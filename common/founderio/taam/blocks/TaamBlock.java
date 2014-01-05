@@ -102,6 +102,7 @@ public class TaamBlock extends Block {
 					.getBlockTileEntity(par2, par3, par4));
 			te.setOwner(((EntityPlayer) par5EntityLivingBase).username);
 		}
+		updateBlocksAround(par1World, par2, par3, par4);
 	}
 	
 	@Override
@@ -113,8 +114,10 @@ public class TaamBlock extends Block {
 	}
 	
 	@Override
-	public void onBlockPreDestroy(World par1World, int par2, int par3,
-			int par4, int par5) {
+	public void breakBlock(World par1World, int par2, int par3, int par4,
+			int par5, int par6) {
 		updateBlocksAround(par1World, par2, par3, par4);
+		
+		super.breakBlock(par1World, par2, par3, par4, par5, par6);
 	}
 }

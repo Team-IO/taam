@@ -64,9 +64,10 @@ public class TileEntitySensor extends BaseTileEntity {
 			xMax += offLength / 2;
 			zMin -= offLength / 2;
 			zMax += offLength / 2;
+			break;
 		case UP:
 			yMax += down;
-			yMin -= blind;
+			yMin += blind;
 			xMin -= offLength / 2;
 			xMax += offLength / 2;
 			zMin -= offLength / 2;
@@ -119,7 +120,6 @@ public class TileEntitySensor extends BaseTileEntity {
 			//worldObj.setB
 			((TaamBlock)getBlockType()).updateBlocksAround(worldObj, xCoord, yCoord, zCoord);
 		}
-		System.out.println(found);
 	}
 	
 	@Override
