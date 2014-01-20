@@ -4,6 +4,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.Configuration;
+import net.minecraftforge.common.Property;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -14,7 +15,7 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.registry.GameRegistry;
-import founderio.taam.blocks.TaamBlock;
+import founderio.taam.blocks.TaamSensorBlock;
 import founderio.taam.blocks.TileEntitySensor;
 
 @Mod(modid = Taam.MOD_ID, name = Taam.MOD_NAME, version = Taam.MOD_VERSION)
@@ -28,9 +29,11 @@ public class TaamMain {
 
 	public static CreativeTabs creativeTab;
 
-	public static TaamBlock blockSensor;
+	public static TaamSensorBlock blockSensor;
 
 	private Configuration config;
+	
+	public static int sensor_placement_mode = 1;
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
@@ -42,7 +45,15 @@ public class TaamMain {
 		
 		config = new Configuration(event.getSuggestedConfigurationFile());
 		config.load();
+		
+		Property spm = config.get(Configuration.CATEGORY_GENERAL, "sensor_placement_mode", 1, Taam.CFG_COMMENT_SENSOR_PLACEMENT_MODE);
+		sensor_placement_mode = spm.getInt();
 
+		if(sensor_placement_mode < 1 || sensor_placement_mode > 2) {
+			sensor_placement_mode = 1;
+			spm.set(1);
+		}
+		
 		creativeTab = new CreativeTabs(Taam.MOD_ID) {
 
 			@Override
@@ -51,7 +62,7 @@ public class TaamMain {
 			}
 		};
 
-		blockSensor = new TaamBlock(config.getBlock(Taam.BLOCK_SENSOR, 3030).getInt());
+		blockSensor = new TaamSensorBlock(config.getBlock(Taam.BLOCK_SENSOR, 3030).getInt());
 		blockSensor.setUnlocalizedName(Taam.BLOCK_SENSOR);
 		blockSensor.setCreativeTab(creativeTab);
 

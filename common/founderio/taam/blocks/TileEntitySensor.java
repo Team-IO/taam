@@ -7,7 +7,6 @@ import net.minecraftforge.common.ForgeDirection;
 
 public class TileEntitySensor extends BaseTileEntity {
 	
-	private String owner = "";
 	private int offLength = 5;
 	private int offLeft = 5;
 	private int offRight = 5;
@@ -15,6 +14,8 @@ public class TileEntitySensor extends BaseTileEntity {
 	private int down = 5;
 	
 	private boolean powering = false;
+	
+	public int renderingOffset = 0;
 	
 	public int isPowering() {
 		if(powering) {
@@ -24,21 +25,7 @@ public class TileEntitySensor extends BaseTileEntity {
 		}
 	}
 	
-	public void setOwner(String owner) {
-		this.owner = owner;
-	}
-	
-	public String getOwner() {
-		return owner;
-	}
-	
 	public TileEntitySensor() {
-	}
-	
-	@Override
-	public void updateContainingBlockInfo() {
-		// TODO Auto-generated method stub
-		super.updateContainingBlockInfo();
 	}
 	
 	@Override
@@ -118,16 +105,18 @@ public class TileEntitySensor extends BaseTileEntity {
 		if(found != powering) {
 			powering = found;
 			//worldObj.setB
-			((TaamBlock)getBlockType()).updateBlocksAround(worldObj, xCoord, yCoord, zCoord);
+			((TaamSensorBlock)getBlockType()).updateBlocksAround(worldObj, xCoord, yCoord, zCoord);
 		}
 	}
 	
 	@Override
 	protected void writePropertiesToNBT(NBTTagCompound par1nbtTagCompound) {
+		//TODO: Write properties
 	}
 
 	@Override
 	protected void readPropertiesFromNBT(NBTTagCompound par1nbtTagCompound) {
+		//TODO: Read properties
 	}
 
 }

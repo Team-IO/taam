@@ -1,24 +1,28 @@
 package founderio.taam.blocks;
 
+import java.util.List;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import founderio.taam.Taam;
 
-public class TaamBlock extends Block {
+public class TaamSensorBlock extends BaseBlock {
 
 	public static final String[] metaList = new String[] {
 		Taam.BLOCK_SENSOR_MOTION,
 		Taam.BLOCK_SENSOR_MINECT
 	};
 	
-	public TaamBlock(int par1) {
+	public TaamSensorBlock(int par1) {
 		super(par1, Material.iron);
 		this.setHardness(2);
 		this.setResistance(6f);
@@ -45,6 +49,15 @@ public class TaamBlock extends Block {
 	public boolean renderAsNormalBlock() {
 		return false;
 	}
+	
+	@Override
+	public void addCollisionBoxesToList(World par1World, int par2, int par3,
+			int par4, AxisAlignedBB par5AxisAlignedBB, List par6List,
+			Entity par7Entity) {
+		return;
+	}
+	
+	//TODO: Adjust Hitbox!
 
 	public TileEntity createTileEntity(World world, int metadata) {
 		return new TileEntitySensor();
@@ -92,19 +105,13 @@ public class TaamBlock extends Block {
         par1World.notifyBlocksOfNeighborChange(par2, par3 - 1, par4, this.blockID);
         par1World.notifyBlocksOfNeighborChange(par2, par3 + 1, par4, this.blockID);
 	}
-	
+
 	@Override
-	public void onBlockPlacedBy(World par1World, int par2, int par3, int par4,
-			EntityLivingBase par5EntityLivingBase, ItemStack par6ItemStack) {
-		// Update Owner
-		if (par5EntityLivingBase instanceof EntityPlayer) {
-			TileEntitySensor te = ((TileEntitySensor) par1World
-					.getBlockTileEntity(par2, par3, par4));
-			te.setOwner(((EntityPlayer) par5EntityLivingBase).username);
-		}
+	public void onPostBlockPlaced(World par1World, int par2, int par3,
+			int par4, int par5) {
 		updateBlocksAround(par1World, par2, par3, par4);
 	}
-	
+
 	@Override
 	public int onBlockPlaced(World par1World, int x, int y, int z,
 			int side, float hitx, float hity, float hitz, int meta) {

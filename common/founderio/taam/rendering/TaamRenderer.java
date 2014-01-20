@@ -17,7 +17,7 @@ import org.lwjgl.opengl.GL11;
 import cpw.mods.fml.common.ITickHandler;
 import cpw.mods.fml.common.TickType;
 import founderio.taam.Taam;
-import founderio.taam.blocks.TaamBlock;
+import founderio.taam.blocks.TaamSensorBlock;
 
 public class TaamRenderer extends TileEntitySpecialRenderer implements
 IItemRenderer, ITickHandler {
@@ -70,7 +70,7 @@ IItemRenderer, ITickHandler {
 
 	@Override
 	public boolean handleRenderType(ItemStack item, ItemRenderType type) {
-		return Block.blocksList[item.itemID] instanceof TaamBlock;
+		return Block.blocksList[item.itemID] instanceof TaamSensorBlock;
 	}
 
 	@Override
