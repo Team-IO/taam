@@ -7,10 +7,10 @@ import net.minecraftforge.common.ForgeDirection;
 
 public class TileEntitySensor extends BaseTileEntity {
 	
-	private int offLength = 1;
-	private int offLeft = 2;
-	private int offRight = 2;
-	private int blind = 0;
+	private float offLength = 1.5f;
+	private int offLeft = 1;
+	private int offRight = 1;
+	private int blind = 1;
 	private int down = 2;
 	
 	private boolean powering = false;
@@ -36,13 +36,13 @@ public class TileEntitySensor extends BaseTileEntity {
 		
 		ForgeDirection dir = ForgeDirection.getOrientation(rotation);
 		
-		float xMin = xCoord;
-		float yMin = yCoord;
-		float zMin = zCoord;
-		float xMax = xCoord;
-		float yMax = yCoord;
-		float zMax = zCoord;
-		
+		float xMin = xCoord + 0.5f;
+		float yMin = yCoord + 0.5f;
+		float zMin = zCoord + 0.5f;
+		float xMax = xCoord + 0.5f;
+		float yMax = yCoord + 0.5f;
+		float zMax = zCoord + 0.5f;
+
 		switch(dir) {
 		case DOWN:
 			yMax -= blind;
