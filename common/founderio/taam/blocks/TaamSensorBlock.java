@@ -27,7 +27,7 @@ public class TaamSensorBlock extends BaseBlock {
 		this.setHardness(2);
 		this.setResistance(6f);
 		this.setStepSound(Block.soundMetalFootstep);
-		MinecraftForge.setBlockHarvestLevel(this, "pickaxe", 0);
+		MinecraftForge.setBlockHarvestLevel(this, "pickaxe", 1);
 	}
 	
 	@Override
