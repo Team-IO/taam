@@ -72,7 +72,7 @@ public class TaamSensorBlock extends BaseBlock {
 	public int isProvidingWeakPower(IBlockAccess par1iBlockAccess, int par2,
 			int par3, int par4, int par5) {
 		TileEntitySensor te = ((TileEntitySensor) par1iBlockAccess.getBlockTileEntity(par2, par3, par4));
-		System.out.println(te.isPowering());
+		//System.out.println(te.isPowering());
 		return te.isPowering();
 	}
 	
@@ -81,7 +81,7 @@ public class TaamSensorBlock extends BaseBlock {
 			int par3, int par4, int par5) {
 		TileEntitySensor te = ((TileEntitySensor) par1iBlockAccess
 				.getBlockTileEntity(par2, par3, par4));
-		System.out.println(te.isPowering());
+		//System.out.println(te.isPowering());
 		return te.isPowering();
 	}
 	
