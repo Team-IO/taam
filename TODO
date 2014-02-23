@@ -7,3 +7,13 @@
 	- CC integration
 - "Firewall Block", leitet Signale nur in erwünschte Richtung weiter
 - Jukebox gibt audiosignal aus
+- Beleuchtung/Signallampen, direkt an Multinet-Kabel anschließbar
+- Schaltkasten Mulitblock
+	- Addons
+		- Power Converter
+		- Not Strom
+			- Redstone output wenn in benutzung
+		- Stromzähler
+		- Sicherungen für IC²
+		- Redstone Logicgates
+		
