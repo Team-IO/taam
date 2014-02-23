@@ -1,9 +1,9 @@
 "Multinet":
-- bundled cable, erlaubt Übertragung mehrerer Arten von Inhalt
+- bundled cable, erlaubt √úbertragung mehrerer Arten von Inhalt
 	- Sound
 	- Redstone (Lossless)
 	- Power (Taam-Specific Power?, BC, RF, IC2, ...)
 	- Data (Communication between Taam Tech Blocks)
 	- CC integration
-- "Firewall Block", leitet Signale nur in erwünschte Richtung weiter
+- "Firewall Block", leitet Signale nur in erw√ºnschte Richtung weiter
 - Jukebox gibt audiosignal aus
