@@ -18,6 +18,7 @@ import cpw.mods.fml.common.ITickHandler;
 import cpw.mods.fml.common.TickType;
 import founderio.taam.Taam;
 import founderio.taam.blocks.TaamSensorBlock;
+import founderio.taam.blocks.TileEntitySensor;
 
 public class TaamRenderer extends TileEntitySpecialRenderer implements
 IItemRenderer, ITickHandler {
@@ -102,19 +103,20 @@ IItemRenderer, ITickHandler {
 			break;
 		}
 		
-		renderAt(item.getItemDamage() | 7, offX, offY, offZ);
+		renderAt(item.getItemDamage() | 7, offX, offY, offZ, false);
 	}
 
 	@Override
 	public void renderTileEntityAt(TileEntity tileentity, double x, double y,
 			double z, float partialTickTime) {
-		renderAt(tileentity.getBlockMetadata(), x, y, z);
+		TileEntitySensor te = ((TileEntitySensor) tileentity);
+		renderAt(tileentity.getBlockMetadata(), x, y, z, te.isPowering() > 0);
 	}
 	
-	public void renderAt(int meta, double x, double y, double z) {
+	public void renderAt(int meta, double x, double y, double z, boolean fixBlink) {
 		switch(meta & 8) {
 		case 0:
-			renderSensor(x, y, z, (meta & 7));
+			renderSensor(x, y, z, (meta & 7), fixBlink);
 			break;
 		case 8:
 			//TODO: renderMinect();
@@ -122,7 +124,7 @@ IItemRenderer, ITickHandler {
 		}
 	}
 	
-	public void renderSensor(double x, double y, double z, int rotation) {
+	public void renderSensor(double x, double y, double z, int rotation, boolean fixBlink) {
 		GL11.glPushMatrix();
 
 
@@ -131,7 +133,7 @@ IItemRenderer, ITickHandler {
 				(float) z + 0.5f);
 		
 		
-		if((rot % 40) == 0) {
+		if((rot % 40) == 0 || fixBlink) {
 			rot = 0;
 			Minecraft.getMinecraft().renderEngine.bindTexture(textureSensorBlink);
 		} else {
@@ -177,6 +179,7 @@ IItemRenderer, ITickHandler {
 		}
 		GL11.glRotatef(180f, 1.0f, 0, 0);
 		
+		//modelSensor.renderPart(partName)
 		
 		modelSensor.renderAll();
 
