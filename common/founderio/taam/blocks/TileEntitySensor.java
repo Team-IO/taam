@@ -8,8 +8,8 @@ import net.minecraftforge.common.ForgeDirection;
 public class TileEntitySensor extends BaseTileEntity {
 	
 	private float offLength = 1.5f;
-	private int offLeft = 1;
-	private int offRight = 1;
+	private float offLeft = 1.5f;
+	private float offRight = 1.5f;
 	private int blind = 1;
 	private int down = 2;
 	
