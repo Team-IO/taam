@@ -11,7 +11,7 @@ public class TileEntitySensor extends BaseTileEntity {
 	private float offLeft = 1.5f;
 	private float offRight = 1.5f;
 	private int blind = 1;
-	private int down = 2;
+	private float down = 2.5f;
 	
 	private boolean powering = false;
 	
