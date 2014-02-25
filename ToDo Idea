@@ -1,7 +1,6 @@
 ToDo:
 	- Sensor
 		- Nur Entitys die Wärme abgeben bemerken
-		- Hitbox anspassen
 	- Base Block
 		- Update Owner
 	- Multipart
