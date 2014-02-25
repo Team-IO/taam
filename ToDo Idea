@@ -1,6 +1,11 @@
 ToDo:
+	- Sensor
+		- Nur Entitys die Wärme abgeben bemerken
+		- Hitbox anspassen
+	- Base Block
+		- Update Owner
 	- Multipart
-	"Multinet":
+	- Multinet:
 		- Bundled cable, erlaubt Übertragung mehrerer Arten von Inhalt
 			- Sound
 				- Jukebox gibt audiosignal aus
@@ -28,10 +33,6 @@ ToDo:
 			- Texturen und Models
 				- Basic Stromkasten
 				- Power Converter
-		- Sensor
-			- Hitbox anspassen
-		- Base Block
-			- Update Owner
 
 			
 Idea
