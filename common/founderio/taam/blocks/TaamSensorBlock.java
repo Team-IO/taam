@@ -1,9 +1,11 @@
 package founderio.taam.blocks;
 
 import java.util.List;
+import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
@@ -11,6 +13,8 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.common.MinecraftForge;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import founderio.taam.Taam;
 
 public class TaamSensorBlock extends BaseBlock {
@@ -85,7 +89,7 @@ public class TaamSensorBlock extends BaseBlock {
 			minX = width;
 			maxX = 1f - width;
 			minY = 1f-depth;
-			maxY = depth;
+			maxY = 1f;
 			minZ = height;
 			maxZ = 1f - height;
 			break;
@@ -205,4 +209,38 @@ public class TaamSensorBlock extends BaseBlock {
 		
 		super.breakBlock(par1World, par2, par3, par4, par5, par6);
 	}
+	
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void registerIcons(IconRegister par1IconRegister) {
+		this.blockIcon = par1IconRegister.registerIcon(Taam.MOD_ID + ":tech_block");
+	}
+	
+	@Override
+	public boolean canBlockStay(World world, int x, int y, int z) {
+		int meta = world.getBlockMetadata(x, y, z);
+		int rotation = meta & 7;
+		ForgeDirection dir = ForgeDirection.getOrientation(rotation).getOpposite();
+		
+		return world.isBlockSolidOnSide(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ, ForgeDirection.getOrientation(rotation));
+	}
+	
+	@Override
+	public boolean canPlaceBlockOnSide(World world, int x, int y,
+			int z, int side) {
+		ForgeDirection dir = ForgeDirection.getOrientation(side).getOpposite();
+		return world.isBlockSolidOnSide(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ, dir);
+	}
+	
+	@Override
+	public void onNeighborBlockChange(World world, int x, int y,
+			int z, int neighborId) {
+		if(!canBlockStay(world, x, y, z)) {
+			int meta = world.getBlockMetadata(x, y, z);
+            dropBlockAsItem(world, x, y, z, meta, 0);
+            world.setBlock(x, y, z, 0, 0, 3);
+		}
+	}
+	
+	
 }
