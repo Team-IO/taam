@@ -15,7 +15,7 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.registry.GameRegistry;
-import founderio.taam.blocks.TaamSensorBlock;
+import founderio.taam.blocks.BlockSensor;
 import founderio.taam.blocks.TileEntitySensor;
 
 @Mod(modid = Taam.MOD_ID, name = Taam.MOD_NAME, version = Taam.MOD_VERSION)
@@ -29,7 +29,7 @@ public class TaamMain {
 
 	public static CreativeTabs creativeTab;
 
-	public static TaamSensorBlock blockSensor;
+	public static BlockSensor blockSensor;
 
 	private Configuration config;
 	
@@ -72,7 +72,7 @@ public class TaamMain {
 			}
 		};
 
-		blockSensor = new TaamSensorBlock(config.getBlock(Taam.BLOCK_SENSOR, 3030).getInt());
+		blockSensor = new BlockSensor(config.getBlock(Taam.BLOCK_SENSOR, 3030).getInt());
 		blockSensor.setUnlocalizedName(Taam.BLOCK_SENSOR);
 		blockSensor.setCreativeTab(creativeTab);
 

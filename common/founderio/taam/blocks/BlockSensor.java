@@ -16,14 +16,27 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import founderio.taam.Taam;
 
-public class TaamSensorBlock extends BaseBlock {
-
+public class BlockSensor extends BaseBlock {
+	
+	/**
+	 * Hitbox "offset" depth (attaching side -> sensor front)
+	 */
+	private static final float depth = 0.30f;
+	/**
+	 * Hitbox "offset" depth (block side -> sensor base)
+	 */
+	private static final float width = 0.23f;
+	/**
+	 * Hitbox "offset" depth (block bottom/top -> sensor base)
+	 */
+	private static final float height = 0.43f;
+	
 	public static final String[] metaList = new String[] {
 		Taam.BLOCK_SENSOR_MOTION,
 		Taam.BLOCK_SENSOR_MINECT
 	};
 	
-	public TaamSensorBlock(int par1) {
+	public BlockSensor(int par1) {
 		super(par1, Material.iron);
 		this.setHardness(3.5f);
 		this.setStepSound(Block.soundMetalFootstep);
@@ -57,8 +70,6 @@ public class TaamSensorBlock extends BaseBlock {
 			Entity par7Entity) {
 		return;
 	}
-	
-	//TODO: Adjust Hitbox!
 
 	public TileEntity createTileEntity(World world, int metadata) {
 		return new TileEntitySensor();
@@ -71,23 +82,11 @@ public class TaamSensorBlock extends BaseBlock {
 		int rotation = meta & 7;
 		ForgeDirection dir = ForgeDirection.getOrientation(rotation);
 		
-		
-		
-		/*
-		 * Größen des Sensors
-		 */
-		// Tiefe (Verankerung -> Sensor)
-		final float depth = 0.30f;
-		// Breite (Block Außenseite -> Aufhängung)
-		final float width = 0.23f;
-		// höhe (Block Unter-/Oberseite -> Aufhängung
-		final float height = 0.43f;
-		
-		switch(dir) {
+		switch (dir) {
 		case DOWN:
 			minX = width;
 			maxX = 1f - width;
-			minY = 1f-depth;
+			minY = 1f - depth;
 			maxY = 1f;
 			minZ = height;
 			maxZ = 1f - height;
@@ -141,7 +140,6 @@ public class TaamSensorBlock extends BaseBlock {
 			maxZ = 1;
 			break;
 		}
-		
 	}
 	@Override
 	public boolean canProvidePower() {

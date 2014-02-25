@@ -116,7 +116,7 @@ public class TileEntitySensor extends BaseTileEntity {
 		
 		if(found != powering) {
 			powering = found;
-			((TaamSensorBlock)getBlockType()).updateBlocksAround(worldObj, xCoord, yCoord, zCoord);
+			((BlockSensor)getBlockType()).updateBlocksAround(worldObj, xCoord, yCoord, zCoord);
 		}
 	}
 	
