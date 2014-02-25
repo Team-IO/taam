@@ -1,7 +1,6 @@
 package founderio.taam.blocks;
 
 import java.util.List;
-import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -152,19 +151,31 @@ public class TaamSensorBlock extends BaseBlock {
 	@Override
 	public int isProvidingWeakPower(IBlockAccess world, int x, int y, int z,
 			int side) {
-		TileEntitySensor te = ((TileEntitySensor) world.getBlockTileEntity(x,
-				y, z));
-
-		return te.isPowering();
+		int meta = world.getBlockMetadata(x, y, z);
+		int rotation = meta & 7;
+		ForgeDirection dir = ForgeDirection.getOrientation(rotation);
+		ForgeDirection sideDir = ForgeDirection.getOrientation(side);
+		if(dir == sideDir) {
+			TileEntitySensor te = ((TileEntitySensor) world.getBlockTileEntity(x, y, z));
+			return te.isPowering();
+		} else {
+			return 0;
+		}
 	}
 	
 	@Override
 	public int isProvidingStrongPower(IBlockAccess world, int x, int y, int z,
 			int side) {
-		TileEntitySensor te = ((TileEntitySensor) world.getBlockTileEntity(x,
-				y, z));
-
-		return te.isPowering();
+		int meta = world.getBlockMetadata(x, y, z);
+		int rotation = meta & 7;
+		ForgeDirection dir = ForgeDirection.getOrientation(rotation);
+		ForgeDirection sideDir = ForgeDirection.getOrientation(side);
+		if(dir == sideDir) {
+			TileEntitySensor te = ((TileEntitySensor) world.getBlockTileEntity(x, y, z));
+			return te.isPowering();
+		} else {
+			return 0;
+		}
 	}
 
 	@Override
