@@ -82,18 +82,18 @@ public class TaamSensorBlock extends BaseBlock {
 		
 		switch(dir) {
 		case DOWN:
-			minX = depth;
-			maxX = 1f-depth;
-			maxY = 1f;
-			minY = 1f - width;
+			minX = width;
+			maxX = 1f - width;
+			minY = 1f-depth;
+			maxY = depth;
 			minZ = height;
 			maxZ = 1f - height;
 			break;
 		case UP:
-			minX = 0f;
-			maxX = depth;
-			maxY = 1f;
-			minY = 1f - width;
+			minX = width;
+			maxX = 1f - width;
+			minY = 0f;
+			maxY = depth;
 			minZ = height;
 			maxZ = 1f - height;
 			break;
@@ -144,32 +144,34 @@ public class TaamSensorBlock extends BaseBlock {
 	public boolean canProvidePower() {
 		return true;
 	}
-	
+
 	@Override
-	public int isProvidingWeakPower(IBlockAccess par1iBlockAccess, int par2,
-			int par3, int par4, int par5) {
-		TileEntitySensor te = ((TileEntitySensor) par1iBlockAccess.getBlockTileEntity(par2, par3, par4));
-		//System.out.println(te.isPowering());
+	public int isProvidingWeakPower(IBlockAccess world, int x, int y, int z,
+			int side) {
+		TileEntitySensor te = ((TileEntitySensor) world.getBlockTileEntity(x,
+				y, z));
+
 		return te.isPowering();
 	}
 	
 	@Override
-	public int isProvidingStrongPower(IBlockAccess par1iBlockAccess, int par2,
-			int par3, int par4, int par5) {
-		TileEntitySensor te = ((TileEntitySensor) par1iBlockAccess
-				.getBlockTileEntity(par2, par3, par4));
-		//System.out.println(te.isPowering());
+	public int isProvidingStrongPower(IBlockAccess world, int x, int y, int z,
+			int side) {
+		TileEntitySensor te = ((TileEntitySensor) world.getBlockTileEntity(x,
+				y, z));
+
 		return te.isPowering();
 	}
-	
+
 	@Override
 	public boolean isBlockNormalCube(World world, int x, int y, int z) {
 		return false;
 	}
-	
+
 	@Override
-	public boolean isBlockSolidOnSide(World world, int x, int y, int z, net.minecraftforge.common.ForgeDirection side) {
-		return true;
+	public boolean isBlockSolidOnSide(World world, int x, int y, int z,
+			ForgeDirection side) {
+		return false;
 	};
 	
 	public void updateBlocksAround(World par1World, int par2, int par3, int par4) {
