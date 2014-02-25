@@ -49,6 +49,7 @@ public class TaamSensorBlock extends BaseBlock {
 		return false;
 	}
 	
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void addCollisionBoxesToList(World par1World, int par2, int par3,
 			int par4, AxisAlignedBB par5AxisAlignedBB, List par6List,

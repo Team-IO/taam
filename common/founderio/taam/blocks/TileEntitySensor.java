@@ -31,7 +31,7 @@ public class TileEntitySensor extends BaseTileEntity {
 	@Override
 	public void updateEntity() {
 		int meta = getBlockMetadata();
-		int type = meta & 8;
+//		int type = meta & 8;
 		int rotation = meta & 7;
 		
 		ForgeDirection dir = ForgeDirection.getOrientation(rotation);

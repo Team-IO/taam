@@ -14,7 +14,7 @@ public class TileEntityEmitter extends BaseTileEntity {
 		if(count >= timeout) {
 			count = 0;
 			
-			//TODO: Play Sound here
+			worldObj.playSound(xCoord + 0.5f, yCoord + 0.5f, zCoord + 0.5f, sound, 1f, 1f, true);
 		}
 	}
 	
