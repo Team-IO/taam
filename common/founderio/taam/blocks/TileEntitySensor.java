@@ -122,12 +122,12 @@ public class TileEntitySensor extends BaseTileEntity {
 	
 	@Override
 	protected void writePropertiesToNBT(NBTTagCompound par1nbtTagCompound) {
-		//TODO: Write properties
+		par1nbtTagCompound.setInteger("tickOn", tickOn);
 	}
 
 	@Override
 	protected void readPropertiesFromNBT(NBTTagCompound par1nbtTagCompound) {
-		//TODO: Read properties
+		tickOn = par1nbtTagCompound.getInteger("tickOn");
 	}
 
 }
