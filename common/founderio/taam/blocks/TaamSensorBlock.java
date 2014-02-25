@@ -74,11 +74,11 @@ public class TaamSensorBlock extends BaseBlock {
 		 * Größen des Sensors
 		 */
 		// Tiefe (Verankerung -> Sensor)
-		final float depth = 0.25f;
+		final float depth = 0.30f;
 		// Breite (Block Außenseite -> Aufhängung)
-		final float width = 0.25f;
+		final float width = 0.23f;
 		// höhe (Block Unter-/Oberseite -> Aufhängung
-		final float height = 0.45f;
+		final float height = 0.43f;
 		
 		switch(dir) {
 		case DOWN:
