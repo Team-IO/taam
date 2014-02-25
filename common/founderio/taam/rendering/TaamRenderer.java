@@ -179,9 +179,15 @@ IItemRenderer, ITickHandler {
 		}
 		GL11.glRotatef(180f, 1.0f, 0, 0);
 		
-		//modelSensor.renderPart(partName)
+		modelSensor.renderPart("p1");
+		modelSensor.renderPart("p2");
+		modelSensor.renderPart("socket");
 		
-		modelSensor.renderAll();
+		if(dir != ForgeDirection.DOWN && dir != ForgeDirection.UP) {
+			GL11.glRotatef(20f, 1.0f, 0, 0);
+			GL11.glTranslatef(0f, 0f, 0.8f);
+		}
+		modelSensor.renderPart("device");
 
 		GL11.glPopMatrix();
 	}
