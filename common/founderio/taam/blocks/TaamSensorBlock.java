@@ -9,6 +9,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.common.MinecraftForge;
 import founderio.taam.Taam;
 
@@ -60,7 +61,85 @@ public class TaamSensorBlock extends BaseBlock {
 		return new TileEntitySensor();
 		
 	}
-	
+	@Override
+	public void setBlockBoundsBasedOnState(IBlockAccess world,
+			int x, int y, int z) {
+		int meta = world.getBlockMetadata(x, y, z);
+		int rotation = meta & 7;
+		ForgeDirection dir = ForgeDirection.getOrientation(rotation);
+		
+		
+		
+		/*
+		 * Größen des Sensors
+		 */
+		// Tiefe (Verankerung -> Sensor)
+		final float depth = 0.25f;
+		// Breite (Block Außenseite -> Aufhängung)
+		final float width = 0.25f;
+		// höhe (Block Unter-/Oberseite -> Aufhängung
+		final float height = 0.45f;
+		
+		switch(dir) {
+		case DOWN:
+			minX = depth;
+			maxX = 1f-depth;
+			maxY = 1f;
+			minY = 1f - width;
+			minZ = height;
+			maxZ = 1f - height;
+			break;
+		case UP:
+			minX = 0f;
+			maxX = depth;
+			maxY = 1f;
+			minY = 1f - width;
+			minZ = height;
+			maxZ = 1f - height;
+			break;
+		case NORTH:
+			minX = width;
+			maxX = 1f - width;
+			maxY = 1f - height;
+			minY = height;
+			minZ = 1f - depth;
+			maxZ = 1f;
+			break;
+		case SOUTH:
+			minX = width;
+			maxX = 1f - width;
+			maxY = 1f - height;
+			minY = height;
+			minZ = 0f;
+			maxZ = depth;
+			break;
+		case WEST:
+			minX = 1f - depth;
+			maxX = 1f;
+			maxY = 1f - height;
+			minY = height;
+			minZ = width;
+			maxZ = 1f - width;
+			break;
+		case EAST:
+			minX = 0f;
+			maxX = depth;
+			maxY = 1f - height;
+			minY = height;
+			minZ = width;
+			maxZ = 1f - width;
+			break;
+		case UNKNOWN:
+			minX = 0;
+			maxX = 1;
+			minY = 0;
+			maxY = 1;
+			minZ = 0;
+			maxZ = 1;
+			break;
+		}
+		
+	}
 	@Override
 	public boolean canProvidePower() {
 		return true;
