@@ -1,5 +1,6 @@
 package founderio.taam.blocks;
 
+import founderio.taam.TaamMain;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -17,6 +18,8 @@ public class TileEntitySensor extends BaseTileEntity {
 	private boolean powering = false;
 	
 	public int renderingOffset = 0;
+	
+	private int tickOn = 0;
 	
 	public int isPowering() {
 		if(powering) {
@@ -91,21 +94,28 @@ public class TileEntitySensor extends BaseTileEntity {
 		}
 		
 		AxisAlignedBB bb = AxisAlignedBB.getAABBPool().getAABB(xMin, yMin, zMin, xMax, yMax, zMax);
-		
-		//System.out.println(bb);
-		
+
 		boolean found = false;
-		for(Object obj : worldObj.loadedEntityList) {
-			Entity ent = (Entity)obj;
-			
-			if(ent instanceof EntityLivingBase && ent.boundingBox.intersectsWith(bb)) {
-				found = true;
-				break;
+		
+		if(tickOn > 0) {
+			tickOn--;
+			found = true;
+		} else {
+			for(Object obj : worldObj.loadedEntityList) {
+				Entity ent = (Entity)obj;
+				
+				if(ent instanceof EntityLivingBase && ent.boundingBox.intersectsWith(bb)) {
+					found = true;
+					break;
+				}
+			}
+			if(found) {
+				tickOn = TaamMain.sensor_delay;
 			}
 		}
+		
 		if(found != powering) {
 			powering = found;
-			//worldObj.setB
 			((TaamSensorBlock)getBlockType()).updateBlocksAround(worldObj, xCoord, yCoord, zCoord);
 		}
 	}

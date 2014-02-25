@@ -34,6 +34,7 @@ public class TaamMain {
 	private Configuration config;
 	
 	public static int sensor_placement_mode = 1;
+	public static int sensor_delay = 30;
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
@@ -52,7 +53,15 @@ public class TaamMain {
 
 		if(sensor_placement_mode < 1 || sensor_placement_mode > 2) {
 			sensor_placement_mode = 1;
-			spm.set(1);
+			spm.set(sensor_placement_mode);
+		}
+		
+		Property sd = config.get(Configuration.CATEGORY_GENERAL, "sensor_delay", 30, Taam.CFG_COMMENT_SENSOR_DELAY);
+		sensor_delay = sd.getInt();
+
+		if(sensor_delay < 10) {
+			sensor_delay = 10;
+			sd.set(sensor_delay);
 		}
 		
 		creativeTab = new CreativeTabs(Taam.MOD_ID) {
