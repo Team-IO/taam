@@ -1,8 +1,5 @@
 ToDo:
-	- Sensor
-		- Nur Entitys die Wärme abgeben bemerken
-	- Base Block
-		- Update Owner
+	- Schiebetür
 	- Multipart
 	- Multinet:
 		- Bundled cable, erlaubt Übertragung mehrerer Arten von Inhalt
