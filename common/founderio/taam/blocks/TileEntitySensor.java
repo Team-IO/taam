@@ -1,6 +1,7 @@
 package founderio.taam.blocks;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.ForgeDirection;
@@ -97,7 +98,7 @@ public class TileEntitySensor extends BaseTileEntity {
 		for(Object obj : worldObj.loadedEntityList) {
 			Entity ent = (Entity)obj;
 			
-			if(ent.boundingBox.intersectsWith(bb)) {
+			if(ent instanceof EntityLivingBase && ent.boundingBox.intersectsWith(bb)) {
 				found = true;
 				break;
 			}
