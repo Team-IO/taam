@@ -2,6 +2,7 @@ ToDo:
 	- Schiebetür
 	- Multipart
 	- Multinet:
+		- Cable Racks, für Freischwebende Kabelverlegung (mit Komponenten für vertikale Verbindungen)
 		- Bundled cable, erlaubt Übertragung mehrerer Arten von Inhalt
 			- Sound
 				- Jukebox gibt audiosignal aus
