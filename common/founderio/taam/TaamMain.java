@@ -18,6 +18,8 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import founderio.taam.blocks.BlockSensor;
 import founderio.taam.blocks.BlockSlidingDoor;
 import founderio.taam.blocks.TileEntitySensor;
+import founderio.taam.blocks.multinet.ItemMultinetCable;
+import founderio.taam.blocks.multinet.MultinetMultipart;
 
 @Mod(modid = Taam.MOD_ID, name = Taam.MOD_NAME, version = Taam.MOD_VERSION)
 @NetworkMod(clientSideRequired = true, serverSideRequired = false)
@@ -28,6 +30,10 @@ public class TaamMain {
 	@SidedProxy(clientSide = "founderio.taam.TaamClientProxy", serverSide = "founderio.taam.TaamCommonProxy")
 	public static TaamCommonProxy proxy;
 
+	public static MultinetMultipart multinetMultipart;
+	
+	public static ItemMultinetCable itemMultinetCable;
+	
 	public static CreativeTabs creativeTab;
 
 	public static BlockSensor blockSensor;
@@ -82,6 +88,12 @@ public class TaamMain {
 		blockSlidingDoor = new BlockSlidingDoor(config.getBlock(Taam.BLOCK_SLIDINGDOOR, 3031).getInt());
 		blockSlidingDoor.setUnlocalizedName(Taam.BLOCK_SLIDINGDOOR);
 		blockSlidingDoor.setCreativeTab(creativeTab);
+
+		multinetMultipart = new MultinetMultipart();
+		
+		itemMultinetCable = new ItemMultinetCable(config.getItem(Taam.ITEM_MULTINET_CABLE, 3032).getInt());
+		itemMultinetCable.setUnlocalizedName(Taam.ITEM_MULTINET_CABLE);
+		itemMultinetCable.setCreativeTab(creativeTab);
 		
 		config.save();
 
