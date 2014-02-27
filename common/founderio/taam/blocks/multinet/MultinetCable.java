@@ -54,18 +54,18 @@ public class MultinetCable extends TMultiPart {
 			break;
 		case NORTH:
 		case SOUTH:
-			if(hit.y > hit.z) {
-				layer = (int)(hit.y * layerCount);
-			} else {
-				layer = (int)(hit.z * layerCount);
-			}
-			break;
-		case WEST:
-		case EAST:
 			if(hit.y > hit.x) {
 				layer = (int)(hit.y * layerCount);
 			} else {
 				layer = (int)(hit.x * layerCount);
+			}
+			break;
+		case WEST:
+		case EAST:
+			if(hit.y > hit.z) {
+				layer = (int)(hit.y * layerCount);
+			} else {
+				layer = (int)(hit.z * layerCount);
 			}
 			break;
 		default:
@@ -164,13 +164,48 @@ public class MultinetCable extends TMultiPart {
 								 pos.x + ox2, pos.y + oy2, pos.z + oz2).render();
 			break;
 		case WEST:
+			ox1 = 0;
+			oy1 = 0;
+			oz1 = layerOffset;
+			ox2 = cableWidth;
+			oy2 = 1;
+			oz2 = layerOffset + cableWidth;
+			ccm.generateBlock(0, pos.x + ox1, pos.y + oy1, pos.z + oz1,
+								 pos.x + ox2, pos.y + oy2, pos.z + oz2).render();
+			ox1 = 0;
+			oy1 = layerOffset;
+			oz1 = 0;
+			ox2 = cableWidth;
+			oy2 = layerOffset + cableWidth;
+			oz2 = 1;
+
+			ccm.generateBlock(0, pos.x + ox1, pos.y + oy1, pos.z + oz1,
+								 pos.x + ox2, pos.y + oy2, pos.z + oz2).render();
+			break;
 		case EAST:
-			
+			ox1 = 1 - cableWidth;
+			oy1 = 0;
+			oz1 = layerOffset;
+			ox2 = 1;
+			oy2 = 1;
+			oz2 = layerOffset + cableWidth;
+			ccm.generateBlock(0, pos.x + ox1, pos.y + oy1, pos.z + oz1,
+								 pos.x + ox2, pos.y + oy2, pos.z + oz2).render();
+			ox1 = 1 - cableWidth;
+			oy1 = layerOffset;
+			oz1 = 0;
+			ox2 = 1;
+			oy2 = layerOffset + cableWidth;
+			oz2 = 1;
+
+			ccm.generateBlock(0, pos.x + ox1, pos.y + oy1, pos.z + oz1,
+								 pos.x + ox2, pos.y + oy2, pos.z + oz2).render();
 			break;
 		default:
 			break;
 		}
 	}
+	
 	
 	@Override
 	@SideOnly(Side.SERVER)
