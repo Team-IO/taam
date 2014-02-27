@@ -18,7 +18,6 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import founderio.taam.blocks.BlockSensor;
 import founderio.taam.blocks.BlockSlidingDoor;
 import founderio.taam.blocks.TileEntitySensor;
-import founderio.taam.blocks.TileEntitySlidingDoor;
 
 @Mod(modid = Taam.MOD_ID, name = Taam.MOD_NAME, version = Taam.MOD_VERSION)
 @NetworkMod(clientSideRequired = true, serverSideRequired = false)
