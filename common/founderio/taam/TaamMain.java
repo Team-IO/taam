@@ -16,7 +16,9 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.registry.GameRegistry;
 import founderio.taam.blocks.BlockSensor;
+import founderio.taam.blocks.BlockSlidingDoor;
 import founderio.taam.blocks.TileEntitySensor;
+import founderio.taam.blocks.TileEntitySlidingDoor;
 
 @Mod(modid = Taam.MOD_ID, name = Taam.MOD_NAME, version = Taam.MOD_VERSION)
 @NetworkMod(clientSideRequired = true, serverSideRequired = false)
@@ -30,7 +32,9 @@ public class TaamMain {
 	public static CreativeTabs creativeTab;
 
 	public static BlockSensor blockSensor;
-
+	
+	public static BlockSlidingDoor blockSlidingDoor;
+	
 	private Configuration config;
 	
 	public static int sensor_placement_mode = 1;
@@ -75,13 +79,18 @@ public class TaamMain {
 		blockSensor = new BlockSensor(config.getBlock(Taam.BLOCK_SENSOR, 3030).getInt());
 		blockSensor.setUnlocalizedName(Taam.BLOCK_SENSOR);
 		blockSensor.setCreativeTab(creativeTab);
-
+		
+		blockSlidingDoor = new BlockSlidingDoor(config.getBlock(Taam.BLOCK_SLIDINGDOOR, 3031).getInt());
+		blockSlidingDoor.setUnlocalizedName(Taam.BLOCK_SLIDINGDOOR);
+		blockSlidingDoor.setCreativeTab(creativeTab);
+		
 		config.save();
 
 		GameRegistry.registerBlock(blockSensor, ItemBlock.class, Taam.BLOCK_SENSOR, Taam.MOD_ID);
-
+		GameRegistry.registerBlock(blockSlidingDoor, ItemBlock.class, Taam.BLOCK_SLIDINGDOOR, Taam.MOD_ID);
+		
 		GameRegistry.registerTileEntity(TileEntitySensor.class, Taam.TILEENTITY_SENSOR);
-
+		GameRegistry.registerTileEntity(TileEntitySlidingDoor.class, Taam.TILEENTITY_SLIDINGDOOR);
 	}
 
 	@EventHandler
