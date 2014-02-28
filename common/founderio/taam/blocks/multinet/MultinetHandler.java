@@ -11,7 +11,6 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.RenderUtils;
 import codechicken.lib.render.TextureUtils;
 import codechicken.lib.vec.Vector3;
-import codechicken.microblock.ItemMicroPartRenderer;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import founderio.taam.TaamMain;

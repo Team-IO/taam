@@ -6,13 +6,9 @@ import java.util.List;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-import codechicken.lib.render.CCModel;
 import codechicken.lib.vec.BlockCoord;
 import codechicken.lib.vec.Vector3;
-import codechicken.microblock.MicroMaterialRegistry.IMicroHighlightRenderer;
 import codechicken.multipart.JItemMultiPart;
-import codechicken.multipart.MultiPartRegistry;
-import codechicken.multipart.MultipartRenderer;
 import codechicken.multipart.TMultiPart;
 import founderio.taam.blocks.multinet.cables.CableRedstone;
 
