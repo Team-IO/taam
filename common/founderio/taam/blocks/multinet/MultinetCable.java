@@ -42,7 +42,17 @@ public class MultinetCable extends TMultiPart {
 		ForgeDirection dir = ForgeDirection.getOrientation(face).getOpposite();
 		this.face = dir.ordinal();
 		
-		
+		this.layer = MultinetCable.getLayer(dir, hit);
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void renderStatic(Vector3 pos, LazyLightMatrix olm, int pass) {
+		MultinetCable.render(pos, olm, pass, face, layer);
+	}
+	
+	public static int getLayer(ForgeDirection dir, Vector3 hit) {
+		int layer = -1;
 		switch(dir) {
 		case DOWN:
 		case UP:
@@ -71,11 +81,10 @@ public class MultinetCable extends TMultiPart {
 		default:
 			break;
 		}
+		return layer;
 	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void renderStatic(Vector3 pos, LazyLightMatrix olm, int pass) {
+	
+	public static void render(Vector3 pos, LazyLightMatrix olm, int pass, int face, int layer) {
 		ForgeDirection dir = ForgeDirection.getOrientation(face);
 
 		float layerOffset = (float)layer/(float)layerCount;
@@ -205,7 +214,6 @@ public class MultinetCable extends TMultiPart {
 			break;
 		}
 	}
-	
 	
 	@Override
 	@SideOnly(Side.SERVER)

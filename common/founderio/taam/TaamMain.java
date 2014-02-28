@@ -4,6 +4,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.Configuration;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.Property;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -19,6 +20,7 @@ import founderio.taam.blocks.BlockSensor;
 import founderio.taam.blocks.BlockSlidingDoor;
 import founderio.taam.blocks.TileEntitySensor;
 import founderio.taam.blocks.multinet.ItemMultinetCable;
+import founderio.taam.blocks.multinet.MultinetHandler;
 import founderio.taam.blocks.multinet.MultinetMultipart;
 
 @Mod(modid = Taam.MOD_ID, name = Taam.MOD_NAME, version = Taam.MOD_VERSION)
@@ -107,6 +109,7 @@ public class TaamMain {
 	@EventHandler
 	public void init(FMLInitializationEvent event) {
 		proxy.registerRenderStuff();
+		MinecraftForge.EVENT_BUS.register(new MultinetHandler());
 	}
 
 	@EventHandler
