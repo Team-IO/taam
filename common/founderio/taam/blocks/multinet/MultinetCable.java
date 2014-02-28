@@ -3,18 +3,12 @@ package founderio.taam.blocks.multinet;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.lwjgl.opengl.GL11;
-
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.Vec3;
 import net.minecraftforge.common.ForgeDirection;
 import codechicken.lib.data.MCDataInput;
 import codechicken.lib.data.MCDataOutput;
 import codechicken.lib.lighting.LazyLightMatrix;
-import codechicken.lib.raytracer.ExtendedMOP;
 import codechicken.lib.raytracer.IndexedCuboid6;
 import codechicken.lib.render.CCModel;
 import codechicken.lib.vec.BlockCoord;
@@ -58,6 +52,30 @@ public class MultinetCable extends TMultiPart {
 		this.layer = MultinetCable.getLayer(dir, hit);
 	}
 
+	@Override
+	public boolean occlusionTest(TMultiPart npart) {
+		
+		if(npart instanceof MultinetCable) {
+			return ((MultinetCable) npart).layer != layer;
+		} else {
+			Iterable<Cuboid6> otherBoxes = npart.getCollisionBoxes();
+			
+			ForgeDirection fd = ForgeDirection.getOrientation(face);
+			
+			Cuboid6 collisionCube = new Cuboid6(
+					fd.offsetX - fd.offsetX * cableWidth, fd.offsetY - fd.offsetY * cableWidth, fd.offsetZ - fd.offsetZ * cableWidth,
+					fd.offsetX, fd.offsetY, fd.offsetZ);
+			
+			for(Cuboid6 box : otherBoxes) {
+				if(Cuboid6.intersects(box, collisionCube)) {
+					return false;
+				}
+			}
+			
+			return true;
+		}
+	}
+	
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void renderStatic(Vector3 pos, LazyLightMatrix olm, int pass) {
@@ -370,23 +388,23 @@ public class MultinetCable extends TMultiPart {
 		return drops;
 	}
 	
-	@Override
-	@SideOnly(Side.CLIENT)
-	public boolean drawHighlight(MovingObjectPosition hit, EntityPlayer player,
-			float frame) {
-
-        GL11.glBegin(GL11.GL_LINES);
-        GL11.glPushMatrix();
-        GL11.glTranslated(0.5, 0.5, 0.5);
-        GL11.glScaled(1.002, 1.002, 1.002);
-        GL11.glTranslated(-0.5, -0.5, -0.5);
-		
-        MultinetCable.render(new Vector3(hit.blockX,  hit.blockY, hit.blockZ), null, 1, hit.sideHit, layer);
-
-        GL11.glPopMatrix();
-        GL11.glEnd();
-        return true;
-	}
+//	@Override
+//	@SideOnly(Side.CLIENT)
+//	public boolean drawHighlight(MovingObjectPosition hit, EntityPlayer player,
+//			float frame) {
+//
+//        GL11.glPushMatrix();
+//        GL11.glBegin(GL11.GL_LINES);
+//        GL11.glTranslated(0.5, 0.5, 0.5);
+//        GL11.glScaled(1.002, 1.002, 1.002);
+//        GL11.glTranslated(-0.5, -0.5, -0.5);
+//		
+//        MultinetCable.render(new Vector3(hit.blockX,  hit.blockY, hit.blockZ), null, 1, hit.sideHit, layer);
+//
+//        GL11.glEnd();
+//        GL11.glPopMatrix();
+//        return true;
+//	}
 	
 	@Override
 	public Iterable<IndexedCuboid6> getSubParts() {
