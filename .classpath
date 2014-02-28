@@ -6,5 +6,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/Minecraft"/>
 	<classpathentry kind="lib" path="lib/CodeChickenLib-dev-1.6.4-1.0.0.62.jar"/>
 	<classpathentry kind="lib" path="lib/ForgeMultipart-dev-1.6.4-1.0.0.250.jar"/>
+	<classpathentry kind="lib" path="lib/waila"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
