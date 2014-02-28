@@ -19,6 +19,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import founderio.taam.Taam;
 import founderio.taam.TaamMain;
+import founderio.taam.multinet.Multinet;
 
 public class MultinetCable extends TMultiPart {
 
@@ -32,6 +33,8 @@ public class MultinetCable extends TMultiPart {
 	private int layer = -1;
 	
 	private String part;
+	
+	public Multinet network;
 
 	private static final int layerCount = 6;
 	private static final float cableWidth = 2f / 16f;
@@ -42,6 +45,14 @@ public class MultinetCable extends TMultiPart {
 		return Taam.MULTIPART_MULTINET_CABLE + "." + part;
 	}
 
+	public int getLayer() {
+		return layer;
+	}
+	
+	public int getFace() {
+		return face;
+	}
+	
 	public void init(BlockCoord blockCoords, int face, Vector3 hit, String part) {
 		
 		this.part = part;
@@ -56,7 +67,7 @@ public class MultinetCable extends TMultiPart {
 	public boolean occlusionTest(TMultiPart npart) {
 		
 		if(npart instanceof MultinetCable) {
-			return ((MultinetCable) npart).layer != layer;
+			return ((MultinetCable) npart).layer != layer || ((MultinetCable) npart).face != face;
 		} else {
 			Iterable<Cuboid6> otherBoxes = npart.getCollisionBoxes();
 			
@@ -417,9 +428,20 @@ public class MultinetCable extends TMultiPart {
 	}
 	
 	@Override
-	@SideOnly(Side.SERVER)
 	public void onWorldJoin() {
+		if(world().isRemote) {
+			return;
+		}
+		Multinet.addNetwork(this);
 		sendDescUpdate();
+	}
+	
+	@Override
+	public void onWorldSeparate() {
+		if(world().isRemote) {
+			return;
+		}
+		network.removeCable(this);
 	}
 	
 	@Override

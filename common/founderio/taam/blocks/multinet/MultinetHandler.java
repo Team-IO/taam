@@ -57,7 +57,7 @@ public class MultinetHandler {
                 GL11.glDepthMask(true);
                 GL11.glPopMatrix();
                 
-               event.setCanceled(true);
+//               event.setCanceled(true);
             GL11.glPopMatrix();
         }
     }
