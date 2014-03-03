@@ -40,6 +40,13 @@ public class MultinetCable extends TMultiPart {
 	private static final float cableWidth = 2f / 16f;
 	private static CCModel ccm = CCModel.newModel(7, 24);
 
+
+	
+	@Override
+	public String toString() {
+		return "Multinet Cable [" + part + "] + network: " + network;
+	}
+	
 	@Override
 	public String getType() {
 		return Taam.MULTIPART_MULTINET_CABLE + "." + part;

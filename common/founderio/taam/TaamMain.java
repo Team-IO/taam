@@ -22,6 +22,7 @@ import founderio.taam.blocks.TileEntitySensor;
 import founderio.taam.blocks.multinet.ItemMultinetCable;
 import founderio.taam.blocks.multinet.MultinetHandler;
 import founderio.taam.blocks.multinet.MultinetMultipart;
+import founderio.taam.items.ItemDebugTool;
 
 @Mod(modid = Taam.MOD_ID, name = Taam.MOD_NAME, version = Taam.MOD_VERSION)
 @NetworkMod(clientSideRequired = true, serverSideRequired = false)
@@ -35,6 +36,7 @@ public class TaamMain {
 	public static MultinetMultipart multinetMultipart;
 	
 	public static ItemMultinetCable itemMultinetCable;
+	public static ItemDebugTool itemMultinetDebugger;
 	
 	public static CreativeTabs creativeTab;
 
@@ -96,6 +98,10 @@ public class TaamMain {
 		itemMultinetCable = new ItemMultinetCable(config.getItem(Taam.ITEM_MULTINET_CABLE, 3032).getInt());
 		itemMultinetCable.setUnlocalizedName(Taam.ITEM_MULTINET_CABLE);
 		itemMultinetCable.setCreativeTab(creativeTab);
+		
+		itemMultinetDebugger = new ItemDebugTool(config.getItem(Taam.ITEM_MULTINET_DEBUGGER, 3033).getInt());
+		itemMultinetDebugger.setUnlocalizedName(Taam.ITEM_MULTINET_DEBUGGER);
+		itemMultinetDebugger.setCreativeTab(creativeTab);
 		
 		config.save();
 

@@ -1,7 +1,10 @@
 package founderio.taam.multinet;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.PriorityQueue;
+import java.util.Set;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
@@ -94,9 +97,92 @@ public class Multinet {
 		if(a.world().provider.dimensionId != this.dimension) {
 			return false;
 		}
-		//TODO: actually check if it still connects
-		return false;
+		return astar(a, b) != null;
 	}
+	
+	private static class AStarNode<T> implements Comparable<AStarNode<T>> {
+		public T object;
+		public Integer dist = Integer.MAX_VALUE;
+		public Double value = 0d;
+		public AStarNode<T> predecessor;
+		
+		public AStarNode(T object, Double value) {
+			this.object = object;
+			this.value = value;
+		}
+		
+		@Override
+		public int compareTo(AStarNode<T> o) {
+			return value.compareTo(o.value);
+		}
+	}
+	
+	private static AStarNode<MultinetCable> astar(MultinetCable origin, MultinetCable target) {
+		PriorityQueue<AStarNode<MultinetCable>> openlist = new PriorityQueue<AStarNode<MultinetCable>>();
+		Set<AStarNode<MultinetCable>> closedlist = new HashSet<AStarNode<MultinetCable>>();
+		openlist.add(new AStarNode<MultinetCable>(origin, 0d));
+		
+		AStarNode<MultinetCable> current;
+		
+		BlockCoord bctarget = new BlockCoord(target.x(), target.y(), target.z());
+		BlockCoord bccurrent = new BlockCoord();
+		
+		do {
+			current = openlist.remove();
+			
+			if(current.object == target) {
+				return current;
+			}
+			
+			closedlist.add(current);
+			
+			for(MultinetCable successor : findNeighbors(current.object)) {
+				boolean found = false;
+				for(AStarNode<MultinetCable> op : openlist) {
+					if(op.object == successor) {
+						found = true;
+						break;
+					}
+				}
+				if(found) {
+					continue;
+				}
+				
+				int tentative_g = current.dist + 1;
+				
+				AStarNode<MultinetCable> foundS = null;
+				for(AStarNode<MultinetCable> op : closedlist) {
+					if(op.object == successor) {
+						found = true;
+						foundS = op;
+						break;
+					}
+				}
+				if(found && tentative_g >= foundS.dist) {
+					continue;
+				}
+				
+				if(!found) {
+					foundS = new AStarNode<MultinetCable>(successor, 0d);
+				}
+				
+				foundS.predecessor = current;
+				foundS.dist = tentative_g;
+				
+				double f = tentative_g + bccurrent.set(current.object.x(), current.object.y(), current.object.z()).sub(bctarget).mag();
+				foundS.value = f;
+				if(found) {
+					openlist.remove(foundS);
+				}
+				openlist.add(foundS);
+				
+			}
+			
+			
+		} while(!openlist.isEmpty());
+		return null;
+	}
+	
 	
 	public boolean splitNetworks(MultinetCable a, MultinetCable b) {
 		if(a.network != b.network) {
@@ -163,7 +249,9 @@ public class Multinet {
 			for(TMultiPart part : multiParts) {
 				if(part instanceof MultinetCable) {
 					MultinetCable cable = (MultinetCable)part;
-					if(cable.getType().equals(type) && cable.getLayer() == layer && cable.getFace() == face) {
+					if((type == null || cable.getType().equals(type))
+							&& cable.getLayer() == layer
+							&& cable.getFace() == face) {
 						return cable;
 					}
 				}

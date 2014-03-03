@@ -22,6 +22,7 @@ public final class Taam {
 	public static final String MULTIPART_MULTINET_CABLE = "taam.multinet.cable";
 	
 	public static final String ITEM_MULTINET_CABLE = "taam.item.cable";
+	public static final String ITEM_MULTINET_DEBUGGER = "taam.item.debugger";
 	
 	
 	public static final String TILEENTITY_SENSOR = "taam.sensor";
