@@ -6,6 +6,7 @@ import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import codechicken.lib.data.MCDataInput;
 import codechicken.lib.data.MCDataOutput;
@@ -449,6 +450,12 @@ public class MultinetCable extends TMultiPart implements IMultinetAttachment {
 
 	@Override
 	public BlockCoord getCoordinates() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public World getDimension() {
 		// TODO Auto-generated method stub
 		return null;
 	}
