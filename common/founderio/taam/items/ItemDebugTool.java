@@ -40,7 +40,7 @@ public class ItemDebugTool extends Item {
         
         int face = dirOpp.ordinal();
         
-        int layer = MultinetCable.getLayer(dirOpp, localHit);
+        int layer = Multinet.getHitLayer(dirOpp, localHit);
 		
         MultinetCable cable = Multinet.getCable(world, new BlockCoord(x, y, z), layer, face, null);
         

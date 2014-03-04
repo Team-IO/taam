@@ -12,6 +12,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import codechicken.lib.vec.BlockCoord;
+import codechicken.lib.vec.Vector3;
 import codechicken.multipart.TMultiPart;
 import codechicken.multipart.TileMultipart;
 import founderio.taam.blocks.multinet.MultinetCable;
@@ -112,6 +113,48 @@ public class Multinet {
 		System.out.println("Multinet merged");
 		
 		return true;
+	}
+
+	/**
+	 * Cables per block side
+	 */
+	public static final int layerCount = 6;
+	/**
+	 * Width of cables (in times of block size -> 1/16 is one "pixel")
+	 */
+	public static final float cableWidth = 2f / 16f;
+	
+	public static int getHitLayer(ForgeDirection dir, Vector3 hit) {
+		int layer = -1;
+		switch(dir) {
+		case DOWN:
+		case UP:
+			if(hit.x > hit.z) {
+				layer = (int)(hit.x * layerCount);
+			} else {
+				layer = (int)(hit.z * layerCount);
+			}
+			break;
+		case NORTH:
+		case SOUTH:
+			if(hit.y > hit.x) {
+				layer = (int)(hit.y * layerCount);
+			} else {
+				layer = (int)(hit.x * layerCount);
+			}
+			break;
+		case WEST:
+		case EAST:
+			if(hit.y > hit.z) {
+				layer = (int)(hit.y * layerCount);
+			} else {
+				layer = (int)(hit.z * layerCount);
+			}
+			break;
+		default:
+			break;
+		}
+		return layer;
 	}
 	
 	public static boolean findConnection(MultinetCable a, MultinetCable b) {

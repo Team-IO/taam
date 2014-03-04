@@ -14,6 +14,7 @@ import codechicken.lib.vec.Vector3;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import founderio.taam.TaamMain;
+import founderio.taam.multinet.Multinet;
 
 public class MultinetHandler {
 
@@ -49,7 +50,9 @@ public class MultinetHandler {
                 ForgeDirection dirOpp = dir.getOpposite();
                 Vector3 localHit = new Vector3(event.target.hitVec).$minus(new Vector3(event.target.blockX, event.target.blockY, event.target.blockZ));
                 
-                MultinetCable.render(new Vector3(dir.offsetX, dir.offsetY, dir.offsetZ), null, 1, dirOpp.ordinal(), MultinetCable.getLayer(dirOpp, localHit));
+                MultinetCable.render(
+                		new Vector3(dir.offsetX, dir.offsetY, dir.offsetZ),
+                		null, 1, dirOpp.ordinal(), Multinet.getHitLayer(dirOpp, localHit));
                 
                 CCRenderState.draw();
                 
