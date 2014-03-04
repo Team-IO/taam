@@ -3,6 +3,8 @@ package founderio.taam.blocks.multinet;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -13,6 +15,7 @@ import codechicken.lib.data.MCDataOutput;
 import codechicken.lib.lighting.LazyLightMatrix;
 import codechicken.lib.raytracer.IndexedCuboid6;
 import codechicken.lib.render.CCModel;
+import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.IconTransformation;
 import codechicken.lib.render.TextureUtils;
 import codechicken.lib.vec.BlockCoord;
@@ -101,10 +104,10 @@ public class MultinetCable extends TMultiPart implements IMultinetAttachment {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void renderStatic(Vector3 pos, LazyLightMatrix olm, int pass) {
-		MultinetCable.render(pos, olm, pass, face, layer);
+		MultinetCable.render(world(), pos, olm, pass, face, layer, false);
 	}
 	
-	public static void render(Vector3 pos, LazyLightMatrix olm, int pass, int face, int layer) {
+	public static void render(World world, Vector3 pos, LazyLightMatrix olm, int pass, int face, int layer, boolean preview) {
 		ForgeDirection dir = ForgeDirection.getOrientation(face);
 
 		float layerOffset = (float)layer/Multinet.layerCount;
@@ -118,6 +121,13 @@ public class MultinetCable extends TMultiPart implements IMultinetAttachment {
 		IconTransformation ictrans = new IconTransformation(Block.blockRedstone.getBlockTextureFromSide(0));
 		
 		TextureUtils.bindAtlas(0);
+		CCRenderState.useNormals(true);
+        CCRenderState.setBrightness(world, (int)Math.round(pos.x), (int)Math.round(pos.y), (int)Math.round(pos.z));
+        CCRenderState.useModelColours(true);
+
+		if(preview) {
+			CCRenderState.setAlpha(80);
+		}
 		
 		switch(dir) {
 		case DOWN:

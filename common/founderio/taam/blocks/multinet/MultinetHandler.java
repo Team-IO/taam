@@ -40,19 +40,15 @@ public class MultinetHandler {
                 
                 CCRenderState.reset();
                 TextureUtils.bindAtlas(0);
-                CCRenderState.useNormals(true);
-                CCRenderState.setBrightness(event.player.worldObj, event.target.blockX, event.target.blockY, event.target.blockZ);
-                CCRenderState.setAlpha(80);
-                CCRenderState.useModelColours(true);
-                CCRenderState.startDrawing(7);
+                
 
                 ForgeDirection dir = ForgeDirection.getOrientation(event.target.sideHit);
                 ForgeDirection dirOpp = dir.getOpposite();
                 Vector3 localHit = new Vector3(event.target.hitVec).$minus(new Vector3(event.target.blockX, event.target.blockY, event.target.blockZ));
                 
-                MultinetCable.render(
+                MultinetCable.render(event.player.worldObj,
                 		new Vector3(dir.offsetX, dir.offsetY, dir.offsetZ),
-                		null, 1, dirOpp.ordinal(), Multinet.getHitLayer(dirOpp, localHit));
+                		null, 1, dirOpp.ordinal(), Multinet.getHitLayer(dirOpp, localHit), true);
                 
                 CCRenderState.draw();
                 
