@@ -16,7 +16,6 @@ import codechicken.lib.render.IconTransformation;
 import codechicken.lib.render.TextureUtils;
 import codechicken.lib.vec.BlockCoord;
 import codechicken.lib.vec.Cuboid6;
-import codechicken.lib.vec.RedundantTransformation;
 import codechicken.lib.vec.Translation;
 import codechicken.lib.vec.Vector3;
 import codechicken.multipart.TMultiPart;
