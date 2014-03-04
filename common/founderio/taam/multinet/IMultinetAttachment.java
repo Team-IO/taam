@@ -1,5 +1,6 @@
-package founderio.taam.blocks.multinet;
+package founderio.taam.multinet;
 
+import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import codechicken.lib.vec.BlockCoord;
 
@@ -8,4 +9,6 @@ public interface IMultinetAttachment {
 			String type);
 
 	BlockCoord getCoordinates();
+	
+	World getDimension();
 }

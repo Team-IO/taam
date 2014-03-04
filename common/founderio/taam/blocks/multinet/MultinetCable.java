@@ -16,7 +16,6 @@ import codechicken.lib.render.IconTransformation;
 import codechicken.lib.render.TextureUtils;
 import codechicken.lib.vec.BlockCoord;
 import codechicken.lib.vec.Cuboid6;
-import codechicken.lib.vec.RedundantTransformation;
 import codechicken.lib.vec.Translation;
 import codechicken.lib.vec.Vector3;
 import codechicken.multipart.TMultiPart;
@@ -24,6 +23,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import founderio.taam.Taam;
 import founderio.taam.TaamMain;
+import founderio.taam.multinet.IMultinetAttachment;
 import founderio.taam.multinet.Multinet;
 
 public class MultinetCable extends TMultiPart implements IMultinetAttachment {

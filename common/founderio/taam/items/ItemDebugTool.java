@@ -29,7 +29,6 @@ public class ItemDebugTool extends Item {
 			float hitx, float hity, float hitz) {
 		
 		if(world.isRemote) {
-			// Don't run on client!
 			return true;
 		}
 		
@@ -52,8 +51,8 @@ public class ItemDebugTool extends Item {
         } else {
         	cableB = cable;
         	System.out.println(cableB);
-        	if(cableB != null && cableA.network != null) {
-	        	System.out.println(cableA.network.findConnection(cableA, cableB));
+        	if(cableB != null) {
+	        	System.out.println(Multinet.findConnection(cableA, cableB));
 	        	cableA = null;
 	        	cableB = null;
         	}
