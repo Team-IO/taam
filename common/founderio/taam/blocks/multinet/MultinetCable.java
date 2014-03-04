@@ -40,7 +40,7 @@ public class MultinetCable extends TMultiPart {
 	private static final float cableWidth = 2f / 16f;
 	private static CCModel ccm = CCModel.newModel(7, 24);
 
-
+	public boolean available = false;
 	
 	@Override
 	public String toString() {
@@ -439,7 +439,8 @@ public class MultinetCable extends TMultiPart {
 		if(world().isRemote) {
 			return;
 		}
-		Multinet.addNetwork(this);
+		available = true;
+		Multinet.addCableToNetwork(this);
 		sendDescUpdate();
 	}
 	
@@ -448,7 +449,8 @@ public class MultinetCable extends TMultiPart {
 		if(world().isRemote) {
 			return;
 		}
-		network.removeCable(this);
+		available = false;
+		Multinet.removeFromNetwork(this);
 	}
 	
 	@Override

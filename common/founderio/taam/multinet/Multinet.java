@@ -1,9 +1,11 @@
 package founderio.taam.multinet;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.Set;
 
 import net.minecraft.tileentity.TileEntity;
@@ -22,7 +24,7 @@ public class Multinet {
 		networks = new ArrayList<Multinet>();
 	}
 	
-	public static void addNetwork(MultinetCable cable) {
+	public static void addCableToNetwork(MultinetCable cable) {
 		List<MultinetCable> surrounding = findNeighbors(cable);
 		Multinet netToAdd = null;
 		if(!surrounding.isEmpty()) {
@@ -42,34 +44,54 @@ public class Multinet {
 			netToAdd.cableType = cable.getType();
 			networks.add(netToAdd);
 		}
-		
-		netToAdd.cables.add(cable);
-		System.out.println("Cable added!");
-		cable.network = netToAdd;
+		netToAdd.addCable(cable);
+	}
+	
+	public static void removeFromNetwork(MultinetCable cable) {
+		if(cable.network != null) {
+			Multinet network = cable.network;
+			network.removeCable(cable);
+
+			
+			List<MultinetCable> neighbors = findNeighbors(cable);
+			if(neighbors.size() > 1) {
+				MultinetCable first = neighbors.get(0);
+				
+				for(int i = 1; i < neighbors.size(); i++) {
+					splitNetworks(first, neighbors.get(i));
+				}
+			}
+			
+			if(network.cables.isEmpty()) {
+				networks.remove(network);
+				System.out.println("Multinet destroyed!");
+				//TOO: invalidate net, that people referencing it do not use it anymore
+			}
+		}
 	}
 	
 	private String cableType = "";
 	private List<MultinetCable> cables;
 	private int dimension;
 	
-	public Multinet() {
+	private Multinet() {
 		cables = new ArrayList<MultinetCable>();
-		System.out.println("Multinet created!");
+		System.out.println("Multinet created");
 	}
 	
-	public void addCable(MultinetCable cable) {
+	private void addCable(MultinetCable cable) {
 		cables.add(cable);
-		System.out.println("Cable added! (Manually)");
 		cable.network = this;
+		System.out.println("Cable added");
 	}
 	
-	public void removeCable(MultinetCable cable) {
+	private void removeCable(MultinetCable cable) {
 		cables.remove(cable);
-		System.out.println("Cable removed");
 		cable.network = null;
+		System.out.println("Cable removed");
 	}
 	
-	public boolean mergeOtherMultinet(Multinet net) {
+	private boolean mergeOtherMultinet(Multinet net) {
 		if(this == net) {
 			return false;
 		}
@@ -79,24 +101,20 @@ public class Multinet {
 		if(net.dimension != this.dimension) {
 			return false;
 		}
-		System.out.println("Multinet merged!");
+
+		System.out.println("Merging Multinet...");
 		
 		for(MultinetCable cable : net.cables) {
-			cable.network = this;
-			cables.add(cable);
+			addCable(cable);
 		}
 		net.cables.clear();
+		networks.remove(net);
+		System.out.println("Multinet merged");
 		
 		return true;
 	}
 	
-	public boolean findConnection(MultinetCable a, MultinetCable b) {
-		if(a.world().provider.dimensionId != b.world().provider.dimensionId) {
-			return false;
-		}
-		if(a.world().provider.dimensionId != this.dimension) {
-			return false;
-		}
+	public static boolean findConnection(MultinetCable a, MultinetCable b) {
 		return astar(a, b) != null;
 	}
 	
@@ -184,7 +202,7 @@ public class Multinet {
 	}
 	
 	
-	public boolean splitNetworks(MultinetCable a, MultinetCable b) {
+	private static boolean splitNetworks(MultinetCable a, MultinetCable b) {
 		if(a.network != b.network) {
 			return false;
 		}
@@ -192,18 +210,40 @@ public class Multinet {
 			return false;
 		} else {
 			
-			//TODO: actually split networks
+			Multinet netToAdd = new Multinet();
+			netToAdd.dimension = a.world().provider.dimensionId;
+			netToAdd.cableType = a.getType();
+			networks.add(netToAdd);
 			
+			Queue<MultinetCable> cables = new ArrayDeque<MultinetCable>();
+			cables.add(a);
+			
+			do {
+				MultinetCable check = cables.remove();
+				
+				if(!netToAdd.cables.contains(check)) {
+					netToAdd.addCable(check);
+					
+					cables.addAll(findNeighbors(check));
+				}
+				
+			} while(!cables.isEmpty());
 			
 			return true;
 		}
 	}
 	
 	public static List<MultinetCable> findNeighbors(MultinetCable cable) {
+		//TODO: Move to cable implementation (and create static method here to find cables or other machines connecting to a specific side)
 		List<MultinetCable> cbl = new ArrayList<MultinetCable>();
 		World world = cable.world();
 		ForgeDirection dir = ForgeDirection.getOrientation(cable.getFace());
 		ForgeDirection[] otherDirs;
+		/*
+		 * Get valid connection sides
+		 * (adjacent walls in same block and adjacent blocks on the same wall
+		 * all use the same direction, just handling is different)
+		 */
 		switch(dir) {
 		case DOWN:
 		case UP:
@@ -225,7 +265,7 @@ public class Multinet {
 			// Adjacent cables on the same wall, one block offset
 			for(ForgeDirection od : otherDirs) {
 				MultinetCable nc = getCable(world, new BlockCoord(cable.x() + od.offsetX, cable.y() + od.offsetY, cable.z() + od.offsetZ), cable.getLayer(), cable.getFace(), cable.getType());
-				if(nc != null) {
+				if(nc != null && nc.available) {
 					cbl.add(nc);
 				}
 			}
@@ -233,7 +273,7 @@ public class Multinet {
 		// Adjacent cables in the same block, on adjacent walls
 		for(ForgeDirection od : otherDirs) {
 			MultinetCable nc = getCable(world, new BlockCoord(cable.x(), cable.y(), cable.z()), cable.getLayer(), od.ordinal(), cable.getType());
-			if(nc != null) {
+			if(nc != null && nc.available) {
 				cbl.add(nc);
 			}
 		}
