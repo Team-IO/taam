@@ -25,7 +25,14 @@ public class MultinetHandler {
         if(event.currentItem != null && event.currentItem.getItem() == TaamMain.itemMultinetCable && 
                 event.target != null && event.target.typeOfHit == EnumMovingObjectType.TILE)
         {
-            GL11.glPushMatrix();
+        	ForgeDirection dir = ForgeDirection.getOrientation(event.target.sideHit);
+            ForgeDirection dirOpp = dir.getOpposite();
+            Vector3 localHit = new Vector3(event.target.hitVec).$minus(new Vector3(event.target.blockX, event.target.blockY, event.target.blockZ));
+            
+            if(MultinetCable.canStay(event.player.worldObj,
+            		event.target.blockX + dir.offsetX, event.target.blockY + dir.offsetY, event.target.blockZ + dir.offsetZ,
+            		dirOpp)) {
+            	GL11.glPushMatrix();
                 RenderUtils.translateToWorldCoords(event.player, event.partialTicks);
                 
                 
@@ -40,12 +47,9 @@ public class MultinetHandler {
                 
                 CCRenderState.reset();
                 TextureUtils.bindAtlas(0);
-                
 
-                ForgeDirection dir = ForgeDirection.getOrientation(event.target.sideHit);
-                ForgeDirection dirOpp = dir.getOpposite();
-                Vector3 localHit = new Vector3(event.target.hitVec).$minus(new Vector3(event.target.blockX, event.target.blockY, event.target.blockZ));
-                
+                CCRenderState.startDrawing(7);
+
                 MultinetCable.render(event.player.worldObj,
                 		new Vector3(dir.offsetX, dir.offsetY, dir.offsetZ),
                 		null, 1, dirOpp.ordinal(), Multinet.getHitLayer(dirOpp, localHit), true);
@@ -56,8 +60,11 @@ public class MultinetHandler {
                 GL11.glDepthMask(true);
                 GL11.glPopMatrix();
                 
-//               event.setCanceled(true);
             GL11.glPopMatrix();
+            }
+				
+        	
+            
         }
     }
 	

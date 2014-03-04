@@ -3,8 +3,6 @@ package founderio.taam.blocks.multinet;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.lwjgl.opengl.GL11;
-
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -422,6 +420,21 @@ public class MultinetCable extends TMultiPart implements IMultinetAttachment {
 	}
 	
 	@Override
+	public void onNeighborChanged() {
+		if(world().isRemote) {
+			return;
+		}
+		if(!canStay(world(), x(), y(), z(), ForgeDirection.getOrientation(face))) {
+			tile().dropItems(getDrops());
+			tile().remPart(this);
+		}
+	}
+	
+	public static boolean canStay(World world, int x, int y, int z, ForgeDirection side) {
+		return world.isBlockSolidOnSide(x + side.offsetX, y + side.offsetY, z + side.offsetZ, side.getOpposite(), false);
+	}
+	
+	@Override
 	public void save(NBTTagCompound tag) {
 		super.save(tag);
 		
@@ -454,19 +467,17 @@ public class MultinetCable extends TMultiPart implements IMultinetAttachment {
 	@Override
 	public boolean canAttach(ForgeDirection face, ForgeDirection dir,
 			int layer, String type) {
-		// TODO Auto-generated method stub
-		return false;
+		//TODO: Actually check for occlusion!
+		return face.ordinal() == this.face && layer == this.layer;
 	}
 
 	@Override
 	public BlockCoord getCoordinates() {
-		// TODO Auto-generated method stub
-		return null;
+		return new BlockCoord(getTile());
 	}
 
 	@Override
 	public World getDimension() {
-		// TODO Auto-generated method stub
-		return null;
+		return world();
 	}
 }
