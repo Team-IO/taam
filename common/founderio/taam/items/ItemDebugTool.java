@@ -37,11 +37,9 @@ public class ItemDebugTool extends Item {
 
         Vector3 localHit = new Vector3(hitx, hity, hitz);
         
-        int face = dirOpp.ordinal();
-        
         int layer = Multinet.getHitLayer(dirOpp, localHit);
 		
-        MultinetCable cable = Multinet.getCable(world, new BlockCoord(x, y, z), layer, face, null);
+        MultinetCable cable = Multinet.getCable(world, new BlockCoord(x, y, z), layer, dirOpp, null);
         
         if(cableA == null) {
         	cableA = cable;

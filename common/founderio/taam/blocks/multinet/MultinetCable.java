@@ -33,15 +33,15 @@ public class MultinetCable extends TMultiPart implements IMultinetAttachment {
 	/**
 	 * 0-5 == Block Sides, 6 == Cable Rack
 	 */
-	private int face;
+	private ForgeDirection face;
 	/**
 	 * Layer index, 0-layerCount
 	 */
 	private int layer = -1;
-	
-	private String part;
-	
-	public Multinet network;
+
+	private String type;
+
+	private Multinet network;
 
 	private static CCModel ccm = CCModel.newModel(7, 48);
 
@@ -49,28 +49,74 @@ public class MultinetCable extends TMultiPart implements IMultinetAttachment {
 	
 	@Override
 	public String toString() {
-		return "Multinet Cable [" + part + "] + network: " + network;
+		return "Multinet Cable [" + type + "] + network: " + network;
 	}
 	
 	@Override
 	public String getType() {
-		return Taam.MULTIPART_MULTINET_CABLE + "." + part;
+		return Taam.MULTIPART_MULTINET_CABLE + "." + type;
 	}
 
+	@Override
+	public String getCableType() {
+		return type;
+	}
+	
+	@Override
+	public boolean canAttach(ForgeDirection face, ForgeDirection dir,
+			int layer, String type) {
+		//TODO: Actually check for occlusion!
+		return face == this.face && layer == this.layer;
+	}
+	
+	@Override
+	public List<IMultinetAttachment> getIrregularAttachments() {
+		return null;
+	}
+
+	@Override
+	public BlockCoord getCoordinates() {
+		return new BlockCoord(getTile());
+	}
+
+	@Override
+	public World getDimension() {
+		return world();
+	}
+
+	@Override
+	public void setNetwork(Multinet network) {
+		this.network = network;
+	}
+
+	@Override
+	public Multinet getNetwork() {
+		return this.network;
+	}
+
+	@Override
 	public int getLayer() {
 		return layer;
 	}
-	
-	public int getFace() {
+
+	@Override
+	public ForgeDirection getFace() {
 		return face;
 	}
 	
-	public void init(BlockCoord blockCoords, int face, Vector3 hit, String part) {
+	/**
+	 * 
+	 * @param blockCoords
+	 * @param blockface
+	 * @param hit The face of the block that was hit, on which the cable should be placed on. (Cable face will be offosite of this!)
+	 * @param part
+	 */
+	public void init(BlockCoord blockCoords, int hitface, Vector3 hit, String part) {
 		
-		this.part = part;
+		this.type = part;
 		
-		ForgeDirection dir = ForgeDirection.getOrientation(face).getOpposite();
-		this.face = dir.ordinal();
+		ForgeDirection dir = ForgeDirection.getOrientation(hitface).getOpposite();
+		this.face = dir;
 		
 		this.layer = Multinet.getHitLayer(dir, hit);
 	}
@@ -83,11 +129,9 @@ public class MultinetCable extends TMultiPart implements IMultinetAttachment {
 		} else {
 			Iterable<Cuboid6> otherBoxes = npart.getCollisionBoxes();
 			
-			ForgeDirection fd = ForgeDirection.getOrientation(face);
-			
 			Cuboid6 collisionCube = new Cuboid6(
-					fd.offsetX - fd.offsetX * Multinet.cableWidth, fd.offsetY - fd.offsetY * Multinet.cableWidth, fd.offsetZ - fd.offsetZ * Multinet.cableWidth,
-					fd.offsetX, fd.offsetY, fd.offsetZ);
+					face.offsetX - face.offsetX * Multinet.cableWidth, face.offsetY - face.offsetY * Multinet.cableWidth, face.offsetZ - face.offsetZ * Multinet.cableWidth,
+					face.offsetX, face.offsetY, face.offsetZ);
 			
 			for(Cuboid6 box : otherBoxes) {
 				if(Cuboid6.intersects(box, collisionCube)) {
@@ -105,8 +149,7 @@ public class MultinetCable extends TMultiPart implements IMultinetAttachment {
 		MultinetCable.render(world(), pos, olm, pass, face, layer, false);
 	}
 	
-	public static void render(World world, Vector3 pos, LazyLightMatrix olm, int pass, int face, int layer, boolean preview) {
-		ForgeDirection dir = ForgeDirection.getOrientation(face);
+	public static void render(World world, Vector3 pos, LazyLightMatrix olm, int pass, ForgeDirection face, int layer, boolean preview) {
 
 		float layerOffset = (float)layer/Multinet.layerCount;
 		float ox1 = 0;
@@ -127,7 +170,7 @@ public class MultinetCable extends TMultiPart implements IMultinetAttachment {
 			CCRenderState.setAlpha(80);
 		}
 		
-		switch(dir) {
+		switch(face) {
 		case DOWN:
 			ox1 = layerOffset;
 			oy1 = 0;
@@ -251,7 +294,6 @@ public class MultinetCable extends TMultiPart implements IMultinetAttachment {
 	@Override
 	public Iterable<Cuboid6> getCollisionBoxes() {
 		List<Cuboid6> boxes = new ArrayList<Cuboid6>();
-		ForgeDirection dir = ForgeDirection.getOrientation(face);
 
 		float layerOffset = (float)layer/Multinet.layerCount;
 		float ox1 = 0;
@@ -262,7 +304,7 @@ public class MultinetCable extends TMultiPart implements IMultinetAttachment {
 		float oz2 = 0;
 		
 		
-		switch(dir) {
+		switch(face) {
 		case DOWN:
 			ox1 = layerOffset;
 			oy1 = 0;
@@ -386,7 +428,7 @@ public class MultinetCable extends TMultiPart implements IMultinetAttachment {
 	@Override
 	public Iterable<ItemStack> getDrops() {
 		List<ItemStack> drops = new ArrayList<ItemStack>();
-		drops.add(new ItemStack(TaamMain.itemMultinetCable, 1, ItemMultinetCable.cables.indexOf(part)));
+		drops.add(new ItemStack(TaamMain.itemMultinetCable, 1, ItemMultinetCable.cables.indexOf(type)));
 		return drops;
 	}
 	
@@ -424,7 +466,7 @@ public class MultinetCable extends TMultiPart implements IMultinetAttachment {
 		if(world().isRemote) {
 			return;
 		}
-		if(!canStay(world(), x(), y(), z(), ForgeDirection.getOrientation(face))) {
+		if(!canStay(world(), x(), y(), z(), face)) {
 			tile().dropItems(getDrops());
 			tile().remPart(this);
 		}
@@ -438,46 +480,29 @@ public class MultinetCable extends TMultiPart implements IMultinetAttachment {
 	public void save(NBTTagCompound tag) {
 		super.save(tag);
 		
-		tag.setInteger("face", face);
+		tag.setInteger("face", face.ordinal());
 		tag.setInteger("layer", layer);
-		tag.setString("part", part);
+		tag.setString("type", type);
 	}
 	
 	@Override
 	public void load(NBTTagCompound tag) {
 		super.load(tag);
 		
-		face = tag.getInteger("face");
+		face = ForgeDirection.getOrientation(tag.getInteger("face"));
 		layer = tag.getInteger("layer");
-		part = tag.getString("part");
+		type = tag.getString("type");
 	}
 	
 	@Override
 	public void writeDesc(MCDataOutput packet) {
-		packet.writeInt(face);
+		packet.writeInt(face.ordinal());
 		packet.writeInt(layer);
 	}
 	
 	@Override
 	public void readDesc(MCDataInput packet) {
-		face = packet.readInt();
+		face = ForgeDirection.getOrientation(packet.readInt());
 		layer = packet.readInt();
-	}
-
-	@Override
-	public boolean canAttach(ForgeDirection face, ForgeDirection dir,
-			int layer, String type) {
-		//TODO: Actually check for occlusion!
-		return face.ordinal() == this.face && layer == this.layer;
-	}
-
-	@Override
-	public BlockCoord getCoordinates() {
-		return new BlockCoord(getTile());
-	}
-
-	@Override
-	public World getDimension() {
-		return world();
 	}
 }

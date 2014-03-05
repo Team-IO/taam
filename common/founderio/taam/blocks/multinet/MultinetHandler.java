@@ -52,7 +52,7 @@ public class MultinetHandler {
 
                 MultinetCable.render(event.player.worldObj,
                 		new Vector3(dir.offsetX, dir.offsetY, dir.offsetZ),
-                		null, 1, dirOpp.ordinal(), Multinet.getHitLayer(dirOpp, localHit), true);
+                		null, 1, dirOpp, Multinet.getHitLayer(dirOpp, localHit), true);
                 
                 CCRenderState.draw();
                 

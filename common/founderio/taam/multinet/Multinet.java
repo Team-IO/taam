@@ -25,38 +25,37 @@ public class Multinet {
 		networks = new ArrayList<Multinet>();
 	}
 	
-	public static void addCableToNetwork(MultinetCable cable) {
-		List<MultinetCable> surrounding = findNeighbors(cable);
+	public static void addCableToNetwork(IMultinetAttachment cable) {
+		List<IMultinetAttachment> surrounding = findNeighbors(cable);
 		Multinet netToAdd = null;
 		if(!surrounding.isEmpty()) {
 			for(int i = 0; i < surrounding.size(); i++) {
 				if(netToAdd == null) {
-					netToAdd = surrounding.get(i).network;
+					netToAdd = surrounding.get(i).getNetwork();
 				}
-				if(surrounding.get(i).network != null) {
-					netToAdd.mergeOtherMultinet(surrounding.get(i).network);
+				if(surrounding.get(i).getNetwork() != null) {
+					netToAdd.mergeOtherMultinet(surrounding.get(i).getNetwork());
 				}
 			}
 			
 		}
 		if(netToAdd == null) {
 			netToAdd = new Multinet();
-			netToAdd.dimension = cable.world().provider.dimensionId;
-			netToAdd.cableType = cable.getType();
+			netToAdd.cableType = cable.getCableType();
 			networks.add(netToAdd);
 		}
 		netToAdd.addCable(cable);
 	}
 	
 	public static void removeFromNetwork(MultinetCable cable) {
-		if(cable.network != null) {
-			Multinet network = cable.network;
+		if(cable.getNetwork() != null) {
+			Multinet network = cable.getNetwork();
 			network.removeCable(cable);
 
 			
-			List<MultinetCable> neighbors = findNeighbors(cable);
+			List<IMultinetAttachment> neighbors = findNeighbors(cable);
 			if(neighbors.size() > 1) {
-				MultinetCable first = neighbors.get(0);
+				IMultinetAttachment first = neighbors.get(0);
 				
 				for(int i = 1; i < neighbors.size(); i++) {
 					splitNetworks(first, neighbors.get(i));
@@ -72,23 +71,22 @@ public class Multinet {
 	}
 	
 	private String cableType = "";
-	private List<MultinetCable> cables;
-	private int dimension;
+	private List<IMultinetAttachment> cables;
 	
 	private Multinet() {
-		cables = new ArrayList<MultinetCable>();
+		cables = new ArrayList<IMultinetAttachment>();
 		System.out.println("Multinet created");
 	}
 	
-	private void addCable(MultinetCable cable) {
+	private void addCable(IMultinetAttachment cable) {
 		cables.add(cable);
-		cable.network = this;
+		cable.setNetwork(this);
 		System.out.println("Cable added");
 	}
 	
-	private void removeCable(MultinetCable cable) {
+	private void removeCable(IMultinetAttachment cable) {
 		cables.remove(cable);
-		cable.network = null;
+		cable.setNetwork(null);
 		System.out.println("Cable removed");
 	}
 	
@@ -99,13 +97,10 @@ public class Multinet {
 		if(!net.cableType.equals(cableType)) {
 			return false;
 		}
-		if(net.dimension != this.dimension) {
-			return false;
-		}
 
 		System.out.println("Merging Multinet...");
 		
-		for(MultinetCable cable : net.cables) {
+		for(IMultinetAttachment cable : net.cables) {
 			addCable(cable);
 		}
 		net.cables.clear();
@@ -157,15 +152,18 @@ public class Multinet {
 		return layer;
 	}
 	
-	public static boolean findConnection(MultinetCable a, MultinetCable b) {
+	public static boolean findConnection(IMultinetAttachment a, IMultinetAttachment b) {
+		if(!a.getCableType().equals(b.getCableType())) {
+			return false;
+		}
 		return astar(a, b) != null;
 	}
 	
-	private static class AStarNode<T> implements Comparable<AStarNode<T>> {
-		public T object;
-		public Integer dist = Integer.MAX_VALUE;
-		public Double value = 0d;
-		public AStarNode<T> predecessor;
+	public static class AStarNode<T> implements Comparable<AStarNode<T>> {
+		public final T object;
+		protected Integer dist = Integer.MAX_VALUE;
+		protected Double value = 0d;
+		protected AStarNode<T> predecessor;
 		
 		public AStarNode(T object, Double value) {
 			this.object = object;
@@ -176,16 +174,24 @@ public class Multinet {
 		public int compareTo(AStarNode<T> o) {
 			return value.compareTo(o.value);
 		}
+		
+		public AStarNode<T> getPredecessor() {
+			return predecessor;
+		}
+		
+		public int getStepDistance() {
+			return dist;
+		}
 	}
 	
-	private static AStarNode<MultinetCable> astar(MultinetCable origin, MultinetCable target) {
-		PriorityQueue<AStarNode<MultinetCable>> openlist = new PriorityQueue<AStarNode<MultinetCable>>();
-		Set<AStarNode<MultinetCable>> closedlist = new HashSet<AStarNode<MultinetCable>>();
-		openlist.add(new AStarNode<MultinetCable>(origin, 0d));
+	private static AStarNode<IMultinetAttachment> astar(IMultinetAttachment origin, IMultinetAttachment target) {
+		PriorityQueue<AStarNode<IMultinetAttachment>> openlist = new PriorityQueue<AStarNode<IMultinetAttachment>>();
+		Set<AStarNode<IMultinetAttachment>> closedlist = new HashSet<AStarNode<IMultinetAttachment>>();
+		openlist.add(new AStarNode<IMultinetAttachment>(origin, 0d));
 		
-		AStarNode<MultinetCable> current;
+		AStarNode<IMultinetAttachment> current;
 		
-		BlockCoord bctarget = new BlockCoord(target.x(), target.y(), target.z());
+		BlockCoord bctarget = target.getCoordinates();
 		BlockCoord bccurrent = new BlockCoord();
 		
 		do {
@@ -197,9 +203,16 @@ public class Multinet {
 			
 			closedlist.add(current);
 			
-			for(MultinetCable successor : findNeighbors(current.object)) {
+			for(IMultinetAttachment successor : findNeighbors(current.object)) {
+				// skip attachments that are already being processed
 				boolean found = false;
-				for(AStarNode<MultinetCable> op : openlist) {
+				for(AStarNode<IMultinetAttachment> op : openlist) {
+					if(op.object == successor) {
+						found = true;
+						break;
+					}
+				}
+				for(AStarNode<IMultinetAttachment> op : closedlist) {
 					if(op.object == successor) {
 						found = true;
 						break;
@@ -211,8 +224,8 @@ public class Multinet {
 				
 				int tentative_g = current.dist + 1;
 				
-				AStarNode<MultinetCable> foundS = null;
-				for(AStarNode<MultinetCable> op : closedlist) {
+				AStarNode<IMultinetAttachment> foundS = null;
+				for(AStarNode<IMultinetAttachment> op : closedlist) {
 					if(op.object == successor) {
 						found = true;
 						foundS = op;
@@ -224,13 +237,13 @@ public class Multinet {
 				}
 				
 				if(!found) {
-					foundS = new AStarNode<MultinetCable>(successor, 0d);
+					foundS = new AStarNode<IMultinetAttachment>(successor, 0d);
 				}
 				
 				foundS.predecessor = current;
 				foundS.dist = tentative_g;
 				
-				double f = tentative_g + bccurrent.set(current.object.x(), current.object.y(), current.object.z()).sub(bctarget).mag();
+				double f = tentative_g + bccurrent.set(current.object.getCoordinates()).sub(bctarget).mag();
 				foundS.value = f;
 				if(found) {
 					openlist.remove(foundS);
@@ -245,8 +258,8 @@ public class Multinet {
 	}
 	
 	
-	private static boolean splitNetworks(MultinetCable a, MultinetCable b) {
-		if(a.network != b.network) {
+	private static boolean splitNetworks(IMultinetAttachment a, IMultinetAttachment b) {
+		if(a.getNetwork() != b.getNetwork()) {
 			return false;
 		}
 		if(findConnection(a, b)) {
@@ -254,15 +267,14 @@ public class Multinet {
 		} else {
 			
 			Multinet netToAdd = new Multinet();
-			netToAdd.dimension = a.world().provider.dimensionId;
-			netToAdd.cableType = a.getType();
+			netToAdd.cableType = a.getCableType();
 			networks.add(netToAdd);
 			
-			Queue<MultinetCable> cables = new ArrayDeque<MultinetCable>();
+			Queue<IMultinetAttachment> cables = new ArrayDeque<IMultinetAttachment>();
 			cables.add(a);
 			
 			do {
-				MultinetCable check = cables.remove();
+				IMultinetAttachment check = cables.remove();
 				
 				if(!netToAdd.cables.contains(check)) {
 					netToAdd.addCable(check);
@@ -276,11 +288,11 @@ public class Multinet {
 		}
 	}
 	
-	public static List<MultinetCable> findNeighbors(MultinetCable cable) {
+	public static List<IMultinetAttachment> findNeighbors(IMultinetAttachment cable) {
 		//TODO: Move to cable implementation (and create static method here to find cables or other machines connecting to a specific side)
-		List<MultinetCable> cbl = new ArrayList<MultinetCable>();
-		World world = cable.world();
-		ForgeDirection dir = ForgeDirection.getOrientation(cable.getFace());
+		List<IMultinetAttachment> cbl = new ArrayList<IMultinetAttachment>();
+		World world = cable.getDimension();
+		ForgeDirection dir = cable.getFace();
 		ForgeDirection[] otherDirs;
 		/*
 		 * Get valid connection sides
@@ -307,24 +319,45 @@ public class Multinet {
 		if(dir != ForgeDirection.UNKNOWN) {
 			// Adjacent cables on the same wall, one block offset
 			for(ForgeDirection od : otherDirs) {
-				MultinetCable nc = getCable(world, new BlockCoord(cable.x() + od.offsetX, cable.y() + od.offsetY, cable.z() + od.offsetZ), cable.getLayer(), cable.getFace(), cable.getType());
-				if(nc != null && nc.available) {
-					cbl.add(nc);
-				}
+				cbl.addAll(getMultinetAttachments(world, cable.getCoordinates().add(od.offsetX, od.offsetY, od.offsetZ), cable.getLayer(), cable.getFace(), od.getOpposite(), cable.getCableType()));
 			}
 		}
 		// Adjacent cables in the same block, on adjacent walls
 		for(ForgeDirection od : otherDirs) {
-			MultinetCable nc = getCable(world, new BlockCoord(cable.x(), cable.y(), cable.z()), cable.getLayer(), od.ordinal(), cable.getType());
-			if(nc != null && nc.available) {
-				cbl.add(nc);
+			cbl.addAll(getMultinetAttachments(world, cable.getCoordinates(), cable.getLayer(), od, cable.getFace(), cable.getCableType()));
+		}
+		
+		List<IMultinetAttachment> irregular = cable.getIrregularAttachments();
+		if(irregular != null) {
+			for(IMultinetAttachment att : irregular) {
+				if(att.getCableType().equals(cable.getCableType())) {
+					cbl.add(att);
+				}
 			}
 		}
 		
 		return cbl;
 	}
 	
-	public static MultinetCable getCable(World world, BlockCoord pos, int layer, int face, String type) {
+	public static List<IMultinetAttachment> getMultinetAttachments(World world, BlockCoord pos, int layer, ForgeDirection face, ForgeDirection dir, String type) {
+		List<IMultinetAttachment> attachments = new ArrayList<IMultinetAttachment>(2);
+		TileEntity te = world.getBlockTileEntity(pos.x, pos.y, pos.z);
+		if(te instanceof TileMultipart) {
+			List<TMultiPart> multiParts = ((TileMultipart) te).jPartList();
+			
+			for(TMultiPart part : multiParts) {
+				if(part instanceof IMultinetAttachment) {
+					IMultinetAttachment attach = (IMultinetAttachment)part;
+					if(attach.canAttach(face, dir, layer, type)) {
+						attachments.add(attach);
+					}
+				}
+			}
+		}
+		return attachments;
+	}
+	
+	public static MultinetCable getCable(World world, BlockCoord pos, int layer, ForgeDirection face, String type) {
 		TileEntity te = world.getBlockTileEntity(pos.x, pos.y, pos.z);
 		if(te instanceof TileMultipart) {
 			List<TMultiPart> multiParts = ((TileMultipart) te).jPartList();
