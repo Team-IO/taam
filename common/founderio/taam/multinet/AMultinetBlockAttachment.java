@@ -21,6 +21,8 @@ public abstract class AMultinetBlockAttachment implements IMultinetAttachment {
 	private int layer;
 	private String type;
 	
+	private boolean available = false;
+	
 	public AMultinetBlockAttachment(World world, int x, int y, int z, ForgeDirection face, ForgeDirection dir,
 			int layer, String type) {
 		this.world = world;
@@ -75,4 +77,19 @@ public abstract class AMultinetBlockAttachment implements IMultinetAttachment {
 		return network;
 	}
 
+	public void connect() {
+		available = true;
+		Multinet.addToNetwork(this);
+	}
+
+	public void disconnect() {
+		available = false;
+		Multinet.removeFromNetwork(this);
+	}
+	
+	@Override
+	public boolean isAvailable() {
+		return available;
+	}
+	
 }

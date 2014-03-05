@@ -24,6 +24,8 @@ public interface IMultinetAttachment {
 	
 	Multinet getNetwork();
 	
+	boolean isAvailable();
+	
 	/**
 	 * Get Attachments that are different from regular block side attachments, like inter-layer connections or wireless connections.
 	 * @return

@@ -25,8 +25,8 @@ public class Multinet {
 		networks = new ArrayList<Multinet>();
 	}
 	
-	public static void addCableToNetwork(IMultinetAttachment cable) {
-		List<IMultinetAttachment> surrounding = findNeighbors(cable);
+	public static void addToNetwork(IMultinetAttachment attachment) {
+		List<IMultinetAttachment> surrounding = findNeighbors(attachment);
 		Multinet netToAdd = null;
 		if(!surrounding.isEmpty()) {
 			for(int i = 0; i < surrounding.size(); i++) {
@@ -41,19 +41,19 @@ public class Multinet {
 		}
 		if(netToAdd == null) {
 			netToAdd = new Multinet();
-			netToAdd.cableType = cable.getCableType();
+			netToAdd.cableType = attachment.getCableType();
 			networks.add(netToAdd);
 		}
-		netToAdd.addCable(cable);
+		netToAdd.addCable(attachment);
 	}
 	
-	public static void removeFromNetwork(MultinetCable cable) {
-		if(cable.getNetwork() != null) {
-			Multinet network = cable.getNetwork();
-			network.removeCable(cable);
+	public static void removeFromNetwork(IMultinetAttachment attachment) {
+		if(attachment.getNetwork() != null) {
+			Multinet network = attachment.getNetwork();
+			network.removeCable(attachment);
 
 			
-			List<IMultinetAttachment> neighbors = findNeighbors(cable);
+			List<IMultinetAttachment> neighbors = findNeighbors(attachment);
 			if(neighbors.size() > 1) {
 				IMultinetAttachment first = neighbors.get(0);
 				
@@ -288,11 +288,11 @@ public class Multinet {
 		}
 	}
 	
-	public static List<IMultinetAttachment> findNeighbors(IMultinetAttachment cable) {
+	public static List<IMultinetAttachment> findNeighbors(IMultinetAttachment attachment) {
 		//TODO: Move to cable implementation (and create static method here to find cables or other machines connecting to a specific side)
 		List<IMultinetAttachment> cbl = new ArrayList<IMultinetAttachment>();
-		World world = cable.getDimension();
-		ForgeDirection dir = cable.getFace();
+		World world = attachment.getDimension();
+		ForgeDirection dir = attachment.getFace();
 		ForgeDirection[] otherDirs;
 		/*
 		 * Get valid connection sides
@@ -316,21 +316,23 @@ public class Multinet {
 			otherDirs = ForgeDirection.VALID_DIRECTIONS;
 			break;
 		}
+		// UNKWOWN == cable rack
 		if(dir != ForgeDirection.UNKNOWN) {
 			// Adjacent cables on the same wall, one block offset
 			for(ForgeDirection od : otherDirs) {
-				cbl.addAll(getMultinetAttachments(world, cable.getCoordinates().add(od.offsetX, od.offsetY, od.offsetZ), cable.getLayer(), cable.getFace(), od.getOpposite(), cable.getCableType()));
+				cbl.addAll(getMultinetAttachments(world, attachment.getCoordinates().add(od.offsetX, od.offsetY, od.offsetZ), attachment.getLayer(), attachment.getFace(), od.getOpposite(), attachment.getCableType(), false));
 			}
 		}
 		// Adjacent cables in the same block, on adjacent walls
 		for(ForgeDirection od : otherDirs) {
-			cbl.addAll(getMultinetAttachments(world, cable.getCoordinates(), cable.getLayer(), od, cable.getFace(), cable.getCableType()));
+			cbl.addAll(getMultinetAttachments(world, attachment.getCoordinates(), attachment.getLayer(), od, attachment.getFace(), attachment.getCableType(), false));
 		}
 		
-		List<IMultinetAttachment> irregular = cable.getIrregularAttachments();
+		// Irregular connections (teleport, cross-layer, ...)
+		List<IMultinetAttachment> irregular = attachment.getIrregularAttachments();
 		if(irregular != null) {
 			for(IMultinetAttachment att : irregular) {
-				if(att.getCableType().equals(cable.getCableType())) {
+				if(att.isAvailable() && att.getCableType().equals(attachment.getCableType())) {
 					cbl.add(att);
 				}
 			}
@@ -339,7 +341,7 @@ public class Multinet {
 		return cbl;
 	}
 	
-	public static List<IMultinetAttachment> getMultinetAttachments(World world, BlockCoord pos, int layer, ForgeDirection face, ForgeDirection dir, String type) {
+	public static List<IMultinetAttachment> getMultinetAttachments(World world, BlockCoord pos, int layer, ForgeDirection face, ForgeDirection dir, String type, boolean includeUnavailable) {
 		List<IMultinetAttachment> attachments = new ArrayList<IMultinetAttachment>(2);
 		TileEntity te = world.getBlockTileEntity(pos.x, pos.y, pos.z);
 		if(te instanceof TileMultipart) {
@@ -348,7 +350,7 @@ public class Multinet {
 			for(TMultiPart part : multiParts) {
 				if(part instanceof IMultinetAttachment) {
 					IMultinetAttachment attach = (IMultinetAttachment)part;
-					if(attach.canAttach(face, dir, layer, type)) {
+					if((includeUnavailable || attach.isAvailable()) && attach.canAttach(face, dir, layer, type)) {
 						attachments.add(attach);
 					}
 				}

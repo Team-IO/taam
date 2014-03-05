@@ -68,6 +68,11 @@ public class MultinetCable extends TMultiPart implements IMultinetAttachment {
 		//TODO: Actually check for occlusion!
 		return face == this.face && layer == this.layer;
 	}
+
+	@Override
+	public boolean isAvailable() {
+		return available;
+	}
 	
 	@Override
 	public List<IMultinetAttachment> getIrregularAttachments() {
@@ -448,7 +453,7 @@ public class MultinetCable extends TMultiPart implements IMultinetAttachment {
 			return;
 		}
 		available = true;
-		Multinet.addCableToNetwork(this);
+		Multinet.addToNetwork(this);
 		sendDescUpdate();
 	}
 	
