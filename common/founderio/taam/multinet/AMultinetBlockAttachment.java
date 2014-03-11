@@ -1,7 +1,5 @@
 package founderio.taam.multinet;
 
-import java.util.List;
-
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import codechicken.lib.vec.BlockCoord;
