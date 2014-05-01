@@ -29,7 +29,7 @@ public class MultinetHandler {
             ForgeDirection dirOpp = dir.getOpposite();
             Vector3 localHit = new Vector3(event.target.hitVec).$minus(new Vector3(event.target.blockX, event.target.blockY, event.target.blockZ));
             
-            if(MultinetCable.canStay(event.player.worldObj,
+            if(MultinetUtil.canCableStay(event.player.worldObj,
             		event.target.blockX + dir.offsetX, event.target.blockY + dir.offsetY, event.target.blockZ + dir.offsetZ,
             		dirOpp)) {
             	GL11.glPushMatrix();

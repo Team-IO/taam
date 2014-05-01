@@ -35,7 +35,7 @@ public abstract class AMultinetBlockAttachment implements IMultinetAttachment {
 	
 	
 	@Override
-	public boolean canAttach(ForgeDirection face, ForgeDirection dir,
+	public boolean canAttach(BlockCoord coords, ForgeDirection face, ForgeDirection dir,
 			int layer, String type) {
 		return face == this.face && dir == this.dir && layer == this.layer && this.type.equals(type);
 	}

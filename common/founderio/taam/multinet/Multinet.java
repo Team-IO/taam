@@ -134,5 +134,11 @@ public class Multinet {
 		networks.remove(this);
 		System.out.println("Multinet destroyed!");
 	}
+
+	public void update() {
+		for(IMultinetAttachment attachment : cables) {
+			attachment.updateAttachmentState();
+		}
+	}
 	
 }

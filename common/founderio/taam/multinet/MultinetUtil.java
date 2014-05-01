@@ -250,6 +250,8 @@ public final class MultinetUtil {
 		for(ForgeDirection od : otherDirs) {
 			cbl.addAll(MultinetUtil.getMultinetAttachments(world, attachment.getCoordinates(), attachment.getLayer(), od, attachment.getFace(), attachment.getCableType(), false));
 		}
+		// Adjacent cables in the same block, on the same face (multitronix & Co.)
+		cbl.addAll(MultinetUtil.getMultinetAttachments(world, attachment.getCoordinates(), attachment.getLayer(), attachment.getFace(), ForgeDirection.UNKNOWN, attachment.getCableType(), false));
 		
 		// Irregular connections (teleport, cross-layer, ...)
 		List<IMultinetAttachment> irregular = attachment.getIrregularAttachments();
@@ -260,7 +262,8 @@ public final class MultinetUtil {
 				}
 			}
 		}
-		
+		// Just to be sure not to cause loops in the code ;)
+		cbl.remove(attachment);
 		return cbl;
 	}
 
@@ -273,7 +276,7 @@ public final class MultinetUtil {
 			for(TMultiPart part : multiParts) {
 				if(part instanceof IMultinetAttachment) {
 					IMultinetAttachment attach = (IMultinetAttachment)part;
-					if((includeUnavailable || attach.isAvailable()) && attach.canAttach(face, dir, layer, type)) {
+					if((includeUnavailable || attach.isAvailable()) && attach.canAttach(pos, face, dir, layer, type)) {
 						attachments.add(attach);
 					}
 				}
@@ -299,5 +302,9 @@ public final class MultinetUtil {
 			}
 		}
 		return null;
+	}
+	
+	public static boolean canCableStay(World world, int x, int y, int z, ForgeDirection side) {
+		return world.isBlockSolidOnSide(x + side.offsetX, y + side.offsetY, z + side.offsetZ, side.getOpposite(), false);
 	}
 }

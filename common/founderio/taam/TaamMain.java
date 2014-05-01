@@ -20,9 +20,13 @@ import founderio.taam.blocks.BlockSensor;
 import founderio.taam.blocks.BlockSlidingDoor;
 import founderio.taam.blocks.TileEntitySensor;
 import founderio.taam.blocks.multinet.ItemMultinetCable;
+import founderio.taam.blocks.multinet.ItemMultinetMultitronix;
 import founderio.taam.blocks.multinet.MultinetHandler;
 import founderio.taam.blocks.multinet.MultinetPartFactory;
+import founderio.taam.blocks.multinet.cables.OperatorRedstone;
 import founderio.taam.items.ItemDebugTool;
+import founderio.taam.multinet.Multinet;
+import founderio.taam.multinet.MultinetUtil;
 
 @Mod(modid = Taam.MOD_ID, name = Taam.MOD_NAME, version = Taam.MOD_VERSION)
 @NetworkMod(clientSideRequired = true, serverSideRequired = false)
@@ -36,6 +40,7 @@ public class TaamMain {
 	public static MultinetPartFactory multinetMultipart;
 	
 	public static ItemMultinetCable itemMultinetCable;
+	public static ItemMultinetMultitronix itemMultinetMultitronix;
 	public static ItemDebugTool itemMultinetDebugger;
 	
 	public static CreativeTabs creativeTab;
@@ -102,6 +107,12 @@ public class TaamMain {
 		itemMultinetDebugger = new ItemDebugTool(config.getItem(Taam.ITEM_MULTINET_DEBUGGER, 3033).getInt());
 		itemMultinetDebugger.setUnlocalizedName(Taam.ITEM_MULTINET_DEBUGGER);
 		itemMultinetDebugger.setCreativeTab(creativeTab);
+		
+		itemMultinetMultitronix = new ItemMultinetMultitronix(config.getItem(Taam.ITEM_MULTINET_MULTITRONIX, 3034).getInt());
+		itemMultinetMultitronix.setUnlocalizedName(Taam.ITEM_MULTINET_MULTITRONIX);
+		itemMultinetMultitronix.setCreativeTab(creativeTab);
+		
+		Multinet.registerOperator(new OperatorRedstone("redstone"));
 		
 		config.save();
 

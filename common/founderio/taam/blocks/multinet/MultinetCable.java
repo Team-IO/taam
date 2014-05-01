@@ -26,53 +26,32 @@ import cpw.mods.fml.relauncher.SideOnly;
 import founderio.taam.Taam;
 import founderio.taam.TaamMain;
 import founderio.taam.multinet.IMultinetAttachment;
-import founderio.taam.multinet.Multinet;
 import founderio.taam.multinet.MultinetUtil;
 
-public class MultinetCable extends TMultiPart implements IMultinetAttachment {
+public abstract class MultinetCable extends MultinetMultipart {
 
-	/**
-	 * 0-5 == Block Sides, 6 == Cable Rack
-	 */
-	private ForgeDirection face;
-	/**
-	 * Layer index, 0-layerCount
-	 */
-	private int layer = -1;
 
-	private String type;
-
-	private Multinet network;
+	public MultinetCable(String cableType) {
+		super(cableType);
+	}
 
 	private static CCModel ccm = CCModel.newModel(7, 48);
-
-	public boolean available = false;
 	
 	@Override
 	public String toString() {
-		return "Multinet Cable [" + type + "] + network: " + network;
+		return "Multinet Cable [" + cableType + "] + network: " + network;
 	}
 	
 	@Override
 	public String getType() {
-		return Taam.MULTIPART_MULTINET_CABLE + "." + type;
-	}
-
-	@Override
-	public String getCableType() {
-		return type;
+		return Taam.MULTIPART_MULTINET_CABLE + "." + cableType;
 	}
 	
 	@Override
-	public boolean canAttach(ForgeDirection face, ForgeDirection dir,
+	public boolean canAttach(BlockCoord coords, ForgeDirection face, ForgeDirection dir,
 			int layer, String type) {
 		//TODO: Actually check for occlusion!
 		return face == this.face && layer == this.layer;
-	}
-
-	@Override
-	public boolean isAvailable() {
-		return available;
 	}
 	
 	@Override
@@ -81,50 +60,45 @@ public class MultinetCable extends TMultiPart implements IMultinetAttachment {
 	}
 
 	@Override
-	public BlockCoord getCoordinates() {
-		return new BlockCoord(getTile());
+	protected void saveProperties(NBTTagCompound tag) {
+		
 	}
 
 	@Override
-	public World getDimension() {
-		return world();
+	protected void loadProperties(NBTTagCompound tag) {
+		
 	}
 
 	@Override
-	public void setNetwork(Multinet network) {
-		this.network = network;
+	protected void saveProperties(MCDataOutput packet) {
+		
 	}
 
 	@Override
-	public Multinet getNetwork() {
-		return this.network;
-	}
-
-	@Override
-	public int getLayer() {
-		return layer;
-	}
-
-	@Override
-	public ForgeDirection getFace() {
-		return face;
+	protected void loadProperties(MCDataInput packet) {
+		
 	}
 	
-	/**
-	 * 
-	 * @param blockCoords
-	 * @param blockface
-	 * @param hit The face of the block that was hit, on which the cable should be placed on. (Cable face will be offosite of this!)
-	 * @param part
-	 */
-	public void init(BlockCoord blockCoords, int hitface, Vector3 hit, String part) {
-		
-		this.type = part;
-		
-		ForgeDirection dir = ForgeDirection.getOrientation(hitface).getOpposite();
-		this.face = dir;
-		
-		this.layer = MultinetUtil.getHitLayer(dir, hit);
+	@Override
+	public Iterable<ItemStack> getDrops() {
+		List<ItemStack> drops = new ArrayList<ItemStack>();
+		drops.add(new ItemStack(TaamMain.itemMultinetCable, 1, ItemMultinetCable.cables.indexOf(cableType)));
+		return drops;
+	}
+	
+	@Override
+	public Iterable<IndexedCuboid6> getSubParts() {
+		List<Cuboid6> boxes = (List<Cuboid6>) getCollisionBoxes();
+		List<IndexedCuboid6> retBoxes = new ArrayList<IndexedCuboid6>();
+		for(Cuboid6 box : boxes) {
+			retBoxes.add(new IndexedCuboid6(null, box));
+		}
+		return retBoxes;
+	}
+	
+	@Override
+	public boolean canStay(World world, int x, int y, int z, ForgeDirection side) {
+		return MultinetUtil.canCableStay(world, x, y, z, side);
 	}
 
 	@Override
@@ -429,86 +403,5 @@ public class MultinetCable extends TMultiPart implements IMultinetAttachment {
 			break;
 		}
 		return boxes;
-	}
-	
-	@Override
-	public Iterable<ItemStack> getDrops() {
-		List<ItemStack> drops = new ArrayList<ItemStack>();
-		drops.add(new ItemStack(TaamMain.itemMultinetCable, 1, ItemMultinetCable.cables.indexOf(type)));
-		return drops;
-	}
-	
-	@Override
-	public Iterable<IndexedCuboid6> getSubParts() {
-		List<Cuboid6> boxes = (List<Cuboid6>) getCollisionBoxes();
-		List<IndexedCuboid6> retBoxes = new ArrayList<IndexedCuboid6>();
-		for(Cuboid6 box : boxes) {
-			retBoxes.add(new IndexedCuboid6(null, box));
-		}
-		return retBoxes;
-	}
-	
-	@Override
-	public void onWorldJoin() {
-		if(world().isRemote) {
-			return;
-		}
-		available = true;
-		MultinetUtil.addToNetwork(this);
-		sendDescUpdate();
-	}
-	
-	@Override
-	public void onWorldSeparate() {
-		if(world().isRemote) {
-			return;
-		}
-		available = false;
-		MultinetUtil.removeFromNetwork(this);
-	}
-	
-	@Override
-	public void onNeighborChanged() {
-		if(world().isRemote) {
-			return;
-		}
-		if(!canStay(world(), x(), y(), z(), face)) {
-			tile().dropItems(getDrops());
-			tile().remPart(this);
-		}
-	}
-	
-	public static boolean canStay(World world, int x, int y, int z, ForgeDirection side) {
-		return world.isBlockSolidOnSide(x + side.offsetX, y + side.offsetY, z + side.offsetZ, side.getOpposite(), false);
-	}
-	
-	@Override
-	public void save(NBTTagCompound tag) {
-		super.save(tag);
-		
-		tag.setInteger("face", face.ordinal());
-		tag.setInteger("layer", layer);
-		tag.setString("type", type);
-	}
-	
-	@Override
-	public void load(NBTTagCompound tag) {
-		super.load(tag);
-		
-		face = ForgeDirection.getOrientation(tag.getInteger("face"));
-		layer = tag.getInteger("layer");
-		type = tag.getString("type");
-	}
-	
-	@Override
-	public void writeDesc(MCDataOutput packet) {
-		packet.writeInt(face.ordinal());
-		packet.writeInt(layer);
-	}
-	
-	@Override
-	public void readDesc(MCDataInput packet) {
-		face = ForgeDirection.getOrientation(packet.readInt());
-		layer = packet.readInt();
 	}
 }

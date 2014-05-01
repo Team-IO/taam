@@ -52,7 +52,25 @@ public class OperatorRedstone extends MultinetOperator {
 	}
 	
 	public void update() {
-		
+		multinet.update();
+	}
+	
+	public int getPowerLevel() {
+		int maxLevel = 0;
+		for(Integer level : poweredStateAttachments.values()) {
+			if(level > maxLevel) {
+				maxLevel = level;
+			}
+		}
+		return maxLevel;
+	}
+	
+	public void setPowerLevel(IMultinetAttachment attachment, int level) {
+		if(!multinet.contains(attachment)) {
+			throw new IllegalStateException("Tried to set redstone level of attachment outside this network.");
+		}
+		poweredStateAttachments.put(attachment, level);
+		update();
 	}
 
 }

@@ -11,21 +11,21 @@ import codechicken.lib.vec.BlockCoord;
 import codechicken.lib.vec.Vector3;
 import codechicken.multipart.JItemMultiPart;
 import codechicken.multipart.TMultiPart;
-import founderio.taam.blocks.multinet.cables.CableRedstone;
+import founderio.taam.blocks.multinet.cables.RedstoneBlockAdapter;
 import founderio.taam.multinet.MultinetUtil;
 
-public class ItemMultinetCable extends JItemMultiPart {
+public class ItemMultinetMultitronix extends JItemMultiPart {
 
-	public static final List<String> cables;
+	public static final List<String> multitronix;
 	
 	static {
 		
-		cables = new ArrayList<String>();
-		cables.add("redstone");
-		//TODO: More cable types
+		multitronix = new ArrayList<String>();
+		multitronix.add("redstone_block_attachment");
+		//TODO: More multitronix types
 	}
 	
-	public ItemMultinetCable(int id) {
+	public ItemMultinetMultitronix(int id) {
 		super(id);
 	}
 
@@ -35,25 +35,25 @@ public class ItemMultinetCable extends JItemMultiPart {
 		
 		int dmg = itemStack.getItemDamage();
 		
-		if(dmg < 0 || dmg > cables.size()) {
+		if(dmg < 0 || dmg > multitronix.size()) {
 			return null;
 		} else {
 			
 			if(MultinetUtil.canCableStay(world, blockCoords.x, blockCoords.y, blockCoords.z, ForgeDirection.getOrientation(face).getOpposite())) {
-				MultinetCable cable;
+				MultinetMultipart part;
 				
 				//TODO: Factories (for flexibility, plugins, etc.)
 				switch(dmg) {
 				case 0:
-					cable = new CableRedstone();
+					part = new RedstoneBlockAdapter();
 					break;
 				default:
 					return null;
 				}
 				
-				cable.init(blockCoords, face, hit);
+				part.init(blockCoords, face, hit);
 				
-				return cable;
+				return part;
 			} else {
 				return null;
 			}
