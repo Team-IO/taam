@@ -77,12 +77,12 @@ public abstract class AMultinetBlockAttachment implements IMultinetAttachment {
 
 	public void connect() {
 		available = true;
-		Multinet.addToNetwork(this);
+		MultinetUtil.addToNetwork(this);
 	}
 
 	public void disconnect() {
 		available = false;
-		Multinet.removeFromNetwork(this);
+		MultinetUtil.removeFromNetwork(this);
 	}
 	
 	@Override

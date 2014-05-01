@@ -8,7 +8,7 @@ import net.minecraftforge.common.ForgeDirection;
 import codechicken.lib.vec.BlockCoord;
 import codechicken.lib.vec.Vector3;
 import founderio.taam.blocks.multinet.MultinetCable;
-import founderio.taam.multinet.Multinet;
+import founderio.taam.multinet.MultinetUtil;
 
 public class ItemDebugTool extends Item {
 
@@ -37,9 +37,9 @@ public class ItemDebugTool extends Item {
 
         Vector3 localHit = new Vector3(hitx, hity, hitz);
         
-        int layer = Multinet.getHitLayer(dirOpp, localHit);
+        int layer = MultinetUtil.getHitLayer(dirOpp, localHit);
 		
-        MultinetCable cable = Multinet.getCable(world, new BlockCoord(x, y, z), layer, dirOpp, null);
+        MultinetCable cable = MultinetUtil.getCable(world, new BlockCoord(x, y, z), layer, dirOpp, null);
         
         if(cableA == null) {
         	cableA = cable;
@@ -50,7 +50,7 @@ public class ItemDebugTool extends Item {
         	cableB = cable;
         	System.out.println(cableB);
         	if(cableB != null) {
-	        	System.out.println(Multinet.findConnection(cableA, cableB));
+	        	System.out.println(MultinetUtil.findConnection(cableA, cableB));
 	        	cableA = null;
 	        	cableB = null;
         	}

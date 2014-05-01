@@ -27,6 +27,7 @@ import founderio.taam.Taam;
 import founderio.taam.TaamMain;
 import founderio.taam.multinet.IMultinetAttachment;
 import founderio.taam.multinet.Multinet;
+import founderio.taam.multinet.MultinetUtil;
 
 public class MultinetCable extends TMultiPart implements IMultinetAttachment {
 
@@ -123,7 +124,7 @@ public class MultinetCable extends TMultiPart implements IMultinetAttachment {
 		ForgeDirection dir = ForgeDirection.getOrientation(hitface).getOpposite();
 		this.face = dir;
 		
-		this.layer = Multinet.getHitLayer(dir, hit);
+		this.layer = MultinetUtil.getHitLayer(dir, hit);
 	}
 
 	@Override
@@ -135,7 +136,7 @@ public class MultinetCable extends TMultiPart implements IMultinetAttachment {
 			Iterable<Cuboid6> otherBoxes = npart.getCollisionBoxes();
 			
 			Cuboid6 collisionCube = new Cuboid6(
-					face.offsetX - face.offsetX * Multinet.cableWidth, face.offsetY - face.offsetY * Multinet.cableWidth, face.offsetZ - face.offsetZ * Multinet.cableWidth,
+					face.offsetX - face.offsetX * MultinetUtil.cableWidth, face.offsetY - face.offsetY * MultinetUtil.cableWidth, face.offsetZ - face.offsetZ * MultinetUtil.cableWidth,
 					face.offsetX, face.offsetY, face.offsetZ);
 			
 			for(Cuboid6 box : otherBoxes) {
@@ -156,7 +157,7 @@ public class MultinetCable extends TMultiPart implements IMultinetAttachment {
 	
 	public static void render(World world, Vector3 pos, LazyLightMatrix olm, int pass, ForgeDirection face, int layer, boolean preview) {
 
-		float layerOffset = (float)layer/Multinet.layerCount;
+		float layerOffset = (float)layer/MultinetUtil.layerCount;
 		float ox1 = 0;
 		float oy1 = 0;
 		float oz1 = 0;
@@ -180,8 +181,8 @@ public class MultinetCable extends TMultiPart implements IMultinetAttachment {
 			ox1 = layerOffset;
 			oy1 = 0;
 			oz1 = 0;
-			ox2 = layerOffset + Multinet.cableWidth;
-			oy2 = Multinet.cableWidth;
+			ox2 = layerOffset + MultinetUtil.cableWidth;
+			oy2 = MultinetUtil.cableWidth;
 			oz2 = 1;
 			ccm.generateBlock(0, ox1, oy1, oz1,
 								 ox2, oy2, oz2);
@@ -190,27 +191,27 @@ public class MultinetCable extends TMultiPart implements IMultinetAttachment {
 			oy1 = 0;
 			oz1 = layerOffset;
 			ox2 = 1;
-			oy2 = Multinet.cableWidth;
-			oz2 = layerOffset + Multinet.cableWidth;
+			oy2 = MultinetUtil.cableWidth;
+			oz2 = layerOffset + MultinetUtil.cableWidth;
 
 			ccm.generateBlock(24, ox1, oy1, oz1,
 					 ox2, oy2, oz2).render(new Translation(pos), ictrans);
 			break;
 		case UP:
 			ox1 = layerOffset;
-			oy1 = 1 - Multinet.cableWidth;
+			oy1 = 1 - MultinetUtil.cableWidth;
 			oz1 = 0;
-			ox2 = layerOffset + Multinet.cableWidth;
+			ox2 = layerOffset + MultinetUtil.cableWidth;
 			oy2 = 1;
 			oz2 = 1;
 			ccm.generateBlock(0, ox1, oy1, oz1,
 					 ox2, oy2, oz2);
 			ox1 = 0;
-			oy1 = 1f - Multinet.cableWidth;
+			oy1 = 1f - MultinetUtil.cableWidth;
 			oz1 = layerOffset;
 			ox2 = 1;
 			oy2 = 1;
-			oz2 = layerOffset + Multinet.cableWidth;
+			oz2 = layerOffset + MultinetUtil.cableWidth;
 
 			ccm.generateBlock(24, ox1, oy1, oz1,
 					 ox2, oy2, oz2).render(new Translation(pos), ictrans);
@@ -219,17 +220,17 @@ public class MultinetCable extends TMultiPart implements IMultinetAttachment {
 			ox1 = layerOffset;
 			oy1 = 0;
 			oz1 = 0;
-			ox2 = layerOffset + Multinet.cableWidth;
+			ox2 = layerOffset + MultinetUtil.cableWidth;
 			oy2 = 1;
-			oz2 = Multinet.cableWidth;
+			oz2 = MultinetUtil.cableWidth;
 			ccm.generateBlock(0, ox1, oy1, oz1,
 					 ox2, oy2, oz2);
 			ox1 = 0;
 			oy1 = layerOffset;
 			oz1 = 0;
 			ox2 = 1;
-			oy2 = layerOffset + Multinet.cableWidth;
-			oz2 = Multinet.cableWidth;
+			oy2 = layerOffset + MultinetUtil.cableWidth;
+			oz2 = MultinetUtil.cableWidth;
 
 			ccm.generateBlock(24, ox1, oy1, oz1,
 					 ox2, oy2, oz2).render(new Translation(pos), ictrans);
@@ -237,17 +238,17 @@ public class MultinetCable extends TMultiPart implements IMultinetAttachment {
 		case SOUTH:
 			ox1 = layerOffset;
 			oy1 = 0;
-			oz1 = 1 - Multinet.cableWidth;
-			ox2 = layerOffset + Multinet.cableWidth;
+			oz1 = 1 - MultinetUtil.cableWidth;
+			ox2 = layerOffset + MultinetUtil.cableWidth;
 			oy2 = 1;
 			oz2 = 1;
 			ccm.generateBlock(0, ox1, oy1, oz1,
 					 ox2, oy2, oz2);
 			ox1 = 0;
 			oy1 = layerOffset;
-			oz1 = 1 - Multinet.cableWidth;
+			oz1 = 1 - MultinetUtil.cableWidth;
 			ox2 = 1;
-			oy2 = layerOffset + Multinet.cableWidth;
+			oy2 = layerOffset + MultinetUtil.cableWidth;
 			oz2 = 1;
 
 			ccm.generateBlock(24, ox1, oy1, oz1,
@@ -257,35 +258,35 @@ public class MultinetCable extends TMultiPart implements IMultinetAttachment {
 			ox1 = 0;
 			oy1 = 0;
 			oz1 = layerOffset;
-			ox2 = Multinet.cableWidth;
+			ox2 = MultinetUtil.cableWidth;
 			oy2 = 1;
-			oz2 = layerOffset + Multinet.cableWidth;
+			oz2 = layerOffset + MultinetUtil.cableWidth;
 			ccm.generateBlock(0, ox1, oy1, oz1,
 					 ox2, oy2, oz2);
 			ox1 = 0;
 			oy1 = layerOffset;
 			oz1 = 0;
-			ox2 = Multinet.cableWidth;
-			oy2 = layerOffset + Multinet.cableWidth;
+			ox2 = MultinetUtil.cableWidth;
+			oy2 = layerOffset + MultinetUtil.cableWidth;
 			oz2 = 1;
 
 			ccm.generateBlock(24, ox1, oy1, oz1,
 					 ox2, oy2, oz2).render(new Translation(pos), ictrans);
 			break;
 		case EAST:
-			ox1 = 1 - Multinet.cableWidth;
+			ox1 = 1 - MultinetUtil.cableWidth;
 			oy1 = 0;
 			oz1 = layerOffset;
 			ox2 = 1;
 			oy2 = 1;
-			oz2 = layerOffset + Multinet.cableWidth;
+			oz2 = layerOffset + MultinetUtil.cableWidth;
 			ccm.generateBlock(0, ox1, oy1, oz1,
 					 ox2, oy2, oz2);
-			ox1 = 1 - Multinet.cableWidth;
+			ox1 = 1 - MultinetUtil.cableWidth;
 			oy1 = layerOffset;
 			oz1 = 0;
 			ox2 = 1;
-			oy2 = layerOffset + Multinet.cableWidth;
+			oy2 = layerOffset + MultinetUtil.cableWidth;
 			oz2 = 1;
 
 			ccm.generateBlock(24, ox1, oy1, oz1,
@@ -300,7 +301,7 @@ public class MultinetCable extends TMultiPart implements IMultinetAttachment {
 	public Iterable<Cuboid6> getCollisionBoxes() {
 		List<Cuboid6> boxes = new ArrayList<Cuboid6>();
 
-		float layerOffset = (float)layer/Multinet.layerCount;
+		float layerOffset = (float)layer/MultinetUtil.layerCount;
 		float ox1 = 0;
 		float oy1 = 0;
 		float oz1 = 0;
@@ -314,8 +315,8 @@ public class MultinetCable extends TMultiPart implements IMultinetAttachment {
 			ox1 = layerOffset;
 			oy1 = 0;
 			oz1 = 0;
-			ox2 = layerOffset + Multinet.cableWidth;
-			oy2 = Multinet.cableWidth;
+			ox2 = layerOffset + MultinetUtil.cableWidth;
+			oy2 = MultinetUtil.cableWidth;
 			oz2 = 1;
 			boxes.add(new Cuboid6(ox1, oy1, oz1,
 								  ox2, oy2, oz2));
@@ -323,27 +324,27 @@ public class MultinetCable extends TMultiPart implements IMultinetAttachment {
 			oy1 = 0;
 			oz1 = layerOffset;
 			ox2 = 1;
-			oy2 = Multinet.cableWidth;
-			oz2 = layerOffset + Multinet.cableWidth;
+			oy2 = MultinetUtil.cableWidth;
+			oz2 = layerOffset + MultinetUtil.cableWidth;
 
 			boxes.add(new Cuboid6(ox1, oy1, oz1,
 					  ox2, oy2, oz2));
 			break;
 		case UP:
 			ox1 = layerOffset;
-			oy1 = 1 - Multinet.cableWidth;
+			oy1 = 1 - MultinetUtil.cableWidth;
 			oz1 = 0;
-			ox2 = layerOffset + Multinet.cableWidth;
+			ox2 = layerOffset + MultinetUtil.cableWidth;
 			oy2 = 1;
 			oz2 = 1;
 			boxes.add(new Cuboid6(ox1, oy1, oz1,
 					  ox2, oy2, oz2));
 			ox1 = 0;
-			oy1 = 1f - Multinet.cableWidth;
+			oy1 = 1f - MultinetUtil.cableWidth;
 			oz1 = layerOffset;
 			ox2 = 1;
 			oy2 = 1;
-			oz2 = layerOffset + Multinet.cableWidth;
+			oz2 = layerOffset + MultinetUtil.cableWidth;
 
 			boxes.add(new Cuboid6(ox1, oy1, oz1,
 					  ox2, oy2, oz2));
@@ -352,17 +353,17 @@ public class MultinetCable extends TMultiPart implements IMultinetAttachment {
 			ox1 = layerOffset;
 			oy1 = 0;
 			oz1 = 0;
-			ox2 = layerOffset + Multinet.cableWidth;
+			ox2 = layerOffset + MultinetUtil.cableWidth;
 			oy2 = 1;
-			oz2 = Multinet.cableWidth;
+			oz2 = MultinetUtil.cableWidth;
 			boxes.add(new Cuboid6(ox1, oy1, oz1,
 					  ox2, oy2, oz2));
 			ox1 = 0;
 			oy1 = layerOffset;
 			oz1 = 0;
 			ox2 = 1;
-			oy2 = layerOffset + Multinet.cableWidth;
-			oz2 = Multinet.cableWidth;
+			oy2 = layerOffset + MultinetUtil.cableWidth;
+			oz2 = MultinetUtil.cableWidth;
 
 			boxes.add(new Cuboid6(ox1, oy1, oz1,
 					  ox2, oy2, oz2));
@@ -370,17 +371,17 @@ public class MultinetCable extends TMultiPart implements IMultinetAttachment {
 		case SOUTH:
 			ox1 = layerOffset;
 			oy1 = 0;
-			oz1 = 1 - Multinet.cableWidth;
-			ox2 = layerOffset + Multinet.cableWidth;
+			oz1 = 1 - MultinetUtil.cableWidth;
+			ox2 = layerOffset + MultinetUtil.cableWidth;
 			oy2 = 1;
 			oz2 = 1;
 			boxes.add(new Cuboid6(ox1, oy1, oz1,
 					  ox2, oy2, oz2));
 			ox1 = 0;
 			oy1 = layerOffset;
-			oz1 = 1 - Multinet.cableWidth;
+			oz1 = 1 - MultinetUtil.cableWidth;
 			ox2 = 1;
-			oy2 = layerOffset + Multinet.cableWidth;
+			oy2 = layerOffset + MultinetUtil.cableWidth;
 			oz2 = 1;
 
 			boxes.add(new Cuboid6(ox1, oy1, oz1,
@@ -390,35 +391,35 @@ public class MultinetCable extends TMultiPart implements IMultinetAttachment {
 			ox1 = 0;
 			oy1 = 0;
 			oz1 = layerOffset;
-			ox2 = Multinet.cableWidth;
+			ox2 = MultinetUtil.cableWidth;
 			oy2 = 1;
-			oz2 = layerOffset + Multinet.cableWidth;
+			oz2 = layerOffset + MultinetUtil.cableWidth;
 			boxes.add(new Cuboid6(ox1, oy1, oz1,
 					  ox2, oy2, oz2));
 			ox1 = 0;
 			oy1 = layerOffset;
 			oz1 = 0;
-			ox2 = Multinet.cableWidth;
-			oy2 = layerOffset + Multinet.cableWidth;
+			ox2 = MultinetUtil.cableWidth;
+			oy2 = layerOffset + MultinetUtil.cableWidth;
 			oz2 = 1;
 
 			boxes.add(new Cuboid6(ox1, oy1, oz1,
 					  ox2, oy2, oz2));
 			break;
 		case EAST:
-			ox1 = 1 - Multinet.cableWidth;
+			ox1 = 1 - MultinetUtil.cableWidth;
 			oy1 = 0;
 			oz1 = layerOffset;
 			ox2 = 1;
 			oy2 = 1;
-			oz2 = layerOffset + Multinet.cableWidth;
+			oz2 = layerOffset + MultinetUtil.cableWidth;
 			boxes.add(new Cuboid6(ox1, oy1, oz1,
 					  ox2, oy2, oz2));
-			ox1 = 1 - Multinet.cableWidth;
+			ox1 = 1 - MultinetUtil.cableWidth;
 			oy1 = layerOffset;
 			oz1 = 0;
 			ox2 = 1;
-			oy2 = layerOffset + Multinet.cableWidth;
+			oy2 = layerOffset + MultinetUtil.cableWidth;
 			oz2 = 1;
 
 			boxes.add(new Cuboid6(ox1, oy1, oz1,
@@ -453,7 +454,7 @@ public class MultinetCable extends TMultiPart implements IMultinetAttachment {
 			return;
 		}
 		available = true;
-		Multinet.addToNetwork(this);
+		MultinetUtil.addToNetwork(this);
 		sendDescUpdate();
 	}
 	
@@ -463,7 +464,7 @@ public class MultinetCable extends TMultiPart implements IMultinetAttachment {
 			return;
 		}
 		available = false;
-		Multinet.removeFromNetwork(this);
+		MultinetUtil.removeFromNetwork(this);
 	}
 	
 	@Override
