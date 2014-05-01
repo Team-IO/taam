@@ -103,5 +103,9 @@ public class RedstoneBlockAdapter extends MultinetMultipart implements IRedstone
 	public void updateAttachmentState() {
 		tile().notifyPartChange(this);
 	}
+	
+	//TODO: Rendering
+	
+	//TODO: Redstone input
 
 }
