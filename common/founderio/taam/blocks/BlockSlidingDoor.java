@@ -12,9 +12,7 @@ public class BlockSlidingDoor extends BaseBlock {
 		this.setHardness(3.5f);
 		this.setStepSound(soundMetalFootstep);
 		MinecraftForge.setBlockHarvestLevel(this, "pickaxe", 1);
-		
 	}
-
 
 	@Override
 	public boolean hasTileEntity(int metadata) {
@@ -35,16 +33,15 @@ public class BlockSlidingDoor extends BaseBlock {
 	public boolean renderAsNormalBlock() {
 		return false;
 	}
+
 	@Override
 	public TileEntity createTileEntity(World world, int metadata) {
 		return new TileEntitySlidingDoor();
-		
 	}
-	
+
 	@Override
 	public boolean isBlockNormalCube(World world, int x, int y, int z) {
 		return false;
 	}
-
 
 }

@@ -17,12 +17,20 @@ public class Multinet {
 	}
 	
 	public static void registerOperator(MultinetOperator operatorReference) {
+		if(operatorReference == null) {
+			throw new IllegalArgumentException("Registering NULL value as operator.");
+		}
 		if(!operatorReference.isReference) {
 			throw new IllegalArgumentException("Can only register reference operators. (Created without multinet assigned)");
 		}
+		if(operatorReference.multinetCableType == null || "".equals(operatorReference.multinetCableType)) {
+			throw new IllegalArgumentException("Registering NULL/Empty value as operator multinet cable type.");
+		}
+		operatorReferences.put(operatorReference.multinetCableType, operatorReference);
 	}
 	
 	public final String cableType;
+	public final MultinetOperator operator;
 	
 	private boolean isDestroyed = false;
 	private final List<IMultinetAttachment> cables;
@@ -31,8 +39,25 @@ public class Multinet {
 
 	public Multinet(String cableType) {
 		this.cableType = cableType;
+		if(operatorReferences.containsKey(cableType)) {
+			operator = operatorReferences.get(cableType).createNewInstance(this);
+			if(operator == null) {
+				throw new IllegalStateException("Operator reference returned null operator instance.");
+			}
+			if(operator.isReference) {
+				throw new IllegalStateException("Operator reference returned operator reference instead of an instance.");
+			}
+			if(operator.multinet != this) {
+				throw new IllegalStateException("Operator reference returned operator instance for a different multinet.");
+			}
+		} else {
+			operator = null;
+		}
 		cables = new ArrayList<IMultinetAttachment>();
 		networks.add(this);
+		if(operator != null) {
+			operator.multinetCreated();
+		}
 		System.out.println("Multinet created");
 	}
 	
@@ -42,7 +67,10 @@ public class Multinet {
 		}
 		cables.add(cable);
 		cable.setNetwork(this);
-		System.out.println("Cable added");
+		if(operator != null) {
+			operator.multinetAttachmentAdded(cable);
+		}
+		System.out.println("IMultinetAttachment added");
 	}
 	
 	public void removeCable(IMultinetAttachment cable) {
@@ -51,6 +79,9 @@ public class Multinet {
 		}
 		cables.remove(cable);
 		cable.setNetwork(null);
+		if(operator != null) {
+			operator.multinetAttachmentRemoved(cable);
+		}
 		System.out.println("Cable removed");
 	}
 	
@@ -94,6 +125,9 @@ public class Multinet {
 	public void destroy() {
 		if(isDestroyed) {
 			return;
+		}
+		if(operator != null) {
+			operator.multinetWillBeDestroyed();
 		}
 		cables.clear();
 		isDestroyed = true;

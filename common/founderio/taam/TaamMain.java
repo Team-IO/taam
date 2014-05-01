@@ -21,7 +21,7 @@ import founderio.taam.blocks.BlockSlidingDoor;
 import founderio.taam.blocks.TileEntitySensor;
 import founderio.taam.blocks.multinet.ItemMultinetCable;
 import founderio.taam.blocks.multinet.MultinetHandler;
-import founderio.taam.blocks.multinet.MultinetMultipart;
+import founderio.taam.blocks.multinet.MultinetPartFactory;
 import founderio.taam.items.ItemDebugTool;
 
 @Mod(modid = Taam.MOD_ID, name = Taam.MOD_NAME, version = Taam.MOD_VERSION)
@@ -33,7 +33,7 @@ public class TaamMain {
 	@SidedProxy(clientSide = "founderio.taam.TaamClientProxy", serverSide = "founderio.taam.TaamCommonProxy")
 	public static TaamCommonProxy proxy;
 
-	public static MultinetMultipart multinetMultipart;
+	public static MultinetPartFactory multinetMultipart;
 	
 	public static ItemMultinetCable itemMultinetCable;
 	public static ItemDebugTool itemMultinetDebugger;
@@ -93,7 +93,7 @@ public class TaamMain {
 		blockSlidingDoor.setUnlocalizedName(Taam.BLOCK_SLIDINGDOOR);
 		blockSlidingDoor.setCreativeTab(creativeTab);
 
-		multinetMultipart = new MultinetMultipart();
+		multinetMultipart = new MultinetPartFactory();
 		
 		itemMultinetCable = new ItemMultinetCable(config.getItem(Taam.ITEM_MULTINET_CABLE, 3032).getInt());
 		itemMultinetCable.setUnlocalizedName(Taam.ITEM_MULTINET_CABLE);

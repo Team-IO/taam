@@ -11,11 +11,16 @@ public abstract class MultinetOperator {
 		this.multinet = null;
 	}
 	
-	public MultinetOperator(String multinetCableType, Multinet multinet) {
+	public MultinetOperator(Multinet multinet) {
 		this.isReference = false;
-		this.multinetCableType = multinetCableType;
+		this.multinetCableType = multinet.cableType;
 		this.multinet = multinet;
 	}
 	
-	public abstract MultinetOperator createNewInstance();
+	public abstract MultinetOperator createNewInstance(Multinet multinet);
+	
+	public abstract void multinetCreated();
+	public abstract void multinetAttachmentAdded(IMultinetAttachment attachment);
+	public abstract void multinetAttachmentRemoved(IMultinetAttachment attachment);
+	public abstract void multinetWillBeDestroyed();
 }

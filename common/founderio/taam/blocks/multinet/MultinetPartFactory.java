@@ -6,9 +6,9 @@ import codechicken.multipart.TMultiPart;
 import founderio.taam.Taam;
 import founderio.taam.blocks.multinet.cables.CableRedstone;
 
-public class MultinetMultipart implements IPartFactory {
+public class MultinetPartFactory implements IPartFactory {
 
-	public MultinetMultipart() {
+	public MultinetPartFactory() {
 		registerMultiparts();
 	}
 	
