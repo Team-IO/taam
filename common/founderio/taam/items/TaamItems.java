@@ -9,8 +9,8 @@ import net.minecraft.item.Item;
  */
 public class TaamItems extends Item {
 
-	public TaamItems(int id) {
-		super(id);
+	public TaamItems() {
+		super();
 	}
 
 }

@@ -3,9 +3,8 @@
 	<classpathentry kind="src" path="resources"/>
 	<classpathentry kind="src" path="common"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/Minecraft"/>
-	<classpathentry kind="lib" path="lib/CodeChickenLib-dev-1.6.4-1.0.0.62.jar"/>
-	<classpathentry kind="lib" path="lib/ForgeMultipart-dev-1.6.4-1.0.0.250.jar"/>
-	<classpathentry kind="lib" path="lib/waila"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/forge1082"/>
+	<classpathentry kind="lib" path="lib/CodeChickenLib-1.7.2-1.1.1.80-dev.jar"/>
+	<classpathentry kind="lib" path="lib/ForgeMultipart-1.7.2-1.1.0.282-dev.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

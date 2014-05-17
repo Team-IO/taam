@@ -10,7 +10,7 @@ import java.util.Set;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import codechicken.lib.vec.BlockCoord;
 import codechicken.lib.vec.Vector3;
 import codechicken.multipart.TMultiPart;
@@ -269,7 +269,7 @@ public final class MultinetUtil {
 
 	public static List<IMultinetAttachment> getMultinetAttachments(World world, BlockCoord pos, int layer, ForgeDirection face, ForgeDirection dir, String type, boolean includeUnavailable) {
 		List<IMultinetAttachment> attachments = new ArrayList<IMultinetAttachment>(2);
-		TileEntity te = world.getBlockTileEntity(pos.x, pos.y, pos.z);
+		TileEntity te = world.getTileEntity(pos.x, pos.y, pos.z);
 		if(te instanceof TileMultipart) {
 			List<TMultiPart> multiParts = ((TileMultipart) te).jPartList();
 			
@@ -286,7 +286,8 @@ public final class MultinetUtil {
 	}
 
 	public static MultinetCable getCable(World world, BlockCoord pos, int layer, ForgeDirection face, String type) {
-		TileEntity te = world.getBlockTileEntity(pos.x, pos.y, pos.z);
+		
+		TileEntity te = world.getTileEntity(pos.x, pos.y, pos.z);
 		if(te instanceof TileMultipart) {
 			List<TMultiPart> multiParts = ((TileMultipart) te).jPartList();
 			
@@ -305,6 +306,6 @@ public final class MultinetUtil {
 	}
 	
 	public static boolean canCableStay(World world, int x, int y, int z, ForgeDirection side) {
-		return world.isBlockSolidOnSide(x + side.offsetX, y + side.offsetY, z + side.offsetZ, side.getOpposite(), false);
+		return world.isSideSolid(x + side.offsetX, y + side.offsetY, z + side.offsetZ, side.getOpposite(), false);
 	}
 }

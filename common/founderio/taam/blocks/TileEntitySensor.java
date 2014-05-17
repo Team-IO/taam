@@ -1,11 +1,11 @@
 package founderio.taam.blocks;
 
-import founderio.taam.TaamMain;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
+import founderio.taam.TaamMain;
 
 public class TileEntitySensor extends BaseTileEntity {
 	

@@ -1,7 +1,5 @@
 package founderio.taam.rendering;
 
-import java.util.EnumSet;
-
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
@@ -10,18 +8,19 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.IItemRenderer;
 import net.minecraftforge.client.model.techne.TechneModel;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 
 import org.lwjgl.opengl.GL11;
 
-import cpw.mods.fml.common.ITickHandler;
-import cpw.mods.fml.common.TickType;
+import cpw.mods.fml.common.gameevent.TickEvent;
+import cpw.mods.fml.common.gameevent.TickEvent.Phase;
+import cpw.mods.fml.common.gameevent.TickEvent.Type;
 import founderio.taam.Taam;
 import founderio.taam.blocks.BlockSensor;
 import founderio.taam.blocks.TileEntitySensor;
 
 public class TaamRenderer extends TileEntitySpecialRenderer implements
-IItemRenderer, ITickHandler {
+IItemRenderer {
 
 	public final TechneModel modelSensor;
 	public final ResourceLocation textureSensor;
@@ -40,38 +39,23 @@ IItemRenderer, ITickHandler {
 //		ei = new EntityItem(null, 0, 0, 0, new ItemStack(Item.pickaxeDiamond));
 //		ri.setRenderManager(RenderManager.instance);
 		
-		String reconstructor = "/assets/" + Taam.MOD_ID
-				+ "/models/sensor.tcn";
-		modelSensor = new TechneModel(reconstructor,
-				TaamRenderer.class.getResource(reconstructor));
+		modelSensor = new TechneModel(new ResourceLocation(Taam.MOD_ID + ":models/sensor.tcn"));
 		textureSensor = new ResourceLocation(Taam.MOD_ID
 				+ ":textures/models/sensor.png");
 		textureSensorBlink = new ResourceLocation(Taam.MOD_ID
 				+ ":textures/models/sensor_blink.png");
 	}
-
-	@Override
-	public void tickStart(EnumSet<TickType> type, Object... tickData) {
-	}
-
-	@Override
-	public void tickEnd(EnumSet<TickType> type, Object... tickData) {
-		rot++;
-	}
-
-	@Override
-	public EnumSet<TickType> ticks() {
-		return EnumSet.of(TickType.CLIENT);
-	}
-
-	@Override
-	public String getLabel() {
-		return "Taam TE Rendering Update";
+	
+	public void tickEvent(TickEvent event) {
+		if(event.type == Type.CLIENT && event.phase == Phase.END) {
+			rot++;
+		}
 	}
 
 	@Override
 	public boolean handleRenderType(ItemStack item, ItemRenderType type) {
-		return Block.blocksList[item.itemID] instanceof BlockSensor;
+
+		return Block.getBlockFromItem(item.getItem()) instanceof BlockSensor;
 	}
 
 	@Override

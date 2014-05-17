@@ -3,19 +3,18 @@ package founderio.taam.blocks.multinet;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import codechicken.lib.data.MCDataInput;
 import codechicken.lib.data.MCDataOutput;
-import codechicken.lib.lighting.LazyLightMatrix;
 import codechicken.lib.raytracer.IndexedCuboid6;
 import codechicken.lib.render.CCModel;
 import codechicken.lib.render.CCRenderState;
-import codechicken.lib.render.IconTransformation;
 import codechicken.lib.render.TextureUtils;
+import codechicken.lib.render.uv.IconTransformation;
 import codechicken.lib.vec.BlockCoord;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Translation;
@@ -125,11 +124,12 @@ public abstract class MultinetCable extends MultinetMultipart {
 	
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void renderStatic(Vector3 pos, LazyLightMatrix olm, int pass) {
-		MultinetCable.render(world(), pos, olm, pass, face, layer, false);
+	public boolean renderStatic(Vector3 pos, int pass) {
+		MultinetCable.render(world(), pos, pass, face, layer, false);
+		return true;
 	}
 	
-	public static void render(World world, Vector3 pos, LazyLightMatrix olm, int pass, ForgeDirection face, int layer, boolean preview) {
+	public static void render(World world, Vector3 pos, int pass, ForgeDirection face, int layer, boolean preview) {
 
 		float layerOffset = (float)layer/MultinetUtil.layerCount;
 		float ox1 = 0;
@@ -139,15 +139,14 @@ public abstract class MultinetCable extends MultinetMultipart {
 		float oy2 = 0;
 		float oz2 = 0;
 		
-		IconTransformation ictrans = new IconTransformation(Block.blockRedstone.getBlockTextureFromSide(0));
+		IconTransformation ictrans = new IconTransformation(Blocks.redstone_block.getBlockTextureFromSide(0));
 		
 		TextureUtils.bindAtlas(0);
-		CCRenderState.useNormals(true);
+		CCRenderState.useNormals = true;
         CCRenderState.setBrightness(world, (int)Math.round(pos.x), (int)Math.round(pos.y), (int)Math.round(pos.z));
-        CCRenderState.useModelColours(true);
 
 		if(preview) {
-			CCRenderState.setAlpha(80);
+			CCRenderState.alphaOverride = 80;
 		}
 		
 		switch(face) {

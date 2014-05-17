@@ -1,11 +1,10 @@
 package founderio.taam.blocks;
 
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.INetworkManager;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.Packet132TileEntityData;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.Packet;
+import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import cpw.mods.fml.common.network.PacketDispatcher;
 
 public abstract class BaseTileEntity extends TileEntity {
 
@@ -24,26 +23,22 @@ public abstract class BaseTileEntity extends TileEntity {
 		if (worldObj.isRemote) {
 			return;
 		}
-		PacketDispatcher.sendPacketToAllAround(xCoord, yCoord, zCoord, 128,
-				worldObj.provider.dimensionId, getDescriptionPacket());
+		this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 	}
-
+	
 	@Override
-	public final Packet getDescriptionPacket() {
-		NBTTagCompound nbt = new NBTTagCompound();
-		writePropertiesToNBTInternal(nbt);
-
-		Packet132TileEntityData packet = new Packet132TileEntityData(xCoord,
-				yCoord, zCoord, 0, nbt);
-
-		return packet;
-	}
-
-	@Override
-	public final void onDataPacket(INetworkManager net, Packet132TileEntityData pkt) {
-		NBTTagCompound nbt = pkt.data;
+	public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt) {
+		NBTTagCompound nbt = pkt.func_148857_g();
 
 		readPropertiesFromNBTInternal(nbt);
+	}
+	
+	@Override
+	public Packet getDescriptionPacket() {
+		NBTTagCompound nbt = new NBTTagCompound();
+		writePropertiesToNBTInternal(nbt);
+		
+		return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, 0, nbt);
 	}
 
 	@Override

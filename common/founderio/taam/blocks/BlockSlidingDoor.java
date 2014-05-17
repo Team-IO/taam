@@ -1,17 +1,17 @@
 package founderio.taam.blocks;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import net.minecraftforge.common.MinecraftForge;
 
 public class BlockSlidingDoor extends BaseBlock {
 
-	public BlockSlidingDoor(int par1) {
-		super(par1, Material.iron);
+	public BlockSlidingDoor() {
+		super(Material.iron);
 		this.setHardness(3.5f);
-		this.setStepSound(soundMetalFootstep);
-		MinecraftForge.setBlockHarvestLevel(this, "pickaxe", 1);
+		this.setStepSound(Block.soundTypeMetal);
+		this.setHarvestLevel("pickaxe", 1);
 	}
 
 	@Override
@@ -40,7 +40,7 @@ public class BlockSlidingDoor extends BaseBlock {
 	}
 
 	@Override
-	public boolean isBlockNormalCube(World world, int x, int y, int z) {
+	public boolean isNormalCube() {
 		return false;
 	}
 

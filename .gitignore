@@ -2,3 +2,13 @@
 
 # Package Files #
 /bin
+/build
+/resourcepacks
+/mods
+/saves
+/logs
+/options.txt
+/crash-reports
+/config
+/asm
+/.gradle

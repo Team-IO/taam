@@ -4,7 +4,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.ForgeDirection;
 import codechicken.lib.vec.BlockCoord;
 import codechicken.lib.vec.Vector3;
 import founderio.taam.blocks.multinet.MultinetCable;
@@ -12,8 +12,8 @@ import founderio.taam.multinet.MultinetUtil;
 
 public class ItemDebugTool extends Item {
 
-	public ItemDebugTool(int par1) {
-		super(par1);
+	public ItemDebugTool() {
+		super();
 		this.setMaxStackSize(1);
 		this.setMaxDamage(0);
 	}

@@ -9,19 +9,19 @@ import net.minecraft.world.World;
 
 public abstract class BaseBlock extends Block {
 
-	public BaseBlock(int par1, Material par2Material) {
-		super(par1, par2Material);
+	public BaseBlock(Material material) {
+		super(material);
 	}
 
 	@Override
-	public void onBlockPlacedBy(World par1World, int par2, int par3, int par4,
-			EntityLivingBase par5EntityLivingBase, ItemStack par6ItemStack) {
+	public void onBlockPlacedBy(World world, int x, int y, int z,
+			EntityLivingBase entity, ItemStack itemStack) {
 		// Update Owner
-		if (par5EntityLivingBase instanceof EntityPlayer) {
-			BaseTileEntity te = ((BaseTileEntity) par1World
-					.getBlockTileEntity(par2, par3, par4));
-			te.setOwner(((EntityPlayer) par5EntityLivingBase).username);
+		if (entity instanceof EntityPlayer) {
+			BaseTileEntity te = (BaseTileEntity) world.getTileEntity(x, y, z);
+			// TODO: Change to UUID
+			te.setOwner(((EntityPlayer) entity).getDisplayName());
 		}
 	}
-	
+
 }

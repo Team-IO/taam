@@ -1,11 +1,12 @@
 package founderio.taam;
 
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.Property;
+import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.config.Property;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -14,8 +15,9 @@ import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import founderio.taam.blocks.BlockSensor;
 import founderio.taam.blocks.BlockSlidingDoor;
 import founderio.taam.blocks.TileEntitySensor;
@@ -26,10 +28,8 @@ import founderio.taam.blocks.multinet.MultinetPartFactory;
 import founderio.taam.blocks.multinet.cables.OperatorRedstone;
 import founderio.taam.items.ItemDebugTool;
 import founderio.taam.multinet.Multinet;
-import founderio.taam.multinet.MultinetUtil;
 
-@Mod(modid = Taam.MOD_ID, name = Taam.MOD_NAME, version = Taam.MOD_VERSION)
-@NetworkMod(clientSideRequired = true, serverSideRequired = false)
+@Mod(modid = Taam.MOD_ID, name = Taam.MOD_NAME, version = Taam.MOD_VERSION, dependencies = "required-after:ForgeMultipart")
 public class TaamMain {
 	@Instance(Taam.MOD_ID)
 	public static TaamMain instance;
@@ -85,30 +85,39 @@ public class TaamMain {
 		creativeTab = new CreativeTabs(Taam.MOD_ID) {
 
 			@Override
+			@SideOnly(Side.CLIENT)
 			public ItemStack getIconItemStack() {
 				return new ItemStack(blockSensor);
 			}
+			
+			
+			@Override
+			@SideOnly(Side.CLIENT)
+			public Item getTabIconItem() {
+				// TODO Auto-generated method stub
+				return null;
+			}
 		};
 
-		blockSensor = new BlockSensor(config.getBlock(Taam.BLOCK_SENSOR, 3030).getInt());
-		blockSensor.setUnlocalizedName(Taam.BLOCK_SENSOR);
+		blockSensor = new BlockSensor();
+		blockSensor.setBlockName(Taam.BLOCK_SENSOR);
 		blockSensor.setCreativeTab(creativeTab);
 		
-		blockSlidingDoor = new BlockSlidingDoor(config.getBlock(Taam.BLOCK_SLIDINGDOOR, 3031).getInt());
-		blockSlidingDoor.setUnlocalizedName(Taam.BLOCK_SLIDINGDOOR);
+		blockSlidingDoor = new BlockSlidingDoor();
+		blockSlidingDoor.setBlockName(Taam.BLOCK_SLIDINGDOOR);
 		blockSlidingDoor.setCreativeTab(creativeTab);
 
 		multinetMultipart = new MultinetPartFactory();
 		
-		itemMultinetCable = new ItemMultinetCable(config.getItem(Taam.ITEM_MULTINET_CABLE, 3032).getInt());
+		itemMultinetCable = new ItemMultinetCable();
 		itemMultinetCable.setUnlocalizedName(Taam.ITEM_MULTINET_CABLE);
 		itemMultinetCable.setCreativeTab(creativeTab);
 		
-		itemMultinetDebugger = new ItemDebugTool(config.getItem(Taam.ITEM_MULTINET_DEBUGGER, 3033).getInt());
+		itemMultinetDebugger = new ItemDebugTool();
 		itemMultinetDebugger.setUnlocalizedName(Taam.ITEM_MULTINET_DEBUGGER);
 		itemMultinetDebugger.setCreativeTab(creativeTab);
 		
-		itemMultinetMultitronix = new ItemMultinetMultitronix(config.getItem(Taam.ITEM_MULTINET_MULTITRONIX, 3034).getInt());
+		itemMultinetMultitronix = new ItemMultinetMultitronix();
 		itemMultinetMultitronix.setUnlocalizedName(Taam.ITEM_MULTINET_MULTITRONIX);
 		itemMultinetMultitronix.setCreativeTab(creativeTab);
 		
@@ -116,7 +125,7 @@ public class TaamMain {
 		
 		config.save();
 
-		GameRegistry.registerBlock(blockSensor, ItemBlock.class, Taam.BLOCK_SENSOR, Taam.MOD_ID);
+		GameRegistry.registerBlock(blockSensor, ItemBlock.class, Taam.BLOCK_SENSOR);
 		//GameRegistry.registerBlock(blockSlidingDoor, ItemBlock.class, Taam.BLOCK_SLIDINGDOOR, Taam.MOD_ID);
 		
 		GameRegistry.registerTileEntity(TileEntitySensor.class, Taam.TILEENTITY_SENSOR);

@@ -1,9 +1,8 @@
 package founderio.taam.blocks.multinet;
 
-import net.minecraft.util.EnumMovingObjectType;
+import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
-import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.event.ForgeSubscribe;
+import net.minecraftforge.common.util.ForgeDirection;
 
 import org.lwjgl.opengl.GL11;
 
@@ -11,6 +10,7 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.RenderUtils;
 import codechicken.lib.render.TextureUtils;
 import codechicken.lib.vec.Vector3;
+import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import founderio.taam.TaamMain;
@@ -18,12 +18,12 @@ import founderio.taam.multinet.MultinetUtil;
 
 public class MultinetHandler {
 
-	@ForgeSubscribe
+	@EventHandler
     @SideOnly(Side.CLIENT)
     public void drawBlockHighlight(DrawBlockHighlightEvent event)
     {
         if(event.currentItem != null && event.currentItem.getItem() == TaamMain.itemMultinetCable && 
-                event.target != null && event.target.typeOfHit == EnumMovingObjectType.TILE)
+                event.target != null && event.target.typeOfHit == MovingObjectType.BLOCK)
         {
         	ForgeDirection dir = ForgeDirection.getOrientation(event.target.sideHit);
             ForgeDirection dirOpp = dir.getOpposite();
@@ -48,11 +48,11 @@ public class MultinetHandler {
                 CCRenderState.reset();
                 TextureUtils.bindAtlas(0);
 
-                CCRenderState.startDrawing(7);
+                CCRenderState.startDrawing();
 
                 MultinetCable.render(event.player.worldObj,
                 		new Vector3(dir.offsetX, dir.offsetY, dir.offsetZ),
-                		null, 1, dirOpp, MultinetUtil.getHitLayer(dirOpp, localHit), true);
+                		1, dirOpp, MultinetUtil.getHitLayer(dirOpp, localHit), true);
                 
                 CCRenderState.draw();
                 

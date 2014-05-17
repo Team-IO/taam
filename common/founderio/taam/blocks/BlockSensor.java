@@ -4,14 +4,13 @@ import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.entity.Entity;
+import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.ForgeDirection;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import founderio.taam.Taam;
@@ -36,11 +35,11 @@ public class BlockSensor extends BaseBlock {
 		Taam.BLOCK_SENSOR_MINECT
 	};
 	
-	public BlockSensor(int par1) {
-		super(par1, Material.iron);
+	public BlockSensor() {
+		super(Material.iron);
 		this.setHardness(3.5f);
-		this.setStepSound(Block.soundMetalFootstep);
-		MinecraftForge.setBlockHarvestLevel(this, "pickaxe", 1);
+		this.setStepSound(Block.soundTypeMetal);
+		this.setHarvestLevel("pickaxe", 1);
 	}
 	
 	@Override
@@ -154,7 +153,7 @@ public class BlockSensor extends BaseBlock {
 		ForgeDirection dir = ForgeDirection.getOrientation(rotation);
 		ForgeDirection sideDir = ForgeDirection.getOrientation(side);
 		if(dir == sideDir) {
-			TileEntitySensor te = ((TileEntitySensor) world.getBlockTileEntity(x, y, z));
+			TileEntitySensor te = ((TileEntitySensor) world.getTileEntity(x, y, z));
 			return te.isPowering();
 		} else {
 			return 0;
@@ -169,32 +168,33 @@ public class BlockSensor extends BaseBlock {
 		ForgeDirection dir = ForgeDirection.getOrientation(rotation);
 		ForgeDirection sideDir = ForgeDirection.getOrientation(side);
 		if(dir == sideDir) {
-			TileEntitySensor te = ((TileEntitySensor) world.getBlockTileEntity(x, y, z));
+			TileEntitySensor te = ((TileEntitySensor) world.getTileEntity(x, y, z));
 			return te.isPowering();
 		} else {
 			return 0;
 		}
 	}
-
+	
 	@Override
-	public boolean isBlockNormalCube(World world, int x, int y, int z) {
+	@SideOnly(Side.CLIENT)
+	public boolean isBlockNormalCube() {
 		return false;
 	}
 
 	@Override
-	public boolean isBlockSolidOnSide(World world, int x, int y, int z,
-			ForgeDirection side) {
+	public boolean isBlockSolid(IBlockAccess world, int x,
+			int y, int z, int side) {
 		return false;
-	};
+	}
 	
-	public void updateBlocksAround(World par1World, int par2, int par3, int par4) {
-		par1World.notifyBlocksOfNeighborChange(par2, par3, par4, this.blockID);
-		par1World.notifyBlocksOfNeighborChange(par2 + 1, par3, par4, this.blockID);
-        par1World.notifyBlocksOfNeighborChange(par2 - 1, par3, par4, this.blockID);
-        par1World.notifyBlocksOfNeighborChange(par2, par3, par4 + 1, this.blockID);
-        par1World.notifyBlocksOfNeighborChange(par2, par3, par4 - 1, this.blockID);
-        par1World.notifyBlocksOfNeighborChange(par2, par3 - 1, par4, this.blockID);
-        par1World.notifyBlocksOfNeighborChange(par2, par3 + 1, par4, this.blockID);
+	public void updateBlocksAround(World world, int x, int y, int z) {
+		world.notifyBlocksOfNeighborChange(x, y, z, this);
+		world.notifyBlocksOfNeighborChange(x + 1, y, z, this);
+		world.notifyBlocksOfNeighborChange(x - 1, y, z, this);
+		world.notifyBlocksOfNeighborChange(x, y, z + 1, this);
+		world.notifyBlocksOfNeighborChange(x, y, z - 1, this);
+		world.notifyBlocksOfNeighborChange(x, y - 1, z, this);
+		world.notifyBlocksOfNeighborChange(x, y + 1, z, this);
 	}
 
 	@Override
@@ -212,17 +212,16 @@ public class BlockSensor extends BaseBlock {
 	}
 	
 	@Override
-	public void breakBlock(World par1World, int par2, int par3, int par4,
-			int par5, int par6) {
-		updateBlocksAround(par1World, par2, par3, par4);
-		
-		super.breakBlock(par1World, par2, par3, par4, par5, par6);
+	public void breakBlock(World world, int x, int y,
+			int z, Block block, int meta) {
+		updateBlocksAround(world, x, y, z);
+		super.breakBlock(world, x, y, z, block, meta);
 	}
 	
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister par1IconRegister) {
-		this.blockIcon = par1IconRegister.registerIcon(Taam.MOD_ID + ":tech_block");
+	protected String getTextureName() {
+		return Taam.MOD_ID + ":tech_block";
 	}
 	
 	@Override
@@ -231,23 +230,23 @@ public class BlockSensor extends BaseBlock {
 		int rotation = meta & 7;
 		ForgeDirection dir = ForgeDirection.getOrientation(rotation).getOpposite();
 		
-		return world.isBlockSolidOnSide(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ, ForgeDirection.getOrientation(rotation));
+		return world.isSideSolid(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ, ForgeDirection.getOrientation(rotation));
 	}
 	
 	@Override
 	public boolean canPlaceBlockOnSide(World world, int x, int y,
 			int z, int side) {
 		ForgeDirection dir = ForgeDirection.getOrientation(side).getOpposite();
-		return world.isBlockSolidOnSide(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ, dir);
+		return world.isSideSolid(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ, dir);
 	}
 	
 	@Override
 	public void onNeighborBlockChange(World world, int x, int y,
-			int z, int neighborId) {
+			int z, Block neighbor) {
 		if(!canBlockStay(world, x, y, z)) {
 			int meta = world.getBlockMetadata(x, y, z);
             dropBlockAsItem(world, x, y, z, meta, 0);
-            world.setBlock(x, y, z, 0, 0, 3);
+            world.setBlock(x, y, z, Blocks.air, 0, 3);
 		}
 	}
 	
