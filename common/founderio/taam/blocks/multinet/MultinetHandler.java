@@ -10,7 +10,7 @@ import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.RenderUtils;
 import codechicken.lib.render.TextureUtils;
 import codechicken.lib.vec.Vector3;
-import cpw.mods.fml.common.Mod.EventHandler;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import founderio.taam.TaamMain;
@@ -18,7 +18,7 @@ import founderio.taam.multinet.MultinetUtil;
 
 public class MultinetHandler {
 
-	@EventHandler
+	@SubscribeEvent
     @SideOnly(Side.CLIENT)
     public void drawBlockHighlight(DrawBlockHighlightEvent event)
     {
@@ -47,7 +47,6 @@ public class MultinetHandler {
                 
                 CCRenderState.reset();
                 TextureUtils.bindAtlas(0);
-
                 CCRenderState.startDrawing();
 
                 MultinetCable.render(event.player.worldObj,
