@@ -1,2 +1,10 @@
-tile.taam.sensor.name=Motion Sensor
+#Item localization
+item.taam.item.debugger=Debugger
+
+#Creativ Tap localization
 itemGroup.taam=Taam
+
+#Block localization
+tile.taam.sensor.name=Motion Sensor
+tile.taam.item.cable=MulitNet Cable
+tile.taam.slidingdoor=Sliding Door

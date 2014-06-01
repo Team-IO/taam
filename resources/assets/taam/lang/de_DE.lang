@@ -1,2 +1,6 @@
+#Item localization
 tile.taam.sensor.name=Bewegungs Sensor
+tile.taam.item.cable=MulitNet Kabel
+tile.taam.item.debugger=Debugger
+#Creativ Tap localization
 itemGroup.taam=Taam

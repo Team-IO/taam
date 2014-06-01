@@ -27,6 +27,7 @@ import founderio.taam.blocks.multinet.MultinetHandler;
 import founderio.taam.blocks.multinet.MultinetPartFactory;
 import founderio.taam.blocks.multinet.cables.OperatorRedstone;
 import founderio.taam.items.ItemDebugTool;
+import founderio.taam.items.ItemPhotoCell;
 import founderio.taam.multinet.Multinet;
 
 @Mod(modid = Taam.MOD_ID, name = Taam.MOD_NAME, version = Taam.MOD_VERSION, dependencies = "required-after:ForgeMultipart")
@@ -42,12 +43,13 @@ public class TaamMain {
 	public static ItemMultinetCable itemMultinetCable;
 	public static ItemMultinetMultitronix itemMultinetMultitronix;
 	public static ItemDebugTool itemMultinetDebugger;
+	public static ItemPhotoCell itemPhotoCell;
 	
 	public static CreativeTabs creativeTab;
 
 	public static BlockSensor blockSensor;
-	
 	public static BlockSlidingDoor blockSlidingDoor;
+	
 	
 	private Configuration config;
 	
@@ -121,9 +123,15 @@ public class TaamMain {
 		itemMultinetMultitronix.setUnlocalizedName(Taam.ITEM_MULTINET_MULTITRONIX);
 		itemMultinetMultitronix.setCreativeTab(creativeTab);
 		
+		itemPhotoCell = new ItemPhotoCell();
+		itemPhotoCell.setUnlocalizedName(Taam.ITEM_PHOTOCELL);
+		itemPhotoCell.setCreativeTab(creativeTab);
+		
 		Multinet.registerOperator(new OperatorRedstone("redstone"));
 		
 		config.save();
+		
+		GameRegistry.registerItem(itemPhotoCell, Taam.ID_ITEM_PHOTOCELL, Taam.MOD_ID);
 
 		GameRegistry.registerBlock(blockSensor, ItemBlock.class, Taam.BLOCK_SENSOR);
 		//GameRegistry.registerBlock(blockSlidingDoor, ItemBlock.class, Taam.BLOCK_SLIDINGDOOR, Taam.MOD_ID);
@@ -141,5 +149,9 @@ public class TaamMain {
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
 
+	}
+	
+	public void craftingrecipe(){
+		
 	}
 }
