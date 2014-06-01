@@ -3,6 +3,7 @@ package founderio.taam.blocks.multinet;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -122,6 +123,8 @@ public abstract class MultinetCable extends MultinetMultipart {
 		}
 	}
 	
+	
+	
 	@Override
 	@SideOnly(Side.CLIENT)
 	public boolean renderStatic(Vector3 pos, int pass) {
@@ -142,9 +145,10 @@ public abstract class MultinetCable extends MultinetMultipart {
 		IconTransformation ictrans = new IconTransformation(Blocks.redstone_block.getBlockTextureFromSide(0));
 		
 		TextureUtils.bindAtlas(0);
-		CCRenderState.useNormals = true;
+		CCRenderState.useNormals = false;
+		CCRenderState.pullLightmap();
         CCRenderState.setBrightness(world, (int)Math.round(pos.x), (int)Math.round(pos.y), (int)Math.round(pos.z));
-
+//		CCRenderState.changeTexture(Taam.MOD_ID + ":tech_block");
 		if(preview) {
 			CCRenderState.alphaOverride = 80;
 		}
@@ -154,78 +158,77 @@ public abstract class MultinetCable extends MultinetMultipart {
 			ox1 = layerOffset;
 			oy1 = 0;
 			oz1 = 0;
-			ox2 = layerOffset + MultinetUtil.cableWidth;
+			ox2 = MultinetUtil.cableWidth;
 			oy2 = MultinetUtil.cableWidth;
 			oz2 = 1;
-			ccm.generateBlock(0, ox1, oy1, oz1,
-								 ox2, oy2, oz2);
-			
+			ccm.generateBox(0, ox1, oy1, oz1,
+					ox2, oy2, oz2, 0, 0, 16, 16, 1);
 			ox1 = 0;
 			oy1 = 0;
 			oz1 = layerOffset;
 			ox2 = 1;
 			oy2 = MultinetUtil.cableWidth;
-			oz2 = layerOffset + MultinetUtil.cableWidth;
+			oz2 = MultinetUtil.cableWidth;
 
-			ccm.generateBlock(24, ox1, oy1, oz1,
-					 ox2, oy2, oz2).render(new Translation(pos), ictrans);
+			ccm.generateBox(24, ox1, oy1, oz1,
+					ox2, oy2, oz2, 0, 0, 16, 16, 1);
 			break;
 		case UP:
 			ox1 = layerOffset;
 			oy1 = 1 - MultinetUtil.cableWidth;
 			oz1 = 0;
-			ox2 = layerOffset + MultinetUtil.cableWidth;
-			oy2 = 1;
+			ox2 = MultinetUtil.cableWidth;
+			oy2 = MultinetUtil.cableWidth;
 			oz2 = 1;
-			ccm.generateBlock(0, ox1, oy1, oz1,
-					 ox2, oy2, oz2);
+			ccm.generateBox(0, ox1, oy1, oz1,
+					ox2, oy2, oz2, 0, 0, 16, 16, 1);
 			ox1 = 0;
 			oy1 = 1f - MultinetUtil.cableWidth;
 			oz1 = layerOffset;
 			ox2 = 1;
-			oy2 = 1;
-			oz2 = layerOffset + MultinetUtil.cableWidth;
+			oy2 = MultinetUtil.cableWidth;
+			oz2 = MultinetUtil.cableWidth;
 
-			ccm.generateBlock(24, ox1, oy1, oz1,
-					 ox2, oy2, oz2).render(new Translation(pos), ictrans);
+			ccm.generateBox(24, ox1, oy1, oz1,
+					ox2, oy2, oz2, 0, 0, 16, 16, 1);
 			break;
 		case NORTH:
 			ox1 = layerOffset;
 			oy1 = 0;
 			oz1 = 0;
-			ox2 = layerOffset + MultinetUtil.cableWidth;
+			ox2 = MultinetUtil.cableWidth;
 			oy2 = 1;
 			oz2 = MultinetUtil.cableWidth;
-			ccm.generateBlock(0, ox1, oy1, oz1,
-					 ox2, oy2, oz2);
+			ccm.generateBox(0, ox1, oy1, oz1,
+					ox2, oy2, oz2, 0, 0, 16, 16, 1);
 			ox1 = 0;
 			oy1 = layerOffset;
 			oz1 = 0;
 			ox2 = 1;
-			oy2 = layerOffset + MultinetUtil.cableWidth;
+			oy2 = MultinetUtil.cableWidth;
 			oz2 = MultinetUtil.cableWidth;
 
-			ccm.generateBlock(24, ox1, oy1, oz1,
-					 ox2, oy2, oz2).render(new Translation(pos), ictrans);
+			ccm.generateBox(24, ox1, oy1, oz1,
+					ox2, oy2, oz2, 0, 0, 16, 16, 1);
 			break;
 		case SOUTH:
 			ox1 = layerOffset;
 			oy1 = 0;
 			oz1 = 1 - MultinetUtil.cableWidth;
-			ox2 = layerOffset + MultinetUtil.cableWidth;
+			ox2 = MultinetUtil.cableWidth;
 			oy2 = 1;
-			oz2 = 1;
-			ccm.generateBlock(0, ox1, oy1, oz1,
-					 ox2, oy2, oz2);
+			oz2 = MultinetUtil.cableWidth;
+			ccm.generateBox(0, ox1, oy1, oz1,
+					ox2, oy2, oz2, 0, 0, 16, 16, 1);
 			ox1 = 0;
 			oy1 = layerOffset;
 			oz1 = 1 - MultinetUtil.cableWidth;
 			ox2 = 1;
-			oy2 = layerOffset + MultinetUtil.cableWidth;
-			oz2 = 1;
+			oy2 = MultinetUtil.cableWidth;
+			oz2 = MultinetUtil.cableWidth;
 
-			ccm.generateBlock(24, ox1, oy1, oz1,
-					 ox2, oy2, oz2).render(new Translation(pos), ictrans);
+			ccm.generateBox(24, ox1, oy1, oz1,
+					ox2, oy2, oz2, 0, 0, 16, 16, 1);
 			break;
 		case WEST:
 			ox1 = 0;
@@ -233,41 +236,44 @@ public abstract class MultinetCable extends MultinetMultipart {
 			oz1 = layerOffset;
 			ox2 = MultinetUtil.cableWidth;
 			oy2 = 1;
-			oz2 = layerOffset + MultinetUtil.cableWidth;
-			ccm.generateBlock(0, ox1, oy1, oz1,
-					 ox2, oy2, oz2);
+			oz2 = MultinetUtil.cableWidth;
+			ccm.generateBox(0, ox1, oy1, oz1,
+					ox2, oy2, oz2, 0, 0, 16, 16, 1);
 			ox1 = 0;
 			oy1 = layerOffset;
 			oz1 = 0;
 			ox2 = MultinetUtil.cableWidth;
-			oy2 = layerOffset + MultinetUtil.cableWidth;
+			oy2 = MultinetUtil.cableWidth;
 			oz2 = 1;
 
-			ccm.generateBlock(24, ox1, oy1, oz1,
-					 ox2, oy2, oz2).render(new Translation(pos), ictrans);
+			ccm.generateBox(24, ox1, oy1, oz1,
+					ox2, oy2, oz2, 0, 0, 16, 16, 1);
 			break;
 		case EAST:
 			ox1 = 1 - MultinetUtil.cableWidth;
 			oy1 = 0;
 			oz1 = layerOffset;
-			ox2 = 1;
+			ox2 = MultinetUtil.cableWidth;
 			oy2 = 1;
-			oz2 = layerOffset + MultinetUtil.cableWidth;
-			ccm.generateBlock(0, ox1, oy1, oz1,
-					 ox2, oy2, oz2);
+			oz2 = MultinetUtil.cableWidth;
+			ccm.generateBox(0, ox1, oy1, oz1,
+					ox2, oy2, oz2, 0, 0, 16, 16, 1);
 			ox1 = 1 - MultinetUtil.cableWidth;
 			oy1 = layerOffset;
 			oz1 = 0;
-			ox2 = 1;
-			oy2 = layerOffset + MultinetUtil.cableWidth;
+			ox2 = MultinetUtil.cableWidth;
+			oy2 = MultinetUtil.cableWidth;
 			oz2 = 1;
 
-			ccm.generateBlock(24, ox1, oy1, oz1,
-					 ox2, oy2, oz2).render(new Translation(pos), ictrans);
+			ccm.generateBox(24, ox1, oy1, oz1,
+					ox2, oy2, oz2, 0, 0, 16, 16, 1);
 			break;
 		default:
 			break;
 		}
+//		ccm.computeLightCoords();
+		ccm.render(new Translation(pos), ictrans);
+		TextureUtils.bindAtlas(0);
 	}
 	
 	@Override

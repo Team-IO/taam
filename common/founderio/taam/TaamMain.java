@@ -106,8 +106,6 @@ public class TaamMain {
 		blockSlidingDoor = new BlockSlidingDoor();
 		blockSlidingDoor.setBlockName(Taam.BLOCK_SLIDINGDOOR);
 		blockSlidingDoor.setCreativeTab(creativeTab);
-
-		multinetMultipart = new MultinetPartFactory();
 		
 		itemMultinetCable = new ItemMultinetCable();
 		itemMultinetCable.setUnlocalizedName(Taam.ITEM_MULTINET_CABLE);
@@ -125,6 +123,10 @@ public class TaamMain {
 		
 		config.save();
 
+		GameRegistry.registerItem(itemMultinetCable, Taam.ITEM_MULTINET_CABLE, Taam.MOD_ID);
+		GameRegistry.registerItem(itemMultinetDebugger, Taam.ITEM_MULTINET_DEBUGGER, Taam.MOD_ID);
+		GameRegistry.registerItem(itemMultinetMultitronix, Taam.ITEM_MULTINET_MULTITRONIX, Taam.MOD_ID);
+		
 		GameRegistry.registerBlock(blockSensor, ItemBlock.class, Taam.BLOCK_SENSOR);
 		//GameRegistry.registerBlock(blockSlidingDoor, ItemBlock.class, Taam.BLOCK_SLIDINGDOOR, Taam.MOD_ID);
 		
@@ -134,6 +136,8 @@ public class TaamMain {
 
 	@EventHandler
 	public void init(FMLInitializationEvent event) {
+
+		multinetMultipart = new MultinetPartFactory();
 		proxy.registerRenderStuff();
 		MinecraftForge.EVENT_BUS.register(new MultinetHandler());
 	}
