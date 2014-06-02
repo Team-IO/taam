@@ -129,7 +129,7 @@ public class TaamMain {
 		
 		config.save();
 		
-		GameRegistry.registerItem(itemPhotoCell, Taam.ID_ITEM_PHOTOCELL, Taam.MOD_ID);
+		GameRegistry.registerItem(itemPhotoCell, Taam.ITEM_PHOTOCELL, Taam.MOD_ID);
 
 		GameRegistry.registerItem(itemMultinetCable, Taam.ITEM_MULTINET_CABLE, Taam.MOD_ID);
 		GameRegistry.registerItem(itemMultinetDebugger, Taam.ITEM_MULTINET_DEBUGGER, Taam.MOD_ID);
