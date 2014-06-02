@@ -1,6 +1,8 @@
 package founderio.taam;
 
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -28,6 +30,7 @@ import founderio.taam.blocks.multinet.MultinetPartFactory;
 import founderio.taam.blocks.multinet.cables.OperatorRedstone;
 import founderio.taam.items.ItemDebugTool;
 import founderio.taam.items.ItemPhotoCell;
+import founderio.taam.items.ItemPlastic;
 import founderio.taam.multinet.Multinet;
 
 @Mod(modid = Taam.MOD_ID, name = Taam.MOD_NAME, version = Taam.MOD_VERSION, dependencies = "required-after:ForgeMultipart")
@@ -44,6 +47,7 @@ public class TaamMain {
 	public static ItemMultinetMultitronix itemMultinetMultitronix;
 	public static ItemDebugTool itemMultinetDebugger;
 	public static ItemPhotoCell itemPhotoCell;
+	public static ItemPlastic itemPlastic;
 	
 	public static CreativeTabs creativeTab;
 
@@ -125,12 +129,17 @@ public class TaamMain {
 		itemPhotoCell.setUnlocalizedName(Taam.ITEM_PHOTOCELL);
 		itemPhotoCell.setCreativeTab(creativeTab);
 		
+		itemPlastic = new ItemPlastic();
+		itemPlastic.setUnlocalizedName(Taam.ITEM_PLASTIC);
+		itemPlastic.setCreativeTab(creativeTab);
+		
 		Multinet.registerOperator(new OperatorRedstone("redstone"));
 		
 		config.save();
 		
 		GameRegistry.registerItem(itemPhotoCell, Taam.ITEM_PHOTOCELL, Taam.MOD_ID);
-
+		GameRegistry.registerItem(itemPlastic, Taam.ITEM_PLASTIC, Taam.MOD_ID);
+		
 		GameRegistry.registerItem(itemMultinetCable, Taam.ITEM_MULTINET_CABLE, Taam.MOD_ID);
 		GameRegistry.registerItem(itemMultinetDebugger, Taam.ITEM_MULTINET_DEBUGGER, Taam.MOD_ID);
 		GameRegistry.registerItem(itemMultinetMultitronix, Taam.ITEM_MULTINET_MULTITRONIX, Taam.MOD_ID);
@@ -148,14 +157,16 @@ public class TaamMain {
 		multinetMultipart = new MultinetPartFactory();
 		proxy.registerRenderStuff();
 		MinecraftForge.EVENT_BUS.register(new MultinetHandler());
+		
+		
+		GameRegistry.addRecipe(new ItemStack(itemPhotoCell, 9), "GGG", "GDG", "PRP", 'G', Blocks.glass, 'D', Blocks.daylight_detector, 'P', new ItemStack(itemPlastic), 'R', Items.redstone);
+		GameRegistry.addRecipe(new ItemStack(blockSensor, 1), "PGP", "PpP", "IRI", 'P', new ItemStack(itemPlastic), 'G', Blocks.glass, 'p', new ItemStack(itemPhotoCell), 'I', Items.iron_ingot, 'R', Items.redstone);
+		
 	}
 
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
 
 	}
-	
-	public void craftingrecipe(){
-		
-	}
+
 }

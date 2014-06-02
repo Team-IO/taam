@@ -26,6 +26,7 @@ public final class Taam {
 	public static final String ITEM_MULTINET_DEBUGGER = "taam.item.debugger";
 	public static final String ITEM_MULTINET_MULTITRONIX = "taam.item.multitronix";
 	public static final String ITEM_PHOTOCELL = "taam.item.photocell";
+	public static final String ITEM_PLASTIC = "taam.item.plastic";
 	
 	public static final String TILEENTITY_SENSOR = "taam.sensor";
 	public static final String TILEENTITY_SLIDINGDOOR = "taam.slidingdoor";
