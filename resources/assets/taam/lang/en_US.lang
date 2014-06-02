@@ -1,10 +1,13 @@
 #Item localization
 item.taam.item.debugger.name=Debugger
+item.taam.item.plastic.name=Plastic
+item.taam.item.photocell.name=Photo Cell
+item.taam.item.cable.name=MulitNet Cable
+item.taam.item.multitronix.name=Multitronix
 
 #Creativ Tap localization
 itemGroup.taam=Taam
 
 #Block localization
 tile.taam.sensor.name=Motion Sensor
-tile.taam.item.cable=MulitNet Cable
 tile.taam.slidingdoor=Sliding Door
