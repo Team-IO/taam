@@ -18,6 +18,7 @@ public final class Taam {
 	public static final String BLOCK_SLIDINGDOOR = "taam.slidingdoor";
 	public static final String BLOCK_SENSOR_MOTION = "taam.sensor.motion";
 	public static final String BLOCK_SENSOR_MINECT = "taam.sensor.minect";
+	public static final String BLOCK_COPPPER_ORE = "taam.copperore";
 	
 	public static final String MULTIPART_MULTINET_CABLE = "taam.multinet.cable";
 	public static final String MULTIPART_MULTINET_MULTITRONIX = "taam.multinet.multitronix";
@@ -27,6 +28,8 @@ public final class Taam {
 	public static final String ITEM_MULTINET_MULTITRONIX = "taam.item.multitronix";
 	public static final String ITEM_PHOTOCELL = "taam.item.photocell";
 	public static final String ITEM_PLASTIC = "taam.item.plastic";
+	public static final String ITEM_COPPER_INGOT = "taam.item.copper_ingot";
+	public static final String ITEM_TIN_INGOT = "taam.item.tin_ingot";
 	
 	public static final String TILEENTITY_SENSOR = "taam.sensor";
 	public static final String TILEENTITY_SLIDINGDOOR = "taam.slidingdoor";

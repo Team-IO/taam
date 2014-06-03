@@ -20,6 +20,7 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import founderio.taam.blocks.BlockCopperOre;
 import founderio.taam.blocks.BlockSensor;
 import founderio.taam.blocks.BlockSlidingDoor;
 import founderio.taam.blocks.TileEntitySensor;
@@ -28,9 +29,11 @@ import founderio.taam.blocks.multinet.ItemMultinetMultitronix;
 import founderio.taam.blocks.multinet.MultinetHandler;
 import founderio.taam.blocks.multinet.MultinetPartFactory;
 import founderio.taam.blocks.multinet.cables.OperatorRedstone;
+import founderio.taam.items.ItemCopperIngot;
 import founderio.taam.items.ItemDebugTool;
 import founderio.taam.items.ItemPhotoCell;
 import founderio.taam.items.ItemPlastic;
+import founderio.taam.items.ItemTinIngot;
 import founderio.taam.multinet.Multinet;
 
 @Mod(modid = Taam.MOD_ID, name = Taam.MOD_NAME, version = Taam.MOD_VERSION, dependencies = "required-after:ForgeMultipart")
@@ -48,12 +51,14 @@ public class TaamMain {
 	public static ItemDebugTool itemMultinetDebugger;
 	public static ItemPhotoCell itemPhotoCell;
 	public static ItemPlastic itemPlastic;
+	public static ItemCopperIngot itemCopperIngot;
+	public static ItemTinIngot itemTinIngot;
 	
 	public static CreativeTabs creativeTab;
 
 	public static BlockSensor blockSensor;
 	public static BlockSlidingDoor blockSlidingDoor;
-	
+	public static BlockCopperOre blockCopperOre;
 	
 	private Configuration config;
 	
@@ -113,6 +118,10 @@ public class TaamMain {
 		blockSlidingDoor.setBlockName(Taam.BLOCK_SLIDINGDOOR);
 		blockSlidingDoor.setCreativeTab(creativeTab);
 		
+		blockCopperOre = new BlockCopperOre();
+		blockCopperOre.setBlockName(Taam.BLOCK_COPPPER_ORE);
+		blockCopperOre.setCreativeTab(creativeTab);
+		
 		itemMultinetCable = new ItemMultinetCable();
 		itemMultinetCable.setUnlocalizedName(Taam.ITEM_MULTINET_CABLE);
 		itemMultinetCable.setCreativeTab(creativeTab);
@@ -133,6 +142,10 @@ public class TaamMain {
 		itemPlastic.setUnlocalizedName(Taam.ITEM_PLASTIC);
 		itemPlastic.setCreativeTab(creativeTab);
 		
+		itemCopperIngot = new ItemCopperIngot();
+		itemCopperIngot.setUnlocalizedName(Taam.ITEM_COPPER_INGOT);
+		itemCopperIngot.setCreativeTab(creativeTab);
+		
 		Multinet.registerOperator(new OperatorRedstone("redstone"));
 		
 		config.save();
@@ -143,9 +156,12 @@ public class TaamMain {
 		GameRegistry.registerItem(itemMultinetCable, Taam.ITEM_MULTINET_CABLE, Taam.MOD_ID);
 		GameRegistry.registerItem(itemMultinetDebugger, Taam.ITEM_MULTINET_DEBUGGER, Taam.MOD_ID);
 		GameRegistry.registerItem(itemMultinetMultitronix, Taam.ITEM_MULTINET_MULTITRONIX, Taam.MOD_ID);
+		GameRegistry.registerItem(itemCopperIngot, Taam.ITEM_COPPER_INGOT, Taam.MOD_ID);
+		//GameRegistry.registerItem(itemTinIngot, Taam.ITEM_TIN_INGOT, Taam.MOD_ID);
 		
 		GameRegistry.registerBlock(blockSensor, ItemBlock.class, Taam.BLOCK_SENSOR);
-		//GameRegistry.registerBlock(blockSlidingDoor, ItemBlock.class, Taam.BLOCK_SLIDINGDOOR, Taam.MOD_ID);
+		//GameRegistry.registerBlock(blockSlidingDoor, ItemBlock.class, Taam.BLOCK_SLIDINGDOOR);
+		GameRegistry.registerBlock(blockCopperOre, ItemBlock.class, Taam.BLOCK_COPPPER_ORE);
 		
 		GameRegistry.registerTileEntity(TileEntitySensor.class, Taam.TILEENTITY_SENSOR);
 		//GameRegistry.registerTileEntity(TileEntitySlidingDoor.class, Taam.TILEENTITY_SLIDINGDOOR);
@@ -161,6 +177,9 @@ public class TaamMain {
 		
 		GameRegistry.addRecipe(new ItemStack(itemPhotoCell, 9), "GGG", "GDG", "PRP", 'G', Blocks.glass, 'D', Blocks.daylight_detector, 'P', new ItemStack(itemPlastic), 'R', Items.redstone);
 		GameRegistry.addRecipe(new ItemStack(blockSensor, 1), "PGP", "PpP", "IRI", 'P', new ItemStack(itemPlastic), 'G', Blocks.glass, 'p', new ItemStack(itemPhotoCell), 'I', Items.iron_ingot, 'R', Items.redstone);
+		
+		
+		
 		
 	}
 
