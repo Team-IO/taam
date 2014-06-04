@@ -8,7 +8,7 @@ item.taam.item.tin_ingot.name=Tin Ingot
 item.taam.item.copper_ingot.name=Copper Ingot
 
 #Creativ Tap localization
-itemGroup.taam.name=Taam
+itemGroup.taam=Taam
 
 #Block localization
 tile.taam.sensor.name=Motion Sensor
