@@ -9,6 +9,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
+import net.minecraftforge.oredict.OreDictionary;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -23,6 +24,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import founderio.taam.blocks.BlockCopperOre;
 import founderio.taam.blocks.BlockSensor;
 import founderio.taam.blocks.BlockSlidingDoor;
+import founderio.taam.blocks.BlockTinOre;
 import founderio.taam.blocks.TileEntitySensor;
 import founderio.taam.blocks.multinet.ItemMultinetCable;
 import founderio.taam.blocks.multinet.ItemMultinetMultitronix;
@@ -59,6 +61,7 @@ public class TaamMain {
 	public static BlockSensor blockSensor;
 	public static BlockSlidingDoor blockSlidingDoor;
 	public static BlockCopperOre blockCopperOre;
+	public static BlockTinOre blockTinOre;
 	
 	private Configuration config;
 	
@@ -122,6 +125,10 @@ public class TaamMain {
 		blockCopperOre.setBlockName(Taam.BLOCK_COPPPER_ORE);
 		blockCopperOre.setCreativeTab(creativeTab);
 		
+		blockTinOre = new BlockTinOre();
+		blockTinOre.setBlockName(Taam.BLOCK_TIN_ORE);
+		blockTinOre.setCreativeTab(creativeTab);
+		
 		itemMultinetCable = new ItemMultinetCable();
 		itemMultinetCable.setUnlocalizedName(Taam.ITEM_MULTINET_CABLE);
 		itemMultinetCable.setCreativeTab(creativeTab);
@@ -146,6 +153,10 @@ public class TaamMain {
 		itemCopperIngot.setUnlocalizedName(Taam.ITEM_COPPER_INGOT);
 		itemCopperIngot.setCreativeTab(creativeTab);
 		
+		itemTinIngot = new ItemTinIngot();
+		itemTinIngot.setUnlocalizedName(Taam.ITEM_TIN_INGOT);
+		itemTinIngot.setCreativeTab(creativeTab);
+		
 		Multinet.registerOperator(new OperatorRedstone("redstone"));
 		
 		config.save();
@@ -157,11 +168,12 @@ public class TaamMain {
 		GameRegistry.registerItem(itemMultinetDebugger, Taam.ITEM_MULTINET_DEBUGGER, Taam.MOD_ID);
 		GameRegistry.registerItem(itemMultinetMultitronix, Taam.ITEM_MULTINET_MULTITRONIX, Taam.MOD_ID);
 		GameRegistry.registerItem(itemCopperIngot, Taam.ITEM_COPPER_INGOT, Taam.MOD_ID);
-		//GameRegistry.registerItem(itemTinIngot, Taam.ITEM_TIN_INGOT, Taam.MOD_ID);
+		GameRegistry.registerItem(itemTinIngot, Taam.ITEM_TIN_INGOT, Taam.MOD_ID);
 		
 		GameRegistry.registerBlock(blockSensor, ItemBlock.class, Taam.BLOCK_SENSOR);
 		//GameRegistry.registerBlock(blockSlidingDoor, ItemBlock.class, Taam.BLOCK_SLIDINGDOOR);
 		GameRegistry.registerBlock(blockCopperOre, ItemBlock.class, Taam.BLOCK_COPPPER_ORE);
+		GameRegistry.registerBlock(blockTinOre, ItemBlock.class, Taam.BLOCK_TIN_ORE);
 		
 		GameRegistry.registerTileEntity(TileEntitySensor.class, Taam.TILEENTITY_SENSOR);
 		//GameRegistry.registerTileEntity(TileEntitySlidingDoor.class, Taam.TILEENTITY_SLIDINGDOOR);
@@ -173,13 +185,11 @@ public class TaamMain {
 		multinetMultipart = new MultinetPartFactory();
 		proxy.registerRenderStuff();
 		MinecraftForge.EVENT_BUS.register(new MultinetHandler());
-		
-		
-		GameRegistry.addRecipe(new ItemStack(itemPhotoCell, 9), "GGG", "GDG", "PRP", 'G', Blocks.glass, 'D', Blocks.daylight_detector, 'P', new ItemStack(itemPlastic), 'R', Items.redstone);
-		GameRegistry.addRecipe(new ItemStack(blockSensor, 1), "PGP", "PpP", "IRI", 'P', new ItemStack(itemPlastic), 'G', Blocks.glass, 'p', new ItemStack(itemPhotoCell), 'I', Items.iron_ingot, 'R', Items.redstone);
-		
-		
-		
+
+		oreRegistration();
+		addRecipes();
+		addSmeltingRecipes();
+		addOreRecipes();
 		
 	}
 
@@ -187,5 +197,25 @@ public class TaamMain {
 	public void postInit(FMLPostInitializationEvent event) {
 
 	}
+	
+	public void oreRegistration(){
+		OreDictionary.registerOre("ingotCopper", new ItemStack(itemCopperIngot));
+		OreDictionary.registerOre("oreCopper", new ItemStack(blockCopperOre));
+		OreDictionary.registerOre("ingotTin", new ItemStack(itemTinIngot));
+		OreDictionary.registerOre("oreTin", new ItemStack(blockTinOre));
+	}
 
+	public void addRecipes(){
+		GameRegistry.addRecipe(new ItemStack(itemPhotoCell, 9), "GGG", "GDG", "PRP", 'G', Blocks.glass, 'D', Blocks.daylight_detector, 'P', new ItemStack(itemPlastic), 'R', Items.redstone);
+		GameRegistry.addRecipe(new ItemStack(blockSensor, 1), "PGP", "PpP", "IRI", 'P', new ItemStack(itemPlastic), 'G', Blocks.glass, 'p', new ItemStack(itemPhotoCell), 'I', Items.iron_ingot, 'R', Items.redstone);
+	}
+
+	public void addSmeltingRecipes(){
+		GameRegistry.addSmelting(new ItemStack(blockCopperOre), new ItemStack(itemCopperIngot), 1);
+		GameRegistry.addSmelting(new ItemStack(blockTinOre), new ItemStack(itemTinIngot), 1);
+	}
+	
+	public void addOreRecipes(){
+	}
 }
+

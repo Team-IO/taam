@@ -19,6 +19,7 @@ public final class Taam {
 	public static final String BLOCK_SENSOR_MOTION = "taam.sensor.motion";
 	public static final String BLOCK_SENSOR_MINECT = "taam.sensor.minect";
 	public static final String BLOCK_COPPPER_ORE = "taam.copperore";
+	public static final String BLOCK_TIN_ORE = "taam.tinore";
 	
 	public static final String MULTIPART_MULTINET_CABLE = "taam.multinet.cable";
 	public static final String MULTIPART_MULTINET_MULTITRONIX = "taam.multinet.multitronix";

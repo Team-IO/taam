@@ -4,10 +4,14 @@ item.taam.item.plastic.name=Plastic
 item.taam.item.photocell.name=Photo Cell
 item.taam.item.cable.name=MulitNet Cable
 item.taam.item.multitronix.name=Multitronix
+item.taam.item.tin_ingot.name=Tin Ingot
+item.taam.item.copper_ingot.name=Copper Ingot
 
 #Creativ Tap localization
-itemGroup.taam=Taam
+itemGroup.taam.name=Taam
 
 #Block localization
 tile.taam.sensor.name=Motion Sensor
-tile.taam.slidingdoor=Sliding Door
+tile.taam.slidingdoor.name=Sliding Door
+tile.taam.copperore.name=Copper Ore
+tile.taam.tinore.name=Tin Ore
