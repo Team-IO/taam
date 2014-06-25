@@ -1,8 +1,6 @@
 package founderio.taam;
 
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -187,9 +185,9 @@ public class TaamMain {
 		MinecraftForge.EVENT_BUS.register(new MultinetHandler());
 
 		oreRegistration();
-		addRecipes();
-		addSmeltingRecipes();
-		addOreRecipes();
+		TaamRecipes.addRecipes();
+		TaamRecipes.addSmeltingRecipes();
+		TaamRecipes.addOreRecipes();
 		
 	}
 
@@ -198,24 +196,12 @@ public class TaamMain {
 
 	}
 	
-	public void oreRegistration(){
+	public static void oreRegistration(){
 		OreDictionary.registerOre("ingotCopper", new ItemStack(itemCopperIngot));
 		OreDictionary.registerOre("oreCopper", new ItemStack(blockCopperOre));
 		OreDictionary.registerOre("ingotTin", new ItemStack(itemTinIngot));
 		OreDictionary.registerOre("oreTin", new ItemStack(blockTinOre));
-	}
-
-	public void addRecipes(){
-		GameRegistry.addRecipe(new ItemStack(itemPhotoCell, 9), "GGG", "GDG", "PRP", 'G', Blocks.glass, 'D', Blocks.daylight_detector, 'P', new ItemStack(itemPlastic), 'R', Items.redstone);
-		GameRegistry.addRecipe(new ItemStack(blockSensor, 1), "PGP", "PpP", "IRI", 'P', new ItemStack(itemPlastic), 'G', Blocks.glass, 'p', new ItemStack(itemPhotoCell), 'I', Items.iron_ingot, 'R', Items.redstone);
-	}
-
-	public void addSmeltingRecipes(){
-		GameRegistry.addSmelting(new ItemStack(blockCopperOre), new ItemStack(itemCopperIngot), 1);
-		GameRegistry.addSmelting(new ItemStack(blockTinOre), new ItemStack(itemTinIngot), 1);
-	}
-	
-	public void addOreRecipes(){
+		OreDictionary.registerOre("materialPlastic", new ItemStack(itemPlastic));
 	}
 }
 
