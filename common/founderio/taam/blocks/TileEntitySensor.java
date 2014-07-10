@@ -93,7 +93,7 @@ public class TileEntitySensor extends BaseTileEntity {
 			break;
 		}
 		
-		AxisAlignedBB bb = AxisAlignedBB.getAABBPool().getAABB(xMin, yMin, zMin, xMax, yMax, zMax);
+		AxisAlignedBB bb = AxisAlignedBB.getBoundingBox(xMin, yMin, zMin, xMax, yMax, zMax);
 
 		boolean found = false;
 		

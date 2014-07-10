@@ -13,6 +13,8 @@ public final class Taam {
 	public static final String MOD_DESCRIPTION = "Tech and Acessories Mod";
 	public static final String MOD_CREDITS = "";
 	public static final String MOD_LOGO_PATH = "";
+	
+	public static final String GUI_FACTORY_CLASS = "founderio.taam.client.gui.GuiFactory";
 
 	public static final String BLOCK_SENSOR = "taam.sensor";
 	public static final String BLOCK_SLIDINGDOOR = "taam.slidingdoor";
@@ -37,4 +39,5 @@ public final class Taam {
 	
 	public static final String CFG_COMMENT_SENSOR_DELAY = "Sensor [Motion, Minect] delay (minimum activation time) in game ticks, minimum 10";
 	public static final String CFG_COMMENT_SENSOR_PLACEMENT_MODE = "Sensor [Motion, Minect] placement mode when side by side. 1 = move together, 2 = merge into one";
+	public static final String CFG_COMMENT_GEN_COPPER_ORE = "Shoud Taam generate Copper Ore in the World";
 }
