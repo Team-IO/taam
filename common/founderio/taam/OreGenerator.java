@@ -4,6 +4,7 @@ import java.util.Random;
 
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
+import net.minecraft.world.gen.feature.WorldGenMinable;
 import cpw.mods.fml.common.IWorldGenerator;
 
 public class OreGenerator implements IWorldGenerator {
@@ -28,13 +29,13 @@ public class OreGenerator implements IWorldGenerator {
 	private void generateNether(World world, Random random, int i, int j) {}
 
 	private void generateSurface(World world, Random random, int i, int j) {
-		
-		for (int k = o; k < 10; k++){
-			int firstBlockXCoord = chunkX + rand.nextInt(16);
+		Random rand = new Random();
+		for (int k = 0; k < 10; k++){
+			int firstBlockXCoord = i + rand.nextInt(16);
         	int firstBlockYCoord = rand.nextInt(64);
-        	int firstBlockZCoord = chunkZ + rand.nextInt(16);
+        	int firstBlockZCoord = j + rand.nextInt(16);
         	
-        	(new WorldGenMineable(Taam.BLOCK_COPPPER_ORE, 13)).generate(world, rand, firstBlockXCoord, firstBlockYCoord, firstBlockZCoord);
+        	(new WorldGenMinable(TaamMain.blockCopperOre, 13)).generate(world, rand, firstBlockXCoord, firstBlockYCoord, firstBlockZCoord);
 		}
 	
 	}
