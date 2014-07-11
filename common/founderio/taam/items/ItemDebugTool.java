@@ -32,9 +32,9 @@ public class ItemDebugTool extends Item {
 	public void addInformation(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, List par3List, boolean par4)
 	{
 	par3List.add(Taam.LORE_DEBUG_NO_SHIFT);
-	par3List.add(Taam.LORE_HOLD_SHIFT);
+	//par3List.add(Taam.LORE_HOLD_SHIFT);
 	}
-	
+		
 	@Override
 	public boolean onItemUse(ItemStack itemStack,
 			EntityPlayer player, World world,
@@ -42,10 +42,11 @@ public class ItemDebugTool extends Item {
 			int side,
 			float hitx, float hity, float hitz) {
 		
+		world.playSound(player.posX, player.posY + 1 , player.posZ,"random.drink", 1f, 1f, true);
 		if(world.isRemote) {
 			return true;
 		}
-		
+					
 		ForgeDirection dir = ForgeDirection.getOrientation(side);
         ForgeDirection dirOpp = dir.getOpposite();
 
