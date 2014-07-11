@@ -19,10 +19,10 @@ apply plugin: 'forge'
 
 version = "1.0"
 group= "founderio.taam" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "taam-1.7.2"
+archivesBaseName = "taam-1.7.10"
 
 minecraft {
-    version = "1.7.2-10.12.2.1147"
+    version = "1.7.10-10.13.0.1179"
     assetDir = "eclipse/assets"
 }
 
