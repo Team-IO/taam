@@ -77,25 +77,7 @@ public class TaamMain {
 		
 		MinecraftForge.EVENT_BUS.register(new MultinetHandler());
 		FMLCommonHandler.instance().bus().register(new Config());
-		
-//		config.load();
-		
-//		Property spm = config.get(Configuration.CATEGORY_GENERAL, "sensor_placement_mode", 1, Taam.CFG_COMMENT_SENSOR_PLACEMENT_MODE);
-//		sensor_placement_mode = spm.getInt();
-
-//		if(sensor_placement_mode < 1 || sensor_placement_mode > 2) {
-//			sensor_placement_mode = 1;
-//			spm.set(sensor_placement_mode);
-//		}
-		
-//	Property sd = config.get(Configuration.CATEGORY_GENERAL, "sensor_delay", 30, Taam.CFG_COMMENT_SENSOR_DELAY);
-//		sensor_delay = sd.getInt();
-
-//		if(sensor_delay < 10) {
-//			sensor_delay = 10;
-//			sd.set(sensor_delay);
-//		}
-		
+				
 		Config.init(event.getSuggestedConfigurationFile());
 		
 		creativeTab = new CreativeTabs(Taam.MOD_ID) {
@@ -171,12 +153,12 @@ public class TaamMain {
 		GameRegistry.registerItem(itemTinIngot, Taam.ITEM_TIN_INGOT, Taam.MOD_ID);
 		
 		GameRegistry.registerBlock(blockSensor, ItemBlock.class, Taam.BLOCK_SENSOR);
-		//GameRegistry.registerBlock(blockSlidingDoor, ItemBlock.class, Taam.BLOCK_SLIDINGDOOR);
+//		GameRegistry.registerBlock(blockSlidingDoor, ItemBlock.class, Taam.BLOCK_SLIDINGDOOR);
 		GameRegistry.registerBlock(blockCopperOre, ItemBlock.class, Taam.BLOCK_COPPPER_ORE);
 		GameRegistry.registerBlock(blockTinOre, ItemBlock.class, Taam.BLOCK_TIN_ORE);
 		
 		GameRegistry.registerTileEntity(TileEntitySensor.class, Taam.TILEENTITY_SENSOR);
-		//GameRegistry.registerTileEntity(TileEntitySlidingDoor.class, Taam.TILEENTITY_SLIDINGDOOR);
+//		GameRegistry.registerTileEntity(TileEntitySlidingDoor.class, Taam.TILEENTITY_SLIDINGDOOR);
 	}
 
 	@EventHandler
