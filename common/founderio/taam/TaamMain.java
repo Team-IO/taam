@@ -6,6 +6,7 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.oredict.OreDictionary;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -62,6 +63,8 @@ public class TaamMain {
 	
 	public static int sensor_placement_mode = 1;
 	public static int sensor_delay = 30;
+	
+	
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
@@ -154,10 +157,7 @@ public class TaamMain {
 		itemTinIngot.setCreativeTab(creativeTab);
 		
 		Multinet.registerOperator(new OperatorRedstone("redstone"));
-		
-//		if(config.hasChanged()){
-//		config.save();
-//		}
+
 		GameRegistry.registerItem(itemPhotoCell, Taam.ITEM_PHOTOCELL, Taam.MOD_ID);
 		GameRegistry.registerItem(itemPlastic, Taam.ITEM_PLASTIC, Taam.MOD_ID);
 		
@@ -182,6 +182,7 @@ public class TaamMain {
 		multinetMultipart = new MultinetPartFactory();
 		proxy.registerRenderStuff();
 		MinecraftForge.EVENT_BUS.register(new MultinetHandler());
+		FMLCommonHandler.instance().bus().register(new Config());
 
 		oreRegistration();
 		TaamRecipes.addRecipes();

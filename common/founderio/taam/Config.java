@@ -14,9 +14,11 @@ public class Config {
 	public static void init(File configFile)
 	{
 				
+		
 		if (config == null)
 		{
 		config = new Configuration(configFile);
+	
 		loadConfig();
 		}
 		
@@ -24,6 +26,12 @@ public class Config {
 	private static void loadConfig()
 	{
 		genCopper = config.getBoolean("generateCopper", Configuration.CATEGORY_GENERAL, true, Taam.CFG_COMMENT_GEN_COPPER_ORE);
+		
+		
+		if(config.hasChanged())
+		{
+			config.save();
+		}
 	}
 	
 	
@@ -31,6 +39,9 @@ public class Config {
 	public void onConfigChangedEvent(ConfigChangedEvent.OnConfigChangedEvent Event)
 	{
 		if (Event.modID.equalsIgnoreCase(Taam.MOD_ID));
+		{
+			loadConfig();
+		}
 	}
 	
 }

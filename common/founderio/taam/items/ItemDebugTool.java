@@ -1,5 +1,7 @@
 package founderio.taam.items;
 
+import java.util.List;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -7,6 +9,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import codechicken.lib.vec.BlockCoord;
 import codechicken.lib.vec.Vector3;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import founderio.taam.Taam;
 import founderio.taam.blocks.multinet.MultinetCable;
 import founderio.taam.multinet.MultinetUtil;
 
@@ -20,6 +25,15 @@ public class ItemDebugTool extends Item {
 	
 	private MultinetCable cableA;
 	private MultinetCable cableB;
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void addInformation(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, List par3List, boolean par4)
+	{
+	par3List.add(Taam.LORE_DEBUG_NO_SHIFT);
+	par3List.add(Taam.LORE_HOLD_SHIFT);
+	}
 	
 	@Override
 	public boolean onItemUse(ItemStack itemStack,
