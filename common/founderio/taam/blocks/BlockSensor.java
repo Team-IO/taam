@@ -40,6 +40,7 @@ public class BlockSensor extends BaseBlock {
 		this.setHardness(3.5f);
 		this.setStepSound(Block.soundTypeMetal);
 		this.setHarvestLevel("pickaxe", 1);
+		this.setBlockTextureName(Taam.MOD_ID + ":tech_block");
 	}
 	
 	@Override
@@ -217,13 +218,7 @@ public class BlockSensor extends BaseBlock {
 		updateBlocksAround(world, x, y, z);
 		super.breakBlock(world, x, y, z, block, meta);
 	}
-	
-	@Override
-	@SideOnly(Side.CLIENT)
-	protected String getTextureName() {
-		return Taam.MOD_ID + ":tech_block";
-	}
-	
+		
 	@Override
 	public boolean canBlockStay(World world, int x, int y, int z) {
 		int meta = world.getBlockMetadata(x, y, z);
