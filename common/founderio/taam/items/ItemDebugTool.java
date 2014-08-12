@@ -2,6 +2,7 @@ package founderio.taam.items;
 
 import java.util.List;
 
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -11,7 +12,7 @@ import codechicken.lib.vec.BlockCoord;
 import codechicken.lib.vec.Vector3;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import founderio.taam.Taam;
+import founderio.taam.Config;
 import founderio.taam.blocks.multinet.MultinetCable;
 import founderio.taam.multinet.MultinetUtil;
 
@@ -31,8 +32,22 @@ public class ItemDebugTool extends Item {
 	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, List par3List, boolean par4)
 	{
-	par3List.add(Taam.LORE_DEBUG_NO_SHIFT);
-	//par3List.add(Taam.LORE_HOLD_SHIFT);
+		
+
+		if (!GuiScreen.isShiftKeyDown())
+		{
+				par3List.add("This is our Debug Tool");
+				par3List.add("Hold Shift");
+		}
+		else
+		{
+
+			par3List.add("This item can't be obtain ");
+			par3List.add("in Survival.");
+			par3List.add("It give debug information");
+			par3List.add("in to chat or console.");
+		}
+		
 	}
 		
 	@Override
@@ -41,8 +56,12 @@ public class ItemDebugTool extends Item {
 			int x, int y, int z,
 			int side,
 			float hitx, float hity, float hitz) {
-		
-		world.playSound(player.posX, player.posY + 1 , player.posZ,"random.drink", 1f, 1f, true);
+
+
+		if(Config.debug == false)
+		{
+			world.playSound(player.posX ,player.posY ,player.posZ ,"random.drink", 1, 1, false);
+		}
 		if(world.isRemote) {
 			return true;
 		}

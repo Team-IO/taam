@@ -5,7 +5,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.ForgeDirection;
-import founderio.taam.TaamMain;
+import founderio.taam.Config;
 
 public class TileEntitySensor extends BaseTileEntity {
 	
@@ -110,7 +110,7 @@ public class TileEntitySensor extends BaseTileEntity {
 				}
 			}
 			if(found) {
-				tickOn = TaamMain.sensor_delay;
+				tickOn = Config.sensor_delay;
 			}
 		}
 		

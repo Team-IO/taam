@@ -12,6 +12,7 @@ public class Config {
 	
 	public static boolean genCopper = true;
 	public static boolean genTin = true;
+	public static boolean debug = false;
 	
 	public static int sensor_delay = 30;
 	public static int sensor_placement_mode = 1;
@@ -30,15 +31,18 @@ public class Config {
 	}
 	private static void loadConfig()
 	{
-		genCopper = config.getBoolean("generateCopper", Configuration.CATEGORY_GENERAL, true, Taam.CFG_COMMENT_GEN_COPPER_ORE);
-		genTin = config.getBoolean("generateTin", Configuration.CATEGORY_GENERAL, true , Taam.CFG_COMMENT_GEN_TIN_ORE);
-		sensor_delay = config.getInt("sensor_delay", Configuration.CATEGORY_GENERAL, 30, 10, 100, Taam.CFG_COMMENT_SENSOR_DELAY);
-		sensor_placement_mode = config.getInt("sensor_placement_mode", Configuration.CATEGORY_GENERAL, 1, 1, 2, Taam.CFG_COMMENT_SENSOR_PLACEMENT_MODE);
-		
 		if(config.hasChanged())
 		{
 			config.save();
 		}
+		
+		genCopper = config.getBoolean("generateCopper", Configuration.CATEGORY_GENERAL, true, Taam.CFG_COMMENT_GEN_COPPER_ORE);
+		genTin = config.getBoolean("generateTin", Configuration.CATEGORY_GENERAL, true , Taam.CFG_COMMENT_GEN_TIN_ORE);
+		debug =config.getBoolean("debug_output", Configuration.CATEGORY_GENERAL, false, Taam.CFG_COMMENT_DEBUG_OUTPUT);
+		
+		sensor_delay = config.getInt("sensor_delay", Configuration.CATEGORY_GENERAL, 30, 10, 100, Taam.CFG_COMMENT_SENSOR_DELAY);
+		sensor_placement_mode = config.getInt("sensor_placement_mode", Configuration.CATEGORY_GENERAL, 1, 1, 2, Taam.CFG_COMMENT_SENSOR_PLACEMENT_MODE);
+		
 	}
 	
 	

@@ -35,8 +35,14 @@ public class OreGenerator implements IWorldGenerator {
         	int firstBlockYCoord = rand.nextInt(64);
         	int firstBlockZCoord = j + rand.nextInt(16);
         	
-        	(new WorldGenMinable(TaamMain.blockTinOre, 14)).generate(world, rand, firstBlockXCoord, firstBlockYCoord, firstBlockZCoord);
-        	(new WorldGenMinable(TaamMain.blockCopperOre, 13)).generate(world, rand, firstBlockXCoord, firstBlockYCoord, firstBlockZCoord);
+        	if (Config.genCopper)
+        	{
+        		(new WorldGenMinable(TaamMain.blockTinOre, 14)).generate(world, rand, firstBlockXCoord, firstBlockYCoord, firstBlockZCoord);
+        	}
+        	if (Config.genTin)
+        	{
+            	(new WorldGenMinable(TaamMain.blockCopperOre, 13)).generate(world, rand, firstBlockXCoord, firstBlockYCoord, firstBlockZCoord);
+        	}
 		}
 	
 	}
