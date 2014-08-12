@@ -19,3 +19,5 @@
 /build
 /.gradle
 /asm
+
+/.metadata
