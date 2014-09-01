@@ -2,11 +2,17 @@ package founderio.taam.rendering;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.init.Items;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.IItemRenderer;
+import net.minecraftforge.client.model.obj.WavefrontObject;
 import net.minecraftforge.client.model.techne.TechneModel;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -16,34 +22,40 @@ import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.Phase;
 import cpw.mods.fml.common.gameevent.TickEvent.Type;
 import founderio.taam.Taam;
+import founderio.taam.TaamMain;
 import founderio.taam.blocks.BlockSensor;
+import founderio.taam.blocks.TileEntityConveyor;
 import founderio.taam.blocks.TileEntitySensor;
 
-public class TaamRenderer extends TileEntitySpecialRenderer implements
-IItemRenderer {
+public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRenderer {
 
 	public final TechneModel modelSensor;
 	public final ResourceLocation textureSensor;
 	public final ResourceLocation textureSensorBlink;
-//	private RenderItem ri;
-//	private EntityItem ei;
+	
+	public final WavefrontObject modelConveyor;
+	public final ResourceLocation textureConveyor;
+	
+	private RenderItem ri;
+	private EntityItem ei;
 	private float rot = 0;
 	
 	public TaamRenderer() {
-//		ri = new RenderItem() {
-//			@Override
-//			public boolean shouldBob() {
-//				return false;
-//			}
-//		};
-//		ei = new EntityItem(null, 0, 0, 0, new ItemStack(Item.pickaxeDiamond));
-//		ri.setRenderManager(RenderManager.instance);
+		ri = new RenderItem() {
+			@Override
+			public boolean shouldBob() {
+				return false;
+			}
+		};
+		ei = new EntityItem(null, 0, 0, 0, new ItemStack(Items.apple));
+		ri.setRenderManager(RenderManager.instance);
 		
 		modelSensor = new TechneModel(new ResourceLocation(Taam.MOD_ID + ":models/sensor.tcn"));
-		textureSensor = new ResourceLocation(Taam.MOD_ID
-				+ ":textures/models/sensor.png");
-		textureSensorBlink = new ResourceLocation(Taam.MOD_ID
-				+ ":textures/models/sensor_blink.png");
+		textureSensor = new ResourceLocation(Taam.MOD_ID + ":textures/models/sensor.png");
+		textureSensorBlink = new ResourceLocation(Taam.MOD_ID + ":textures/models/sensor_blink.png");
+
+		modelConveyor = new WavefrontObject(new ResourceLocation(Taam.MOD_ID + ":models/conveyor.obj"));
+		textureConveyor = new ResourceLocation(Taam.MOD_ID + ":textures/models/conveyor.png");
 	}
 	
 	public void tickEvent(TickEvent event) {
@@ -87,25 +99,43 @@ IItemRenderer {
 			break;
 		}
 		
-		renderAt(item.getItemDamage() | 7, offX, offY, offZ, false);
+		if(item.getItem() == Item.getItemFromBlock(TaamMain.blockSensor)) {
+			//TODO: Document meta components!
+			int meta = item.getItemDamage() | 7;
+			renderSensor(offX, offY, offZ, (meta & 7), false);
+		} else if(item.getItem() == Item.getItemFromBlock(TaamMain.blockProductionLine)) {
+			renderConveyor(null, offX, offY, offZ, 0);
+		}
+		
 	}
 
 	@Override
-	public void renderTileEntityAt(TileEntity tileentity, double x, double y,
-			double z, float partialTickTime) {
-		TileEntitySensor te = ((TileEntitySensor) tileentity);
-		renderAt(tileentity.getBlockMetadata(), x, y, z, te.isPowering() > 0);
+	public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float partialTickTime) {
+		if(tileentity instanceof TileEntitySensor) {
+			TileEntitySensor te = ((TileEntitySensor) tileentity);
+			int meta = tileentity.getBlockMetadata();
+			switch(tileentity.getBlockMetadata() & 8) {
+			case 0:
+				renderSensor(x, y, z, (meta & 7), te.isPowering() > 0);
+				break;
+			case 8:
+				//TODO: renderMinect();
+				break;
+			}
+		} else if(tileentity instanceof TileEntityConveyor) {
+			renderConveyor((TileEntityConveyor)tileentity, x, y, z, 0);
+		}
 	}
 	
-	public void renderAt(int meta, double x, double y, double z, boolean fixBlink) {
-		switch(meta & 8) {
-		case 0:
-			renderSensor(x, y, z, (meta & 7), fixBlink);
-			break;
-		case 8:
-			//TODO: renderMinect();
-			break;
-		}
+	public void renderConveyor(TileEntityConveyor conveyor, double x, double y, double z, int rotation) {
+		GL11.glPushMatrix();
+		
+		GL11.glTranslatef((float) x + 0.5f, (float) y,
+				(float) z + 0.5f);
+		
+		Minecraft.getMinecraft().renderEngine.bindTexture(textureConveyor);
+		modelConveyor.renderAll();
+		GL11.glPopMatrix();
 	}
 	
 	public void renderSensor(double x, double y, double z, int rotation, boolean fixBlink) {

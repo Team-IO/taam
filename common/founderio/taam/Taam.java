@@ -17,6 +17,7 @@ public final class Taam {
 	public static final String GUI_FACTORY_CLASS = "founderio.taam.client.gui.GuiFactory";
 
 	public static final String BLOCK_SENSOR = "taam.sensor";
+	public static final String BLOCK_PRODUCTIONLINE = "taam.productionline";
 	public static final String BLOCK_SLIDINGDOOR = "taam.slidingdoor";
 	public static final String BLOCK_SENSOR_MOTION = "taam.sensor.motion";
 	public static final String BLOCK_SENSOR_MINECT = "taam.sensor.minect";
@@ -39,6 +40,7 @@ public final class Taam {
 	
 	public static final String TILEENTITY_SENSOR = "taam.sensor";
 	public static final String TILEENTITY_SLIDINGDOOR = "taam.slidingdoor";
+	public static final String TILEENTITY_CONVEYOR = "taam.conveyor";
 	
 	public static final String CFG_COMMENT_SENSOR_DELAY = "Sensor [Motion, Minect] delay (minimum activation time) in game ticks, minimum 10";
 	public static final String CFG_COMMENT_SENSOR_PLACEMENT_MODE = "Sensor [Motion, Minect] placement mode when side by side. 1 = move together, 2 = merge into one";

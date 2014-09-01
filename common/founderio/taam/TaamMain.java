@@ -20,8 +20,10 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import founderio.taam.blocks.BlockOre;
+import founderio.taam.blocks.BlockProductionLine;
 import founderio.taam.blocks.BlockSensor;
 import founderio.taam.blocks.BlockSlidingDoor;
+import founderio.taam.blocks.TileEntityConveyor;
 import founderio.taam.blocks.TileEntitySensor;
 import founderio.taam.blocks.multinet.ItemMultinetCable;
 import founderio.taam.blocks.multinet.ItemMultinetMultitronix;
@@ -55,6 +57,7 @@ public class TaamMain {
 	public static CreativeTabs creativeTab;
 
 	public static BlockSensor blockSensor;
+	public static BlockProductionLine blockProductionLine;
 	public static BlockSlidingDoor blockSlidingDoor;
 	public static BlockOre blockOre;
 	
@@ -97,6 +100,10 @@ public class TaamMain {
 		blockSensor = new BlockSensor();
 		blockSensor.setBlockName(Taam.BLOCK_SENSOR);
 		blockSensor.setCreativeTab(creativeTab);
+
+		blockProductionLine = new BlockProductionLine();
+		blockProductionLine.setBlockName(Taam.BLOCK_PRODUCTIONLINE);
+		blockProductionLine.setCreativeTab(creativeTab);
 		
 		blockSlidingDoor = new BlockSlidingDoor();
 		blockSlidingDoor.setBlockName(Taam.BLOCK_SLIDINGDOOR);
@@ -141,11 +148,13 @@ public class TaamMain {
 		GameRegistry.registerItem(itemIngot, Taam.ITEM_INGOT, Taam.MOD_ID);
 		
 		GameRegistry.registerBlock(blockSensor, ItemBlock.class, Taam.BLOCK_SENSOR);
+		GameRegistry.registerBlock(blockProductionLine, ItemBlock.class, Taam.BLOCK_PRODUCTIONLINE);
 //		GameRegistry.registerBlock(blockSlidingDoor, ItemBlock.class, Taam.BLOCK_SLIDINGDOOR);
 		GameRegistry.registerBlock(blockOre, null, Taam.BLOCK_ORE);
 		GameRegistry.registerItem(new ItemMultiTexture(blockOre, blockOre, Taam.BLOCK_ORE_META), Taam.BLOCK_ORE, Taam.MOD_ID);
 		
 		GameRegistry.registerTileEntity(TileEntitySensor.class, Taam.TILEENTITY_SENSOR);
+		GameRegistry.registerTileEntity(TileEntityConveyor.class, Taam.TILEENTITY_CONVEYOR);
 //		GameRegistry.registerTileEntity(TileEntitySlidingDoor.class, Taam.TILEENTITY_SLIDINGDOOR);
 		
 		GameRegistry.registerWorldGenerator(new OreGenerator(), 2);

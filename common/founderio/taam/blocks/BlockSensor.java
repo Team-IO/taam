@@ -187,16 +187,6 @@ public class BlockSensor extends BaseBlock {
 			int y, int z, int side) {
 		return false;
 	}
-	
-	public void updateBlocksAround(World world, int x, int y, int z) {
-		world.notifyBlocksOfNeighborChange(x, y, z, this);
-		world.notifyBlocksOfNeighborChange(x + 1, y, z, this);
-		world.notifyBlocksOfNeighborChange(x - 1, y, z, this);
-		world.notifyBlocksOfNeighborChange(x, y, z + 1, this);
-		world.notifyBlocksOfNeighborChange(x, y, z - 1, this);
-		world.notifyBlocksOfNeighborChange(x, y - 1, z, this);
-		world.notifyBlocksOfNeighborChange(x, y + 1, z, this);
-	}
 
 	@Override
 	public void onPostBlockPlaced(World par1World, int par2, int par3,
