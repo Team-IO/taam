@@ -2,6 +2,7 @@ package founderio.taam;
 
 import java.util.Random;
 
+import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.feature.WorldGenMinable;
@@ -37,11 +38,11 @@ public class OreGenerator implements IWorldGenerator {
         	
         	if (Config.genCopper == true)
         	{
-        		(new WorldGenMinable(TaamMain.blockTinOre, 14)).generate(world, rand, firstBlockXCoord, firstBlockYCoord, firstBlockZCoord);
+        		(new WorldGenMinable(TaamMain.blockOre, 0, 14, Blocks.stone)).generate(world, rand, firstBlockXCoord, firstBlockYCoord, firstBlockZCoord);
         	}
         	if (Config.genTin == true)
         	{
-            	(new WorldGenMinable(TaamMain.blockCopperOre, 13)).generate(world, rand, firstBlockXCoord, firstBlockYCoord, firstBlockZCoord);
+            	(new WorldGenMinable(TaamMain.blockOre, 1, 13, Blocks.stone)).generate(world, rand, firstBlockXCoord, firstBlockYCoord, firstBlockZCoord);
         	}
 		}
 	

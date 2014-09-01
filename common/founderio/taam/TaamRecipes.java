@@ -13,8 +13,8 @@ public class TaamRecipes {
 	}
 
 	public static void addSmeltingRecipes(){
-		GameRegistry.addSmelting(new ItemStack(TaamMain.blockCopperOre), new ItemStack(TaamMain.itemCopperIngot), 1);
-		GameRegistry.addSmelting(new ItemStack(TaamMain.blockTinOre), new ItemStack(TaamMain.itemTinIngot), 1);
+		GameRegistry.addSmelting(new ItemStack(TaamMain.blockOre, 1, 0), new ItemStack(TaamMain.itemIngot, 1, 0), 1);
+		GameRegistry.addSmelting(new ItemStack(TaamMain.blockOre, 1, 1), new ItemStack(TaamMain.itemIngot, 1, 1), 1);
 	}
 
 	public static void addOreRecipes(){
