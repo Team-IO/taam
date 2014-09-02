@@ -135,23 +135,47 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 			renderConveyor((TileEntityConveyor)tileentity, x, y, z, 0);
 		}
 	}
-	
+	//TODO: remove rotation
 	public void renderConveyor(TileEntityConveyor conveyor, double x, double y, double z, int rotation) {
+		
+		
+		ForgeDirection direction;
+		if(conveyor != null) {
+			direction = conveyor.getDirection();
+		} else {
+			direction = ForgeDirection.SOUTH;
+		}
+		
+		// Model Rendering
 		GL11.glPushMatrix();
+		GL11.glTranslated(x, y, z);
 		
-		GL11.glTranslatef((float) x + 0.5f, (float) y,
-				(float) z + 0.5f);
+		// Rotation
+		GL11.glTranslatef(0.5f, 0, 0.5f);
 		
+		if(direction == ForgeDirection.WEST) {
+			GL11.glRotatef(90, 0, 1, 0);
+		} else if(direction == ForgeDirection.NORTH) {
+			GL11.glRotatef(180, 0, 1, 0);
+		} else if(direction == ForgeDirection.EAST) {
+			GL11.glRotatef(270, 0, 1, 0);
+		}
+		
+		GL11.glTranslated(-0.5, 0, -0.5);
+		
+		// Rendering
 		Minecraft.getMinecraft().renderEngine.bindTexture(textureConveyor);
 		modelConveyor.renderAll();
 		
+		GL11.glPopMatrix();
+		
+		// Item Rendering
+		GL11.glPushMatrix();
+		GL11.glTranslated(x, y, z);
+		
 		if(conveyor != null) {
-			ForgeDirection dir = conveyor.getDirection();
-			// Turn one to the (right)? TODO: Check this statement.
-			ForgeDirection dirRotated = dir.getRotation(ForgeDirection.UP);
-			
-			GL11.glTranslatef(-dir.offsetX * 0.5f, 0.1f, -dir.offsetZ * 0.5f);
-			GL11.glTranslatef(-dirRotated.offsetX * 0.5f, 0.1f, -dirRotated.offsetZ * 0.5f);
+			// Turn one to the right
+			ForgeDirection dirRotated = direction.getRotation(ForgeDirection.UP);
 			
 			List<ItemWrapper> items = conveyor.getItems();
 			for(ItemWrapper wrapper : items) {
@@ -159,15 +183,27 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 					continue;
 				}
 				
-				float progress = (wrapper.progress / 100f);
-				float offset = (wrapper.offset / 100f);
+				float progress = wrapper.progress / 100f;
+				if(direction.offsetX < 0 || direction.offsetZ < 0) {
+					progress = 1-progress;
+					progress *= -1;// cope for the fact that direction offset is negative
+				}
+				float offset = wrapper.offset / 100f;
+				if(dirRotated.offsetX < 0 || dirRotated.offsetZ < 0) {
+					offset = 1-offset;
+					offset *= -1;// cope for the fact that direction offset is negative
+				}
+				
+				// Absolute Position of the Item
+				float absX = direction.offsetX * progress + dirRotated.offsetX * offset;
+				float absY = 0.1f;
+				float absZ = direction.offsetZ * progress + dirRotated.offsetZ * offset;
+				
 				
 				GL11.glPushMatrix();
-				GL11.glTranslatef(dir.offsetX * progress, 0, dir.offsetZ * progress);
-				GL11.glTranslatef(dirRotated.offsetX * offset, 0, dirRotated.offsetZ * offset);
+				GL11.glTranslatef(absX, absY, absZ);
 				
 				ei.setEntityItemStack(wrapper.itemStack);
-				ei.setPosition(x, y + 1, z);
 
 				RenderItem.renderInFrame = true;
 				ri.doRender(ei, 0, .5f, 0, 0, 0);
