@@ -4,15 +4,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import founderio.taam.conveyors.IConveyorAwareTE;
 import founderio.taam.conveyors.ItemWrapper;
@@ -72,6 +70,7 @@ public class TileEntityConveyor extends BaseTileEntity implements IInventory, IC
 			return false;
 		}
 		items.add(new ItemWrapper(item, (int)(progress * 100), (int)(offset * 100)));
+		updateState();
 		return true;
 	}
 
@@ -107,6 +106,7 @@ public class TileEntityConveyor extends BaseTileEntity implements IInventory, IC
 		item.offset = (int)(offset * 100);
 		item.progress = (int)(progress * 100);
 		items.add(item);
+		updateState();
 		return true;
 	}
 	
@@ -114,13 +114,16 @@ public class TileEntityConveyor extends BaseTileEntity implements IInventory, IC
 	
 	@Override
 	public void updateEntity() {
-		
-		AxisAlignedBB bb = AxisAlignedBB.getBoundingBox(xCoord, yCoord + 0.5, zCoord, xCoord + 1, yCoord + 1, zCoord + 1);
+
+		/*
+		 * Find items laying on the conveyor.
+		 */
+
 
 		for(Object obj : worldObj.loadedEntityList) {
 			Entity ent = (Entity)obj;
 			
-			if(ent instanceof EntityItem && ent.boundingBox.intersectsWith(bb)) {
+			if(ent instanceof EntityItem) {
 				if(addItemAt(((EntityItem)ent).getEntityItem(), ent.posX, ent.posY, ent.posZ)) {
 					ent.setDead();
 					break;
@@ -128,61 +131,75 @@ public class TileEntityConveyor extends BaseTileEntity implements IInventory, IC
 			}
 		}
 		
+		/*
+		 * Move items already on the conveyor
+		 */
+		
+		boolean changed = false;
 		Iterator<ItemWrapper> iter = items.iterator();
+		
 		
 		while(iter.hasNext()) {
 			ItemWrapper wrapper = iter.next();
 			wrapper.progress += 1;
 			if(wrapper.progress > maxProgress) {
-				wrapper.progress = maxProgress;//Just to be sure... (maybe needed later, so commented out.)
-				if(isBlockConveyor(worldObj, xCoord + direction.offsetX, yCoord + direction.offsetY, zCoord + direction.offsetZ)) {
-					//TODO: delegate this with coordinates to the other "conveyor"
-					TileEntityConveyor conveyor = (TileEntityConveyor) worldObj.getTileEntity(xCoord + direction.offsetX, yCoord + direction.offsetY, zCoord + direction.offsetZ);
-					
-					ForgeDirection dirRotated = direction.getRotation(ForgeDirection.UP);
+				wrapper.progress = maxProgress;//Just to keep the item where it is when the next conveyor is blocked.
 
+				ForgeDirection dirRotated = direction.getRotation(ForgeDirection.UP);
+				
+				float progress = wrapper.progress / 100f;
+				if(direction.offsetX < 0 || direction.offsetZ < 0) {
+					progress = 1-progress;
+					progress *= -1;// cope for the fact that direction offset is negative
+				}
+				float offset = wrapper.offset / 100f;
+				if(dirRotated.offsetX < 0 || dirRotated.offsetZ < 0) {
+					offset = 1-offset;
+					offset *= -1;// cope for the fact that direction offset is negative
+				}
+				
+				// Absolute Position of the Item
+				float absX = xCoord + direction.offsetX * progress + dirRotated.offsetX * offset;
+				float absY = yCoord + 0.4f;
+				float absZ = zCoord + direction.offsetZ * progress + dirRotated.offsetZ * offset;
+				
+				// Next block, potentially a conveyor-aware block.
+				int nextBlockX = xCoord + direction.offsetX;
+				int nextBlockY = yCoord + direction.offsetY;
+				int nextBlockZ = zCoord + direction.offsetZ;
+				
+				TileEntity te = worldObj.getTileEntity(nextBlockX, nextBlockY, nextBlockZ);
+				
+				// Next conveyor aware block
+				if(te instanceof IConveyorAwareTE) {
+					IConveyorAwareTE conveyor = (IConveyorAwareTE) worldObj.getTileEntity(nextBlockX, nextBlockY, nextBlockZ);
+					
 					System.out.println("Trying to remove");
 					
-					float progress = wrapper.progress / 100f;
-					if(direction.offsetX < 0 || direction.offsetZ < 0) {
-						progress = 1-progress;
-						progress *= -1;// cope for the fact that direction offset is negative
-					}
-					float offset = wrapper.offset / 100f;
-					if(dirRotated.offsetX < 0 || dirRotated.offsetZ < 0) {
-						offset = 1-offset;
-						offset *= -1;// cope for the fact that direction offset is negative
-					}
-					
-					if(conveyor.addItemAt(wrapper,
-							xCoord + direction.offsetX * progress + dirRotated.offsetX * offset,
-							yCoord + 0.4f,
-							zCoord + direction.offsetZ * progress + dirRotated.offsetZ * offset)) {
+					// If the item was added (no backlog), remote it from this entity
+					if (conveyor.addItemAt(wrapper, absX, absY, absZ)) {
 						System.out.println("Removing.");
 						iter.remove();
+						changed = true;
 					}
+				// Drop it
 				} else if(!worldObj.isRemote) {
 					
-					EntityItem item = new EntityItem(worldObj, xCoord + 0.5f + direction.offsetX * 0.5f, yCoord + 0.4, zCoord + 0.5f + direction.offsetZ * 0.5f, wrapper.itemStack);//new EntityItem(worldObj);
+					EntityItem item = new EntityItem(worldObj, absX, absY, absZ, wrapper.itemStack);
 					worldObj.spawnEntityInWorld(item);
 					iter.remove();
+					changed = true;
 				}
 			}
 		}
+		
+		// Content changed, send Network update.
+		if(changed) {
+			updateState();
+		}
 	}
 	
-	public static boolean isBlockConveyor(IBlockAccess world, int x, int y, int z) {
-		//TODO: create interface that allows other blocks to mimic the same receiving method.
-
-		Block nextBlock = world.getBlock(x, y, z);
-		if(nextBlock instanceof BlockProductionLine) {
-			if(world.getTileEntity(x, y, z) instanceof TileEntityConveyor) {
-				return true;
-			}
-		}
-		
-		return false;
-	}
+	//TODO: Handle items!
 	
 	@Override
 	protected void writePropertiesToNBT(NBTTagCompound tag) {

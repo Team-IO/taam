@@ -121,6 +121,7 @@ public class BlockProductionLine extends BaseBlock {
 			int side, float hitX, float hitY,
 			float hitZ) {
 		if(!world.isRemote) {
+			//TODO: Wrench only...
 			TileEntityConveyor conveyor = (TileEntityConveyor) world.getTileEntity(x, y, z);
 			conveyor.setDirection(conveyor.getDirection().getRotation(ForgeDirection.UP));
 		}
