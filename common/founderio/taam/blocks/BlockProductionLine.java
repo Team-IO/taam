@@ -5,6 +5,8 @@ import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
@@ -110,6 +112,25 @@ public class BlockProductionLine extends BaseBlock {
 			int par4, int par5) {
 		updateBlocksAround(par1World, par2, par3, par4);
 	}
+	
+	@Override
+	public AxisAlignedBB getCollisionBoundingBoxFromPool(World world,
+			int x, int y, int z) {
+		this.maxY = 0.5f;
+		return super.getCollisionBoundingBoxFromPool(world, x, y, z);
+	}
+	
+	@Override
+	public boolean onBlockActivated(World world, int x,
+			int y, int z, EntityPlayer player,
+			int side, float hitX, float hitY,
+			float hitZ) {
+		if(!world.isRemote) {
+			TileEntityConveyor conveyor = (TileEntityConveyor) world.getTileEntity(x, y, z);
+			conveyor.setDirection(conveyor.getDirection().getRotation(ForgeDirection.UP));
+		}
+		return true;
+	}
 
 //	@Override
 //	public int onBlockPlaced(World par1World, int x, int y, int z,
@@ -125,5 +146,5 @@ public class BlockProductionLine extends BaseBlock {
 		//TODO: Drop Items
 		super.breakBlock(world, x, y, z, block, meta);
 	}
-		
+	
 }

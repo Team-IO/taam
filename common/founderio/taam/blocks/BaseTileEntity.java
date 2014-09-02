@@ -42,29 +42,29 @@ public abstract class BaseTileEntity extends TileEntity {
 	}
 
 	@Override
-	public final void writeToNBT(NBTTagCompound par1nbtTagCompound) {
-		super.writeToNBT(par1nbtTagCompound);
+	public final void writeToNBT(NBTTagCompound tag) {
+		super.writeToNBT(tag);
 
-		writePropertiesToNBTInternal(par1nbtTagCompound);
+		writePropertiesToNBTInternal(tag);
 	}
 	
-	private void writePropertiesToNBTInternal(NBTTagCompound par1nbtTagCompound) {
-		writePropertiesToNBT(par1nbtTagCompound);
+	private void writePropertiesToNBTInternal(NBTTagCompound tag) {
+		writePropertiesToNBT(tag);
 	}
 
-	protected abstract void writePropertiesToNBT(NBTTagCompound par1nbtTagCompound);
+	protected abstract void writePropertiesToNBT(NBTTagCompound tag);
 
 	@Override
-	public final void readFromNBT(NBTTagCompound par1nbtTagCompound) {
-		super.readFromNBT(par1nbtTagCompound);
+	public final void readFromNBT(NBTTagCompound tag) {
+		super.readFromNBT(tag);
 
-		readPropertiesFromNBTInternal(par1nbtTagCompound);
+		readPropertiesFromNBTInternal(tag);
 	}
 	
-	private void readPropertiesFromNBTInternal(NBTTagCompound par1nbtTagCompound) {
-		readPropertiesFromNBT(par1nbtTagCompound);
+	private void readPropertiesFromNBTInternal(NBTTagCompound tag) {
+		readPropertiesFromNBT(tag);
 	}
 
-	protected abstract void readPropertiesFromNBT(NBTTagCompound par1nbtTagCompound);
+	protected abstract void readPropertiesFromNBT(NBTTagCompound tag);
 	
 }

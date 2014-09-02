@@ -1,5 +1,7 @@
 package founderio.taam.rendering;
 
+import java.util.List;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.RenderItem;
@@ -23,9 +25,11 @@ import cpw.mods.fml.common.gameevent.TickEvent.Phase;
 import cpw.mods.fml.common.gameevent.TickEvent.Type;
 import founderio.taam.Taam;
 import founderio.taam.TaamMain;
+import founderio.taam.blocks.BlockProductionLine;
 import founderio.taam.blocks.BlockSensor;
 import founderio.taam.blocks.TileEntityConveyor;
 import founderio.taam.blocks.TileEntitySensor;
+import founderio.taam.conveyors.ItemWrapper;
 
 public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRenderer {
 
@@ -66,8 +70,13 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 
 	@Override
 	public boolean handleRenderType(ItemStack item, ItemRenderType type) {
-
-		return Block.getBlockFromItem(item.getItem()) instanceof BlockSensor;
+		Block block = Block.getBlockFromItem(item.getItem());
+		if(block instanceof BlockSensor) {
+			return true;
+		} else if(block instanceof BlockProductionLine) {
+			return true;
+		}
+		return false;
 	}
 
 	@Override
@@ -135,6 +144,39 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 		
 		Minecraft.getMinecraft().renderEngine.bindTexture(textureConveyor);
 		modelConveyor.renderAll();
+		
+		if(conveyor != null) {
+			ForgeDirection dir = conveyor.getDirection();
+			// Turn one to the (right)? TODO: Check this statement.
+			ForgeDirection dirRotated = dir.getRotation(ForgeDirection.UP);
+			
+			GL11.glTranslatef(-dir.offsetX * 0.5f, 0.1f, -dir.offsetZ * 0.5f);
+			GL11.glTranslatef(-dirRotated.offsetX * 0.5f, 0.1f, -dirRotated.offsetZ * 0.5f);
+			
+			List<ItemWrapper> items = conveyor.getItems();
+			for(ItemWrapper wrapper : items) {
+				if(wrapper == null || wrapper.itemStack == null) {
+					continue;
+				}
+				
+				float progress = (wrapper.progress / 100f);
+				float offset = (wrapper.offset / 100f);
+				
+				GL11.glPushMatrix();
+				GL11.glTranslatef(dir.offsetX * progress, 0, dir.offsetZ * progress);
+				GL11.glTranslatef(dirRotated.offsetX * offset, 0, dirRotated.offsetZ * offset);
+				
+				ei.setEntityItemStack(wrapper.itemStack);
+				ei.setPosition(x, y + 1, z);
+
+				RenderItem.renderInFrame = true;
+				ri.doRender(ei, 0, .5f, 0, 0, 0);
+				
+				GL11.glPopMatrix();
+			}
+			
+		}
+		
 		GL11.glPopMatrix();
 	}
 	
