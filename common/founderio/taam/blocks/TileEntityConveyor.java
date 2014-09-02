@@ -4,14 +4,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.lwjgl.opengl.GL11;
-
-import founderio.taam.conveyors.IConveyorAwareTE;
-import founderio.taam.conveyors.ItemWrapper;
-
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -20,6 +14,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.util.ForgeDirection;
+import founderio.taam.conveyors.IConveyorAwareTE;
+import founderio.taam.conveyors.ItemWrapper;
 
 public class TileEntityConveyor extends BaseTileEntity implements IInventory, IConveyorAwareTE {
 	
@@ -45,17 +41,6 @@ public class TileEntityConveyor extends BaseTileEntity implements IInventory, IC
 	public TileEntityConveyor() {
 		items = new ArrayList<ItemWrapper>();
 	}
-	
-	
-
-
-	public void insertItem(ItemStack itemStack, int progress) {
-		items.add(new ItemWrapper(itemStack, progress, 0));
-	}
-	
-
-	
-	
 
 	@Override
 	public boolean addItemAt(ItemStack item, double x, double y, double z) {
@@ -124,10 +109,6 @@ public class TileEntityConveyor extends BaseTileEntity implements IInventory, IC
 		items.add(item);
 		return true;
 	}
-	
-	
-	
-	
 	
 	public static final int maxProgress = 130;
 	
