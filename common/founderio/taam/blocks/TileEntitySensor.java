@@ -6,8 +6,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.ForgeDirection;
 import founderio.taam.Config;
+import founderio.taam.conveyors.IRotatable;
 
-public class TileEntitySensor extends BaseTileEntity {
+public class TileEntitySensor extends BaseTileEntity implements IRotatable {
 	
 	private float offLength = 1.5f;
 	private float offLeft = 1.5f;
@@ -29,7 +30,21 @@ public class TileEntitySensor extends BaseTileEntity {
 		}
 	}
 	
+	//TODO: move rotation from metadata to tileentity property.
+	
 	public TileEntitySensor() {
+	}
+
+	@Override
+	public ForgeDirection getFacingDirection() {
+		int meta = getBlockMetadata();
+		int rotation = meta & 7;
+		return ForgeDirection.getOrientation(rotation);
+	}
+
+	@Override
+	public ForgeDirection getMountDirection() {
+		return getFacingDirection().getOpposite();
 	}
 	
 	@Override

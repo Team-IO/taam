@@ -13,23 +13,30 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import founderio.taam.conveyors.IConveyorAwareTE;
+import founderio.taam.conveyors.IRotatable;
 import founderio.taam.conveyors.ItemWrapper;
 
-public class TileEntityConveyor extends BaseTileEntity implements IInventory, IConveyorAwareTE {
+public class TileEntityConveyor extends BaseTileEntity implements IInventory, IConveyorAwareTE, IRotatable {
 	
 	private List<ItemWrapper> items;
 	
 	private ForgeDirection direction = ForgeDirection.NORTH;
 	
-	public ForgeDirection getDirection() {
-		return direction;
-	}
-
+	//TODO: Migrate to IRotatable version..
 	public void setDirection(ForgeDirection direction) {
 		this.direction = direction;
 		updateState();
 	}
-	
+
+	@Override
+	public ForgeDirection getFacingDirection() {
+		return direction;
+	}
+
+	@Override
+	public ForgeDirection getMountDirection() {
+		return ForgeDirection.DOWN;
+	}
 	
 
 	public List<ItemWrapper> getItems() {

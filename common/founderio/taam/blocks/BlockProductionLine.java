@@ -123,7 +123,7 @@ public class BlockProductionLine extends BaseBlock {
 		if(!world.isRemote) {
 			//TODO: Wrench only...
 			TileEntityConveyor conveyor = (TileEntityConveyor) world.getTileEntity(x, y, z);
-			conveyor.setDirection(conveyor.getDirection().getRotation(ForgeDirection.UP));
+			conveyor.setDirection(conveyor.getFacingDirection().getRotation(ForgeDirection.UP));
 		}
 		return true;
 	}

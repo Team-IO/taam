@@ -113,7 +113,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 			int meta = item.getItemDamage() | 7;
 			renderSensor(offX, offY, offZ, (meta & 7), false);
 		} else if(item.getItem() == Item.getItemFromBlock(TaamMain.blockProductionLine)) {
-			renderConveyor(null, offX, offY, offZ, 0);
+			renderConveyor(null, offX, offY, offZ);
 		}
 		
 	}
@@ -132,16 +132,16 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 				break;
 			}
 		} else if(tileentity instanceof TileEntityConveyor) {
-			renderConveyor((TileEntityConveyor)tileentity, x, y, z, 0);
+			renderConveyor((TileEntityConveyor)tileentity, x, y, z);
 		}
 	}
-	//TODO: remove rotation
-	public void renderConveyor(TileEntityConveyor conveyor, double x, double y, double z, int rotation) {
+
+	public void renderConveyor(TileEntityConveyor conveyor, double x, double y, double z) {
 		
 		
 		ForgeDirection direction;
 		if(conveyor != null) {
-			direction = conveyor.getDirection();
+			direction = conveyor.getFacingDirection();
 		} else {
 			direction = ForgeDirection.SOUTH;
 		}
