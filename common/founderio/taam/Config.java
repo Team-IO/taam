@@ -17,6 +17,10 @@ public class Config {
 	public static int sensor_delay = 30;
 	public static int sensor_placement_mode = 1;
 	
+	public static int pl_appl_sprayer_maxProgress = 20;
+	//TODO: Change to mB
+	public static int pl_appl_sprayer_resourceUsage = 1;
+	
 	public static void init(File configFile)
 	{
 				
@@ -31,18 +35,22 @@ public class Config {
 	}
 	private static void loadConfig()
 	{
+		
+		genCopper = config.getBoolean("generateCopper", "worldgen", true, Taam.CFG_COMMENT_GEN_COPPER_ORE);
+		genTin = config.getBoolean("generateTin", "worldgen", true , Taam.CFG_COMMENT_GEN_TIN_ORE);
+		
+		debug = config.getBoolean("debug_output", Configuration.CATEGORY_GENERAL, false, Taam.CFG_COMMENT_DEBUG_OUTPUT);
+		
+		sensor_delay = config.getInt("sensor_delay", "multitronix", 30, 10, 100, Taam.CFG_COMMENT_SENSOR_DELAY);
+		sensor_placement_mode = config.getInt("sensor_placement_mode", "multitronix", 1, 1, 2, Taam.CFG_COMMENT_SENSOR_PLACEMENT_MODE);
+		
+		pl_appl_sprayer_maxProgress = config.getInt("sprayer_maxProgress", "production_line_appliances", 20, 1, 500, "Maximum processing steps for the sprayer appliance.");
+		pl_appl_sprayer_resourceUsage = config.getInt("sprayer_paintUsage", "production_line_appliances", 1, 1, 500, "Resource Usage per spray step in the sprayer.");
+
 		if(config.hasChanged())
 		{
 			config.save();
 		}
-		
-		genCopper = config.getBoolean("generateCopper", Configuration.CATEGORY_GENERAL, true, Taam.CFG_COMMENT_GEN_COPPER_ORE);
-		genTin = config.getBoolean("generateTin", Configuration.CATEGORY_GENERAL, true , Taam.CFG_COMMENT_GEN_TIN_ORE);
-		debug =config.getBoolean("debug_output", Configuration.CATEGORY_GENERAL, false, Taam.CFG_COMMENT_DEBUG_OUTPUT);
-		
-		sensor_delay = config.getInt("sensor_delay", Configuration.CATEGORY_GENERAL, 30, 10, 100, Taam.CFG_COMMENT_SENSOR_DELAY);
-		sensor_placement_mode = config.getInt("sensor_placement_mode", Configuration.CATEGORY_GENERAL, 1, 1, 2, Taam.CFG_COMMENT_SENSOR_PLACEMENT_MODE);
-		
 	}
 	
 	
