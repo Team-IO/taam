@@ -52,7 +52,10 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 			}
 		};
 		ei = new EntityItem(null, 0, 0, 0, new ItemStack(Items.apple));
+		ei.rotationPitch = 0;
+		ei.rotationYaw = 0;
 		ri.setRenderManager(RenderManager.instance);
+		
 		
 		modelSensor = new TechneModel(new ResourceLocation(Taam.MOD_ID + ":models/sensor.tcn"));
 		textureSensor = new ResourceLocation(Taam.MOD_ID + ":textures/models/sensor.png");
@@ -154,18 +157,35 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 		GL11.glTranslatef(0.5f, 0, 0.5f);
 		
 		if(direction == ForgeDirection.WEST) {
-			GL11.glRotatef(90, 0, 1, 0);
+			GL11.glRotatef(270, 0, 1, 0);
 		} else if(direction == ForgeDirection.NORTH) {
 			GL11.glRotatef(180, 0, 1, 0);
 		} else if(direction == ForgeDirection.EAST) {
-			GL11.glRotatef(270, 0, 1, 0);
+			GL11.glRotatef(90, 0, 1, 0);
 		}
-		
+
 		GL11.glTranslated(-0.5, 0, -0.5);
 		
 		// Rendering
 		Minecraft.getMinecraft().renderEngine.bindTexture(textureConveyor);
-		modelConveyor.renderAll();
+
+		modelConveyor.renderPart("Support_smdl");
+		
+		if(conveyor == null || !conveyor.isEnd()) {
+			modelConveyor.renderPart("Conveyor_Straight_csmdl");
+		} else {
+			modelConveyor.renderPart("Conveyor_End_cemdl");
+		}
+		
+		GL11.glTranslated(0.5, 0, 0.5);
+		GL11.glRotatef(180, 0, 1, 0);
+		GL11.glTranslated(-0.5, 0, -0.5);
+		
+		if(conveyor == null || !conveyor.isBegin()) {
+			modelConveyor.renderPart("Conveyor_Straight_csmdl");
+		} else {
+			modelConveyor.renderPart("Conveyor_End_cemdl");
+		}
 		
 		GL11.glPopMatrix();
 		

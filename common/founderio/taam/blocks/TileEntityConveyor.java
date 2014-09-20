@@ -1,6 +1,7 @@
 package founderio.taam.blocks;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -9,8 +10,11 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.common.util.ForgeDirection;
 import founderio.taam.conveyors.IConveyorAwareTE;
 import founderio.taam.conveyors.IRotatable;
@@ -18,9 +22,31 @@ import founderio.taam.conveyors.ItemWrapper;
 
 public class TileEntityConveyor extends BaseTileEntity implements IInventory, IConveyorAwareTE, IRotatable {
 	
-	private List<ItemWrapper> items;
+	private ArrayList<ItemWrapper> items;
 	
 	private ForgeDirection direction = ForgeDirection.NORTH;
+	
+	private boolean isEnd = false;
+	private boolean isBegin = false;
+	
+	public boolean isBegin() {
+		return isBegin;
+	}
+	
+	public boolean isEnd() {
+		return isEnd;
+	}
+	
+	@Override
+	public void updateContainingBlockInfo() {
+		super.updateContainingBlockInfo();
+		TileEntity te = worldObj.getTileEntity(xCoord + direction.offsetX, yCoord + direction.offsetY, zCoord + direction.offsetZ);
+		isEnd = !(te instanceof TileEntityConveyor) || ((TileEntityConveyor)te).getFacingDirection() != direction;
+		ForgeDirection inverse = direction.getOpposite();
+		te = worldObj.getTileEntity(xCoord + inverse.offsetX, yCoord + inverse.offsetY, zCoord + inverse.offsetZ);
+		isBegin = !(te instanceof TileEntityConveyor) || ((TileEntityConveyor)te).getFacingDirection() != direction;
+	}
+	
 	
 	//TODO: Migrate to IRotatable version..
 	public void setDirection(ForgeDirection direction) {
@@ -119,6 +145,19 @@ public class TileEntityConveyor extends BaseTileEntity implements IInventory, IC
 	
 	public static final int maxProgress = 130;
 	
+	private boolean checkSpace(int progress, int offset, int except) {
+		for(int i = except + 1; i < items.size(); i++) {
+			ItemWrapper item = items.get(i);
+			System.out.println(Math.abs(item.progress - progress)/100f);
+			int distP = Math.abs(item.progress - progress);
+			int distO = Math.abs(item.offset - offset);
+			if(distP * distP + distO * distO < 40*40) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
 	@Override
 	public void updateEntity() {
 
@@ -138,17 +177,20 @@ public class TileEntityConveyor extends BaseTileEntity implements IInventory, IC
 			}
 		}
 		
+		Collections.sort(items);
+		
 		/*
 		 * Move items already on the conveyor
 		 */
 		
 		boolean changed = false;
-		Iterator<ItemWrapper> iter = items.iterator();
 		
+		for(int idx = items.size() - 1; idx >= 0; idx--) {
 		
-		while(iter.hasNext()) {
-			ItemWrapper wrapper = iter.next();
-			wrapper.progress += 1;
+			ItemWrapper wrapper = items.get(idx);
+			if(checkSpace(wrapper.progress+1, wrapper.offset, idx)) {
+				wrapper.progress += 1;
+			}
 			if(wrapper.progress > maxProgress) {
 				wrapper.progress = maxProgress;//Just to keep the item where it is when the next conveyor is blocked.
 
@@ -164,7 +206,6 @@ public class TileEntityConveyor extends BaseTileEntity implements IInventory, IC
 					offset = 1-offset;
 					offset *= -1;// cope for the fact that direction offset is negative
 				}
-				
 				// Absolute Position of the Item
 				float absX = xCoord + direction.offsetX * progress + dirRotated.offsetX * offset;
 				float absY = yCoord + 0.4f;
@@ -181,20 +222,21 @@ public class TileEntityConveyor extends BaseTileEntity implements IInventory, IC
 				if(te instanceof IConveyorAwareTE) {
 					IConveyorAwareTE conveyor = (IConveyorAwareTE) worldObj.getTileEntity(nextBlockX, nextBlockY, nextBlockZ);
 					
-					System.out.println("Trying to remove");
+//					System.out.println("Trying to remove");
 					
 					// If the item was added (no backlog), remote it from this entity
 					if (conveyor.addItemAt(wrapper, absX, absY, absZ)) {
-						System.out.println("Removing.");
-						iter.remove();
+//						System.out.println("Removing.");
+						items.remove(idx);
 						changed = true;
 					}
 				// Drop it
 				} else if(!worldObj.isRemote) {
 					
 					EntityItem item = new EntityItem(worldObj, absX, absY, absZ, wrapper.itemStack);
+					item.setVelocity(direction.offsetX * 0.05, direction.offsetY * 0.05, direction.offsetZ * 0.05);
 					worldObj.spawnEntityInWorld(item);
-					iter.remove();
+					items.remove(idx);
 					changed = true;
 				}
 			}
@@ -211,11 +253,28 @@ public class TileEntityConveyor extends BaseTileEntity implements IInventory, IC
 	@Override
 	protected void writePropertiesToNBT(NBTTagCompound tag) {
 		tag.setInteger("direction", direction.ordinal());
+		if(!items.isEmpty()) {
+			NBTTagList itemsTag = new NBTTagList();
+			for(int i = 0; i < items.size(); i++) {
+				itemsTag.appendTag(items.get(i).writeToNBT());
+			}
+			tag.setTag("items", itemsTag);
+		}
 	}
 
 	@Override
 	protected void readPropertiesFromNBT(NBTTagCompound tag) {
 		direction = ForgeDirection.getOrientation(tag.getInteger("direction"));
+		NBTTagList itemsTag = tag.getTagList("items", NBT.TAG_COMPOUND);
+		if(itemsTag != null) {
+			int count = itemsTag.func_150303_d();
+			items.clear();
+			items.ensureCapacity(count);
+			for(int i = 0; i < count; i++) {
+				items.add(ItemWrapper.readFromNBT(itemsTag.getCompoundTagAt(i)));
+			}
+			items.trimToSize();
+		}
 	}
 
 	@Override
@@ -226,44 +285,38 @@ public class TileEntityConveyor extends BaseTileEntity implements IInventory, IC
 
 	@Override
 	public ItemStack getStackInSlot(int p_70301_1_) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public ItemStack decrStackSize(int p_70298_1_, int p_70298_2_) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public ItemStack getStackInSlotOnClosing(int p_70304_1_) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public void setInventorySlotContents(int p_70299_1_, ItemStack p_70299_2_) {
-		// TODO Auto-generated method stub
-		
+		//TODO: insert at the specified side (will have one "slot" per side)
+		//TODO: Check if that area is free, else drop it (since we cannot abort...)
 	}
 
 	@Override
 	public String getInventoryName() {
-		// TODO Auto-generated method stub
-		return null;
+		return "Conveyor Belt";
 	}
 
 	@Override
 	public boolean hasCustomInventoryName() {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override
 	public int getInventoryStackLimit() {
-		// TODO Auto-generated method stub
-		return 0;
+		return 64;
 	}
 
 	@Override
@@ -274,20 +327,16 @@ public class TileEntityConveyor extends BaseTileEntity implements IInventory, IC
 
 	@Override
 	public void openInventory() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void closeInventory() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public boolean isItemValidForSlot(int p_94041_1_, ItemStack p_94041_2_) {
-		// TODO Auto-generated method stub
-		return false;
+		//TODO: check if that area is free
+		return true;
 	}
 
 }
