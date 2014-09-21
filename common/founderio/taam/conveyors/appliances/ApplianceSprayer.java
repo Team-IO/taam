@@ -10,60 +10,47 @@ import net.minecraft.block.BlockColored;
 import net.minecraft.block.BlockHardenedClay;
 import net.minecraft.block.BlockStainedGlass;
 import net.minecraft.block.BlockStainedGlassPane;
-import net.minecraft.inventory.InventoryBasic;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.oredict.OreDictionary;
 import founderio.taam.Config;
 import founderio.taam.blocks.TileEntityConveyor;
 import founderio.taam.conveyors.ApplianceInventory;
 import founderio.taam.conveyors.IConveyorAppliance;
+import founderio.taam.conveyors.IConveyorApplianceFactory;
 import founderio.taam.conveyors.ItemWrapper;
 
-public class ApplianceSprayer implements IConveyorAppliance {
+public class ApplianceSprayer extends ApplianceInventory {
 
-	@Override
-	public int getProgressBegin() {
-		return 40;
+	public ApplianceSprayer() {
+		super(1, 1);
 	}
+	
+	public static class Factory implements IConveyorApplianceFactory {
 
-	@Override
-	public int getProgressEnd() {
-		return 60;
+		@Override
+		public IConveyorAppliance setUpApplianceInventory(String type, TileEntityConveyor conveyor) {
+			IConveyorAppliance ainv = new ApplianceSprayer();
+			return ainv; 
+		}
 	}
+	
+	/*
+	 * "Static"
+	 */
 
 	static final String[] dyes = { "Black", "Red", "Green", "Brown", "Blue",
 			"Purple", "Cyan", "LightGray", "Gray", "Pink", "Lime", "Yellow",
 			"LightBlue", "Magenta", "Orange", "White" };
 	
-	@Override
-	public void processItem(TileEntityConveyor conveyor, ApplianceInventory inventory, ItemWrapper wrapper) {
-		//TODO: Review this, and change to fluid usage (will use fluid during progress, can leave half-processed items.)
-		if(wrapper.progress > Config.pl_appl_sprayer_maxProgress) {
-			int paintType = getPaintType(inventory);
-			int itemPaintType = getItemPaintType(wrapper.itemStack);
-			if(paintType == itemPaintType) {
-				//Reset progress, as we cannot spray it
-				wrapper.progress = 0;
-				return;
-			}
-			if(checkResource(inventory) >= Config.pl_appl_sprayer_resourceUsage) {
-				consumeResource(inventory);
-				setItemPaintType(wrapper.itemStack, paintType);
-			}
-		}
-		wrapper.progress = -1;
-	}
-
-	@Override
-	public ApplianceInventory setUpApplianceInventory(TileEntityConveyor conveyor) {
-		ApplianceInventory ainv = new ApplianceInventory();
-		//TODO: Migrate to tanks once ready
-		ainv.inventory = new InventoryBasic("appliance_sprayer", true, 1);
-		return ainv; 
-	}
-	
 	private int getItemPaintType(ItemStack is) {
+		//TODO: Migrate to tanks once ready
+		if(is == null) {
+			return -1;
+		}
 		Item item = is.getItem();
 		if (item == null) {
 			return -1;
@@ -80,6 +67,9 @@ public class ApplianceSprayer implements IConveyorAppliance {
 	}
 	
 	private void setItemPaintType(ItemStack is, int paintType) {
+		if(is == null) {
+			return;
+		}
 		Item item = is.getItem();
 		if (item == null) {
 			return;
@@ -94,8 +84,46 @@ public class ApplianceSprayer implements IConveyorAppliance {
 		}
 	}
 	
-	private int getPaintType(ApplianceInventory inventory) {
-		ItemStack is = inventory.inventory.getStackInSlot(0);
+	/*
+	 * "Dynamic"
+	 */
+	
+	@Override
+	public int getProgressBegin() {
+		return 40;
+	}
+
+	@Override
+	public int getProgressEnd() {
+		return 60;
+	}
+	
+	@Override
+	public void processItem(TileEntityConveyor conveyor, ItemWrapper wrapper) {
+		//TODO: Review this, and change to fluid usage (will use fluid during progress, can leave half-processed items.)
+		if(wrapper.processing > 1) {//Config.pl_appl_sprayer_maxProgress) {
+			int paintType = getAvailablePaintType();
+			int itemPaintType = getItemPaintType(wrapper.itemStack);
+			if(paintType == itemPaintType) {
+				System.out.println("No need to paint");
+				//Reset progress, as we cannot spray it
+				wrapper.processing = 0;
+				return;
+			}
+			if(checkResource() >= Config.pl_appl_sprayer_resourceUsage) {
+				consumeResource();
+				setItemPaintType(wrapper.itemStack, paintType);
+				wrapper.processing = -1;
+			} else {
+				System.out.println("No resources");
+				//Reset progress, as we cannot spray it
+				wrapper.processing = 0;
+			}
+		}
+	}
+	
+	private int getAvailablePaintType() {
+		ItemStack is = inventory.getStackInSlot(0);
 		if(is == null || is.getItem() == null || is.stackSize <= 0) {
 			return -1;
 		}
@@ -112,16 +140,16 @@ public class ApplianceSprayer implements IConveyorAppliance {
 		return -1;
 	}
 	
-	private void consumeResource(ApplianceInventory inventory) {
-		inventory.inventory.getStackInSlot(0).stackSize -= Config.pl_appl_sprayer_resourceUsage;
-		if(inventory.inventory.getStackInSlot(0).stackSize <= 0) {
-			inventory.inventory.setInventorySlotContents(0, null);
+	private void consumeResource() {
+		inventory.getStackInSlot(0).stackSize -= Config.pl_appl_sprayer_resourceUsage;
+		if(inventory.getStackInSlot(0).stackSize <= 0) {
+			inventory.setInventorySlotContents(0, null);
 		}
 	}
 	
-	private int checkResource(ApplianceInventory inventory) {
-		if(getPaintType(inventory) > -1) {
-			return inventory.inventory.getStackInSlot(0).stackSize;
+	private int checkResource() {
+		if(getAvailablePaintType() > -1) {
+			return inventory.getStackInSlot(0).stackSize;
 		}
 		return 0;
 	}
@@ -144,12 +172,63 @@ public class ApplianceSprayer implements IConveyorAppliance {
 	}
 
 	@Override
-	public boolean isApplianceSetupCompatible(
-			TileEntityConveyor conveyorSource,
-			ApplianceInventory inventorySource,
-			TileEntityConveyor conveyorTarget,
-			ApplianceInventory inventoryTarget) {
+	public boolean isApplianceSetupCompatible(TileEntityConveyor conveyorTarget, IConveyorAppliance applianceTarget) {
+		if(applianceTarget instanceof ApplianceSprayer) {
+			return ((ApplianceSprayer) applianceTarget).getAvailablePaintType() == getAvailablePaintType();
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public boolean isUseableByPlayer(EntityPlayer p_70300_1_) {
+		return true;
+	}
+
+	@Override
+	public boolean isItemValidForSlot(int slot, ItemStack itemStack) {
+		List<ItemStack> dyeOres = OreDictionary.getOres("dye");
+		Iterator<ItemStack> itr = ((ArrayList<ItemStack>)dyeOres).iterator();
+        while (itr.hasNext())
+        {
+            if(OreDictionary.itemMatches(itr.next(), itemStack, false)) {
+            	return true;
+            }
+        }
+        return false;
+	}
+
+	//TODO: Create global recipe registry for the production line
+	
+	@Override
+	public boolean canFill(ForgeDirection from, Fluid fluid) {
+		// TODO: Check if fluid is a matching type
+		return false;
+	}
+
+	@Override
+	public boolean canDrain(ForgeDirection from, Fluid fluid) {
 		// TODO Auto-generated method stub
+		return true;
+	}
+
+	@Override
+	protected int getTankForSide(ForgeDirection from) {
+		return 0;
+	}
+
+	@Override
+	public int[] getAccessibleSlotsFromSide(int side) {
+		return new int[] { 0 };
+	}
+
+	@Override
+	public boolean canInsertItem(int slot, ItemStack itemStack, int side) {
+		return true;
+	}
+
+	@Override
+	public boolean canExtractItem(int slot, ItemStack itemStack, int side) {
 		return true;
 	}
 

@@ -103,7 +103,12 @@ public class ItemDebugTool extends Item {
         	didSomething = true;
         	TileEntityConveyor tec = (TileEntityConveyor) te;
         	tec.updateContainingBlockInfo();
-        	player.addChatMessage(new ChatComponentText(String.format("Conveyor facing %s. isEnd: %b isBegin: %b", tec.getFacingDirection().toString(), tec.isEnd(), tec.isBegin())));
+        	player.addChatMessage(new ChatComponentText(String.format((world.isRemote ? 'C' : 'S') + " Conveyor facing %s. isEnd: %b isBegin: %b", tec.getFacingDirection().toString(), tec.isEnd(), tec.isBegin())));
+        	if(tec.appliance == null) {
+        		player.addChatMessage(new ChatComponentText(String.format((world.isRemote ? 'C' : 'S') + " Appliance Type: %s Appliance is null. ", tec.applianceType)));
+        	} else {
+        		player.addChatMessage(new ChatComponentText(String.format((world.isRemote ? 'C' : 'S') + " Appliance Type: %s Appliance: %s", tec.applianceType, String.valueOf(tec.appliance))));
+        	}
         }
         if(didSomething && !world.isRemote) {
         	world.playSound(player.posX ,player.posY ,player.posZ ,"random.drink", 1, 1, false);

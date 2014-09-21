@@ -67,7 +67,9 @@ public class ItemWrapper implements Comparable<ItemWrapper> {
 		tag.setInteger("progress", progress);
 		tag.setInteger("processing", processing);
 		tag.setInteger("offset", offset);
-		itemStack.writeToNBT(tag);
+		if(itemStack != null) {
+			itemStack.writeToNBT(tag);
+		}
 		return tag;
 	}
 	

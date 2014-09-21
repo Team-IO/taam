@@ -17,7 +17,7 @@ public class Config {
 	public static int sensor_delay = 30;
 	public static int sensor_placement_mode = 1;
 	
-	public static int pl_appl_sprayer_maxProgress = 20;
+	public static int pl_appl_sprayer_maxProgress = 1;
 	//TODO: Change to mB
 	public static int pl_appl_sprayer_resourceUsage = 1;
 	

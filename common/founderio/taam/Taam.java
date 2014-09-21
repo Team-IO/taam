@@ -37,6 +37,11 @@ public final class Taam {
 	public static final String ITEM_PHOTOCELL = "taam.item.photocell";
 	public static final String ITEM_PLASTIC = "taam.item.plastic";
 	public static final String ITEM_INGOT = "taam.item.ingot";
+	public static final String ITEM_CONVEYOR_APPLIANCE = "taam.item.conveyor_appliance";
+	
+	public static final String[] ITEM_CONVEYOR_APPLIANCE_META = new String[] {
+		"sprayer"
+	};
 	
 	public static final String TILEENTITY_SENSOR = "taam.sensor";
 	public static final String TILEENTITY_SLIDINGDOOR = "taam.slidingdoor";

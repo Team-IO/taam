@@ -30,6 +30,7 @@ import founderio.taam.blocks.multinet.ItemMultinetMultitronix;
 import founderio.taam.blocks.multinet.MultinetHandler;
 import founderio.taam.blocks.multinet.MultinetPartFactory;
 import founderio.taam.blocks.multinet.cables.OperatorRedstone;
+import founderio.taam.items.ItemConveyorAppliance;
 import founderio.taam.items.ItemDebugTool;
 import founderio.taam.items.ItemIngot;
 import founderio.taam.items.ItemPhotoCell;
@@ -53,6 +54,7 @@ public class TaamMain {
 	public static ItemPhotoCell itemPhotoCell;
 	public static ItemPlastic itemPlastic;
 	public static ItemIngot itemIngot;
+	public static ItemConveyorAppliance itemConveyorAppliance;
 	
 	public static CreativeTabs creativeTab;
 
@@ -137,6 +139,11 @@ public class TaamMain {
 		itemIngot.setUnlocalizedName(Taam.ITEM_INGOT);
 		itemIngot.setCreativeTab(creativeTab);
 		
+		itemConveyorAppliance = new ItemConveyorAppliance();
+		itemConveyorAppliance.setUnlocalizedName(Taam.ITEM_CONVEYOR_APPLIANCE);
+		itemConveyorAppliance.setCreativeTab(creativeTab);
+		
+		
 		Multinet.registerOperator(new OperatorRedstone("redstone"));
 
 		GameRegistry.registerItem(itemPhotoCell, Taam.ITEM_PHOTOCELL, Taam.MOD_ID);
@@ -146,6 +153,7 @@ public class TaamMain {
 		GameRegistry.registerItem(itemMultinetDebugger, Taam.ITEM_MULTINET_DEBUGGER, Taam.MOD_ID);
 		GameRegistry.registerItem(itemMultinetMultitronix, Taam.ITEM_MULTINET_MULTITRONIX, Taam.MOD_ID);
 		GameRegistry.registerItem(itemIngot, Taam.ITEM_INGOT, Taam.MOD_ID);
+		GameRegistry.registerItem(itemConveyorAppliance, Taam.ITEM_CONVEYOR_APPLIANCE, Taam.MOD_ID);
 		
 		GameRegistry.registerBlock(blockSensor, ItemBlock.class, Taam.BLOCK_SENSOR);
 		GameRegistry.registerBlock(blockProductionLine, ItemBlock.class, Taam.BLOCK_PRODUCTIONLINE);
