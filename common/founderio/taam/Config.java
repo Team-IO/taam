@@ -45,7 +45,7 @@ public class Config {
 		sensor_placement_mode = config.getInt("sensor_placement_mode", "multitronix", 1, 1, 2, Taam.CFG_COMMENT_SENSOR_PLACEMENT_MODE);
 		
 		pl_appl_sprayer_maxProgress = config.getInt("sprayer_maxProgress", "production_line_appliances", 20, 1, 500, "Maximum processing steps for the sprayer appliance.");
-		pl_appl_sprayer_resourceUsage = config.getInt("sprayer_paintUsage", "production_line_appliances", 1, 1, 500, "Resource Usage per spray step in the sprayer.");
+		pl_appl_sprayer_resourceUsage = config.getInt("sprayer_resourceUsage", "production_line_appliances", 1, 1, 500, "Resource Usage per spray step in the sprayer.");
 
 		if(config.hasChanged())
 		{

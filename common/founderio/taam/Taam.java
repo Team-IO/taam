@@ -28,6 +28,11 @@ public final class Taam {
 		"tin"
 	};
 	
+	public static final String[] BLOCK_CONVEYOR_META = new String[] {
+		"conveyor",
+		"hopper"
+	};
+	
 	public static final String MULTIPART_MULTINET_CABLE = "taam.multinet.cable";
 	public static final String MULTIPART_MULTINET_MULTITRONIX = "taam.multinet.multitronix";
 	

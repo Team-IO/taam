@@ -177,14 +177,15 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 		 * Find items laying on the conveyor.
 		 */
 
-
-		for(Object obj : worldObj.loadedEntityList) {
-			Entity ent = (Entity)obj;
-			
-			if(ent instanceof EntityItem) {
-				if(addItemAt(((EntityItem)ent).getEntityItem(), ent.posX, ent.posY, ent.posZ)) {
-					ent.setDead();
-					break;
+		if(!worldObj.isRemote) {
+			for(Object obj : worldObj.loadedEntityList) {
+				Entity ent = (Entity)obj;
+				
+				if(ent instanceof EntityItem) {
+					if(addItemAt(((EntityItem)ent).getEntityItem(), ent.posX, ent.posY, ent.posZ)) {
+						ent.setDead();
+						break;
+					}
 				}
 			}
 		}
@@ -196,7 +197,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 		 */
 		
 		boolean changed = false;
-		
+		System.out.println(items.size());
 		for(int idx = items.size() - 1; idx >= 0; idx--) {
 		
 			ItemWrapper wrapper = items.get(idx);
@@ -281,7 +282,8 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 		}
 		
 		// Content changed, send Network update.
-		if(changed) {
+		if(changed && !worldObj.isRemote) {
+			//TODO: Do not update the items all the time. (Update differently)
 			updateState();
 		}
 	}

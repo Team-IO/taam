@@ -156,7 +156,8 @@ public class TaamMain {
 		GameRegistry.registerItem(itemConveyorAppliance, Taam.ITEM_CONVEYOR_APPLIANCE, Taam.MOD_ID);
 		
 		GameRegistry.registerBlock(blockSensor, ItemBlock.class, Taam.BLOCK_SENSOR);
-		GameRegistry.registerBlock(blockProductionLine, ItemBlock.class, Taam.BLOCK_PRODUCTIONLINE);
+		GameRegistry.registerBlock(blockProductionLine, null, Taam.BLOCK_PRODUCTIONLINE);
+		GameRegistry.registerItem(new ItemMultiTexture(blockProductionLine, blockProductionLine, Taam.BLOCK_CONVEYOR_META), Taam.BLOCK_PRODUCTIONLINE, Taam.MOD_ID);
 //		GameRegistry.registerBlock(blockSlidingDoor, ItemBlock.class, Taam.BLOCK_SLIDINGDOOR);
 		GameRegistry.registerBlock(blockOre, null, Taam.BLOCK_ORE);
 		GameRegistry.registerItem(new ItemMultiTexture(blockOre, blockOre, Taam.BLOCK_ORE_META), Taam.BLOCK_ORE, Taam.MOD_ID);

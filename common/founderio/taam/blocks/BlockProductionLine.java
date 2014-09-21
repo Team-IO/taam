@@ -1,8 +1,13 @@
 package founderio.taam.blocks;
 
+import java.util.List;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.IBlockAccess;
@@ -20,6 +25,25 @@ public class BlockProductionLine extends BaseBlock {
 		this.setStepSound(Block.soundTypeMetal);
 		this.setHarvestLevel("pickaxe", 1);
 		this.setBlockTextureName(Taam.MOD_ID + ":tech_block");
+	}
+
+	public String getUnlocalizedName(ItemStack itemStack) {
+		int i = itemStack.getItemDamage();
+
+		if (i < 0 || i >= Taam.BLOCK_CONVEYOR_META.length) {
+			i = 0;
+		}
+
+		return super.getUnlocalizedName() + "." + Taam.BLOCK_CONVEYOR_META[i];
+	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void getSubBlocks(Item item, CreativeTabs creativeTab, List list) {
+		for (int i = 0; i < Taam.BLOCK_CONVEYOR_META.length; i++) {
+			list.add(new ItemStack(item, 1, i));
+		}
 	}
 	
 	@Override
@@ -43,8 +67,12 @@ public class BlockProductionLine extends BaseBlock {
 	}
 
 	public TileEntity createTileEntity(World world, int metadata) {
-		return new TileEntityConveyor();
-		
+		if(metadata == 0) {
+			return new TileEntityConveyor();
+		} else if(metadata == 1) {
+			return new TileEntityConveyorHopper();
+		}
+		return null;
 	}
 	@Override
 	public void setBlockBoundsBasedOnState(IBlockAccess world,
