@@ -28,7 +28,9 @@ import founderio.taam.TaamMain;
 import founderio.taam.blocks.BlockProductionLine;
 import founderio.taam.blocks.BlockSensor;
 import founderio.taam.blocks.TileEntityConveyor;
+import founderio.taam.blocks.TileEntityConveyorHopper;
 import founderio.taam.blocks.TileEntitySensor;
+import founderio.taam.conveyors.IRotatable;
 import founderio.taam.conveyors.ItemWrapper;
 
 public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRenderer {
@@ -134,17 +136,17 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 				//TODO: renderMinect();
 				break;
 			}
-		} else if(tileentity instanceof TileEntityConveyor) {
-			renderConveyor((TileEntityConveyor)tileentity, x, y, z);
+		} else if(tileentity instanceof TileEntityConveyor || tileentity instanceof TileEntityConveyorHopper) {
+			renderConveyor(tileentity, x, y, z);
 		}
 	}
 
-	public void renderConveyor(TileEntityConveyor conveyor, double x, double y, double z) {
+	public void renderConveyor(TileEntity tileEntity, double x, double y, double z) {
 		
 		
 		ForgeDirection direction;
-		if(conveyor != null) {
-			direction = conveyor.getFacingDirection();
+		if(tileEntity instanceof IRotatable) {
+			direction = ((IRotatable) tileEntity).getFacingDirection();
 		} else {
 			direction = ForgeDirection.SOUTH;
 		}
@@ -171,20 +173,27 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 
 		modelConveyor.renderPart("Support_smdl");
 		
-		if(conveyor == null || !conveyor.isEnd()) {
-			modelConveyor.renderPart("Conveyor_Straight_csmdl");
-		} else {
-			modelConveyor.renderPart("Conveyor_End_cemdl");
-		}
+		TileEntityConveyor conveyor = null;
 		
-		GL11.glTranslated(0.5, 0, 0.5);
-		GL11.glRotatef(180, 0, 1, 0);
-		GL11.glTranslated(-0.5, 0, -0.5);
-		
-		if(conveyor == null || !conveyor.isBegin()) {
-			modelConveyor.renderPart("Conveyor_Straight_csmdl");
-		} else {
-			modelConveyor.renderPart("Conveyor_End_cemdl");
+		if(tileEntity instanceof TileEntityConveyor) {
+			conveyor = (TileEntityConveyor)tileEntity;
+			if(conveyor == null || !conveyor.isEnd()) {
+				modelConveyor.renderPart("Conveyor_Straight_csmdl");
+			} else {
+				modelConveyor.renderPart("Conveyor_End_cemdl");
+			}
+			
+			GL11.glTranslated(0.5, 0, 0.5);
+			GL11.glRotatef(180, 0, 1, 0);
+			GL11.glTranslated(-0.5, 0, -0.5);
+			
+			if(conveyor == null || !conveyor.isBegin()) {
+				modelConveyor.renderPart("Conveyor_Straight_csmdl");
+			} else {
+				modelConveyor.renderPart("Conveyor_End_cemdl");
+			}
+		} else if(tileEntity instanceof TileEntityConveyorHopper) {
+			modelConveyor.renderPart("Conveyor_Hopper_chmdl");
 		}
 		
 		GL11.glPopMatrix();

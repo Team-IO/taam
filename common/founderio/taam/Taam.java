@@ -51,6 +51,7 @@ public final class Taam {
 	public static final String TILEENTITY_SENSOR = "taam.sensor";
 	public static final String TILEENTITY_SLIDINGDOOR = "taam.slidingdoor";
 	public static final String TILEENTITY_CONVEYOR = "taam.conveyor";
+	public static final String TILEENTITY_CONVEYOR_HOPPER = "taam.conveyor_hopper";
 	
 	public static final String CFG_COMMENT_SENSOR_DELAY = "Sensor [Motion, Minect] delay (minimum activation time) in game ticks, minimum 10";
 	public static final String CFG_COMMENT_SENSOR_PLACEMENT_MODE = "Sensor [Motion, Minect] placement mode when side by side. 1 = move together, 2 = merge into one";
