@@ -1,14 +1,15 @@
 package founderio.taam.blocks;
 
-import codechicken.lib.inventory.InventorySimple;
-import codechicken.lib.inventory.InventoryUtils;
-import founderio.taam.conveyors.IConveyorAwareTE;
-import founderio.taam.conveyors.ItemWrapper;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.inventory.InventoryBasic;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.util.ForgeDirection;
+import codechicken.lib.inventory.InventoryRange;
+import codechicken.lib.inventory.InventorySimple;
+import codechicken.lib.inventory.InventoryUtils;
+import founderio.taam.conveyors.ConveyorUtil;
+import founderio.taam.conveyors.IConveyorAwareTE;
+import founderio.taam.conveyors.ItemWrapper;
 
 
 public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyorAwareTE {
@@ -25,20 +26,26 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 		 * Find items laying on the conveyor.
 		 */
 
-		if(!worldObj.isRemote) {
-			for(Object obj : worldObj.loadedEntityList) {
-				Entity ent = (Entity)obj;
-				
-				if(ent instanceof EntityItem) {
-					if(addItemAt(((EntityItem)ent).getEntityItem(), ent.posX, ent.posY, ent.posZ)) {
-						ent.setDead();
+		ConveyorUtil.tryInsertItemsFromWorld(this, worldObj, null, true);
+		
+		//TODO: Check Redstone Status
+		
+		IInventory inventory = InventoryUtils.getInventory(worldObj, xCoord, yCoord - 1, zCoord);
+		if(inventory != null) {
+			InventoryRange range = new InventoryRange(inventory, ForgeDirection.UP.ordinal());
+			for(int i = 0; i < this.inventory.getSizeInventory(); i++) {
+				if(InventoryUtils.stackSize(this.inventory, i) > 0) {
+					System.out.println("Trying Transfer Stack");
+					// Transfer ONE item down
+					ItemStack oneItem = InventoryUtils.copyStack(this.inventory.getStackInSlot(i), 1);
+					if(InventoryUtils.insertItem(range, oneItem, false) == 0) {
+						InventoryUtils.decrStackSize(this.inventory, i, 1);
+						updateState();
 						break;
 					}
 				}
 			}
 		}
-		
-		
 	}
 	
 	@Override
@@ -52,24 +59,25 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 	}
 
 	@Override
-	public boolean addItemAt(ItemStack item, double x, double y, double z) {
+	public int addItemAt(ItemStack item, double x, double y, double z) {
 		x -= xCoord;
 		y -= yCoord;
 		z -= zCoord;
 		if(y < 0.4 || y > 1) {
-			return false;
+			return 0;
 		}
 		if(x > 1.1 || x < -0.1 || z > 1.1 || z < -0.1) {
-			return false;
+			return 0;
 		}
-//		InventoryUtils.
-//		inventory.isItemValidForSlot(p_94041_1_, p_94041_2_)
-		// TODO Auto-generated method stub
-		return false;
+		// insertItem returns item count unable to insert.
+		int inserted = item.stackSize - InventoryUtils.insertItem(inventory, item, false);
+		System.out.println("Inserting " + inserted);
+		System.out.println("Inve Slot 0: " + inventory.getStackInSlot(0));
+		return inserted;
 	}
 
 	@Override
-	public boolean addItemAt(ItemWrapper item, double x, double y, double z) {
+	public int addItemAt(ItemWrapper item, double x, double y, double z) {
 		return addItemAt(item.itemStack, x, y, z);
 	}
 

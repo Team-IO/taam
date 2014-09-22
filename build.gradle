@@ -18,7 +18,7 @@ buildscript {
 apply plugin: 'forge'
 
 version = "1.0"
-group= "founderio.taam" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+group = "founderio.taam" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "taam-1.7.10"
 
 minecraft {
@@ -43,21 +43,11 @@ sourceSets {
 }
 
 dependencies {
-    // you may put jars on which you depend on in ./libs
-    // or you may define them like so..
-    //compile "some.group:artifact:version:classifier"
-    //compile "some.group:artifact:version"
-      
-    // real examples
-    //compile 'com.mod-buildcraft:buildcraft:6.0.8:dev'  // adds buildcraft to the dev env
-    //compile 'com.googlecode.efficient-java-matrix-library:ejml:0.24' // adds ejml to the dev env
+    //compile 'com.mod-buildcraft:buildcraft:6.0.8:dev'
 
-    // for more info...
-    // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
-    // http://www.gradle.org/docs/current/userguide/dependency_management.html
-
-    compile fileTree(dir: 'lib', include: '*.jar')
-
+	compile 'codechicken:ForgeMultipart:1.7.10-1.1.0.307:dev'
+	compile 'codechicken:CodeChickenLib:1.7.10-1.1.1.104:dev'
+    // compile fileTree(dir: 'lib', include: '*.jar')
 }
 
 processResources

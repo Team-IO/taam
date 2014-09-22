@@ -20,6 +20,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 import founderio.taam.conveyors.ApplianceRegistry;
+import founderio.taam.conveyors.ConveyorUtil;
 import founderio.taam.conveyors.IConveyorAppliance;
 import founderio.taam.conveyors.IConveyorApplianceFactory;
 import founderio.taam.conveyors.IConveyorAwareTE;
@@ -86,12 +87,12 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	}
 
 	@Override
-	public boolean addItemAt(ItemStack item, double x, double y, double z) {
+	public int addItemAt(ItemStack item, double x, double y, double z) {
 		x -= xCoord;
 		y -= yCoord;
 		z -= zCoord;
 		if(y < 0.4 || y > 1) {
-			return false;
+			return 0;
 		}
 		double progress;
 		double offset;
@@ -108,24 +109,24 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 			progress = z;
 			offset = x;
 		} else {
-			return false;
+			return 0;
 		}
 		// check with security buffer in mind
 		if(progress < -0.01 || progress > 1.01 || offset < 0.2 || offset > 0.8) {
-			return false;
+			return 0;
 		}
 		items.add(new ItemWrapper(item, (int)(progress * 100), (int)(offset * 100)));
 		updateState();
-		return true;
+		return item.stackSize;
 	}
 
 	@Override
-	public boolean addItemAt(ItemWrapper item, double x, double y, double z) {
+	public int addItemAt(ItemWrapper item, double x, double y, double z) {
 		x -= xCoord;
 		y -= yCoord;
 		z -= zCoord;
 		if(y < 0.4 || y > 1) {
-			return false;
+			return 0;
 		}
 		double progress;
 		double offset;
@@ -142,17 +143,17 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 			progress = z;
 			offset = x;
 		} else {
-			return false;
+			return 0;
 		}
 		// check with security buffer in mind
 		if(progress < -0.01 || progress > 1.01 || offset < 0.2 || offset > 0.8) {
-			return false;
+			return 0;
 		}
 		item.offset = (int)(offset * 100);
 		item.progress = (int)(progress * 100);
 		items.add(item);
 		updateState();
-		return true;
+		return item.itemStack.stackSize;
 	}
 	
 	public static final int maxProgress = 130;
@@ -177,18 +178,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 		 * Find items laying on the conveyor.
 		 */
 
-		if(!worldObj.isRemote) {
-			for(Object obj : worldObj.loadedEntityList) {
-				Entity ent = (Entity)obj;
-				
-				if(ent instanceof EntityItem) {
-					if(addItemAt(((EntityItem)ent).getEntityItem(), ent.posX, ent.posY, ent.posZ)) {
-						ent.setDead();
-						break;
-					}
-				}
-			}
-		}
+		ConveyorUtil.tryInsertItemsFromWorld(this, worldObj, null, true);
 		
 		Collections.sort(items);
 		
@@ -197,10 +187,17 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 		 */
 		
 		boolean changed = false;
-		System.out.println(items.size());
 		for(int idx = items.size() - 1; idx >= 0; idx--) {
 		
 			ItemWrapper wrapper = items.get(idx);
+			
+			if(wrapper == null || wrapper.itemStack == null) {
+				items.remove(idx);
+				//TODO: Fix that. Please.
+//				System.out.println("Removing NULL Wrapper/ItemStack from Conveyor. " + wrapper);
+				continue;
+			}
+			
 			if(checkSpace(wrapper.progress+1, wrapper.offset, idx)) {
 				wrapper.progress += 1;
 			}
@@ -219,6 +216,8 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 				wrapper.progress = maxProgress;//Just to keep the item where it is when the next conveyor is blocked.
 
 				ForgeDirection dirRotated = direction.getRotation(ForgeDirection.UP);
+				
+				//TODO: Extract position calculation
 				
 				float progress = wrapper.progress / 100f;
 				if(direction.offsetX < 0 || direction.offsetZ < 0) {
@@ -242,6 +241,8 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 				
 				TileEntity te = worldObj.getTileEntity(nextBlockX, nextBlockY, nextBlockZ);
 				
+				//TODO: Items Stacking up does not work correctly (works only inside one conveyor)
+				
 				// Next conveyor aware block
 				if(te instanceof IConveyorAwareTE) {
 					IConveyorAwareTE conveyor = (IConveyorAwareTE) worldObj.getTileEntity(nextBlockX, nextBlockY, nextBlockZ);
@@ -258,9 +259,9 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 							resetProcessing = false;
 						}
 					}
-					
+					//TODO: Centralize transferring somehow
 					// If the item was added (no backlog), remote it from this entity
-					if (conveyor.addItemAt(wrapper, absX, absY, absZ)) {
+					if (conveyor.addItemAt(wrapper, absX, absY, absZ) == wrapper.itemStack.stackSize) {
 						if(resetProcessing) {
 							wrapper.processing = 0;
 						}

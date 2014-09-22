@@ -181,6 +181,8 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 				modelConveyor.renderPart("Conveyor_Straight_csmdl");
 			} else {
 				modelConveyor.renderPart("Conveyor_End_cemdl");
+				//TODO: Check if other conveyor part there or actually end of line
+				modelConveyor.renderPart("Conveyor_End_Cap_cecmdl");
 			}
 			
 			GL11.glTranslated(0.5, 0, 0.5);
