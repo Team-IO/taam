@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import codechicken.lib.inventory.InventoryUtils;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -115,7 +117,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 		if(progress < -0.01 || progress > 1.01 || offset < 0.2 || offset > 0.8) {
 			return 0;
 		}
-		items.add(new ItemWrapper(item, (int)(progress * 100), (int)(offset * 100)));
+		items.add(new ItemWrapper(InventoryUtils.copyStack(item, item.stackSize), (int)(progress * 100), (int)(offset * 100)));
 		updateState();
 		return item.stackSize;
 	}
@@ -149,11 +151,12 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 		if(progress < -0.01 || progress > 1.01 || offset < 0.2 || offset > 0.8) {
 			return 0;
 		}
-		item.offset = (int)(offset * 100);
-		item.progress = (int)(progress * 100);
-		items.add(item);
+		ItemWrapper clone = item.copy();
+		clone.offset = (int)(offset * 100);
+		clone.progress = (int)(progress * 100);
+		items.add(clone);
 		updateState();
-		return item.itemStack.stackSize;
+		return item.getStackSize();
 	}
 	
 	public static final int maxProgress = 130;
@@ -247,8 +250,6 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 				if(te instanceof IConveyorAwareTE) {
 					IConveyorAwareTE conveyor = (IConveyorAwareTE) worldObj.getTileEntity(nextBlockX, nextBlockY, nextBlockZ);
 					
-					System.out.println("Trying to remove");
-					
 					boolean resetProcessing = true;
 					//TODO: conveyor instance host
 					if(appliance != null && conveyor instanceof TileEntityConveyor) {
@@ -259,16 +260,16 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 							resetProcessing = false;
 						}
 					}
-					//TODO: Centralize transferring somehow
-					// If the item was added (no backlog), remote it from this entity
-					if (conveyor.addItemAt(wrapper, absX, absY, absZ) == wrapper.itemStack.stackSize) {
-						if(resetProcessing) {
-							wrapper.processing = 0;
-						}
-						System.out.println("Removing.");
-						items.remove(idx);
-						changed = true;
+					if(resetProcessing) {
+						//TODO: handle processing tracking different
 					}
+					// If the item was added (fully, no backlog), remove it from this entity
+					if(ConveyorUtil.tryInsertItems(conveyor, wrapper, absX, absY, absZ)) {
+						if(wrapper.getStackSize() == 0) {
+							items.remove(idx);
+						}
+					}
+					changed = true;
 				// Drop it
 				} else if(!worldObj.isRemote) {
 					if(wrapper.itemStack != null) {

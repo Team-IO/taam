@@ -1,5 +1,6 @@
 package founderio.taam.conveyors;
 
+import codechicken.lib.inventory.InventoryUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -16,6 +17,20 @@ public class ItemWrapper implements Comparable<ItemWrapper> {
 		this.offset = offset;
 	}
 
+	public int getStackSize() {
+		if(itemStack == null) {
+			return 0;
+		} else {
+			return itemStack.stackSize;
+		}
+	}
+	
+	public void setStackSize(int stackSize) {
+		if(itemStack != null) {
+			itemStack.stackSize = stackSize;
+		}
+	}
+	
 	@Override
 	public String toString() {
 		return String.format("ItemWrapper [itemStack=%s, progress=%d, offset=%d, processing=%d]",
@@ -80,6 +95,12 @@ public class ItemWrapper implements Comparable<ItemWrapper> {
 		ItemWrapper wrapper = new ItemWrapper(itemStack, progress, offset);
 		wrapper.processing = tag.getInteger("processing");
 		return wrapper;
+	}
+
+	public ItemWrapper copy() {
+		ItemWrapper clone = new ItemWrapper(InventoryUtils.copyStack(itemStack, getStackSize()), progress, offset);
+		clone.processing = processing;
+		return clone;
 	}
 
 }

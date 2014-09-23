@@ -54,4 +54,30 @@ public class ConveyorUtil {
 			}
 		}
 	}
+	
+	/**
+	 * Tries to insert items into the conveyor passed. Sets the stack size accordingly.
+	 * @param conveyorTE
+	 * @param itemWrapper
+	 * @param absX
+	 * @param absY
+	 * @param absZ
+	 * @return true if items were inserted.
+	 */
+	public static boolean tryInsertItems(IConveyorAwareTE conveyorTE, ItemWrapper itemWrapper,
+			double absX, double absY, double absZ) {
+		int previousStackSize = itemWrapper.getStackSize();
+		if(previousStackSize == 0) {
+			// Just remove it.
+			return true;
+		}
+		int added = conveyorTE.addItemAt(itemWrapper, absX, absY, absZ);
+		if(added > 0) {
+			// Fully or Partially inserted
+			itemWrapper.setStackSize(previousStackSize - added);
+			return true;
+		} else {
+			return false;
+		}
+	}
 }

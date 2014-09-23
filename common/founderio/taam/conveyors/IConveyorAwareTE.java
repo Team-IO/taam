@@ -10,7 +10,6 @@ public interface IConveyorAwareTE {
 	 * @param y World Global Y
 	 * @param z World Global Z
 	 * @return The number of items actually inserted.
-	 * If the number is equal to the stacksize the sent instance is to be consudered re-used and NOT MODIFIABLE anymore!
 	 */
 	int addItemAt(ItemStack item, double x, double y, double z);
 
@@ -21,7 +20,7 @@ public interface IConveyorAwareTE {
 	 * @param y World Global Y
 	 * @param z World Global Z
 	 * @return The number of items actually inserted.
-	 * If the number is equal to the stacksize the sent instance is to be consudered re-used and NOT MODIFIABLE anymore!
+	 * If the number is equal to the stacksize the sent instance is to be considered re-used and NOT MODIFIABLE anymore!
 	 */
 	int addItemAt(ItemWrapper item, double x, double y, double z);
 
