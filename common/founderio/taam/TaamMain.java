@@ -16,6 +16,7 @@ import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -31,6 +32,7 @@ import founderio.taam.blocks.multinet.ItemMultinetMultitronix;
 import founderio.taam.blocks.multinet.MultinetHandler;
 import founderio.taam.blocks.multinet.MultinetPartFactory;
 import founderio.taam.blocks.multinet.cables.OperatorRedstone;
+import founderio.taam.client.gui.GuiHandler;
 import founderio.taam.items.ItemConveyorAppliance;
 import founderio.taam.items.ItemDebugTool;
 import founderio.taam.items.ItemIngot;
@@ -176,7 +178,7 @@ public class TaamMain {
 
 		multinetMultipart = new MultinetPartFactory();
 		proxy.registerRenderStuff();
-
+		NetworkRegistry.INSTANCE.registerGuiHandler(this, new GuiHandler());
 
 		oreRegistration();
 		TaamRecipes.addRecipes();

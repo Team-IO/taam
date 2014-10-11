@@ -1,9 +1,11 @@
 package founderio.taam.blocks;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.common.util.Constants.NBT;
 import codechicken.lib.inventory.InventoryRange;
 import codechicken.lib.inventory.InventorySimple;
 import codechicken.lib.inventory.InventoryUtils;
@@ -12,7 +14,7 @@ import founderio.taam.conveyors.IConveyorAwareTE;
 import founderio.taam.conveyors.ItemWrapper;
 
 
-public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyorAwareTE {
+public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyorAwareTE, IInventory {
 
 	private InventorySimple inventory;
 	
@@ -50,12 +52,12 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 	
 	@Override
 	protected void writePropertiesToNBT(NBTTagCompound tag) {
-		//TODO: write intenvory
+		tag.setTag("items", InventoryUtils.writeItemStacksToTag(inventory.items));
 	}
 
 	@Override
 	protected void readPropertiesFromNBT(NBTTagCompound tag) {
-		//TODO: read intenvory
+		InventoryUtils.readItemStacksFromTag(inventory.items, tag.getTagList("items", NBT.TAG_COMPOUND));
 	}
 
 	@Override
@@ -79,6 +81,66 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 	@Override
 	public int addItemAt(ItemWrapper item, double x, double y, double z) {
 		return addItemAt(item.itemStack, x, y, z);
+	}
+
+	@Override
+	public int getSizeInventory() {
+		return inventory.getSizeInventory();
+	}
+
+	@Override
+	public ItemStack getStackInSlot(int slot) {
+		return inventory.getStackInSlot(slot);
+	}
+
+	@Override
+	public ItemStack decrStackSize(int slot, int amount) {
+		return inventory.decrStackSize(slot, amount);
+	}
+
+	@Override
+	public ItemStack getStackInSlotOnClosing(int slot) {
+		return inventory.getStackInSlotOnClosing(slot);
+	}
+
+	@Override
+	public void setInventorySlotContents(int slot, ItemStack stack) {
+		inventory.setInventorySlotContents(slot, stack);
+	}
+
+	@Override
+	public String getInventoryName() {
+		return inventory.getInventoryName();
+	}
+
+	@Override
+	public boolean hasCustomInventoryName() {
+		return inventory.hasCustomInventoryName();
+	}
+
+	@Override
+	public int getInventoryStackLimit() {
+		return inventory.getInventoryStackLimit();
+	}
+
+	@Override
+	public boolean isUseableByPlayer(EntityPlayer p_70300_1_) {
+		return true;
+	}
+
+	@Override
+	public void openInventory() {
+		// Nothing to do.
+	}
+
+	@Override
+	public void closeInventory() {
+		// Nothing to do.
+	}
+
+	@Override
+	public boolean isItemValidForSlot(int slot, ItemStack stack) {
+		return inventory.isItemValidForSlot(slot, stack);
 	}
 
 }

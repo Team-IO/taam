@@ -16,6 +16,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import founderio.taam.Taam;
+import founderio.taam.TaamMain;
 
 public class BlockProductionLine extends BaseBlock {
 	
@@ -156,6 +157,8 @@ public class BlockProductionLine extends BaseBlock {
 			if(te instanceof TileEntityConveyor) {
 				TileEntityConveyor conveyor = (TileEntityConveyor) te;
 				conveyor.setDirection(conveyor.getFacingDirection().getRotation(ForgeDirection.UP));
+			} else if(te instanceof TileEntityConveyorHopper) {
+				player.openGui(TaamMain.instance, 0, world, x, y, z);
 			}
 		}
 		return true;
