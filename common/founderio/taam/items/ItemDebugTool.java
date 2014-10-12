@@ -46,7 +46,7 @@ public class ItemDebugTool extends Item {
 			par3List.add("This item can't be obtained ");
 			par3List.add("in Survival.");
 			par3List.add("It prints debug information");
-			par3List.add("into the chat or console.");
+			par3List.add("into chat or console.");
 		}
 
 	}
