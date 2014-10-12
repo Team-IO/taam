@@ -43,6 +43,7 @@ public final class Taam {
 	public static final String ITEM_PLASTIC = "taam.item.plastic";
 	public static final String ITEM_INGOT = "taam.item.ingot";
 	public static final String ITEM_CONVEYOR_APPLIANCE = "taam.item.conveyor_appliance";
+	public static final String ITEM_CRAFTING_MOTOR = "taam.item.craftingmotor";
 	
 	public static final String[] ITEM_CONVEYOR_APPLIANCE_META = new String[] {
 		"sprayer"

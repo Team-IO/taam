@@ -6,6 +6,7 @@ item.taam.item.cable.name=MulitNet Cable
 item.taam.item.multitronix.name=Multitronix
 item.taam.item.ingot.tin.name=Tin Ingot
 item.taam.item.ingot.copper.name=Copper Ingot
+item.taam.item.craftingmotor.name=Motor
 
 #Creativ Tab localization
 itemGroup.taam=Taam
