@@ -64,7 +64,7 @@ public class ItemDebugTool extends Item {
 
 		if(!Config.debug)
 		{
-			world.playSound(player.posX ,player.posY ,player.posZ ,"random.drink", 1, 1, false);
+			world.playSound(player.posX ,player.posY  + 1 ,player.posZ ,"random.drink", 1, 1, false);
 //			return true;
 		}
 					
