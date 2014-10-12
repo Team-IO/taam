@@ -34,11 +34,8 @@ import founderio.taam.blocks.multinet.MultinetPartFactory;
 import founderio.taam.blocks.multinet.cables.OperatorRedstone;
 import founderio.taam.client.gui.GuiHandler;
 import founderio.taam.items.ItemConveyorAppliance;
-import founderio.taam.items.ItemCraftingMotor;
 import founderio.taam.items.ItemDebugTool;
-import founderio.taam.items.ItemIngot;
-import founderio.taam.items.ItemPhotoCell;
-import founderio.taam.items.ItemPlastic;
+import founderio.taam.items.ItemWithMetadata;
 import founderio.taam.multinet.Multinet;
 
 
@@ -55,11 +52,10 @@ public class TaamMain {
 	public static ItemMultinetCable itemMultinetCable;
 	public static ItemMultinetMultitronix itemMultinetMultitronix;
 	public static ItemDebugTool itemMultinetDebugger;
-	public static ItemPhotoCell itemPhotoCell;
-	public static ItemPlastic itemPlastic;
-	public static ItemIngot itemIngot;
+	public static ItemWithMetadata itemMaterial;
+	public static ItemWithMetadata itemPart;
+	public static ItemWithMetadata itemIngot;
 	public static ItemConveyorAppliance itemConveyorAppliance;
-	public static ItemCraftingMotor itemCraftingMotor;
 	
 	public static CreativeTabs creativeTab;
 
@@ -68,11 +64,6 @@ public class TaamMain {
 	public static BlockSlidingDoor blockSlidingDoor;
 	public static BlockOre blockOre;
 	
-	public static int sensor_placement_mode = 1;
-	public static int sensor_delay = 30;
-	
-	
-
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
 		ModMetadata meta = event.getModMetadata();
@@ -95,11 +86,9 @@ public class TaamMain {
 				return new ItemStack(blockSensor);
 			}
 			
-			
 			@Override
 			@SideOnly(Side.CLIENT)
 			public Item getTabIconItem() {
-				// TODO Auto-generated method stub
 				return null;
 			}
 		};
@@ -132,15 +121,15 @@ public class TaamMain {
 		itemMultinetMultitronix.setUnlocalizedName(Taam.ITEM_MULTINET_MULTITRONIX);
 		itemMultinetMultitronix.setCreativeTab(creativeTab);
 		
-		itemPhotoCell = new ItemPhotoCell();
-		itemPhotoCell.setUnlocalizedName(Taam.ITEM_PHOTOCELL);
-		itemPhotoCell.setCreativeTab(creativeTab);
+		itemMaterial = new ItemWithMetadata("material", Taam.ITEM_MATERIAL_META);
+		itemMaterial.setUnlocalizedName(Taam.ITEM_MATERIAL);
+		itemMaterial.setCreativeTab(creativeTab);
 		
-		itemPlastic = new ItemPlastic();
-		itemPlastic.setUnlocalizedName(Taam.ITEM_PLASTIC);
-		itemPlastic.setCreativeTab(creativeTab);
+		itemPart = new ItemWithMetadata("part", Taam.ITEM_PART_META);
+		itemPart.setUnlocalizedName(Taam.ITEM_PART);
+		itemPart.setCreativeTab(creativeTab);
 		
-		itemIngot = new ItemIngot();
+		itemIngot = new ItemWithMetadata("ingot", Taam.BLOCK_ORE_META);
 		itemIngot.setUnlocalizedName(Taam.ITEM_INGOT);
 		itemIngot.setCreativeTab(creativeTab);
 		
@@ -148,24 +137,21 @@ public class TaamMain {
 		itemConveyorAppliance.setUnlocalizedName(Taam.ITEM_CONVEYOR_APPLIANCE);
 		itemConveyorAppliance.setCreativeTab(creativeTab);
 		
-		itemCraftingMotor = new ItemCraftingMotor();
-		itemCraftingMotor.setUnlocalizedName(Taam.ITEM_CRAFTING_MOTOR);
-		itemCraftingMotor.setCreativeTab(creativeTab);
-		
 		Multinet.registerOperator(new OperatorRedstone("redstone"));
 
-		GameRegistry.registerItem(itemPhotoCell, Taam.ITEM_PHOTOCELL, Taam.MOD_ID);
-		GameRegistry.registerItem(itemPlastic, Taam.ITEM_PLASTIC, Taam.MOD_ID);
-		
+		GameRegistry.registerItem(itemMaterial, Taam.ITEM_MATERIAL, Taam.MOD_ID);
+		GameRegistry.registerItem(itemPart, Taam.ITEM_PART, Taam.MOD_ID);
+		GameRegistry.registerItem(itemIngot, Taam.ITEM_INGOT, Taam.MOD_ID);
+
 		GameRegistry.registerItem(itemMultinetCable, Taam.ITEM_MULTINET_CABLE, Taam.MOD_ID);
 		GameRegistry.registerItem(itemMultinetDebugger, Taam.ITEM_MULTINET_DEBUGGER, Taam.MOD_ID);
 		GameRegistry.registerItem(itemMultinetMultitronix, Taam.ITEM_MULTINET_MULTITRONIX, Taam.MOD_ID);
-		GameRegistry.registerItem(itemIngot, Taam.ITEM_INGOT, Taam.MOD_ID);
+
 		GameRegistry.registerItem(itemConveyorAppliance, Taam.ITEM_CONVEYOR_APPLIANCE, Taam.MOD_ID);
-		GameRegistry.registerItem(itemCraftingMotor, Taam.ITEM_CRAFTING_MOTOR, Taam.MOD_ID);
 		
 		GameRegistry.registerBlock(blockSensor, ItemBlock.class, Taam.BLOCK_SENSOR);
 		GameRegistry.registerBlock(blockProductionLine, null, Taam.BLOCK_PRODUCTIONLINE);
+		//TODO: custom item implementation for production line with lore (see ItemConveyorAppliance)
 		GameRegistry.registerItem(new ItemMultiTexture(blockProductionLine, blockProductionLine, Taam.BLOCK_CONVEYOR_META), Taam.BLOCK_PRODUCTIONLINE, Taam.MOD_ID);
 //		GameRegistry.registerBlock(blockSlidingDoor, ItemBlock.class, Taam.BLOCK_SLIDINGDOOR);
 		GameRegistry.registerBlock(blockOre, null, Taam.BLOCK_ORE);
@@ -201,9 +187,18 @@ public class TaamMain {
 	public static void oreRegistration(){
 		OreDictionary.registerOre("oreCopper", new ItemStack(blockOre, 1, 0));
 		OreDictionary.registerOre("oreTin", new ItemStack(blockOre, 1, 1));
+		OreDictionary.registerOre("oreAluminum", new ItemStack(blockOre, 1, 2));
+		
 		OreDictionary.registerOre("ingotCopper", new ItemStack(itemIngot, 1, 0));
 		OreDictionary.registerOre("ingotTin", new ItemStack(itemIngot, 1, 1));
-		OreDictionary.registerOre("materialPlastic", new ItemStack(itemPlastic));
+		OreDictionary.registerOre("ingotAluminum", new ItemStack(itemIngot, 1, 2));
+		
+		OreDictionary.registerOre("materialPlastic", new ItemStack(itemMaterial, 1, 0));
+		OreDictionary.registerOre("materialRubber", new ItemStack(itemMaterial, 1, 1));
+		OreDictionary.registerOre("materialGraphite", new ItemStack(itemMaterial, 1, 2));
+		
+		OreDictionary.registerOre("partPhotocell", new ItemStack(itemPart, 1, 0));
+		OreDictionary.registerOre("partMotor", new ItemStack(itemPart, 1, 1));
 	}
 }
 

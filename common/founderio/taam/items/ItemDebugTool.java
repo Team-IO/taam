@@ -3,11 +3,13 @@ package founderio.taam.items;
 import java.util.List;
 
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import codechicken.lib.vec.BlockCoord;
@@ -38,17 +40,17 @@ public class ItemDebugTool extends Item {
 	public void addInformation(ItemStack par1ItemStack,
 			EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
 
+		par3List.add(EnumChatFormatting.DARK_GREEN + I18n.format("lore.taam.debugtool", new Object[0]));
 		if (!GuiScreen.isShiftKeyDown()) {
-			par3List.add("This is our Debug Tool");
-			par3List.add("Hold Shift");
+			par3List.add(EnumChatFormatting.DARK_PURPLE + I18n.format("lore.taam.shift", new Object[0]));
 		} else {
-
-			par3List.add("This item can't be obtained ");
-			par3List.add("in Survival.");
-			par3List.add("It prints debug information");
-			par3List.add("into chat or console.");
+			String usage = I18n.format("lore.taam.debugtool.usage", new Object[0]);
+			//Split at literal \n in the translated text. a lot of escaping here.
+			String[] split = usage.split("\\\\n");
+			for(int i = 0;i < split.length; i++) {
+				par3List.add(split[i]);
+			}
 		}
-
 	}
 		
 	@Override

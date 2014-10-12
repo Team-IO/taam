@@ -2,73 +2,47 @@ package founderio.taam.items;
 
 import java.util.List;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
-import net.minecraft.world.World;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.world.World;
 import founderio.taam.Taam;
 import founderio.taam.blocks.TileEntityConveyor;
 
-public class ItemConveyorAppliance extends Item {
-
-	private IIcon[] iconList;
+public class ItemConveyorAppliance extends ItemWithMetadata {
 
 	public ItemConveyorAppliance() {
-		super();
-		this.setMaxDamage(0);
-		this.setHasSubtypes(true);
+		super("conveyor_appliance", Taam.ITEM_CONVEYOR_APPLIANCE_META);
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public IIcon getIconFromDamage(int meta) {
-
-		if (meta < 0 || meta >= iconList.length) {
-			meta = 0;
-		}
-
-		return iconList[meta];
-	}
-
-	public String getUnlocalizedName(ItemStack itemStack) {
-		int i = itemStack.getItemDamage();
-
-		if (i < 0 || i >= Taam.ITEM_CONVEYOR_APPLIANCE_META.length) {
-			i = 0;
-		}
-
-		return super.getUnlocalizedName() + "." + Taam.ITEM_CONVEYOR_APPLIANCE_META[i];
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerIcons(IIconRegister ir) {
-		iconList = new IIcon[Taam.ITEM_CONVEYOR_APPLIANCE_META.length];
-		for (int i = 0; i < Taam.ITEM_CONVEYOR_APPLIANCE_META.length; i++) {
-			iconList[i] = ir.registerIcon(Taam.MOD_ID + ":conveyor_appliance." + Taam.ITEM_CONVEYOR_APPLIANCE_META[i]);
-		}
+	public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world,
+			int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
+		return false;
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void getSubItems(Item item, CreativeTabs creativeTab, List list) {
-		for (int i = 0; i < Taam.ITEM_CONVEYOR_APPLIANCE_META.length; i++) {
-			list.add(new ItemStack(item, 1, i));
+	public void addInformation(ItemStack par1ItemStack,
+			EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
+
+		par3List.add(EnumChatFormatting.DARK_GREEN + I18n.format("lore.taam.conveyor_appliance", new Object[0]));
+		if (!GuiScreen.isShiftKeyDown()) {
+			par3List.add(EnumChatFormatting.DARK_PURPLE + I18n.format("lore.taam.shift", new Object[0]));
+		} else {
+			String usage = I18n.format("lore.taam.conveyor_appliance.usage", new Object[0]);
+			//Split at literal \n in the translated text. a lot of escaping here.
+			String[] split = usage.split("\\\\n");
+			for(int i = 0;i < split.length; i++) {
+				par3List.add(split[i]);
+			}
 		}
-	}
-	
-	@Override
-	public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world,
-			int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
-		
-		return false;
 	}
 	
 	@Override

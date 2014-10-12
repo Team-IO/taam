@@ -25,7 +25,8 @@ public final class Taam {
 	
 	public static final String[] BLOCK_ORE_META = new String[] {
 		"copper",
-		"tin"
+		"tin",
+		"aluminum"
 	};
 	
 	public static final String[] BLOCK_CONVEYOR_META = new String[] {
@@ -39,14 +40,22 @@ public final class Taam {
 	public static final String ITEM_MULTINET_CABLE = "taam.item.cable";
 	public static final String ITEM_MULTINET_DEBUGGER = "taam.item.debugger";
 	public static final String ITEM_MULTINET_MULTITRONIX = "taam.item.multitronix";
-	public static final String ITEM_PHOTOCELL = "taam.item.photocell";
-	public static final String ITEM_PLASTIC = "taam.item.plastic";
+	public static final String ITEM_MATERIAL = "taam.item.material";
+	public static final String ITEM_PART= "taam.item.part";
 	public static final String ITEM_INGOT = "taam.item.ingot";
 	public static final String ITEM_CONVEYOR_APPLIANCE = "taam.item.conveyor_appliance";
-	public static final String ITEM_CRAFTING_MOTOR = "taam.item.craftingmotor";
 	
 	public static final String[] ITEM_CONVEYOR_APPLIANCE_META = new String[] {
 		"sprayer"
+	};
+	public static final String[] ITEM_MATERIAL_META = new String[] {
+		"plastic",
+		"rubber",
+		"graphite"
+	};
+	public static final String[] ITEM_PART_META = new String[] {
+		"photocell",
+		"motor"
 	};
 	
 	public static final String TILEENTITY_SENSOR = "taam.sensor";
