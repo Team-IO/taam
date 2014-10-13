@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.List;
 
 import codechicken.lib.inventory.InventoryUtils;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -25,11 +24,12 @@ import founderio.taam.conveyors.ApplianceRegistry;
 import founderio.taam.conveyors.ConveyorUtil;
 import founderio.taam.conveyors.IConveyorAppliance;
 import founderio.taam.conveyors.IConveyorApplianceFactory;
+import founderio.taam.conveyors.IConveyorApplianceHost;
 import founderio.taam.conveyors.IConveyorAwareTE;
 import founderio.taam.conveyors.IRotatable;
 import founderio.taam.conveyors.ItemWrapper;
 
-public class TileEntityConveyor extends BaseTileEntity implements ISidedInventory, IFluidHandler, IConveyorAwareTE, IRotatable {
+public class TileEntityConveyor extends BaseTileEntity implements ISidedInventory, IFluidHandler, IConveyorAwareTE, IRotatable, IConveyorApplianceHost {
 	
 	private ArrayList<ItemWrapper> items;
 	
@@ -37,6 +37,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	
 	private boolean isEnd = false;
 	private boolean isBegin = false;
+	//TODO: More State to fill Gaps between conveyors
 	
 	//TODO: encapsulate
 	public String applianceType;
@@ -255,7 +256,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 					if(appliance != null && conveyor instanceof TileEntityConveyor) {
 						IConveyorAppliance applianceOther = ((TileEntityConveyor)conveyor).appliance;
 						if(applianceOther != null &&
-								appliance.isApplianceSetupCompatible((TileEntityConveyor)conveyor, applianceOther)
+								appliance.isApplianceSetupCompatible((IConveyorApplianceHost)conveyor, applianceOther)
 							) {
 							resetProcessing = false;
 						}
@@ -338,6 +339,10 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see founderio.taam.blocks.IConveyorApplianceHost#initAppliance(java.lang.String)
+	 */
+	@Override
 	public void initAppliance(String name) {
 		IConveyorApplianceFactory factory = ApplianceRegistry.getFactory(name);
 		if(factory == null) {
@@ -398,7 +403,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	@Override
 	public String getInventoryName() {
 		if(appliance == null) {
-			return "Conveyor Belt";
+			return "tile.taam.productionline.conveyor.name";
 		} else {
 			return appliance.getInventoryName();
 		}
@@ -407,7 +412,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	@Override
 	public boolean hasCustomInventoryName() {
 		if(appliance == null) {
-			return true;
+			return false;
 		} else {
 			return appliance.hasCustomInventoryName();
 		}

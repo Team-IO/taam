@@ -26,6 +26,7 @@ tile.taam.slidingdoor.name=Sliding Door
 tile.taam.ore.copper.name=Copper Ore
 tile.taam.ore.tin.name=Tin Ore
 tile.taam.ore.aluminum.name=Bauxite
+# Machines
 tile.taam.productionline.conveyor.name=Conveyor
 tile.taam.productionline.hopper.name=Conveyor Hopper
 
