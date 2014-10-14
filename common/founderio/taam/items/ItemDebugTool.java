@@ -60,12 +60,14 @@ public class ItemDebugTool extends Item {
 			int side,
 			float hitx, float hity, float hitz) {
 
+//		if(world.isRemote) {
+//			return true;
+//		}
+
 		if(!Config.debug)
 		{
-			if(!world.isRemote) {
-				world.playSound(player.posX ,player.posY  + 1 ,player.posZ ,"random.drink", 1, 1, false);
-			}
-			return true;
+			world.playSound(player.posX ,player.posY  + 1 ,player.posZ ,"random.drink", 1, 1, false);
+//			return true;
 		}
 					
 		ForgeDirection dir = ForgeDirection.getOrientation(side);
@@ -87,6 +89,7 @@ public class ItemDebugTool extends Item {
             	System.out.println(cableA);
             } else if(cableA == cable) {
             	player.addChatMessage(new ChatComponentText("You already selected this cable as cable A"));
+            	//cableA = null;
             } else {
             	cableB = cable;
             	player.addChatMessage(new ChatComponentText("Selected cable B"));

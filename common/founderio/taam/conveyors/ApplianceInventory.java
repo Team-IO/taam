@@ -136,6 +136,14 @@ public abstract class ApplianceInventory implements IConveyorAppliance {
 		inventory.setInventorySlotContents(p_70299_1_, p_70299_2_);
 	}
 
+	public String getInventoryName() {
+		return inventory.getInventoryName();
+	}
+
+	public boolean hasCustomInventoryName() {
+		return inventory.hasCustomInventoryName();
+	}
+
 	public int getInventoryStackLimit() {
 		return inventory.getInventoryStackLimit();
 	}

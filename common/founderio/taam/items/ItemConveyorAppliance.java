@@ -13,7 +13,6 @@ import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
 import founderio.taam.Taam;
 import founderio.taam.blocks.TileEntityConveyor;
-import founderio.taam.conveyors.IConveyorApplianceHost;
 
 public class ItemConveyorAppliance extends ItemWithMetadata {
 
@@ -58,7 +57,7 @@ public class ItemConveyorAppliance extends ItemWithMetadata {
 		//TODO: Change to ConveyorApplianceHost once ready
 		if(te instanceof TileEntityConveyor) {
 			System.out.println("Item Setting up Appliance");
-			((IConveyorApplianceHost) te).initAppliance("taam." + Taam.ITEM_CONVEYOR_APPLIANCE_META[i]);
+			((TileEntityConveyor) te).initAppliance("taam." + Taam.ITEM_CONVEYOR_APPLIANCE_META[i]);
 			((TileEntityConveyor) te).updateState();
 			return true;
 		}
