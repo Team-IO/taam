@@ -17,10 +17,10 @@ import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.oredict.OreDictionary;
 import founderio.taam.Config;
-import founderio.taam.blocks.TileEntityConveyor;
 import founderio.taam.conveyors.ApplianceInventory;
 import founderio.taam.conveyors.IConveyorAppliance;
 import founderio.taam.conveyors.IConveyorApplianceFactory;
+import founderio.taam.conveyors.IConveyorApplianceHost;
 import founderio.taam.conveyors.ItemWrapper;
 
 public class ApplianceSprayer extends ApplianceInventory {
@@ -32,7 +32,7 @@ public class ApplianceSprayer extends ApplianceInventory {
 	public static class Factory implements IConveyorApplianceFactory {
 
 		@Override
-		public IConveyorAppliance setUpApplianceInventory(String type, TileEntityConveyor conveyor) {
+		public IConveyorAppliance setUpApplianceInventory(String type, IConveyorApplianceHost conveyor) {
 			IConveyorAppliance ainv = new ApplianceSprayer();
 			return ainv; 
 		}
@@ -99,7 +99,7 @@ public class ApplianceSprayer extends ApplianceInventory {
 	}
 	
 	@Override
-	public void processItem(TileEntityConveyor conveyor, ItemWrapper wrapper) {
+	public void processItem(IConveyorApplianceHost conveyor, ItemWrapper wrapper) {
 		//TODO: Review this, and change to fluid usage (will use fluid during progress, can leave half-processed items.)
 		if(wrapper.processing > 1) {//Config.pl_appl_sprayer_maxProgress) {
 			int paintType = getAvailablePaintType();
@@ -172,7 +172,7 @@ public class ApplianceSprayer extends ApplianceInventory {
 	}
 
 	@Override
-	public boolean isApplianceSetupCompatible(TileEntityConveyor conveyorTarget, IConveyorAppliance applianceTarget) {
+	public boolean isApplianceSetupCompatible(IConveyorApplianceHost conveyorTarget, IConveyorAppliance applianceTarget) {
 		if(applianceTarget instanceof ApplianceSprayer) {
 			return ((ApplianceSprayer) applianceTarget).getAvailablePaintType() == getAvailablePaintType();
 		} else {
@@ -230,6 +230,16 @@ public class ApplianceSprayer extends ApplianceInventory {
 	@Override
 	public boolean canExtractItem(int slot, ItemStack itemStack, int side) {
 		return true;
+	}
+
+	@Override
+	public String getInventoryName() {
+		return "item.taam.item.conveyor_appliance.sprayer.name";
+	}
+
+	@Override
+	public boolean hasCustomInventoryName() {
+		return false;
 	}
 
 }
