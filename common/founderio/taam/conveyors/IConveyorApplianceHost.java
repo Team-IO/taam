@@ -2,6 +2,6 @@ package founderio.taam.conveyors;
 
 public interface IConveyorApplianceHost {
 
-	public abstract void initAppliance(String name);
+	public abstract boolean initAppliance(String name);
 
 }

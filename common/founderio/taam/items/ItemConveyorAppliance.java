@@ -2,8 +2,6 @@ package founderio.taam.items;
 
 import java.util.List;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -11,8 +9,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import founderio.taam.Taam;
-import founderio.taam.blocks.TileEntityConveyor;
 import founderio.taam.conveyors.IConveyorApplianceHost;
 
 public class ItemConveyorAppliance extends ItemWithMetadata {
@@ -55,11 +54,15 @@ public class ItemConveyorAppliance extends ItemWithMetadata {
 			i = 0;
 		}
 		TileEntity te = world.getTileEntity(x, y, z);
-		//TODO: Change to ConveyorApplianceHost once ready
-		if(te instanceof TileEntityConveyor) {
-			System.out.println("Item Setting up Appliance");
-			((IConveyorApplianceHost) te).initAppliance("taam." + Taam.ITEM_CONVEYOR_APPLIANCE_META[i]);
-			((TileEntityConveyor) te).updateState();
+		if(te instanceof IConveyorApplianceHost) {
+			IConveyorApplianceHost host = (IConveyorApplianceHost) te;
+			System.out.println("Item Setting up Appliance " + "taam." + Taam.ITEM_CONVEYOR_APPLIANCE_META[i]);
+			boolean result = host.initAppliance("taam." + Taam.ITEM_CONVEYOR_APPLIANCE_META[i]);
+			if(result) {
+				System.out.println("Appliance set up.");
+			} else {
+				System.out.println("Appliance not set up.");
+			}
 			return true;
 		}
 		return false;

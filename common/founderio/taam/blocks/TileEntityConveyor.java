@@ -325,12 +325,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 			items.trimToSize();
 		}
 		String newApplianceType = tag.getString("applianceType");
-		if(newApplianceType == null) {
-			appliance = null;
-			applianceType = null;
-		} else if(!newApplianceType.equals(applianceType)) {
-			initAppliance(newApplianceType);
-		}
+		setAppliance(newApplianceType);
 		if(appliance != null) {
 			NBTTagCompound applianceData = tag.getCompoundTag("appliance");
 			if(applianceData != null) {
@@ -339,18 +334,39 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 		}
 	}
 	
-	/* (non-Javadoc)
-	 * @see founderio.taam.blocks.IConveyorApplianceHost#initAppliance(java.lang.String)
-	 */
 	@Override
-	public void initAppliance(String name) {
+	public boolean initAppliance(String name) {
+		if(isAppliancePresent()) {
+			return false;
+		}
+		boolean result = setAppliance(name);
+		updateState();
+		updateContainingBlockInfo();
+		return result;
+	}
+	
+	private boolean isAppliancePresent() {
+		return appliance != null;
+	}
+	
+	private boolean setAppliance(String name) {
+		if(name == null) {
+			appliance = null;
+			applianceType = null;
+			return true;
+		}
+		if(name.equals(applianceType)) {
+			return false;
+		}
 		IConveyorApplianceFactory factory = ApplianceRegistry.getFactory(name);
 		if(factory == null) {
+			appliance = null;
 			applianceType = null;
 		} else {
 			appliance = factory.setUpApplianceInventory(name, this);
 			applianceType = name;
 		}
+		return true;
 	}
 
 	@Override
