@@ -36,6 +36,7 @@ import founderio.taam.client.gui.GuiHandler;
 import founderio.taam.items.ItemConveyorAppliance;
 import founderio.taam.items.ItemDebugTool;
 import founderio.taam.items.ItemWithMetadata;
+import founderio.taam.items.ItemWrench;
 import founderio.taam.multinet.Multinet;
 
 
@@ -51,7 +52,8 @@ public class TaamMain {
 	
 	public static ItemMultinetCable itemMultinetCable;
 	public static ItemMultinetMultitronix itemMultinetMultitronix;
-	public static ItemDebugTool itemMultinetDebugger;
+	public static ItemDebugTool itemDebugTool;
+	public static ItemWrench itemWrench;
 	public static ItemWithMetadata itemMaterial;
 	public static ItemWithMetadata itemPart;
 	public static ItemWithMetadata itemIngot;
@@ -113,9 +115,13 @@ public class TaamMain {
 		itemMultinetCable.setUnlocalizedName(Taam.ITEM_MULTINET_CABLE);
 		itemMultinetCable.setCreativeTab(creativeTab);
 		
-		itemMultinetDebugger = new ItemDebugTool();
-		itemMultinetDebugger.setUnlocalizedName(Taam.ITEM_MULTINET_DEBUGGER);
-		itemMultinetDebugger.setCreativeTab(creativeTab);
+		itemDebugTool = new ItemDebugTool();
+		itemDebugTool.setUnlocalizedName(Taam.ITEM_DEBUG_TOOL);
+		itemDebugTool.setCreativeTab(creativeTab);
+		
+		itemWrench = new ItemWrench();
+		itemWrench.setUnlocalizedName(Taam.ITEM_WRENCH);
+		itemWrench.setCreativeTab(creativeTab);
 		
 		itemMultinetMultitronix = new ItemMultinetMultitronix();
 		itemMultinetMultitronix.setUnlocalizedName(Taam.ITEM_MULTINET_MULTITRONIX);
@@ -144,7 +150,8 @@ public class TaamMain {
 		GameRegistry.registerItem(itemIngot, Taam.ITEM_INGOT, Taam.MOD_ID);
 
 		GameRegistry.registerItem(itemMultinetCable, Taam.ITEM_MULTINET_CABLE, Taam.MOD_ID);
-		GameRegistry.registerItem(itemMultinetDebugger, Taam.ITEM_MULTINET_DEBUGGER, Taam.MOD_ID);
+		GameRegistry.registerItem(itemDebugTool, Taam.ITEM_DEBUG_TOOL, Taam.MOD_ID);
+		GameRegistry.registerItem(itemWrench, Taam.ITEM_WRENCH, Taam.MOD_ID);
 		GameRegistry.registerItem(itemMultinetMultitronix, Taam.ITEM_MULTINET_MULTITRONIX, Taam.MOD_ID);
 
 		GameRegistry.registerItem(itemConveyorAppliance, Taam.ITEM_CONVEYOR_APPLIANCE, Taam.MOD_ID);
