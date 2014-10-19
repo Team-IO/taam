@@ -118,6 +118,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 			int meta = item.getItemDamage() | 7;
 			renderSensor(offX, offY, offZ, (meta & 7), false);
 		} else if(item.getItem() == Item.getItemFromBlock(TaamMain.blockProductionLine)) {
+			//TODO: distinction between single conveyer components
 			renderConveyor(null, offX, offY, offZ);
 		}
 		

@@ -17,6 +17,8 @@ public class Config {
 	public static int sensor_delay = 30;
 	public static int sensor_placement_mode = 1;
 	
+	public static int pl_hopper_highspeed_delay = 1;
+	public static int pl_hopper_delay = 1;
 	public static int pl_appl_sprayer_maxProgress = 1;
 	//TODO: Change to mB
 	public static int pl_appl_sprayer_resourceUsage = 1;
@@ -44,6 +46,9 @@ public class Config {
 		sensor_delay = config.getInt("sensor_delay", "multitronix", 30, 10, 100, Taam.CFG_COMMENT_SENSOR_DELAY);
 		sensor_placement_mode = config.getInt("sensor_placement_mode", "multitronix", 1, 1, 2, Taam.CFG_COMMENT_SENSOR_PLACEMENT_MODE);
 		
+		pl_hopper_highspeed_delay = config.getInt("hopper_delay", "production_line", 8, 1, 500, "Maximum processing steps for the sprayer appliance.");
+		pl_hopper_highspeed_delay = config.getInt("hopper_highspeed_delay", "production_line", 0, 1, 500, "Maximum processing steps for the sprayer appliance.");
+
 		pl_appl_sprayer_maxProgress = config.getInt("sprayer_maxProgress", "production_line_appliances", 20, 1, 500, "Maximum processing steps for the sprayer appliance.");
 		pl_appl_sprayer_resourceUsage = config.getInt("sprayer_resourceUsage", "production_line_appliances", 1, 1, 500, "Resource Usage per spray step in the sprayer.");
 

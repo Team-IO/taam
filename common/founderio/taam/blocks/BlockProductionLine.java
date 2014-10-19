@@ -71,7 +71,14 @@ public class BlockProductionLine extends BaseBlock {
 		if(metadata == 0) {
 			return new TileEntityConveyor();
 		} else if(metadata == 1) {
+			// Regular
 			return new TileEntityConveyorHopper();
+		} else if(metadata == 2) {
+			// High-Speed
+			return new TileEntityConveyorHopper(true);
+		} else if(metadata == 3) {
+			//TODO: Separate entity/other kind of distinction
+			return new TileEntityConveyorHopper(true);
 		}
 		return null;
 	}
@@ -140,7 +147,14 @@ public class BlockProductionLine extends BaseBlock {
 	@Override
 	public AxisAlignedBB getCollisionBoundingBoxFromPool(World world,
 			int x, int y, int z) {
-		this.maxY = 0.5f;
+		int meta = world.getBlockMetadata(x, y, z);
+		if(meta == 3) {
+			// Standalone
+			this.maxY = 1;
+		} else {
+			// Conveyor Machinery
+			this.maxY = 0.5f;
+		}
 		return super.getCollisionBoundingBoxFromPool(world, x, y, z);
 	}
 	

@@ -4,22 +4,36 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.tileentity.IHopper;
 import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraftforge.common.util.ForgeDirection;
 import codechicken.lib.inventory.InventoryRange;
 import codechicken.lib.inventory.InventorySimple;
 import codechicken.lib.inventory.InventoryUtils;
+import founderio.taam.Config;
 import founderio.taam.conveyors.ConveyorUtil;
 import founderio.taam.conveyors.IConveyorAwareTE;
 import founderio.taam.conveyors.ItemWrapper;
 
 
-public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyorAwareTE, IInventory {
+public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyorAwareTE, IInventory, IHopper {
 
 	private InventorySimple inventory;
 	
+	private boolean highSpeed;
+	private int timeout;
+	
 	public TileEntityConveyorHopper() {
+		this(false);
+	}
+	
+	public TileEntityConveyorHopper(boolean highSpeed) {
+		this.highSpeed = highSpeed;
 		inventory = new InventorySimple(5, "Conveyor Hopper");
+	}
+	
+	public boolean isCoolingDown() {
+		return timeout > 0;
 	}
 	
 	@Override
@@ -30,7 +44,18 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 
 		ConveyorUtil.tryInsertItemsFromWorld(this, worldObj, null, true);
 		
+		
+		if(isCoolingDown()) {
+			timeout--;
+			return;
+		}
+		
+		boolean isShutdown = false;
 		//TODO: Check Redstone Status
+		
+		if(isShutdown) {
+			return;
+		}
 		
 		IInventory inventory = InventoryUtils.getInventory(worldObj, xCoord, yCoord - 1, zCoord);
 		if(inventory != null) {
@@ -42,6 +67,11 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 					ItemStack oneItem = InventoryUtils.copyStack(this.inventory.getStackInSlot(i), 1);
 					if(InventoryUtils.insertItem(range, oneItem, false) == 0) {
 						InventoryUtils.decrStackSize(this.inventory, i, 1);
+						if(highSpeed) {
+							timeout += Config.pl_hopper_highspeed_delay;
+						} else {
+							timeout += Config.pl_hopper_delay;
+						}
 						updateState();
 						break;
 					}
@@ -53,11 +83,23 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 	@Override
 	protected void writePropertiesToNBT(NBTTagCompound tag) {
 		tag.setTag("items", InventoryUtils.writeItemStacksToTag(inventory.items));
+		tag.setBoolean("highSpeed", highSpeed);
+		tag.setInteger("timeout", timeout);
 	}
 
 	@Override
 	protected void readPropertiesFromNBT(NBTTagCompound tag) {
 		InventoryUtils.readItemStacksFromTag(inventory.items, tag.getTagList("items", NBT.TAG_COMPOUND));
+		highSpeed = tag.getBoolean("highSpeed");
+		timeout = tag.getInteger("timeout");
+	}
+
+	public boolean isHighSpeed() {
+		return highSpeed;
+	}
+
+	public void setHighSpeed(boolean highSpeed) {
+		this.highSpeed = highSpeed;
 	}
 
 	@Override
@@ -141,6 +183,21 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 	@Override
 	public boolean isItemValidForSlot(int slot, ItemStack stack) {
 		return inventory.isItemValidForSlot(slot, stack);
+	}
+
+	@Override
+	public double getXPos() {
+		return this.xCoord;
+	}
+
+	@Override
+	public double getYPos() {
+		return this.yCoord;
+	}
+
+	@Override
+	public double getZPos() {
+		return this.zCoord;
 	}
 
 }
