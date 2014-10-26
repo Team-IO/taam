@@ -25,6 +25,14 @@ public class BlockOre extends Block {
 	}
 	
 	@Override
+	public int damageDropped(int meta) {
+		if (meta < 0 || meta >= Taam.BLOCK_ORE_META.length) {
+			meta = 0;
+		}
+		return meta;
+	}
+	
+	@Override
 	@SideOnly(Side.CLIENT)
 	public IIcon getIcon(int side, int meta) {
 		if (meta < 0 || meta >= iconList.length) {
