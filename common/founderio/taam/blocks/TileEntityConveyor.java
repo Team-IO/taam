@@ -336,7 +336,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	
 	@Override
 	public boolean initAppliance(String name) {
-		if(isAppliancePresent()) {
+		if(hasAppliance()) {
 			return false;
 		}
 		boolean result = setAppliance(name);
@@ -345,26 +345,22 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 		return result;
 	}
 	
-	private boolean isAppliancePresent() {
-		return appliance != null;
-	}
-	
-	private boolean setAppliance(String name) {
-		if(name == null) {
+	private boolean setAppliance(String type) {
+		if(type == null) {
 			appliance = null;
 			applianceType = null;
 			return true;
 		}
-		if(name.equals(applianceType)) {
+		if(type.equals(applianceType)) {
 			return false;
 		}
-		IConveyorApplianceFactory factory = ApplianceRegistry.getFactory(name);
+		IConveyorApplianceFactory factory = ApplianceRegistry.getFactory(type);
 		if(factory == null) {
 			appliance = null;
 			applianceType = null;
 		} else {
-			appliance = factory.setUpApplianceInventory(name, this);
-			applianceType = name;
+			appliance = factory.setUpApplianceInventory(type, this);
+			applianceType = type;
 		}
 		return true;
 	}
@@ -562,6 +558,16 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 		} else {
 			return appliance.canExtractItem(slot, itemStack, side);
 		}
+	}
+
+	@Override
+	public boolean hasAppliance() {
+		return appliance != null;
+	}
+
+	@Override
+	public boolean hasApplianceWithType(String type) {
+		return hasAppliance() && applianceType.equals(type);
 	}
 
 }

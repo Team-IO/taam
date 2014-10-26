@@ -71,4 +71,5 @@ public final class Taam {
 	public static final String CFG_COMMENT_GEN_COPPER_ORE = "Should Taam generate Copper Ore in the World";
 	public static final String CFG_COMMENT_GEN_TIN_ORE  = "Should Taam generate Tin Ore in the World";
 	public static final String CFG_COMMENT_DEBUG_OUTPUT = "Should the Debug mode form Taam be activated";
+	public static final String APPLIANCE_SPRAYER = "taam.sprayer";
 }

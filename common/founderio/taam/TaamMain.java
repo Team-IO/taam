@@ -33,6 +33,8 @@ import founderio.taam.blocks.multinet.MultinetHandler;
 import founderio.taam.blocks.multinet.MultinetPartFactory;
 import founderio.taam.blocks.multinet.cables.OperatorRedstone;
 import founderio.taam.client.gui.GuiHandler;
+import founderio.taam.conveyors.ApplianceRegistry;
+import founderio.taam.conveyors.appliances.ApplianceSprayer;
 import founderio.taam.items.ItemConveyorAppliance;
 import founderio.taam.items.ItemDebugTool;
 import founderio.taam.items.ItemWithMetadata;
@@ -170,6 +172,8 @@ public class TaamMain {
 //		GameRegistry.registerTileEntity(TileEntitySlidingDoor.class, Taam.TILEENTITY_SLIDINGDOOR);
 		
 		GameRegistry.registerWorldGenerator(new OreGenerator(), 2);
+		
+		ApplianceRegistry.registerFactory(Taam.APPLIANCE_SPRAYER, new ApplianceSprayer.Factory());
 	}
 
 	@EventHandler

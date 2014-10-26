@@ -195,6 +195,13 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 			} else {
 				modelConveyor.renderPart("Conveyor_End_cemdl");
 			}
+			
+			if(conveyor != null) {
+				if(conveyor.hasApplianceWithType(Taam.APPLIANCE_SPRAYER)) {
+					modelConveyor.renderPart("Appliance_Sprayer_asmdl");
+				}
+			}
+			
 		} else if(tileEntity instanceof TileEntityConveyorHopper) {
 			modelConveyor.renderPart("Conveyor_Hopper_chmdl");
 		}
