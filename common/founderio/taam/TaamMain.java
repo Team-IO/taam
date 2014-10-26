@@ -37,6 +37,7 @@ import founderio.taam.blocks.multinet.cables.OperatorRedstone;
 import founderio.taam.client.gui.GuiHandler;
 import founderio.taam.conveyors.ApplianceRegistry;
 import founderio.taam.conveyors.appliances.ApplianceSprayer;
+import founderio.taam.fluids.DyeFluid;
 import founderio.taam.items.ItemConveyorAppliance;
 import founderio.taam.items.ItemDebugTool;
 import founderio.taam.items.ItemWithMetadata;
@@ -69,6 +70,8 @@ public class TaamMain {
 	public static BlockProductionLine blockProductionLine;
 	public static BlockSlidingDoor blockSlidingDoor;
 	public static BlockOre blockOre;
+	
+	public static DyeFluid[] fluidsDye;
 	
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
@@ -162,7 +165,7 @@ public class TaamMain {
 		
 		GameRegistry.registerBlock(blockSensor, ItemBlock.class, Taam.BLOCK_SENSOR);
 		GameRegistry.registerBlock(blockProductionLine, null, Taam.BLOCK_PRODUCTIONLINE);
-		//TODO: custom item implementation for production line with lore (see ItemConveyorAppliance)
+		//TODO: custom item implementation for production line with lore (see ItemConveyorAppliance), because of Lore
 		GameRegistry.registerItem(new ItemMultiTexture(blockProductionLine, blockProductionLine, Taam.BLOCK_CONVEYOR_META), Taam.BLOCK_PRODUCTIONLINE, Taam.MOD_ID);
 //		GameRegistry.registerBlock(blockSlidingDoor, ItemBlock.class, Taam.BLOCK_SLIDINGDOOR);
 		GameRegistry.registerBlock(blockOre, null, Taam.BLOCK_ORE);
@@ -177,6 +180,11 @@ public class TaamMain {
 		
 		ApplianceRegistry.registerFactory(Taam.APPLIANCE_SPRAYER, new ApplianceSprayer.Factory());
 		
+		fluidsDye = new DyeFluid[Taam.FLUID_DYE_META.length];
+		for(int i = 0; i < Taam.FLUID_DYE_META.length; i++) {
+			fluidsDye[i] = new DyeFluid(Taam.FLUID_DYE + Taam.FLUID_DYE_META[i]);
+			FluidRegistry.registerFluid(fluidsDye[i]);
+		}
 	}
 
 	@EventHandler

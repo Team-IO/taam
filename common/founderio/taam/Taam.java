@@ -73,6 +73,25 @@ public final class Taam {
 	public static final String CFG_COMMENT_DEBUG_OUTPUT = "Should the Debug mode form Taam be activated";
 	
 	public static final String APPLIANCE_SPRAYER = "taam.sprayer";
-	
+
+	public static final String[] FLUID_DYE_META = new String[] {
+		"black",
+		"red",
+		"green",
+		"brown",
+		"blue",
+		"purple",
+		"cyan",
+		"lightGray",
+		"gray",
+		"pink",
+		"lime",
+		"yellow",
+		"lightBlue",
+		"magenta",
+		"orange",
+		"white"
+	};
+
 	public static final String FLUID_DYE = "taam.dye";
 }
