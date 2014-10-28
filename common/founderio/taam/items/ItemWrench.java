@@ -4,17 +4,18 @@ import java.util.List;
 
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import founderio.taam.Taam;
 import founderio.taam.blocks.TileEntityConveyor;
-import founderio.taam.blocks.multinet.MultinetCable;
 
 public class ItemWrench extends Item {
 
@@ -42,6 +43,27 @@ public class ItemWrench extends Item {
 				par3List.add(split[i]);
 			}
 		}
+	}
+	
+	@Override
+	public boolean hitEntity(ItemStack stack, EntityLivingBase source,
+			EntityLivingBase target) {
+//		target.prevRotationPitch += 180;
+//		target.rotationPitch += 180;
+		Vec3 pos = source.getPosition(0);
+		// x y z yaw pitch
+		System.out.println("Entity will be hit." + source.rotationYaw);
+		if(target.isSneaking()) {
+			source.rotationYawHead = source.rotationYawHead = (source.rotationYawHead + 180) % 360f;
+		} else {
+			source.rotationYaw = source.rotationYaw = (source.rotationYaw + 180) % 360f;
+		}
+		//source.addVelocity(0, 20, 0);
+//		target.setPositionAndRotation(pos.xCoord, pos.yCoord, pos.zCoord, target.rotationYaw + 180, target.rotationPitch + 180);
+//		target.
+		System.out.println("Entity hit." + source.rotationYaw);
+		// TODO Auto-generated method stub
+		return true;//super.hitEntity(stack, source, target);
 	}
 		
 	@Override

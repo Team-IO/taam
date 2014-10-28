@@ -23,10 +23,13 @@ public final class Taam {
 	public static final String BLOCK_SENSOR_MINECT = "taam.sensor.minect";
 	public static final String BLOCK_ORE = "taam.ore";
 	
+	//TODO: Ignore Bauxite in Ingot Form
 	public static final String[] BLOCK_ORE_META = new String[] {
 		"copper",
 		"tin",
-		"aluminum"
+		"aluminum",
+		"bauxite",
+		"kaolinite"
 	};
 	
 	public static final String[] BLOCK_CONVEYOR_META = new String[] {
@@ -58,7 +61,8 @@ public final class Taam {
 	};
 	public static final String[] ITEM_PART_META = new String[] {
 		"photocell",
-		"motor"
+		"motor",
+		"support_frame"
 	};
 	
 	public static final String TILEENTITY_SENSOR = "taam.sensor";
