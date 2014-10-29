@@ -1,23 +1,24 @@
 #Item localization
-item.taam.item.debugger.name=Coffee
-item.taam.item.cable.name=MulitNet Cable
-item.taam.item.multitronix.name=Multitronix
+item.taam.debugger.name=Coffee
+item.taam.wrench.name=Adjustable Wrench
+item.taam.cable.name=MulitNet Cable
+item.taam.multitronix.name=Multitronix
 # Ingots
-item.taam.item.ingot.tin.name=Tin Ingot
-item.taam.item.ingot.copper.name=Copper Ingot
-item.taam.item.ingot.aluminum.name=Aluminum Ingot
-item.taam.item.ingot.bauxite.name=The Impossible Bauxite Ingot
-item.taam.item.ingot.kaolinite.name=The Impossible Kaolinite Ingot
+item.taam.ingot.tin.name=Tin Ingot
+item.taam.ingot.copper.name=Copper Ingot
+item.taam.ingot.aluminum.name=Aluminum Ingot
+item.taam.ingot.bauxite.name=The Impossible Bauxite Ingot
+item.taam.ingot.kaolinite.name=The Impossible Kaolinite Ingot
 # Parts (Crafting Items)
-item.taam.item.part.photocell.name=Photo Cell
-item.taam.item.part.motor.name=Motor
-item.taam.item.part.support_frame.name=Support Frame
+item.taam.part.photocell.name=Photo Cell
+item.taam.part.motor.name=Motor
+item.taam.part.support_frame.name=Support Frame
 # Materials
-item.taam.item.material.plastic.name=Plastic
-item.taam.item.material.rubber.name=Rubber
-item.taam.item.material.graphite.name=Graphite
+item.taam.material.plastic.name=Plastic
+item.taam.material.rubber.name=Rubber
+item.taam.material.graphite.name=Graphite
 # Conveyor Appliances
-item.taam.item.conveyor_appliance.sprayer.name=Sprayer
+item.taam.conveyor_appliance.sprayer.name=Sprayer
 
 #Creativ Tab localization
 itemGroup.taam=Taam
@@ -34,6 +35,8 @@ tile.taam.ore.kaolinite.name=Kaolinite
 # Machines
 tile.taam.productionline.conveyor.name=Conveyor
 tile.taam.productionline.hopper.name=Conveyor Hopper
+tile.taam.productionline.hopper_hs.name=High Speed Conveyor Hopper
+tile.taam.productionline.hopper_hs_standalone.name=High Speed Conveyor Hopper
 
 #Lore localization
 lore.taam.shift=Hold Shift
@@ -44,3 +47,5 @@ lore.taam.productionline.usage=Can work together with other\nproduction line com
 lore.taam.productionline.isappliancehost=Is a valid appliance host.
 lore.taam.debugtool=Debug Tool
 lore.taam.debugtool.usage=This item can't be obtained in Survival.\nIt prints debug information\ninto chat or console.
+lore.taam.wrench=An engineers utility
+lore.taam.wrench.usage=Use this wrench to rotate\nand manage productionline machines.

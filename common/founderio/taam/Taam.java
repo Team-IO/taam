@@ -23,7 +23,7 @@ public final class Taam {
 	public static final String BLOCK_SENSOR_MINECT = "taam.sensor.minect";
 	public static final String BLOCK_ORE = "taam.ore";
 	
-	//TODO: Ignore Bauxite in Ingot Form
+	//TODO: Ignore Bauxite + Kaolinite in Ingot Form
 	public static final String[] BLOCK_ORE_META = new String[] {
 		"copper",
 		"tin",
@@ -32,7 +32,7 @@ public final class Taam {
 		"kaolinite"
 	};
 	
-	public static final String[] BLOCK_CONVEYOR_META = new String[] {
+	public static final String[] BLOCK_PRODUCTIONLINE_META = new String[] {
 		"conveyor",
 		"hopper",
 		"hopper_hs",
@@ -42,14 +42,14 @@ public final class Taam {
 	public static final String MULTIPART_MULTINET_CABLE = "taam.multinet.cable";
 	public static final String MULTIPART_MULTINET_MULTITRONIX = "taam.multinet.multitronix";
 	
-	public static final String ITEM_MULTINET_CABLE = "taam.item.cable";
-	public static final String ITEM_DEBUG_TOOL = "taam.item.debugger";
-	public static final String ITEM_WRENCH = "taam.item.wrench";
-	public static final String ITEM_MULTINET_MULTITRONIX = "taam.item.multitronix";
-	public static final String ITEM_MATERIAL = "taam.item.material";
-	public static final String ITEM_PART= "taam.item.part";
-	public static final String ITEM_INGOT = "taam.item.ingot";
-	public static final String ITEM_CONVEYOR_APPLIANCE = "taam.item.conveyor_appliance";
+	public static final String ITEM_MULTINET_CABLE = "taam.cable";
+	public static final String ITEM_DEBUG_TOOL = "taam.debugger";
+	public static final String ITEM_WRENCH = "taam.wrench";
+	public static final String ITEM_MULTINET_MULTITRONIX = "taam.multitronix";
+	public static final String ITEM_MATERIAL = "taam.material";
+	public static final String ITEM_PART = "taam.part";
+	public static final String ITEM_INGOT = "taam.ingot";
+	public static final String ITEM_CONVEYOR_APPLIANCE = "taam.conveyor_appliance";
 	
 	public static final String[] ITEM_CONVEYOR_APPLIANCE_META = new String[] {
 		"sprayer"

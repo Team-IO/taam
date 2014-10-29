@@ -31,18 +31,18 @@ public class BlockProductionLine extends BaseBlock {
 	public String getUnlocalizedName(ItemStack itemStack) {
 		int i = itemStack.getItemDamage();
 
-		if (i < 0 || i >= Taam.BLOCK_CONVEYOR_META.length) {
+		if (i < 0 || i >= Taam.BLOCK_PRODUCTIONLINE_META.length) {
 			i = 0;
 		}
 
-		return super.getUnlocalizedName() + "." + Taam.BLOCK_CONVEYOR_META[i];
+		return super.getUnlocalizedName() + "." + Taam.BLOCK_PRODUCTIONLINE_META[i];
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void getSubBlocks(Item item, CreativeTabs creativeTab, List list) {
-		for (int i = 0; i < Taam.BLOCK_CONVEYOR_META.length; i++) {
+		for (int i = 0; i < Taam.BLOCK_PRODUCTIONLINE_META.length; i++) {
 			list.add(new ItemStack(item, 1, i));
 		}
 	}
