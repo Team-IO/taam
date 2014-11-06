@@ -17,6 +17,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import founderio.taam.Taam;
 import founderio.taam.TaamMain;
+import founderio.taam.conveyors.ConveyorUtil;
 
 public class BlockProductionLine extends BaseBlock {
 	
@@ -165,12 +166,20 @@ public class BlockProductionLine extends BaseBlock {
 			float hitZ) {
 		if(!world.isRemote) {
 			
-			//TODO: Wrench only...
 			//TODO: Use IRotatable?
 			TileEntity te = world.getTileEntity(x, y, z);
 			if(te instanceof TileEntityConveyor) {
-				TileEntityConveyor conveyor = (TileEntityConveyor) te;
-				conveyor.setDirection(conveyor.getFacingDirection().getRotation(ForgeDirection.UP));
+				if(ConveyorUtil.playerHasWrench(player)) {
+					TileEntityConveyor conveyor = (TileEntityConveyor) te;
+					if(player.isSneaking()) {
+						System.out.println("Disassembling.");
+						ConveyorUtil.dropAppliance(conveyor, world, x, y, z);
+						conveyor.removeAppliance();
+					} else {
+						System.out.println("Rotating.");
+						conveyor.setDirection(conveyor.getFacingDirection().getRotation(ForgeDirection.UP));
+					}
+				}
 			} else if(te instanceof TileEntityConveyorHopper) {
 				player.openGui(TaamMain.instance, 0, world, x, y, z);
 			}

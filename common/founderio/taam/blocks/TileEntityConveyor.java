@@ -4,11 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import codechicken.lib.inventory.InventoryUtils;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -20,6 +17,7 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+import codechicken.lib.inventory.InventoryUtils;
 import founderio.taam.conveyors.ApplianceRegistry;
 import founderio.taam.conveyors.ConveyorUtil;
 import founderio.taam.conveyors.IConveyorAppliance;
@@ -442,7 +440,6 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	@Override
 	public boolean isUseableByPlayer(EntityPlayer player) {
 		if(appliance == null) {
-			//TODO: check if that area is free
 			return true;
 		} else {
 			return appliance.isUseableByPlayer(player);
@@ -568,6 +565,25 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	@Override
 	public boolean hasApplianceWithType(String type) {
 		return hasAppliance() && applianceType.equals(type);
+	}
+
+	@Override
+	public String getApplianceType() {
+		return applianceType;
+	}
+
+	@Override
+	public IConveyorAppliance getAppliance() {
+		return appliance;
+	}
+
+	@Override
+	public boolean removeAppliance() {
+		boolean hadAppliance = hasAppliance();
+		appliance = null;
+		applianceType = null;
+		updateState();
+		return hadAppliance;
 	}
 
 }

@@ -10,6 +10,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import codechicken.lib.inventory.InventoryUtils;
 import codechicken.lib.vec.Vector3;
+import founderio.taam.conveyors.ConveyorUtil;
+import founderio.taam.conveyors.IConveyorApplianceHost;
 
 public abstract class BaseBlock extends Block {
 
@@ -45,34 +47,29 @@ public abstract class BaseBlock extends Block {
 		}
 		TileEntity te = world.getTileEntity(x, y, z);
 
+		
 		/*
 		 * Drop Items
 		 */
 		if(te instanceof IInventory) {
 			IInventory inventory = (IInventory)te;
+			Vector3 location = new Vector3(x, y, z);
 			for (int index = 0; index < inventory.getSizeInventory(); index++) {
 				ItemStack itemstack = inventory.getStackInSlot(index);
 
 				if (itemstack != null && itemstack.getItem() != null) {
-					InventoryUtils.dropItem(itemstack, world, new Vector3(x, y, z));
+					InventoryUtils.dropItem(itemstack, world, location);
 				}
 			}
 		}
 		
-		//TODO: Drop stuff like conveyor appliances
-//		/*
-//		 * Drop Modules
-//		 */
-//		if(te instanceof IModuleHost) {
-//			IModuleHost moduleHost = (IModuleHost)te;
-//			for (int index = 0; index < moduleHost.getSizeModules(); index++) {
-//				ItemStack itemstack = moduleHost.getModuleItemStack(index);
-//
-//				if (itemstack != null && itemstack.getItem() != null) {
-//					ItemUtil.spawnItemStackDropped(itemstack, world, x, y, z);
-//				}
-//			}
-//		}
+		/*
+		 * Drop Appliances
+		 */
+		if(te instanceof IConveyorApplianceHost) {
+			IConveyorApplianceHost applianceHost = (IConveyorApplianceHost)te;
+			ConveyorUtil.dropAppliance(applianceHost, world, x, y, z);
+		}
 
 		super.breakBlock(world, x, y, z, block, meta);
 	}

@@ -1,7 +1,11 @@
 package founderio.taam.conveyors;
 
+import codechicken.lib.inventory.InventoryUtils;
+import codechicken.lib.vec.Vector3;
+import founderio.taam.TaamMain;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
@@ -79,5 +83,60 @@ public class ConveyorUtil {
 		} else {
 			return false;
 		}
+	}
+	
+	/**
+	 * Drops the installed appliance and its content, if available.
+	 * @param applianceHost
+	 * @param world
+	 * @param x
+	 * @param y
+	 * @param z
+	 */
+	public static void dropAppliance(IConveyorApplianceHost applianceHost, World world, int x, int y, int z) {
+		String type = applianceHost.getApplianceType();
+		if(type == null) {
+			return;
+		}
+		IConveyorApplianceFactory factory = ApplianceRegistry.getFactory(type);
+		if(factory == null) {
+			return;
+		}
+		Vector3 location = new Vector3(x, y, z);
+		/*
+		 * Drop appliance
+		 */
+		ItemStack stack = factory.getItemStack(type);
+		//TODO: Make ItemStack retain certain data? (Tanks... Energy...)
+		if(stack != null) {
+			InventoryUtils.dropItem(stack, world, location);
+		}
+		/*
+		 * Drop appliance content
+		 */
+		IConveyorAppliance appliance = applianceHost.getAppliance();
+		if(appliance == null) {
+			return;
+		}
+		for(int i = 0; i < appliance.getSizeInventory(); i++) {
+			stack = appliance.getStackInSlot(i);
+			if(stack != null) {
+				InventoryUtils.dropItem(stack, world, location);
+			}
+		}
+	}
+	
+	/**
+	 * Returns true if the player is holding a wrench in his hand.
+	 * @param player
+	 * @return
+	 */
+	public static boolean playerHasWrench(EntityPlayer player) {
+		ItemStack held = player.getHeldItem();
+		if(held == null) {
+			return false;
+		}
+		//TODO: Check other wrench types once supported
+		return held.getItem() == TaamMain.itemWrench;
 	}
 }

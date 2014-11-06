@@ -2,6 +2,7 @@ package founderio.taam.items;
 
 import java.util.List;
 
+import codechicken.lib.inventory.InventoryUtils;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -60,10 +61,11 @@ public class ItemConveyorAppliance extends ItemWithMetadata {
 			boolean result = host.initAppliance("taam." + Taam.ITEM_CONVEYOR_APPLIANCE_META[i]);
 			if(result) {
 				System.out.println("Appliance set up.");
+				InventoryUtils.consumeItem(player.inventory, player.inventory.currentItem);
+				return true;
 			} else {
 				System.out.println("Appliance not set up.");
 			}
-			return true;
 		}
 		return false;
 	}

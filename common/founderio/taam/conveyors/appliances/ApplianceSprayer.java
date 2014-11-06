@@ -17,6 +17,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.oredict.OreDictionary;
 import founderio.taam.Config;
+import founderio.taam.TaamMain;
 import founderio.taam.conveyors.ApplianceInventory;
 import founderio.taam.conveyors.IConveyorAppliance;
 import founderio.taam.conveyors.IConveyorApplianceFactory;
@@ -35,6 +36,11 @@ public class ApplianceSprayer extends ApplianceInventory {
 		public IConveyorAppliance setUpApplianceInventory(String type, IConveyorApplianceHost conveyor) {
 			IConveyorAppliance ainv = new ApplianceSprayer();
 			return ainv; 
+		}
+
+		@Override
+		public ItemStack getItemStack(String type) {
+			return new ItemStack(TaamMain.itemConveyorAppliance, 1, 0);
 		}
 	}
 	

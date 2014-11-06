@@ -44,7 +44,9 @@ public class ItemWrench extends Item {
 			}
 		}
 	}
-	
+	public boolean doesSneakBypassUse(World world, int x, int y, int z, EntityPlayer player) {
+		return true;
+	};
 	@Override
 	public boolean hitEntity(ItemStack stack, EntityLivingBase source,
 			EntityLivingBase target) {
