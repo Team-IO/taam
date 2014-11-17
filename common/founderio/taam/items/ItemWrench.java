@@ -10,7 +10,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -21,11 +20,11 @@ public class ItemWrench extends Item {
 
 	public ItemWrench() {
 		super();
-		this.setMaxStackSize(1);
-		this.setMaxDamage(0);
-		this.setTextureName(Taam.MOD_ID + ":wrench");
+		setMaxStackSize(1);
+		setMaxDamage(0);
+		setTextureName(Taam.MOD_ID + ":wrench");
 	}
-	
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	@SideOnly(Side.CLIENT)
@@ -44,30 +43,26 @@ public class ItemWrench extends Item {
 			}
 		}
 	}
+
+
+	@Override
 	public boolean doesSneakBypassUse(World world, int x, int y, int z, EntityPlayer player) {
 		return true;
 	};
+
 	@Override
 	public boolean hitEntity(ItemStack stack, EntityLivingBase source,
 			EntityLivingBase target) {
-//		target.prevRotationPitch += 180;
-//		target.rotationPitch += 180;
-		Vec3 pos = source.getPosition(0);
-		// x y z yaw pitch
-		System.out.println("Entity will be hit." + source.rotationYaw);
+		//System.out.println("Entity will be hit." + source.rotationYaw);
 		if(target.isSneaking()) {
 			source.rotationYawHead = source.rotationYawHead = (source.rotationYawHead + 180) % 360f;
 		} else {
 			source.rotationYaw = source.rotationYaw = (source.rotationYaw + 180) % 360f;
 		}
-		//source.addVelocity(0, 20, 0);
-//		target.setPositionAndRotation(pos.xCoord, pos.yCoord, pos.zCoord, target.rotationYaw + 180, target.rotationPitch + 180);
-//		target.
-		System.out.println("Entity hit." + source.rotationYaw);
-		// TODO Auto-generated method stub
-		return true;//super.hitEntity(stack, source, target);
+		//System.out.println("Entity hit." + source.rotationYaw);
+		return true;
 	}
-		
+
 	@Override
 	public boolean onItemUse(ItemStack itemStack,
 			EntityPlayer player, World world,
@@ -76,25 +71,21 @@ public class ItemWrench extends Item {
 			float hitx, float hity, float hitz) {
 
 		boolean didSomething = false;
-		
+
 		TileEntity te = world.getTileEntity(x, y, z);
-        
-        if(te instanceof TileEntityConveyor) {
-        	didSomething = true;
-        	TileEntityConveyor tec = (TileEntityConveyor) te;
-        	tec.updateContainingBlockInfo();
-//        	player.addChatMessage(new ChatComponentText(String.format((world.isRemote ? 'C' : 'S') + " Conveyor facing %s. isEnd: %b isBegin: %b", tec.getFacingDirection().toString(), tec.isEnd(), tec.isBegin())));
-//        	if(tec.appliance == null) {
-//        		player.addChatMessage(new ChatComponentText(String.format((world.isRemote ? 'C' : 'S') + " Appliance Type: %s Appliance is null. ", tec.applianceType)));
-//        	} else {
-//        		player.addChatMessage(new ChatComponentText(String.format((world.isRemote ? 'C' : 'S') + " Appliance Type: %s Appliance: %s", tec.applianceType, String.valueOf(tec.appliance))));
-//        	}
-        }
-        if(didSomething && !world.isRemote) {
-        	world.playSound(player.posX ,player.posY ,player.posZ ,"note.hat", 1, 1, false);
-        }
-		
-        return !didSomething;
+
+		if(te instanceof TileEntityConveyor) {
+			//Rotation Logic is in the block implementation.
+			didSomething = true;
+			TileEntityConveyor tec = (TileEntityConveyor) te;
+			tec.updateContainingBlockInfo();
+		}
+		if (didSomething && !world.isRemote) {
+			// TODO: play custom sound
+			world.playSound(player.posX, player.posY, player.posZ, "note.hat", 1, 1, false);
+		}
+
+		return !didSomething;
 	}
 
 }

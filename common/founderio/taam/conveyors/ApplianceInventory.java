@@ -1,5 +1,7 @@
 package founderio.taam.conveyors;
 
+import codechicken.lib.inventory.InventorySimple;
+import codechicken.lib.inventory.InventoryUtils;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.ItemStack;
@@ -13,11 +15,11 @@ import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidTank;
 
 public abstract class ApplianceInventory implements IConveyorAppliance {
-	public IInventory inventory;
+	public InventorySimple inventory;
 	public FluidTank[] fluidTanks;
 	
 	public ApplianceInventory(int inventorySlots, int... tankCapacities) {
-		inventory = new InventoryBasic("Appliance Inventory", false, inventorySlots);
+		inventory = new InventorySimple(inventorySlots, "Appliance Inventory");
 		if(tankCapacities != null) {
 			fluidTanks = new FluidTank[tankCapacities.length];
 			for(int i = 0; i < tankCapacities.length; i++) {
@@ -89,6 +91,9 @@ public abstract class ApplianceInventory implements IConveyorAppliance {
 
 	@Override
 	public void writeToNBT(NBTTagCompound tag) {
+		/*
+		 * Write Tanks
+		 */
 		if(fluidTanks != null && fluidTanks.length != 0) {
 			NBTTagList tanks = new NBTTagList();
 			for(int i = 0; i < fluidTanks.length; i++) {
@@ -98,11 +103,17 @@ public abstract class ApplianceInventory implements IConveyorAppliance {
 			}
 			tag.setTag("tanks", tanks);
 		}
-		//TODO: Write Inventory
+		/*
+		 * Write Items
+		 */
+		tag.setTag("items", InventoryUtils.writeItemStacksToTag(inventory.items));
 	}
 
 	@Override
 	public void readFromNBT(NBTTagCompound tag) {
+		/*
+		 * Read Tanks
+		 */
 		NBTTagList tanks = tag.getTagList("tanks", NBT.TAG_COMPOUND);
 		if(tanks != null) {
 			int max = Math.min(tanks.func_150303_d(), fluidTanks.length);
@@ -110,7 +121,10 @@ public abstract class ApplianceInventory implements IConveyorAppliance {
 				fluidTanks[i].readFromNBT(tanks.getCompoundTagAt(i));
 			}
 		}
-		//TODO: Read Inventory
+		/*
+		 * Read Items
+		 */
+		InventoryUtils.readItemStacksFromTag(inventory.items, tag.getTagList("items", NBT.TAG_COMPOUND));
 	}
 	/*
 	 * IInventory

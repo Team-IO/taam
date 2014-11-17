@@ -16,6 +16,11 @@ import cpw.mods.fml.relauncher.SideOnly;
 import founderio.taam.TaamMain;
 import founderio.taam.multinet.MultinetUtil;
 
+/**
+ * Handler to draw overlays during placing of multinet cables
+ * @author oliverkahrmann
+ *
+ */
 public class MultinetHandler {
 
 	@SubscribeEvent

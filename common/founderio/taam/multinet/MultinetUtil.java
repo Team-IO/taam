@@ -2,11 +2,8 @@ package founderio.taam.multinet;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.PriorityQueue;
 import java.util.Queue;
-import java.util.Set;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
@@ -111,77 +108,28 @@ public final class MultinetUtil {
 		return MultinetUtil.astar(a, b) != null;
 	}
 
-	static AStarNode<IMultinetAttachment> astar(IMultinetAttachment origin, IMultinetAttachment target) {
-		PriorityQueue<AStarNode<IMultinetAttachment>> openlist = new PriorityQueue<AStarNode<IMultinetAttachment>>();
-		Set<AStarNode<IMultinetAttachment>> closedlist = new HashSet<AStarNode<IMultinetAttachment>>();
-		openlist.add(new AStarNode<IMultinetAttachment>(origin, 0d));
+	public static class Navigator implements AStar.Navigator<IMultinetAttachment> {
+
+		static Navigator instance = new Navigator();
 		
-		AStarNode<IMultinetAttachment> current;
+		private Navigator() {
+			
+		}
 		
-		BlockCoord bctarget = target.getCoordinates();
-		BlockCoord bccurrent = new BlockCoord();
+		@Override
+		public BlockCoord getCoords(IMultinetAttachment object) {
+			return object.getCoordinates();
+		}
+
+		@Override
+		public List<IMultinetAttachment> findNeighbors(IMultinetAttachment object) {
+			return MultinetUtil.findNeighbors(object);
+		}
 		
-		do {
-			current = openlist.remove();
-			
-			if(current.object == target) {
-				return current;
-			}
-			
-			closedlist.add(current);
-			
-			for(IMultinetAttachment successor : MultinetUtil.findNeighbors(current.object)) {
-				// skip attachments that are already being processed
-				boolean found = false;
-				for(AStarNode<IMultinetAttachment> op : openlist) {
-					if(op.object == successor) {
-						found = true;
-						break;
-					}
-				}
-				for(AStarNode<IMultinetAttachment> op : closedlist) {
-					if(op.object == successor) {
-						found = true;
-						break;
-					}
-				}
-				if(found) {
-					continue;
-				}
-				
-				int tentative_g = current.dist + 1;
-				
-				AStarNode<IMultinetAttachment> foundS = null;
-				for(AStarNode<IMultinetAttachment> op : closedlist) {
-					if(op.object == successor) {
-						found = true;
-						foundS = op;
-						break;
-					}
-				}
-				if(found && tentative_g >= foundS.dist) {
-					continue;
-				}
-				
-				if(!found) {
-					foundS = new AStarNode<IMultinetAttachment>(successor, 0d);
-				}
-				
-				foundS.predecessor = current;
-				foundS.dist = tentative_g;
-				
-				double f = tentative_g + bccurrent.set(current.object.getCoordinates()).sub(bctarget).mag();
-				foundS.value = f;
-				if(found) {
-					openlist.remove(foundS);
-				}
-				openlist.add(foundS);
-				
-			}
-			
-			
-		} while(!openlist.isEmpty());
-		return null;
+	}
+	
+	static AStar.Node<IMultinetAttachment> astar(IMultinetAttachment origin, IMultinetAttachment target) {
+		return AStar.astar(origin, target, Navigator.instance);
 	}
 
 	static boolean splitNetworks(IMultinetAttachment a, IMultinetAttachment b) {
