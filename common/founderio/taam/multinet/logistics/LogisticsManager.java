@@ -1,6 +1,7 @@
 package founderio.taam.multinet.logistics;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import founderio.taam.multinet.logistics.StationGraph.Track;
@@ -119,44 +120,27 @@ public class LogisticsManager {
 		 * Pick starting point
 		 */
 		
-		// Begin with transport of closest due time:
-		long minNeedBy = Long.MAX_VALUE;
-		long creationDate = Long.MAX_VALUE;
-		int startingPointIndex = 0;
-		Transport startingPoint = pendingTransport.get(0);
-		
 //		TODO Maybe: When calculating due date, simulate how long the next available cart would take!
 
 //		TODO If enabled, prioritize manual requests
 //		TODO Generally make priority configurable
+
+		// Begin with transport of closest due time - or oldest transport if none has a due time.
+		Collections.sort(pendingTransport);
 		
-		// Ignore first one, since that is already "selected"
-		for(int i = 1; i < pendingTransport.size(); i++) {
-			Transport check = pendingTransport.get(i);
-			// Transports with demand have priority.
-			if(check.demand != null) {
-				// begin with transport with the closest due time or, if not available, the oldest transport
-				// means: same need by time transports will be sorted by their creation date.
-				if(check.demand.needBy < minNeedBy ||
-						(check.demand.needBy == minNeedBy && check.created < creationDate)) {
-					minNeedBy = check.demand.needBy;
-					creationDate = check.created;
-					startingPointIndex = i;
-					startingPoint = check;
-				}
-			}
-		}
-		
+		Vehicle vehicle = null;
+
 		/*
-		 * Select a suitable free vehicle and generate route for it
+		 * Select a suitable free vehicle and generate route for it.
+		 * If not found, try to go with the next task.
 		 */
-		
-		Vehicle vehicle = findSuitableVehicle(startingPoint);
-		if(vehicle == null) {
-			//TODO: Rework above selection code to create sorted list and pick next vehicle from list. (until all transports iterated or vehicle found.
-			return;
-		}
-		
+		int startingPointIndex = -1;
+		Transport startingPoint = null; 
+		do {
+			startingPointIndex++;
+			startingPoint = pendingTransport.get(0);
+			vehicle = findSuitableVehicle(startingPoint);
+		} while (vehicle == null);
 		
 		Route route = new Route();
 		route.transports.add(startingPoint);

@@ -6,6 +6,8 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 import founderio.taam.multinet.AStar.Node;
 import founderio.taam.multinet.logistics.StationGraph.Track;
 
@@ -23,10 +25,16 @@ public class Route {
 	
 	List<Track> plot;
 	Map<Integer, Integer> stationsToPlot;
+	boolean hasPlot = false;
 	
-	public boolean plotRoute(StationGraph graph) {
+	public void clearPlot() {
+		hasPlot = false;
 		plot.clear();
 		stationsToPlot.clear();
+	}
+	
+	public boolean plotRoute(StationGraph graph) {
+		clearPlot();
 		
 		if(stations.size() < 2) {
 			return true;
@@ -64,6 +72,7 @@ public class Route {
 			// Log the location of the station in relation to the plot
 			stationsToPlot.put(i, plot.size() - 1);
 		}
+		hasPlot = true;
 		return true;
 	}
 	
@@ -104,10 +113,28 @@ public class Route {
 	
 	public boolean canAddTransport(Transport transport, Vehicle vehicle) {
 		//TODO: Check vehicle status
-		return false;
+		return true;
 	}
 	
 	public void addTransport(Transport transport) {
-		
+		addStation(transport.from);
+		addStation(transport.to);
+	}
+	
+	private void addStation(Station station) {
+		if(!stations.contains(station)) {
+			if(stations.isEmpty()) {
+				stations.add(station);
+			} else {
+				int stationIdx = 0;
+				for(int t = 0; t < plot.size() && stationIdx < stations.size(); t++) {
+					if(ArrayUtils.contains(plot.get(t).connectedTracks, station)) {
+						break;
+					}
+				}
+				stations.add(stationIdx, station);
+			}
+			clearPlot();
+		}
 	}
 }
