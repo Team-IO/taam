@@ -22,6 +22,7 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import founderio.taam.blocks.BlockMagnetRail;
 import founderio.taam.blocks.BlockOre;
 import founderio.taam.blocks.BlockProductionLine;
 import founderio.taam.blocks.BlockSensor;
@@ -70,6 +71,7 @@ public class TaamMain {
 	public static BlockProductionLine blockProductionLine;
 	public static BlockSlidingDoor blockSlidingDoor;
 	public static BlockOre blockOre;
+	public static BlockMagnetRail blockMagnetRail;
 	
 	public static DyeFluid[] fluidsDye;
 	
@@ -117,6 +119,10 @@ public class TaamMain {
 		blockOre = new BlockOre();
 		blockOre.setBlockName(Taam.BLOCK_ORE);
 		blockOre.setCreativeTab(creativeTab);
+		
+		blockMagnetRail = new BlockMagnetRail();
+		blockMagnetRail.setBlockName(Taam.BLOCK_MAGNET_RAIL);
+		blockMagnetRail.setCreativeTab(creativeTab);
 		
 		itemMultinetCable = new ItemMultinetCable();
 		itemMultinetCable.setUnlocalizedName(Taam.ITEM_MULTINET_CABLE);
@@ -169,6 +175,7 @@ public class TaamMain {
 		GameRegistry.registerItem(new ItemMultiTexture(blockProductionLine, blockProductionLine, Taam.BLOCK_PRODUCTIONLINE_META), Taam.BLOCK_PRODUCTIONLINE, Taam.MOD_ID);
 //		GameRegistry.registerBlock(blockSlidingDoor, ItemBlock.class, Taam.BLOCK_SLIDINGDOOR);
 		GameRegistry.registerBlock(blockOre, null, Taam.BLOCK_ORE);
+		GameRegistry.registerBlock(blockMagnetRail, ItemBlock.class, Taam.BLOCK_MAGNET_RAIL);
 		GameRegistry.registerItem(new ItemMultiTexture(blockOre, blockOre, Taam.BLOCK_ORE_META), Taam.BLOCK_ORE, Taam.MOD_ID);
 		
 		GameRegistry.registerTileEntity(TileEntitySensor.class, Taam.TILEENTITY_SENSOR);

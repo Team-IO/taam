@@ -80,6 +80,10 @@ public class BlockProductionLine extends BaseBlock {
 		} else if(metadata == 3) {
 			//TODO: Separate entity/other kind of distinction
 			return new TileEntityConveyorHopper(true);
+		} else if(metadata == 4) {
+			return new TileEntityLogisticsManager();
+		} else if(metadata == 5) {
+			return new TileEntityLogisticsStation();
 		}
 		return null;
 	}

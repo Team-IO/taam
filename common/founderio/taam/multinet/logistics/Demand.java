@@ -10,7 +10,7 @@ public class Demand {
 	
 	public Goods goods;
 	
-	public Station station;
+	public IStation station;
 	
 	public long needBy;
 	public DemandCategory category;

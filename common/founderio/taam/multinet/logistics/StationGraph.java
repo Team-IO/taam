@@ -13,13 +13,11 @@ import founderio.taam.multinet.AStar;
 import founderio.taam.multinet.AStar.Node;
 
 public class StationGraph {
-	public static class Track {
+	public static class Track implements ITrack {
 		
-		private String name = "";
 		
 		public Track(String name) {
 			this.name = name;
-			locatedStations = new Hashtable<Station, Integer>();
 		}
 		
 		@Override
@@ -27,16 +25,41 @@ public class StationGraph {
 			return "Track [" + name + "]";
 		}
 		
+		/* (non-Javadoc)
+		 * @see founderio.taam.multinet.logistics.ITrack#getConnectedTracks()
+		 */
+		@Override
+		public ITrack[] getConnectedTracks() {
+			return connectedTracks;
+		}
+
+		public void setConnectedTracks(ITrack[] connectedTracks) {
+			this.connectedTracks = connectedTracks;
+		}
+
+		/* (non-Javadoc)
+		 * @see founderio.taam.multinet.logistics.ITrack#getLocatedStations()
+		 */
+		@Override
+		public Map<IStation, Integer> getLocatedStations() {
+			return locatedStations;
+		}
+
+		public void setLocatedStations(Map<IStation, Integer> locatedStations) {
+			this.locatedStations = locatedStations;
+		}
+
+		private String name = "";
 		int length;
 		/**
 		 * Mapping from connected stations to -> position in reference to start
 		 */
-		public Map<Station, Integer> locatedStations;
+		private Map<IStation, Integer> locatedStations = new Hashtable<IStation, Integer>();
 		
-		public Track[] connectedTracks;
+		private ITrack[] connectedTracks = new ITrack[0];
 	}
 	
-	public static class Navigator implements AStar.Navigator<Track> {
+	public static class Navigator implements AStar.Navigator<ITrack> {
 
 		public static final Navigator instance = new Navigator();
 		
@@ -45,15 +68,15 @@ public class StationGraph {
 		}
 		
 		@Override
-		public BlockCoord getCoords(Track object) {
+		public BlockCoord getCoords(ITrack object) {
 			//TODO: actually use coords...
 			return new BlockCoord(0, 0, 0);
 		}
 
 		@SuppressWarnings("unchecked")
 		@Override
-		public List<Track> findNeighbors(Track object) {
-			return Arrays.asList(object.connectedTracks);
+		public List<ITrack> findNeighbors(ITrack object) {
+			return Arrays.asList(object.getConnectedTracks());
 		}
 		
 	}
@@ -64,16 +87,16 @@ public class StationGraph {
 	
 	public List<Track> tracks;
 	
-	public Track getTrackForStation(Station station) {
+	public Track getTrackForStation(IStation station) {
 		for(Track track : tracks) {
-			if(track.locatedStations.containsKey(station)) {
+			if(track.getLocatedStations().containsKey(station)) {
 				return track;
 			}
 		}
 		return null;
 	}
 	
-	public static Node<Track> astar(Track origin, Track target) {
+	public static Node<ITrack> astar(ITrack origin, ITrack target) {
 		return AStar.astar(origin, target, Navigator.instance);
 	}
 }

@@ -9,7 +9,7 @@ import founderio.taam.multinet.logistics.StationGraph.Track;
 public class LogisticsManager {
 
 	StationGraph graph;
-	List<Station> stations;
+	List<IStation> stations;
 	List<Vehicle> vehicles;
 	/*
 	 * Step 1: Satisfy demands by creating transports
@@ -24,7 +24,7 @@ public class LogisticsManager {
 	List<Route> processingRoutes;
 	
 	public LogisticsManager() {
-		stations = new ArrayList<Station>();
+		stations = new ArrayList<IStation>();
 		vehicles = new ArrayList<Vehicle>();
 		pendingDemands = new ArrayList<Demand>();
 		pendingTransport = new ArrayList<Transport>();
@@ -46,21 +46,21 @@ public class LogisticsManager {
 		Track trackBC = new Track("BC");
 		Track trackE = new Track("E");
 		
-		trackDA.connectedTracks = new Track[] {
+		trackDA.setConnectedTracks(new ITrack[] {
 			trackE,
 			trackBC
-		};
-		trackDA.locatedStations.put(d, 2);
-		trackDA.locatedStations.put(a, 4);
-		trackE.connectedTracks = new Track[] {
+		});
+		trackDA.getLocatedStations().put(d, 2);
+		trackDA.getLocatedStations().put(a, 4);
+		trackE.setConnectedTracks(new ITrack[] {
 			trackDA
-		};
-		trackE.locatedStations.put(e, 2);
-		trackBC.connectedTracks = new Track[] {
+		});
+		trackE.getLocatedStations().put(e, 2);
+		trackBC.setConnectedTracks(new ITrack[] {
 			trackDA
-		};
-		trackBC.locatedStations.put(b, 2);
-		trackBC.locatedStations.put(c, 4);
+		});
+		trackBC.getLocatedStations().put(b, 2);
+		trackBC.getLocatedStations().put(c, 4);
 		
 		
 		manager.graph.tracks.add(trackDA);
@@ -155,7 +155,7 @@ public class LogisticsManager {
 		tryAppendTransports(route);
 	}
 	
-	public void tryAppendTransports(Route route) {
+	private void tryAppendTransports(Route route) {
 		for(int i = 0; i < pendingTransport.size(); i++) {
 			Transport transport = pendingTransport.get(i);
 			int location = route.locateTransportOnRoute(transport);
@@ -169,8 +169,16 @@ public class LogisticsManager {
 		//TODO: Implement
 	}
 	
-	public Vehicle findSuitableVehicle(Transport transport) {
+	private Vehicle findSuitableVehicle(Transport transport) {
 		//TODO: Implement.
 		return new Vehicle(new Vehicle.Storage[] { new Vehicle.Storage(64) });
+	}
+
+	public void addStation(IStation station) {
+		stations.add(station);
+	}
+
+	public void removeStation(IStation station) {
+		stations.remove(station);
 	}
 }

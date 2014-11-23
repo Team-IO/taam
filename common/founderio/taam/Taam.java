@@ -22,6 +22,7 @@ public final class Taam {
 	public static final String BLOCK_SENSOR_MOTION = "taam.sensor.motion";
 	public static final String BLOCK_SENSOR_MINECT = "taam.sensor.minect";
 	public static final String BLOCK_ORE = "taam.ore";
+	public static final String BLOCK_MAGNET_RAIL = "taam.magnet_rail";
 	
 	//TODO: Ignore Bauxite + Kaolinite in Ingot Form
 	public static final String[] BLOCK_ORE_META = new String[] {
@@ -36,7 +37,9 @@ public final class Taam {
 		"conveyor",
 		"hopper",
 		"hopper_hs",
-		"hopper_hs_standalone"
+		"hopper_hs_standalone",
+		"logistics_manager",
+		"logistics_station"
 	};
 	
 	public static final String MULTIPART_MULTINET_CABLE = "taam.multinet.cable";
