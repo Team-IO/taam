@@ -29,6 +29,7 @@ import founderio.taam.blocks.BlockProductionLine;
 import founderio.taam.blocks.BlockSensor;
 import founderio.taam.blocks.TileEntityConveyor;
 import founderio.taam.blocks.TileEntityConveyorHopper;
+import founderio.taam.blocks.TileEntityLogisticsStation;
 import founderio.taam.blocks.TileEntitySensor;
 import founderio.taam.conveyors.IRotatable;
 import founderio.taam.conveyors.ItemWrapper;
@@ -41,6 +42,9 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 	
 	public final WavefrontObject modelConveyor;
 	public final ResourceLocation textureConveyor;
+	
+	public final WavefrontObject modelLogisticsStation;
+	public final ResourceLocation textureLogisticsStation;
 	
 	private RenderItem ri;
 	private EntityItem ei;
@@ -65,6 +69,9 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 
 		modelConveyor = new WavefrontObject(new ResourceLocation(Taam.MOD_ID + ":models/conveyor.obj"));
 		textureConveyor = new ResourceLocation(Taam.MOD_ID + ":textures/models/conveyor.png");
+
+		modelLogisticsStation = new WavefrontObject(new ResourceLocation(Taam.MOD_ID + ":models/logistics_station.obj"));
+		textureLogisticsStation = new ResourceLocation(Taam.MOD_ID + ":textures/models/logistics_station.png");
 	}
 	
 	public void tickEvent(TickEvent event) {
@@ -139,7 +146,41 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 			}
 		} else if(tileentity instanceof TileEntityConveyor || tileentity instanceof TileEntityConveyorHopper) {
 			renderConveyor(tileentity, x, y, z);
+		} else if(tileentity instanceof TileEntityLogisticsStation) {
+			renderLogisticsStation((TileEntityLogisticsStation)tileentity, x, y, z);
 		}
+	}
+	
+	public void renderLogisticsStation(TileEntityLogisticsStation tileEntity, double x, double y, double z) {
+		ForgeDirection direction;
+		if(tileEntity instanceof IRotatable) {
+			direction = ((IRotatable) tileEntity).getFacingDirection();
+		} else {
+			direction = ForgeDirection.SOUTH;
+		}
+		
+		// Model Rendering
+		GL11.glPushMatrix();
+		GL11.glTranslated(x, y, z);
+		
+		// Rotation
+		GL11.glTranslatef(0.5f, 0, 0.5f);
+
+		if(direction == ForgeDirection.WEST) {
+			GL11.glRotatef(270, 0, 1, 0);
+		} else if(direction == ForgeDirection.NORTH) {
+			GL11.glRotatef(180, 0, 1, 0);
+		} else if(direction == ForgeDirection.EAST) {
+			GL11.glRotatef(90, 0, 1, 0);
+		}
+		
+		GL11.glTranslated(-0.5, 0, -0.5);
+
+		Minecraft.getMinecraft().renderEngine.bindTexture(textureLogisticsStation);
+
+		modelLogisticsStation.renderAll();//renderPart("Support_smdl");
+
+		GL11.glPopMatrix();
 	}
 
 	public void renderConveyor(TileEntity tileEntity, double x, double y, double z) {

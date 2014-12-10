@@ -186,6 +186,8 @@ public class BlockProductionLine extends BaseBlock {
 				}
 			} else if(te instanceof TileEntityConveyorHopper) {
 				player.openGui(TaamMain.instance, 0, world, x, y, z);
+			} else if(te instanceof TileEntityLogisticsStation) {
+				player.openGui(TaamMain.instance, 0, world, x, y, z);
 			}
 		}
 		return true;

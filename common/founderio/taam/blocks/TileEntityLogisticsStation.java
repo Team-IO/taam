@@ -1,10 +1,12 @@
 package founderio.taam.blocks;
 
 import codechicken.lib.vec.BlockCoord;
+import founderio.taam.conveyors.IRotatable;
 import founderio.taam.multinet.logistics.IStation;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.util.ForgeDirection;
 
-public class TileEntityLogisticsStation extends BaseTileEntity implements IStation {
+public class TileEntityLogisticsStation extends BaseTileEntity implements IStation, IRotatable {
 	
 	private String name = "";
 	
@@ -52,6 +54,17 @@ public class TileEntityLogisticsStation extends BaseTileEntity implements IStati
 		} else {
 			return name;
 		}
+	}
+
+	@Override
+	public ForgeDirection getFacingDirection() {
+		//TODO: save & make rotatable
+		return ForgeDirection.NORTH;
+	}
+
+	@Override
+	public ForgeDirection getMountDirection() {
+		return ForgeDirection.DOWN;
 	}
 
 }
