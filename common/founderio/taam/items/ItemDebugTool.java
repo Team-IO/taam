@@ -62,9 +62,10 @@ public class ItemDebugTool extends Item {
 
 		if(!Config.debug)
 		{
-			if(!world.isRemote) {
+			//TODO: Clarify!
+			//if(!world.isRemote) {
 				world.playSound(player.posX ,player.posY  + 1 ,player.posZ ,"random.drink", 1, 1, false);
-			}
+			//}
 			return true;
 		}
 					
@@ -108,9 +109,6 @@ public class ItemDebugTool extends Item {
         	} else {
         		player.addChatMessage(new ChatComponentText(String.format((world.isRemote ? 'C' : 'S') + " Appliance Type: %s Appliance: %s", tec.applianceType, String.valueOf(tec.appliance))));
         	}
-        }
-        if(didSomething && !world.isRemote) {
-        	world.playSound(player.posX ,player.posY ,player.posZ ,"random.drink", 1, 1, false);
         }
 		
         return !didSomething;
