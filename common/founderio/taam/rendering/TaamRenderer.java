@@ -178,7 +178,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 
 		Minecraft.getMinecraft().renderEngine.bindTexture(textureLogisticsStation);
 
-		modelLogisticsStation.renderAll();//renderPart("Support_smdl");
+		modelLogisticsStation.renderPart("ControlPanel");
 
 		GL11.glPopMatrix();
 	}

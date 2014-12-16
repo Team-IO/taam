@@ -62,11 +62,26 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 		}
 	}
 	
-	
-	//TODO: Migrate to IRotatable version..
-	public void setDirection(ForgeDirection direction) {
+
+	@Override
+	public ForgeDirection getNextFacingDirection() {
+		return direction.getRotation(ForgeDirection.UP);
+	}
+
+	@Override
+	public ForgeDirection getNextMountDirection() {
+		return ForgeDirection.DOWN;
+	}
+
+	@Override
+	public void setFacingDirection(ForgeDirection direction) {
 		this.direction = direction;
 		updateState();
+	}
+
+	@Override
+	public void setMountDirection(ForgeDirection direction) {
+		return;
 	}
 
 	@Override
@@ -585,5 +600,6 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 		updateState();
 		return hadAppliance;
 	}
+
 
 }

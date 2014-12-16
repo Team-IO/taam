@@ -99,4 +99,26 @@ public class BlockMagnetRail extends Block implements ITrack, IRotatable {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public ForgeDirection getNextFacingDirection() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ForgeDirection getNextMountDirection() {
+		return ForgeDirection.DOWN;
+	}
+
+	@Override
+	public void setFacingDirection(ForgeDirection direction) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setMountDirection(ForgeDirection direction) {
+		return;
+	}
 }

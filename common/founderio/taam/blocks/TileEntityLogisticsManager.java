@@ -1,5 +1,9 @@
 package founderio.taam.blocks;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import net.minecraft.nbt.NBTTagCompound;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -7,6 +11,23 @@ import founderio.taam.multinet.logistics.IStation;
 import founderio.taam.multinet.logistics.LogisticsManager;
 
 public class TileEntityLogisticsManager extends BaseTileEntity {
+
+	private static List<TileEntityLogisticsManager> activeManagers;
+	
+	static {
+		//TODO: Make this list + the updating routines server-only (the client does not need to know and does not have all entities loaded anyways)
+		activeManagers = new ArrayList<TileEntityLogisticsManager>();
+	}
+	
+	public static List<TileEntityLogisticsManager> getActiveManagers() {
+		return Collections.unmodifiableList(activeManagers);
+	}
+	
+	private LogisticsManager manager;
+	
+	public LogisticsManager getManager() {
+		return manager;
+	}
 	
 	public TileEntityLogisticsManager() {
 	}
@@ -14,6 +35,20 @@ public class TileEntityLogisticsManager extends BaseTileEntity {
 	@SideOnly(Side.SERVER)
 	private void initServerside() {
 		manager = new LogisticsManager();
+	}
+	
+	@Override
+	public void onChunkUnload() {
+		activeManagers.remove(this);
+		super.onChunkUnload();
+	}
+	
+	@Override
+	public void updateContainingBlockInfo() {
+		super.updateContainingBlockInfo();
+		if(!activeManagers.contains(this)) {
+			activeManagers.add(this);
+		}
 	}
 	
 	@Override
@@ -37,7 +72,6 @@ public class TileEntityLogisticsManager extends BaseTileEntity {
 		
 	}
 	
-	private LogisticsManager manager;
 
 	//TODO: Keep list around / fetch from manager to store in NBT
 	public void stationRegister(IStation station) {

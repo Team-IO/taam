@@ -14,7 +14,7 @@ public class LogisticsManager {
 	/*
 	 * Step 1: Satisfy demands by creating transports
 	 */
-	List<Demand> pendingDemands;
+	public List<Demand> pendingDemands;
 	List<Demand> processingDemands;
 	
 	/*
@@ -32,78 +32,78 @@ public class LogisticsManager {
 		processingRoutes = new ArrayList<Route>();
 	}
 	
-	public static void main(String[] args) {
-		LogisticsManager manager = new LogisticsManager();
-		manager.graph = new StationGraph();
-		
-		Station a = new Station("A");
-		Station b = new Station("B");
-		Station c = new Station("C");
-		Station d = new Station("D");
-		Station e = new Station("E");
-		
-		Track trackDA = new Track("DA");
-		Track trackBC = new Track("BC");
-		Track trackE = new Track("E");
-		
-		trackDA.setConnectedTracks(new ITrack[] {
-			trackE,
-			trackBC
-		});
-		trackDA.getLocatedStations().put(d, 2);
-		trackDA.getLocatedStations().put(a, 4);
-		trackE.setConnectedTracks(new ITrack[] {
-			trackDA
-		});
-		trackE.getLocatedStations().put(e, 2);
-		trackBC.setConnectedTracks(new ITrack[] {
-			trackDA
-		});
-		trackBC.getLocatedStations().put(b, 2);
-		trackBC.getLocatedStations().put(c, 4);
-		
-		
-		manager.graph.tracks.add(trackDA);
-		manager.graph.tracks.add(trackE);
-		manager.graph.tracks.add(trackBC);
-		
-		Transport tA = new Transport();
-		tA.created = 5;
-		tA.from = a;
-		tA.to = c;
-
-		Transport tB = new Transport();
-		tB.created = 5;
-		tB.from = d;
-		tB.to = e;
-
-		Transport tC = new Transport();
-		tC.created = 5;
-		tC.from = a;
-		tC.to = b;
-
-		Transport tD = new Transport();
-		tD.created = 5;
-		tD.from = e;
-		tD.to = b;
-
-		//TODO: Test multiple transports
-		//TODO: Test transports connected to demand (time based scheduling)
-		
-		manager.pendingTransport.add(tA);
-		
-		System.out.println("Setup done");
-		
-		manager.scheduleTransports();
-		
-		Route route = manager.processingRoutes.get(0);
-		
-		System.out.println(route.locateTransportOnRoute(tB));
-		System.out.println(route.locateTransportOnRoute(tC));
-		System.out.println(route.locateTransportOnRoute(tD));
-		
-		System.out.println("Scheduling done");
-	}
+//	public static void main(String[] args) {
+//		LogisticsManager manager = new LogisticsManager();
+//		manager.graph = new StationGraph();
+//		
+//		Station a = new Station("A");
+//		Station b = new Station("B");
+//		Station c = new Station("C");
+//		Station d = new Station("D");
+//		Station e = new Station("E");
+//		
+//		Track trackDA = new Track("DA");
+//		Track trackBC = new Track("BC");
+//		Track trackE = new Track("E");
+//		
+//		trackDA.setConnectedTracks(new ITrack[] {
+//			trackE,
+//			trackBC
+//		});
+//		trackDA.getLocatedStations().put(d, 2);
+//		trackDA.getLocatedStations().put(a, 4);
+//		trackE.setConnectedTracks(new ITrack[] {
+//			trackDA
+//		});
+//		trackE.getLocatedStations().put(e, 2);
+//		trackBC.setConnectedTracks(new ITrack[] {
+//			trackDA
+//		});
+//		trackBC.getLocatedStations().put(b, 2);
+//		trackBC.getLocatedStations().put(c, 4);
+//		
+//		
+//		manager.graph.tracks.add(trackDA);
+//		manager.graph.tracks.add(trackE);
+//		manager.graph.tracks.add(trackBC);
+//		
+//		Transport tA = new Transport();
+//		tA.created = 5;
+//		tA.from = a;
+//		tA.to = c;
+//
+//		Transport tB = new Transport();
+//		tB.created = 5;
+//		tB.from = d;
+//		tB.to = e;
+//
+//		Transport tC = new Transport();
+//		tC.created = 5;
+//		tC.from = a;
+//		tC.to = b;
+//
+//		Transport tD = new Transport();
+//		tD.created = 5;
+//		tD.from = e;
+//		tD.to = b;
+//
+//		//TODO: Test multiple transports
+//		//TODO: Test transports connected to demand (time based scheduling)
+//		
+//		manager.pendingTransport.add(tA);
+//		
+//		System.out.println("Setup done");
+//		
+//		manager.scheduleTransports();
+//		
+//		Route route = manager.processingRoutes.get(0);
+//		
+//		System.out.println(route.locateTransportOnRoute(tB));
+//		System.out.println(route.locateTransportOnRoute(tC));
+//		System.out.println(route.locateTransportOnRoute(tD));
+//		
+//		System.out.println("Scheduling done");
+//	}
 	
 	
 	

@@ -15,13 +15,13 @@ public class Route {
 	
 	public Route() {
 		transports = new ArrayList<Transport>();
-		stations = new ArrayList<Station>();
+		stations = new ArrayList<IStation>();
 		stationsToPlot = new Hashtable<Integer, Integer>();
 		plot = new ArrayList<ITrack>();
 	}
 	
 	List<Transport> transports;
-	List<Station> stations;
+	List<IStation> stations;
 	
 	List<ITrack> plot;
 	Map<Integer, Integer> stationsToPlot;
@@ -121,7 +121,7 @@ public class Route {
 		addStation(transport.to);
 	}
 	
-	private void addStation(Station station) {
+	private void addStation(IStation station) {
 		if(!stations.contains(station)) {
 			if(stations.isEmpty()) {
 				stations.add(station);

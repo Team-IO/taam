@@ -46,11 +46,12 @@ public abstract class BaseTileEntity extends TileEntity {
 	@Override
 	public final void writeToNBT(NBTTagCompound tag) {
 		super.writeToNBT(tag);
-
+		
 		writePropertiesToNBTInternal(tag);
 	}
 	
 	private void writePropertiesToNBTInternal(NBTTagCompound tag) {
+		tag.setString("owner", owner);
 		writePropertiesToNBT(tag);
 	}
 
@@ -64,6 +65,7 @@ public abstract class BaseTileEntity extends TileEntity {
 	}
 	
 	private void readPropertiesFromNBTInternal(NBTTagCompound tag) {
+		owner = tag.getString("owner");
 		readPropertiesFromNBT(tag);
 	}
 

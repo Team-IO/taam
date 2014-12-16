@@ -7,6 +7,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import codechicken.lib.inventory.InventoryUtils;
 import codechicken.lib.vec.Vector3;
@@ -28,6 +29,18 @@ public abstract class BaseBlock extends Block {
 			// TODO: Change to UUID
 			te.setOwner(((EntityPlayer) entity).getDisplayName());
 		}
+	}
+	
+	@Override
+	public void onNeighborChange(IBlockAccess world, int x, int y, int z,
+			int tileX, int tileY, int tileZ) {
+		TileEntity te = world.getTileEntity(x, y, z);
+		// TODO: Temporaryhack?
+		// Update stuff like conveyors if something changes
+		if(te != null) {
+			te.updateContainingBlockInfo();
+		}
+		super.onNeighborChange(world, x, y, z, tileX, tileY, tileZ);
 	}
 	
 	public void updateBlocksAround(World world, int x, int y, int z) {

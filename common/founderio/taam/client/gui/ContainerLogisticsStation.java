@@ -20,7 +20,7 @@ public class ContainerLogisticsStation extends Container {
 //			addSlotToContainer(new Slot(tileEntity, i, 44 + i * 18, 20));
 //		}
 
-		bindPlayerInventory(inventoryPlayer);
+		bindPlayerInventory(inventoryPlayer, 91, 185);
 	}
 
 	@Override
@@ -28,15 +28,15 @@ public class ContainerLogisticsStation extends Container {
 		return true;//tileEntity.isUseableByPlayer(player);
 	}
 
-	protected void bindPlayerInventory(InventoryPlayer inventoryPlayer) {
+	protected void bindPlayerInventory(InventoryPlayer inventoryPlayer, int x, int y) {
 		for (int i = 0; i < 3; i++) {
 			for (int j = 0; j < 9; j++) {
-				addSlotToContainer(new Slot(inventoryPlayer, j + i * 9 + 9, 8 + j * 18, /*84*/51 + i * 18));
+				addSlotToContainer(new Slot(inventoryPlayer, j + i * 9 + 9, x + j * 18, y + i * 18));
 			}
 		}
 
 		for (int i = 0; i < 9; i++) {
-			addSlotToContainer(new Slot(inventoryPlayer, i, 8 + i * 18, 109));
+			addSlotToContainer(new Slot(inventoryPlayer, i, x + i * 18, y + 58));
 		}
 	}
 
