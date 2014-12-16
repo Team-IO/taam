@@ -92,15 +92,17 @@ public class ConveyorUtil {
 	 * @param x
 	 * @param y
 	 * @param z
+	 * @return true if an appliance was there and did drop.
 	 */
-	public static void dropAppliance(IConveyorApplianceHost applianceHost, World world, int x, int y, int z) {
+	//TODO: Make it drop directly to player inventory if possible
+	public static boolean dropAppliance(IConveyorApplianceHost applianceHost, World world, int x, int y, int z) {
 		String type = applianceHost.getApplianceType();
 		if(type == null) {
-			return;
+			return false;
 		}
 		IConveyorApplianceFactory factory = ApplianceRegistry.getFactory(type);
 		if(factory == null) {
-			return;
+			return false;
 		}
 		Vector3 location = new Vector3(x, y, z);
 		/*
@@ -116,7 +118,7 @@ public class ConveyorUtil {
 		 */
 		IConveyorAppliance appliance = applianceHost.getAppliance();
 		if(appliance == null) {
-			return;
+			return false;
 		}
 		for(int i = 0; i < appliance.getSizeInventory(); i++) {
 			stack = appliance.getStackInSlot(i);
@@ -124,6 +126,7 @@ public class ConveyorUtil {
 				InventoryUtils.dropItem(stack, world, location);
 			}
 		}
+		return true;
 	}
 	
 	/**

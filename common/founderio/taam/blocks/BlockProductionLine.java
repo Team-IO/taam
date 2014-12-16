@@ -18,6 +18,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import founderio.taam.Taam;
 import founderio.taam.TaamMain;
 import founderio.taam.conveyors.ConveyorUtil;
+import founderio.taam.conveyors.IRotatable;
 
 public class BlockProductionLine extends BaseBlock {
 	
@@ -170,21 +171,34 @@ public class BlockProductionLine extends BaseBlock {
 			float hitZ) {
 		if(!world.isRemote) {
 			
-			//TODO: Use IRotatable?
+			boolean playerHasWrench = ConveyorUtil.playerHasWrench(player);
+			
+			//TODO: Handle wrenching somewhere else
+			//TODO: use separate interface for disassembling?
+			//TODO: Interaction with other mods??
 			TileEntity te = world.getTileEntity(x, y, z);
 			if(te instanceof TileEntityConveyor) {
-				if(ConveyorUtil.playerHasWrench(player)) {
+				if(playerHasWrench) {
 					TileEntityConveyor conveyor = (TileEntityConveyor) te;
 					if(player.isSneaking()) {
-						System.out.println("Disassembling.");
-						ConveyorUtil.dropAppliance(conveyor, world, x, y, z);
-						conveyor.removeAppliance();
-					} else {
-						System.out.println("Rotating.");
-						conveyor.setDirection(conveyor.getFacingDirection().getRotation(ForgeDirection.UP));
+						if(ConveyorUtil.dropAppliance(conveyor, world, x, y, z)) {
+							conveyor.removeAppliance();
+							return true;
+						}
 					}
 				}
-			} else if(te instanceof TileEntityConveyorHopper) {
+			}
+			
+			if(playerHasWrench && !player.isSneaking() && te instanceof IRotatable) {
+				IRotatable rotatable = (IRotatable) te;
+				rotatable.setFacingDirection(rotatable.getNextFacingDirection());
+				return true;
+			}
+			
+			if(player.isSneaking()) {
+				return false;
+			}
+			if(te instanceof TileEntityConveyorHopper) {
 				player.openGui(TaamMain.instance, 0, world, x, y, z);
 			} else if(te instanceof TileEntityLogisticsStation) {
 				player.openGui(TaamMain.instance, 0, world, x, y, z);

@@ -145,4 +145,28 @@ public class TileEntitySensor extends BaseTileEntity implements IRotatable {
 		tickOn = par1nbtTagCompound.getInteger("tickOn");
 	}
 
+	@Override
+	public ForgeDirection getNextFacingDirection() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ForgeDirection getNextMountDirection() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setFacingDirection(ForgeDirection direction) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setMountDirection(ForgeDirection direction) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
