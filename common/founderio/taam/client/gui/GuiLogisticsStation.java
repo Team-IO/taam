@@ -9,6 +9,8 @@ import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
 
+import codechicken.lib.vec.BlockCoord;
+
 import com.google.common.base.Function;
 
 import founderio.taam.blocks.TileEntityLogisticsManager;
@@ -83,6 +85,11 @@ public class GuiLogisticsStation extends CustomGui {
 		this.fontRendererObj.drawString("Owner: " + tileEntity.getOwner(), 12, 160, 0x800000);
 		this.fontRendererObj.drawString(getTranslatedInventoryName(inventoryPlayer), 91, 175, 0x404040);
 		
+		if(tileEntity.getControlledInventory() == null) {
+
+			this.fontRendererObj.drawString("No Inventory", 12, 21, 0xAA0000);
+		}
+		
 		if(tileEntity.isManagerConnected()) {
 
 			disableList();
@@ -129,14 +136,17 @@ public class GuiLogisticsStation extends CustomGui {
 	@SuppressWarnings("unchecked")
 	private void initList() {
 		buttonList.add(scrollUp = new CustomButton(0, (width + listWidth) / 2, guiTop + 50, "^"));
-		buttonList.add(scrollUp = new CustomButton(0, (width + listWidth) / 2, guiTop + 50 + 16 * listLength - 16, "v"));
+		buttonList.add(scrollDown = new CustomButton(0, (width + listWidth) / 2, guiTop + 50 + 16 * listLength - 16, "v"));
+		//TODO: Scroll-Button Click Handler
+		
 		listContent = new ArrayList<Object>(0);
 		listButtons = new ArrayList<CustomButton>(listLength);
 		Function<CustomButton, Boolean> clickHandler = new Function<CustomButton, Boolean>() {
 			
 			@Override
 			public Boolean apply(CustomButton input) {
-				tileEntity.linkToManager((TileEntityLogisticsManager) listContent.get(input.id + scrollPosition));
+				TileEntityLogisticsManager manager = (TileEntityLogisticsManager) listContent.get(input.id + scrollPosition);
+				tileEntity.linkToManager(new BlockCoord(manager));
 				return true;
 			}
 		};
@@ -149,6 +159,15 @@ public class GuiLogisticsStation extends CustomGui {
 	}
 	
 	private void enableList() {
+		scrollUp.visible = true;
+		scrollDown.visible = true;
+
+		int scrollArea = listContent.size() - listLength;
+		boolean hasToScroll = scrollArea > 0;
+
+		scrollUp.enabled = hasToScroll;
+		scrollDown.enabled = hasToScroll;
+		
 		for(int i = 0; i < listLength; i++) {
 			CustomButton btn = listButtons.get(i);
 			btn.visible = true;
@@ -164,6 +183,9 @@ public class GuiLogisticsStation extends CustomGui {
 	}
 	
 	private void disableList() {
+		scrollUp.visible = false;
+		scrollDown.visible = false;
+		
 		for(int i = 0; i < listLength; i++) {
 			CustomButton btn = listButtons.get(i);
 			btn.visible = false;

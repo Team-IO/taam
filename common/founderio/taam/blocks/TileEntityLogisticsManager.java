@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.server.MinecraftServer;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import founderio.taam.multinet.logistics.IStation;
@@ -26,15 +27,16 @@ public class TileEntityLogisticsManager extends BaseTileEntity {
 	private LogisticsManager manager;
 	
 	public LogisticsManager getManager() {
+		if(worldObj.isRemote) {
+			return null;
+		}
+		if(manager == null) {
+			manager = new LogisticsManager();
+		}
 		return manager;
 	}
-	
+
 	public TileEntityLogisticsManager() {
-	}
-	
-	@SideOnly(Side.SERVER)
-	private void initServerside() {
-		manager = new LogisticsManager();
 	}
 	
 	@Override

@@ -18,6 +18,7 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -55,6 +56,8 @@ public class TaamMain {
 	@SidedProxy(clientSide = "founderio.taam.TaamClientProxy", serverSide = "founderio.taam.TaamCommonProxy")
 	public static TaamCommonProxy proxy;
 
+	public static SimpleNetworkWrapper network;
+	
 	public static MultinetPartFactory multinetMultipart;
 	
 	public static ItemMultinetCable itemMultinetCable;
@@ -195,6 +198,9 @@ public class TaamMain {
 			fluidsDye[i] = new DyeFluid(Taam.FLUID_DYE + Taam.FLUID_DYE_META[i]);
 			FluidRegistry.registerFluid(fluidsDye[i]);
 		}
+		
+		network = NetworkRegistry.INSTANCE.newSimpleChannel(Taam.CHANNEL_NAME);
+		proxy.registerPackets(network);
 	}
 
 	@EventHandler

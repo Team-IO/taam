@@ -3,9 +3,9 @@ package founderio.taam.blocks;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
+import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -17,12 +17,16 @@ import codechicken.lib.vec.BlockCoord;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 
+import founderio.taam.TaamMain;
 import founderio.taam.conveyors.IRotatable;
 import founderio.taam.multinet.logistics.Demand;
 import founderio.taam.multinet.logistics.Demand.DemandCategory;
+import founderio.taam.multinet.logistics.Goods;
 import founderio.taam.multinet.logistics.IStation;
 import founderio.taam.multinet.logistics.LogisticsConfiguration;
 import founderio.taam.multinet.logistics.LogisticsManager;
+import founderio.taam.multinet.logistics.PredictedInventory;
+import founderio.taam.network.TPLogisticsConfiguration;
 
 public class TileEntityLogisticsStation extends BaseTileEntity implements IStation, IRotatable {
 	
@@ -54,15 +58,37 @@ public class TileEntityLogisticsStation extends BaseTileEntity implements IStati
 	
 	public TileEntityLogisticsStation() {
 		configurations = new ArrayList<LogisticsConfiguration>();
+		LogisticsConfiguration.KeepStock testConfig = new LogisticsConfiguration.KeepStock();
+		
+		testConfig.what = new ItemStack(Blocks.dirt);
+		testConfig.amount = 20;
+		testConfig.enabled = true;
+		
+		configurations.add(testConfig);
 	}
 	
-	public void linkToManager(TileEntityLogisticsManager manager) {
+	private void linkToManager(TileEntityLogisticsManager manager) {
 		//TODO for later: once cross-dimensional support is a topic, update this.
 		if(manager.getWorldObj() != worldObj) {
 			return;
 		}
 		//TODO: fetch station ID from manager
 		this.coordsManager = new BlockCoord(manager);
+		updateState();
+	}
+	
+	public void linkToManager(BlockCoord coords) {
+		if(worldObj.isRemote) {
+			TPLogisticsConfiguration config = TPLogisticsConfiguration.newConnectManager(worldObj.provider.dimensionId, new BlockCoord(this), coords);
+			TaamMain.network.sendToServer(config);
+		} else {
+			TileEntity te = worldObj.getTileEntity(coords.x, coords.y, coords.z);
+			if(te instanceof TileEntityLogisticsManager) {
+				linkToManager((TileEntityLogisticsManager) te);
+			} else {
+				//TODO: Log Error
+			}
+		}
 	}
 	
 	public void unlinkFromManager() {
@@ -94,62 +120,12 @@ public class TileEntityLogisticsStation extends BaseTileEntity implements IStati
 	public void placeDemand(ItemStack stack) {
 		Collection<Demand> currentDemands = getCurrentDemands();
 		Demand demand = new Demand();
+		demand.goods = new Goods();
 		demand.goods.amount = stack.stackSize;
 		demand.goods.type = stack;
 		demand.category = DemandCategory.FillStock;
 		demand.station = stationID;
 		currentDemands.add(demand);
-	}
-	
-	public static class PredictedInventory {
-		//TODO: Respect already scheduled transports
-		
-		private List<ItemStack> projected;
-		
-		public PredictedInventory(IInventory inventory, Collection<Demand> demands) {
-			int size = 5;
-			if(inventory != null) {
-				size = inventory.getSizeInventory();
-			}
-			projected = new ArrayList<ItemStack>(size);
-			if(inventory != null) {
-				for(int i = 0; i < size; i++) {
-					changeStock(inventory.getStackInSlot(i), false);
-				}
-			}
-			for(Demand demand : demands) {
-				//TODO: change once demands & goods are up to speed.
-				changeStock((ItemStack) demand.goods.type, false);
-			}
-		}
-		
-		public ItemStack findSameItem(ItemStack stack) {
-			for(ItemStack projectedStack : projected) {
-				if(projectedStack.isItemEqual(stack)) {
-					return projectedStack;
-				}
-			}
-			return null;
-		}
-		
-		private void changeStock(ItemStack stack, boolean subtract) {
-			Iterator<ItemStack> iter = projected.iterator();
-			while(iter.hasNext()) {
-				ItemStack projectedStack = iter.next();
-				if(projectedStack.isItemEqual(stack)) {
-					if(subtract) {
-						projectedStack.stackSize -= stack.stackSize;
-						if(projectedStack.stackSize == 0) {
-							iter.remove();
-						}
-					} else {
-						projectedStack.stackSize += stack.stackSize;
-					}
-					return;
-				}
-			}
-		}
-		
 	}
 	
 	public IInventory getControlledInventory() {
@@ -159,9 +135,11 @@ public class TileEntityLogisticsStation extends BaseTileEntity implements IStati
 				zCoord + direction.offsetZ);
 	}
 	
-	public PredictedInventory getProjectedInventory() {
+	public PredictedInventory getPredictedInventory() {
 		Collection<Demand> demands = getCurrentDemands();
-		return new PredictedInventory(getControlledInventory(), demands);
+		PredictedInventory inventory = new PredictedInventory(true, getControlledInventory());
+		inventory.addDemands(demands);
+		return inventory;
 	}
 	
 	//private Collection<Demand> currentDemands;
@@ -189,7 +167,8 @@ public class TileEntityLogisticsStation extends BaseTileEntity implements IStati
 			changed = false;
 			
 			TileEntityLogisticsManager teManager = getManagerTE();
-			if(teManager != null) {
+			IInventory controlledInventory = getControlledInventory();
+			if(teManager != null && controlledInventory != null) {
 				//LogisticsManager manager = teManager.getManager();
 						
 				

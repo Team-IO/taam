@@ -2,7 +2,6 @@ package founderio.taam.multinet.logistics;
 
 import net.minecraft.item.ItemStack;
 import founderio.taam.blocks.TileEntityLogisticsStation;
-import founderio.taam.blocks.TileEntityLogisticsStation.PredictedInventory;
 
 public abstract class LogisticsConfiguration {
 	
@@ -23,7 +22,7 @@ public abstract class LogisticsConfiguration {
 		public void process(
 				TileEntityLogisticsStation tileEntityLogisticsStation) {
 			// TODO Auto-generated method stub
-			PredictedInventory projectedInventory = tileEntityLogisticsStation.getProjectedInventory();
+			PredictedInventory projectedInventory = tileEntityLogisticsStation.getPredictedInventory();
 			ItemStack found = projectedInventory.findSameItem(what);
 			int orderAmount = 0;
 			if(found == null) {

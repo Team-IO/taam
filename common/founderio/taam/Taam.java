@@ -103,4 +103,5 @@ public final class Taam {
 	};
 
 	public static final String FLUID_DYE = "taam.dye";
+	public static final String CHANNEL_NAME = "TAAM";
 }
