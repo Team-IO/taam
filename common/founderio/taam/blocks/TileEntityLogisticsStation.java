@@ -58,13 +58,10 @@ public class TileEntityLogisticsStation extends BaseTileEntity implements IStati
 	
 	public TileEntityLogisticsStation() {
 		configurations = new ArrayList<LogisticsConfiguration>();
-		LogisticsConfiguration.KeepStock testConfig = new LogisticsConfiguration.KeepStock();
-		
-		testConfig.what = new ItemStack(Blocks.dirt);
-		testConfig.amount = 20;
-		testConfig.enabled = true;
-		
-		configurations.add(testConfig);
+	}
+
+	public int getStationID() {
+		return stationID;
 	}
 	
 	private void linkToManager(TileEntityLogisticsManager manager) {
@@ -74,6 +71,25 @@ public class TileEntityLogisticsStation extends BaseTileEntity implements IStati
 		}
 		//TODO: fetch station ID from manager
 		this.coordsManager = new BlockCoord(manager);
+		this.stationID = manager.stationRegister(this);
+		
+		if(stationID % 2 == 0) {
+			LogisticsConfiguration.KeepStock testConfig = new LogisticsConfiguration.KeepStock(this);
+			
+			testConfig.what = new ItemStack(Blocks.dirt);
+			testConfig.amount = 20;
+			testConfig.enabled = true;
+			
+			configurations.add(testConfig);
+		} else {
+			LogisticsConfiguration.ProvideStock testConfig = new LogisticsConfiguration.ProvideStock(this);
+			
+			testConfig.what = new ItemStack(Blocks.dirt);
+			testConfig.enabled = true;
+			
+			configurations.add(testConfig);
+		}
+		
 		updateState();
 	}
 	
@@ -125,6 +141,7 @@ public class TileEntityLogisticsStation extends BaseTileEntity implements IStati
 		demand.goods.type = stack;
 		demand.category = DemandCategory.FillStock;
 		demand.station = stationID;
+		System.out.println("Placing demand: " + demand);
 		currentDemands.add(demand);
 	}
 	
@@ -139,6 +156,12 @@ public class TileEntityLogisticsStation extends BaseTileEntity implements IStati
 		Collection<Demand> demands = getCurrentDemands();
 		PredictedInventory inventory = new PredictedInventory(true, getControlledInventory());
 		inventory.addDemands(demands);
+		return inventory;
+	}
+	
+	public PredictedInventory getGrantedInventory() {
+		PredictedInventory inventory = new PredictedInventory(true, getControlledInventory());
+		//TODO: subtract outgoing transports
 		return inventory;
 	}
 	
@@ -174,7 +197,7 @@ public class TileEntityLogisticsStation extends BaseTileEntity implements IStati
 				
 				for(LogisticsConfiguration config : configurations) {
 					if(config.enabled) {
-						config.process(this);
+						config.process();
 					}
 				}
 			}
@@ -242,11 +265,16 @@ public class TileEntityLogisticsStation extends BaseTileEntity implements IStati
 	@Override
 	public void setFacingDirection(ForgeDirection direction) {
 		this.direction = direction;
+		updateState();
 	}
 
 	@Override
 	public void setMountDirection(ForgeDirection direction) {
 		return;
+	}
+
+	public List<LogisticsConfiguration> getConfigurations() {
+		return Collections.unmodifiableList(configurations);
 	}
 
 }

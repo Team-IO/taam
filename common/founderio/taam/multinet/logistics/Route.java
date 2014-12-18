@@ -15,13 +15,13 @@ public class Route {
 	
 	public Route() {
 		transports = new ArrayList<Transport>();
-		stations = new ArrayList<IStation>();
+		stations = new ArrayList<Integer>();
 		stationsToPlot = new Hashtable<Integer, Integer>();
 		plot = new ArrayList<ITrack>();
 	}
 	
 	List<Transport> transports;
-	List<IStation> stations;
+	List<Integer> stations;
 	
 	List<ITrack> plot;
 	Map<Integer, Integer> stationsToPlot;
@@ -33,7 +33,7 @@ public class Route {
 		stationsToPlot.clear();
 	}
 	
-	public boolean plotRoute(StationGraph graph) {
+	public boolean plotRoute(StationGraph graph, LogisticsManager manager) {
 		clearPlot();
 		
 		if(stations.size() < 2) {
@@ -43,12 +43,12 @@ public class Route {
 		
 		//TODO: Split Plot into one track list per station -> make replotting easier
 		
-		IStation current = stations.get(0);
+		IStation current = manager.getStation(stations.get(0));
 		Track currentTrack = graph.getTrackForStation(current);
 		plot.add(currentTrack);
 		stationsToPlot.put(0, 0);
 		for(int i = 1; i < stations.size(); i++) {
-			IStation nextStation = stations.get(i);
+			IStation nextStation = manager.getStation(stations.get(i));
 			ITrack nextTrack = graph.getTrackForStation(nextStation);
 			if(nextTrack == null) {
 				return false;
@@ -121,7 +121,7 @@ public class Route {
 		addStation(transport.to);
 	}
 	
-	private void addStation(IStation station) {
+	private void addStation(int station) {
 		if(!stations.contains(station)) {
 			if(stations.isEmpty()) {
 				stations.add(station);

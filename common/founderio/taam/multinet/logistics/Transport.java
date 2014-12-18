@@ -9,8 +9,8 @@ public class Transport implements Comparable<Transport> {
 	
 	public long created;
 	
-	public IStation from;
-	public IStation to;
+	public int from;
+	public int to;
 	
 	@Override
 	public int compareTo(Transport other) {

@@ -1,10 +1,11 @@
 package founderio.taam.multinet.logistics;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
-
-import founderio.taam.multinet.logistics.StationGraph.Track;
+import java.util.Map;
 
 public class LogisticsManager {
 
@@ -15,12 +16,12 @@ public class LogisticsManager {
 	 * Step 1: Satisfy demands by creating transports
 	 */
 	public List<Demand> pendingDemands;
-	List<Demand> processingDemands;
+	public List<Demand> processingDemands;
 	
 	/*
 	 * Step 2: Schedule Transports into routes
 	 */
-	List<Transport> pendingTransport;
+	public List<Transport> pendingTransport;
 	List<Route> processingRoutes;
 	
 	public LogisticsManager() {
@@ -30,6 +31,8 @@ public class LogisticsManager {
 		pendingTransport = new ArrayList<Transport>();
 		processingDemands = new ArrayList<Demand>();
 		processingRoutes = new ArrayList<Route>();
+		mapStationID = new HashMap<Integer, IStation>();
+		mapIDStation = new HashMap<IStation, Integer>();
 	}
 	
 //	public static void main(String[] args) {
@@ -147,12 +150,24 @@ public class LogisticsManager {
 		route.stations.add(startingPoint.from);
 		route.stations.add(startingPoint.to);
 		
-		route.plotRoute(graph);
+		route.plotRoute(graph, this);
 		
 		processingRoutes.add(route);
 		pendingTransport.remove(startingPointIndex);
 		
 		tryAppendTransports(route);
+	}
+	
+	//TODO: Do we need a separate list anymore? don't think so.
+	private Map<Integer, IStation> mapStationID;
+	private Map<IStation, Integer> mapIDStation;
+	
+	public IStation getStation(int stationID) {
+		return mapStationID.get(stationID);
+	}
+	
+	public int getStationID(IStation station) {
+		return mapIDStation.get(station);
 	}
 	
 	private void tryAppendTransports(Route route) {
@@ -166,19 +181,31 @@ public class LogisticsManager {
 				i--;
 			}
 		}
-		//TODO: Implement
 	}
 	
 	private Vehicle findSuitableVehicle(Transport transport) {
 		//TODO: Implement.
 		return new Vehicle(new Vehicle.Storage[] { new Vehicle.Storage(64) });
 	}
+	
+	private int lastStationID = 0;
 
-	public void addStation(IStation station) {
+	public int addStation(IStation station) {
 		stations.add(station);
+		int stationID = ++lastStationID;
+		mapStationID.put(stationID, station);
+		mapIDStation.put(station, stationID);
+		return stationID;
 	}
 
 	public void removeStation(IStation station) {
+		int stationID = getStationID(station);
+		mapStationID.remove(stationID);
+		mapIDStation.remove(station);
 		stations.remove(station);
+	}
+
+	public Collection<IStation> getStations() {
+		return Collections.unmodifiableCollection(stations);
 	}
 }
