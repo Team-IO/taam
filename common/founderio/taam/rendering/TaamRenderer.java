@@ -4,6 +4,8 @@ import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
@@ -12,14 +14,18 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.client.IItemRenderer;
 import net.minecraftforge.client.model.obj.WavefrontObject;
 import net.minecraftforge.client.model.techne.TechneModel;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.lwjgl.opengl.GL11;
 
+import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.Phase;
 import cpw.mods.fml.common.gameevent.TickEvent.Type;
@@ -49,6 +55,78 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 	private RenderItem ri;
 	private EntityItem ei;
 	private float rot = 0;
+	
+	public static int renderMagneticRailID;
+	
+	public static ISimpleBlockRenderingHandler renderMagneticRail = new ISimpleBlockRenderingHandler() {
+		
+		@Override
+		public boolean shouldRender3DInInventory(int modelId) {
+			return false;
+		}
+		
+		@Override
+		public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z,
+				Block block, int modelId, RenderBlocks renderer) {
+			Tessellator tessellator = Tessellator.instance;
+			int metadata = world.getBlockMetadata(x, y, z);
+	        IIcon iicon = renderer.getBlockIcon(block, world, x, y, z, metadata);
+
+	        if (renderer.hasOverrideBlockTexture())
+	        {
+	            iicon = renderer.overrideBlockTexture;
+	        }
+
+	        float f = 0.015625F;
+	        double d0 = (double)iicon.getMinU();
+	        double d1 = (double)iicon.getMinV();
+	        double d2 = (double)iicon.getMaxU();
+	        double d3 = (double)iicon.getMaxV();
+	        
+	        int rotation = metadata & 3;
+	        
+        	int x1 = x;
+        	int x2 = x+1;
+        	int x3 = x+1;
+        	int x4 = x;
+        	int z1 = z+1;
+        	int z2 = z+1;
+        	int z3 = z;
+        	int z4 = z;
+	        
+	        for(int i = 0; i < rotation; i++) {
+	        	int temp = x4;
+	        	x4 = x3;
+	        	x3 = x2;
+	        	x2 = x1;
+	        	x1 = temp;
+	        	temp = z4;
+	        	z4 = z3;
+	        	z3 = z2;
+	        	z2 = z1;
+	        	z1 = temp;
+	        }
+	        tessellator.setBrightness(block.getMixedBrightnessForBlock(renderer.blockAccess, x, y, z));
+	        
+	        tessellator.setColorOpaque_I(block.getBlockColor());
+	        tessellator.addVertexWithUV(x1, y + f, z1, d2, d1);
+	        tessellator.addVertexWithUV(x2, y + f, z2, d0, d1);
+	        tessellator.addVertexWithUV(x3, y + f, z3, d0, d3);
+	        tessellator.addVertexWithUV(x4, y + f, z4, d2, d3);
+	        return true;
+		}
+		
+		@Override
+		public void renderInventoryBlock(Block block, int metadata, int modelId,
+				RenderBlocks renderer) {
+	       
+		}
+		
+		@Override
+		public int getRenderId() {
+			return renderMagneticRailID;
+		}
+	};
 	
 	public TaamRenderer() {
 		ri = new RenderItem() {

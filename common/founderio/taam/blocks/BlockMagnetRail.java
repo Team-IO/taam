@@ -1,9 +1,9 @@
 package founderio.taam.blocks;
 
-import java.util.Map;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.IIcon;
@@ -11,16 +11,27 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import founderio.taam.Taam;
-import founderio.taam.conveyors.IRotatable;
-import founderio.taam.multinet.logistics.IStation;
-import founderio.taam.multinet.logistics.ITrack;
+import founderio.taam.conveyors.ConveyorUtil;
+import founderio.taam.rendering.TaamRenderer;
 
-public class BlockMagnetRail extends Block implements ITrack, IRotatable {
+public class BlockMagnetRail extends Block {
 
+	private IIcon connRight;
+	private IIcon connLeft;
+	private IIcon connBoth;
+	
 	public BlockMagnetRail() {
 		super(Material.circuits);
         this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 0.0625F, 1.0F);
         this.setBlockTextureName(Taam.MOD_ID + ":magnet_rail");
+	}
+	
+	@Override
+	public void registerBlockIcons(IIconRegister register) {
+		connRight = register.registerIcon(Taam.MOD_ID + ":magnet_rail_right");
+		connLeft = register.registerIcon(Taam.MOD_ID + ":magnet_rail_left");
+		connBoth = register.registerIcon(Taam.MOD_ID + ":magnet_rail_both");
+		super.registerBlockIcons(register);
 	}
 
 	@Override
@@ -40,16 +51,82 @@ public class BlockMagnetRail extends Block implements ITrack, IRotatable {
 	
 	@Override
 	public int getRenderType() {
-		// Render Type for Lily Pad
-		return 23;
+		return TaamRenderer.renderMagneticRailID;
 	}
 	
 	@Override
-	public IIcon getIcon(IBlockAccess p_149673_1_, int p_149673_2_,
-			int p_149673_3_, int p_149673_4_, int p_149673_5_) {
+	public IIcon getIcon(IBlockAccess world, int x,
+			int y, int z, int meta) {
+		int rotation = getRotation(world.getBlockMetadata(x, y, z));
+		ForgeDirection direction = ForgeDirection.SOUTH;
+		for(int i = 0; i < rotation; i++) {
+			direction = direction.getRotation(ForgeDirection.UP);
+		}
+		ForgeDirection left = direction.getRotation(ForgeDirection.DOWN);
+		ForgeDirection right = direction.getRotation(ForgeDirection.UP);
+		boolean leftConnected = false;
+		boolean rightConnected = false;
+		
+		Block block = world.getBlock(x + left.offsetX, y + left.offsetY, z + left.offsetZ);
+		
+		if(block == this) {
+			int otherRotation = getRotation(world.getBlockMetadata(x + left.offsetX, y + left.offsetY, z + left.offsetZ));
+			if(otherRotation == rotation - 1 || otherRotation == otherRotation + 3) {
+				leftConnected = true;
+			}
+		}
+		
+		block = world.getBlock(x + right.offsetX, y + right.offsetY, z + right.offsetZ);
+		
+		if(block == this) {
+			int otherRotation = getRotation(world.getBlockMetadata(x + right.offsetX, y + right.offsetY, z + right.offsetZ));
+			if(otherRotation == rotation + 1 || otherRotation == otherRotation - 3) {
+				rightConnected = true;
+			}
+		}
+		
+		if(rightConnected && leftConnected) {
+			return connBoth;
+		} else if(rightConnected) {
+			return connRight;
+		} else if(leftConnected) {
+			return connLeft;
+		} else {
+			return blockIcon;
+		}
+	}
+	
+	public int getRotation(int meta) {
+		return meta & 3;
+	}
+	
+	public int setRotation(int meta, int rotation) {
+		if(rotation > 3) {
+			rotation = 0;
+		}
+		return ((meta | 3) - 3) | rotation;
+	}
+	
+	@Override
+	public boolean onBlockActivated(World world, int x,
+			int y, int z, EntityPlayer player,
+			int side, float hitX, float hitY,
+			float hitZ) {
+		if(ConveyorUtil.playerHasWrench(player)) {
+			if(player.isSneaking()) {
+				//TODO: Drop Block
+			} else {
+				int meta = world.getBlockMetadata(x, y, z);
+				int rotation = getRotation(meta);
+				rotation ++;
+				meta = setRotation(meta, rotation);
+				world.setBlockMetadataWithNotify(x, y, z, meta, 1+2);
+			}
+		}
 		// TODO Auto-generated method stub
-		return super.getIcon(p_149673_1_, p_149673_2_, p_149673_3_, p_149673_4_,
-				p_149673_5_);
+		return super.onBlockActivated(world, x, y,
+				z, player, side, hitX, hitY,
+				hitZ);
 	}
 	
 	@Override
@@ -75,50 +152,5 @@ public class BlockMagnetRail extends Block implements ITrack, IRotatable {
 
 	            super.onNeighborBlockChange(world, x, y, z, block);
 	        }
-	}
-
-	@Override
-	public ForgeDirection getFacingDirection() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ForgeDirection getMountDirection() {
-		return ForgeDirection.DOWN;
-	}
-
-	@Override
-	public ITrack[] getConnectedTracks() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Map<IStation, Integer> getLocatedStations() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ForgeDirection getNextFacingDirection() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ForgeDirection getNextMountDirection() {
-		return ForgeDirection.DOWN;
-	}
-
-	@Override
-	public void setFacingDirection(ForgeDirection direction) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void setMountDirection(ForgeDirection direction) {
-		return;
 	}
 }
