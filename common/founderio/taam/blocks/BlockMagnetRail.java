@@ -12,6 +12,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import founderio.taam.Taam;
 import founderio.taam.conveyors.ConveyorUtil;
+import founderio.taam.multinet.logistics.InBlockRoute;
 import founderio.taam.rendering.TaamRenderer;
 
 public class BlockMagnetRail extends Block {
@@ -20,10 +21,39 @@ public class BlockMagnetRail extends Block {
 	private IIcon connLeft;
 	private IIcon connBoth;
 	
+	private InBlockRoute[] routesRight;
+	private InBlockRoute[] routesLeft;
+	private InBlockRoute[] routesForward;
+	
 	public BlockMagnetRail() {
 		super(Material.circuits);
         this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 0.0625F, 1.0F);
         this.setBlockTextureName(Taam.MOD_ID + ":magnet_rail");
+        
+        routesRight = new InBlockRoute[4];
+        routesLeft = new InBlockRoute[4];
+        routesForward = new InBlockRoute[4];
+        
+        //TODO: Validate these coordinates!
+        routesForward[0] = new InBlockRoute(ForgeDirection.SOUTH, ForgeDirection.NORTH, new float[] {
+        		0.5f, 0, 1,
+        		0.5f, 0, 0
+        });
+        routesLeft[0] = new InBlockRoute(ForgeDirection.SOUTH, ForgeDirection.WEST, new float[] {
+        		0.5f, 0, 1,
+        		0.5f, 0, 0.5f,
+        		1, 0, 0.5f
+        });
+        routesRight[0] = new InBlockRoute(ForgeDirection.SOUTH, ForgeDirection.EAST, new float[] {
+        		0.5f, 0, 1,
+        		0.5f, 0, 0.5f,
+        		0, 0, 0.5f
+        });
+        for(int i = 1; i < 4; i++) {
+        	routesForward[i] = routesForward[i-1].getRotated();
+        	routesLeft[i] = routesLeft[i-1].getRotated();
+        	routesRight[i] = routesRight[i-1].getRotated();
+        }
 	}
 	
 	@Override

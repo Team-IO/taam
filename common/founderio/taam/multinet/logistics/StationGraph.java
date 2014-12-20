@@ -76,6 +76,8 @@ public class StationGraph {
 		@SuppressWarnings("unchecked")
 		@Override
 		public List<ITrack> findNeighbors(ITrack object) {
+			//TODO: Use InBlockRoutes
+			//TODO: We need the previous route here...
 			return Arrays.asList(object.getConnectedTracks());
 		}
 		
