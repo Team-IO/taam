@@ -1,0 +1,4 @@
+{
+	"sip": {"category": "neutral","sounds":[{"name": "sip","steam": false}]},
+	"sip_ah": {"category": "neutral","sounds":[{"name": "sip_ah","steam": false}]}
+}

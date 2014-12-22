@@ -64,7 +64,8 @@ public class ItemDebugTool extends Item {
 		{
 			//TODO: Clarify!
 			//if(!world.isRemote) {
-				world.playSound(player.posX ,player.posY  + 1 ,player.posZ ,"random.drink", 1, 1, false);
+			world.playSoundEffect(player.posX, player.posY + 1, player.posZ,
+					"taam:sip_ah", 1, 1);
 			//}
 			return true;
 		}
