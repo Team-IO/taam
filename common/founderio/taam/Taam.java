@@ -53,6 +53,7 @@ public final class Taam {
 	public static final String ITEM_PART = "taam.part";
 	public static final String ITEM_INGOT = "taam.ingot";
 	public static final String ITEM_CONVEYOR_APPLIANCE = "taam.conveyor_appliance";
+	public static final String ITEM_LOGISTICS_CART = "taam.logistics_cart";
 	
 	public static final String[] ITEM_CONVEYOR_APPLIANCE_META = new String[] {
 		"sprayer"
@@ -74,6 +75,8 @@ public final class Taam {
 	public static final String TILEENTITY_CONVEYOR_HOPPER = "taam.conveyor_hopper";
 	public static final String TILEENTITY_LOGISTICS_STATION = "taam.logistics_station";
 	public static final String TILEENTITY_LOGISTICS_MANAGER = "taam.logistics_manager";
+
+	public static final String ENTITY_LOGISTICS_CART = "taam.logistics_manager";
 	
 	public static final String CFG_COMMENT_SENSOR_DELAY = "Sensor [Motion, Minect] delay (minimum activation time) in game ticks, minimum 10";
 	public static final String CFG_COMMENT_SENSOR_PLACEMENT_MODE = "Sensor [Motion, Minect] placement mode when side by side. 1 = move together, 2 = merge into one";

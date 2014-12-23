@@ -2,13 +2,15 @@ package founderio.taam.multinet.logistics;
 
 import codechicken.lib.vec.BlockCoord;
 
-public interface IStation {
-
+public interface IVehicle {
 	String getName();
+	void setName(String name);
+	
+	PredictedInventory getPredictedInventory();
 
-	int getStationID();
+	int getVehicleID();
 
 	boolean isConnectedToManager();
-
+	
 	void linkToManager(BlockCoord coords);
 }

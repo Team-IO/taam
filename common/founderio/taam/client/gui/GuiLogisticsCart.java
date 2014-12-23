@@ -17,18 +17,19 @@ import founderio.taam.blocks.TileEntityLogisticsManager;
 import founderio.taam.blocks.TileEntityLogisticsStation;
 import founderio.taam.client.gui.util.CustomButton;
 import founderio.taam.client.gui.util.CustomGui;
+import founderio.taam.entities.EntityLogisticsCart;
 
-public class GuiLogisticsStation extends CustomGui {
+public class GuiLogisticsCart extends CustomGui {
 	public static ResourceLocation bg = new ResourceLocation("taam:textures/gui/logistics_station.png");
 	
-	private TileEntityLogisticsStation tileEntity;
+	private EntityLogisticsCart entity;
 	private InventoryPlayer inventoryPlayer;
 	
 	private CustomButton changeName;
 	
-	public GuiLogisticsStation(InventoryPlayer inventoryPlayer, TileEntityLogisticsStation tileEntity) {
-		super(new ContainerLogisticsStation(inventoryPlayer, tileEntity));
-		this.tileEntity = tileEntity;
+	public GuiLogisticsCart(InventoryPlayer inventoryPlayer, EntityLogisticsCart entity) {
+		super(new ContainerLogisticsCart(inventoryPlayer, entity));
+		this.entity = entity;
 		this.inventoryPlayer = inventoryPlayer;
 		this.xSize = 342;
         this.ySize = 267;
@@ -63,7 +64,7 @@ public class GuiLogisticsStation extends CustomGui {
 		/*
 		 * Station Name
 		 */
-		String tileEntityName = fontRendererObj.trimStringToWidth(tileEntity.getName(), 200);
+		String tileEntityName = fontRendererObj.trimStringToWidth(entity.getName(), 200);
 		textWidth = fontRendererObj.getStringWidth(tileEntityName);
 		/*
 		 * Edit Button
@@ -82,15 +83,16 @@ public class GuiLogisticsStation extends CustomGui {
 		/*
 		 * Owner + Player Inventory Title
 		 */
-		this.fontRendererObj.drawString("Owner: " + tileEntity.getOwner(), 12, 160, 0x800000);
+		//TODO: Owner
+//		this.fontRendererObj.drawString("Owner: " + entity.getOwner(), 12, 160, 0x800000);
 		this.fontRendererObj.drawString(getTranslatedInventoryName(inventoryPlayer), 91, 175, 0x404040);
 		
-		if(tileEntity.getControlledInventory() == null) {
-
-			this.fontRendererObj.drawString("No Inventory", 12, 21, 0xAA0000);
-		}
+//		if(tileEntity.getControlledInventory() == null) {
+//
+//			this.fontRendererObj.drawString("No Inventory", 12, 21, 0xAA0000);
+//		}
 		
-		if(tileEntity.isConnectedToManager()) {
+		if(entity.isConnectedToManager()) {
 
 			disableList();
 			
@@ -104,10 +106,11 @@ public class GuiLogisticsStation extends CustomGui {
 			
 			GL11.glScalef(scaleFactor, scaleFactor, 0);
 			
-			String status = "<<" + tileEntity.getStatus().toString() + ">>";
+			// TODO: Status
+//			String status = "<<" + entity.getStatus().toString() + ">>";
 			
-			textWidth = this.fontRendererObj.getStringWidth(status);
-			this.fontRendererObj.drawString(status, (this.xSize / 2) / scaleFactor - textWidth / 2, (90 - fontRendererObj.FONT_HEIGHT / 2) / scaleFactor, 0x00DDFF);
+//			textWidth = this.fontRendererObj.getStringWidth(status);
+//			this.fontRendererObj.drawString(status, (this.xSize / 2) / scaleFactor - textWidth / 2, (90 - fontRendererObj.FONT_HEIGHT / 2) / scaleFactor, 0x00DDFF);
 		} else {
 			this.fontRendererObj.drawString("No Connection", 12, 12, 0xAA0000);
 			
@@ -146,7 +149,7 @@ public class GuiLogisticsStation extends CustomGui {
 			@Override
 			public Boolean apply(CustomButton input) {
 				TileEntityLogisticsManager manager = (TileEntityLogisticsManager) listContent.get(input.id + scrollPosition);
-				tileEntity.linkToManager(new BlockCoord(manager));
+				entity.linkToManager(new BlockCoord(manager));
 				return true;
 			}
 		};

@@ -11,7 +11,13 @@ public class LogisticsManager {
 
 	StationGraph graph;
 	List<IStation> stations;
-	List<Vehicle> vehicles;
+	List<IVehicle> vehicles;
+	
+	//TODO: Do we need a separate list anymore? don't think so.
+	private Map<Integer, IStation> mapStationID;
+	private Map<IStation, Integer> mapIDStation;
+	private Map<Integer, IVehicle> mapVehicleID;
+	private Map<IVehicle, Integer> mapIDVehicle;
 	/*
 	 * Step 1: Satisfy demands by creating transports
 	 */
@@ -26,13 +32,17 @@ public class LogisticsManager {
 	
 	public LogisticsManager() {
 		stations = new ArrayList<IStation>();
-		vehicles = new ArrayList<Vehicle>();
+		vehicles = new ArrayList<IVehicle>();
 		pendingDemands = new ArrayList<Demand>();
 		pendingTransport = new ArrayList<Transport>();
 		processingDemands = new ArrayList<Demand>();
 		processingRoutes = new ArrayList<Route>();
+		
 		mapStationID = new HashMap<Integer, IStation>();
 		mapIDStation = new HashMap<IStation, Integer>();
+		
+		mapVehicleID = new HashMap<Integer, IVehicle>();
+		mapIDVehicle = new HashMap<IVehicle, Integer>();
 	}
 	
 //	public static void main(String[] args) {
@@ -131,7 +141,7 @@ public class LogisticsManager {
 		// Begin with transport of closest due time - or oldest transport if none has a due time.
 		Collections.sort(pendingTransport);
 		
-		Vehicle vehicle = null;
+		IVehicle vehicle = null;
 
 		/*
 		 * Select a suitable free vehicle and generate route for it.
@@ -158,16 +168,20 @@ public class LogisticsManager {
 		tryAppendTransports(route);
 	}
 	
-	//TODO: Do we need a separate list anymore? don't think so.
-	private Map<Integer, IStation> mapStationID;
-	private Map<IStation, Integer> mapIDStation;
+	public int getStationID(IStation station) {
+		return mapIDStation.get(station);
+	}
 	
 	public IStation getStation(int stationID) {
 		return mapStationID.get(stationID);
 	}
 	
-	public int getStationID(IStation station) {
-		return mapIDStation.get(station);
+	public int getVehicleID(IVehicle vehicle) {
+		return mapIDVehicle.get(vehicle);
+	}
+	
+	public IVehicle getVehicle(int vehicleID) {
+		return mapVehicleID.get(vehicleID);
 	}
 	
 	private void tryAppendTransports(Route route) {
@@ -183,12 +197,13 @@ public class LogisticsManager {
 		}
 	}
 	
-	private Vehicle findSuitableVehicle(Transport transport) {
+	private IVehicle findSuitableVehicle(Transport transport) {
 		//TODO: Implement.
 		return new Vehicle(new Vehicle.Storage[] { new Vehicle.Storage(64) });
 	}
 	
 	private int lastStationID = 0;
+	private int lastVehicleID = 0;
 
 	public int addStation(IStation station) {
 		stations.add(station);
@@ -207,5 +222,24 @@ public class LogisticsManager {
 
 	public Collection<IStation> getStations() {
 		return Collections.unmodifiableCollection(stations);
+	}
+
+	public int addVehicle(IVehicle vehicle) {
+		vehicles.add(vehicle);
+		int vehicleID = ++lastVehicleID;
+		mapVehicleID.put(vehicleID, vehicle);
+		mapIDVehicle.put(vehicle, vehicleID);
+		return vehicleID;
+	}
+	
+	public void removeVehicle(IVehicle vehicle) {
+		int vehicleID = getVehicleID(vehicle);
+		mapVehicleID.remove(vehicleID);
+		mapIDVehicle.remove(vehicle);
+		vehicles.remove(vehicle);
+	}
+	
+	public Collection<IVehicle> getVehicles() {
+		return Collections.unmodifiableCollection(vehicles);
 	}
 }

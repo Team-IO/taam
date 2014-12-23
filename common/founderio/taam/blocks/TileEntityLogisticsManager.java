@@ -14,6 +14,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import founderio.taam.multinet.logistics.Demand;
 import founderio.taam.multinet.logistics.Goods;
 import founderio.taam.multinet.logistics.IStation;
+import founderio.taam.multinet.logistics.IVehicle;
 import founderio.taam.multinet.logistics.LogisticsConfiguration;
 import founderio.taam.multinet.logistics.LogisticsManager;
 import founderio.taam.multinet.logistics.Transport;
@@ -176,5 +177,15 @@ public class TileEntityLogisticsManager extends BaseTileEntity {
 	public void stationUnregister(IStation station) {
 		System.out.println("Station removed " + station.getName());
 		getManager().removeStation(station);
+	}
+	
+	public int vehicleRegister(IVehicle vehicle) {
+		System.out.println("Station added " + vehicle.getName());
+		return getManager().addVehicle(vehicle);
+	}
+	
+	public void vehicleUnregister(IVehicle vehicle) {
+		System.out.println("Station removed " + vehicle.getName());
+		getManager().removeVehicle(vehicle);
 	}
 }

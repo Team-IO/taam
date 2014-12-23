@@ -48,18 +48,20 @@ public class TileEntityLogisticsStation extends BaseTileEntity implements IStati
 		ManualOrder
 	}
 	
+	public TileEntityLogisticsStation() {
+		configurations = new ArrayList<LogisticsConfiguration>();
+	}
+	
 	public StationStatus getStatus() {
 		return StationStatus.Idle;
 	}
 	
-	public boolean isManagerConnected() {
+	@Override
+	public boolean isConnectedToManager() {
 		return coordsManager != null;
 	}
-	
-	public TileEntityLogisticsStation() {
-		configurations = new ArrayList<LogisticsConfiguration>();
-	}
 
+	@Override
 	public int getStationID() {
 		return stationID;
 	}
@@ -69,7 +71,6 @@ public class TileEntityLogisticsStation extends BaseTileEntity implements IStati
 		if(manager.getWorldObj() != worldObj) {
 			return;
 		}
-		//TODO: fetch station ID from manager
 		this.coordsManager = new BlockCoord(manager);
 		this.stationID = manager.stationRegister(this);
 		
@@ -93,6 +94,7 @@ public class TileEntityLogisticsStation extends BaseTileEntity implements IStati
 		updateState();
 	}
 	
+	@Override
 	public void linkToManager(BlockCoord coords) {
 		if(worldObj.isRemote) {
 			TPLogisticsConfiguration config = TPLogisticsConfiguration.newConnectManager(worldObj.provider.dimensionId, new BlockCoord(this), coords);

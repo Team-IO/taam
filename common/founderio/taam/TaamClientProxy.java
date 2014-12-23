@@ -10,11 +10,14 @@ import founderio.taam.blocks.TileEntityConveyorHopper;
 import founderio.taam.blocks.TileEntityLogisticsManager;
 import founderio.taam.blocks.TileEntityLogisticsStation;
 import founderio.taam.blocks.TileEntitySensor;
+import founderio.taam.entities.EntityLogisticsCart;
+import founderio.taam.rendering.TaamEntityRenderer;
 import founderio.taam.rendering.TaamRenderer;
 
 public class TaamClientProxy extends TaamCommonProxy {
 	
 	public TaamRenderer taamRenderer;
+	public TaamEntityRenderer taamEntityRenderer;
 	
 	@Override
 	public void registerRenderStuff() {
@@ -24,11 +27,16 @@ public class TaamClientProxy extends TaamCommonProxy {
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityConveyorHopper.class, taamRenderer);
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityLogisticsStation.class, taamRenderer);
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityLogisticsManager.class, taamRenderer);
+		
 		MinecraftForgeClient.registerItemRenderer(ItemBlock.getItemFromBlock(TaamMain.blockSensor), taamRenderer);
 		MinecraftForgeClient.registerItemRenderer(ItemBlock.getItemFromBlock(TaamMain.blockProductionLine), taamRenderer);
 		MinecraftForge.EVENT_BUS.register(taamRenderer);
+		
 		int id = RenderingRegistry.getNextAvailableRenderId();
 		TaamRenderer.renderMagneticRailID = id;
 		RenderingRegistry.registerBlockHandler(id, TaamRenderer.renderMagneticRail);
+		
+		taamEntityRenderer = new TaamEntityRenderer();
+		RenderingRegistry.registerEntityRenderingHandler(EntityLogisticsCart.class, taamEntityRenderer);
 	}
 }

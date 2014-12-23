@@ -19,6 +19,7 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -40,9 +41,11 @@ import founderio.taam.blocks.multinet.cables.OperatorRedstone;
 import founderio.taam.client.gui.GuiHandler;
 import founderio.taam.conveyors.ApplianceRegistry;
 import founderio.taam.conveyors.appliances.ApplianceSprayer;
+import founderio.taam.entities.EntityLogisticsCart;
 import founderio.taam.fluids.DyeFluid;
 import founderio.taam.items.ItemConveyorAppliance;
 import founderio.taam.items.ItemDebugTool;
+import founderio.taam.items.ItemLogisticsCart;
 import founderio.taam.items.ItemWithMetadata;
 import founderio.taam.items.ItemWrench;
 import founderio.taam.multinet.Multinet;
@@ -68,6 +71,7 @@ public class TaamMain {
 	public static ItemWithMetadata itemPart;
 	public static ItemWithMetadata itemIngot;
 	public static ItemConveyorAppliance itemConveyorAppliance;
+	public static ItemLogisticsCart itemLogisticsCart;
 	
 	public static CreativeTabs creativeTab;
 
@@ -160,6 +164,10 @@ public class TaamMain {
 		itemConveyorAppliance.setUnlocalizedName(Taam.ITEM_CONVEYOR_APPLIANCE);
 		itemConveyorAppliance.setCreativeTab(creativeTab);
 		
+		itemLogisticsCart = new ItemLogisticsCart();
+		itemLogisticsCart.setUnlocalizedName(Taam.ITEM_LOGISTICS_CART);
+		itemLogisticsCart.setCreativeTab(creativeTab);
+		
 		Multinet.registerOperator(new OperatorRedstone("redstone"));
 
 		GameRegistry.registerItem(itemMaterial, Taam.ITEM_MATERIAL, Taam.MOD_ID);
@@ -172,6 +180,8 @@ public class TaamMain {
 		GameRegistry.registerItem(itemMultinetMultitronix, Taam.ITEM_MULTINET_MULTITRONIX, Taam.MOD_ID);
 
 		GameRegistry.registerItem(itemConveyorAppliance, Taam.ITEM_CONVEYOR_APPLIANCE, Taam.MOD_ID);
+		
+		GameRegistry.registerItem(itemLogisticsCart, Taam.ITEM_LOGISTICS_CART, Taam.MOD_ID);
 		
 		GameRegistry.registerBlock(blockSensor, ItemBlock.class, Taam.BLOCK_SENSOR);
 		GameRegistry.registerBlock(blockProductionLine, null, Taam.BLOCK_PRODUCTIONLINE);
@@ -192,6 +202,8 @@ public class TaamMain {
 		GameRegistry.registerWorldGenerator(new OreGenerator(), 2);
 		
 		ApplianceRegistry.registerFactory(Taam.APPLIANCE_SPRAYER, new ApplianceSprayer.Factory());
+		
+		EntityRegistry.registerModEntity(EntityLogisticsCart.class, Taam.ENTITY_LOGISTICS_CART, 0, this, 64, 2, true);
 		
 		fluidsDye = new DyeFluid[Taam.FLUID_DYE_META.length];
 		for(int i = 0; i < Taam.FLUID_DYE_META.length; i++) {

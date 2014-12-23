@@ -111,7 +111,7 @@ public class Route {
 		return fromFound ? 1 : 0;
 	}
 	
-	public boolean canAddTransport(Transport transport, Vehicle vehicle) {
+	public boolean canAddTransport(Transport transport, IVehicle vehicle) {
 		//TODO: Check vehicle status
 		return true;
 	}
