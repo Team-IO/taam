@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.minecraft.item.ItemStack;
+
 public class LogisticsManager {
 
 	StationGraph graph;
@@ -151,9 +153,9 @@ public class LogisticsManager {
 		Transport startingPoint = null; 
 		do {
 			startingPointIndex++;
-			startingPoint = pendingTransport.get(0);
+			startingPoint = pendingTransport.get(startingPointIndex);
 			vehicle = findSuitableVehicle(startingPoint);
-		} while (vehicle == null);
+		} while (vehicle == null && startingPointIndex < pendingTransport.size() - 1);
 		
 		Route route = new Route();
 		route.transports.add(startingPoint);
@@ -198,8 +200,15 @@ public class LogisticsManager {
 	}
 	
 	private IVehicle findSuitableVehicle(Transport transport) {
-		//TODO: Implement.
-		return new Vehicle(new Vehicle.Storage[] { new Vehicle.Storage(64) });
+		for(IVehicle vehicle : vehicles) {
+			if(vehicle.hasRouteToStation(transport.from)) {
+				PredictedInventory predInv = vehicle.getPredictedInventory();
+				if(predInv.canStackFit((ItemStack) transport.goods.type)) {
+					return vehicle;
+				}
+			}
+		}
+		return null;
 	}
 	
 	private int lastStationID = 0;

@@ -7,10 +7,12 @@ public interface IVehicle {
 	void setName(String name);
 	
 	PredictedInventory getPredictedInventory();
-
+	PredictedInventory getCurrentInventory();
+	
 	int getVehicleID();
 
 	boolean isConnectedToManager();
 	
 	void linkToManager(BlockCoord coords);
+	boolean hasRouteToStation(int stationID);
 }

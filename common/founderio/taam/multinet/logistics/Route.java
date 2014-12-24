@@ -8,8 +8,9 @@ import java.util.Map;
 
 import org.apache.commons.lang3.ArrayUtils;
 
+import codechicken.lib.vec.BlockCoord;
+import founderio.taam.TaamMain;
 import founderio.taam.multinet.AStar.Node;
-import founderio.taam.multinet.logistics.StationGraph.Track;
 
 public class Route {
 	
@@ -17,13 +18,14 @@ public class Route {
 		transports = new ArrayList<Transport>();
 		stations = new ArrayList<Integer>();
 		stationsToPlot = new Hashtable<Integer, Integer>();
-		plot = new ArrayList<ITrack>();
+		plot = new ArrayList<BlockCoord>();
 	}
 	
 	List<Transport> transports;
 	List<Integer> stations;
 	
-	List<ITrack> plot;
+	//TODO: World coordinates
+	List<BlockCoord> plot;
 	Map<Integer, Integer> stationsToPlot;
 	boolean hasPlot = false;
 	
@@ -44,12 +46,12 @@ public class Route {
 		//TODO: Split Plot into one track list per station -> make replotting easier
 		
 		IStation current = manager.getStation(stations.get(0));
-		Track currentTrack = graph.getTrackForStation(current);
+		BlockCoord currentTrack = graph.getTrackForStation(current);
 		plot.add(currentTrack);
 		stationsToPlot.put(0, 0);
 		for(int i = 1; i < stations.size(); i++) {
 			IStation nextStation = manager.getStation(stations.get(i));
-			ITrack nextTrack = graph.getTrackForStation(nextStation);
+			BlockCoord nextTrack = graph.getTrackForStation(nextStation);
 			if(nextTrack == null) {
 				return false;
 			}
@@ -57,12 +59,12 @@ public class Route {
 				stationsToPlot.put(i, plot.size() - 1);
 				continue;
 			}
-			Node<ITrack> node = StationGraph.astar(currentTrack, nextTrack);
+			Node<BlockCoord> node = graph.astar(currentTrack, nextTrack);
 			if(node == null) {
 				return false;
 			}
 			// Add astar result to plot in reverse (result is from target to origin)
-			List<ITrack> nextPlotContent = new ArrayList<ITrack>();
+			List<BlockCoord> nextPlotContent = new ArrayList<BlockCoord>();
 			do {
 				nextPlotContent.add(node.object);
 				node = node.getPredecessor();
@@ -91,21 +93,22 @@ public class Route {
 	public int locateTransportOnRoute(Transport transport) {
 		boolean fromFound = false;
 		for(int i = 0; i < plot.size(); i++) {
-			if(fromFound) {
-				// TO found after FROM -> begins and ends on the route.
-				if(plot.get(i).getLocatedStations().containsKey(transport.to)) {
-					return 3;
-				}
-			} else {
-				// FROM found, no check for TO yet.
-				if(plot.get(i).getLocatedStations().containsKey(transport.from)) {
-					fromFound = true;
-				} else
-				// TO found before FROM -> ends on the route.
-				if(plot.get(i).getLocatedStations().containsKey(transport.to)) {
-					return 2;
-				}
-			}
+			//TODO: Fix after the StationGraph is working usefully again.
+//			if(fromFound) {
+//				// TO found after FROM -> begins and ends on the route.
+//				if(plot.get(i).getLocatedStations().containsKey(transport.to)) {
+//					return 3;
+//				}
+//			} else {
+//				// FROM found, no check for TO yet.
+//				if(plot.get(i).getLocatedStations().containsKey(transport.from)) {
+//					fromFound = true;
+//				} else
+//				// TO found before FROM -> ends on the route.
+//				if(plot.get(i).getLocatedStations().containsKey(transport.to)) {
+//					return 2;
+//				}
+//			}
 		}
 		// When FROM has been found but TO is still missing -> begins on the route.
 		return fromFound ? 1 : 0;
@@ -126,12 +129,14 @@ public class Route {
 			if(stations.isEmpty()) {
 				stations.add(station);
 			} else {
-				int stationIdx = 0;
-				for(int t = 0; t < plot.size() && stationIdx < stations.size(); t++) {
-					if(ArrayUtils.contains(plot.get(t).getConnectedTracks(), station)) {
-						break;
-					}
-				}
+				int stationIdx = stations.size();//0;
+				//TODO: Fix after the StationGraph is working usefully again.
+				//TODO: Find station on existing route points & insert correctly
+//				for(int t = 0; t < plot.size() && stationIdx < stations.size(); t++) {
+//					if(plot.get(t).getLocatedStations().containsKey(station)) {
+//						break;
+//					}
+//				}
 				stations.add(stationIdx, station);
 			}
 			clearPlot();

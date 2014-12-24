@@ -1,5 +1,9 @@
 package founderio.taam.blocks;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import codechicken.lib.vec.BlockCoord;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -126,6 +130,56 @@ public class BlockMagnetRail extends Block {
 		}
 	}
 	
+	public List<InBlockRoute> getInBlockRoutes(IBlockAccess world, int x, int y, int z, int meta) {
+		//TODO: Extract method
+		int rotation = getRotation(world.getBlockMetadata(x, y, z));
+		ForgeDirection direction = ForgeDirection.SOUTH;
+		for(int i = 0; i < rotation; i++) {
+			direction = direction.getRotation(ForgeDirection.UP);
+		}
+		ForgeDirection left = direction.getRotation(ForgeDirection.DOWN);
+		ForgeDirection right = direction.getRotation(ForgeDirection.UP);
+		boolean leftConnected = false;
+		boolean rightConnected = false;
+		
+		Block block = world.getBlock(x + left.offsetX, y + left.offsetY, z + left.offsetZ);
+		
+		if(block == this) {
+			int otherRotation = getRotation(world.getBlockMetadata(x + left.offsetX, y + left.offsetY, z + left.offsetZ));
+			if(otherRotation == rotation - 1 || otherRotation == otherRotation + 3) {
+				leftConnected = true;
+			}
+		}
+		
+		block = world.getBlock(x + right.offsetX, y + right.offsetY, z + right.offsetZ);
+		
+		if(block == this) {
+			int otherRotation = getRotation(world.getBlockMetadata(x + right.offsetX, y + right.offsetY, z + right.offsetZ));
+			if(otherRotation == rotation + 1 || otherRotation == otherRotation - 3) {
+				rightConnected = true;
+			}
+		}
+		
+		
+		//TODO: Optimize
+		List<InBlockRoute> routes = new ArrayList<InBlockRoute>(3);
+		
+		if(rightConnected && leftConnected) {
+			routes.add(routesForward[rotation]);
+			routes.add(routesLeft[rotation]);
+			routes.add(routesRight[rotation]);
+		} else if(rightConnected) {
+			routes.add(routesForward[rotation]);
+			routes.add(routesRight[rotation]);
+		} else if(leftConnected) {
+			routes.add(routesForward[rotation]);
+			routes.add(routesLeft[rotation]);
+		} else {
+			routes.add(routesForward[rotation]);
+		}
+		return routes;
+	}
+	
 	public int getRotation(int meta) {
 		return meta & 3;
 	}
@@ -182,5 +236,66 @@ public class BlockMagnetRail extends Block {
 
 	            super.onNeighborBlockChange(world, x, y, z, block);
 	        }
+	}
+
+	public List<BlockCoord> getConnectedTracks(World world, int x, int y, int z, int meta) {
+		
+		int rotation = getRotation(world.getBlockMetadata(x, y, z));
+		ForgeDirection direction = ForgeDirection.SOUTH;
+		for(int i = 0; i < rotation; i++) {
+			direction = direction.getRotation(ForgeDirection.UP);
+		}
+		ForgeDirection left = direction.getRotation(ForgeDirection.DOWN);
+		ForgeDirection right = direction.getRotation(ForgeDirection.UP);
+		boolean leftConnected = false;
+		boolean rightConnected = false;
+		boolean forwardConnected = false;
+		
+		Block block = world.getBlock(x + left.offsetX, y + left.offsetY, z + left.offsetZ);
+		
+		if(block == this) {
+			int otherRotation = getRotation(world.getBlockMetadata(x + left.offsetX, y + left.offsetY, z + left.offsetZ));
+			if(otherRotation == rotation - 1 || otherRotation == otherRotation + 3) {
+				leftConnected = true;
+			}
+		}
+		
+		block = world.getBlock(x + right.offsetX, y + right.offsetY, z + right.offsetZ);
+		
+		if(block == this) {
+			int otherRotation = getRotation(world.getBlockMetadata(x + right.offsetX, y + right.offsetY, z + right.offsetZ));
+			if(otherRotation == rotation + 1 || otherRotation == otherRotation - 3) {
+				rightConnected = true;
+			}
+		}
+		
+		block = world.getBlock(x + direction.offsetX, y + direction.offsetY, z + direction.offsetZ);
+		
+		if(block == this) {
+			int otherRotation = getRotation(world.getBlockMetadata(x + direction.offsetX, y + direction.offsetY, z + direction.offsetZ));
+			if(otherRotation == rotation) {
+				forwardConnected = true;
+			}
+		}
+		
+		BlockCoord leftC = new BlockCoord(x + left.offsetX, y + left.offsetY, z + left.offsetZ);
+		BlockCoord forwardC = new BlockCoord(x + direction.offsetX, y + direction.offsetY, z + direction.offsetZ);
+		BlockCoord rightC = new BlockCoord(x + right.offsetX, y + right.offsetY, z + right.offsetZ);
+		
+		//TODO: Optimize
+		
+		List<BlockCoord> coords = new ArrayList<BlockCoord>();
+		
+		if(rightConnected) {
+			coords.add(rightC);
+		}
+		if(leftConnected) {
+			coords.add(leftC);
+		}
+		if(forwardConnected) {
+			coords.add(forwardC);
+		}
+		return coords;
+		
 	}
 }

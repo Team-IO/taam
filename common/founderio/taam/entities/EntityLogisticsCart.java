@@ -2,27 +2,21 @@ package founderio.taam.entities;
 
 import java.util.List;
 
-import codechicken.lib.vec.BlockCoord;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.inventory.Container;
-import net.minecraft.inventory.ContainerHorseInventory;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.play.server.S2DPacketOpenWindow;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
-import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants.NBT;
+import codechicken.lib.inventory.InventorySimple;
+import codechicken.lib.inventory.InventoryUtils;
+import codechicken.lib.vec.BlockCoord;
 import founderio.taam.TaamMain;
 import founderio.taam.blocks.TileEntityLogisticsManager;
-import founderio.taam.client.gui.ContainerLogisticsCart;
-import founderio.taam.client.gui.GuiLogisticsCart;
 import founderio.taam.multinet.logistics.IVehicle;
 import founderio.taam.multinet.logistics.InBlockRoute;
 import founderio.taam.multinet.logistics.LogisticsUtil;
@@ -32,6 +26,9 @@ import founderio.taam.network.TPLogisticsConfiguration;
 
 public class EntityLogisticsCart extends Entity implements IVehicle {
 
+	public static final int inventory_size = 3;
+	
+	private InventorySimple inventory;
 	
 	private int vehicleID = -1;
 	
@@ -57,6 +54,7 @@ public class EntityLogisticsCart extends Entity implements IVehicle {
 
 	@Override
 	protected void entityInit() {
+		inventory = new InventorySimple(inventory_size);
 		if(coordsManager == null) {
 			dataWatcher.addObject(20, 0);
 			dataWatcher.addObject(21, 0);
@@ -104,6 +102,7 @@ public class EntityLogisticsCart extends Entity implements IVehicle {
 		} else {
 			coordsManager = BlockCoord.fromAxes(coords);
 		}
+		InventoryUtils.readItemStacksFromTag(inventory.items, tag.getTagList("inventory", NBT.TAG_COMPOUND));
 	}
 
 	@Override
@@ -128,6 +127,7 @@ public class EntityLogisticsCart extends Entity implements IVehicle {
 		if(name != null && !name.trim().isEmpty()) {
 			tag.setString("name", name);
 		}
+		tag.setTag("inventory", InventoryUtils.writeItemStacksToTag(inventory.items));
 	}
 	
 	@Override
@@ -222,7 +222,27 @@ public class EntityLogisticsCart extends Entity implements IVehicle {
 		this.name = name;
 	}
 	
-	
+	private void snapToRail() {
+		 int x = MathHelper.floor_double(this.posX);
+         int y = MathHelper.floor_double(this.posY);
+         int z = MathHelper.floor_double(this.posZ);
+         
+         boolean isActuallyOnRail = LogisticsUtil.isMagnetRail(worldObj, x, y, z);
+         // Also check one block below if we are "floating"
+         if(!isActuallyOnRail && worldObj.isAirBlock(x, y, z)) {
+        	 isActuallyOnRail = LogisticsUtil.isMagnetRail(worldObj, x, y-1, z);
+         }
+         if(!isOnRail && isActuallyOnRail) {
+         	currentRailX = x;
+         	currentRailY = y;
+         	currentRailZ = z;
+         	
+         	ibrProgress = 0;
+         	ibr = TaamMain.blockMagnetRail.getInBlockRoutes(worldObj, x, y, z, worldObj.getBlockMetadata(x, y, z)).get(0);
+         	
+         	isOnRail = true;
+         }
+	}
 	
 	@Override
 	public void onEntityUpdate() {
@@ -233,18 +253,7 @@ public class EntityLogisticsCart extends Entity implements IVehicle {
             this.prevPosY = this.posY;
             this.prevPosZ = this.posZ;
 
-            int x = MathHelper.floor_double(this.posX);
-            int y = MathHelper.floor_double(this.posY);
-            int z = MathHelper.floor_double(this.posZ);
-            
-            boolean isActuallyOnRail = LogisticsUtil.isMagnetRail(worldObj, x, y, z);
-            if(!isOnRail && isActuallyOnRail) {
-            	currentRailX = x;
-            	currentRailY = y;
-            	currentRailZ = z;
-            	//TODO: Snap into place
-            	isOnRail = true;
-            }
+           snapToRail();
             
             if(isOnRail) {
             	//TODO: Check where we need to go, depending on route
@@ -316,8 +325,20 @@ public class EntityLogisticsCart extends Entity implements IVehicle {
 
 	@Override
 	public PredictedInventory getPredictedInventory() {
+		//TODO: Respect inventory for given position in route
+		//TODO: allow plausibility check for transport from-to different stations, respecting inbetween transactions
+		return getCurrentInventory();
+	}
+
+	@Override
+	public PredictedInventory getCurrentInventory() {
+		return new PredictedInventory(false, inventory);
+	}
+
+	@Override
+	public boolean hasRouteToStation(int stationID) {
 		// TODO Auto-generated method stub
-		return null;
+		return false;
 	}
 
 }
