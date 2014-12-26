@@ -245,6 +245,7 @@ public class TaamMain {
 		
 		OreDictionary.registerOre("materialPlastic", new ItemStack(itemMaterial, 1, 0));
 		OreDictionary.registerOre("materialRubber", new ItemStack(itemMaterial, 1, 1));
+		OreDictionary.registerOre("itemRubber", new ItemStack(itemMaterial, 1, 1));
 		OreDictionary.registerOre("materialGraphite", new ItemStack(itemMaterial, 1, 2));
 		
 		OreDictionary.registerOre("partPhotocell", new ItemStack(itemPart, 1, 0));
