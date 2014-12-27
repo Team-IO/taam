@@ -13,6 +13,8 @@ import codechicken.lib.vec.Vector3;
 import codechicken.multipart.TMultiPart;
 import codechicken.multipart.TileMultipart;
 import founderio.taam.blocks.multinet.MultinetCable;
+import founderio.taam.multinet.AStar.Node;
+import founderio.taam.multinet.logistics.WorldCoord;
 
 public final class MultinetUtil {
 	/**
@@ -117,12 +119,12 @@ public final class MultinetUtil {
 		}
 		
 		@Override
-		public BlockCoord getCoords(IMultinetAttachment object) {
+		public WorldCoord getCoords(IMultinetAttachment object) {
 			return object.getCoordinates();
 		}
 
 		@Override
-		public List<IMultinetAttachment> findNeighbors(IMultinetAttachment object) {
+		public List<IMultinetAttachment> findNeighbors(IMultinetAttachment object, Node<IMultinetAttachment> predecessor) {
 			return MultinetUtil.findNeighbors(object);
 		}
 		
@@ -162,7 +164,6 @@ public final class MultinetUtil {
 
 	public static List<IMultinetAttachment> findNeighbors(IMultinetAttachment attachment) {
 		List<IMultinetAttachment> cbl = new ArrayList<IMultinetAttachment>();
-		World world = attachment.getDimension();
 		ForgeDirection dir = attachment.getFace();
 		ForgeDirection[] otherDirs;
 		/*
@@ -191,15 +192,15 @@ public final class MultinetUtil {
 		if(dir != ForgeDirection.UNKNOWN) {
 			// Adjacent cables on the same wall, one block offset
 			for(ForgeDirection od : otherDirs) {
-				cbl.addAll(MultinetUtil.getMultinetAttachments(world, attachment.getCoordinates().add(od.offsetX, od.offsetY, od.offsetZ), attachment.getLayer(), attachment.getFace(), od.getOpposite(), attachment.getCableType(), false));
+				cbl.addAll(MultinetUtil.getMultinetAttachments(attachment.getCoordinates().getDirectionalOffset(od), attachment.getLayer(), attachment.getFace(), od.getOpposite(), attachment.getCableType(), false));
 			}
 		}
 		// Adjacent cables in the same block, on adjacent walls
 		for(ForgeDirection od : otherDirs) {
-			cbl.addAll(MultinetUtil.getMultinetAttachments(world, attachment.getCoordinates(), attachment.getLayer(), od, attachment.getFace(), attachment.getCableType(), false));
+			cbl.addAll(MultinetUtil.getMultinetAttachments(attachment.getCoordinates(), attachment.getLayer(), od, attachment.getFace(), attachment.getCableType(), false));
 		}
 		// Adjacent cables in the same block, on the same face (multitronix & Co.)
-		cbl.addAll(MultinetUtil.getMultinetAttachments(world, attachment.getCoordinates(), attachment.getLayer(), attachment.getFace(), ForgeDirection.UNKNOWN, attachment.getCableType(), false));
+		cbl.addAll(MultinetUtil.getMultinetAttachments(attachment.getCoordinates(), attachment.getLayer(), attachment.getFace(), ForgeDirection.UNKNOWN, attachment.getCableType(), false));
 		
 		// Irregular connections (teleport, cross-layer, ...)
 		List<IMultinetAttachment> irregular = attachment.getIrregularAttachments();
@@ -215,9 +216,9 @@ public final class MultinetUtil {
 		return cbl;
 	}
 
-	public static List<IMultinetAttachment> getMultinetAttachments(World world, BlockCoord pos, int layer, ForgeDirection face, ForgeDirection dir, String type, boolean includeUnavailable) {
+	public static List<IMultinetAttachment> getMultinetAttachments(WorldCoord pos, int layer, ForgeDirection face, ForgeDirection dir, String type, boolean includeUnavailable) {
 		List<IMultinetAttachment> attachments = new ArrayList<IMultinetAttachment>(2);
-		TileEntity te = world.getTileEntity(pos.x, pos.y, pos.z);
+		TileEntity te = pos.getWorldServer().getTileEntity(pos.x, pos.y, pos.z);
 		if(te instanceof TileMultipart) {
 			List<TMultiPart> multiParts = ((TileMultipart) te).jPartList();
 			
@@ -233,9 +234,9 @@ public final class MultinetUtil {
 		return attachments;
 	}
 
-	public static MultinetCable getCable(World world, BlockCoord pos, int layer, ForgeDirection face, String type) {
+	public static MultinetCable getCable(WorldCoord pos, int layer, ForgeDirection face, String type) {
 		
-		TileEntity te = world.getTileEntity(pos.x, pos.y, pos.z);
+		TileEntity te = pos.getWorldServer().getTileEntity(pos.x, pos.y, pos.z);
 		if(te instanceof TileMultipart) {
 			List<TMultiPart> multiParts = ((TileMultipart) te).jPartList();
 			

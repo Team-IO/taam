@@ -22,6 +22,7 @@ import founderio.taam.multinet.logistics.InBlockRoute;
 import founderio.taam.multinet.logistics.LogisticsUtil;
 import founderio.taam.multinet.logistics.PredictedInventory;
 import founderio.taam.multinet.logistics.Route;
+import founderio.taam.multinet.logistics.WorldCoord;
 import founderio.taam.network.TPLogisticsConfiguration;
 
 public class EntityLogisticsCart extends Entity implements IVehicle {
@@ -44,8 +45,7 @@ public class EntityLogisticsCart extends Entity implements IVehicle {
 	private Route route;
 	
 	private float currentSpeed = 0.1f;
-	//TODO: World Coords
-	private BlockCoord coordsManager;
+	private WorldCoord coordsManager;
     private String name;
     
 	public EntityLogisticsCart(World world) {
@@ -55,32 +55,37 @@ public class EntityLogisticsCart extends Entity implements IVehicle {
 	@Override
 	protected void entityInit() {
 		inventory = new InventorySimple(inventory_size);
-		if(coordsManager == null) {
-			dataWatcher.addObject(20, 0);
-			dataWatcher.addObject(21, 0);
-			dataWatcher.addObject(22, 0);
-		} else {
-			dataWatcher.addObject(20, coordsManager.x);
-			dataWatcher.addObject(21, coordsManager.y);
-			dataWatcher.addObject(22, coordsManager.z);
-		}
+		dataWatcher.addObject(19, (byte)0);
+		dataWatcher.addObject(20, 0);
+		dataWatcher.addObject(21, 0);
+		dataWatcher.addObject(22, 0);
+		dataWatcher.addObject(23, 0);
+		setCoordsManager(coordsManager);
 	}
 	
-	private BlockCoord getCoordsManager() {
-		if(coordsManager == null) {
-			coordsManager = new BlockCoord();
+	private WorldCoord getCoordsManager() {
+		boolean coordsPresent = dataWatcher.getWatchableObjectByte(19) != (byte)0;
+		if(coordsPresent) {
+			coordsManager = new WorldCoord();
+			coordsManager.world = dataWatcher.getWatchableObjectInt(20);
+			coordsManager.x = dataWatcher.getWatchableObjectInt(21);
+			coordsManager.y = dataWatcher.getWatchableObjectInt(22);
+			coordsManager.z = dataWatcher.getWatchableObjectInt(23);
+		} else {
+			coordsManager = null;
 		}
-		coordsManager.x = dataWatcher.getWatchableObjectInt(20);
-		coordsManager.y = dataWatcher.getWatchableObjectInt(21);
-		coordsManager.z = dataWatcher.getWatchableObjectInt(22);
 		return coordsManager;
 	}
 	
-	private void setCoordsManager(BlockCoord coords) {
+	private void setCoordsManager(WorldCoord coords) {
 		coordsManager = coords;
-		dataWatcher.updateObject(20, coordsManager.x);
-		dataWatcher.updateObject(21, coordsManager.y);
-		dataWatcher.updateObject(22, coordsManager.z);
+		dataWatcher.updateObject(19, coordsManager == null ? (byte)0 : (byte)1);
+		if(coordsManager != null) {
+			dataWatcher.updateObject(20, coordsManager.world);
+			dataWatcher.updateObject(21, coordsManager.x);
+			dataWatcher.updateObject(22, coordsManager.y);
+			dataWatcher.updateObject(23, coordsManager.z);
+		}
 	}
 
 	@Override
@@ -96,11 +101,11 @@ public class EntityLogisticsCart extends Entity implements IVehicle {
 		currentSpeed = tag.getFloat("currentSpeed");
 		
 		name = tag.getString("name");
-		int[] coords = tag.getIntArray("coordsManager");
-		if(coords == null || coords.length != 3) {
-			coordsManager = null;
+		NBTTagCompound coordsManager = tag.getCompoundTag("coordsManager");
+		if(coordsManager == null) {
+			this.coordsManager = null;
 		} else {
-			coordsManager = BlockCoord.fromAxes(coords);
+			this.coordsManager = new WorldCoord().readFromNBT(coordsManager);
 		}
 		InventoryUtils.readItemStacksFromTag(inventory.items, tag.getTagList("inventory", NBT.TAG_COMPOUND));
 	}
@@ -122,7 +127,9 @@ public class EntityLogisticsCart extends Entity implements IVehicle {
 		tag.setFloat("currentSpeed", currentSpeed);
 		
 		if(coordsManager != null) {
-			tag.setIntArray("coordsManager", coordsManager.intArray());
+			NBTTagCompound tagCoords = new NBTTagCompound();
+			coordsManager.writeToNBT(tagCoords);
+			tag.setTag("coordsManager", tagCoords);
 		}
 		if(name != null && !name.trim().isEmpty()) {
 			tag.setString("name", name);
@@ -187,12 +194,12 @@ public class EntityLogisticsCart extends Entity implements IVehicle {
 		if(manager.getWorldObj() != worldObj) {
 			return;
 		}
-		setCoordsManager(new BlockCoord(manager));
+		setCoordsManager(new WorldCoord(manager));
 		this.vehicleID = manager.vehicleRegister(this);
 	}
 
 	@Override
-	public void linkToManager(BlockCoord coords) {
+	public void linkToManager(WorldCoord coords) {
 		if(worldObj.isRemote) {
 			//TODO: send packet
 			TPLogisticsConfiguration config = TPLogisticsConfiguration.newConnectManagerVehicle(worldObj.provider.dimensionId, this.getEntityId(), coords);

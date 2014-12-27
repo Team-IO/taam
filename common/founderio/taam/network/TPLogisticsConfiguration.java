@@ -5,13 +5,13 @@ import net.minecraft.entity.Entity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.WorldServer;
-import codechicken.lib.vec.BlockCoord;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import cpw.mods.fml.relauncher.Side;
 import founderio.taam.blocks.TileEntityLogisticsStation;
 import founderio.taam.entities.EntityLogisticsCart;
+import founderio.taam.multinet.logistics.WorldCoord;
 
 public final class TPLogisticsConfiguration implements IMessage {
 
@@ -19,7 +19,7 @@ public final class TPLogisticsConfiguration implements IMessage {
 
 		@Override
 		public IMessage onMessage(TPLogisticsConfiguration message, MessageContext ctx) {
-			WorldServer world = MinecraftServer.getServer().worldServerForDimension(message.world);
+			WorldServer world = MinecraftServer.getServer().worldServerForDimension(message.entityDimensionID);
 			if(ctx.side == Side.SERVER) {
 				switch(message.mode) {
 				case ConnectManager:
@@ -60,27 +60,25 @@ public final class TPLogisticsConfiguration implements IMessage {
 		DisconnectManagerVehicle
 	}
 	
-	public static TPLogisticsConfiguration newConnectManager(int world, BlockCoord station, BlockCoord manager) {
+	public static TPLogisticsConfiguration newConnectManager(WorldCoord station, WorldCoord manager) {
 		TPLogisticsConfiguration pack = new TPLogisticsConfiguration();
 		pack.mode = Action.ConnectManager;
-		pack.world = world;
 		pack.station = station;
 		pack.manager = manager;
 		return pack;
 	}
 	
-	public static TPLogisticsConfiguration newDisconnectManager(int world, BlockCoord station) {
+	public static TPLogisticsConfiguration newDisconnectManager(WorldCoord station) {
 		TPLogisticsConfiguration pack = new TPLogisticsConfiguration();
 		pack.mode = Action.DisconnectManager;
-		pack.world = world;
 		pack.station = station;
 		return pack;
 	}
 	
-	public static TPLogisticsConfiguration newConnectManagerVehicle(int world, int entityID, BlockCoord manager) {
+	public static TPLogisticsConfiguration newConnectManagerVehicle(int world, int entityID, WorldCoord manager) {
 		TPLogisticsConfiguration pack = new TPLogisticsConfiguration();
 		pack.mode = Action.ConnectManagerVehicle;
-		pack.world = world;
+		pack.entityDimensionID = world;
 		pack.entityID = entityID;
 		pack.manager = manager;
 		return pack;
@@ -89,7 +87,7 @@ public final class TPLogisticsConfiguration implements IMessage {
 	public static TPLogisticsConfiguration newDisconnectManagerVehicle(int world, int entityID) {
 		TPLogisticsConfiguration pack = new TPLogisticsConfiguration();
 		pack.mode = Action.DisconnectManagerVehicle;
-		pack.world = world;
+		pack.entityDimensionID = world;
 		pack.entityID = entityID;
 		return pack;
 	}
@@ -98,10 +96,10 @@ public final class TPLogisticsConfiguration implements IMessage {
 		// Serialization only.
 	}
 
-	int world;
+	int entityDimensionID;
 	int entityID;
-	private BlockCoord station;
-	private BlockCoord manager;
+	private WorldCoord station;
+	private WorldCoord manager;
 	private Action mode;
 	
 	@Override
@@ -111,34 +109,34 @@ public final class TPLogisticsConfiguration implements IMessage {
 		mode = Action.values()[modeOrd];
 		switch(mode) {
 		case ConnectManager:
-			world = buf.readInt();
 			station = readCoords(buf);
 			manager = readCoords(buf);
 			break;
 		case DisconnectManager:
-			world = buf.readInt();
 			station = readCoords(buf);
 			break;
 		case ConnectManagerVehicle:
-			world = buf.readInt();
+			entityDimensionID = buf.readInt();
 			entityID = buf.readInt();
 			manager = readCoords(buf);
 			break;
 		case DisconnectManagerVehicle:
-			world = buf.readInt();
+			entityDimensionID = buf.readInt();
 			entityID = buf.readInt();
 			break;
 		}
 	}
 	
-	private BlockCoord readCoords(ByteBuf buf) {
+	private WorldCoord readCoords(ByteBuf buf) {
+		int world = buf.readInt();
 		int x = buf.readInt();
 		int y = buf.readInt();
 		int z = buf.readInt();
-		return new BlockCoord(x, y, z);
+		return new WorldCoord(world, x, y, z);
 	}
 	
-	private void writeCoords(ByteBuf buf, BlockCoord coords) {
+	private void writeCoords(ByteBuf buf, WorldCoord coords) {
+		buf.writeInt(coords.world);
 		buf.writeInt(coords.x);
 		buf.writeInt(coords.y);
 		buf.writeInt(coords.z);
@@ -149,21 +147,19 @@ public final class TPLogisticsConfiguration implements IMessage {
 		buf.writeInt(mode.ordinal());
 		switch(mode) {
 		case ConnectManager:
-			buf.writeInt(world);
 			writeCoords(buf, station);
 			writeCoords(buf, manager);
 			return;
 		case DisconnectManager:
-			buf.writeInt(world);
 			writeCoords(buf, station);
 			break;
 		case ConnectManagerVehicle:
-			buf.writeInt(world);
+			buf.writeInt(entityDimensionID);
 			buf.writeInt(entityID);
 			writeCoords(buf, manager);
 			return;
 		case DisconnectManagerVehicle:
-			buf.writeInt(world);
+			buf.writeInt(entityDimensionID);
 			buf.writeInt(entityID);
 			break;
 		}

@@ -14,6 +14,7 @@ import founderio.taam.Taam;
 import founderio.taam.blocks.multinet.MultinetMultipart;
 import founderio.taam.multinet.IMultinetAttachment;
 import founderio.taam.multinet.MultinetUtil;
+import founderio.taam.multinet.logistics.WorldCoord;
 
 public class RedstoneBlockAdapter extends MultinetMultipart implements IRedstonePart {
 
@@ -46,7 +47,7 @@ public class RedstoneBlockAdapter extends MultinetMultipart implements IRedstone
 	}
 
 	@Override
-	public boolean canAttach(BlockCoord coords, ForgeDirection face, ForgeDirection dir,
+	public boolean canAttach(WorldCoord coords, ForgeDirection face, ForgeDirection dir,
 			int layer, String type) {
 		//TODO: Actually check for occlusion!
 		return face == this.face && layer == this.layer && coords.equals(getCoordinates());

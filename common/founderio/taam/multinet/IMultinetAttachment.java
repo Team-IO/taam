@@ -4,13 +4,13 @@ import java.util.List;
 
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-import codechicken.lib.vec.BlockCoord;
+import founderio.taam.multinet.logistics.WorldCoord;
 
 public interface IMultinetAttachment {
-	boolean canAttach(BlockCoord coords, ForgeDirection face,
+	boolean canAttach(WorldCoord coords, ForgeDirection face,
 			ForgeDirection dir, int layer, String type);
 
-	BlockCoord getCoordinates();
+	WorldCoord getCoordinates();
 
 	int getLayer();
 

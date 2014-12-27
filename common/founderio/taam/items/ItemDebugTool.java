@@ -12,7 +12,6 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-import codechicken.lib.vec.BlockCoord;
 import codechicken.lib.vec.Vector3;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -21,6 +20,7 @@ import founderio.taam.Taam;
 import founderio.taam.blocks.TileEntityConveyor;
 import founderio.taam.blocks.multinet.MultinetCable;
 import founderio.taam.multinet.MultinetUtil;
+import founderio.taam.multinet.logistics.WorldCoord;
 
 public class ItemDebugTool extends Item {
 
@@ -79,7 +79,7 @@ public class ItemDebugTool extends Item {
 		
         boolean didSomething = false;
         
-        MultinetCable cable = MultinetUtil.getCable(world, new BlockCoord(x, y, z), layer, dirOpp, null);
+        MultinetCable cable = MultinetUtil.getCable(new WorldCoord(world, x, y, z), layer, dirOpp, null);
         
         if(cable != null) {
         	didSomething = true;

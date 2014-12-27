@@ -15,7 +15,6 @@ import codechicken.lib.render.CCModel;
 import codechicken.lib.render.CCRenderState;
 import codechicken.lib.render.TextureUtils;
 import codechicken.lib.render.uv.IconTransformation;
-import codechicken.lib.vec.BlockCoord;
 import codechicken.lib.vec.Cuboid6;
 import codechicken.lib.vec.Translation;
 import codechicken.lib.vec.Vector3;
@@ -26,6 +25,7 @@ import founderio.taam.Taam;
 import founderio.taam.TaamMain;
 import founderio.taam.multinet.IMultinetAttachment;
 import founderio.taam.multinet.MultinetUtil;
+import founderio.taam.multinet.logistics.WorldCoord;
 
 public abstract class MultinetCable extends MultinetMultipart {
 
@@ -47,8 +47,7 @@ public abstract class MultinetCable extends MultinetMultipart {
 	}
 	
 	@Override
-	public boolean canAttach(BlockCoord coords, ForgeDirection face, ForgeDirection dir,
-			int layer, String type) {
+	public boolean canAttach(WorldCoord coords, ForgeDirection face, ForgeDirection dir, int layer, String type) {
 		//TODO: Actually check for occlusion!
 		return face == this.face && layer == this.layer;
 	}

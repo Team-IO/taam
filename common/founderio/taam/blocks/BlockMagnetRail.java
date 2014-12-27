@@ -3,7 +3,6 @@ package founderio.taam.blocks;
 import java.util.ArrayList;
 import java.util.List;
 
-import codechicken.lib.vec.BlockCoord;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -17,6 +16,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import founderio.taam.Taam;
 import founderio.taam.conveyors.ConveyorUtil;
 import founderio.taam.multinet.logistics.InBlockRoute;
+import founderio.taam.multinet.logistics.WorldCoord;
 import founderio.taam.rendering.TaamRenderer;
 
 public class BlockMagnetRail extends Block {
@@ -238,7 +238,7 @@ public class BlockMagnetRail extends Block {
 	        }
 	}
 
-	public List<BlockCoord> getConnectedTracks(World world, int x, int y, int z, int meta) {
+	public List<WorldCoord> getConnectedTracks(World world, int x, int y, int z, int meta) {
 		
 		int rotation = getRotation(world.getBlockMetadata(x, y, z));
 		ForgeDirection direction = ForgeDirection.SOUTH;
@@ -278,13 +278,13 @@ public class BlockMagnetRail extends Block {
 			}
 		}
 		
-		BlockCoord leftC = new BlockCoord(x + left.offsetX, y + left.offsetY, z + left.offsetZ);
-		BlockCoord forwardC = new BlockCoord(x + direction.offsetX, y + direction.offsetY, z + direction.offsetZ);
-		BlockCoord rightC = new BlockCoord(x + right.offsetX, y + right.offsetY, z + right.offsetZ);
+		WorldCoord leftC = new WorldCoord(world, x, y, z).getDirectionalOffset(left);
+		WorldCoord forwardC = new WorldCoord(world, x, y, z).getDirectionalOffset(direction);
+		WorldCoord rightC = new WorldCoord(world, x, y, z).getDirectionalOffset(right);
 		
 		//TODO: Optimize
 		
-		List<BlockCoord> coords = new ArrayList<BlockCoord>();
+		List<WorldCoord> coords = new ArrayList<WorldCoord>();
 		
 		if(rightConnected) {
 			coords.add(rightC);

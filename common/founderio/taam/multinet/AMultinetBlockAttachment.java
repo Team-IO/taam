@@ -2,7 +2,7 @@ package founderio.taam.multinet;
 
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-import codechicken.lib.vec.BlockCoord;
+import founderio.taam.multinet.logistics.WorldCoord;
 
 public abstract class AMultinetBlockAttachment implements IMultinetAttachment {
 
@@ -35,14 +35,14 @@ public abstract class AMultinetBlockAttachment implements IMultinetAttachment {
 	
 	
 	@Override
-	public boolean canAttach(BlockCoord coords, ForgeDirection face, ForgeDirection dir,
+	public boolean canAttach(WorldCoord coords, ForgeDirection face, ForgeDirection dir,
 			int layer, String type) {
 		return face == this.face && dir == this.dir && layer == this.layer && this.type.equals(type);
 	}
 
 	@Override
-	public BlockCoord getCoordinates() {
-		return new BlockCoord(x, y, z);
+	public WorldCoord getCoordinates() {
+		return new WorldCoord(world, x, y, z);
 	}
 
 	@Override
