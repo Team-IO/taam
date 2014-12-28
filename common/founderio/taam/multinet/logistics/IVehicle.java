@@ -13,5 +13,6 @@ public interface IVehicle {
 	boolean isConnectedToManager();
 	
 	void linkToManager(WorldCoord coords);
-	boolean hasRouteToStation(int stationID);
+	boolean hasRouteToStation(int stationID, StationGraph graph, LogisticsManager manager);
+	void setRoute(Route route);
 }

@@ -201,7 +201,7 @@ public class LogisticsManager {
 	
 	private IVehicle findSuitableVehicle(Transport transport) {
 		for(IVehicle vehicle : vehicles) {
-			if(vehicle.hasRouteToStation(transport.from)) {
+			if(vehicle.hasRouteToStation(transport.from, graph, this)) {
 				PredictedInventory predInv = vehicle.getPredictedInventory();
 				if(predInv.canStackFit((ItemStack) transport.goods.type)) {
 					return vehicle;

@@ -1,6 +1,7 @@
 package founderio.taam.blocks;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import net.minecraft.block.Block;
@@ -130,8 +131,12 @@ public class BlockMagnetRail extends Block {
 		}
 	}
 	
-	public List<InBlockRoute> getInBlockRoutes(IBlockAccess world, int x, int y, int z, int meta) {
+	public List<InBlockRoute> getInBlockRoutes(IBlockAccess world, int x, int y, int z) {
 		//TODO: Extract method
+		if(world.getBlock(x, y, z) != this) {
+			return Collections.emptyList();
+		}
+		
 		int rotation = getRotation(world.getBlockMetadata(x, y, z));
 		ForgeDirection direction = ForgeDirection.SOUTH;
 		for(int i = 0; i < rotation; i++) {

@@ -1,10 +1,10 @@
 package founderio.taam.entities;
 
+import java.util.Iterator;
 import java.util.List;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
@@ -12,16 +12,18 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraftforge.common.util.ForgeDirection;
 import codechicken.lib.inventory.InventorySimple;
 import codechicken.lib.inventory.InventoryUtils;
-import codechicken.lib.vec.BlockCoord;
 import founderio.taam.TaamMain;
 import founderio.taam.blocks.TileEntityLogisticsManager;
 import founderio.taam.multinet.logistics.IVehicle;
 import founderio.taam.multinet.logistics.InBlockRoute;
+import founderio.taam.multinet.logistics.LogisticsManager;
 import founderio.taam.multinet.logistics.LogisticsUtil;
 import founderio.taam.multinet.logistics.PredictedInventory;
 import founderio.taam.multinet.logistics.Route;
+import founderio.taam.multinet.logistics.StationGraph;
 import founderio.taam.multinet.logistics.WorldCoord;
 import founderio.taam.network.TPLogisticsConfiguration;
 
@@ -61,6 +63,9 @@ public class EntityLogisticsCart extends Entity implements IVehicle {
 		dataWatcher.addObject(22, 0);
 		dataWatcher.addObject(23, 0);
 		setCoordsManager(coordsManager);
+		
+		//TODO: Set BoundingBox
+		this.boundingBox.maxY = 0.8;
 	}
 	
 	private WorldCoord getCoordsManager() {
@@ -245,10 +250,32 @@ public class EntityLogisticsCart extends Entity implements IVehicle {
          	currentRailZ = z;
          	
          	ibrProgress = 0;
-         	ibr = TaamMain.blockMagnetRail.getInBlockRoutes(worldObj, x, y, z, worldObj.getBlockMetadata(x, y, z)).get(0);
+         	ibr = TaamMain.blockMagnetRail.getInBlockRoutes(worldObj, x, y, z).get(0);
          	
          	isOnRail = true;
          }
+	}
+	
+	private void findNextRoute() {
+		ForgeDirection dir = ibr.leaveTo;
+		List<InBlockRoute> nextRoutes = TaamMain.blockMagnetRail.getInBlockRoutes(worldObj, this.currentRailX + dir.offsetX, this.currentRailY + dir.offsetX, this.currentRailZ + dir.offsetX);
+		
+		Iterator<InBlockRoute> iter = nextRoutes.iterator();
+		
+		while(iter.hasNext()) {
+			InBlockRoute route = iter.next();
+			if(route.enterFrom != dir) {
+				iter.remove();
+			}
+		}
+		if(nextRoutes.isEmpty()) {
+			//Stop at end of track
+			ibrProgress = ibr.totalLength;
+			return;
+		}
+		//TODO: Find the next block in the route to see which ibr to use
+		ibr = nextRoutes.get(0);
+		ibrProgress -= ibr.totalLength;
 	}
 	
 	@Override
@@ -266,12 +293,18 @@ public class EntityLogisticsCart extends Entity implements IVehicle {
             	//TODO: Check where we need to go, depending on route
             	
             	if(ibr == null) {
-            		//TODO: Find route
+            		List<InBlockRoute> routes = TaamMain.blockMagnetRail.getInBlockRoutes(worldObj, currentRailX, currentRailY, currentRailZ);
+            		
+            		if(routes.isEmpty()) {
+            			return;
+            		} else {
+            			//TODO: Snap using direction/interpolation?
+            			ibr = routes.get(0);
+            		}
             	} else {
             		ibrProgress += currentSpeed;
             		while(ibrProgress > ibr.totalLength) {
-            			//TODO: get next ibr
-            			ibrProgress -= ibr.totalLength;
+            			findNextRoute();
             		}
             		// Find the point in the ibr we are at and do a linear interpolation between the closes points on the ibr.
             		float calcOffset = ibrProgress;
@@ -343,9 +376,19 @@ public class EntityLogisticsCart extends Entity implements IVehicle {
 	}
 
 	@Override
-	public boolean hasRouteToStation(int stationID) {
+	public boolean hasRouteToStation(int stationID, StationGraph graph, LogisticsManager manager) {
+		if(isOnRail) {
+			//TODO: Respect IBR (already "skip ahead" to next rail on that route)
+			return null != graph.astar(new WorldCoord(worldObj, currentRailX, currentRailY, currentRailZ), graph.getTrackForStation(manager.getStation(stationID)));
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public void setRoute(Route route) {
 		// TODO Auto-generated method stub
-		return false;
+		
 	}
 
 }
