@@ -24,7 +24,6 @@ public final class Taam {
 	public static final String BLOCK_ORE = "taam.ore";
 	public static final String BLOCK_MAGNET_RAIL = "taam.magnet_rail";
 	
-	//TODO: Ignore Bauxite + Kaolinite in Ingot Form
 	public static final String[] BLOCK_ORE_META = new String[] {
 		"copper",
 		"tin",
