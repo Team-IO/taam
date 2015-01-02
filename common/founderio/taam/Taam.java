@@ -7,7 +7,7 @@ public final class Taam {
 	
 	public static final String MOD_ID = "taam";
 	public static final String MOD_NAME = "Taam";
-	public static final String MOD_VERSION = "0.1";
+	public static final String MOD_VERSION = "@VERSION@";
 	public static final String MOD_AUTHOR1 = "founderio";
 	public static final String MOD_AUTHOR2 = "Xander112";
 	public static final String MOD_DESCRIPTION = "Tech and Acessories Mod";
