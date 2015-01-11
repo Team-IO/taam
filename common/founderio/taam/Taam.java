@@ -61,12 +61,16 @@ public final class Taam {
 	public static final String[] ITEM_MATERIAL_META = new String[] {
 		"plastic",
 		"rubber",
-		"graphite"
+		"graphite",
+		"silicon_wafer"
 	};
 	public static final String[] ITEM_PART_META = new String[] {
 		"photocell",
 		"motor",
-		"support_frame"
+		"support_frame",
+		"circuit_basic",
+		"circuit_advanced",
+		"logistics_chip"
 	};
 	
 	public static final String TILEENTITY_SENSOR = "taam.sensor";
