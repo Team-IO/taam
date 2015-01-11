@@ -11,6 +11,7 @@ import codechicken.multipart.TMultiPart;
 import founderio.taam.multinet.IMultinetAttachment;
 import founderio.taam.multinet.Multinet;
 import founderio.taam.multinet.MultinetUtil;
+import founderio.taam.multinet.logistics.WorldCoord;
 
 public abstract class MultinetMultipart extends TMultiPart implements IMultinetAttachment {
 
@@ -130,8 +131,8 @@ public abstract class MultinetMultipart extends TMultiPart implements IMultinetA
 	 */
 	
 	@Override
-	public BlockCoord getCoordinates() {
-		return new BlockCoord(getTile());
+	public WorldCoord getCoordinates() {
+		return new WorldCoord(getTile());
 	}
 
 	@Override

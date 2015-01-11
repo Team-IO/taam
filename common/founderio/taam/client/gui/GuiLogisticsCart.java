@@ -9,15 +9,13 @@ import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
 
-import codechicken.lib.vec.BlockCoord;
-
 import com.google.common.base.Function;
 
 import founderio.taam.blocks.TileEntityLogisticsManager;
-import founderio.taam.blocks.TileEntityLogisticsStation;
 import founderio.taam.client.gui.util.CustomButton;
 import founderio.taam.client.gui.util.CustomGui;
 import founderio.taam.entities.EntityLogisticsCart;
+import founderio.taam.multinet.logistics.WorldCoord;
 
 public class GuiLogisticsCart extends CustomGui {
 	public static ResourceLocation bg = new ResourceLocation("taam:textures/gui/logistics_station.png");
@@ -149,7 +147,7 @@ public class GuiLogisticsCart extends CustomGui {
 			@Override
 			public Boolean apply(CustomButton input) {
 				TileEntityLogisticsManager manager = (TileEntityLogisticsManager) listContent.get(input.id + scrollPosition);
-				entity.linkToManager(new BlockCoord(manager));
+				entity.linkToManager(new WorldCoord(manager));
 				return true;
 			}
 		};

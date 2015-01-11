@@ -1,6 +1,5 @@
 package founderio.taam.multinet.logistics;
 
-import codechicken.lib.vec.BlockCoord;
 
 public interface IStation {
 
@@ -10,5 +9,5 @@ public interface IStation {
 
 	boolean isConnectedToManager();
 
-	void linkToManager(BlockCoord coords);
+	void linkToManager(WorldCoord coords);
 }

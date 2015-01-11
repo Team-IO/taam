@@ -26,6 +26,7 @@ import founderio.taam.multinet.logistics.IStation;
 import founderio.taam.multinet.logistics.LogisticsConfiguration;
 import founderio.taam.multinet.logistics.LogisticsManager;
 import founderio.taam.multinet.logistics.PredictedInventory;
+import founderio.taam.multinet.logistics.WorldCoord;
 import founderio.taam.network.TPLogisticsConfiguration;
 
 public class TileEntityLogisticsStation extends BaseTileEntity implements IStation, IRotatable {
@@ -95,9 +96,9 @@ public class TileEntityLogisticsStation extends BaseTileEntity implements IStati
 	}
 	
 	@Override
-	public void linkToManager(BlockCoord coords) {
+	public void linkToManager(WorldCoord coords) {
 		if(worldObj.isRemote) {
-			TPLogisticsConfiguration config = TPLogisticsConfiguration.newConnectManager(worldObj.provider.dimensionId, new BlockCoord(this), coords);
+			TPLogisticsConfiguration config = TPLogisticsConfiguration.newConnectManager(new WorldCoord(this), coords);
 			TaamMain.network.sendToServer(config);
 		} else {
 			TileEntity te = worldObj.getTileEntity(coords.x, coords.y, coords.z);

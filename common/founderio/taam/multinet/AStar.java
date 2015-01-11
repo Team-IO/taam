@@ -6,12 +6,13 @@ import java.util.PriorityQueue;
 import java.util.Set;
 
 import codechicken.lib.vec.BlockCoord;
+import founderio.taam.multinet.logistics.WorldCoord;
 
 public class AStar {
 
 	public static interface Navigator<T> {
-		public BlockCoord getCoords(T object);
-		public List<T> findNeighbors(T object);
+		public WorldCoord getCoords(T object);
+		public List<T> findNeighbors(T object, Node<T> predecessor);
 	}
 	
 	public static class Node<T> implements Comparable<Node<T>> {
@@ -46,8 +47,8 @@ public class AStar {
 		
 		Node<T> current;
 		
-		BlockCoord bctarget = navigator.getCoords(target);
-		BlockCoord bccurrent = new BlockCoord();
+		WorldCoord bctarget = navigator.getCoords(target);
+		WorldCoord bccurrent = new WorldCoord();
 		
 		do {
 			current = openlist.remove();
@@ -58,7 +59,7 @@ public class AStar {
 			
 			closedlist.add(current);
 			
-			for(T successor : navigator.findNeighbors(current.object)) {
+			for(T successor : navigator.findNeighbors(current.object, current)) {
 				// skip attachments that are already being processed
 				boolean found = false;
 				for(Node<T> op : openlist) {
@@ -98,7 +99,7 @@ public class AStar {
 				foundS.predecessor = current;
 				foundS.dist = tentative_g;
 				
-				double f = tentative_g + bccurrent.set(navigator.getCoords(current.object)).sub(bctarget).mag();
+				double f = tentative_g + bccurrent.set(navigator.getCoords(current.object)).subtract(bctarget).mag();
 				foundS.value = f;
 				if(found) {
 					openlist.remove(foundS);

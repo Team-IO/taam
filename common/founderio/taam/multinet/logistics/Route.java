@@ -18,14 +18,14 @@ public class Route {
 		transports = new ArrayList<Transport>();
 		stations = new ArrayList<Integer>();
 		stationsToPlot = new Hashtable<Integer, Integer>();
-		plot = new ArrayList<BlockCoord>();
+		plot = new ArrayList<WorldCoord>();
 	}
 	
 	List<Transport> transports;
 	List<Integer> stations;
 	
 	//TODO: World coordinates
-	List<BlockCoord> plot;
+	List<WorldCoord> plot;
 	Map<Integer, Integer> stationsToPlot;
 	boolean hasPlot = false;
 	
@@ -46,12 +46,12 @@ public class Route {
 		//TODO: Split Plot into one track list per station -> make replotting easier
 		
 		IStation current = manager.getStation(stations.get(0));
-		BlockCoord currentTrack = graph.getTrackForStation(current);
+		WorldCoord currentTrack = graph.getTrackForStation(current);
 		plot.add(currentTrack);
 		stationsToPlot.put(0, 0);
 		for(int i = 1; i < stations.size(); i++) {
 			IStation nextStation = manager.getStation(stations.get(i));
-			BlockCoord nextTrack = graph.getTrackForStation(nextStation);
+			WorldCoord nextTrack = graph.getTrackForStation(nextStation);
 			if(nextTrack == null) {
 				return false;
 			}
@@ -59,12 +59,12 @@ public class Route {
 				stationsToPlot.put(i, plot.size() - 1);
 				continue;
 			}
-			Node<BlockCoord> node = graph.astar(currentTrack, nextTrack);
+			Node<WorldCoord> node = graph.astar(currentTrack, nextTrack);
 			if(node == null) {
 				return false;
 			}
 			// Add astar result to plot in reverse (result is from target to origin)
-			List<BlockCoord> nextPlotContent = new ArrayList<BlockCoord>();
+			List<WorldCoord> nextPlotContent = new ArrayList<WorldCoord>();
 			do {
 				nextPlotContent.add(node.object);
 				node = node.getPredecessor();

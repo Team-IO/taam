@@ -1,6 +1,5 @@
 package founderio.taam.multinet.logistics;
 
-import codechicken.lib.vec.BlockCoord;
 
 public interface IVehicle {
 	String getName();
@@ -13,6 +12,7 @@ public interface IVehicle {
 
 	boolean isConnectedToManager();
 	
-	void linkToManager(BlockCoord coords);
-	boolean hasRouteToStation(int stationID);
+	void linkToManager(WorldCoord coords);
+	boolean hasRouteToStation(int stationID, StationGraph graph, LogisticsManager manager);
+	void setRoute(Route route);
 }

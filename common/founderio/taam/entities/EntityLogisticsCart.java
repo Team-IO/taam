@@ -1,10 +1,10 @@
 package founderio.taam.entities;
 
+import java.util.Iterator;
 import java.util.List;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
@@ -12,16 +12,19 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraftforge.common.util.ForgeDirection;
 import codechicken.lib.inventory.InventorySimple;
 import codechicken.lib.inventory.InventoryUtils;
-import codechicken.lib.vec.BlockCoord;
 import founderio.taam.TaamMain;
 import founderio.taam.blocks.TileEntityLogisticsManager;
 import founderio.taam.multinet.logistics.IVehicle;
 import founderio.taam.multinet.logistics.InBlockRoute;
+import founderio.taam.multinet.logistics.LogisticsManager;
 import founderio.taam.multinet.logistics.LogisticsUtil;
 import founderio.taam.multinet.logistics.PredictedInventory;
 import founderio.taam.multinet.logistics.Route;
+import founderio.taam.multinet.logistics.StationGraph;
+import founderio.taam.multinet.logistics.WorldCoord;
 import founderio.taam.network.TPLogisticsConfiguration;
 
 public class EntityLogisticsCart extends Entity implements IVehicle {
@@ -44,8 +47,7 @@ public class EntityLogisticsCart extends Entity implements IVehicle {
 	private Route route;
 	
 	private float currentSpeed = 0.1f;
-	//TODO: World Coords
-	private BlockCoord coordsManager;
+	private WorldCoord coordsManager;
     private String name;
     
 	public EntityLogisticsCart(World world) {
@@ -55,32 +57,40 @@ public class EntityLogisticsCart extends Entity implements IVehicle {
 	@Override
 	protected void entityInit() {
 		inventory = new InventorySimple(inventory_size);
-		if(coordsManager == null) {
-			dataWatcher.addObject(20, 0);
-			dataWatcher.addObject(21, 0);
-			dataWatcher.addObject(22, 0);
-		} else {
-			dataWatcher.addObject(20, coordsManager.x);
-			dataWatcher.addObject(21, coordsManager.y);
-			dataWatcher.addObject(22, coordsManager.z);
-		}
+		dataWatcher.addObject(19, (byte)0);
+		dataWatcher.addObject(20, 0);
+		dataWatcher.addObject(21, 0);
+		dataWatcher.addObject(22, 0);
+		dataWatcher.addObject(23, 0);
+		setCoordsManager(coordsManager);
+		
+		//TODO: Set BoundingBox
+		this.boundingBox.maxY = 0.8;
 	}
 	
-	private BlockCoord getCoordsManager() {
-		if(coordsManager == null) {
-			coordsManager = new BlockCoord();
+	private WorldCoord getCoordsManager() {
+		boolean coordsPresent = dataWatcher.getWatchableObjectByte(19) != (byte)0;
+		if(coordsPresent) {
+			coordsManager = new WorldCoord();
+			coordsManager.world = dataWatcher.getWatchableObjectInt(20);
+			coordsManager.x = dataWatcher.getWatchableObjectInt(21);
+			coordsManager.y = dataWatcher.getWatchableObjectInt(22);
+			coordsManager.z = dataWatcher.getWatchableObjectInt(23);
+		} else {
+			coordsManager = null;
 		}
-		coordsManager.x = dataWatcher.getWatchableObjectInt(20);
-		coordsManager.y = dataWatcher.getWatchableObjectInt(21);
-		coordsManager.z = dataWatcher.getWatchableObjectInt(22);
 		return coordsManager;
 	}
 	
-	private void setCoordsManager(BlockCoord coords) {
+	private void setCoordsManager(WorldCoord coords) {
 		coordsManager = coords;
-		dataWatcher.updateObject(20, coordsManager.x);
-		dataWatcher.updateObject(21, coordsManager.y);
-		dataWatcher.updateObject(22, coordsManager.z);
+		dataWatcher.updateObject(19, coordsManager == null ? (byte)0 : (byte)1);
+		if(coordsManager != null) {
+			dataWatcher.updateObject(20, coordsManager.world);
+			dataWatcher.updateObject(21, coordsManager.x);
+			dataWatcher.updateObject(22, coordsManager.y);
+			dataWatcher.updateObject(23, coordsManager.z);
+		}
 	}
 
 	@Override
@@ -96,11 +106,11 @@ public class EntityLogisticsCart extends Entity implements IVehicle {
 		currentSpeed = tag.getFloat("currentSpeed");
 		
 		name = tag.getString("name");
-		int[] coords = tag.getIntArray("coordsManager");
-		if(coords == null || coords.length != 3) {
-			coordsManager = null;
+		NBTTagCompound coordsManager = tag.getCompoundTag("coordsManager");
+		if(coordsManager == null) {
+			this.coordsManager = null;
 		} else {
-			coordsManager = BlockCoord.fromAxes(coords);
+			this.coordsManager = new WorldCoord().readFromNBT(coordsManager);
 		}
 		InventoryUtils.readItemStacksFromTag(inventory.items, tag.getTagList("inventory", NBT.TAG_COMPOUND));
 	}
@@ -122,7 +132,9 @@ public class EntityLogisticsCart extends Entity implements IVehicle {
 		tag.setFloat("currentSpeed", currentSpeed);
 		
 		if(coordsManager != null) {
-			tag.setIntArray("coordsManager", coordsManager.intArray());
+			NBTTagCompound tagCoords = new NBTTagCompound();
+			coordsManager.writeToNBT(tagCoords);
+			tag.setTag("coordsManager", tagCoords);
 		}
 		if(name != null && !name.trim().isEmpty()) {
 			tag.setString("name", name);
@@ -187,12 +199,12 @@ public class EntityLogisticsCart extends Entity implements IVehicle {
 		if(manager.getWorldObj() != worldObj) {
 			return;
 		}
-		setCoordsManager(new BlockCoord(manager));
+		setCoordsManager(new WorldCoord(manager));
 		this.vehicleID = manager.vehicleRegister(this);
 	}
 
 	@Override
-	public void linkToManager(BlockCoord coords) {
+	public void linkToManager(WorldCoord coords) {
 		if(worldObj.isRemote) {
 			//TODO: send packet
 			TPLogisticsConfiguration config = TPLogisticsConfiguration.newConnectManagerVehicle(worldObj.provider.dimensionId, this.getEntityId(), coords);
@@ -238,10 +250,32 @@ public class EntityLogisticsCart extends Entity implements IVehicle {
          	currentRailZ = z;
          	
          	ibrProgress = 0;
-         	ibr = TaamMain.blockMagnetRail.getInBlockRoutes(worldObj, x, y, z, worldObj.getBlockMetadata(x, y, z)).get(0);
+         	ibr = TaamMain.blockMagnetRail.getInBlockRoutes(worldObj, x, y, z).get(0);
          	
          	isOnRail = true;
          }
+	}
+	
+	private void findNextRoute() {
+		ForgeDirection dir = ibr.leaveTo;
+		List<InBlockRoute> nextRoutes = TaamMain.blockMagnetRail.getInBlockRoutes(worldObj, this.currentRailX + dir.offsetX, this.currentRailY + dir.offsetX, this.currentRailZ + dir.offsetX);
+		
+		Iterator<InBlockRoute> iter = nextRoutes.iterator();
+		
+		while(iter.hasNext()) {
+			InBlockRoute route = iter.next();
+			if(route.enterFrom != dir) {
+				iter.remove();
+			}
+		}
+		if(nextRoutes.isEmpty()) {
+			//Stop at end of track
+			ibrProgress = ibr.totalLength;
+			return;
+		}
+		//TODO: Find the next block in the route to see which ibr to use
+		ibr = nextRoutes.get(0);
+		ibrProgress -= ibr.totalLength;
 	}
 	
 	@Override
@@ -259,12 +293,18 @@ public class EntityLogisticsCart extends Entity implements IVehicle {
             	//TODO: Check where we need to go, depending on route
             	
             	if(ibr == null) {
-            		//TODO: Find route
+            		List<InBlockRoute> routes = TaamMain.blockMagnetRail.getInBlockRoutes(worldObj, currentRailX, currentRailY, currentRailZ);
+            		
+            		if(routes.isEmpty()) {
+            			return;
+            		} else {
+            			//TODO: Snap using direction/interpolation?
+            			ibr = routes.get(0);
+            		}
             	} else {
             		ibrProgress += currentSpeed;
             		while(ibrProgress > ibr.totalLength) {
-            			//TODO: get next ibr
-            			ibrProgress -= ibr.totalLength;
+            			findNextRoute();
             		}
             		// Find the point in the ibr we are at and do a linear interpolation between the closes points on the ibr.
             		float calcOffset = ibrProgress;
@@ -336,9 +376,19 @@ public class EntityLogisticsCart extends Entity implements IVehicle {
 	}
 
 	@Override
-	public boolean hasRouteToStation(int stationID) {
+	public boolean hasRouteToStation(int stationID, StationGraph graph, LogisticsManager manager) {
+		if(isOnRail) {
+			//TODO: Respect IBR (already "skip ahead" to next rail on that route)
+			return null != graph.astar(new WorldCoord(worldObj, currentRailX, currentRailY, currentRailZ), graph.getTrackForStation(manager.getStation(stationID)));
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public void setRoute(Route route) {
 		// TODO Auto-generated method stub
-		return false;
+		
 	}
 
 }
