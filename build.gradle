@@ -22,7 +22,7 @@ group = "founderio.taam" // http://maven.apache.org/guides/mini/guide-naming-con
 archivesBaseName = "taam-1.7.10"
 
 minecraft {
-    version = "1.7.10-10.13.0.1179"
+    version = "1.7.10-10.13.2.1230"
     assetDir = "eclipse/assets"
     replace "@VERSION@", project.version
 }
