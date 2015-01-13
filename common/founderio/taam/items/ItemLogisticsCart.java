@@ -19,7 +19,7 @@ import founderio.taam.entities.EntityLogisticsCart;
 public class ItemLogisticsCart extends ItemWithMetadata {
 
 	public ItemLogisticsCart() {
-		super("conveyor_appliance", Taam.ITEM_CONVEYOR_APPLIANCE_META);
+		super("conveyor_appliance", Taam.ITEM_LOGISTICS_CART_META);
 	}
 
 	@Override
@@ -52,7 +52,7 @@ public class ItemLogisticsCart extends ItemWithMetadata {
 			int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
 		int i = stack.getItemDamage();
 
-		if (i < 0 || i >= Taam.ITEM_CONVEYOR_APPLIANCE_META.length) {
+		if (i < 0 || i >= Taam.ITEM_LOGISTICS_CART_META.length) {
 			i = 0;
 		}
 		

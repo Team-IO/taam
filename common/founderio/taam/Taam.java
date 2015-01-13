@@ -57,6 +57,9 @@ public final class Taam {
 	public static final String[] ITEM_CONVEYOR_APPLIANCE_META = new String[] {
 		"sprayer"
 	};
+	public static final String[] ITEM_LOGISTICS_CART_META = new String[] {
+		"basic"
+	};
 	public static final String[] ITEM_MATERIAL_META = new String[] {
 		"plastic",
 		"rubber",
