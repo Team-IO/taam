@@ -46,7 +46,7 @@ public class EntityLogisticsCart extends Entity implements IVehicle {
 	private float ibrProgress;
 	private Route route;
 	
-	private float currentSpeed = 0.1f;
+	private float currentSpeed = 0.001f;
 	private WorldCoord coordsManager;
     private String name;
     
@@ -242,7 +242,8 @@ public class EntityLogisticsCart extends Entity implements IVehicle {
          boolean isActuallyOnRail = LogisticsUtil.isMagnetRail(worldObj, x, y, z);
          // Also check one block below if we are "floating"
          if(!isActuallyOnRail && worldObj.isAirBlock(x, y, z)) {
-        	 isActuallyOnRail = LogisticsUtil.isMagnetRail(worldObj, x, y-1, z);
+        	 y -= 1;
+        	 isActuallyOnRail = LogisticsUtil.isMagnetRail(worldObj, x, y, z);
          }
          if(!isOnRail && isActuallyOnRail) {
          	currentRailX = x;
@@ -253,6 +254,8 @@ public class EntityLogisticsCart extends Entity implements IVehicle {
          	ibr = TaamMain.blockMagnetRail.getInBlockRoutes(worldObj, x, y, z).get(0);
          	
          	isOnRail = true;
+         } else {
+        	 isOnRail = false;
          }
 	}
 	
@@ -264,7 +267,7 @@ public class EntityLogisticsCart extends Entity implements IVehicle {
 		
 		while(iter.hasNext()) {
 			InBlockRoute route = iter.next();
-			if(route.enterFrom != dir) {
+			if(route.enterFrom.getOpposite() != dir) {
 				iter.remove();
 			}
 		}
@@ -276,6 +279,9 @@ public class EntityLogisticsCart extends Entity implements IVehicle {
 		//TODO: Find the next block in the route to see which ibr to use
 		ibr = nextRoutes.get(0);
 		ibrProgress -= ibr.totalLength;
+		currentRailX += dir.offsetX;
+		currentRailY += dir.offsetY;
+		currentRailZ += dir.offsetZ;
 	}
 	
 	@Override

@@ -40,16 +40,16 @@ public class BlockMagnetRail extends Block {
         routesForward = new InBlockRoute[4];
         
         //TODO: Validate these coordinates!
-        routesForward[0] = new InBlockRoute(ForgeDirection.SOUTH, ForgeDirection.NORTH, new float[] {
+        routesForward[0] = new InBlockRoute(ForgeDirection.NORTH, ForgeDirection.SOUTH, new float[] {
         		0.5f, 0, 1,
         		0.5f, 0, 0
         });
-        routesLeft[0] = new InBlockRoute(ForgeDirection.SOUTH, ForgeDirection.WEST, new float[] {
+        routesLeft[0] = new InBlockRoute(ForgeDirection.NORTH, ForgeDirection.EAST, new float[] {
         		0.5f, 0, 1,
         		0.5f, 0, 0.5f,
         		1, 0, 0.5f
         });
-        routesRight[0] = new InBlockRoute(ForgeDirection.SOUTH, ForgeDirection.EAST, new float[] {
+        routesRight[0] = new InBlockRoute(ForgeDirection.NORTH, ForgeDirection.WEST, new float[] {
         		0.5f, 0, 1,
         		0.5f, 0, 0.5f,
         		0, 0, 0.5f
