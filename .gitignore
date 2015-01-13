@@ -1,27 +1,19 @@
-*.class
 .DS_Store
 
-# Package Files #
-*.jar
-!gradle-wrapper.jar
-!/lib/*.jar
-*.war
-*.ear
 /bin
-/.pmd
-/.classpath
 /config
 /crash-reports
 /logs
 /mods
 /resourcepacks
+/screenshots
 /saves
 /options.txt
 /build
-/.gradle
 /asm
+/usernamecache.json
 
+/.pmd
+/.classpath
+/.gradle
 /.metadata
-/stencil1.png
-/stencil2.png
-/stencil3.png
