@@ -39,7 +39,7 @@ public class TileEntityLogisticsManager extends BaseTileEntity {
 			return null;
 		}
 		if(manager == null) {
-			manager = new LogisticsManager();
+			manager = new LogisticsManager(worldObj);
 		}
 		return manager;
 	}

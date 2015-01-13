@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
 
 public class LogisticsManager {
 
@@ -32,7 +33,7 @@ public class LogisticsManager {
 	public List<Transport> pendingTransport;
 	List<Route> processingRoutes;
 	
-	public LogisticsManager() {
+	public LogisticsManager(World world) {
 		stations = new ArrayList<IStation>();
 		vehicles = new ArrayList<IVehicle>();
 		pendingDemands = new ArrayList<Demand>();
@@ -45,6 +46,8 @@ public class LogisticsManager {
 		
 		mapVehicleID = new HashMap<Integer, IVehicle>();
 		mapIDVehicle = new HashMap<IVehicle, Integer>();
+		
+		graph = new StationGraph(world);
 	}
 	
 //	public static void main(String[] args) {
@@ -143,31 +146,41 @@ public class LogisticsManager {
 		// Begin with transport of closest due time - or oldest transport if none has a due time.
 		Collections.sort(pendingTransport);
 		
-		IVehicle vehicle = null;
-
-		/*
-		 * Select a suitable free vehicle and generate route for it.
-		 * If not found, try to go with the next task.
-		 */
-		int startingPointIndex = -1;
-		Transport startingPoint = null; 
-		do {
-			startingPointIndex++;
-			startingPoint = pendingTransport.get(startingPointIndex);
-			vehicle = findSuitableVehicle(startingPoint);
-		} while (vehicle == null && startingPointIndex < pendingTransport.size() - 1);
+		int processingLimit = 5;
 		
-		Route route = new Route();
-		route.transports.add(startingPoint);
-		route.stations.add(startingPoint.from);
-		route.stations.add(startingPoint.to);
-		
-		route.plotRoute(graph, this);
-		
-		processingRoutes.add(route);
-		pendingTransport.remove(startingPointIndex);
-		
-		tryAppendTransports(route);
+		while(processingLimit > 0) {
+			processingLimit--;
+			
+			IVehicle vehicle = null;
+	
+			/*
+			 * Select a suitable free vehicle and generate route for it.
+			 * If not found, try to go with the next task.
+			 */
+			int startingPointIndex = -1;
+			Transport startingPoint = null; 
+			do {
+				startingPointIndex++;
+				startingPoint = pendingTransport.get(startingPointIndex);
+				vehicle = findSuitableVehicle(startingPoint);
+			} while (vehicle == null && startingPointIndex < pendingTransport.size() - 1);
+			
+			Route route = new Route();
+			route.transports.add(startingPoint);
+			route.stations.add(startingPoint.from);
+			route.stations.add(startingPoint.to);
+	
+			//TODO: Only remove auto-scheduled transports before a route is established!
+			pendingTransport.remove(startingPointIndex);
+			
+			if(!route.plotRoute(graph, this)) {
+				return;
+			}
+			
+			processingRoutes.add(route);
+			
+			tryAppendTransports(route);
+		}
 	}
 	
 	public int getStationID(IStation station) {

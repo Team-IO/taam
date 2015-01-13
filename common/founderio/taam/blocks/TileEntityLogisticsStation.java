@@ -177,6 +177,8 @@ public class TileEntityLogisticsStation extends BaseTileEntity implements IStati
 			return Collections.emptyList();
 		}
 		LogisticsManager manager = teManager.getManager();
+		//TODO: Respect processing demands
+		//TODO: Respect transports (DO NOT OVERLAP WITH DEMANDS!)
 		return Collections2.filter(manager.pendingDemands, new Predicate<Demand>() {
 			@Override
 			public boolean apply(Demand input) {

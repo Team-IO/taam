@@ -47,6 +47,9 @@ public class Route {
 		
 		IStation current = manager.getStation(stations.get(0));
 		WorldCoord currentTrack = graph.getTrackForStation(current);
+		if(currentTrack == null) {
+			return false;
+		}
 		plot.add(currentTrack);
 		stationsToPlot.put(0, 0);
 		for(int i = 1; i < stations.size(); i++) {
