@@ -107,13 +107,13 @@ public class TaamRecipes {
 				new ItemStack(TaamMain.blockProductionLine, 1, 3)}));
 		
 //		logistics_manager
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.blockProductionLine, 1, 4),
-				"CGC", "PSP", "IPI",
-				'C', "ingotCopper",
-				'G', Items.gold_ingot,
-				'I', Items.iron_ingot,
-				'P', "materialPlastic",
-				'S', new ItemStack(TaamMain.itemMaterial, 1, 3)));
+//		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.blockProductionLine, 1, 4),
+//				"CGC", "PSP", "IPI",
+//				'C', "ingotCopper",
+//				'G', Items.gold_ingot,
+//				'I', Items.iron_ingot,
+//				'P', "materialPlastic",
+//				'S', new ItemStack(TaamMain.itemMaterial, 1, 3)));
 	
 	}
 	
