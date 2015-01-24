@@ -21,6 +21,8 @@ public class BlockOre extends Block {
 		super(Material.rock);
 		this.setStepSound(Block.soundTypeStone);
 		this.setHarvestLevel("pickaxe", 1);
+		this.setResistance(25);
+		this.setHardness(2);
 		this.setBlockTextureName(Taam.MOD_ID + ":ore");
 	}
 	
