@@ -18,9 +18,11 @@ item.taam.part.circuit_advanced.name=Advanced Circuit
 item.taam.part.logistics_chip.name=Logistics Chip
 item.taam.part.rubber_band.name=Rubber Band
 # Materials
-item.taam.material.plastic.name=Plastic
-item.taam.material.rubber.name=Rubber
-item.taam.material.graphite.name=Graphite
+item.taam.material.plastic_sheet.name=Plastic Sheet
+item.taam.material.plastic_bar.name=Plastic Bar
+item.taam.material.rubber_bar.name=Rubber Bar
+item.taam.material.rubber_sheet.name=Rubber Sheet
+item.taam.material.graphite.name=Graphite Bar
 item.taam.material.silicon_wafer.name=Silicon Wafer
 # Conveyor Appliances
 item.taam.conveyor_appliance.sprayer.name=Sprayer
