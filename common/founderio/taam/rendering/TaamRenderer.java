@@ -260,7 +260,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 
 		GL11.glPopMatrix();
 	}
-
+	//TODO: Don't display metal cap when not pointing to wards a block
 	public void renderConveyor(TileEntity tileEntity, double x, double y, double z) {
 		
 		

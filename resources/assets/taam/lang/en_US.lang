@@ -13,10 +13,15 @@ item.taam.ingot.kaolinite.name=The Impossible Kaolinite Ingot
 item.taam.part.photocell.name=Photo Cell
 item.taam.part.motor.name=Motor
 item.taam.part.support_frame.name=Support Frame
+item.taam.part.circuit_basic.name=Basic Circuit
+item.taam.part.circuit_advanced.name=Advanced Circuit
+item.taam.part.logistics_chip.name=Logistics Chip
+item.taam.part.rubber_band.name=Rubber Band
 # Materials
 item.taam.material.plastic.name=Plastic
 item.taam.material.rubber.name=Rubber
 item.taam.material.graphite.name=Graphite
+item.taam.material.silicon_wafer.name=Silicon Wafer
 # Conveyor Appliances
 item.taam.conveyor_appliance.sprayer.name=Sprayer
 item.taam.logistic_cart.sprayer.name=Logistic Cart
@@ -38,7 +43,11 @@ tile.taam.productionline.conveyor.name=Conveyor
 tile.taam.productionline.hopper.name=Conveyor Hopper
 tile.taam.productionline.hopper_hs.name=High Speed Conveyor Hopper
 tile.taam.productionline.hopper_hs_standalone.name=High Speed Conveyor Hopper
+#Logistics System
 tile.taam.magnet_rail.name=Magnet Rail
+tile.taam.productionline.logistics_manager.name=Logistics Manager
+tile.taam.productionline.logistics_station.name=Logistics Station
+item.taam.logistics_cart.basic.name=Basic Logistic Cart
 
 #Lore localization
 lore.taam.shift=Hold Shift
