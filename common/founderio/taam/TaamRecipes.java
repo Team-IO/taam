@@ -20,50 +20,6 @@ public class TaamRecipes {
 	}
 
 	public static void addOreRecipes(){
-//		photocell
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 9, 0),
-				"GGG", "GDG", "PRP",
-				'G', "blockGlass",
-				'D', Blocks.daylight_detector,
-				'P', "materialPlastic",
-				'R', Items.redstone));
-		
-//		motor
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, 1),
-				"PCP", "CIC", "PCP",
-				'P', "materialPlastic",
-				'I', Items.iron_ingot,
-				'C', "materialCopper"));
-		
-//		support frame
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, 2),
-				"III", "III", "AAA",
-				'I', Blocks.iron_bars,
-				'A', "ingotAluminum"));
-		
-//		circuit_basic
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 8, 3),
-				"CGC", "PSP", "IPI",
-				'C', "ingotCopper",
-				'G', Items.gold_ingot,
-				'I', Items.iron_ingot,
-				'P', "materialPlastic",
-				'S', new ItemStack(TaamMain.itemMaterial, 1, 3)));
-		
-//		circuit_advanced
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, 4),
-				"PCP", "CGC", "PCP",
-				'C', "materialBasicCircuit",
-				'G', Items.gold_ingot,
-				'P', "materialPlastic"));
-		
-//		logistics_chip
-		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(TaamMain.blockProductionLine, 1, 2), new Object[]{ 
-				"materialAdvancedCircuit",
-				Blocks.chest,
-				Blocks.hopper,
-				Items.comparator,
-				Items.repeater}));
 		
 //		motion sensor
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.blockSensor, 1, 0),
@@ -74,20 +30,6 @@ public class TaamRecipes {
 				'I', Items.iron_ingot,
 				'R', Items.redstone));
 		
-//		conveyor
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.blockProductionLine, 1, 0),
-				"RRR", "SMS", "AAA",
-				'R', "materialRubber",
-				'S', new ItemStack(TaamMain.itemPart, 1, 0),
-				'M', "partMoter",
-				'A', "ingotAluminum"));
-	
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.blockProductionLine, 1, 0),
-				"RRR", "SMS", "AAA",
-				'R', "itemRubber",
-				'S', new ItemStack(TaamMain.itemPart, 1, 0),
-				'M', "partMoter",
-				'A', "ingotAluminum"));
 		
 //		hopper
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.blockProductionLine, 1, 1),
@@ -107,15 +49,7 @@ public class TaamRecipes {
 				new Object[] { new ItemStack(TaamMain.itemPart, 1, 2),
 				new ItemStack(TaamMain.blockProductionLine, 1, 3)}));
 		
-//		logistics_manager
-//		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.blockProductionLine, 1, 4),
-//				"CGC", "PSP", "IPI",
-//				'C', "ingotCopper",
-//				'G', Items.gold_ingot,
-//				'I', Items.iron_ingot,
-//				'P', "materialPlastic",
-//				'S', new ItemStack(TaamMain.itemMaterial, 1, 3)));
-	
+
 	}
 	
 	
