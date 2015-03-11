@@ -51,13 +51,19 @@ public class TaamRecipes {
 				'H', Blocks.hopper,
 				'V', Items.comparator,
 				'C', new ItemStack(TaamMain.itemPart, 1, 4)));
-		
+//		basic circuit
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, 3),
 				"CCC", "RGR", "CCC",
 				'C', "ingotCopper",
 				'G', Items.gold_ingot,
 				'R', Items.redstone));
-
+//		advanced circuit
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, 4),
+				"RGR", "GCG", "RGR",
+				'R', Items.redstone,
+				'G', Items.gold_ingot,
+				'C', new ItemStack(TaamMain.itemPart, 1, 3)));
+		
 	}
 	
 	
