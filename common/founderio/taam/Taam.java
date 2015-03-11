@@ -70,8 +70,8 @@ public final class Taam {
 		"basic"
 	};
 	public static final String[] ITEM_MATERIAL_META = new String[] {
-		"plastic",
-		"rubber",
+		"plastic_sheet",
+		"rubber_bar",
 		"graphite",
 		"silicon_wafer"
 	};
