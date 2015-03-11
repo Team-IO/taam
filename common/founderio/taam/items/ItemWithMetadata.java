@@ -60,8 +60,15 @@ public class ItemWithMetadata extends Item {
 	@SideOnly(Side.CLIENT)
 	public void getSubItems(Item item, CreativeTabs creativeTab, List list) {
 		for (int i = 0; i < metaValues.length; i++) {
+			if(!isValidMetadata(i)) {
+				continue;
+			}
 			list.add(new ItemStack(item, 1, i));
 		}
+	}
+	
+	public boolean isValidMetadata(int meta) {
+		return meta >= 0 && meta < metaValues.length;
 	}
 
 }
