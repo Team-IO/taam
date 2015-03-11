@@ -51,6 +51,12 @@ public class TaamRecipes {
 				'H', Blocks.hopper,
 				'V', Items.comparator,
 				'C', new ItemStack(TaamMain.itemPart, 1, 4)));
+		
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, 3),
+				"CCC", "RGR", "CCC",
+				'C', "ingotCopper",
+				'G', Items.gold_ingot,
+				'R', Items.redstone));
 
 	}
 	
