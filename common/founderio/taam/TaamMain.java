@@ -45,6 +45,7 @@ import founderio.taam.entities.EntityLogisticsCart;
 import founderio.taam.fluids.DyeFluid;
 import founderio.taam.items.ItemConveyorAppliance;
 import founderio.taam.items.ItemDebugTool;
+import founderio.taam.items.ItemIngot;
 import founderio.taam.items.ItemLogisticsCart;
 import founderio.taam.items.ItemWithMetadata;
 import founderio.taam.items.ItemWrench;
@@ -69,7 +70,7 @@ public class TaamMain {
 	public static ItemWrench itemWrench;
 	public static ItemWithMetadata itemMaterial;
 	public static ItemWithMetadata itemPart;
-	public static ItemWithMetadata itemIngot;
+	public static ItemIngot itemIngot;
 	public static ItemConveyorAppliance itemConveyorAppliance;
 	public static ItemLogisticsCart itemLogisticsCart;
 	
@@ -156,7 +157,7 @@ public class TaamMain {
 		itemPart.setUnlocalizedName(Taam.ITEM_PART);
 		itemPart.setCreativeTab(creativeTab);
 		
-		itemIngot = new ItemWithMetadata("ingot", Taam.BLOCK_ORE_META);
+		itemIngot = new ItemIngot("ingot", Taam.BLOCK_ORE_META);
 		itemIngot.setUnlocalizedName(Taam.ITEM_INGOT);
 		itemIngot.setCreativeTab(creativeTab);
 		

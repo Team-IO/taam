@@ -15,6 +15,9 @@ public class TaamRecipes {
 	public static void addSmeltingRecipes(){
 		//TODO: Remove Bauxite and Kaolinit ore furnace recipes
 		for(int meta = 0; meta < Taam.BLOCK_ORE_META.length; meta++) {
+			if(Taam.isOreOnly(meta)) {
+				continue;
+			}
 			GameRegistry.addSmelting(new ItemStack(TaamMain.blockOre, 1, meta), new ItemStack(TaamMain.itemIngot, 1, meta), 1);
 		}
 	}

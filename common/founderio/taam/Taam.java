@@ -28,9 +28,18 @@ public final class Taam {
 		"copper",
 		"tin",
 		"aluminum",
-		"bauxite",
-		"kaolinite"
+		"bauxite",//Ore Only!
+		"kaolinite"//Ore Only!
 	};
+	
+	/**
+	 * Skip non-ingot stuff when registering ingots & smelting recipes
+	 * @param meta
+	 * @return
+	 */
+	public static boolean isOreOnly(int meta) {
+		return meta == 3 || meta == 4;
+	}
 	
 	public static final String[] BLOCK_PRODUCTIONLINE_META = new String[] {
 		"conveyor",
