@@ -110,6 +110,13 @@ public class GuiLogisticsStation extends CustomGui {
 		} else {
 			this.fontRendererObj.drawString("No Connection", 12, 12, 0xAA0000);
 			
+			//TODO: Optimize Manager Selection:
+			/*
+			 * Get all loaded managers
+			 * Check track connection (simple route finding should suffice)
+			 * Display closest connected managers first, then unconnected
+			 * always show owner & name
+			 */
 			//TODO: Get this from the Server!
 			List<TileEntityLogisticsManager> managers = TileEntityLogisticsManager.getActiveManagers();
 			
