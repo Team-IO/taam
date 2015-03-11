@@ -17,6 +17,9 @@ item.taam.part.circuit_basic.name=Basic Circuit
 item.taam.part.circuit_advanced.name=Advanced Circuit
 item.taam.part.logistics_chip.name=Logistics Chip
 item.taam.part.rubber_band.name=Rubber Band
+item.taam.part.tank.name=Tank
+item.taam.part.pump.name=Pump
+item.taam.part.nozzle.name=Nozzle
 # Materials
 item.taam.material.plastic_sheet.name=Plastic Sheet
 item.taam.material.plastic_bar.name=Plastic Bar

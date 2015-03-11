@@ -82,7 +82,10 @@ public final class Taam {
 		"circuit_basic",
 		"circuit_advanced",
 		"logistics_chip",
-		"rubber_band"
+		"rubber_band",
+		"pump",
+		"tank",
+		"nozzle"
 	};
 	
 	public static final String TILEENTITY_SENSOR = "taam.sensor";
