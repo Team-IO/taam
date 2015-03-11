@@ -13,7 +13,7 @@ public class TaamRecipes {
 		
 	}
 	public static void addSmeltingRecipes(){
-		//TODO: Remove Bauxite and Kanlinit ore furnace recipes
+		//TODO: Remove Bauxite and Kaolinit ore furnace recipes
 		for(int meta = 0; meta < Taam.BLOCK_ORE_META.length; meta++) {
 			GameRegistry.addSmelting(new ItemStack(TaamMain.blockOre, 1, meta), new ItemStack(TaamMain.itemIngot, 1, meta), 1);
 		}
@@ -30,14 +30,6 @@ public class TaamRecipes {
 				'I', Items.iron_ingot,
 				'R', Items.redstone));
 		
-		
-//		hopper
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.blockProductionLine, 1, 1),
-				"RRR", "SMS", "AAA",
-				'R', "materialRubber",
-				'S', new ItemStack(TaamMain.itemPart, 1, 0),
-				'M', "partMoter",
-				'A', "ingotAluminum"));
 //		hs hopper standalone
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.blockProductionLine, 1, 3),
 				"C C", " H ", 
@@ -48,7 +40,14 @@ public class TaamRecipes {
 		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(TaamMain.blockProductionLine, 1, 2), 
 				new Object[] { new ItemStack(TaamMain.itemPart, 1, 2),
 				new ItemStack(TaamMain.blockProductionLine, 1, 3)}));
-		
+//		logistics chip
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, 5),
+				"PKP", "HCH", "PVP",
+				'P', "materialPlastic",
+				'K', Blocks.chest,
+				'H', Blocks.hopper,
+				'V', Items.comparator,
+				'C', new ItemStack(TaamMain.itemPart, 1, 4)));
 
 	}
 	
