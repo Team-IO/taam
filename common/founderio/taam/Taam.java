@@ -85,7 +85,10 @@ public final class Taam {
 		"rubber_band",
 		"pump",
 		"tank",
-		"nozzle"
+		"nozzle",
+		"magnetic_coil",
+		"iron_frame",
+		"metal_bearing"
 	};
 	
 	public static final String TILEENTITY_SENSOR = "taam.sensor";

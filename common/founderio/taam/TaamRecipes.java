@@ -63,6 +63,11 @@ public class TaamRecipes {
 				'R', Items.redstone,
 				'G', Items.gold_ingot,
 				'C', new ItemStack(TaamMain.itemPart, 1, 3)));
+//		metal bearing
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, 11),
+				"III", "I I", "I I",
+				'I', Items.iron_ingot));
+		
 		
 	}
 	
