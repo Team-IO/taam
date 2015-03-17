@@ -81,7 +81,7 @@ public abstract class BaseBlock extends Block {
 		 */
 		if(te instanceof IConveyorApplianceHost) {
 			IConveyorApplianceHost applianceHost = (IConveyorApplianceHost)te;
-			ConveyorUtil.dropAppliance(applianceHost, world, x, y, z);
+			ConveyorUtil.dropAppliance(applianceHost, null, world, x, y, z);
 		}
 
 		super.breakBlock(world, x, y, z, block, meta);

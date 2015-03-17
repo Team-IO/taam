@@ -95,7 +95,7 @@ public class ConveyorUtil {
 	 * @return true if an appliance was there and did drop.
 	 */
 	//TODO: Make it drop directly to player inventory if possible
-	public static boolean dropAppliance(IConveyorApplianceHost applianceHost, World world, int x, int y, int z) {
+	public static boolean dropAppliance(IConveyorApplianceHost applianceHost, EntityPlayer player, World world, int x, int y, int z) {
 		String type = applianceHost.getApplianceType();
 		if(type == null) {
 			return false;
@@ -111,7 +111,11 @@ public class ConveyorUtil {
 		ItemStack stack = factory.getItemStack(type);
 		//TODO: Make ItemStack retain certain data? (Tanks... Energy...)
 		if(stack != null) {
-			InventoryUtils.dropItem(stack, world, location);
+			if(player != null) {
+				tryDropToInventory(player, stack, x, y, z);
+			} else {
+				InventoryUtils.dropItem(stack, world, location);
+			}
 		}
 		/*
 		 * Drop appliance content
@@ -122,7 +126,12 @@ public class ConveyorUtil {
 		}
 		for(int i = 0; i < appliance.getSizeInventory(); i++) {
 			stack = appliance.getStackInSlot(i);
-			if(stack != null) {
+			if(stack == null) {
+				continue;
+			}
+			if(player != null) {
+				tryDropToInventory(player, stack, x, y, z);
+			} else {
 				InventoryUtils.dropItem(stack, world, location);
 			}
 		}
@@ -141,5 +150,13 @@ public class ConveyorUtil {
 		}
 		//TODO: Check other wrench types once supported
 		return held.getItem() == TaamMain.itemWrench;
+	}
+	
+	public static void tryDropToInventory(EntityPlayer player, ItemStack stack, double x, double y, double z) {
+		if(!player.inventory.addItemStackToInventory(stack)) {
+			if(!player.worldObj.isRemote) {
+				InventoryUtils.dropItem(stack, player.worldObj, new Vector3(x, y, z));
+			}
+		}
 	}
 }

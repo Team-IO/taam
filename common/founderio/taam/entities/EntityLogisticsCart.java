@@ -16,11 +16,9 @@ import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.common.util.ForgeDirection;
 import codechicken.lib.inventory.InventorySimple;
 import codechicken.lib.inventory.InventoryUtils;
-import codechicken.lib.vec.Vector3;
 import founderio.taam.TaamMain;
 import founderio.taam.blocks.TileEntityLogisticsManager;
 import founderio.taam.conveyors.ConveyorUtil;
-import founderio.taam.items.ItemLogisticsCart;
 import founderio.taam.multinet.logistics.IVehicle;
 import founderio.taam.multinet.logistics.InBlockRoute;
 import founderio.taam.multinet.logistics.LogisticsManager;
@@ -169,9 +167,8 @@ public class EntityLogisticsCart extends Entity implements IVehicle {
 	@Override
 	public boolean interactFirst(EntityPlayer player) {
 		if(player.isSneaking() && ConveyorUtil.playerHasWrench(player)) {
-			if(!player.worldObj.isRemote) {
-				InventoryUtils.dropItem(new ItemStack(TaamMain.itemLogisticsCart), player.worldObj, new Vector3(posX, posY, posZ));
-			}
+			ItemStack stack = new ItemStack(TaamMain.itemLogisticsCart);
+			ConveyorUtil.tryDropToInventory(player, stack, posX, posY, posZ);
 			this.setDead();
 		} else {
 			player.openGui(TaamMain.instance, 1, worldObj, this.getEntityId(), 0, 0);

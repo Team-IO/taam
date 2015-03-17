@@ -9,12 +9,14 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import founderio.taam.Taam;
+import founderio.taam.TaamMain;
 import founderio.taam.conveyors.ConveyorUtil;
 import founderio.taam.multinet.logistics.InBlockRoute;
 import founderio.taam.multinet.logistics.WorldCoord;
@@ -35,6 +37,8 @@ public class BlockMagnetRail extends Block {
 		super(Material.circuits);
         this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 0.0625F, 1.0F);
         this.setBlockTextureName(Taam.MOD_ID + ":magnet_rail");
+        this.setHardness(5);
+        this.setResistance(1);
         
         routesRight = new InBlockRoute[4];
         routesLeft = new InBlockRoute[4];
@@ -170,7 +174,8 @@ public class BlockMagnetRail extends Block {
 			float hitZ) {
 		if(ConveyorUtil.playerHasWrench(player)) {
 			if(player.isSneaking()) {
-				//TODO: Drop Block
+				ConveyorUtil.tryDropToInventory(player, new ItemStack(TaamMain.blockMagnetRail), x+hitX, y+hitY, z+hitZ);
+				world.setBlockToAir(x, y, z);
 			} else {
 				int meta = world.getBlockMetadata(x, y, z);
 				int rotation = getRotation(meta);

@@ -18,6 +18,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import founderio.taam.Taam;
 import founderio.taam.TaamMain;
 import founderio.taam.conveyors.ConveyorUtil;
+import founderio.taam.conveyors.IConveyorApplianceHost;
 import founderio.taam.conveyors.IRotatable;
 
 public class BlockProductionLine extends BaseBlock {
@@ -169,35 +170,34 @@ public class BlockProductionLine extends BaseBlock {
 			int y, int z, EntityPlayer player,
 			int side, float hitX, float hitY,
 			float hitZ) {
-		if(!world.isRemote) {
 			
-			boolean playerHasWrench = ConveyorUtil.playerHasWrench(player);
-			
-			//TODO: Handle wrenching somewhere else
-			//TODO: use separate interface for disassembling?
-			//TODO: Interaction with other mods??
-			TileEntity te = world.getTileEntity(x, y, z);
-			if(te instanceof TileEntityConveyor) {
-				if(playerHasWrench) {
-					TileEntityConveyor conveyor = (TileEntityConveyor) te;
-					if(player.isSneaking()) {
-						if(ConveyorUtil.dropAppliance(conveyor, world, x, y, z)) {
-							conveyor.removeAppliance();
-							return true;
-						}
+		boolean playerHasWrench = ConveyorUtil.playerHasWrench(player);
+		
+		//TODO: Handle wrenching somewhere else
+		//TODO: Interaction with other mods??
+		TileEntity te = world.getTileEntity(x, y, z);
+		if(te instanceof IConveyorApplianceHost) {
+			if(playerHasWrench) {
+				TileEntityConveyor conveyor = (TileEntityConveyor) te;
+				if(player.isSneaking()) {
+					if(ConveyorUtil.dropAppliance(conveyor, player, world, x, y, z)) {
+						conveyor.removeAppliance();
+						return true;
 					}
 				}
 			}
-			
-			if(playerHasWrench && !player.isSneaking() && te instanceof IRotatable) {
-				IRotatable rotatable = (IRotatable) te;
-				rotatable.setFacingDirection(rotatable.getNextFacingDirection());
-				return true;
-			}
-			
-			if(player.isSneaking()) {
-				return false;
-			}
+		}
+		
+		if(playerHasWrench && !player.isSneaking() && te instanceof IRotatable) {
+			IRotatable rotatable = (IRotatable) te;
+			rotatable.setFacingDirection(rotatable.getNextFacingDirection());
+			return true;
+		}
+		if(player.isSneaking()) {
+			return false;
+		}
+
+		if(!world.isRemote) {
 			if(te instanceof TileEntityConveyorHopper) {
 				player.openGui(TaamMain.instance, 0, world, x, y, z);
 			} else if(te instanceof TileEntityLogisticsStation) {
