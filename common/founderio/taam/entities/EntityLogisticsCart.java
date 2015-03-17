@@ -5,6 +5,7 @@ import java.util.List;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
@@ -15,8 +16,11 @@ import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.common.util.ForgeDirection;
 import codechicken.lib.inventory.InventorySimple;
 import codechicken.lib.inventory.InventoryUtils;
+import codechicken.lib.vec.Vector3;
 import founderio.taam.TaamMain;
 import founderio.taam.blocks.TileEntityLogisticsManager;
+import founderio.taam.conveyors.ConveyorUtil;
+import founderio.taam.items.ItemLogisticsCart;
 import founderio.taam.multinet.logistics.IVehicle;
 import founderio.taam.multinet.logistics.InBlockRoute;
 import founderio.taam.multinet.logistics.LogisticsManager;
@@ -164,7 +168,14 @@ public class EntityLogisticsCart extends Entity implements IVehicle {
 	
 	@Override
 	public boolean interactFirst(EntityPlayer player) {
-		player.openGui(TaamMain.instance, 1, worldObj, this.getEntityId(), 0, 0);
+		if(player.isSneaking() && ConveyorUtil.playerHasWrench(player)) {
+			if(!player.worldObj.isRemote) {
+				InventoryUtils.dropItem(new ItemStack(TaamMain.itemLogisticsCart), player.worldObj, new Vector3(posX, posY, posZ));
+			}
+			this.setDead();
+		} else {
+			player.openGui(TaamMain.instance, 1, worldObj, this.getEntityId(), 0, 0);
+		}
 		return true;
 	}
 	
@@ -384,8 +395,13 @@ public class EntityLogisticsCart extends Entity implements IVehicle {
 	@Override
 	public boolean hasRouteToStation(int stationID, StationGraph graph, LogisticsManager manager) {
 		if(isOnRail) {
-			//TODO: Respect IBR (already "skip ahead" to next rail on that route)
-			return null != graph.astar(new WorldCoord(worldObj, currentRailX, currentRailY, currentRailZ), graph.getTrackForStation(manager.getStation(stationID)));
+			WorldCoord currentPosition = new WorldCoord(worldObj, currentRailX, currentRailY, currentRailZ);
+			
+			//Respect current IBR (already "skip ahead" to next rail on that route)
+			if(ibr != null && ibrProgress > 0) {
+				currentPosition = currentPosition.getDirectionalOffset(ibr.leaveTo);
+			}
+			return null != graph.astar(currentPosition, graph.getTrackForStation(manager.getStation(stationID)));
 		} else {
 			return false;
 		}

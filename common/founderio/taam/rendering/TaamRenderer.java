@@ -66,24 +66,45 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 		}
 		
 		@Override
-		public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z,
-				Block block, int modelId, RenderBlocks renderer) {
+		public boolean renderWorldBlock(IBlockAccess world, int x, int y,
+				int z, Block block, int modelId, RenderBlocks renderer) {
 			Tessellator tessellator = Tessellator.instance;
 			int metadata = world.getBlockMetadata(x, y, z);
-	        IIcon iicon = renderer.getBlockIcon(block, world, x, y, z, metadata);
 
-	        if (renderer.hasOverrideBlockTexture())
-	        {
-	            iicon = renderer.overrideBlockTexture;
-	        }
+			int rotation = metadata & 3;
+			
+			boolean left = (metadata & 4) == 4;
+			boolean right = (metadata & 8) == 8;
+			boolean forward = true;//We cannot pack that I think... (metadata & 16) == 16 is out of range :(
+			
+			tessellator.setBrightness(block.getMixedBrightnessForBlock(
+					renderer.blockAccess, x, y, z));
 
-	        float f = 0.015625F;
+			tessellator.setColorOpaque_I(block.getBlockColor());
+			IIcon iicon;
+			iicon = TaamMain.blockMagnetRail.connBase;
+			renderFlatTexture(tessellator, iicon, x, y, z, rotation);
+			if(left) {
+				iicon = TaamMain.blockMagnetRail.connLeft;
+				renderFlatTexture(tessellator, iicon, x, y, z, rotation);
+			}
+			if(right) {
+				iicon = TaamMain.blockMagnetRail.connRight;
+				renderFlatTexture(tessellator, iicon, x, y, z, rotation);
+			}
+			if(forward) {
+				iicon = TaamMain.blockMagnetRail.connForward;
+				renderFlatTexture(tessellator, iicon, x, y, z, rotation);
+			}
+			return true;
+		}
+		
+		public void renderFlatTexture(Tessellator tessellator, IIcon iicon, int x, int y, int z, int rotation) {
+			 float f = 0.015625F;
 	        double d0 = (double)iicon.getMinU();
 	        double d1 = (double)iicon.getMinV();
 	        double d2 = (double)iicon.getMaxU();
 	        double d3 = (double)iicon.getMaxV();
-	        
-	        int rotation = metadata & 3;
 	        
         	int x1 = x;
         	int x2 = x+1;
@@ -106,14 +127,10 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 	        	z2 = z1;
 	        	z1 = temp;
 	        }
-	        tessellator.setBrightness(block.getMixedBrightnessForBlock(renderer.blockAccess, x, y, z));
-	        
-	        tessellator.setColorOpaque_I(block.getBlockColor());
 	        tessellator.addVertexWithUV(x1, y + f, z1, d2, d1);
 	        tessellator.addVertexWithUV(x2, y + f, z2, d0, d1);
 	        tessellator.addVertexWithUV(x3, y + f, z3, d0, d3);
 	        tessellator.addVertexWithUV(x4, y + f, z4, d2, d3);
-	        return true;
 		}
 		
 		@Override
