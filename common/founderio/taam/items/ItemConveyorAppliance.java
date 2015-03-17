@@ -61,7 +61,9 @@ public class ItemConveyorAppliance extends ItemWithMetadata {
 			boolean result = host.initAppliance("taam." + Taam.ITEM_CONVEYOR_APPLIANCE_META[i]);
 			if(result) {
 				System.out.println("Appliance set up.");
-				InventoryUtils.consumeItem(player.inventory, player.inventory.currentItem);
+				if(!player.capabilities.isCreativeMode) {
+					InventoryUtils.consumeItem(player.inventory, player.inventory.currentItem);
+				}
 				return true;
 			} else {
 				System.out.println("Appliance not set up.");

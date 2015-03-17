@@ -94,7 +94,6 @@ public class ConveyorUtil {
 	 * @param z
 	 * @return true if an appliance was there and did drop.
 	 */
-	//TODO: Make it drop directly to player inventory if possible
 	public static boolean dropAppliance(IConveyorApplianceHost applianceHost, EntityPlayer player, World world, int x, int y, int z) {
 		String type = applianceHost.getApplianceType();
 		if(type == null) {
@@ -153,6 +152,9 @@ public class ConveyorUtil {
 	}
 	
 	public static void tryDropToInventory(EntityPlayer player, ItemStack stack, double x, double y, double z) {
+		if(player.capabilities.isCreativeMode) {
+			return;
+		}
 		if(!player.inventory.addItemStackToInventory(stack)) {
 			if(!player.worldObj.isRemote) {
 				InventoryUtils.dropItem(stack, player.worldObj, new Vector3(x, y, z));

@@ -2,24 +2,19 @@ package founderio.taam.items;
 
 import java.util.List;
 
-import codechicken.lib.inventory.InventoryUtils;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
+import codechicken.lib.inventory.InventoryUtils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import founderio.taam.Taam;
-import founderio.taam.conveyors.IConveyorApplianceHost;
 import founderio.taam.entities.EntityLogisticsCart;
 
 public class ItemLogisticsCart extends ItemWithMetadata {
 
 	public ItemLogisticsCart() {
-		super("conveyor_appliance", Taam.ITEM_LOGISTICS_CART_META);
+		super("logistics_cart", Taam.ITEM_LOGISTICS_CART_META);
 	}
 
 	@Override
@@ -59,9 +54,13 @@ public class ItemLogisticsCart extends ItemWithMetadata {
 		EntityLogisticsCart cart = new EntityLogisticsCart(world);
 		cart.setPosition(x, y + 1, z);
 		
-		world.spawnEntityInWorld(cart);
+		if(!world.isRemote) {
+			world.spawnEntityInWorld(cart);
+		}
 		
-		InventoryUtils.consumeItem(player.inventory, player.inventory.currentItem);
+		if(!player.capabilities.isCreativeMode) {
+			InventoryUtils.consumeItem(player.inventory, player.inventory.currentItem);
+		}
 		
 		return true;
 	}

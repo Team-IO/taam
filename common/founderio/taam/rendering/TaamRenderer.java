@@ -22,7 +22,6 @@ import net.minecraftforge.client.model.obj.WavefrontObject;
 import net.minecraftforge.client.model.techne.TechneModel;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.lwjgl.opengl.GL11;
 
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
@@ -35,6 +34,7 @@ import founderio.taam.blocks.BlockProductionLine;
 import founderio.taam.blocks.BlockSensor;
 import founderio.taam.blocks.TileEntityConveyor;
 import founderio.taam.blocks.TileEntityConveyorHopper;
+import founderio.taam.blocks.TileEntityLogisticsManager;
 import founderio.taam.blocks.TileEntityLogisticsStation;
 import founderio.taam.blocks.TileEntitySensor;
 import founderio.taam.conveyors.IRotatable;
@@ -51,6 +51,9 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 	
 	public final WavefrontObject modelLogisticsStation;
 	public final ResourceLocation textureLogisticsStation;
+	
+	public final WavefrontObject modelLogisticsManager;
+	public final ResourceLocation textureLogisticsManager;
 	
 	private RenderItem ri;
 	private EntityItem ei;
@@ -167,6 +170,9 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 
 		modelLogisticsStation = new WavefrontObject(new ResourceLocation(Taam.MOD_ID + ":models/logistics_station.obj"));
 		textureLogisticsStation = new ResourceLocation(Taam.MOD_ID + ":textures/models/logistics_station.png");
+
+		modelLogisticsManager = new WavefrontObject(new ResourceLocation(Taam.MOD_ID + ":models/logistics_station.obj"));
+		textureLogisticsManager = new ResourceLocation(Taam.MOD_ID + ":textures/models/logistics_manager.png");
 	}
 	
 	public void tickEvent(TickEvent event) {
@@ -243,6 +249,8 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 			renderConveyor(tileentity, x, y, z);
 		} else if(tileentity instanceof TileEntityLogisticsStation) {
 			renderLogisticsStation((TileEntityLogisticsStation)tileentity, x, y, z);
+		} else if(tileentity instanceof TileEntityLogisticsManager) {
+			renderLogisticsManager((TileEntityLogisticsManager)tileentity, x, y, z);
 		}
 	}
 	
@@ -277,6 +285,39 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 
 		GL11.glPopMatrix();
 	}
+	
+	public void renderLogisticsManager(TileEntityLogisticsManager tileEntity, double x, double y, double z) {
+		ForgeDirection direction;
+		if(tileEntity instanceof IRotatable) {
+			direction = ((IRotatable) tileEntity).getFacingDirection();
+		} else {
+			direction = ForgeDirection.SOUTH;
+		}
+		
+		// Model Rendering
+		GL11.glPushMatrix();
+		GL11.glTranslated(x, y, z);
+		
+		// Rotation
+		GL11.glTranslatef(0.5f, 0, 0.5f);
+
+		if(direction == ForgeDirection.WEST) {
+			GL11.glRotatef(270, 0, 1, 0);
+		} else if(direction == ForgeDirection.NORTH) {
+			GL11.glRotatef(180, 0, 1, 0);
+		} else if(direction == ForgeDirection.EAST) {
+			GL11.glRotatef(90, 0, 1, 0);
+		}
+		
+		GL11.glTranslated(-0.5, 0, -0.5);
+
+		Minecraft.getMinecraft().renderEngine.bindTexture(textureLogisticsStation);
+
+		modelLogisticsStation.renderPart("ControlPanel");
+
+		GL11.glPopMatrix();
+	}
+	
 	//TODO: Don't display metal cap when not pointing to wards a block
 	public void renderConveyor(TileEntity tileEntity, double x, double y, double z) {
 		
