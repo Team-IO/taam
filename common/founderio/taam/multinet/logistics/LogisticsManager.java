@@ -12,7 +12,7 @@ import net.minecraft.world.World;
 
 public class LogisticsManager {
 
-	StationGraph graph;
+	public final StationGraph graph;
 	List<IStation> stations;
 	List<IVehicle> vehicles;
 	
@@ -173,7 +173,7 @@ public class LogisticsManager {
 			//TODO: Only remove auto-scheduled transports before a route is established!
 			pendingTransport.remove(startingPointIndex);
 			
-			if(!route.plotRoute(graph, this)) {
+			if(!route.plotRoute(graph, this, null)) {
 				return;
 			}
 			

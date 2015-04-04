@@ -7,11 +7,14 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.common.util.ForgeDirection;
 import codechicken.lib.inventory.InventorySimple;
@@ -47,6 +50,7 @@ public class EntityLogisticsCart extends Entity implements IVehicle {
 	private InBlockRoute ibr;
 	private float ibrProgress;
 	private Route route;
+	private int routeProgress;
 	
 	private float currentSpeed = 0.001f;
 	private WorldCoord coordsManager;
@@ -253,21 +257,37 @@ public class EntityLogisticsCart extends Entity implements IVehicle {
         	 y -= 1;
         	 isActuallyOnRail = LogisticsUtil.isMagnetRail(worldObj, x, y, z);
          }
-         if(!isOnRail && isActuallyOnRail) {
-         	currentRailX = x;
-         	currentRailY = y;
-         	currentRailZ = z;
-         	
-         	ibrProgress = 0;
-         	ibr = TaamMain.blockMagnetRail.getInBlockRoutes(worldObj, x, y, z).get(0);
-         	
-         	isOnRail = true;
+         if(isOnRail) {
+        	 if(!isActuallyOnRail) {
+        		 isOnRail = false;
+        	 }
          } else {
-        	 isOnRail = false;
+        	 if(isActuallyOnRail) {
+            	 System.out.println("Snapping to rail");
+              	currentRailX = x;
+              	currentRailY = y;
+              	currentRailZ = z;
+				this.prevPosX = this.posX;
+ 		        this.prevPosY = this.posY;
+ 		        this.prevPosZ = this.posZ;
+ 		       
+ 				setPosition(currentRailX, currentRailY, currentRailZ);
+ 				if(!worldObj.isRemote) {
+ 		            MinecraftServer minecraftserver = MinecraftServer.getServer();
+ 		            WorldServer worldserver = minecraftserver.worldServerForDimension(this.dimension);
+	 				worldserver.resetUpdateEntityTick();
+ 				}
+              	ibrProgress = 0;
+             	isOnRail = true;
+              	ibr = TaamMain.blockMagnetRail.getInBlockRoutes(worldObj, x, y, z).get(0);
+        	 } else {
+
+              	isOnRail = false;
+        	 }
          }
 	}
 	
-	private void findNextRoute() {
+	private boolean findNextRoute() {
 		ForgeDirection dir = ibr.leaveTo;
 		List<InBlockRoute> nextRoutes = TaamMain.blockMagnetRail.getInBlockRoutes(worldObj, this.currentRailX + dir.offsetX, this.currentRailY + dir.offsetX, this.currentRailZ + dir.offsetX);
 		
@@ -282,14 +302,31 @@ public class EntityLogisticsCart extends Entity implements IVehicle {
 		if(nextRoutes.isEmpty()) {
 			//Stop at end of track
 			ibrProgress = ibr.totalLength;
-			return;
+			return false;
 		}
-		//TODO: Find the next block in the route to see which ibr to use
-		ibr = nextRoutes.get(0);
-		ibrProgress -= ibr.totalLength;
-		currentRailX += dir.offsetX;
-		currentRailY += dir.offsetY;
-		currentRailZ += dir.offsetZ;
+		if(route == null) {
+			return false;
+		}
+		List<WorldCoord> routePlot = route.getPlot();
+		if(routePlot != null && routeProgress + 1 < routePlot.size()) {
+			System.out.println("Next step in route");
+			//TODO: Do plotting separate from route? (station by station)
+			WorldCoord current = new WorldCoord(worldObj, currentRailX, currentRailY, currentRailZ);
+			WorldCoord next = routePlot.get(routeProgress + 1);
+			for(InBlockRoute nextIbr : nextRoutes) {
+				if(current.isDirectionalOffset(nextIbr.leaveTo, next)) {
+					ibr = nextIbr;
+					ibrProgress -= ibr.totalLength;
+					currentRailX += dir.offsetX;
+					currentRailY += dir.offsetY;
+					currentRailZ += dir.offsetZ;
+					routeProgress++;
+					return true;
+				}
+			}
+			
+		}
+		return false;
 	}
 	
 	@Override
@@ -316,9 +353,15 @@ public class EntityLogisticsCart extends Entity implements IVehicle {
             			ibr = routes.get(0);
             		}
             	} else {
-            		ibrProgress += currentSpeed;
+            		// Stop when reaching the end of a track, until we are ready to continue
+            		if(ibrProgress <= ibr.totalLength) {
+                		ibrProgress += currentSpeed;
+            		}
             		while(ibrProgress > ibr.totalLength) {
-            			findNextRoute();
+            			if(!findNextRoute()) {
+            				
+            				break;
+            			}
             		}
             		// Find the point in the ibr we are at and do a linear interpolation between the closes points on the ibr.
             		float calcOffset = ibrProgress;
@@ -406,8 +449,15 @@ public class EntityLogisticsCart extends Entity implements IVehicle {
 
 	@Override
 	public void setRoute(Route route) {
-		// TODO Auto-generated method stub
-		
+		this.route = route;
+		this.routeProgress = 0;
+		LogisticsManager manager = LogisticsUtil.getManager(worldObj, coordsManager);
+		route.plotRoute(manager.graph, manager, this);
+	}
+
+	@Override
+	public WorldCoord getCurrentLocation() {
+		return new WorldCoord(worldObj, currentRailX, currentRailY, currentRailZ);
 	}
 
 }

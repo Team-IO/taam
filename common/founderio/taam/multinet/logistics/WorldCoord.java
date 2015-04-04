@@ -87,7 +87,7 @@ public class WorldCoord {
 		return new WorldCoord(world, x + direction.offsetX, y + direction.offsetY, z + direction.offsetZ);
 	}
 	
-	public boolean isDirectionalOffset(ForgeDirection direction, BlockCoord other) {
+	public boolean isDirectionalOffset(ForgeDirection direction, WorldCoord other) {
 		return getDirectionalOffset(direction).equals(this);
 	}
 

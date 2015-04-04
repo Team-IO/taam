@@ -14,5 +14,6 @@ public interface IVehicle {
 	
 	void linkToManager(WorldCoord coords);
 	boolean hasRouteToStation(int stationID, StationGraph graph, LogisticsManager manager);
+	WorldCoord getCurrentLocation();
 	void setRoute(Route route);
 }

@@ -6,10 +6,6 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.ArrayUtils;
-
-import codechicken.lib.vec.BlockCoord;
-import founderio.taam.TaamMain;
 import founderio.taam.multinet.AStar.Node;
 
 public class Route {
@@ -35,7 +31,13 @@ public class Route {
 		stationsToPlot.clear();
 	}
 	
-	public boolean plotRoute(StationGraph graph, LogisticsManager manager) {
+	public List<WorldCoord> getPlot() {
+		return plot;
+	}
+	
+	public boolean plotRoute(StationGraph graph, LogisticsManager manager, IVehicle vehicle) {
+		System.out.println("Plotting route.");
+		
 		clearPlot();
 		
 		if(stations.size() < 2) {
@@ -47,6 +49,15 @@ public class Route {
 		
 		IStation current = manager.getStation(stations.get(0));
 		WorldCoord currentTrack = graph.getTrackForStation(current);
+		// If we are plotting for a vehicle, add the route to the first station.
+		if(vehicle != null) {
+			WorldCoord vehicleTrack = vehicle.getCurrentLocation();
+			Node<WorldCoord> node = graph.astar(vehicleTrack, currentTrack);
+			if(node == null) {
+				return false;
+			}
+			addAstarPlot(node, vehicleTrack);
+		}
 		if(currentTrack == null) {
 			return false;
 		}
@@ -66,19 +77,23 @@ public class Route {
 			if(node == null) {
 				return false;
 			}
-			// Add astar result to plot in reverse (result is from target to origin)
-			List<WorldCoord> nextPlotContent = new ArrayList<WorldCoord>();
-			do {
-				nextPlotContent.add(node.object);
-				node = node.getPredecessor();
-			} while(node != null && node.object != currentTrack);
-			Collections.reverse(nextPlotContent);
-			plot.addAll(nextPlotContent);
+			addAstarPlot(node, currentTrack);
 			// Log the location of the station in relation to the plot
 			stationsToPlot.put(i, plot.size() - 1);
 		}
 		hasPlot = true;
 		return true;
+	}
+	
+	private void addAstarPlot(Node<WorldCoord> node, WorldCoord currentTrack) {
+		// Add astar result to plot in reverse (result is from target to origin)
+		List<WorldCoord> nextPlotContent = new ArrayList<WorldCoord>();
+		do {
+			nextPlotContent.add(node.object);
+			node = node.getPredecessor();
+		} while(node != null && node.object != currentTrack);
+		Collections.reverse(nextPlotContent);
+		plot.addAll(nextPlotContent);
 	}
 	
 	/**

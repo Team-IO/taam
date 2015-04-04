@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Set;
 
-import codechicken.lib.vec.BlockCoord;
 import founderio.taam.multinet.logistics.WorldCoord;
 
 public class AStar {
@@ -63,13 +62,13 @@ public class AStar {
 				// skip attachments that are already being processed
 				boolean found = false;
 				for(Node<T> op : openlist) {
-					if(op.object == successor) {
+					if(op.object.equals(successor)) {
 						found = true;
 						break;
 					}
 				}
 				for(Node<T> op : closedlist) {
-					if(op.object == successor) {
+					if(op.object.equals(successor)) {
 						found = true;
 						break;
 					}
