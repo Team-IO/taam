@@ -159,8 +159,8 @@ public class BlockProductionLine extends BaseBlock {
 	public AxisAlignedBB getCollisionBoundingBoxFromPool(World world,
 			int x, int y, int z) {
 		int meta = world.getBlockMetadata(x, y, z);
-		if(meta == 3) {
-			// Standalone
+		if(meta == 20) {
+			// Standalone (not in use at the moment)
 			this.maxY = 1;
 		} else {
 			// Conveyor Machinery

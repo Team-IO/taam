@@ -45,7 +45,7 @@ public final class Taam {
 		"conveyor",
 		"hopper",
 		"hopper_hs",
-		"hopper_hs_standalone",
+		"placeholder",
 		"logistics_manager",
 		"logistics_station"
 	};
@@ -64,7 +64,8 @@ public final class Taam {
 	public static final String ITEM_LOGISTICS_CART = "taam.logistics_cart";
 	
 	public static final String[] ITEM_CONVEYOR_APPLIANCE_META = new String[] {
-		"sprayer"
+		"sprayer",
+		"inserter"
 	};
 	public static final String[] ITEM_LOGISTICS_CART_META = new String[] {
 		"basic"
