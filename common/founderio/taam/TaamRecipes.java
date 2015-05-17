@@ -63,11 +63,30 @@ public class TaamRecipes {
 				'R', Items.redstone,
 				'G', Items.gold_ingot,
 				'C', new ItemStack(TaamMain.itemPart, 1, 3)));
-//		metal bearing
+//		iron frame
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, 11),
 				"III", "I I", "I I",
 				'I', Items.iron_ingot));
 		
+//		rubber band
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, 6),
+				"RRR", "R R", "RRR",
+				'R', "materialRubber"));
+//		tank
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, 8),
+				" I ", "I I", "III",
+				'I', Items.iron_ingot));
+//		nozzle
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1 ,9),
+				" I ", "I I", " I ",
+				'I', Items.iron_ingot));
+//		sprayer
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemConveyorAppliance, 1, 0),
+				"NFN", "N N", "TCT",
+				'N', new ItemStack(TaamMain.itemPart, 1, 9),
+				'C', "partBasicCircuit",
+				'T', new ItemStack(TaamMain.itemPart, 1 ,8),
+				'F', new ItemStack(TaamMain.itemPart, 1, 11)));
 		
 	}
 	
