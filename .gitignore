@@ -18,3 +18,5 @@
 /.gradle
 /.metadata
 /.settings
+/CameraStudio_log.txt.lck
+/CameraStudio_log.txt
