@@ -18,6 +18,8 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 import codechicken.lib.inventory.InventoryUtils;
+import codechicken.lib.vec.Vector3;
+import founderio.taam.TaamMain;
 import founderio.taam.conveyors.ApplianceRegistry;
 import founderio.taam.conveyors.ConveyorUtil;
 import founderio.taam.conveyors.IConveyorAppliance;
@@ -77,6 +79,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	public void setFacingDirection(ForgeDirection direction) {
 		this.direction = direction;
 		updateState();
+		worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, blockType);
 	}
 
 	@Override
@@ -422,7 +425,9 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	public void setInventorySlotContents(int slot, ItemStack itemStack) {
 		if(appliance == null) {
 			//TODO: Check if the area is free, else drop it (?) (since we cannot abort...)
-			items.add(new ItemWrapper(itemStack, 50, 50));
+			
+			//TODO: stack size limiting here, just a workaround.. Provide ghost-slot for inserting or sth..
+			items.add(new ItemWrapper(InventoryUtils.copyStack(itemStack.copy(), 1), 50, 50));
 			updateState();
 		} else {
 			appliance.setInventorySlotContents(slot, itemStack);
@@ -603,6 +608,19 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 		applianceType = null;
 		updateState();
 		return hadAppliance;
+	}
+
+	public void dropItems() {
+		Vector3 location = new Vector3(xCoord + 0.5, yCoord + 0.5, zCoord + 0.5);
+		for (int index = 0; index < items.size(); index++) {
+			ItemWrapper wrapper = items.get(index);
+			ItemStack itemstack = wrapper.itemStack.copy();
+			//TODO: Once position code is extracted, drop item at the exact location
+			if (itemstack != null && itemstack.getItem() != null) {
+				InventoryUtils.dropItem(itemstack, worldObj, location);
+			}
+		}
+		items.clear();
 	}
 
 

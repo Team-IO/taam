@@ -161,7 +161,7 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 					// If we fit anything, decrease inventory accordingly
 					if(unableToInsert < stack.stackSize) {
 						slotToDecrease = i;
-						amountToDecrease = stack.stackSize - unableToInsert;
+						amountToDecrease = ejectStack.stackSize - unableToInsert;
 						break;
 					}
 					// In linear mode, we only look at the front most stack that has items

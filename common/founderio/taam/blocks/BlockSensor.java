@@ -183,15 +183,13 @@ public class BlockSensor extends BaseBlock {
 	}
 
 	@Override
-	public boolean isBlockSolid(IBlockAccess world, int x,
-			int y, int z, int side) {
+	public boolean isBlockSolid(IBlockAccess world, int x, int y, int z, int side) {
 		return false;
 	}
 
 	@Override
-	public void onPostBlockPlaced(World par1World, int par2, int par3,
-			int par4, int par5) {
-		updateBlocksAround(par1World, par2, par3, par4);
+	public void onPostBlockPlaced(World world, int x, int y, int z, int meta) {
+		world.notifyBlocksOfNeighborChange(x, y, z, this);
 	}
 
 	@Override
@@ -203,9 +201,8 @@ public class BlockSensor extends BaseBlock {
 	}
 	
 	@Override
-	public void breakBlock(World world, int x, int y,
-			int z, Block block, int meta) {
-		updateBlocksAround(world, x, y, z);
+	public void breakBlock(World world, int x, int y, int z, Block block, int meta) {
+		world.notifyBlocksOfNeighborChange(x, y, z, this);
 		super.breakBlock(world, x, y, z, block, meta);
 	}
 		
