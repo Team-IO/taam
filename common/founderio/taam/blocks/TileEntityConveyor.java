@@ -390,7 +390,11 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	@Override
 	public ItemStack getStackInSlot(int slot) {
 		if(appliance == null) {
-			return null;
+			if(items.size() > 0) {
+				return items.get(0).itemStack.copy();
+			} else {
+				return null;
+			}
 		} else {
 			return appliance.getStackInSlot(slot);
 		}

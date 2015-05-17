@@ -2,10 +2,14 @@ package founderio.taam.blocks;
 
 import java.util.List;
 
+import codechicken.lib.inventory.InventoryUtils;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockHopper;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Container;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -163,6 +167,21 @@ public class BlockProductionLine extends BaseBlock {
 			this.maxY = 0.5f;
 		}
 		return super.getCollisionBoundingBoxFromPool(world, x, y, z);
+	}
+	
+	@Override
+	public boolean hasComparatorInputOverride() {
+		return true;
+	}
+	
+	@Override
+	public int getComparatorInputOverride(World world, int x, int y, int z, int meta) {
+		IInventory inventory = InventoryUtils.getInventory(world, x, y, z);
+		if(inventory == null) {
+			return 0;
+		} else {
+			return Container.calcRedstoneFromInventory(inventory);
+		}
 	}
 	
 	@Override

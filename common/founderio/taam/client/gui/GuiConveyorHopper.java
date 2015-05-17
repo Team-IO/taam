@@ -1,20 +1,27 @@
 package founderio.taam.client.gui;
 
-import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.client.resources.I18n;
+import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiOptionButton;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
 
+import cpw.mods.fml.client.config.GuiButtonExt;
+import cpw.mods.fml.client.config.GuiCheckBox;
 import founderio.taam.blocks.TileEntityConveyorHopper;
+import founderio.taam.client.gui.util.CustomGui;
 
-public class GuiConveyorHopper extends GuiContainer {
+public class GuiConveyorHopper extends CustomGui {
 	ResourceLocation bg = new ResourceLocation("textures/gui/container/hopper.png");
 	
 	private TileEntityConveyorHopper tileEntity;
 	private InventoryPlayer inventoryPlayer;
+	
+	private GuiButtonExt cbIgnoreRedstone;
+	private GuiCheckBox cbEject;
+	private GuiCheckBox cbStackMode;
+	private GuiCheckBox cbLinearMode;
 	
 	public GuiConveyorHopper(InventoryPlayer inventoryPlayer, TileEntityConveyorHopper tileEntity) {
 		super(new ContainerConveyorHopper(inventoryPlayer, tileEntity));
@@ -29,11 +36,61 @@ public class GuiConveyorHopper extends GuiContainer {
 		this.fontRendererObj.drawString(getTranslatedInventoryName(inventoryPlayer), 8, this.ySize - 96 + 2, 0x404040);
 	}
 
-	private String getTranslatedInventoryName(IInventory inventory) {
-		if(inventory.hasCustomInventoryName()) {
-			return inventory.getInventoryName();
-		} else {
-			return I18n.format(inventory.getInventoryName(), new Object[0]);
+	@SuppressWarnings("unchecked")
+	@Override
+	public void initGui() {
+		super.initGui();
+		//TODO: Adjust background image & draw inside ;)
+		this.buttonList.add(cbIgnoreRedstone = new GuiButtonExt(10, this.guiLeft + this.xSize, this.guiTop, "Redstone Mode"));
+		this.buttonList.add(cbEject = new GuiCheckBox(20, this.guiLeft + this.xSize, this.guiTop + 20, "Eject into World", tileEntity.isEject()));
+		this.buttonList.add(cbLinearMode = new GuiCheckBox(30, this.guiLeft + this.xSize, this.guiTop + 35, "Linear Mode", tileEntity.isLinearMode()));
+		this.buttonList.add(cbStackMode = new GuiCheckBox(40, this.guiLeft + this.xSize, this.guiTop + 50, "Stack Mode", tileEntity.isStackMode()));
+		cbStackMode.visible = tileEntity.isHighSpeed();
+		setRedstoneModeText();
+	}
+	
+	private void setRedstoneModeText() {
+		String appendage;
+		switch(tileEntity.getRedstoneMode()) {
+		case 0:
+			appendage = "Ignore";
+			break;
+		case 1:
+			appendage = "High";
+			break;
+		case 2:
+			appendage = "Low";
+			break;
+		case 3:
+			appendage = "Pulse (High Edge)";
+			break;
+		case 4:
+			appendage = "Pulse (Low Edge)";
+			break;
+		default:
+			appendage = "Wonky";
+		}
+		
+		
+		cbIgnoreRedstone.displayString = "Redstone Mode: " + appendage;
+	}
+	
+	@Override
+	protected void actionPerformed(GuiButton button) {
+		if(button.id == 10) {
+			int rs = tileEntity.getRedstoneMode();
+			rs++;
+			if(rs > 4 || rs < 0) {
+				rs = 0;
+			}
+			tileEntity.setRedstoneMode(rs);
+			setRedstoneModeText();
+		} else if(button.id == 20) {
+			tileEntity.setEject(cbEject.isChecked());
+		} else if(button.id == 30) {
+			tileEntity.setLinearMode(cbLinearMode.isChecked());
+		} else if(button.id == 40) {
+			tileEntity.setStackMode(cbStackMode.isChecked());
 		}
 	}
 	
