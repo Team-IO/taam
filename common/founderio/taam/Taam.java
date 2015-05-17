@@ -18,7 +18,8 @@ public final class Taam {
 
 	public static final String BLOCK_SENSOR = "taam.sensor";
 	public static final String BLOCK_PRODUCTIONLINE = "taam.productionline";
-	public static final String BLOCK_SLIDINGDOOR = "taam.slidingdoor";;
+	public static final String BLOCK_LOGISTICS = "taam.logistics";
+	public static final String BLOCK_SLIDINGDOOR = "taam.slidingdoor";
 	public static final String BLOCK_SENSOR_MOTION = "taam.sensor.motion";
 	public static final String BLOCK_SENSOR_MINECT = "taam.sensor.minect";
 	public static final String BLOCK_ORE = "taam.ore";
@@ -45,9 +46,15 @@ public final class Taam {
 		"conveyor",
 		"hopper",
 		"hopper_hs",
-		"placeholder",
+		"sieve",
+		"shredder",
+		"grinder",
+		"crusher",
+	};
+	
+	public static final String[] BLOCK_LOGISTICS_META = new String[] {
 		"logistics_manager",
-		"logistics_station"
+		"logistics_station",
 	};
 	
 	public static final String MULTIPART_MULTINET_CABLE = "taam.multinet.cable";
