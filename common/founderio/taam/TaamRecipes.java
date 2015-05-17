@@ -87,7 +87,9 @@ public class TaamRecipes {
 				'C', "partBasicCircuit",
 				'T', new ItemStack(TaamMain.itemPart, 1 ,8),
 				'F', new ItemStack(TaamMain.itemPart, 1, 11)));
-		
+//		photo cell
+		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(TaamMain.itemPart, 9, 0),
+				Blocks.daylight_detector));
 	}
 	
 	
