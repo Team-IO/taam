@@ -151,6 +151,10 @@ public class LogisticsManager {
 		while(processingLimit > 0) {
 			processingLimit--;
 			
+			if(pendingTransport.isEmpty()) {
+				return;
+			}
+			
 			IVehicle vehicle = null;
 	
 			/*
@@ -164,6 +168,12 @@ public class LogisticsManager {
 				startingPoint = pendingTransport.get(startingPointIndex);
 				vehicle = findSuitableVehicle(startingPoint);
 			} while (vehicle == null && startingPointIndex < pendingTransport.size() - 1);
+			
+			if(vehicle == null) {
+				return;
+			}
+			
+			System.out.println("Scheduling Transport " + startingPoint + " with vehicle " + vehicle);
 			
 			Route route = new Route();
 			route.transports.add(startingPoint);
@@ -180,6 +190,8 @@ public class LogisticsManager {
 			processingRoutes.add(route);
 			
 			tryAppendTransports(route);
+			
+			vehicle.setRoute(route);
 		}
 	}
 	

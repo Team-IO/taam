@@ -52,7 +52,7 @@ public class AStar {
 		do {
 			current = openlist.remove();
 			
-			if(current.object == target) {
+			if(current.object.equals(target)) {
 				return current;
 			}
 			
@@ -81,7 +81,7 @@ public class AStar {
 				
 				Node<T> foundS = null;
 				for(Node<T> op : closedlist) {
-					if(op.object == successor) {
+					if(op.object.equals(successor)) {
 						found = true;
 						foundS = op;
 						break;

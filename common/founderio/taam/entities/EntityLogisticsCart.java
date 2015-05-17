@@ -441,7 +441,10 @@ public class EntityLogisticsCart extends Entity implements IVehicle {
 			if(ibr != null && ibrProgress > 0) {
 				currentPosition = currentPosition.getDirectionalOffset(ibr.leaveTo);
 			}
-			return null != graph.astar(currentPosition, graph.getTrackForStation(manager.getStation(stationID)));
+			
+			WorldCoord targetPosition = graph.getTrackForStation(manager.getStation(stationID));
+			
+			return null != graph.astar(currentPosition, targetPosition);
 		} else {
 			return false;
 		}
