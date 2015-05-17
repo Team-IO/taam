@@ -76,21 +76,33 @@ public class BlockProductionLine extends BaseBlock {
 
 	public TileEntity createTileEntity(World world, int metadata) {
 		if(metadata == 0) {
+			// Plain Conveyor
 			return new TileEntityConveyor();
 		} else if(metadata == 1) {
-			// Regular
+			// Hopper, Regular
 			return new TileEntityConveyorHopper();
 		} else if(metadata == 2) {
-			// High-Speed
+			// Hopper, High-Speed
 			return new TileEntityConveyorHopper(true);
 		} else if(metadata == 3) {
-			//TODO: Separate entity/other kind of distinction
-			return new TileEntityConveyorHopper(true);
+			// Sieve
+			return null;
 		} else if(metadata == 4) {
-			return new TileEntityLogisticsManager();
+			// Shredder
+			return null;
 		} else if(metadata == 5) {
-			return new TileEntityLogisticsStation();
+			// Grinder
+			return null;
+		} else if(metadata == 6) {
+			// Crusher
+			return null;
 		}
+		//TODO: Move to separate instance/block/whatevs "taam.logistics":
+//		if(metadata == 4) {
+//			return new TileEntityLogisticsManager();
+//		} else if(metadata == 5) {
+//			return new TileEntityLogisticsStation();
+//		}
 		return null;
 	}
 	@Override

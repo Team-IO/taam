@@ -120,7 +120,7 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 					 * -----------
 					 */
 					
-					EntityItem item = new EntityItem(worldObj, xCoord + 0.5, yCoord - 0.2, zCoord + 0.5, ejectStack);
+					EntityItem item = new EntityItem(worldObj, xCoord + 0.5, yCoord - 0.3, zCoord + 0.5, ejectStack);
 			        item.motionX = 0;
 			        item.motionY = 0;
 			        item.motionZ = 0;
