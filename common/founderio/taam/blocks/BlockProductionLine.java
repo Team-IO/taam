@@ -152,15 +152,15 @@ public class BlockProductionLine extends BaseBlock {
 	@Override
 	public void onPostBlockPlaced(World par1World, int par2, int par3,
 			int par4, int par5) {
-		updateBlocksAround(par1World, par2, par3, par4);
+//		updateBlocksAround(par1World, par2, par3, par4);
 	}
 	
 	@Override
 	public AxisAlignedBB getCollisionBoundingBoxFromPool(World world,
 			int x, int y, int z) {
 		int meta = world.getBlockMetadata(x, y, z);
-		if(meta == 3) {
-			// Standalone
+		if(meta == 20) {
+			// Standalone (not in use at the moment)
 			this.maxY = 1;
 		} else {
 			// Conveyor Machinery
@@ -239,6 +239,13 @@ public class BlockProductionLine extends BaseBlock {
 			int z, Block block, int meta) {
 		//TODO: Drop Items
 		super.breakBlock(world, x, y, z, block, meta);
+	}
+	
+	@Override
+	public void onNeighborChange(IBlockAccess world, int x, int y, int z,
+			int tileX, int tileY, int tileZ) {
+		// TODO Auto-generated method stub
+		super.onNeighborChange(world, x, y, z, tileX, tileY, tileZ);
 	}
 	
 }

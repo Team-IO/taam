@@ -30,27 +30,15 @@ public abstract class BaseBlock extends Block {
 			te.setOwner(((EntityPlayer) entity).getDisplayName());
 		}
 	}
-	
+
 	@Override
-	public void onNeighborChange(IBlockAccess world, int x, int y, int z,
-			int tileX, int tileY, int tileZ) {
+	public void onNeighborBlockChange(World world, int x, int y, int z, Block neighborBlock) {
 		TileEntity te = world.getTileEntity(x, y, z);
-		// TODO: Temporaryhack?
 		// Update stuff like conveyors if something changes
 		if(te != null) {
 			te.updateContainingBlockInfo();
+			world.markBlockForUpdate(x, y, z);
 		}
-		super.onNeighborChange(world, x, y, z, tileX, tileY, tileZ);
-	}
-	
-	public void updateBlocksAround(World world, int x, int y, int z) {
-		world.notifyBlocksOfNeighborChange(x, y, z, this);
-		world.notifyBlocksOfNeighborChange(x + 1, y, z, this);
-		world.notifyBlocksOfNeighborChange(x - 1, y, z, this);
-		world.notifyBlocksOfNeighborChange(x, y, z + 1, this);
-		world.notifyBlocksOfNeighborChange(x, y, z - 1, this);
-		world.notifyBlocksOfNeighborChange(x, y - 1, z, this);
-		world.notifyBlocksOfNeighborChange(x, y + 1, z, this);
 	}
 	
 	@Override
@@ -60,6 +48,9 @@ public abstract class BaseBlock extends Block {
 		}
 		TileEntity te = world.getTileEntity(x, y, z);
 
+		if(te instanceof TileEntityConveyor) {
+			((TileEntityConveyor) te).dropItems();
+		}
 		
 		/*
 		 * Drop Items
