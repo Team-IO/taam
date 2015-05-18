@@ -33,16 +33,6 @@ public class TaamRecipes {
 				'I', "ingotIron",
 				'R', Items.redstone));
 		
-//		hs hopper standalone
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.blockProductionLine, 1, 3),
-				"C C", " H ", 
-				'C', new ItemStack(TaamMain.blockProductionLine , 1, 0),
-				'H', Blocks.hopper));
-		
-//		hs hopper
-		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(TaamMain.blockProductionLine, 1, 2), 
-				new Object[] { new ItemStack(TaamMain.itemPart, 1, 2),
-				new ItemStack(TaamMain.blockProductionLine, 1, 3)}));
 //		logistics chip
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, 5),
 				"PKP", "HCH", "PVP",
@@ -100,8 +90,42 @@ public class TaamRecipes {
 				"CCC", "CIC", "CCC",
 				'C', "ingotCopper",
 				'I', "ingotIron"));
+//		iron nugget
+		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(TaamMain.itemPart, 9, 14),
+				"ingotIron"));
+//		metal bearing
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, 12), 
+				"INI", "N*N", "INI",
+				'I', "ingotIron",
+				'N', "nuggetIron"));
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, 12), 
+				"NIN", "I*I", "NIN",
+				'I', "ingotIron",
+				'N', "nuggetIron"));
+//		support frame
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1 ,2),
+				"*A*", "A*A", "AAA",
+				'A', "ingotAluminum"));
+//		copper wire
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 12, 13), 
+				"CCC",
+				'C', "ingotCopper"));
+//		conveyor
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.blockProductionLine, 1, 0),
+				"MRM", "CSC", "ABA",
+				'M', new ItemStack(TaamMain.itemPart, 1, 1),
+				'R', new ItemStack(TaamMain.itemPart, 1, 6),
+				'C', new ItemStack(TaamMain.itemPart, 1, 13),
+				'S', new ItemStack(TaamMain.itemPart, 1, 2),
+				'A', "ingotAluminum",
+				'B', new ItemStack(TaamMain.itemPart, 1, 3)));
+//			conveyor hopper
+		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(TaamMain.blockProductionLine, 1, 1),
+				Blocks.hopper, new ItemStack(TaamMain.itemPart, 1, 2)));
 	
 	}
+	
+	
 	
 	
 
