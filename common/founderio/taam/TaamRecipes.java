@@ -95,6 +95,11 @@ public class TaamRecipes {
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemWrench, 1, 0), 
 				"*I*", "II*", "**I",
 				'I', Items.iron_ingot));
+//		magnetic coil
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, 10),
+				"CCC", "CIC", "CCC",
+				'C', "ingotCopper",
+				'I', "ingotIron"));
 	
 	}
 	
