@@ -100,7 +100,18 @@ public class TaamRecipes {
 				"CCC", "CIC", "CCC",
 				'C', "ingotCopper",
 				'I', "ingotIron"));
-	
+//		iron nugget
+		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(TaamMain.itemPart, 9, 14),
+				"ingotIron"));
+//		metal bearing
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, 12), 
+				"INI", "N*N", "INI",
+				'I', "ingotIron",
+				'N', "nuggetIron"));
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, 12), 
+				"NIN", "I*I", "NIN",
+				'I', "ingotIron",
+				'N', "nuggetIron"));
 	}
 	
 	
