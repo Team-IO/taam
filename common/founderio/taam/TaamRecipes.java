@@ -90,6 +90,12 @@ public class TaamRecipes {
 //		photo cell
 		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(TaamMain.itemPart, 9, 0),
 				Blocks.daylight_detector));
+
+//		wrench
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemWrench, 1, 0), 
+				"*I*", "II*", "**I",
+				'I', Items.iron_ingot));
+	
 	}
 	
 	
