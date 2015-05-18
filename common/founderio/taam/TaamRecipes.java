@@ -30,7 +30,7 @@ public class TaamRecipes {
 				'P', "materialPlastic",
 				'G', "blockGlass",
 				'p', "partPhotocell",
-				'I', Items.iron_ingot,
+				'I', "ingotIron",
 				'R', Items.redstone));
 		
 //		hs hopper standalone
@@ -66,7 +66,7 @@ public class TaamRecipes {
 //		iron frame
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, 11),
 				"III", "I I", "I I",
-				'I', Items.iron_ingot));
+				'I', "ingotIron"));
 		
 //		rubber band
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, 6),
@@ -75,11 +75,11 @@ public class TaamRecipes {
 //		tank
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, 8),
 				" I ", "I I", "III",
-				'I', Items.iron_ingot));
+				'I', "ingotIron"));
 //		nozzle
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1 ,9),
 				" I ", "I I", " I ",
-				'I', Items.iron_ingot));
+				'I', "ingotIron"));
 //		sprayer
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemConveyorAppliance, 1, 0),
 				"NFN", "N N", "TCT",
@@ -94,7 +94,7 @@ public class TaamRecipes {
 //		wrench
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemWrench, 1, 0), 
 				"*I*", "II*", "**I",
-				'I', Items.iron_ingot));
+				'I', "ingotIron"));
 //		magnetic coil
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, 10),
 				"CCC", "CIC", "CCC",

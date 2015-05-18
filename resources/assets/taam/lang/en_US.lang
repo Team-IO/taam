@@ -23,6 +23,8 @@ item.taam.part.nozzle.name=Nozzle
 item.taam.part.magnetic_coil.name=Magnetic Coil
 item.taam.part.iron_frame.name=Iron Frame
 item.taam.part.metal_bearing.name=Metal Bearing
+item.taam.part.copper_wire.name=Copper Wire
+item.taam.part.iron_nugget.name=Iron Nugget
 # Materials
 item.taam.material.plastic_sheet.name=Plastic Sheet
 item.taam.material.plastic_bar.name=Plastic Bar

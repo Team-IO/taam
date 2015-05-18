@@ -96,7 +96,9 @@ public final class Taam {
 		"nozzle",
 		"magnetic_coil",
 		"iron_frame",
-		"metal_bearing"
+		"metal_bearing",
+		"copper_wire",
+		"iron_nugget"
 	};
 	
 	public static final String TILEENTITY_SENSOR = "taam.sensor";
