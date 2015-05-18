@@ -33,16 +33,6 @@ public class TaamRecipes {
 				'I', "ingotIron",
 				'R', Items.redstone));
 		
-//		hs hopper standalone
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.blockProductionLine, 1, 3),
-				"C C", " H ", 
-				'C', new ItemStack(TaamMain.blockProductionLine , 1, 0),
-				'H', Blocks.hopper));
-		
-//		hs hopper
-		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(TaamMain.blockProductionLine, 1, 2), 
-				new Object[] { new ItemStack(TaamMain.itemPart, 1, 2),
-				new ItemStack(TaamMain.blockProductionLine, 1, 3)}));
 //		logistics chip
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, 5),
 				"PKP", "HCH", "PVP",
@@ -129,7 +119,9 @@ public class TaamRecipes {
 				'S', new ItemStack(TaamMain.itemPart, 1, 2),
 				'A', "ingotAluminum",
 				'B', new ItemStack(TaamMain.itemPart, 1, 3)));
-			
+//			conveyor hopper
+		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(TaamMain.blockProductionLine, 1, 1),
+				Blocks.hopper, new ItemStack(TaamMain.itemPart, 1, 2)));
 	
 	}
 	
