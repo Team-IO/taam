@@ -116,7 +116,10 @@ public class TaamRecipes {
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1 ,2),
 				"*A*", "A*A", "AAA",
 				'A', "ingotAluminum"));
-	
+//		copper wire
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 12, 13), 
+				"CCC",
+				'C', "ingotCopper"));
 	
 	
 	
