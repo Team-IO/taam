@@ -112,7 +112,18 @@ public class TaamRecipes {
 				"NIN", "I*I", "NIN",
 				'I', "ingotIron",
 				'N', "nuggetIron"));
+//		support frame
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1 ,2),
+				"*A*", "A*A", "AAA",
+				'A', "ingotAluminum"));
+	
+	
+	
+	
+	
 	}
+	
+	
 	
 	
 
