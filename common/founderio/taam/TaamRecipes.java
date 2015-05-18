@@ -120,9 +120,16 @@ public class TaamRecipes {
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 12, 13), 
 				"CCC",
 				'C', "ingotCopper"));
-	
-	
-	
+//		conveyor
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.blockProductionLine, 1, 0),
+				"MRM", "CSC", "ABA",
+				'M', new ItemStack(TaamMain.itemPart, 1, 1),
+				'R', new ItemStack(TaamMain.itemPart, 1, 6),
+				'C', new ItemStack(TaamMain.itemPart, 1, 13),
+				'S', new ItemStack(TaamMain.itemPart, 1, 2),
+				'A', "ingotAluminum",
+				'B', new ItemStack(TaamMain.itemPart, 1, 3)));
+			
 	
 	}
 	
