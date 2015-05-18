@@ -19,6 +19,8 @@ import founderio.taam.Config;
 import founderio.taam.Taam;
 import founderio.taam.blocks.TileEntityConveyor;
 import founderio.taam.blocks.multinet.MultinetCable;
+import founderio.taam.conveyors.IConveyorAppliance;
+import founderio.taam.conveyors.api.IConveyorApplianceHost;
 import founderio.taam.multinet.MultinetUtil;
 import founderio.taam.multinet.logistics.WorldCoord;
 
@@ -99,17 +101,34 @@ public class ItemDebugTool extends Item {
         }
         
         TileEntity te = world.getTileEntity(x, y, z);
-        
+
+    	char remoteState = world.isRemote ? 'C' : 'S';
+    	
         if(te instanceof TileEntityConveyor) {
         	didSomething = true;
         	TileEntityConveyor tec = (TileEntityConveyor) te;
         	tec.updateContainingBlockInfo();
-        	player.addChatMessage(new ChatComponentText(String.format((world.isRemote ? 'C' : 'S') + " Conveyor facing %s. isEnd: %b isBegin: %b", tec.getFacingDirection().toString(), tec.isEnd(), tec.isBegin())));
-        	if(tec.appliance == null) {
-        		player.addChatMessage(new ChatComponentText(String.format((world.isRemote ? 'C' : 'S') + " Appliance Type: %s Appliance is null. ", tec.applianceType)));
+        	
+        	String text = String.format(remoteState + " Conveyor facing %s. isEnd: %b isBegin: %b",
+        			tec.getFacingDirection().toString(), tec.isEnd(), tec.isBegin());
+
+        	player.addChatMessage(new ChatComponentText(text));
+
+        }
+        
+        if(te instanceof IConveyorApplianceHost) {
+        	IConveyorApplianceHost host = (IConveyorApplianceHost)te;
+        	IConveyorAppliance appliance = host.getAppliance();
+        	String applianceType = host.getApplianceType();
+
+        	String text;
+        	
+        	if(appliance == null) {
+        		text = String.format(remoteState + " Appliance Type: %s Appliance is null. ", applianceType);
         	} else {
-        		player.addChatMessage(new ChatComponentText(String.format((world.isRemote ? 'C' : 'S') + " Appliance Type: %s Appliance: %s", tec.applianceType, String.valueOf(tec.appliance))));
+        		text = String.format(remoteState + " Appliance Type: %s Appliance: %s", applianceType, String.valueOf(appliance));
         	}
+        	player.addChatMessage(new ChatComponentText(text));
         }
 		
         return !didSomething;

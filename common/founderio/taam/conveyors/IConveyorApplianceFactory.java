@@ -1,5 +1,6 @@
 package founderio.taam.conveyors;
 
+import founderio.taam.conveyors.api.IConveyorApplianceHost;
 import net.minecraft.item.ItemStack;
 
 

@@ -13,7 +13,7 @@ import net.minecraft.world.World;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import founderio.taam.Taam;
-import founderio.taam.conveyors.IConveyorApplianceHost;
+import founderio.taam.conveyors.api.IConveyorApplianceHost;
 
 public class ItemConveyorAppliance extends ItemWithMetadata {
 

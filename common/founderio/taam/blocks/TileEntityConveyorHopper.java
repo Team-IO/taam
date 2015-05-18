@@ -14,8 +14,8 @@ import codechicken.lib.inventory.InventoryUtils;
 import founderio.taam.Config;
 import founderio.taam.TaamMain;
 import founderio.taam.conveyors.ConveyorUtil;
-import founderio.taam.conveyors.IConveyorAwareTE;
-import founderio.taam.conveyors.ItemWrapper;
+import founderio.taam.conveyors.api.IConveyorAwareTE;
+import founderio.taam.conveyors.api.IItemFilter;
 import founderio.taam.multinet.logistics.WorldCoord;
 import founderio.taam.network.TPMachineConfiguration;
 
@@ -225,37 +225,55 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 		pulseWasSent = tag.getBoolean("pulseWasSent");
 	}
 
-	public boolean isHighSpeed() {
-		return highSpeed;
-	}
-
-	public void setHighSpeed(boolean highSpeed) {
-		this.highSpeed = highSpeed;
-	}
-
 	@Override
-	public int addItemAt(ItemStack item, double x, double y, double z) {
-		x -= xCoord;
-		y -= yCoord;
-		z -= zCoord;
-		if(y < 0.4 || y > 1) {
-			return 0;
-		}
-		if(x > 1.1 || x < -0.1 || z > 1.1 || z < -0.1) {
-			return 0;
-		}
+	public int insertItemAt(ItemStack item, int slot) {
 		// insertItem returns item count unable to insert.
 		int inserted = item.stackSize - InventoryUtils.insertItem(inventory, item, false);
 		System.out.println("Inserting " + inserted);
 		System.out.println("Inve Slot 0: " + inventory.getStackInSlot(0));
 		return inserted;
 	}
-
+	
 	@Override
-	public int addItemAt(ItemWrapper item, double x, double y, double z) {
-		return addItemAt(item.itemStack, x, y, z);
+	public boolean canSlotMove(int slot) {
+		return false;
 	}
 
+	@Override
+	public int getMovementProgress() {
+		return 0;
+	}
+
+	@Override
+	public int getMaxMovementProgress() {
+		return 1;
+	}
+
+	@Override
+	public IItemFilter getSlotFilter(int slot) {
+		return null;
+	}
+
+	@Override
+	public int posX() {
+		return xCoord;
+	}
+
+	@Override
+	public int posY() {
+		return yCoord;
+	}
+
+	@Override
+	public int posZ() {
+		return zCoord;
+	}
+
+	@Override
+	public ItemStack getItemAt(int slot) {
+		return null;
+	}
+	
 	@Override
 	public int getSizeInventory() {
 		return inventory.getSizeInventory();
@@ -331,6 +349,19 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 		return this.zCoord;
 	}
 
+	@Override
+	public ForgeDirection getMovementDirection() {
+		return ForgeDirection.DOWN;
+	}
+
+	public boolean isHighSpeed() {
+		return highSpeed;
+	}
+
+	public void setHighSpeed(boolean highSpeed) {
+		this.highSpeed = highSpeed;
+	}
+
 	public boolean isEject() {
 		return eject;
 	}
@@ -387,6 +418,5 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 			this.markDirty();
 		}
 	}
-
 
 }

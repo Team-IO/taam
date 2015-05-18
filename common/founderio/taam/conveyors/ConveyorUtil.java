@@ -1,14 +1,17 @@
 package founderio.taam.conveyors;
 
-import codechicken.lib.inventory.InventoryUtils;
-import codechicken.lib.vec.Vector3;
-import founderio.taam.TaamMain;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
+import codechicken.lib.inventory.InventoryUtils;
+import codechicken.lib.vec.Vector3;
+import founderio.taam.TaamMain;
+import founderio.taam.conveyors.api.IConveyorApplianceHost;
+import founderio.taam.conveyors.api.IConveyorAwareTE;
 
 public class ConveyorUtil {
 	/**
@@ -42,48 +45,128 @@ public class ConveyorUtil {
 				if(entityItemStack == null || entityItemStack.getItem() == null) {
 					continue;
 				}
-				int added = conveyorTE.addItemAt(entityItemStack, ent.posX, ent.posY, ent.posZ);
-				if(added == previousStackSize) {
-					ent.setDead();
-					if(stopAtFirstMatch) {
-						break;
-					}
-				} else if(added > 0) {
-					entityItemStack.stackSize = previousStackSize - added;
-					ei.setEntityItemStack(entityItemStack);
-					if(stopAtFirstMatch) {
-						break;
+				double relativeX = ent.posX - conveyorTE.posX();
+				double relativeY = ent.posY - conveyorTE.posY();
+				double relativeZ = ent.posZ - conveyorTE.posZ();
+				
+				
+				int slot = getSlotForRelativeCoordinates(relativeX, relativeZ);
+
+				if(slot >= 0 && slot < 9 && relativeY > 0.3 && relativeY < 1.0) {
+					int added = conveyorTE.insertItemAt(entityItemStack, slot);
+					if(added == previousStackSize) {
+						ent.setDead();
+						if(stopAtFirstMatch) {
+							break;
+						}
+					} else if(added > 0) {
+						entityItemStack.stackSize = previousStackSize - added;
+						ei.setEntityItemStack(entityItemStack);
+						if(stopAtFirstMatch) {
+							break;
+						}
 					}
 				}
 			}
 		}
 	}
 	
-	/**
-	 * Tries to insert items into the conveyor passed. Sets the stack size accordingly.
-	 * @param conveyorTE
-	 * @param itemWrapper
-	 * @param absX
-	 * @param absY
-	 * @param absZ
-	 * @return true if items were inserted.
-	 */
-	public static boolean tryInsertItems(IConveyorAwareTE conveyorTE, ItemWrapper itemWrapper,
-			double absX, double absY, double absZ) {
-		int previousStackSize = itemWrapper.getStackSize();
-		if(previousStackSize == 0) {
-			// Just remove it.
-			return true;
+	public static int getNextSlot(int slot, ForgeDirection dir) {
+		slot = getNextSlotUnwrapped(slot, dir);
+		if(slot < 0) {
+			slot += 9;
+		} else if(slot > 8) {
+			slot -= 9;
 		}
-		int added = conveyorTE.addItemAt(itemWrapper, absX, absY, absZ);
-		if(added > 0) {
-			// Fully or Partially inserted
-			itemWrapper.setStackSize(previousStackSize - added);
-			return true;
-		} else {
-			return false;
+		return slot;
+	}
+	
+	public static int getNextSlotUnwrapped(int slot, ForgeDirection dir) {
+		if(dir.offsetX != 0) {
+			slot += dir.offsetX * 3;
+		}
+		if(dir.offsetZ != 0) {
+			int col = slot % 3;
+			col += dir.offsetZ;
+			if(col < 0) {
+				slot -= 7;
+			} else if(col > 2) {
+				slot += 7;
+			} else {
+				slot += dir.offsetZ;
+			}
+		}
+		return slot;
+	}
+
+	public static final double oneThird = 1/3.0;
+	
+	public static double getItemPositionX(int slot) {
+		double x = Math.floor(slot / 3) + 0.5;
+		return x * oneThird;
+	}
+	
+	public static double getItemPositionX(int slot, double progress, ForgeDirection dir) {
+		double x = getItemPositionX(slot);
+		x += dir.offsetX * progress * oneThird;
+		return x;
+	}
+
+	public static double getItemPositionZ(int slot) {
+		double z = (slot % 3) + 0.5;
+		return z * oneThird;
+	}
+	
+	public static double getItemPositionZ(int slot, double progress, ForgeDirection dir) {
+		double z = getItemPositionZ(slot);
+		z += dir.offsetZ * progress * oneThird;
+		return z;
+	}
+	
+	public static int getSlotForRelativeCoordinates(double x, double z) {
+		if(x > 1 || x < 0 || z > 1 || z < 0) {
+			return -1;
+		}
+		int row = (int)Math.floor(x * 3f);
+		int col = (int)Math.floor(z * 3f);
+		return row * 3 + col;
+	}
+	
+	private static final int[][] slotOrders;
+	
+	static {
+		slotOrders = new int[2][];
+		slotOrders[0] = new int[] {
+				//North -Z to +Z (Processes line by line)
+				//West -X to +X (Processes each line in "parallel")
+				0, 1, 2,
+				3, 4, 5,
+				6, 7, 8
+		};
+		slotOrders[1] = new int[] {
+				//South +Z to -Z (Processes line by line)
+				//East +X to -X (Processes each line in "parallel")
+				6, 7, 8,
+				3, 4, 5,
+				0, 1, 2
+		};
+	}
+	
+	
+	public static int[] getSlotOrderForDirection(ForgeDirection dir) {
+		switch(dir) {
+		default:
+		case NORTH:
+			return slotOrders[0];
+		case SOUTH:
+			return slotOrders[1];
+		case WEST:
+			return slotOrders[0];
+		case EAST:
+			return slotOrders[1];
 		}
 	}
+	
 	
 	/**
 	 * Drops the installed appliance and its content, if available.

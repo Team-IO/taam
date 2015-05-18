@@ -12,7 +12,7 @@ import net.minecraft.world.World;
 import codechicken.lib.inventory.InventoryUtils;
 import codechicken.lib.vec.Vector3;
 import founderio.taam.conveyors.ConveyorUtil;
-import founderio.taam.conveyors.IConveyorApplianceHost;
+import founderio.taam.conveyors.api.IConveyorApplianceHost;
 
 public abstract class BaseBlock extends Block {
 

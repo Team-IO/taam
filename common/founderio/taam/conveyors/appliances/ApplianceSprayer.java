@@ -21,8 +21,8 @@ import founderio.taam.TaamMain;
 import founderio.taam.conveyors.ApplianceInventory;
 import founderio.taam.conveyors.IConveyorAppliance;
 import founderio.taam.conveyors.IConveyorApplianceFactory;
-import founderio.taam.conveyors.IConveyorApplianceHost;
 import founderio.taam.conveyors.ItemWrapper;
+import founderio.taam.conveyors.api.IConveyorApplianceHost;
 
 public class ApplianceSprayer extends ApplianceInventory {
 

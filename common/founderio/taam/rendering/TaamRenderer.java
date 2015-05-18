@@ -37,6 +37,7 @@ import founderio.taam.blocks.TileEntityConveyorHopper;
 import founderio.taam.blocks.TileEntityLogisticsManager;
 import founderio.taam.blocks.TileEntityLogisticsStation;
 import founderio.taam.blocks.TileEntitySensor;
+import founderio.taam.conveyors.ConveyorUtil;
 import founderio.taam.conveyors.IRotatable;
 import founderio.taam.conveyors.ItemWrapper;
 
@@ -394,34 +395,25 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 		GL11.glTranslated(x, y, z);
 		
 		if(conveyor != null) {
-			// Turn one to the right
-			ForgeDirection dirRotated = direction.getRotation(ForgeDirection.UP);
-			
-			List<ItemWrapper> items = conveyor.getItems();
-			for(ItemWrapper wrapper : items) {
+			ItemWrapper[] items = conveyor.getItems();
+			for(int slot = 0; slot < items.length; slot++) {
+				ItemWrapper wrapper = items[slot];
 				if(wrapper == null || wrapper.itemStack == null) {
 					continue;
 				}
 				
-				float progress = wrapper.progress / 100f;
-				if(direction.offsetX < 0 || direction.offsetZ < 0) {
-					progress = 1-progress;
-					progress *= -1;// cope for the fact that direction offset is negative
+				float movementProgress = (float)conveyor.getMovementProgress();
+				if(wrapper.blocked) {
+					movementProgress = 0;
 				}
-				float offset = wrapper.offset / 100f;
-				if(dirRotated.offsetX < 0 || dirRotated.offsetZ < 0) {
-					offset = 1-offset;
-					offset *= -1;// cope for the fact that direction offset is negative
-				}
+				int maxProgress = conveyor.getMaxMovementProgress();
 				
-				// Absolute Position of the Item
-				float absX = direction.offsetX * progress + dirRotated.offsetX * offset;
-				float absY = 0.1f;
-				float absZ = direction.offsetZ * progress + dirRotated.offsetZ * offset;
-				
+				float posX = (float)ConveyorUtil.getItemPositionX(slot, movementProgress / maxProgress, direction);
+				float posY = 0.1f;
+				float posZ = (float)ConveyorUtil.getItemPositionZ(slot, movementProgress / maxProgress, direction);
 				
 				GL11.glPushMatrix();
-				GL11.glTranslatef(absX, absY, absZ);
+				GL11.glTranslatef(posX, posY, posZ);
 				
 				ei.setEntityItemStack(wrapper.itemStack);
 
