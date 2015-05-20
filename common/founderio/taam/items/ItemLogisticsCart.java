@@ -23,7 +23,7 @@ public class ItemLogisticsCart extends ItemWithMetadata {
 		return false;
 	}
 	
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings({ "rawtypes" })
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack par1ItemStack,

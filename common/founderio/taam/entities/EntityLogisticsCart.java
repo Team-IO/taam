@@ -14,7 +14,6 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.common.util.ForgeDirection;
 import codechicken.lib.inventory.InventorySimple;
@@ -397,12 +396,13 @@ public class EntityLogisticsCart extends Entity implements IVehicle {
 
 				AxisAlignedBB box = boundingBox.expand(0.2D, 0.0D, 0.2D);
 
-				List list = this.worldObj.getEntitiesWithinAABBExcludingEntity(
+				@SuppressWarnings("unchecked")
+				List<Entity> list = this.worldObj.getEntitiesWithinAABBExcludingEntity(
 						this, box);
 
 				if (list != null && !list.isEmpty()) {
 					for (int k = 0; k < list.size(); ++k) {
-						Entity entity = (Entity) list.get(k);
+						Entity entity = list.get(k);
 
 						if (entity != this.riddenByEntity
 								&& entity.canBePushed()) {

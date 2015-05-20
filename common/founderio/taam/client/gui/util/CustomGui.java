@@ -6,8 +6,6 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 
-import org.lwjgl.opengl.GL11;
-
 public abstract class CustomGui extends GuiContainer {
 
 	public CustomGui(Container container) {
