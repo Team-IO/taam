@@ -326,7 +326,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 		ItemWrapper slotObject = items[slot];
 		if(slotObject.itemStack == null) {
 			slotObject.itemStack = item.copy();
-			slotObject.unblockForced();
+			slotObject.unblock();
 			slotObject.resetMovement();
 			updateState();
 			return slotObject.itemStack.stackSize;

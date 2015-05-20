@@ -33,37 +33,43 @@ public class ItemWrapper {
 	}
 	
 	/**
-	 * Unblocks the itemstack if it is not blocky by an appliance
-	 * @return
+	 * Unblocks the itemstack if it is blocked (by an appliance)
 	 */
-	public boolean unblock() {
-		// Blocked by appliance
-		if(movementProgress < -1) {
-			return false;
-		}
-		if(movementProgress == -1) {
-			movementProgress = 0;
-		}
-		return true;
-	}
-	
-	/**
-	 * Unblocks the itemstack, no matter what
-	 */
-	public void unblockForced() {
+	public void unblock() {
 		if(movementProgress < 0) {
 			movementProgress = 0;
 		}
 	}
 	
-	public void block() {
-		if(movementProgress >= 0) {
+	/**
+	 * Blocks the item stack (will stay locked at zero progress) if it is not already moving.
+	 * (movement progress has to be zero!)
+	 * @return true if it could be locked or was already locked.
+	 */
+	public boolean block() {
+		if(movementProgress <= 0) {
 			movementProgress = -1;
+			return true;
 		}
+		return false;
+	}
+	
+	/**
+	 * Blocks the item stack (will stay locked at zero progress) even if it is already moving.
+	 * (Will revert moving items!!)
+	 */
+	public void blockForce() {
+		movementProgress = -1;
 	}
 
-	public void blockAppliance() {
-		movementProgress = -2;
+	/**
+	 * Resets movement if it is not blocked.
+	 * (Result is a wrapper at zero progress, or blocked.)
+	 */
+	public void resetMovement() {
+		if(!isBlocked()) {
+			movementProgress = 0;
+		}
 	}
 	
 	@Override
@@ -95,11 +101,5 @@ public class ItemWrapper {
 		clone.processing = processing;
 		clone.movementProgress = movementProgress;
 		return clone;
-	}
-
-	public void resetMovement() {
-		if(!isBlocked()) {
-			movementProgress = 0;
-		}
 	}
 }
