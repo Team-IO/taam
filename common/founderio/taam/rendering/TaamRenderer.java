@@ -1,7 +1,5 @@
 package founderio.taam.rendering;
 
-import java.util.List;
-
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderBlocks;
@@ -402,8 +400,8 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 					continue;
 				}
 				
-				float movementProgress = (float)conveyor.getMovementProgress();
-				if(wrapper.blocked) {
+				float movementProgress = wrapper.movementProgress;
+				if(wrapper.isBlocked()) {
 					movementProgress = 0;
 				}
 				int maxProgress = conveyor.getMaxMovementProgress();

@@ -13,8 +13,6 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
-import codechicken.lib.inventory.InventoryUtils;
-import codechicken.lib.vec.Vector3;
 import founderio.taam.conveyors.ApplianceRegistry;
 import founderio.taam.conveyors.ConveyorUtil;
 import founderio.taam.conveyors.IConveyorAppliance;
@@ -27,13 +25,12 @@ import founderio.taam.conveyors.api.IItemFilter;
 
 public class TileEntityConveyor extends BaseTileEntity implements ISidedInventory, IFluidHandler, IConveyorAwareTE, IRotatable, IConveyorApplianceHost {
 
-	public static final int maxProgress = 130;
+	public static final byte maxProgress = 40;
 	
 	/*
 	 * Content
 	 */
 	private ItemWrapper[] items;
-	private int movementProgress;
 	
 	/*
 	 * Conveyor State
@@ -99,9 +96,9 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 		System.out.println("Dropping slot " + slot + " >>" + slotObject.itemStack);
 		
 		if(!worldObj.isRemote) {
-			double posX = xCoord + ConveyorUtil.getItemPositionX(slot, (float)movementProgress / maxProgress, direction);
+			double posX = xCoord + ConveyorUtil.getItemPositionX(slot, slotObject.movementProgress / (float)maxProgress, direction);
 			double posY = yCoord + 0.4f;
-			double posZ = zCoord + ConveyorUtil.getItemPositionZ(slot, (float)movementProgress / maxProgress, direction);
+			double posZ = zCoord + ConveyorUtil.getItemPositionZ(slot, slotObject.movementProgress / (float)maxProgress, direction);
 			
 			if(slotObject.itemStack != null) {
 				EntityItem item = new EntityItem(worldObj, posX, posY, posZ, slotObject.itemStack);
@@ -116,8 +113,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	}
 	
 	private boolean transferSlot(int slot, IConveyorAwareTE nextBlock, int nextSlot) {
-		
-		System.out.println("Transfer external " + slot + " to " + nextSlot);
+//		System.out.println("Transfer external " + slot + " to " + nextSlot);
 		
 		ItemWrapper slotObject = items[slot];
 		
@@ -141,7 +137,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	
 
 	private boolean transferSlot(int slot, int nextSlot) {
-		System.out.println("Transfer internal " + slot + " to " + nextSlot);
+//		System.out.println("Transfer internal " + slot + " to " + nextSlot);
 		
 		ItemWrapper slotObject = items[slot];
 		ItemWrapper nextSlotObject = items[nextSlot];
@@ -167,16 +163,14 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 		 * Find items laying on the conveyor.
 		 */
 
-		ConveyorUtil.tryInsertItemsFromWorld(this, worldObj, null, false);
-		
+		if(ConveyorUtil.tryInsertItemsFromWorld(this, worldObj, null, false)) {
+			updateState();
+		}
+
 		/*
 		 * Move items already on the conveyor
 		 */
 		
-		boolean changed = false;
-		
-		// Movement blocked by at lease one slot or appliance
-		boolean blockMovement = false;
 		
 		//process from movement direction backward to keep slot order inside one conveyor,
 		// as we depend on the status of the next slot
@@ -192,28 +186,17 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 			}
 			
 			if(appliance != null) {
-				int min = appliance.getProgressBegin();
-				int max = appliance.getProgressEnd();
-				if(wrapper.processing > -1) {
-//					if(wrapper.progress >= min && wrapper.progress < max) {
-						System.out.println("Process");
-						wrapper.processing++;
-						appliance.processItem(this, wrapper);
-//					}
-						//TODO: allow appliance to block slots
-				}
-			}
-			
-			// Only unlock slots when starting a new cycle (otherwise the item would jump forward!)
-			if(wrapper.blocked && movementProgress != 0) {
-				continue;
+				System.out.println("Process");
+				wrapper.processing++;
+				appliance.processItem(this, wrapper);
+				//TODO: allow appliance to block slots
 			}
 			
 			// No next slot means drop to ground..
-			boolean noNextSlot = false;
 			boolean slotWrapped = false;
 			boolean nextSlotFree = false;
 			boolean nextSlotMovable = false;
+			int nextSlotProgress = 0;
 			
 			IConveyorAwareTE nextBlock = null;
 			
@@ -237,68 +220,61 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 				TileEntity te = worldObj.getTileEntity(nextBlockX, nextBlockY, nextBlockZ);
 				
 				if(te instanceof IConveyorAwareTE) {
-					nextBlock = (IConveyorAwareTE) worldObj.getTileEntity(nextBlockX, nextBlockY, nextBlockZ);
+					nextBlock = (IConveyorAwareTE) te;
 					
 					nextSlotFree = nextBlock.getItemAt(nextSlot) == null;
-					nextSlotMovable = nextSlotFree || (nextBlock.canSlotMove(nextSlot) && nextBlock.getMovementDirection() == direction);
+					nextSlotMovable = 
+							(
+								nextBlock.canSlotMove(nextSlot) &&
+								nextBlock.getMovementDirection() == direction
+							);
+					nextSlotProgress = nextBlock.getMovementProgress(nextSlot);
 				} else {
 					// Drop it
-					noNextSlot = true;
+					nextSlotFree = true;
+					nextSlotMovable = true;
 				}
 			} else {
 				nextSlotFree = items[nextSlot].itemStack == null;
-				nextSlotMovable = !items[nextSlot].blocked;
+				nextSlotMovable = !items[nextSlot].isBlocked();
+				nextSlotProgress = items[nextSlot].movementProgress;
 			}
 			
-			nextSlotFree = noNextSlot || nextSlotFree;
-			
 			// check next slot.
-			if(nextSlotFree || nextSlotMovable) {
-				wrapper.blocked = false;
-				
-				if(movementProgress == maxProgress) {
+			if(!wrapper.isBlocked() && (nextSlotFree || nextSlotMovable)) {
+				if(wrapper.movementProgress == maxProgress) {
 					if(nextSlotFree) {
-						if(noNextSlot) {
+						if(slotWrapped && nextBlock == null) {
+							// No next block, drop it.
 							dropItem(slot);
 						} else {
 							boolean completeTransfer;
-							if(nextBlock == null) {
-								completeTransfer = transferSlot(slot, nextSlot);
-							} else {
+							if(slotWrapped) {
 								completeTransfer = transferSlot(slot, nextBlock, nextSlot);
+							} else {
+								completeTransfer = transferSlot(slot, nextSlot);
 							}
 							if(!completeTransfer) {
 								// We still have some items pending here..
-								blockMovement = true;
+								nextSlotFree = false;
+								nextSlotMovable = false;
 							}
 						}
-					} else {
-						blockMovement = true;
 					}
 				}
-			} else {
-				wrapper.blocked = true;
 			}
-			
-		}
-		if(!blockMovement) {
-			movementProgress++;
-			if(movementProgress > maxProgress) {
-				movementProgress = 0;
+			if(nextSlotFree || (nextSlotMovable && wrapper.movementProgress < nextSlotProgress)) {
+				wrapper.movementProgress++;
+				if(wrapper.movementProgress > maxProgress) {
+					wrapper.movementProgress = 0;
+				}
 			}
-		}
-
-		// Content changed, send Network update.
-		if(changed && !worldObj.isRemote) {
-			//TODO: Do not update the items all the time. (Update differently)
-			updateState();
 		}
 	}
 	
 	@Override
 	protected void writePropertiesToNBT(NBTTagCompound tag) {
 		tag.setInteger("direction", direction.ordinal());
-		tag.setInteger("movementProgress", movementProgress);
 		if(applianceType != null) {
 			tag.setString("applianceType", applianceType);
 		}
@@ -317,7 +293,6 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	@Override
 	protected void readPropertiesFromNBT(NBTTagCompound tag) {
 		direction = ForgeDirection.getOrientation(tag.getInteger("direction"));
-		movementProgress = tag.getInteger("movementProgress");
 		NBTTagList itemsTag = tag.getTagList("items", NBT.TAG_COMPOUND);
 		if(itemsTag != null) {
 			int count = Math.min(itemsTag.func_150303_d(), items.length);
@@ -351,7 +326,8 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 		ItemWrapper slotObject = items[slot];
 		if(slotObject.itemStack == null) {
 			slotObject.itemStack = item.copy();
-			slotObject.blocked = true;
+			slotObject.unblockForced();
+			slotObject.resetMovement();
 			updateState();
 			return slotObject.itemStack.stackSize;
 		} else if(slotObject.itemStack.isItemEqual(item)) {
@@ -370,14 +346,9 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	}
 	
 	@Override
-	public int getMovementProgress() {
-		return movementProgress;
-	}
-	
-	@Override
 	public boolean canSlotMove(int slot) {
 		ItemWrapper slotObject = items[slot];
-		return !slotObject.blocked;
+		return !slotObject.isBlocked();
 	};
 	
 	@Override
@@ -409,6 +380,12 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	@Override
 	public ForgeDirection getMovementDirection() {
 		return direction;
+	}
+
+	@Override
+	public int getMovementProgress(int slot) {
+		ItemWrapper slotObject = items[slot];
+		return slotObject.movementProgress;
 	}
 	
 	/*
@@ -627,10 +604,10 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	@Override
 	public int[] getAccessibleSlotsFromSide(int side) {
 		if(appliance == null) {
-			//TODO: make the respective slots available!
 			ForgeDirection dir = ForgeDirection.getOrientation(side);
-			if(dir == ForgeDirection.UP) {
-				return new int[] { 0 };
+			int slot = ConveyorUtil.getSlot(dir);
+			if(slot != -1) {
+				return new int[] { slot };
 			} else {
 				return new int[0];
 			}

@@ -6,7 +6,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 public interface IConveyorAwareTE {
 	
 	boolean canSlotMove(int slot);
-	int getMovementProgress();
+	int getMovementProgress(int slot);
 	int getMaxMovementProgress();
 	
 	IItemFilter getSlotFilter(int slot);

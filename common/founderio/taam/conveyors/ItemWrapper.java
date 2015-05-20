@@ -7,7 +7,7 @@ import net.minecraft.nbt.NBTTagCompound;
 public class ItemWrapper {
 	public ItemStack itemStack;
 	public int processing;
-	public boolean blocked;
+	public byte movementProgress;
 
 	public ItemWrapper(ItemStack itemStack) {
 		super();
@@ -28,16 +28,54 @@ public class ItemWrapper {
 		}
 	}
 	
+	public boolean isBlocked() {
+		return movementProgress < 0;
+	}
+	
+	/**
+	 * Unblocks the itemstack if it is not blocky by an appliance
+	 * @return
+	 */
+	public boolean unblock() {
+		// Blocked by appliance
+		if(movementProgress < -1) {
+			return false;
+		}
+		if(movementProgress == -1) {
+			movementProgress = 0;
+		}
+		return true;
+	}
+	
+	/**
+	 * Unblocks the itemstack, no matter what
+	 */
+	public void unblockForced() {
+		if(movementProgress < 0) {
+			movementProgress = 0;
+		}
+	}
+	
+	public void block() {
+		if(movementProgress >= 0) {
+			movementProgress = -1;
+		}
+	}
+
+	public void blockAppliance() {
+		movementProgress = -2;
+	}
+	
 	@Override
 	public String toString() {
-		return String.format("ItemWrapper [itemStack=%s, processing=%d]",
-				String.valueOf(itemStack), processing);
+		return String.format("ItemWrapper [itemStack=%s, processing=%d, movementProgress=%d]",
+				String.valueOf(itemStack), processing, movementProgress);
 	}
 
 	public NBTTagCompound writeToNBT() {
 		NBTTagCompound tag = new NBTTagCompound();
-		tag.setInteger("processing", processing);
-		tag.setBoolean("blocked", blocked);
+		tag.setInteger("proc", processing);
+		tag.setByte("move", movementProgress);
 		if(itemStack != null) {
 			itemStack.writeToNBT(tag);
 		}
@@ -47,16 +85,21 @@ public class ItemWrapper {
 	public static ItemWrapper readFromNBT(NBTTagCompound tag) {
 		ItemStack itemStack = ItemStack.loadItemStackFromNBT(tag);
 		ItemWrapper wrapper = new ItemWrapper(itemStack);
-		wrapper.processing = tag.getInteger("processing");
-		wrapper.blocked = tag.getBoolean("blocked");
+		wrapper.processing = tag.getInteger("proc");
+		wrapper.movementProgress = tag.getByte("move");
 		return wrapper;
 	}
 
 	public ItemWrapper copy() {
 		ItemWrapper clone = new ItemWrapper(InventoryUtils.copyStack(itemStack, getStackSize()));
 		clone.processing = processing;
-		clone.blocked = blocked;
+		clone.movementProgress = movementProgress;
 		return clone;
 	}
 
+	public void resetMovement() {
+		if(!isBlocked()) {
+			movementProgress = 0;
+		}
+	}
 }

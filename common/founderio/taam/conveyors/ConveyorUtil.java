@@ -25,15 +25,17 @@ public class ConveyorUtil {
 	 *            respected. TODO: Implement this.
 	 * @param stopAtFirstMatch
 	 *            Stop processing items after the first one was added?
+	 *            
 	 */
-	public static void tryInsertItemsFromWorld(
+	public static boolean tryInsertItemsFromWorld(
 			IConveyorAwareTE conveyorTE,
 			World world,
 			AxisAlignedBB bounds,
 			boolean stopAtFirstMatch) {
 		if(world.isRemote) {
-			return;
+			return false;
 		}
+		boolean didAdd = false;
 		//TODO: if Bounding Box is Supplied, use that.
 		for(Object obj : world.loadedEntityList) {
 			Entity ent = (Entity)obj;
@@ -55,11 +57,13 @@ public class ConveyorUtil {
 				if(slot >= 0 && slot < 9 && relativeY > 0.3 && relativeY < 1.0) {
 					int added = conveyorTE.insertItemAt(entityItemStack, slot);
 					if(added == previousStackSize) {
+						didAdd = true;
 						ent.setDead();
 						if(stopAtFirstMatch) {
 							break;
 						}
 					} else if(added > 0) {
+						didAdd = true;
 						entityItemStack.stackSize = previousStackSize - added;
 						ei.setEntityItemStack(entityItemStack);
 						if(stopAtFirstMatch) {
@@ -69,6 +73,7 @@ public class ConveyorUtil {
 				}
 			}
 		}
+		return didAdd;
 	}
 	
 	public static int getNextSlot(int slot, ForgeDirection dir) {
@@ -97,6 +102,19 @@ public class ConveyorUtil {
 			}
 		}
 		return slot;
+	}
+	
+	public static int getSlot(ForgeDirection dir) {
+		if(dir == ForgeDirection.DOWN || dir == ForgeDirection.UNKNOWN) {
+			// Conveyors are only accessible from top/sides!
+			return -1;
+		} else if(dir == ForgeDirection.UP) {
+			// Center
+			return 4;
+		} else {
+			// From that center, we go one off
+			return getNextSlot(4, dir);
+		}
 	}
 
 	public static final double oneThird = 1/3.0;

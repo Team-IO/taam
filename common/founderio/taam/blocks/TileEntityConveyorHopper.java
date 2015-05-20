@@ -229,8 +229,6 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 	public int insertItemAt(ItemStack item, int slot) {
 		// insertItem returns item count unable to insert.
 		int inserted = item.stackSize - InventoryUtils.insertItem(inventory, item, false);
-		System.out.println("Inserting " + inserted);
-		System.out.println("Inve Slot 0: " + inventory.getStackInSlot(0));
 		return inserted;
 	}
 	
@@ -240,7 +238,7 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 	}
 
 	@Override
-	public int getMovementProgress() {
+	public int getMovementProgress(int slot) {
 		return 0;
 	}
 
