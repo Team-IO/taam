@@ -23,6 +23,8 @@ import net.minecraftforge.common.util.ForgeDirection;
 import org.lwjgl.opengl.GL11;
 
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
+import cpw.mods.fml.common.Mod.EventHandler;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.Phase;
 import cpw.mods.fml.common.gameevent.TickEvent.Type;
@@ -175,10 +177,11 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 		textureLogisticsManager = new ResourceLocation(Taam.MOD_ID + ":textures/models/logistics_manager.png");
 	}
 	
-	public void tickEvent(TickEvent event) {
-		if(event.type == Type.CLIENT && event.phase == Phase.END) {
-			rot++;
-		}
+	@SubscribeEvent
+	public void onClientTick(TickEvent.ClientTickEvent event) {
+	    if (event.phase == TickEvent.Phase.END) {
+	    	rot++;
+	    }
 	}
 
 	@Override
@@ -531,7 +534,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 		GL11.glTranslatef((float) x + 0.5f, (float) y,
 				(float) z + 0.5f);
 		
-		
+		System.out.println(rot);
 		if((rot % 40) == 0 || fixBlink) {
 			rot = 0;
 			Minecraft.getMinecraft().renderEngine.bindTexture(textureSensorBlink);

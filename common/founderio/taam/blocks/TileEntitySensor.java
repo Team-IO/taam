@@ -131,7 +131,7 @@ public class TileEntitySensor extends BaseTileEntity implements IRotatable {
 		
 		if(found != powering) {
 			powering = found;
-			worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, blockType);
+			BaseBlock.updateBlocksAround(worldObj, xCoord, yCoord, zCoord);
 		}
 	}
 	

@@ -63,13 +63,11 @@ public class BlockSensor extends BaseBlock {
 		return false;
 	}
 	
-	@SuppressWarnings("rawtypes")
 	@Override
-	public void addCollisionBoxesToList(World par1World, int par2, int par3,
-			int par4, AxisAlignedBB par5AxisAlignedBB, List par6List,
-			Entity par7Entity) {
-		return;
-	}
+    public AxisAlignedBB getCollisionBoundingBoxFromPool(World p_149668_1_, int p_149668_2_, int p_149668_3_, int p_149668_4_)
+    {
+        return null;
+    }
 
 	public TileEntity createTileEntity(World world, int metadata) {
 		return new TileEntitySensor();
@@ -202,10 +200,10 @@ public class BlockSensor extends BaseBlock {
 	
 	@Override
 	public void breakBlock(World world, int x, int y, int z, Block block, int meta) {
-		world.notifyBlocksOfNeighborChange(x, y, z, this);
+		BaseBlock.updateBlocksAround(world, x, y, z);
 		super.breakBlock(world, x, y, z, block, meta);
 	}
-		
+	
 	@Override
 	public boolean canBlockStay(World world, int x, int y, int z) {
 		int meta = world.getBlockMetadata(x, y, z);

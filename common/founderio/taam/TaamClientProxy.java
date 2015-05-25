@@ -2,9 +2,9 @@ package founderio.taam;
 
 import net.minecraft.item.ItemBlock;
 import net.minecraftforge.client.MinecraftForgeClient;
-import net.minecraftforge.common.MinecraftForge;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
+import cpw.mods.fml.common.FMLCommonHandler;
 import founderio.taam.blocks.TileEntityConveyor;
 import founderio.taam.blocks.TileEntityConveyorHopper;
 import founderio.taam.blocks.TileEntityConveyorProcessor;
@@ -32,7 +32,8 @@ public class TaamClientProxy extends TaamCommonProxy {
 		
 		MinecraftForgeClient.registerItemRenderer(ItemBlock.getItemFromBlock(TaamMain.blockSensor), taamRenderer);
 		MinecraftForgeClient.registerItemRenderer(ItemBlock.getItemFromBlock(TaamMain.blockProductionLine), taamRenderer);
-		MinecraftForge.EVENT_BUS.register(taamRenderer);
+		// Receive event for Client Ticks
+		FMLCommonHandler.instance().bus().register(taamRenderer);
 		
 		int id = RenderingRegistry.getNextAvailableRenderId();
 		TaamRenderer.renderMagneticRailID = id;

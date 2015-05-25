@@ -76,5 +76,27 @@ public abstract class BaseBlock extends Block {
 
 		super.breakBlock(world, x, y, z, block, meta);
 	}
+	
+	/**
+	 * Updates a block and all surrounding blocks (meaning, pushes a block
+	 * update for this block and for all directly adjacent blocks)
+	 * 
+	 * Useful when working with redstone.
+	 * 
+	 * @param world
+	 * @param x
+	 * @param y
+	 * @param z
+	 */
+	public static void updateBlocksAround(World world, int x, int y, int z) {
+		Block block = world.getBlock(x, y, z);
+		world.notifyBlocksOfNeighborChange(x, y, z, block);
+		world.notifyBlocksOfNeighborChange(x + 1, y, z, block);
+		world.notifyBlocksOfNeighborChange(x - 1, y, z, block);
+		world.notifyBlocksOfNeighborChange(x, y, z + 1, block);
+		world.notifyBlocksOfNeighborChange(x, y, z - 1, block);
+		world.notifyBlocksOfNeighborChange(x, y - 1, z, block);
+		world.notifyBlocksOfNeighborChange(x, y + 1, z, block);
+	}
 
 }
