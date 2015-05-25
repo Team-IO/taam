@@ -534,7 +534,6 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 		GL11.glTranslatef((float) x + 0.5f, (float) y,
 				(float) z + 0.5f);
 		
-		System.out.println(rot);
 		if((rot % 40) == 0 || fixBlink) {
 			rot = 0;
 			Minecraft.getMinecraft().renderEngine.bindTexture(textureSensorBlink);
