@@ -171,8 +171,15 @@ public class ConveyorUtil {
 	}
 	
 	
+	/**
+	 * Returns the ideal order to process slots on a conveyor. (Always from
+	 * front to back, but lanes are not in a guaranteed order!)
+	 * 
+	 * @param dir
+	 * @return
+	 */
 	public static int[] getSlotOrderForDirection(ForgeDirection dir) {
-		switch(dir) {
+		switch (dir) {
 		default:
 		case NORTH:
 			return slotOrders[0];
@@ -252,6 +259,15 @@ public class ConveyorUtil {
 		return held.getItem() == TaamMain.itemWrench;
 	}
 	
+	/**
+	 * Tries to drop an item into a player inventory or drops it at the specified coordinates.
+	 * 
+	 * @param player
+	 * @param stack
+	 * @param x
+	 * @param y
+	 * @param z
+	 */
 	public static void tryDropToInventory(EntityPlayer player, ItemStack stack, double x, double y, double z) {
 		if(player.capabilities.isCreativeMode) {
 			return;
