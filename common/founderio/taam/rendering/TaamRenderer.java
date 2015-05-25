@@ -436,7 +436,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 				ItemStack processingStack = ((TileEntityConveyorProcessor) tileEntity).getStackInSlot(0);
 				if(processingStack != null) {
 					GL11.glPushMatrix();
-					GL11.glTranslatef(0.5f, 0.3f, 0.5f);
+					GL11.glTranslatef(0.5f, -0.1f, 0.5f);
 					
 					ei.setEntityItemStack(processingStack);
 
