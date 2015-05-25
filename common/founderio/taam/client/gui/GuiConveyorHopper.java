@@ -49,6 +49,7 @@ public class GuiConveyorHopper extends CustomGui {
 	}
 	
 	private void setRedstoneModeText() {
+		//TODO: move to I18N
 		String appendage;
 		switch(tileEntity.getRedstoneMode()) {
 		case 0:
@@ -77,7 +78,7 @@ public class GuiConveyorHopper extends CustomGui {
 	@Override
 	protected void actionPerformed(GuiButton button) {
 		if(button.id == 10) {
-			int rs = tileEntity.getRedstoneMode();
+			byte rs = tileEntity.getRedstoneMode();
 			rs++;
 			if(rs > 4 || rs < 0) {
 				rs = 0;

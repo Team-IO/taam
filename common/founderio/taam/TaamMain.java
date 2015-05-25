@@ -30,6 +30,7 @@ import founderio.taam.blocks.BlockSensor;
 import founderio.taam.blocks.BlockSlidingDoor;
 import founderio.taam.blocks.TileEntityConveyor;
 import founderio.taam.blocks.TileEntityConveyorHopper;
+import founderio.taam.blocks.TileEntityConveyorProcessor;
 import founderio.taam.blocks.TileEntityLogisticsManager;
 import founderio.taam.blocks.TileEntityLogisticsStation;
 import founderio.taam.blocks.TileEntitySensor;
@@ -196,6 +197,7 @@ public class TaamMain {
 		GameRegistry.registerTileEntity(TileEntitySensor.class, Taam.TILEENTITY_SENSOR);
 		GameRegistry.registerTileEntity(TileEntityConveyor.class, Taam.TILEENTITY_CONVEYOR);
 		GameRegistry.registerTileEntity(TileEntityConveyorHopper.class, Taam.TILEENTITY_CONVEYOR_HOPPER);
+		GameRegistry.registerTileEntity(TileEntityConveyorProcessor.class, Taam.TILEENTITY_CONVEYOR_PROCESSOR);
 		GameRegistry.registerTileEntity(TileEntityLogisticsStation.class, Taam.TILEENTITY_LOGISTICS_STATION);
 		GameRegistry.registerTileEntity(TileEntityLogisticsManager.class, Taam.TILEENTITY_LOGISTICS_MANAGER);
 //		GameRegistry.registerTileEntity(TileEntitySlidingDoor.class, Taam.TILEENTITY_SLIDINGDOOR);

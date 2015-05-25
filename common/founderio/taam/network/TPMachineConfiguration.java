@@ -9,6 +9,7 @@ import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import cpw.mods.fml.relauncher.Side;
 import founderio.taam.blocks.TileEntityConveyorHopper;
+import founderio.taam.conveyors.api.IRedstoneControlled;
 import founderio.taam.multinet.logistics.WorldCoord;
 
 public final class TPMachineConfiguration implements IMessage {
@@ -40,10 +41,10 @@ public final class TPMachineConfiguration implements IMessage {
 					}
 					break;
 				case ChangeInteger: 
-					if(te instanceof TileEntityConveyorHopper) {
+					if(te instanceof IRedstoneControlled) {
 						switch(message.id) {
 						case 1:
-							((TileEntityConveyorHopper) te).setRedstoneMode(message.intValue);
+							((IRedstoneControlled) te).setRedstoneMode((byte)message.intValue);
 							break;
 						}
 					} else {

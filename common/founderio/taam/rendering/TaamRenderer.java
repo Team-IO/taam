@@ -36,8 +36,8 @@ import founderio.taam.blocks.TileEntityLogisticsManager;
 import founderio.taam.blocks.TileEntityLogisticsStation;
 import founderio.taam.blocks.TileEntitySensor;
 import founderio.taam.conveyors.ConveyorUtil;
-import founderio.taam.conveyors.IRotatable;
 import founderio.taam.conveyors.ItemWrapper;
+import founderio.taam.conveyors.api.IRotatable;
 
 public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRenderer {
 

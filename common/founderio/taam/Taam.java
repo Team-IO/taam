@@ -105,6 +105,7 @@ public final class Taam {
 	public static final String TILEENTITY_SLIDINGDOOR = "taam.slidingdoor";
 	public static final String TILEENTITY_CONVEYOR = "taam.conveyor";
 	public static final String TILEENTITY_CONVEYOR_HOPPER = "taam.conveyor_hopper";
+	public static final String TILEENTITY_CONVEYOR_PROCESSOR = "taam.conveyor_processor";
 	public static final String TILEENTITY_LOGISTICS_STATION = "taam.logistics_station";
 	public static final String TILEENTITY_LOGISTICS_MANAGER = "taam.logistics_manager";
 

@@ -18,7 +18,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 
 import founderio.taam.TaamMain;
-import founderio.taam.conveyors.IRotatable;
+import founderio.taam.conveyors.api.IRotatable;
 import founderio.taam.multinet.logistics.Demand;
 import founderio.taam.multinet.logistics.Demand.DemandCategory;
 import founderio.taam.multinet.logistics.Goods;

@@ -16,11 +16,12 @@ import founderio.taam.TaamMain;
 import founderio.taam.conveyors.ConveyorUtil;
 import founderio.taam.conveyors.api.IConveyorAwareTE;
 import founderio.taam.conveyors.api.IItemFilter;
+import founderio.taam.conveyors.api.IRedstoneControlled;
 import founderio.taam.multinet.logistics.WorldCoord;
 import founderio.taam.network.TPMachineConfiguration;
 
 
-public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyorAwareTE, IInventory, IHopper {
+public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyorAwareTE, IInventory, IHopper, IRedstoneControlled {
 
 	private InventorySimple inventory;
 	
@@ -29,7 +30,7 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 	private boolean eject;
 	private boolean stackMode;
 	private boolean linearMode;
-	private int redstoneMode;
+	private byte redstoneMode;
 	
 	private boolean pulseWasSent = false;
 	
@@ -39,11 +40,7 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 	
 	public TileEntityConveyorHopper(boolean highSpeed) {
 		this.highSpeed = highSpeed;
-		inventory = new InventorySimple(5, (highSpeed ? "High Speed " : "") + "Conveyor Hopper");
-	}
-	
-	public boolean isCoolingDown() {
-		return timeout > 0;
+		inventory = new InventorySimple(5);
 	}
 	
 	@Override
@@ -67,15 +64,15 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 		boolean isPulsing = false;
 		
 		// Redstone. Other criteria?
-		if(redstoneMode == 1 && !redstoneHigh) {
+		if(redstoneMode == IRedstoneControlled.MODE_ACTIVE_ON_HIGH && !redstoneHigh) {
 			isShutdown = true;
-		} else if(redstoneMode == 2 && redstoneHigh) {
+		} else if(redstoneMode == IRedstoneControlled.MODE_ACTIVE_ON_LOW && redstoneHigh) {
 			isShutdown = true;
-		} else if(redstoneMode == 3) {
+		} else if(redstoneMode == IRedstoneControlled.MODE_ACTIVE_ON_HIGH_PULSE) {
 			// Pulse, send Item on high edge.
 			isShutdown = !(!pulseWasSent && redstoneHigh);
 			isPulsing = true;
-		} else if(redstoneMode == 4) {
+		} else if(redstoneMode == IRedstoneControlled.MODE_ACTIVE_ON_LOW_PULSE) {
 			// Pulse, send Item on low edge.
 			isShutdown = !(pulseWasSent && !redstoneHigh);
 			isPulsing = true;
@@ -199,6 +196,10 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 		}
 	}
 	
+	public boolean isCoolingDown() {
+		return timeout > 0;
+	}
+	
 	@Override
 	protected void writePropertiesToNBT(NBTTagCompound tag) {
 		tag.setTag("items", InventoryUtils.writeItemStacksToTag(inventory.items));
@@ -207,7 +208,7 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 		tag.setBoolean("eject", eject);
 		tag.setBoolean("linearMode", linearMode);
 		tag.setBoolean("stackMode", stackMode);
-		tag.setInteger("redstoneMode", redstoneMode);
+		tag.setByte("redstoneMode", redstoneMode);
 		
 		tag.setBoolean("pulseWasSent", pulseWasSent);
 	}
@@ -220,11 +221,107 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 		eject = tag.getBoolean("eject");
 		linearMode = tag.getBoolean("linearMode");
 		stackMode = tag.getBoolean("stackMode");
-		redstoneMode = tag.getInteger("redstoneMode");
+		redstoneMode = tag.getByte("redstoneMode");
 
 		pulseWasSent = tag.getBoolean("pulseWasSent");
 	}
 
+	/*
+	 * IInventory implementation
+	 */
+	
+	@Override
+	public int getSizeInventory() {
+		return inventory.getSizeInventory();
+	}
+
+	@Override
+	public ItemStack getStackInSlot(int slot) {
+		return inventory.getStackInSlot(slot);
+	}
+
+	@Override
+	public ItemStack decrStackSize(int slot, int amount) {
+		return inventory.decrStackSize(slot, amount);
+	}
+
+	@Override
+	public ItemStack getStackInSlotOnClosing(int slot) {
+		return inventory.getStackInSlotOnClosing(slot);
+	}
+
+	@Override
+	public void setInventorySlotContents(int slot, ItemStack stack) {
+		inventory.setInventorySlotContents(slot, stack);
+	}
+
+	@Override
+	public String getInventoryName() {
+		if(highSpeed) {
+			return "tile.taam.productionline.hopper_hs.name";
+		} else {
+			return "tile.taam.productionline.hopper.name";
+		}
+	}
+
+	@Override
+	public boolean hasCustomInventoryName() {
+		return false;
+	}
+
+	@Override
+	public int getInventoryStackLimit() {
+		return inventory.getInventoryStackLimit();
+	}
+
+	@Override
+	public boolean isUseableByPlayer(EntityPlayer p_70300_1_) {
+		return true;
+	}
+
+	@Override
+	public void openInventory() {
+		// Nothing to do.
+	}
+
+	@Override
+	public void closeInventory() {
+		// Nothing to do.
+	}
+
+	@Override
+	public boolean isItemValidForSlot(int slot, ItemStack stack) {
+		return inventory.isItemValidForSlot(slot, stack);
+	}
+
+	/*
+	 * IHopper implementation
+	 */
+	
+	@Override
+	public double getXPos() {
+		return this.xCoord;
+	}
+
+	@Override
+	public double getYPos() {
+		return this.yCoord;
+	}
+
+	@Override
+	public double getZPos() {
+		return this.zCoord;
+	}
+	
+	/*
+	 * IConveyorAwareTE implementation
+	 */
+
+	@Override
+	public ForgeDirection getMovementDirection() {
+		return ForgeDirection.DOWN;
+	}
+	
 	@Override
 	public int insertItemAt(ItemStack item, int slot) {
 		// insertItem returns item count unable to insert.
@@ -272,85 +369,9 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 		return null;
 	}
 	
-	@Override
-	public int getSizeInventory() {
-		return inventory.getSizeInventory();
-	}
-
-	@Override
-	public ItemStack getStackInSlot(int slot) {
-		return inventory.getStackInSlot(slot);
-	}
-
-	@Override
-	public ItemStack decrStackSize(int slot, int amount) {
-		return inventory.decrStackSize(slot, amount);
-	}
-
-	@Override
-	public ItemStack getStackInSlotOnClosing(int slot) {
-		return inventory.getStackInSlotOnClosing(slot);
-	}
-
-	@Override
-	public void setInventorySlotContents(int slot, ItemStack stack) {
-		inventory.setInventorySlotContents(slot, stack);
-	}
-
-	@Override
-	public String getInventoryName() {
-		return inventory.getInventoryName();
-	}
-
-	@Override
-	public boolean hasCustomInventoryName() {
-		return inventory.hasCustomInventoryName();
-	}
-
-	@Override
-	public int getInventoryStackLimit() {
-		return inventory.getInventoryStackLimit();
-	}
-
-	@Override
-	public boolean isUseableByPlayer(EntityPlayer p_70300_1_) {
-		return true;
-	}
-
-	@Override
-	public void openInventory() {
-		// Nothing to do.
-	}
-
-	@Override
-	public void closeInventory() {
-		// Nothing to do.
-	}
-
-	@Override
-	public boolean isItemValidForSlot(int slot, ItemStack stack) {
-		return inventory.isItemValidForSlot(slot, stack);
-	}
-
-	@Override
-	public double getXPos() {
-		return this.xCoord;
-	}
-
-	@Override
-	public double getYPos() {
-		return this.yCoord;
-	}
-
-	@Override
-	public double getZPos() {
-		return this.zCoord;
-	}
-
-	@Override
-	public ForgeDirection getMovementDirection() {
-		return ForgeDirection.DOWN;
-	}
+	/*
+	 * Accessors
+	 */
 
 	public boolean isHighSpeed() {
 		return highSpeed;
@@ -403,12 +424,23 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 		}
 	}
 
-	public int getRedstoneMode() {
+	/*
+	 * IRedstoneControlled implementation
+	 */
+
+	@Override
+	public boolean isPulsingSupported() {
+		return true;
+	}
+
+	@Override
+	public byte getRedstoneMode() {
 		return redstoneMode;
 	}
-	
-	public void setRedstoneMode(int redstoneMode) {
-		this.redstoneMode = redstoneMode;
+
+	@Override
+	public void setRedstoneMode(byte mode) {
+		this.redstoneMode = mode;
 		if(worldObj.isRemote) {
 			TPMachineConfiguration config = TPMachineConfiguration.newChangeInteger(new WorldCoord(this), (byte)1, redstoneMode);
 			TaamMain.network.sendToServer(config);

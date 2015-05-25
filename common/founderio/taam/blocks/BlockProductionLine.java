@@ -20,8 +20,8 @@ import cpw.mods.fml.relauncher.SideOnly;
 import founderio.taam.Taam;
 import founderio.taam.TaamMain;
 import founderio.taam.conveyors.ConveyorUtil;
-import founderio.taam.conveyors.IRotatable;
 import founderio.taam.conveyors.api.IConveyorApplianceHost;
+import founderio.taam.conveyors.api.IRotatable;
 
 public class BlockProductionLine extends BaseBlock {
 	
@@ -78,7 +78,7 @@ public class BlockProductionLine extends BaseBlock {
 			return new TileEntityConveyor();
 		} else if(metadata == 1) {
 			// Hopper, Regular
-			return new TileEntityConveyorHopper();
+			return new TileEntityConveyorHopper(false);
 		} else if(metadata == 2) {
 			// Hopper, High-Speed
 			return new TileEntityConveyorHopper(true);
@@ -87,13 +87,13 @@ public class BlockProductionLine extends BaseBlock {
 			return null;
 		} else if(metadata == 4) {
 			// Shredder
-			return null;
+			return new TileEntityConveyorProcessor(TileEntityConveyorProcessor.Shredder);
 		} else if(metadata == 5) {
 			// Grinder
-			return null;
+			return new TileEntityConveyorProcessor(TileEntityConveyorProcessor.Grinder);
 		} else if(metadata == 6) {
 			// Crusher
-			return null;
+			return new TileEntityConveyorProcessor(TileEntityConveyorProcessor.Crusher);
 		}
 		//TODO: Move to separate instance/block/whatevs "taam.logistics":
 //		if(metadata == 4) {

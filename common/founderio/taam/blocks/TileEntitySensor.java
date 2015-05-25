@@ -6,7 +6,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.ForgeDirection;
 import founderio.taam.Config;
-import founderio.taam.conveyors.IRotatable;
+import founderio.taam.conveyors.api.IRotatable;
 
 public class TileEntitySensor extends BaseTileEntity implements IRotatable {
 	
