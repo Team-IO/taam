@@ -7,6 +7,7 @@ import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import founderio.taam.blocks.TileEntityConveyor;
 import founderio.taam.blocks.TileEntityConveyorHopper;
+import founderio.taam.blocks.TileEntityConveyorProcessor;
 import founderio.taam.blocks.TileEntityLogisticsManager;
 import founderio.taam.blocks.TileEntityLogisticsStation;
 import founderio.taam.blocks.TileEntitySensor;
@@ -25,6 +26,7 @@ public class TaamClientProxy extends TaamCommonProxy {
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySensor.class, taamRenderer);
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityConveyor.class, taamRenderer);
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityConveyorHopper.class, taamRenderer);
+		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityConveyorProcessor.class, taamRenderer);
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityLogisticsStation.class, taamRenderer);
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityLogisticsManager.class, taamRenderer);
 		

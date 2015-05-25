@@ -44,6 +44,10 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 		// TODO Auto-generated method stub
 		super.updateEntity();
 	}
+
+	public byte getMode() {
+		return mode;
+	}
 	
 	@Override
 	protected void writePropertiesToNBT(NBTTagCompound tag) {

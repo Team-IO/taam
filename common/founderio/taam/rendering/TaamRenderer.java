@@ -32,11 +32,12 @@ import founderio.taam.blocks.BlockProductionLine;
 import founderio.taam.blocks.BlockSensor;
 import founderio.taam.blocks.TileEntityConveyor;
 import founderio.taam.blocks.TileEntityConveyorHopper;
+import founderio.taam.blocks.TileEntityConveyorProcessor;
 import founderio.taam.blocks.TileEntityLogisticsManager;
 import founderio.taam.blocks.TileEntityLogisticsStation;
 import founderio.taam.blocks.TileEntitySensor;
 import founderio.taam.conveyors.ConveyorUtil;
-import founderio.taam.conveyors.ItemWrapper;
+import founderio.taam.conveyors.api.IConveyorAwareTE;
 import founderio.taam.conveyors.api.IRotatable;
 
 public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRenderer {
@@ -199,21 +200,21 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 
 	@Override
 	public void renderItem(ItemRenderType type, ItemStack item, Object... data) {
-		float offX = 0;
-		float offY = 0;
-		float offZ = 0;
+		float x = 0;
+		float y = 0;
+		float z = 0;
 		
 		switch (type) {
 		case ENTITY:
 		case FIRST_PERSON_MAP:
 		default:
-			offX = -0.5f;
-			offY = -0.5f;
-			offZ = -0.5f;
+			x = -0.5f;
+			y = -0.5f;
+			z = -0.5f;
 			break;
 		case INVENTORY:
-			offX = 0.125f;
-			offZ = 0.125f;
+			x = 0.125f;
+			z = 0.125f;
 			break;
 		case EQUIPPED:
 		case EQUIPPED_FIRST_PERSON:
@@ -223,37 +224,64 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 		if(item.getItem() == Item.getItemFromBlock(TaamMain.blockSensor)) {
 			//TODO: Document meta components!
 			int meta = item.getItemDamage() | 7;
-			renderSensor(offX, offY, offZ, (meta & 7), false);
+			renderSensor(x, y, z, (meta & 7), false);
 		} else if(item.getItem() == Item.getItemFromBlock(TaamMain.blockProductionLine)) {
 			int meta = item.getItemDamage();
 			switch(meta) {
-			
+			default:
+			case 0:
+				renderConveyor(null, x, y, z);
+				break;
+			case 1:
+				renderConveyorHopper(null, x, y, z, false);
+				break;
+			case 2:
+				renderConveyorHopper(null, x, y, z, true);
+				break;
+			case 3:
+				// Sieve
+				break;
+			case 4:
+				renderConveyorProcessor(null, x, y, z, TileEntityConveyorProcessor.Shredder);
+				break;
+			case 5:
+				renderConveyorProcessor(null, x, y, z, TileEntityConveyorProcessor.Grinder);
+				break;
+			case 6:
+				renderConveyorProcessor(null, x, y, z, TileEntityConveyorProcessor.Crusher);
+				break;
 			}
-			//TODO: distinction between single conveyer components
-			renderConveyor(null, offX, offY, offZ);
 		}
 		
 	}
 
 	@Override
-	public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float partialTickTime) {
-		if(tileentity instanceof TileEntitySensor) {
-			TileEntitySensor te = ((TileEntitySensor) tileentity);
-			int meta = tileentity.getBlockMetadata();
-			switch(tileentity.getBlockMetadata() & 8) {
+	public void renderTileEntityAt(TileEntity tileEntity, double x, double y, double z, float partialTickTime) {
+		if (tileEntity instanceof TileEntitySensor) {
+			TileEntitySensor te = ((TileEntitySensor) tileEntity);
+			int meta = tileEntity.getBlockMetadata();
+			switch (tileEntity.getBlockMetadata() & 8) {
 			case 0:
 				renderSensor(x, y, z, (meta & 7), te.isPowering() > 0);
 				break;
 			case 8:
-				//TODO: renderMinect();
+				// TODO: renderMinect();
 				break;
 			}
-		} else if(tileentity instanceof TileEntityConveyor || tileentity instanceof TileEntityConveyorHopper) {
-			renderConveyor(tileentity, x, y, z);
-		} else if(tileentity instanceof TileEntityLogisticsStation) {
-			renderLogisticsStation((TileEntityLogisticsStation)tileentity, x, y, z);
-		} else if(tileentity instanceof TileEntityLogisticsManager) {
-			renderLogisticsManager((TileEntityLogisticsManager)tileentity, x, y, z);
+		} else if (tileEntity instanceof TileEntityConveyor) {
+			renderConveyor((TileEntityConveyor) tileEntity, x, y, z);
+		} else if (tileEntity instanceof TileEntityConveyorHopper) {
+			renderConveyorHopper((TileEntityConveyorHopper)tileEntity, x, y, z, false);
+		} else if (tileEntity instanceof TileEntityConveyorProcessor) {
+			renderConveyorProcessor((TileEntityConveyorProcessor) tileEntity, x, y, z, (byte)0);
+		} else if (tileEntity instanceof TileEntityLogisticsStation) {
+			renderLogisticsStation((TileEntityLogisticsStation) tileEntity, x, y, z);
+		} else if (tileEntity instanceof TileEntityLogisticsManager) {
+			renderLogisticsManager((TileEntityLogisticsManager) tileEntity, x, y, z);
+		}
+		
+		if(tileEntity instanceof IConveyorAwareTE) {
+			renderConveyorItems((IConveyorAwareTE) tileEntity, x, y, z);
 		}
 	}
 	
@@ -321,22 +349,19 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 		GL11.glPopMatrix();
 	}
 	
-	//TODO: Don't display metal cap when not pointing to wards a block
-	public void renderConveyor(TileEntity tileEntity, double x, double y, double z) {
+	
+	private void conveyorPrepareRendering(IConveyorAwareTE tileEntity, double x, double y, double z) {
+		ForgeDirection direction = conveyorGetDirection(tileEntity);
 		
-		
-		ForgeDirection direction;
-		if(tileEntity instanceof IRotatable) {
-			direction = ((IRotatable) tileEntity).getFacingDirection();
-		} else {
-			direction = ForgeDirection.SOUTH;
-		}
-		
-		// Model Rendering
 		GL11.glPushMatrix();
+		/*
+		 * Translate to coordinates
+		 */
 		GL11.glTranslated(x, y, z);
 		
-		// Rotation
+		/*
+		 * Rotate if needed
+		 */
 		GL11.glTranslatef(0.5f, 0, 0.5f);
 		
 		if(direction == ForgeDirection.WEST) {
@@ -349,62 +374,49 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 
 		GL11.glTranslated(-0.5, 0, -0.5);
 		
-		// Rendering
+		/*
+		 * Bind Texture
+		 */
 		Minecraft.getMinecraft().renderEngine.bindTexture(textureConveyor);
 
+		/*
+		 * Render Support Frame
+		 */
 		modelConveyor.renderPart("Support_smdl");
-		
-		TileEntityConveyor conveyor = null;
-		
-		if(tileEntity instanceof TileEntityConveyor) {
-			conveyor = (TileEntityConveyor)tileEntity;
-			if(conveyor == null || !conveyor.isEnd()) {
-				modelConveyor.renderPart("Conveyor_Straight_csmdl");
-			} else {
-				modelConveyor.renderPart("Conveyor_End_cemdl");
-				//TODO: Check if other conveyor part there or actually end of line
-				modelConveyor.renderPart("Conveyor_End_Cap_cecmdl");
-			}
-			
-			GL11.glTranslated(0.5, 0, 0.5);
-			GL11.glRotatef(180, 0, 1, 0);
-			GL11.glTranslated(-0.5, 0, -0.5);
-			
-			if(conveyor == null || !conveyor.isBegin()) {
-				modelConveyor.renderPart("Conveyor_Straight_csmdl");
-			} else {
-				modelConveyor.renderPart("Conveyor_End_cemdl");
-			}
-			
-			if(conveyor != null) {
-				if(conveyor.hasApplianceWithType(Taam.APPLIANCE_SPRAYER)) {
-					modelConveyor.renderPart("Appliance_Sprayer_asmdl");
-				}
-			}
-			
-		} else if(tileEntity instanceof TileEntityConveyorHopper) {
-			modelConveyor.renderPart("Conveyor_Hopper_chmdl");
-		}
-		
+	}
+	
+	private void conveyorEndRendering() {
 		GL11.glPopMatrix();
+	}
+	
+	private ForgeDirection conveyorGetDirection(IConveyorAwareTE tileEntity) {
+		ForgeDirection direction;
+		if(tileEntity instanceof IRotatable) {
+			direction = ((IRotatable) tileEntity).getFacingDirection();
+		} else {
+			direction = ForgeDirection.SOUTH;
+		}
+		return direction;
+	}
+	
+	public void renderConveyorItems(IConveyorAwareTE tileEntity, double x, double y, double z) {
+		ForgeDirection direction = conveyorGetDirection(tileEntity);
 		
-		// Item Rendering
 		GL11.glPushMatrix();
 		GL11.glTranslated(x, y, z);
 		
-		if(conveyor != null) {
-			ItemWrapper[] items = conveyor.getItems();
-			for(int slot = 0; slot < items.length; slot++) {
-				ItemWrapper wrapper = items[slot];
-				if(wrapper == null || wrapper.itemStack == null) {
+		if(tileEntity != null) {
+			for(int slot = 0; slot < 9; slot++) {
+				ItemStack itemStack = tileEntity.getItemAt(slot);
+				if(itemStack == null) {
 					continue;
 				}
 				
-				float movementProgress = wrapper.movementProgress;
-				if(wrapper.isBlocked()) {
+				float movementProgress = tileEntity.getMovementProgress(slot);
+				if(movementProgress < 0) {
 					movementProgress = 0;
 				}
-				int maxProgress = conveyor.getMaxMovementProgress();
+				int maxProgress = tileEntity.getMaxMovementProgress();
 				
 				float posX = (float)ConveyorUtil.getItemPositionX(slot, movementProgress / maxProgress, direction);
 				float posY = 0.1f;
@@ -413,23 +425,108 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 				GL11.glPushMatrix();
 				GL11.glTranslatef(posX, posY, posZ);
 				
-				ei.setEntityItemStack(wrapper.itemStack);
+				ei.setEntityItemStack(itemStack);
 
 				RenderItem.renderInFrame = true;
 				ri.doRender(ei, 0, .5f, 0, 0, 0);
 				
 				GL11.glPopMatrix();
 			}
-			
+			if(tileEntity instanceof TileEntityConveyorProcessor) {
+				ItemStack processingStack = ((TileEntityConveyorProcessor) tileEntity).getStackInSlot(0);
+				if(processingStack != null) {
+					GL11.glPushMatrix();
+					GL11.glTranslatef(0.5f, 0.3f, 0.5f);
+					
+					ei.setEntityItemStack(processingStack);
+
+					RenderItem.renderInFrame = true;
+					ri.doRender(ei, 0, .5f, 0, 0, 0);
+					
+					GL11.glPopMatrix();
+				}
+			}
 		}
 		
 		GL11.glPopMatrix();
 	}
 	
+	//TODO: Don't display metal cap when not pointing to wards a block
+	public void renderConveyor(TileEntityConveyor tileEntity, double x, double y, double z) {
+		
+		conveyorPrepareRendering(tileEntity, x, y, z);
+		
+		if(tileEntity == null || !tileEntity.isEnd()) {
+			modelConveyor.renderPart("Conveyor_Straight_csmdl");
+		} else {
+			modelConveyor.renderPart("Conveyor_End_cemdl");
+			modelConveyor.renderPart("Conveyor_End_Cap_cecmdl");
+		}
+		
+		GL11.glTranslated(0.5, 0, 0.5);
+		GL11.glRotatef(180, 0, 1, 0);
+		GL11.glTranslated(-0.5, 0, -0.5);
+		
+		if(tileEntity == null || !tileEntity.isBegin()) {
+			modelConveyor.renderPart("Conveyor_Straight_csmdl");
+		} else {
+			modelConveyor.renderPart("Conveyor_End_cemdl");
+		}
+		
+		if(tileEntity != null) {
+			if(tileEntity.hasApplianceWithType(Taam.APPLIANCE_SPRAYER)) {
+				modelConveyor.renderPart("Appliance_Sprayer_asmdl");
+			}
+		}
+		
+		GL11.glPopMatrix();
+		
+	}
+	
+	public void renderConveyorHopper(TileEntityConveyorHopper tileEntity, double x, double y, double z, boolean forceHighSpeed) {
+		boolean highSpeed = forceHighSpeed;
+		if(tileEntity != null) {
+			forceHighSpeed = forceHighSpeed || tileEntity.isHighSpeed();
+		}
+		conveyorPrepareRendering(tileEntity, x, y, z);
+		
+		modelConveyor.renderPart("Conveyor_Hopper_chmdl");
+		
+		//TODO: Render HighSpeed features
+		
+		conveyorEndRendering();
+	}
+	
+	public void renderConveyorProcessor(TileEntityConveyorProcessor tileEntity, double x, double y, double z, byte forceMode) {
+		byte mode = forceMode;
+		if(forceMode == 0 && tileEntity != null) {
+			mode = tileEntity.getMode();
+		}
+		conveyorPrepareRendering(tileEntity, x, y, z);
+		
+		modelConveyor.renderPart("Conveyor_Processing_Chute_chutemdl");
+
+		//TODO: Rotate Walzes (need to remove mirror first)
+		
+		modelConveyor.renderPart("Processor_Walzes");
+		
+		switch(mode) {
+		case TileEntityConveyorProcessor.Crusher:
+			modelConveyor.renderPart("BumpsCrusher");
+			break;
+		case TileEntityConveyorProcessor.Grinder:
+			modelConveyor.renderPart("BumpsGrinder");
+			break;
+		case TileEntityConveyorProcessor.Shredder:
+			modelConveyor.renderPart("BumpsShredder");
+			break;
+		}
+		
+		conveyorEndRendering();
+	}
+	
 	public void renderSensor(double x, double y, double z, int rotation, boolean fixBlink) {
 		GL11.glPushMatrix();
-
-
 		
 		GL11.glTranslatef((float) x + 0.5f, (float) y,
 				(float) z + 0.5f);
@@ -442,7 +539,6 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 			Minecraft.getMinecraft().renderEngine.bindTexture(textureSensor);
 		}
 		ForgeDirection dir = ForgeDirection.getOrientation(rotation).getOpposite();
-//System.out.println(rotation);
 		switch(dir) {
 		case DOWN:
 			break;
@@ -472,11 +568,12 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 		case UNKNOWN:
 			break;
 		}
+		// UNKNOWN means we are rendering for the inventory
 		if(dir == ForgeDirection.UNKNOWN) {
 			GL11.glScalef(0.125f, 0.125f, 0.125f);
 			GL11.glRotatef(90f, 0, 1.0f, 0);
-			// 1/16th scale, as techne tends to be big..
 		} else {
+			// 1/16th scale, as techne tends to be big..
 			GL11.glScalef(0.0625f, 0.0625f, 0.0625f);
 		}
 		GL11.glRotatef(180f, 1.0f, 0, 0);
