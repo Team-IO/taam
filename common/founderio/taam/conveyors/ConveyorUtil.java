@@ -5,6 +5,7 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import codechicken.lib.inventory.InventoryUtils;
@@ -74,6 +75,10 @@ public class ConveyorUtil {
 			}
 		}
 		return didAdd;
+	}
+	
+	public static boolean canDropIntoWorld(IBlockAccess world, int x, int y, int z) {
+		return world.isAirBlock(x, y, z) || world.getBlock(x, y, z).getMaterial().isLiquid();
 	}
 	
 	public static int getNextSlot(int slot, ForgeDirection dir) {

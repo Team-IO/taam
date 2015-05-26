@@ -1,20 +1,26 @@
 package founderio.taam.blocks;
 
-import codechicken.lib.inventory.InventorySimple;
-import codechicken.lib.inventory.InventoryUtils;
-import founderio.taam.TaamMain;
-import founderio.taam.conveyors.api.IConveyorAwareTE;
-import founderio.taam.conveyors.api.IItemFilter;
-import founderio.taam.conveyors.api.IRedstoneControlled;
-import founderio.taam.multinet.logistics.WorldCoord;
-import founderio.taam.network.TPMachineConfiguration;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.IHopper;
-import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraftforge.common.util.ForgeDirection;
+import codechicken.lib.inventory.InventorySimple;
+import codechicken.lib.inventory.InventoryUtils;
+import founderio.taam.TaamMain;
+import founderio.taam.conveyors.ConveyorUtil;
+import founderio.taam.conveyors.api.IConveyorAwareTE;
+import founderio.taam.conveyors.api.IItemFilter;
+import founderio.taam.conveyors.api.IProcessingRecipe;
+import founderio.taam.conveyors.api.IRedstoneControlled;
+import founderio.taam.conveyors.api.ProcessingRegistry;
+import founderio.taam.multinet.logistics.WorldCoord;
+import founderio.taam.network.TPMachineConfiguration;
 
 public class TileEntityConveyorProcessor extends BaseTileEntity implements ISidedInventory, IConveyorAwareTE, IHopper, IRedstoneControlled {
 
@@ -28,6 +34,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 	private byte redstoneMode;
 	
 	private byte progress;
+	private int timeout;
 	
 
 	public TileEntityConveyorProcessor() {
@@ -39,10 +46,153 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 		this.mode = mode;
 	}
 	
+	public boolean isCoolingDown() {
+		return timeout > 0;
+	}
+	
+	private ItemStack[] holdback;
+	
 	@Override
 	public void updateEntity() {
-		// TODO Auto-generated method stub
-		super.updateEntity();
+		if(worldObj.isRemote) {
+			return;
+		}
+
+		ConveyorUtil.tryInsertItemsFromWorld(this, worldObj, null, false);
+		
+		boolean isShutdown = false;
+		
+		
+		boolean redstoneHigh = worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
+		
+		// Redstone. Other criteria?
+		if(redstoneMode == IRedstoneControlled.MODE_ACTIVE_ON_HIGH && !redstoneHigh) {
+			isShutdown = true;
+		} else if(redstoneMode == IRedstoneControlled.MODE_ACTIVE_ON_LOW && redstoneHigh) {
+			isShutdown = true;
+		} else if(redstoneMode > 4 || redstoneMode < 0) {
+			isShutdown = worldObj.rand.nextBoolean();
+		}
+		
+		if(isShutdown) {
+			return;
+		}
+		
+		boolean decrease = false;
+		
+		if(mode == Shredder) {
+			decrease = processShredder();
+		} else {
+			decrease = processOther();
+		}
+		
+		if(decrease) {
+			decrStackSize(0, 1);
+		}
+		
+	}
+	
+	private boolean processOther() {
+		ItemStack[] outputQueue = holdback;
+		boolean decrease = false;
+		
+		IInventory outputInventory = InventoryUtils.getInventory(worldObj, xCoord, yCoord - 1, zCoord);
+		if(outputInventory == null && !ConveyorUtil.canDropIntoWorld(worldObj, xCoord, yCoord - 1, zCoord)) {
+			return false;
+		}
+		
+		if(outputQueue == null) {
+			
+			if(isCoolingDown()) {
+				timeout--;
+				return false;
+			}
+			
+			ItemStack input = getStackInSlot(0);
+			
+			if(input == null) {
+				return false;
+			}
+			
+			int machine;
+			switch(mode) {
+			case Crusher:
+				machine = ProcessingRegistry.CRUSHER;
+				break;
+			case Grinder:
+				machine = ProcessingRegistry.GRINDER;
+				break;
+			default:
+				return false;
+			}
+			
+			IProcessingRecipe recipe = ProcessingRegistry.getRecipe(machine, input);
+			
+			if(recipe != null) {
+				decrease = true;
+				
+				outputQueue = recipe.getOutput(input, worldObj.rand);
+				
+				timeout += 15;
+			}
+		}
+		
+		if(outputQueue == null) {
+			return false;
+		}
+		
+		if(outputInventory == null) {
+			for(ItemStack itemStack : outputQueue) {
+				if(itemStack == null) {
+					continue;
+				}
+				EntityItem item = new EntityItem(worldObj, xCoord + 0.5, yCoord - 0.3, zCoord + 0.5, itemStack);
+		        item.motionX = 0;
+		        item.motionY = 0;
+		        item.motionZ = 0;
+		        worldObj.spawnEntityInWorld(item);
+			}
+
+			holdback = null;
+		} else {
+			boolean hasOutputLeft = false;
+			
+			for(ItemStack itemStack : outputQueue) {
+				if(itemStack == null) {
+					continue;
+				}
+				int unable = InventoryUtils.insertItem(outputInventory, itemStack, false);
+				if(unable > 0) {
+					itemStack.stackSize = unable;
+					hasOutputLeft = true;
+				}
+			}
+			if(hasOutputLeft) {
+				holdback = outputQueue;
+			} else {
+				holdback = null;
+			}
+		}
+		
+		return decrease;
+	}
+	
+	private boolean processShredder() {
+
+		if(isCoolingDown()) {
+			timeout--;
+			return false;
+		}
+		
+		ItemStack input = getStackInSlot(0);
+		
+		if(input == null) {
+			return false;
+		}
+		//TODO: Config
+		timeout += 5;
+		
+		return true;
 	}
 
 	public byte getMode() {
@@ -52,17 +202,32 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 	@Override
 	protected void writePropertiesToNBT(NBTTagCompound tag) {
 		tag.setTag("items", InventoryUtils.writeItemStacksToTag(inventory.items));
+		if(holdback != null) {
+			tag.setTag("holdback", InventoryUtils.writeItemStacksToTag(holdback));
+		}
 		tag.setByte("mode", mode);
 		tag.setByte("redstoneMode", redstoneMode);
 		tag.setByte("progress", progress);
+		tag.setInteger("timeout", timeout);
 	}
 
 	@Override
 	protected void readPropertiesFromNBT(NBTTagCompound tag) {
+		inventory.items = new ItemStack[inventory.getSizeInventory()];
 		InventoryUtils.readItemStacksFromTag(inventory.items, tag.getTagList("items", NBT.TAG_COMPOUND));
+		
+		NBTTagList holdbackList = tag.getTagList("holdback", NBT.TAG_COMPOUND);
+		if(holdbackList == null) {
+			holdback = null;
+		} else {
+			holdback = new ItemStack[holdbackList.func_150303_d()];
+			InventoryUtils.readItemStacksFromTag(holdback, holdbackList);
+		}
+
 		mode = tag.getByte("mode");
 		redstoneMode = tag.getByte("redstoneMode");
 		progress = tag.getByte("progress");
+		timeout = tag.getInteger("timeout");
 	}
 
 	/*
@@ -81,7 +246,9 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 
 	@Override
 	public ItemStack decrStackSize(int slot, int amount) {
-		return inventory.decrStackSize(slot, amount);
+		ItemStack retVal = inventory.decrStackSize(slot, amount);
+		updateState();
+		return retVal;
 	}
 
 	@Override
@@ -92,6 +259,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 	@Override
 	public void setInventorySlotContents(int slot, ItemStack stack) {
 		inventory.setInventorySlotContents(slot, stack);
+		updateState();
 	}
 
 	@Override
@@ -182,6 +350,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 	public int insertItemAt(ItemStack item, int slot) {
 		// insertItem returns item count unable to insert.
 		int inserted = item.stackSize - InventoryUtils.insertItem(inventory, item, false);
+		updateState();
 		return inserted;
 	}
 

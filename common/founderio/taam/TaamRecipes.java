@@ -6,10 +6,50 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 import cpw.mods.fml.common.registry.GameRegistry;
+import founderio.taam.conveyors.api.ChanceBasedRecipe;
+import founderio.taam.conveyors.api.ChancedOutput;
+import founderio.taam.conveyors.api.ProcessingRegistry;
 
 public class TaamRecipes {
 
 	public static void addRecipes(){
+		
+		/*
+		 * Crusher
+		 */
+		
+		ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
+				new ChanceBasedRecipe(new ItemStack(Blocks.stone),
+						new ChancedOutput(new ItemStack(Blocks.cobblestone), 1.0f),
+						new ChancedOutput(new ItemStack(Blocks.gravel), 0.15f)
+				)
+		);
+		ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
+				new ChanceBasedRecipe(new ItemStack(Blocks.cobblestone),
+						new ChancedOutput(new ItemStack(Blocks.gravel), 1.0f),
+						new ChancedOutput(new ItemStack(Blocks.sand), 0.15f)
+				)
+		);
+		ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
+				new ChanceBasedRecipe(new ItemStack(Blocks.gravel),
+						new ChancedOutput(new ItemStack(Blocks.sand), 1.0f),
+						new ChancedOutput(new ItemStack(Blocks.sand), 0.05f)
+				)
+		);
+		
+		/*
+		 * Grinder
+		 */
+
+		ProcessingRegistry.registerRecipe(ProcessingRegistry.GRINDER,
+				new ChanceBasedRecipe(new ItemStack(Blocks.grass),
+						new ChancedOutput(new ItemStack(Blocks.dirt), 1.0f),
+						new ChancedOutput(new ItemStack(Items.wheat_seeds), 0.05f),
+						new ChancedOutput(new ItemStack(Items.pumpkin_seeds), 0.05f),
+						new ChancedOutput(new ItemStack(Items.melon_seeds), 0.05f),
+						new ChancedOutput(new ItemStack(Blocks.vine), 0.005f)
+				)
+		);
 		
 	}
 	public static void addSmeltingRecipes(){

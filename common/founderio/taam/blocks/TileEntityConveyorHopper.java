@@ -97,7 +97,7 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 		int amountToDecrease = 0;
 		
 		if(eject) {
-			if(!worldObj.isAirBlock(xCoord, yCoord - 1, zCoord)) {
+			if(!ConveyorUtil.canDropIntoWorld(worldObj, xCoord, yCoord - 1, zCoord)) {
 				return;
 			}
 			for(int i = 0; i < this.inventory.getSizeInventory(); i++) {
@@ -215,6 +215,7 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 
 	@Override
 	protected void readPropertiesFromNBT(NBTTagCompound tag) {
+		inventory.items = new ItemStack[inventory.getSizeInventory()];
 		InventoryUtils.readItemStacksFromTag(inventory.items, tag.getTagList("items", NBT.TAG_COMPOUND));
 		highSpeed = tag.getBoolean("highSpeed");
 		timeout = tag.getInteger("timeout");

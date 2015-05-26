@@ -34,6 +34,7 @@ public abstract class BaseTileEntity extends TileEntity {
 		if (worldObj.isRemote) {
 			return;
 		}
+		markDirty();
 		this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 	}
 
