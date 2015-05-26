@@ -37,6 +37,34 @@ public class TaamRecipes {
 				)
 		);
 		
+		ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
+				new ChanceBasedRecipe(new ItemStack(Blocks.gold_block),
+						new ChancedOutput(new ItemStack(Items.gold_ingot, 9), 1.0f)
+				)
+		);
+		ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
+				new ChanceBasedRecipe(new ItemStack(Blocks.iron_block),
+						new ChancedOutput(new ItemStack(Items.iron_ingot, 9), 1.0f)
+				)
+		);
+		ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
+				new ChanceBasedRecipe(new ItemStack(Blocks.diamond_block),
+						new ChancedOutput(new ItemStack(Items.diamond, 9), 1.0f)
+				)
+		);
+		ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
+				new ChanceBasedRecipe(new ItemStack(Blocks.emerald_block),
+						new ChancedOutput(new ItemStack(Items.emerald, 9), 1.0f)
+				)
+		);
+		
+		ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
+				new ChanceBasedRecipe(new ItemStack(Blocks.quartz_block),
+						new ChancedOutput(new ItemStack(Items.quartz, 3), 1.0f),
+						new ChancedOutput(new ItemStack(Items.quartz, 1), 0.25f)
+				)
+		);
+		
 		/*
 		 * Grinder
 		 */

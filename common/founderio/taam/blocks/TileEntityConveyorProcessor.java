@@ -10,6 +10,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.IHopper;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.common.util.ForgeDirection;
+import codechicken.lib.inventory.InventoryRange;
 import codechicken.lib.inventory.InventorySimple;
 import codechicken.lib.inventory.InventoryUtils;
 import founderio.taam.TaamMain;
@@ -95,7 +96,6 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 	private boolean processOther() {
 		ItemStack[] outputQueue = holdback;
 		boolean decrease = false;
-		
 		IInventory outputInventory = InventoryUtils.getInventory(worldObj, xCoord, yCoord - 1, zCoord);
 		if(outputInventory == null && !ConveyorUtil.canDropIntoWorld(worldObj, xCoord, yCoord - 1, zCoord)) {
 			return false;
@@ -114,19 +114,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 				return false;
 			}
 			
-			int machine;
-			switch(mode) {
-			case Crusher:
-				machine = ProcessingRegistry.CRUSHER;
-				break;
-			case Grinder:
-				machine = ProcessingRegistry.GRINDER;
-				break;
-			default:
-				return false;
-			}
-			
-			IProcessingRecipe recipe = ProcessingRegistry.getRecipe(machine, input);
+			IProcessingRecipe recipe = getRecipe(input);
 			
 			if(recipe != null) {
 				decrease = true;
@@ -156,15 +144,19 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 			holdback = null;
 		} else {
 			boolean hasOutputLeft = false;
+			InventoryRange range = new InventoryRange(outputInventory, ForgeDirection.UP.ordinal());
 			
-			for(ItemStack itemStack : outputQueue) {
+			for(int i = 0; i < outputQueue.length; i++) {
+				ItemStack itemStack = outputQueue[i];
 				if(itemStack == null) {
 					continue;
 				}
-				int unable = InventoryUtils.insertItem(outputInventory, itemStack, false);
+				int unable = InventoryUtils.insertItem(range, itemStack, false);
 				if(unable > 0) {
 					itemStack.stackSize = unable;
 					hasOutputLeft = true;
+				} else {
+					outputQueue[i] = null;
 				}
 			}
 			if(hasOutputLeft) {
@@ -303,8 +295,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 
 	@Override
 	public boolean isItemValidForSlot(int slot, ItemStack itemStack) {
-		//TODO: Check recipes
-		return true;
+		return mode == Shredder || getRecipe(itemStack) != null;
 	}
 
 	/*
@@ -347,9 +338,12 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 	}
 
 	@Override
-	public int insertItemAt(ItemStack item, int slot) {
+	public int insertItemAt(ItemStack stack, int slot) {
+		if(!isItemValidForSlot(0, stack)) {
+			return 0;
+		}
 		// insertItem returns item count unable to insert.
-		int inserted = item.stackSize - InventoryUtils.insertItem(inventory, item, false);
+		int inserted = stack.stackSize - InventoryUtils.insertItem(inventory, stack, false);
 		updateState();
 		return inserted;
 	}
@@ -376,11 +370,29 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 	@Override
 	public boolean canInsertItem(int slot, ItemStack stack, int side) {
 		if(side == ForgeDirection.UP.ordinal()) {
-			//TODO: Check recipes
-			return true;
+			if(isItemValidForSlot(0, stack)) {
+				return true;
+			}
+			return false;
 		} else {
 			return false;
 		}
+	}
+
+	private IProcessingRecipe getRecipe(ItemStack input) {
+		int machine;
+		switch(mode) {
+		case Crusher:
+			machine = ProcessingRegistry.CRUSHER;
+			break;
+		case Grinder:
+			machine = ProcessingRegistry.GRINDER;
+			break;
+		default:
+			return null;
+		}
+		
+		return ProcessingRegistry.getRecipe(machine, input);
 	}
 
 	@Override
