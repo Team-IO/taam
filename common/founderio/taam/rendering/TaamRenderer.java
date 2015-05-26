@@ -1,5 +1,7 @@
 package founderio.taam.rendering;
 
+import java.util.Random;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderBlocks;
@@ -436,10 +438,18 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 				GL11.glPopMatrix();
 			}
 			if(tileEntity instanceof TileEntityConveyorProcessor) {
-				ItemStack processingStack = ((TileEntityConveyorProcessor) tileEntity).getStackInSlot(0);
+				TileEntityConveyorProcessor processor = (TileEntityConveyorProcessor) tileEntity;
+				ItemStack processingStack = processor.getStackInSlot(0);
 				if(processingStack != null) {
 					GL11.glPushMatrix();
+					Random rand = processor.getWorldObj().rand;
 					GL11.glTranslatef(0.5f, -0.1f, 0.5f);
+					if(!processor.isShutdown) {
+						GL11.glTranslatef(
+								0.015f * (1-rand.nextFloat()),
+								0.025f * (1-rand.nextFloat()),
+								0.015f * (1-rand.nextFloat()));
+					}
 					
 					ei.setEntityItemStack(processingStack);
 

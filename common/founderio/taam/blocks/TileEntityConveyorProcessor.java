@@ -37,6 +37,10 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 	private byte progress;
 	private int timeout;
 	
+	/**
+	 * Just for rendering purposes we keep this here.
+	 */
+	public boolean isShutdown;
 
 	public TileEntityConveyorProcessor() {
 		this(Shredder);
@@ -61,7 +65,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 
 		ConveyorUtil.tryInsertItemsFromWorld(this, worldObj, null, false);
 		
-		boolean isShutdown = false;
+		isShutdown = false;
 		
 		
 		boolean redstoneHigh = worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
@@ -182,7 +186,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 			return false;
 		}
 		//TODO: Config
-		timeout += 5;
+		timeout += 1;
 		
 		return true;
 	}
