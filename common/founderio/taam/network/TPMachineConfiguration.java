@@ -8,9 +8,9 @@ import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import cpw.mods.fml.relauncher.Side;
+import founderio.taam.content.IRedstoneControlled;
 import founderio.taam.content.conveyors.TileEntityConveyorHopper;
-import founderio.taam.conveyors.api.IRedstoneControlled;
-import founderio.taam.logistics.WorldCoord;
+import founderio.taam.util.WorldCoord;
 
 public final class TPMachineConfiguration implements IMessage {
 

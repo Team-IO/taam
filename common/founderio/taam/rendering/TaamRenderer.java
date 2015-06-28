@@ -32,6 +32,7 @@ import cpw.mods.fml.common.gameevent.TickEvent.Phase;
 import cpw.mods.fml.common.gameevent.TickEvent.Type;
 import founderio.taam.Taam;
 import founderio.taam.TaamMain;
+import founderio.taam.content.IRotatable;
 import founderio.taam.content.common.BlockSensor;
 import founderio.taam.content.common.TileEntitySensor;
 import founderio.taam.content.conveyors.BlockProductionLine;
@@ -42,7 +43,6 @@ import founderio.taam.content.logistics.TileEntityLogisticsManager;
 import founderio.taam.content.logistics.TileEntityLogisticsStation;
 import founderio.taam.conveyors.ConveyorUtil;
 import founderio.taam.conveyors.api.IConveyorAwareTE;
-import founderio.taam.conveyors.api.IRotatable;
 
 public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRenderer {
 

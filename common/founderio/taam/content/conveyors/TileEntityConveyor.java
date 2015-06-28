@@ -14,6 +14,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 import founderio.taam.content.BaseTileEntity;
+import founderio.taam.content.IRotatable;
 import founderio.taam.conveyors.ApplianceRegistry;
 import founderio.taam.conveyors.ConveyorUtil;
 import founderio.taam.conveyors.IConveyorAppliance;
@@ -22,7 +23,6 @@ import founderio.taam.conveyors.ItemWrapper;
 import founderio.taam.conveyors.api.IConveyorApplianceHost;
 import founderio.taam.conveyors.api.IConveyorAwareTE;
 import founderio.taam.conveyors.api.IItemFilter;
-import founderio.taam.conveyors.api.IRotatable;
 
 public class TileEntityConveyor extends BaseTileEntity implements ISidedInventory, IFluidHandler, IConveyorAwareTE, IRotatable, IConveyorApplianceHost {
 

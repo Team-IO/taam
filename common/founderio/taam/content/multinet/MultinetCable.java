@@ -23,9 +23,9 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import founderio.taam.Taam;
 import founderio.taam.TaamMain;
-import founderio.taam.logistics.WorldCoord;
 import founderio.taam.multinet.IMultinetAttachment;
 import founderio.taam.multinet.MultinetUtil;
+import founderio.taam.util.WorldCoord;
 
 public abstract class MultinetCable extends MultinetMultipart {
 

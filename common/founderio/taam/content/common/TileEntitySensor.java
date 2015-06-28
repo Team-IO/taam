@@ -8,7 +8,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import founderio.taam.Config;
 import founderio.taam.content.BaseBlock;
 import founderio.taam.content.BaseTileEntity;
-import founderio.taam.conveyors.api.IRotatable;
+import founderio.taam.content.IRotatable;
 
 public class TileEntitySensor extends BaseTileEntity implements IRotatable {
 	

@@ -15,7 +15,7 @@ import founderio.taam.content.logistics.TileEntityLogisticsManager;
 import founderio.taam.content.logistics.TileEntityLogisticsStation;
 import founderio.taam.gui.util.CustomButton;
 import founderio.taam.gui.util.CustomGui;
-import founderio.taam.logistics.WorldCoord;
+import founderio.taam.util.WorldCoord;
 
 public class GuiLogisticsStation extends CustomGui {
 	public static ResourceLocation bg = new ResourceLocation("taam:textures/gui/logistics_station.png");

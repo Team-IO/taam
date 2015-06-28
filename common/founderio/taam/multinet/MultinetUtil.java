@@ -12,8 +12,9 @@ import codechicken.lib.vec.Vector3;
 import codechicken.multipart.TMultiPart;
 import codechicken.multipart.TileMultipart;
 import founderio.taam.content.multinet.MultinetCable;
-import founderio.taam.logistics.WorldCoord;
-import founderio.taam.multinet.AStar.Node;
+import founderio.taam.util.AStar;
+import founderio.taam.util.WorldCoord;
+import founderio.taam.util.AStar.Node;
 
 public final class MultinetUtil {
 	/**

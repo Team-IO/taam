@@ -1,4 +1,4 @@
-package founderio.taam.conveyors.api;
+package founderio.taam.content;
 
 import net.minecraftforge.common.util.ForgeDirection;
 

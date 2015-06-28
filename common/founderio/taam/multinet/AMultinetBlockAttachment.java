@@ -2,7 +2,7 @@ package founderio.taam.multinet;
 
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-import founderio.taam.logistics.WorldCoord;
+import founderio.taam.util.WorldCoord;
 
 public abstract class AMultinetBlockAttachment implements IMultinetAttachment {
 

@@ -12,9 +12,9 @@ import codechicken.lib.vec.Vector3;
 import codechicken.multipart.IRedstonePart;
 import founderio.taam.Taam;
 import founderio.taam.content.multinet.MultinetMultipart;
-import founderio.taam.logistics.WorldCoord;
 import founderio.taam.multinet.IMultinetAttachment;
 import founderio.taam.multinet.MultinetUtil;
+import founderio.taam.util.WorldCoord;
 
 public class RedstoneBlockAdapter extends MultinetMultipart implements IRedstonePart {
 

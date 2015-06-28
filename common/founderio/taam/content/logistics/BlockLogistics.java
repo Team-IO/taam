@@ -1,4 +1,4 @@
-package founderio.taam.content.conveyors;
+package founderio.taam.content.logistics;
 
 import java.util.List;
 
@@ -21,13 +21,11 @@ import founderio.taam.Taam;
 import founderio.taam.TaamMain;
 import founderio.taam.content.BaseBlock;
 import founderio.taam.content.IRotatable;
-import founderio.taam.conveyors.ConveyorUtil;
-import founderio.taam.conveyors.api.IConveyorApplianceHost;
 import founderio.taam.util.TaamUtil;
 
-public class BlockProductionLine extends BaseBlock {
+public class BlockLogistics extends BaseBlock {
 	
-	public BlockProductionLine() {
+	public BlockLogistics() {
 		super(Material.iron);
 		this.setHardness(3.5f);
 		this.setStepSound(Block.soundTypeMetal);
@@ -76,26 +74,9 @@ public class BlockProductionLine extends BaseBlock {
 
 	public TileEntity createTileEntity(World world, int metadata) {
 		if(metadata == 0) {
-			// Plain Conveyor
-			return new TileEntityConveyor();
+			return new TileEntityLogisticsManager();
 		} else if(metadata == 1) {
-			// Hopper, Regular
-			return new TileEntityConveyorHopper(false);
-		} else if(metadata == 2) {
-			// Hopper, High-Speed
-			return new TileEntityConveyorHopper(true);
-		} else if(metadata == 3) {
-			// Sieve
-			return null;
-		} else if(metadata == 4) {
-			// Shredder
-			return new TileEntityConveyorProcessor(TileEntityConveyorProcessor.Shredder);
-		} else if(metadata == 5) {
-			// Grinder
-			return new TileEntityConveyorProcessor(TileEntityConveyorProcessor.Grinder);
-		} else if(metadata == 6) {
-			// Crusher
-			return new TileEntityConveyorProcessor(TileEntityConveyorProcessor.Crusher);
+			return new TileEntityLogisticsStation();
 		}
 		return null;
 	}
@@ -201,17 +182,6 @@ public class BlockProductionLine extends BaseBlock {
 		//TODO: Handle wrenching somewhere else
 		//TODO: Interaction with other mods??
 		TileEntity te = world.getTileEntity(x, y, z);
-		if(te instanceof IConveyorApplianceHost) {
-			if(playerHasWrench) {
-				TileEntityConveyor conveyor = (TileEntityConveyor) te;
-				if(player.isSneaking()) {
-					if(ConveyorUtil.dropAppliance(conveyor, player, world, x, y, z)) {
-						conveyor.removeAppliance();
-						return true;
-					}
-				}
-			}
-		}
 		
 		if(playerHasWrench && !player.isSneaking() && te instanceof IRotatable) {
 			IRotatable rotatable = (IRotatable) te;
@@ -223,7 +193,7 @@ public class BlockProductionLine extends BaseBlock {
 		}
 
 		if(!world.isRemote) {
-			if(te instanceof TileEntityConveyorHopper) {
+			if(te instanceof TileEntityLogisticsStation) {
 				player.openGui(TaamMain.instance, 0, world, x, y, z);
 			}
 		}

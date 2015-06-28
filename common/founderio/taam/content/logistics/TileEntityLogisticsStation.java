@@ -19,16 +19,16 @@ import com.google.common.collect.Collections2;
 
 import founderio.taam.TaamMain;
 import founderio.taam.content.BaseTileEntity;
-import founderio.taam.conveyors.api.IRotatable;
+import founderio.taam.content.IRotatable;
 import founderio.taam.logistics.Demand;
+import founderio.taam.logistics.Demand.DemandCategory;
 import founderio.taam.logistics.Goods;
 import founderio.taam.logistics.IStation;
 import founderio.taam.logistics.LogisticsConfiguration;
 import founderio.taam.logistics.LogisticsManager;
 import founderio.taam.logistics.PredictedInventory;
-import founderio.taam.logistics.WorldCoord;
-import founderio.taam.logistics.Demand.DemandCategory;
 import founderio.taam.network.TPLogisticsConfiguration;
+import founderio.taam.util.WorldCoord;
 
 public class TileEntityLogisticsStation extends BaseTileEntity implements IStation, IRotatable {
 	

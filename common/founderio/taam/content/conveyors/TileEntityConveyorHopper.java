@@ -14,12 +14,13 @@ import codechicken.lib.inventory.InventoryUtils;
 import founderio.taam.Config;
 import founderio.taam.TaamMain;
 import founderio.taam.content.BaseTileEntity;
+import founderio.taam.content.IRedstoneControlled;
 import founderio.taam.conveyors.ConveyorUtil;
 import founderio.taam.conveyors.api.IConveyorAwareTE;
 import founderio.taam.conveyors.api.IItemFilter;
-import founderio.taam.conveyors.api.IRedstoneControlled;
-import founderio.taam.logistics.WorldCoord;
 import founderio.taam.network.TPMachineConfiguration;
+import founderio.taam.util.TaamUtil;
+import founderio.taam.util.WorldCoord;
 
 
 public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyorAwareTE, IInventory, IHopper, IRedstoneControlled {
@@ -98,7 +99,7 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 		int amountToDecrease = 0;
 		
 		if(eject) {
-			if(!ConveyorUtil.canDropIntoWorld(worldObj, xCoord, yCoord - 1, zCoord)) {
+			if(!TaamUtil.canDropIntoWorld(worldObj, xCoord, yCoord - 1, zCoord)) {
 				return;
 			}
 			for(int i = 0; i < this.inventory.getSizeInventory(); i++) {

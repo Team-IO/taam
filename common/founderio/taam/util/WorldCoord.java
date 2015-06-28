@@ -1,4 +1,4 @@
-package founderio.taam.logistics;
+package founderio.taam.util;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;

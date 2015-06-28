@@ -1,4 +1,4 @@
-package founderio.taam.conveyors.api;
+package founderio.taam.content;
 
 public interface IRedstoneControlled {
 	public static final byte MODE_IGNORE = 0;
