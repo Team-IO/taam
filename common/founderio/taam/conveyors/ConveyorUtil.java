@@ -5,14 +5,13 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import codechicken.lib.inventory.InventoryUtils;
 import codechicken.lib.vec.Vector3;
-import founderio.taam.TaamMain;
 import founderio.taam.conveyors.api.IConveyorApplianceHost;
 import founderio.taam.conveyors.api.IConveyorAwareTE;
+import founderio.taam.util.TaamUtil;
 
 public class ConveyorUtil {
 	/**
@@ -75,10 +74,6 @@ public class ConveyorUtil {
 			}
 		}
 		return didAdd;
-	}
-	
-	public static boolean canDropIntoWorld(IBlockAccess world, int x, int y, int z) {
-		return world.isAirBlock(x, y, z) || world.getBlock(x, y, z).getMaterial().isLiquid();
 	}
 	
 	public static int getNextSlot(int slot, ForgeDirection dir) {
@@ -224,7 +219,7 @@ public class ConveyorUtil {
 		//TODO: Make ItemStack retain certain data? (Tanks... Energy...)
 		if(stack != null) {
 			if(player != null) {
-				tryDropToInventory(player, stack, x, y, z);
+				TaamUtil.tryDropToInventory(player, stack, x, y, z);
 			} else {
 				InventoryUtils.dropItem(stack, world, location);
 			}
@@ -242,45 +237,11 @@ public class ConveyorUtil {
 				continue;
 			}
 			if(player != null) {
-				tryDropToInventory(player, stack, x, y, z);
+				TaamUtil.tryDropToInventory(player, stack, x, y, z);
 			} else {
 				InventoryUtils.dropItem(stack, world, location);
 			}
 		}
 		return true;
-	}
-	
-	/**
-	 * Returns true if the player is holding a wrench in his hand.
-	 * @param player
-	 * @return
-	 */
-	public static boolean playerHasWrench(EntityPlayer player) {
-		ItemStack held = player.getHeldItem();
-		if(held == null) {
-			return false;
-		}
-		//TODO: Check other wrench types once supported
-		return held.getItem() == TaamMain.itemWrench;
-	}
-	
-	/**
-	 * Tries to drop an item into a player inventory or drops it at the specified coordinates.
-	 * 
-	 * @param player
-	 * @param stack
-	 * @param x
-	 * @param y
-	 * @param z
-	 */
-	public static void tryDropToInventory(EntityPlayer player, ItemStack stack, double x, double y, double z) {
-		if(player.capabilities.isCreativeMode) {
-			return;
-		}
-		if(!player.inventory.addItemStackToInventory(stack)) {
-			if(!player.worldObj.isRemote) {
-				InventoryUtils.dropItem(stack, player.worldObj, new Vector3(x, y, z));
-			}
-		}
 	}
 }

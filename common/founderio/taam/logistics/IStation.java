@@ -1,5 +1,7 @@
 package founderio.taam.logistics;
 
+import founderio.taam.util.WorldCoord;
+
 
 public interface IStation {
 

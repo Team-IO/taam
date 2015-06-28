@@ -6,7 +6,8 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
-import founderio.taam.multinet.AStar.Node;
+import founderio.taam.util.WorldCoord;
+import founderio.taam.util.AStar.Node;
 
 public class Route {
 	

@@ -6,8 +6,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import founderio.taam.TaamMain;
 import founderio.taam.content.logistics.TileEntityLogisticsStation;
-import founderio.taam.multinet.AStar;
-import founderio.taam.multinet.AStar.Node;
+import founderio.taam.util.AStar;
+import founderio.taam.util.WorldCoord;
+import founderio.taam.util.AStar.Node;
 
 public class StationGraph {
 

@@ -5,6 +5,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import founderio.taam.TaamMain;
 import founderio.taam.content.logistics.TileEntityLogisticsManager;
+import founderio.taam.util.WorldCoord;
 
 public final class LogisticsUtil {
 	private LogisticsUtil() {

@@ -21,8 +21,8 @@ import founderio.taam.content.conveyors.TileEntityConveyor;
 import founderio.taam.content.multinet.MultinetCable;
 import founderio.taam.conveyors.IConveyorAppliance;
 import founderio.taam.conveyors.api.IConveyorApplianceHost;
-import founderio.taam.logistics.WorldCoord;
 import founderio.taam.multinet.MultinetUtil;
+import founderio.taam.util.WorldCoord;
 
 public class ItemDebugTool extends Item {
 

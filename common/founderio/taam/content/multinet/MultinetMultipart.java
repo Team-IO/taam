@@ -8,10 +8,10 @@ import codechicken.lib.data.MCDataOutput;
 import codechicken.lib.vec.BlockCoord;
 import codechicken.lib.vec.Vector3;
 import codechicken.multipart.TMultiPart;
-import founderio.taam.logistics.WorldCoord;
 import founderio.taam.multinet.IMultinetAttachment;
 import founderio.taam.multinet.Multinet;
 import founderio.taam.multinet.MultinetUtil;
+import founderio.taam.util.WorldCoord;
 
 public abstract class MultinetMultipart extends TMultiPart implements IMultinetAttachment {
 

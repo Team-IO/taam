@@ -26,9 +26,9 @@ import founderio.taam.logistics.IStation;
 import founderio.taam.logistics.LogisticsConfiguration;
 import founderio.taam.logistics.LogisticsManager;
 import founderio.taam.logistics.PredictedInventory;
-import founderio.taam.logistics.WorldCoord;
 import founderio.taam.logistics.Demand.DemandCategory;
 import founderio.taam.network.TPLogisticsConfiguration;
+import founderio.taam.util.WorldCoord;
 
 public class TileEntityLogisticsStation extends BaseTileEntity implements IStation, IRotatable {
 	

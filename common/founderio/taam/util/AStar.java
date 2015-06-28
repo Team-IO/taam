@@ -1,11 +1,9 @@
-package founderio.taam.multinet;
+package founderio.taam.util;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Set;
-
-import founderio.taam.logistics.WorldCoord;
 
 public class AStar {
 

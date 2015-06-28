@@ -24,6 +24,7 @@ import founderio.taam.content.logistics.TileEntityLogisticsStation;
 import founderio.taam.conveyors.ConveyorUtil;
 import founderio.taam.conveyors.api.IConveyorApplianceHost;
 import founderio.taam.conveyors.api.IRotatable;
+import founderio.taam.util.TaamUtil;
 
 public class BlockProductionLine extends BaseBlock {
 	
@@ -202,7 +203,7 @@ public class BlockProductionLine extends BaseBlock {
 			int side, float hitX, float hitY,
 			float hitZ) {
 			
-		boolean playerHasWrench = ConveyorUtil.playerHasWrench(player);
+		boolean playerHasWrench = TaamUtil.playerHasWrench(player);
 		
 		//TODO: Handle wrenching somewhere else
 		//TODO: Interaction with other mods??

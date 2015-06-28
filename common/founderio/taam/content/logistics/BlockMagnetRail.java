@@ -17,10 +17,10 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import founderio.taam.Taam;
 import founderio.taam.TaamMain;
-import founderio.taam.conveyors.ConveyorUtil;
 import founderio.taam.logistics.InBlockRoute;
-import founderio.taam.logistics.WorldCoord;
 import founderio.taam.rendering.TaamRenderer;
+import founderio.taam.util.TaamUtil;
+import founderio.taam.util.WorldCoord;
 
 public class BlockMagnetRail extends Block {
 
@@ -172,9 +172,9 @@ public class BlockMagnetRail extends Block {
 			int y, int z, EntityPlayer player,
 			int side, float hitX, float hitY,
 			float hitZ) {
-		if(ConveyorUtil.playerHasWrench(player)) {
+		if(TaamUtil.playerHasWrench(player)) {
 			if(player.isSneaking()) {
-				ConveyorUtil.tryDropToInventory(player, new ItemStack(TaamMain.blockMagnetRail), x+hitX, y+hitY, z+hitZ);
+				TaamUtil.tryDropToInventory(player, new ItemStack(TaamMain.blockMagnetRail), x+hitX, y+hitY, z+hitZ);
 				world.setBlockToAir(x, y, z);
 			} else {
 				int meta = world.getBlockMetadata(x, y, z);

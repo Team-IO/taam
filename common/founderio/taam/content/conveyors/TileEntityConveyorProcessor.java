@@ -21,8 +21,9 @@ import founderio.taam.conveyors.api.IItemFilter;
 import founderio.taam.conveyors.api.IProcessingRecipe;
 import founderio.taam.conveyors.api.IRedstoneControlled;
 import founderio.taam.conveyors.api.ProcessingRegistry;
-import founderio.taam.logistics.WorldCoord;
 import founderio.taam.network.TPMachineConfiguration;
+import founderio.taam.util.TaamUtil;
+import founderio.taam.util.WorldCoord;
 
 public class TileEntityConveyorProcessor extends BaseTileEntity implements ISidedInventory, IConveyorAwareTE, IHopper, IRedstoneControlled {
 
@@ -102,7 +103,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 		ItemStack[] outputQueue = holdback;
 		boolean decrease = false;
 		IInventory outputInventory = InventoryUtils.getInventory(worldObj, xCoord, yCoord - 1, zCoord);
-		if(outputInventory == null && !ConveyorUtil.canDropIntoWorld(worldObj, xCoord, yCoord - 1, zCoord)) {
+		if(outputInventory == null && !TaamUtil.canDropIntoWorld(worldObj, xCoord, yCoord - 1, zCoord)) {
 			return false;
 		}
 		
