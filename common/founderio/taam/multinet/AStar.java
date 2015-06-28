@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Set;
 
-import founderio.taam.multinet.logistics.WorldCoord;
+import founderio.taam.logistics.WorldCoord;
 
 public class AStar {
 

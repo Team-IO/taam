@@ -9,9 +9,9 @@ import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import cpw.mods.fml.relauncher.Side;
-import founderio.taam.blocks.TileEntityLogisticsStation;
-import founderio.taam.entities.EntityLogisticsCart;
-import founderio.taam.multinet.logistics.WorldCoord;
+import founderio.taam.content.logistics.EntityLogisticsCart;
+import founderio.taam.content.logistics.TileEntityLogisticsStation;
+import founderio.taam.logistics.WorldCoord;
 
 public final class TPLogisticsConfiguration implements IMessage {
 

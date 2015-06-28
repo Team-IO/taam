@@ -11,9 +11,9 @@ import net.minecraftforge.common.util.ForgeDirection;
 import codechicken.lib.vec.Vector3;
 import codechicken.multipart.TMultiPart;
 import codechicken.multipart.TileMultipart;
-import founderio.taam.blocks.multinet.MultinetCable;
+import founderio.taam.content.multinet.MultinetCable;
+import founderio.taam.logistics.WorldCoord;
 import founderio.taam.multinet.AStar.Node;
-import founderio.taam.multinet.logistics.WorldCoord;
 
 public final class MultinetUtil {
 	/**

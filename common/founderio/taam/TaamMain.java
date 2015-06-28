@@ -23,33 +23,33 @@ import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import founderio.taam.blocks.BlockMagnetRail;
-import founderio.taam.blocks.BlockOre;
-import founderio.taam.blocks.BlockProductionLine;
-import founderio.taam.blocks.BlockSensor;
-import founderio.taam.blocks.BlockSlidingDoor;
-import founderio.taam.blocks.TileEntityConveyor;
-import founderio.taam.blocks.TileEntityConveyorHopper;
-import founderio.taam.blocks.TileEntityConveyorProcessor;
-import founderio.taam.blocks.TileEntityLogisticsManager;
-import founderio.taam.blocks.TileEntityLogisticsStation;
-import founderio.taam.blocks.TileEntitySensor;
-import founderio.taam.blocks.multinet.ItemMultinetCable;
-import founderio.taam.blocks.multinet.ItemMultinetMultitronix;
-import founderio.taam.blocks.multinet.MultinetHandler;
-import founderio.taam.blocks.multinet.MultinetPartFactory;
-import founderio.taam.blocks.multinet.cables.OperatorRedstone;
-import founderio.taam.client.gui.GuiHandler;
+import founderio.taam.content.ItemWithMetadata;
+import founderio.taam.content.common.BlockOre;
+import founderio.taam.content.common.BlockSensor;
+import founderio.taam.content.common.BlockSlidingDoor;
+import founderio.taam.content.common.FluidDye;
+import founderio.taam.content.common.ItemDebugTool;
+import founderio.taam.content.common.ItemIngot;
+import founderio.taam.content.common.ItemWrench;
+import founderio.taam.content.common.TileEntitySensor;
+import founderio.taam.content.conveyors.BlockProductionLine;
+import founderio.taam.content.conveyors.ItemConveyorAppliance;
+import founderio.taam.content.conveyors.TileEntityConveyor;
+import founderio.taam.content.conveyors.TileEntityConveyorHopper;
+import founderio.taam.content.conveyors.TileEntityConveyorProcessor;
+import founderio.taam.content.logistics.BlockMagnetRail;
+import founderio.taam.content.logistics.EntityLogisticsCart;
+import founderio.taam.content.logistics.ItemLogisticsCart;
+import founderio.taam.content.logistics.TileEntityLogisticsManager;
+import founderio.taam.content.logistics.TileEntityLogisticsStation;
+import founderio.taam.content.multinet.ItemMultinetCable;
+import founderio.taam.content.multinet.ItemMultinetMultitronix;
+import founderio.taam.content.multinet.MultinetHandler;
+import founderio.taam.content.multinet.MultinetPartFactory;
+import founderio.taam.content.multinet.cables.OperatorRedstone;
 import founderio.taam.conveyors.ApplianceRegistry;
 import founderio.taam.conveyors.appliances.ApplianceSprayer;
-import founderio.taam.entities.EntityLogisticsCart;
-import founderio.taam.fluids.DyeFluid;
-import founderio.taam.items.ItemConveyorAppliance;
-import founderio.taam.items.ItemDebugTool;
-import founderio.taam.items.ItemIngot;
-import founderio.taam.items.ItemLogisticsCart;
-import founderio.taam.items.ItemWithMetadata;
-import founderio.taam.items.ItemWrench;
+import founderio.taam.gui.GuiHandler;
 import founderio.taam.multinet.Multinet;
 
 
@@ -83,7 +83,7 @@ public class TaamMain {
 	public static BlockOre blockOre;
 	public static BlockMagnetRail blockMagnetRail;
 	
-	public static DyeFluid[] fluidsDye;
+	public static FluidDye[] fluidsDye;
 	
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
@@ -208,9 +208,9 @@ public class TaamMain {
 		
 		EntityRegistry.registerModEntity(EntityLogisticsCart.class, Taam.ENTITY_LOGISTICS_CART, 0, this, 64, 2, true);
 		
-		fluidsDye = new DyeFluid[Taam.FLUID_DYE_META.length];
+		fluidsDye = new FluidDye[Taam.FLUID_DYE_META.length];
 		for(int i = 0; i < Taam.FLUID_DYE_META.length; i++) {
-			fluidsDye[i] = new DyeFluid(Taam.FLUID_DYE + Taam.FLUID_DYE_META[i]);
+			fluidsDye[i] = new FluidDye(Taam.FLUID_DYE + Taam.FLUID_DYE_META[i]);
 			FluidRegistry.registerFluid(fluidsDye[i]);
 		}
 		

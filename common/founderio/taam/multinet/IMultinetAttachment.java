@@ -4,7 +4,7 @@ import java.util.List;
 
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-import founderio.taam.multinet.logistics.WorldCoord;
+import founderio.taam.logistics.WorldCoord;
 
 public interface IMultinetAttachment {
 	boolean canAttach(WorldCoord coords, ForgeDirection face,

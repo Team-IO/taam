@@ -3,7 +3,7 @@ package founderio.taam.rendering;
 import org.lwjgl.opengl.GL11;
 
 import founderio.taam.Taam;
-import founderio.taam.entities.EntityLogisticsCart;
+import founderio.taam.content.logistics.EntityLogisticsCart;
 import net.minecraft.client.renderer.entity.RenderEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
