@@ -57,13 +57,11 @@ public class ItemWrench extends Item {
 	@Override
 	public boolean hitEntity(ItemStack stack, EntityLivingBase source,
 			EntityLivingBase target) {
-		//System.out.println("Entity will be hit." + source.rotationYaw);
 		if(target.isSneaking()) {
-			source.rotationYawHead = source.rotationYawHead = (source.rotationYawHead + 180) % 360f;
+			source.rotationYawHead = (source.rotationYawHead + 180) % 360f;
 		} else {
-			source.rotationYaw = source.rotationYaw = (source.rotationYaw + 180) % 360f;
+			source.rotationYaw = (source.rotationYaw + 180) % 360f;
 		}
-		//System.out.println("Entity hit." + source.rotationYaw);
 		return true;
 	}
 

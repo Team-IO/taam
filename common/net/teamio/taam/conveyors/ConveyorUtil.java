@@ -43,10 +43,10 @@ public class ConveyorUtil {
 			if(ent instanceof EntityItem) {
 				EntityItem ei = (EntityItem)ent;
 				ItemStack entityItemStack = ei.getEntityItem();
-				int previousStackSize = entityItemStack.stackSize;
 				if(entityItemStack == null || entityItemStack.getItem() == null) {
 					continue;
 				}
+				int previousStackSize = entityItemStack.stackSize;
 				double relativeX = ent.posX - conveyorTE.posX();
 				double relativeY = ent.posY - conveyorTE.posY();
 				double relativeZ = ent.posZ - conveyorTE.posZ();
