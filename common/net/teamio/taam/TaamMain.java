@@ -58,7 +58,7 @@ public class TaamMain {
 	@Instance(Taam.MOD_ID)
 	public static TaamMain instance;
 
-	@SidedProxy(clientSide = "founderio.taam.TaamClientProxy", serverSide = "founderio.taam.TaamCommonProxy")
+	@SidedProxy(clientSide = "net.teamio.taam.TaamClientProxy", serverSide = "net.teamio.taam.TaamCommonProxy")
 	public static TaamCommonProxy proxy;
 
 	public static SimpleNetworkWrapper network;
