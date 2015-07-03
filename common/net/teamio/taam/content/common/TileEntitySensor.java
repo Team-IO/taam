@@ -2,6 +2,8 @@ package net.teamio.taam.content.common;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.monster.EntityIronGolem;
+import net.minecraft.entity.monster.EntitySnowman;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -121,7 +123,7 @@ public class TileEntitySensor extends BaseTileEntity implements IRotatable {
 			for(Object obj : worldObj.loadedEntityList) {
 				Entity ent = (Entity)obj;
 				
-				if(ent instanceof EntityLivingBase && ent.boundingBox.intersectsWith(bb)) {
+				if(ent instanceof EntityLivingBase && ent.boundingBox.intersectsWith(bb) && ent instanceof EntityIronGolem == false  && ent instanceof EntitySnowman == false) {
 					found = true;
 					break;
 				}
