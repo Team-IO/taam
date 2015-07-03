@@ -14,7 +14,7 @@ public final class Taam {
 	public static final String MOD_CREDITS = "";
 	public static final String MOD_LOGO_PATH = "";
 	
-	public static final String GUI_FACTORY_CLASS = "founderio.taam.client.gui.GuiFactory";
+	public static final String GUI_FACTORY_CLASS = "net.teamio.taam.gui.GuiFactory";
 
 	public static final String BLOCK_SENSOR = "taam.sensor";
 	public static final String BLOCK_PRODUCTIONLINE = "taam.productionline";
