@@ -8,6 +8,7 @@ import net.teamio.taam.content.conveyors.TileEntityConveyorHopper;
 import net.teamio.taam.content.conveyors.TileEntityConveyorProcessor;
 import net.teamio.taam.rendering.TaamRenderer;
 import cpw.mods.fml.client.registry.ClientRegistry;
+import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
 
 public class TaamClientProxy extends TaamCommonProxy {
@@ -27,5 +28,6 @@ public class TaamClientProxy extends TaamCommonProxy {
 		// Receive event for Client Ticks
 		FMLCommonHandler.instance().bus().register(taamRenderer);
 		
+		int id = RenderingRegistry.getNextAvailableRenderId();
 	}
 }

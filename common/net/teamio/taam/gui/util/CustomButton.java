@@ -55,7 +55,6 @@ public class CustomButton extends GuiButton {
 
 			GL11.glEnable(GL11.GL_BLEND);
             // For some reason all sizes here have to be halved.
-			// FIXME: We need a texture here. Central GUI Texture would be good I guess..
             GuiUtils.drawContinuousTexturedBox(null,
             		this.xPosition, this.yPosition,//x y
             		baseTextureU / 2, baseTextureV / 2 + k * bthHalf,//u v

@@ -15,8 +15,11 @@ import net.minecraftforge.common.util.ForgeDirection;
 import net.teamio.taam.Config;
 import net.teamio.taam.Taam;
 import net.teamio.taam.content.conveyors.TileEntityConveyor;
+import net.teamio.taam.content.multinet.MultinetCable;
 import net.teamio.taam.conveyors.IConveyorAppliance;
 import net.teamio.taam.conveyors.api.IConveyorApplianceHost;
+import net.teamio.taam.multinet.MultinetUtil;
+import net.teamio.taam.util.WorldCoord;
 import codechicken.lib.vec.Vector3;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -29,6 +32,9 @@ public class ItemDebugTool extends Item {
 		this.setMaxDamage(0);
 		this.setTextureName(Taam.MOD_ID + ":coffee");
 	}
+	
+	private MultinetCable cableA;
+	private MultinetCable cableB;
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
@@ -71,8 +77,28 @@ public class ItemDebugTool extends Item {
 
         Vector3 localHit = new Vector3(hitx, hity, hitz);
         
+        int layer = MultinetUtil.getHitLayer(dirOpp, localHit);
 		
         boolean didSomething = false;
+        
+        MultinetCable cable = MultinetUtil.getCable(new WorldCoord(world, x, y, z), layer, dirOpp, null);
+        
+        if(cable != null) {
+        	didSomething = true;
+            if(cableA == null) {
+            	player.addChatMessage(new ChatComponentText("Selected cable A"));
+            	cableA = cable;
+            	System.out.println(cableA);
+            } else if(cableA == cable) {
+            	player.addChatMessage(new ChatComponentText("You already selected this cable as cable A"));
+            } else {
+            	cableB = cable;
+            	player.addChatMessage(new ChatComponentText("Selected cable B"));
+	        	System.out.println(MultinetUtil.findConnection(cableA, cableB));
+	        	cableA = null;
+	        	cableB = null;
+            }
+        }
         
         TileEntity te = world.getTileEntity(x, y, z);
 

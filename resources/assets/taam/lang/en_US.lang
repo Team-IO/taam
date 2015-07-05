@@ -1,6 +1,8 @@
 #Item localization
 item.taam.debugger.name=Coffee
 item.taam.wrench.name=Adjustable Wrench
+item.taam.cable.name=MulitNet Cable
+item.taam.multitronix.name=Multitronix
 # Ingots
 item.taam.ingot.tin.name=Tin Ingot
 item.taam.ingot.copper.name=Copper Ingot
@@ -32,6 +34,7 @@ item.taam.material.graphite.name=Graphite Bar
 item.taam.material.silicon_wafer.name=Silicon Wafer
 # Conveyor Appliances
 item.taam.conveyor_appliance.sprayer.name=Sprayer
+item.taam.logistic_cart.sprayer.name=Logistic Cart
 
 #Creativ Tab localization
 itemGroup.taam=Taam
@@ -54,6 +57,11 @@ tile.taam.productionline.sieve.name=Conveyor Sieve
 tile.taam.productionline.shredder.name=Conveyor Shredder
 tile.taam.productionline.grinder.name=Conveyor Grinder
 tile.taam.productionline.crusher.name=Conveyor Crusher
+#Logistics System
+tile.taam.magnet_rail.name=Magnet Rail
+tile.taam.productionline.logistics_manager.name=Logistics Manager
+tile.taam.productionline.logistics_station.name=Logistics Station
+item.taam.logistics_cart.basic.name=Basic Logistic Cart
 
 #Lore localization
 lore.taam.shift=Hold Shift
