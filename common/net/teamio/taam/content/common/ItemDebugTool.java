@@ -71,7 +71,6 @@ public class ItemDebugTool extends Item {
 
         Vector3 localHit = new Vector3(hitx, hity, hitz);
         
-		
         boolean didSomething = false;
         
         TileEntity te = world.getTileEntity(x, y, z);

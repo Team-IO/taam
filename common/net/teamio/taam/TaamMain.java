@@ -22,6 +22,11 @@ import net.teamio.taam.content.conveyors.ItemConveyorAppliance;
 import net.teamio.taam.content.conveyors.TileEntityConveyor;
 import net.teamio.taam.content.conveyors.TileEntityConveyorHopper;
 import net.teamio.taam.content.conveyors.TileEntityConveyorProcessor;
+import net.teamio.taam.content.logistics.BlockMagnetRail;
+import net.teamio.taam.content.logistics.EntityLogisticsCart;
+import net.teamio.taam.content.logistics.ItemLogisticsCart;
+import net.teamio.taam.content.logistics.TileEntityLogisticsManager;
+import net.teamio.taam.content.logistics.TileEntityLogisticsStation;
 import net.teamio.taam.conveyors.ApplianceRegistry;
 import net.teamio.taam.conveyors.appliances.ApplianceSprayer;
 import net.teamio.taam.gui.GuiHandler;
@@ -36,6 +41,7 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -57,6 +63,7 @@ public class TaamMain {
 	public static ItemWithMetadata itemPart;
 	public static ItemIngot itemIngot;
 	public static ItemConveyorAppliance itemConveyorAppliance;
+	public static ItemLogisticsCart itemLogisticsCart;
 	
 	public static CreativeTabs creativeTab;
 
@@ -64,6 +71,7 @@ public class TaamMain {
 	public static BlockProductionLine blockProductionLine;
 	public static BlockSlidingDoor blockSlidingDoor;
 	public static BlockOre blockOre;
+	public static BlockMagnetRail blockMagnetRail;
 	
 	public static FluidDye[] fluidsDye;
 	
@@ -112,6 +120,10 @@ public class TaamMain {
 		blockOre.setBlockName(Taam.BLOCK_ORE);
 		blockOre.setCreativeTab(creativeTab);
 		
+		blockMagnetRail = new BlockMagnetRail();
+		blockMagnetRail.setBlockName(Taam.BLOCK_MAGNET_RAIL);
+		blockMagnetRail.setCreativeTab(creativeTab);
+		
 		itemDebugTool = new ItemDebugTool();
 		itemDebugTool.setUnlocalizedName(Taam.ITEM_DEBUG_TOOL);
 		itemDebugTool.setCreativeTab(creativeTab);
@@ -136,6 +148,10 @@ public class TaamMain {
 		itemConveyorAppliance.setUnlocalizedName(Taam.ITEM_CONVEYOR_APPLIANCE);
 		itemConveyorAppliance.setCreativeTab(creativeTab);
 		
+		itemLogisticsCart = new ItemLogisticsCart();
+		itemLogisticsCart.setUnlocalizedName(Taam.ITEM_LOGISTICS_CART);
+		itemLogisticsCart.setCreativeTab(creativeTab);
+		
 		GameRegistry.registerItem(itemMaterial, Taam.ITEM_MATERIAL, Taam.MOD_ID);
 		GameRegistry.registerItem(itemPart, Taam.ITEM_PART, Taam.MOD_ID);
 		GameRegistry.registerItem(itemIngot, Taam.ITEM_INGOT, Taam.MOD_ID);
@@ -145,23 +161,30 @@ public class TaamMain {
 
 		GameRegistry.registerItem(itemConveyorAppliance, Taam.ITEM_CONVEYOR_APPLIANCE, Taam.MOD_ID);
 		
+		GameRegistry.registerItem(itemLogisticsCart, Taam.ITEM_LOGISTICS_CART, Taam.MOD_ID);
+		
 		GameRegistry.registerBlock(blockSensor, ItemBlock.class, Taam.BLOCK_SENSOR);
 		GameRegistry.registerBlock(blockProductionLine, null, Taam.BLOCK_PRODUCTIONLINE);
 		//TODO: custom item implementation for production line with lore (see ItemConveyorAppliance), because of Lore
 		GameRegistry.registerItem(new ItemMultiTexture(blockProductionLine, blockProductionLine, Taam.BLOCK_PRODUCTIONLINE_META), Taam.BLOCK_PRODUCTIONLINE, Taam.MOD_ID);
 //		GameRegistry.registerBlock(blockSlidingDoor, ItemBlock.class, Taam.BLOCK_SLIDINGDOOR);
 		GameRegistry.registerBlock(blockOre, null, Taam.BLOCK_ORE);
+		GameRegistry.registerBlock(blockMagnetRail, ItemBlock.class, Taam.BLOCK_MAGNET_RAIL);
 		GameRegistry.registerItem(new ItemMultiTexture(blockOre, blockOre, Taam.BLOCK_ORE_META), Taam.BLOCK_ORE, Taam.MOD_ID);
 		
 		GameRegistry.registerTileEntity(TileEntitySensor.class, Taam.TILEENTITY_SENSOR);
 		GameRegistry.registerTileEntity(TileEntityConveyor.class, Taam.TILEENTITY_CONVEYOR);
 		GameRegistry.registerTileEntity(TileEntityConveyorHopper.class, Taam.TILEENTITY_CONVEYOR_HOPPER);
 		GameRegistry.registerTileEntity(TileEntityConveyorProcessor.class, Taam.TILEENTITY_CONVEYOR_PROCESSOR);
+		GameRegistry.registerTileEntity(TileEntityLogisticsStation.class, Taam.TILEENTITY_LOGISTICS_STATION);
+		GameRegistry.registerTileEntity(TileEntityLogisticsManager.class, Taam.TILEENTITY_LOGISTICS_MANAGER);
 //		GameRegistry.registerTileEntity(TileEntitySlidingDoor.class, Taam.TILEENTITY_SLIDINGDOOR);
 		
 		GameRegistry.registerWorldGenerator(new OreGenerator(), 2);
 		
 		ApplianceRegistry.registerFactory(Taam.APPLIANCE_SPRAYER, new ApplianceSprayer.Factory());
+		
+		EntityRegistry.registerModEntity(EntityLogisticsCart.class, Taam.ENTITY_LOGISTICS_CART, 0, this, 64, 2, true);
 		
 		fluidsDye = new FluidDye[Taam.FLUID_DYE_META.length];
 		for(int i = 0; i < Taam.FLUID_DYE_META.length; i++) {
