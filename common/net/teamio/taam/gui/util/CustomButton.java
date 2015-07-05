@@ -2,7 +2,6 @@ package net.teamio.taam.gui.util;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
-import net.teamio.taam.gui.GuiLogisticsStation;
 
 import org.lwjgl.opengl.GL11;
 
@@ -56,7 +55,8 @@ public class CustomButton extends GuiButton {
 
 			GL11.glEnable(GL11.GL_BLEND);
             // For some reason all sizes here have to be halved.
-            GuiUtils.drawContinuousTexturedBox(GuiLogisticsStation.bg,
+			// FIXME: We need a texture here. Central GUI Texture would be good I guess..
+            GuiUtils.drawContinuousTexturedBox(null,
             		this.xPosition, this.yPosition,//x y
             		baseTextureU / 2, baseTextureV / 2 + k * bthHalf,//u v
             		width, height,//width height
