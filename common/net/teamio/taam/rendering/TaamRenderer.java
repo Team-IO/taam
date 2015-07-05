@@ -43,12 +43,6 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 	public final WavefrontObject modelConveyor;
 	public final ResourceLocation textureConveyor;
 	
-	public final WavefrontObject modelLogisticsStation;
-	public final ResourceLocation textureLogisticsStation;
-	
-	public final WavefrontObject modelLogisticsManager;
-	public final ResourceLocation textureLogisticsManager;
-	
 	private RenderItem ri;
 	private EntityItem ei;
 	private float rot = 0;
@@ -73,11 +67,6 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 		modelConveyor = new WavefrontObject(new ResourceLocation(Taam.MOD_ID + ":models/conveyor.obj"));
 		textureConveyor = new ResourceLocation(Taam.MOD_ID + ":textures/models/conveyor.png");
 
-		modelLogisticsStation = new WavefrontObject(new ResourceLocation(Taam.MOD_ID + ":models/logistics_station.obj"));
-		textureLogisticsStation = new ResourceLocation(Taam.MOD_ID + ":textures/models/logistics_station.png");
-
-		modelLogisticsManager = new WavefrontObject(new ResourceLocation(Taam.MOD_ID + ":models/logistics_station.obj"));
-		textureLogisticsManager = new ResourceLocation(Taam.MOD_ID + ":textures/models/logistics_manager.png");
 	}
 	
 	@SubscribeEvent
