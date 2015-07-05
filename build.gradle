@@ -46,7 +46,6 @@ sourceSets {
 dependencies {
     //compile 'com.mod-buildcraft:buildcraft:6.0.8:dev'
 
-	compile 'codechicken:ForgeMultipart:1.7.10-1.1.0.307:dev'
 	compile 'codechicken:CodeChickenLib:1.7.10-1.1.1.104:dev'
     // compile fileTree(dir: 'lib', include: '*.jar')
 }
