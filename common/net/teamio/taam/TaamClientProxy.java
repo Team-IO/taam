@@ -24,6 +24,7 @@ public class TaamClientProxy extends TaamCommonProxy {
 		
 		MinecraftForgeClient.registerItemRenderer(ItemBlock.getItemFromBlock(TaamMain.blockSensor), taamRenderer);
 		MinecraftForgeClient.registerItemRenderer(ItemBlock.getItemFromBlock(TaamMain.blockProductionLine), taamRenderer);
+		MinecraftForgeClient.registerItemRenderer(TaamMain.itemConveyorAppliance, taamRenderer);
 		// Receive event for Client Ticks
 		FMLCommonHandler.instance().bus().register(taamRenderer);
 		

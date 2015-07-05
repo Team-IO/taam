@@ -3,11 +3,13 @@ package net.teamio.taam.content.conveyors;
 import java.util.List;
 
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import net.teamio.taam.Taam;
 import net.teamio.taam.content.ItemWithMetadata;
@@ -71,5 +73,20 @@ public class ItemConveyorAppliance extends ItemWithMetadata {
 			}
 		}
 		return false;
+	}
+	
+	@Override
+	protected String getIconString() {
+		return "tech_item";
+	}
+	
+	@Override
+	public void registerIcons(IIconRegister ir) {
+		this.itemIcon = ir.registerIcon(this.getIconString());
+	}
+	
+	@Override
+	public IIcon getIconFromDamage(int meta) {
+		return this.itemIcon;
 	}
 }

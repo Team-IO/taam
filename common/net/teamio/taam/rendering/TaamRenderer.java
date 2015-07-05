@@ -78,6 +78,9 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 
 	@Override
 	public boolean handleRenderType(ItemStack item, ItemRenderType type) {
+		if(item.getItem() == TaamMain.itemConveyorAppliance) {
+			return true;
+		}
 		Block block = Block.getBlockFromItem(item.getItem());
 		if(block instanceof BlockSensor) {
 			return true;
@@ -144,6 +147,22 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 				break;
 			case 6:
 				renderConveyorProcessor(null, x, y, z, TileEntityConveyorProcessor.Crusher);
+				break;
+			}
+		} else if(item.getItem() == TaamMain.itemConveyorAppliance) {
+			int meta = item.getItemDamage();
+			switch(meta) {
+			default:
+				break;
+			case 0:
+				conveyorPrepareRendering(null, x, y, z);
+				renderConveyorAppliance(Taam.APPLIANCE_SPRAYER);
+				conveyorEndRendering();
+				break;
+			case 1:
+				conveyorPrepareRendering(null, x, y, z);
+				//TODO: Render.
+				conveyorEndRendering();
 				break;
 			}
 		}
@@ -308,13 +327,19 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 		}
 		
 		if(tileEntity != null) {
-			if(tileEntity.hasApplianceWithType(Taam.APPLIANCE_SPRAYER)) {
-				modelConveyor.renderPart("Appliance_Sprayer_asmdl");
+			if(tileEntity.hasAppliance()) {
+				renderConveyorAppliance(tileEntity.getApplianceType());
 			}
 		}
 		
 		GL11.glPopMatrix();
 		
+	}
+	
+	public void renderConveyorAppliance(String type) {
+		if(Taam.APPLIANCE_SPRAYER.equals(type)) {
+			modelConveyor.renderPart("Appliance_Sprayer_asmdl");
+		}
 	}
 	
 	public void renderConveyorHopper(TileEntityConveyorHopper tileEntity, double x, double y, double z, boolean forceHighSpeed) {
