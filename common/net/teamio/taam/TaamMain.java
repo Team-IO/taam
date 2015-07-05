@@ -41,7 +41,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 
-@Mod(modid = Taam.MOD_ID, name = Taam.MOD_NAME, version = Taam.MOD_VERSION, guiFactory = Taam.GUI_FACTORY_CLASS)
+@Mod(modid = Taam.MOD_ID, name = Taam.MOD_NAME, version = Taam.MOD_VERSION, dependencies = "required-after:ForgeMultipart", guiFactory = Taam.GUI_FACTORY_CLASS)
 public class TaamMain {
 	@Instance(Taam.MOD_ID)
 	public static TaamMain instance;
