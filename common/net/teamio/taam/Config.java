@@ -62,9 +62,9 @@ public class Config {
 	
 	
 	@SubscribeEvent
-	public void onConfigChangedEvent(ConfigChangedEvent.OnConfigChangedEvent Event)
+	public void onConfigChangedEvent(ConfigChangedEvent.OnConfigChangedEvent event)
 	{
-		if (Event.modID.equalsIgnoreCase(Taam.MOD_ID));
+		if (event.modID.equalsIgnoreCase(Taam.MOD_ID))
 		{
 			loadConfig();
 		}
