@@ -18,6 +18,7 @@ import net.teamio.taam.Taam;
 import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.BaseBlock;
 import net.teamio.taam.content.IRotatable;
+import net.teamio.taam.content.IWorldInteractable;
 import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.conveyors.api.IConveyorApplianceHost;
 import net.teamio.taam.util.TaamUtil;
@@ -197,32 +198,41 @@ public class BlockProductionLine extends BaseBlock {
 			float hitZ) {
 			
 		boolean playerHasWrench = TaamUtil.playerHasWrench(player);
+		boolean playerIsSneaking = player.isSneaking();
 		
 		//TODO: Handle wrenching somewhere else
 		//TODO: Interaction with other mods??
 		TileEntity te = world.getTileEntity(x, y, z);
-		if(te instanceof IConveyorApplianceHost) {
-			if(playerHasWrench) {
+		
+		if(playerHasWrench) {
+			if(te instanceof IConveyorApplianceHost) {
 				TileEntityConveyor conveyor = (TileEntityConveyor) te;
-				if(player.isSneaking()) {
+				if(playerIsSneaking) {
 					if(ConveyorUtil.dropAppliance(conveyor, player, world, x, y, z)) {
 						conveyor.removeAppliance();
 						return true;
 					}
 				}
 			}
+			if(!playerIsSneaking && te instanceof IRotatable) {
+				IRotatable rotatable = (IRotatable) te;
+				rotatable.setFacingDirection(rotatable.getNextFacingDirection());
+				return true;
+			}
 		}
 		
-		if(playerHasWrench && !player.isSneaking() && te instanceof IRotatable) {
-			IRotatable rotatable = (IRotatable) te;
-			rotatable.setFacingDirection(rotatable.getNextFacingDirection());
-			return true;
-		}
 		if(player.isSneaking()) {
 			return false;
 		}
 
 		if(!world.isRemote) {
+			if(te instanceof IWorldInteractable) {
+				IWorldInteractable interactable = ((IWorldInteractable) te);
+				boolean intercepted = interactable.onBlockActivated(world, x, y, z, player, side, hitX, hitY, hitZ);
+				if(intercepted) {
+					return true;
+				}
+			}
 			if(te instanceof TileEntityConveyorHopper) {
 				player.openGui(TaamMain.instance, 0, world, x, y, z);
 			}

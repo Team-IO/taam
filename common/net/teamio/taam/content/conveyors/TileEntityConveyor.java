@@ -7,6 +7,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
@@ -15,6 +16,7 @@ import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IRotatable;
+import net.teamio.taam.content.IWorldInteractable;
 import net.teamio.taam.conveyors.ApplianceRegistry;
 import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.conveyors.IConveyorAppliance;
@@ -24,7 +26,7 @@ import net.teamio.taam.conveyors.api.IConveyorApplianceHost;
 import net.teamio.taam.conveyors.api.IConveyorAwareTE;
 import net.teamio.taam.conveyors.api.IItemFilter;
 
-public class TileEntityConveyor extends BaseTileEntity implements ISidedInventory, IFluidHandler, IConveyorAwareTE, IRotatable, IConveyorApplianceHost {
+public class TileEntityConveyor extends BaseTileEntity implements ISidedInventory, IFluidHandler, IConveyorAwareTE, IRotatable, IConveyorApplianceHost, IWorldInteractable {
 
 	public static final byte maxProgress = 40;
 	
@@ -532,8 +534,12 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	@Override
 	public void setInventorySlotContents(int slot, ItemStack itemStack) {
 		if(appliance == null) {
-			if(itemStack != null)
+			if(itemStack == null) {
+				items[slot].itemStack = null;
+				updateState();
+			} else {
 				insertItemAt(itemStack, slot);
+			}
 		} else {
 			appliance.setInventorySlotContents(slot, itemStack);
 		}
@@ -693,5 +699,38 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 		} else {
 			return appliance.getTankInfo(from);
 		}
+	}
+
+	/*
+	 * IWorldInteractable implementation
+	 */
+	
+	@Override
+	public boolean onBlockActivated(World world, int x, int y, int z,
+			EntityPlayer player, int side, float hitX, float hitY, float hitZ) {
+		if(side != ForgeDirection.UP.ordinal()) {
+			return false;
+		}
+		int clickedSlot = ConveyorUtil.getSlotForRelativeCoordinates(hitX, hitZ);
+		int playerSlot = player.inventory.currentItem;
+		ItemStack playerStack = player.inventory.getCurrentItem();
+		if(playerStack == null) {
+			// Take from Conveyor
+			ItemStack taken = getItemAt(clickedSlot);
+			if(taken != null) {
+				player.inventory.setInventorySlotContents(playerSlot, taken);
+				setInventorySlotContents(clickedSlot, null);
+			}
+		} else {
+			// Put on conveyor
+			int inserted = insertItemAt(playerStack, clickedSlot);
+			if(inserted == playerStack.stackSize) {
+				player.inventory.setInventorySlotContents(playerSlot, null);
+			} else {
+				playerStack.stackSize -= inserted;
+				player.inventory.setInventorySlotContents(playerSlot, playerStack);
+			}
+		}
+		return true;
 	}
 }
