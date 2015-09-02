@@ -200,8 +200,6 @@ public class BlockProductionLine extends BaseBlock {
 		boolean playerHasWrench = TaamUtil.playerHasWrench(player);
 		boolean playerIsSneaking = player.isSneaking();
 		
-		//TODO: Handle wrenching somewhere else
-		//TODO: Interaction with other mods??
 		TileEntity te = world.getTileEntity(x, y, z);
 		
 		if(playerHasWrench) {
@@ -221,14 +219,14 @@ public class BlockProductionLine extends BaseBlock {
 			}
 		}
 		
-		if(player.isSneaking()) {
+		if(playerIsSneaking) {
 			return false;
 		}
 
 		if(!world.isRemote) {
 			if(te instanceof IWorldInteractable) {
 				IWorldInteractable interactable = ((IWorldInteractable) te);
-				boolean intercepted = interactable.onBlockActivated(world, x, y, z, player, side, hitX, hitY, hitZ);
+				boolean intercepted = interactable.onBlockActivated(world, x, y, z, player, playerHasWrench, side, hitX, hitY, hitZ);
 				if(intercepted) {
 					return true;
 				}

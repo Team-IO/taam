@@ -16,10 +16,10 @@ public interface IWorldInteractable {
 	 * @param hitX
 	 * @param hitY
 	 * @param hitZ
-	 * @return true when the click was intercepted, no further processing is to be done.
+	 * @return true when the click was intercepted, no further processing is to
+	 *         be done.
 	 */
-	boolean onBlockActivated(World world, int x,
-			int y, int z, EntityPlayer player,
-			int side, float hitX, float hitY,
-			float hitZ);
+	boolean onBlockActivated(World world, int x, int y, int z,
+			EntityPlayer player, boolean hasWrench, int side, float hitX,
+			float hitY, float hitZ);
 }

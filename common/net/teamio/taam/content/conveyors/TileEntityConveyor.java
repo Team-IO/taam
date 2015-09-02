@@ -191,8 +191,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 			if(appliance != null) {
 				System.out.println("Process");
 				wrapper.processing++;
-				appliance.processItem(this, wrapper);
-				//TODO: allow appliance to block slots
+				appliance.processItem(this, slot, wrapper);
 			}
 			
 			// No next slot means drop to ground..
@@ -707,7 +706,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z,
-			EntityPlayer player, int side, float hitX, float hitY, float hitZ) {
+			EntityPlayer player, boolean playerHasWrench, int side, float hitX, float hitY, float hitZ) {
 		if(side != ForgeDirection.UP.ordinal()) {
 			return false;
 		}

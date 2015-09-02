@@ -37,16 +37,16 @@ public class ApplianceSprayer extends ApplianceInventory {
 			IConveyorAppliance ainv = new ApplianceSprayer();
 			return ainv; 
 		}
-
-		@Override
-		public ItemStack getItemStack(String type) {
-			return new ItemStack(TaamMain.itemConveyorAppliance, 1, 0);
-		}
 	}
 	
 	/*
 	 * "Static"
 	 */
+
+	@Override
+	public ItemStack getItemStack() {
+		return new ItemStack(TaamMain.itemConveyorAppliance, 1, 0);
+	}
 
 	static final String[] dyes = { "Black", "Red", "Green", "Brown", "Blue",
 			"Purple", "Cyan", "LightGray", "Gray", "Pink", "Lime", "Yellow",
@@ -95,17 +95,7 @@ public class ApplianceSprayer extends ApplianceInventory {
 	 */
 	
 	@Override
-	public int getProgressBegin() {
-		return 40;
-	}
-
-	@Override
-	public int getProgressEnd() {
-		return 60;
-	}
-	
-	@Override
-	public void processItem(IConveyorApplianceHost conveyor, ItemWrapper wrapper) {
+	public void processItem(IConveyorApplianceHost conveyor, int slot, ItemWrapper wrapper) {
 		//TODO: Review this, and change to fluid usage (will use fluid during progress, can leave half-processed items.)
 		if(wrapper.processing > 1) {//Config.pl_appl_sprayer_maxProgress) {
 			int paintType = getAvailablePaintType();
@@ -175,15 +165,6 @@ public class ApplianceSprayer extends ApplianceInventory {
 			return true;
 		}
 		return false;
-	}
-
-	@Override
-	public boolean isApplianceSetupCompatible(IConveyorApplianceHost conveyorTarget, IConveyorAppliance applianceTarget) {
-		if(applianceTarget instanceof ApplianceSprayer) {
-			return ((ApplianceSprayer) applianceTarget).getAvailablePaintType() == getAvailablePaintType();
-		} else {
-			return false;
-		}
 	}
 
 	@Override

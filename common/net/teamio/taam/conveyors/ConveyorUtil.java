@@ -1,5 +1,7 @@
 package net.teamio.taam.conveyors;
 
+import java.util.List;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -36,8 +38,13 @@ public class ConveyorUtil {
 			return false;
 		}
 		boolean didAdd = false;
-		//TODO: if Bounding Box is Supplied, use that.
-		for(Object obj : world.loadedEntityList) {
+		List<?> entities = world.loadedEntityList;
+		
+		//if Bounding Box is Supplied, use that.
+		if(bounds != null) {
+			entities = world.getEntitiesWithinAABB(EntityItem.class, bounds);
+		}
+		for(Object obj : entities) {
 			Entity ent = (Entity)obj;
 			
 			if(ent instanceof EntityItem) {
@@ -215,7 +222,11 @@ public class ConveyorUtil {
 		/*
 		 * Drop appliance
 		 */
-		ItemStack stack = factory.getItemStack(type);
+		IConveyorAppliance appliance = applianceHost.getAppliance();
+		if(appliance == null) {
+			return false;
+		}
+		ItemStack stack = appliance.getItemStack();
 		//TODO: Make ItemStack retain certain data? (Tanks... Energy...)
 		if(stack != null) {
 			if(player != null) {
@@ -227,10 +238,6 @@ public class ConveyorUtil {
 		/*
 		 * Drop appliance content
 		 */
-		IConveyorAppliance appliance = applianceHost.getAppliance();
-		if(appliance == null) {
-			return false;
-		}
 		for(int i = 0; i < appliance.getSizeInventory(); i++) {
 			stack = appliance.getStackInSlot(i);
 			if(stack == null) {
