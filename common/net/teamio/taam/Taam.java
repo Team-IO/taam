@@ -43,7 +43,9 @@ public final class Taam {
 	}
 	
 	public static final String[] BLOCK_PRODUCTIONLINE_META = new String[] {
-		"conveyor",
+		"conveyor1",
+		"conveyor2",
+		"conveyor3",
 		"hopper",
 		"hopper_hs",
 		"sieve",

@@ -17,9 +17,16 @@ public class Config {
 	public static int sensor_delay = 30;
 	public static int sensor_placement_mode = 1;
 	
+	public static final byte[] pl_conveyor_speedsteps = new byte[] {
+		80,
+		40,
+		10
+	};
+	
 	public static int pl_hopper_highspeed_delay = 1;
 	public static int pl_hopper_delay = 8;
 	public static boolean pl_hopper_stackmode_normal_speed = false;
+	
 	public static int pl_appl_sprayer_maxProgress = 1;
 	//TODO: Change to mB
 	public static int pl_appl_sprayer_resourceUsage = 1;
@@ -46,6 +53,10 @@ public class Config {
 		
 		sensor_delay = config.getInt("sensor_delay", "multitronix", 30, 10, 100, Taam.CFG_COMMENT_SENSOR_DELAY);
 		sensor_placement_mode = config.getInt("sensor_placement_mode", "multitronix", 1, 1, 2, Taam.CFG_COMMENT_SENSOR_PLACEMENT_MODE);
+		
+		pl_conveyor_speedsteps[0] = (byte)config.getInt("pl_conveyor_speedsteps_1", "production_line", 80, 1, Byte.MAX_VALUE, "Speedsteps (1/speed) for tier 1 conveyors");
+		pl_conveyor_speedsteps[1] = (byte)config.getInt("pl_conveyor_speedsteps_2", "production_line", 40, 1, Byte.MAX_VALUE, "Speedsteps (1/speed) for tier 2 conveyors");
+		pl_conveyor_speedsteps[2] = (byte)config.getInt("pl_conveyor_speedsteps_3", "production_line", 10, 1, Byte.MAX_VALUE, "Speedsteps (1/speed) for tier 3 conveyors");
 		
 		pl_hopper_delay = config.getInt("hopper_delay", "production_line", 8, 1, 500, "Maximum processing steps for the sprayer appliance.");
 		pl_hopper_highspeed_delay = config.getInt("hopper_highspeed_delay", "production_line", 0, 1, 500, "Maximum processing steps for the sprayer appliance.");

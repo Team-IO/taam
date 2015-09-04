@@ -4,6 +4,8 @@ import net.teamio.taam.conveyors.IConveyorAppliance;
 
 public interface IConveyorApplianceHost {
 
+	public boolean canAcceptAppliance(String type);
+	
 	public boolean initAppliance(String type);
 	public boolean removeAppliance();
 	

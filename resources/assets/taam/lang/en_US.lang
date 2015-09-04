@@ -33,10 +33,10 @@ item.taam.material.silicon_wafer.name=Silicon Wafer
 # Conveyor Appliances
 item.taam.conveyor_appliance.sprayer.name=Sprayer
 
-#Creativ Tab localization
+#Creative Tab localization
 itemGroup.taam=Taam
 
-#Block localization
+# Block localization
 tile.taam.sensor.name=Motion Sensor
 tile.taam.slidingdoor.name=Sliding Door
 # Ores
@@ -47,7 +47,9 @@ tile.taam.ore.bauxite.name=Bauxite
 tile.taam.ore.kaolinite.name=Kaolinite
 # Machines
 tile.taam.productionline.invalid.name=#!#!#!Invalid Data!#!#!#
-tile.taam.productionline.conveyor.name=Conveyor
+tile.taam.productionline.conveyor1.name=Wooden Conveyor
+tile.taam.productionline.conveyor2.name=Conveyor
+tile.taam.productionline.conveyor3.name=High Throughput Conveyor
 tile.taam.productionline.hopper.name=Conveyor Hopper
 tile.taam.productionline.hopper_hs.name=High Speed Conveyor Hopper
 tile.taam.productionline.sieve.name=Conveyor Sieve
@@ -55,7 +57,7 @@ tile.taam.productionline.shredder.name=Conveyor Shredder
 tile.taam.productionline.grinder.name=Conveyor Grinder
 tile.taam.productionline.crusher.name=Conveyor Crusher
 
-#Lore localization
+# Lore localization
 lore.taam.shift=Hold Shift
 lore.taam.conveyor_appliance=Conveyor Appliance
 lore.taam.conveyor_appliance.usage=Can be placed on conveyors\nor other compatible hosts.

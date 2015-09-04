@@ -319,7 +319,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 	}
 
 	@Override
-	public int getMaxMovementProgress() {
+	public int getSpeedsteps() {
 		return 1;
 	}
 

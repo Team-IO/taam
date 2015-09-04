@@ -14,6 +14,7 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+import net.teamio.taam.Config;
 import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.content.IWorldInteractable;
@@ -28,8 +29,6 @@ import net.teamio.taam.conveyors.api.IItemFilter;
 
 public class TileEntityConveyor extends BaseTileEntity implements ISidedInventory, IFluidHandler, IConveyorAwareTE, IRotatable, IConveyorApplianceHost, IWorldInteractable {
 
-	public static final byte maxProgress = 40;
-	
 	/*
 	 * Content
 	 */
@@ -39,10 +38,11 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	 * Conveyor State
 	 */
 	private ForgeDirection direction = ForgeDirection.NORTH;
+	private int speedLevel = 0;
 	
 	private boolean isEnd = false;
 	private boolean isBegin = false;
-	//TODO: More State to fill Gaps between conveyors
+	//TODO: More State to fill Gaps between conveyors (sideways fillers)
 	
 	/*
 	 * Appliance state
@@ -51,11 +51,12 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	private IConveyorAppliance appliance;
 
 
-	public TileEntityConveyor() {
+	public TileEntityConveyor(int speedLevel) {
 		items = new ItemWrapper[9];
 		for(int i = 0; i < items.length; i++) {
 			items[i] = new ItemWrapper(null);
 		}
+		this.speedLevel = speedLevel;
 	}
 	
 	public boolean isBegin() {
@@ -67,41 +68,61 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	}
 	
 	@Override
-	public void updateContainingBlockInfo() {
-		super.updateContainingBlockInfo();
-		if(worldObj != null) {
-			//TODO: Refine this (can we update that in a more reliable manner?)
-			TileEntity te = worldObj.getTileEntity(xCoord + direction.offsetX, yCoord + direction.offsetY, zCoord + direction.offsetZ);
-			isEnd = !(te instanceof TileEntityConveyor) || ((TileEntityConveyor)te).getFacingDirection() != direction;
-			ForgeDirection inverse = direction.getOpposite();
-			te = worldObj.getTileEntity(xCoord + inverse.offsetX, yCoord + inverse.offsetY, zCoord + inverse.offsetZ);
-			isBegin = !(te instanceof TileEntityConveyor) || ((TileEntityConveyor)te).getFacingDirection() != direction;
-		}
+	public int getSpeedsteps() {
+		return Config.pl_conveyor_speedsteps[speedLevel];
+	}
+
+	public int getSpeedLevel() {
+		return speedLevel;
 	}
 	
-
-
+	@Override
+	public void updateContainingBlockInfo() {
+		super.updateContainingBlockInfo();
+		//TODO: Store in bitfield & load from NBT? -> will prevent visual glitch at load time
+		
+		if(worldObj != null) {
+			// Check in front
+			TileEntity te = worldObj.getTileEntity(xCoord + direction.offsetX, yCoord + direction.offsetY, zCoord + direction.offsetZ);
+			if(te instanceof TileEntityConveyor) {
+				TileEntityConveyor next = (TileEntityConveyor)te;
+				isEnd = next.speedLevel != speedLevel || next.getFacingDirection() != direction;
+			} else {
+				isEnd = true;
+			}
+			
+			// Check behind
+			ForgeDirection inverse = direction.getOpposite();
+			te = worldObj.getTileEntity(xCoord + inverse.offsetX, yCoord + inverse.offsetY, zCoord + inverse.offsetZ);
+			if(te instanceof TileEntityConveyor) {
+				TileEntityConveyor next = (TileEntityConveyor)te;
+				isBegin = next.speedLevel != speedLevel || next.getFacingDirection() != direction;
+			} else {
+				isBegin = true;
+			}
+		}
+	}
 
 	public ItemWrapper[] getItems() {
 		return items;
 	}
 
-
-	@Override
-	public int getMaxMovementProgress() {
-		return maxProgress;
+	public void dropItems() {
+		for (int index = 0; index < items.length; index++) {
+			dropItem(index);
+		}
 	}
 	
 	public void dropItem(int slot) {
-		
-		
 		ItemWrapper slotObject = items[slot];
-		System.out.println("Dropping slot " + slot + " >>" + slotObject.itemStack);
+		// System.out.println("Dropping slot " + slot + " >>" + slotObject.itemStack);
 		
 		if(!worldObj.isRemote) {
-			double posX = xCoord + ConveyorUtil.getItemPositionX(slot, slotObject.movementProgress / (float)maxProgress, direction);
+			float speedsteps = getSpeedsteps();
+			
+			double posX = xCoord + ConveyorUtil.getItemPositionX(slot, slotObject.movementProgress / speedsteps, direction);
 			double posY = yCoord + 0.4f;
-			double posZ = zCoord + ConveyorUtil.getItemPositionZ(slot, slotObject.movementProgress / (float)maxProgress, direction);
+			double posZ = zCoord + ConveyorUtil.getItemPositionZ(slot, slotObject.movementProgress / speedsteps, direction);
 			
 			if(slotObject.itemStack != null) {
 				EntityItem item = new EntityItem(worldObj, posX, posY, posZ, slotObject.itemStack);
@@ -116,11 +137,9 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	}
 	
 	private boolean transferSlot(int slot, IConveyorAwareTE nextBlock, int nextSlot) {
-//		System.out.println("Transfer external " + slot + " to " + nextSlot);
+		// System.out.println("Transfer external " + slot + " to " + nextSlot);
 		
 		ItemWrapper slotObject = items[slot];
-		
-		//TODO: we would need to tell the other block the processing state....
 		
 		int transferred = nextBlock.insertItemAt(slotObject.itemStack.copy(), nextSlot);
 		if(transferred > 0) {
@@ -135,12 +154,12 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 				return true;
 			}
 		}
+		// Stack not moved at all, or has backlog
 		return false;
 	}
-	
 
 	private boolean transferSlot(int slot, int nextSlot) {
-//		System.out.println("Transfer internal " + slot + " to " + nextSlot);
+		// System.out.println("Transfer internal " + slot + " to " + nextSlot);
 		
 		ItemWrapper slotObject = items[slot];
 		ItemWrapper nextSlotObject = items[nextSlot];
@@ -158,7 +177,6 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 		return false;
 	}
 	
-	
 	@Override
 	public void updateEntity() {
 
@@ -175,7 +193,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 		 */
 		
 		
-		//process from movement direction backward to keep slot order inside one conveyor,
+		// process from movement direction backward to keep slot order inside one conveyor,
 		// as we depend on the status of the next slot
 		int[] slotOrder = ConveyorUtil.getSlotOrderForDirection(direction);
 		for(int index = 0; index < slotOrder.length; index++) {
@@ -189,12 +207,10 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 			}
 			
 			if(appliance != null) {
-				System.out.println("Process");
-				wrapper.processing++;
+				// System.out.println("Process");
 				appliance.processItem(this, slot, wrapper);
 			}
 			
-			// No next slot means drop to ground..
 			boolean slotWrapped = false;
 			boolean nextSlotFree = false;
 			boolean nextSlotMovable = false;
@@ -244,7 +260,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 			
 			// check next slot.
 			if(!wrapper.isBlocked() && (nextSlotFree || nextSlotMovable)) {
-				if(wrapper.movementProgress == maxProgress) {
+				if(wrapper.movementProgress == getSpeedsteps()) {
 					if(nextSlotFree) {
 						if(slotWrapped && nextBlock == null) {
 							// No next block, drop it.
@@ -267,7 +283,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 			}
 			if(nextSlotFree || (nextSlotMovable && wrapper.movementProgress < nextSlotProgress)) {
 				wrapper.movementProgress++;
-				if(wrapper.movementProgress > maxProgress) {
+				if(wrapper.movementProgress > getSpeedsteps()) {
 					wrapper.movementProgress = 0;
 				}
 			}
@@ -277,6 +293,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	@Override
 	protected void writePropertiesToNBT(NBTTagCompound tag) {
 		tag.setInteger("direction", direction.ordinal());
+		tag.setInteger("speedLevel", speedLevel);
 		if(applianceType != null) {
 			tag.setString("applianceType", applianceType);
 		}
@@ -295,6 +312,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	@Override
 	protected void readPropertiesFromNBT(NBTTagCompound tag) {
 		direction = ForgeDirection.getOrientation(tag.getInteger("direction"));
+		speedLevel = tag.getInteger("speedLevel");
 		NBTTagList itemsTag = tag.getTagList("items", NBT.TAG_COMPOUND);
 		if(itemsTag != null) {
 			int count = Math.min(itemsTag.func_150303_d(), items.length);
@@ -309,13 +327,6 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 			if(applianceData != null) {
 				appliance.readFromNBT(applianceData);
 			}
-		}
-	}
-	
-
-	public void dropItems() {
-		for (int index = 0; index < items.length; index++) {
-			dropItem(index);
 		}
 	}
 	
@@ -429,6 +440,12 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	/*
 	 * IConveyorApplianceHost implementation
 	 */
+	
+	@Override
+	public boolean canAcceptAppliance(String type) {
+		// Only "regular" conveyors can accept appliances
+		return speedLevel == 1;
+	}
 	
 	@Override
 	public boolean initAppliance(String name) {

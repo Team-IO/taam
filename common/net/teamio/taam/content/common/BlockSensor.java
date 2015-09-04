@@ -67,6 +67,7 @@ public class BlockSensor extends BaseBlock {
         return null;
     }
 
+	@Override
 	public TileEntity createTileEntity(World world, int metadata) {
 		return new TileEntitySensor();
 		

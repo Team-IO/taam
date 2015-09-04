@@ -36,6 +36,7 @@ public class ItemWithMetadata extends Item {
 		return iconList[meta];
 	}
 
+	@Override
 	public String getUnlocalizedName(ItemStack itemStack) {
 		int i = itemStack.getItemDamage();
 	

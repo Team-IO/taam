@@ -154,7 +154,7 @@ public class TileEntityConveyorItemBag extends BaseTileEntity implements IConvey
 	}
 
 	@Override
-	public int getMaxMovementProgress() {
+	public int getSpeedsteps() {
 		return 1;
 	}
 

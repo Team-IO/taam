@@ -128,24 +128,26 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 			switch(meta) {
 			default:
 			case 0:
-				renderConveyor(null, x, y, z);
-				break;
 			case 1:
-				renderConveyorHopper(null, x, y, z, false);
-				break;
 			case 2:
-				renderConveyorHopper(null, x, y, z, true);
+				renderConveyor(null, x, y, z, meta);
 				break;
 			case 3:
-				// Sieve
+				renderConveyorHopper(null, x, y, z, false);
 				break;
 			case 4:
-				renderConveyorProcessor(null, x, y, z, TileEntityConveyorProcessor.Shredder);
+				renderConveyorHopper(null, x, y, z, true);
 				break;
 			case 5:
-				renderConveyorProcessor(null, x, y, z, TileEntityConveyorProcessor.Grinder);
+				// Sieve
 				break;
 			case 6:
+				renderConveyorProcessor(null, x, y, z, TileEntityConveyorProcessor.Shredder);
+				break;
+			case 7:
+				renderConveyorProcessor(null, x, y, z, TileEntityConveyorProcessor.Grinder);
+				break;
+			case 8:
 				renderConveyorProcessor(null, x, y, z, TileEntityConveyorProcessor.Crusher);
 				break;
 			}
@@ -183,7 +185,8 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 				break;
 			}
 		} else if (tileEntity instanceof TileEntityConveyor) {
-			renderConveyor((TileEntityConveyor) tileEntity, x, y, z);
+			TileEntityConveyor tec = (TileEntityConveyor) tileEntity;
+			renderConveyor(tec, x, y, z, tec.getSpeedLevel());
 		} else if (tileEntity instanceof TileEntityConveyorHopper) {
 			renderConveyorHopper((TileEntityConveyorHopper)tileEntity, x, y, z, false);
 		} else if (tileEntity instanceof TileEntityConveyorProcessor) {
@@ -257,15 +260,15 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 					continue;
 				}
 				
-				float movementProgress = tileEntity.getMovementProgress(slot);
+				int movementProgress = tileEntity.getMovementProgress(slot);
 				if(movementProgress < 0) {
 					movementProgress = 0;
 				}
-				int maxProgress = tileEntity.getMaxMovementProgress();
+				float speedsteps = tileEntity.getSpeedsteps();
 				
-				float posX = (float)ConveyorUtil.getItemPositionX(slot, movementProgress / maxProgress, direction);
+				float posX = (float)ConveyorUtil.getItemPositionX(slot, movementProgress / speedsteps, direction);
 				float posY = 0.1f;
-				float posZ = (float)ConveyorUtil.getItemPositionZ(slot, movementProgress / maxProgress, direction);
+				float posZ = (float)ConveyorUtil.getItemPositionZ(slot, movementProgress / speedsteps, direction);
 				
 				GL11.glPushMatrix();
 				GL11.glTranslatef(posX, posY, posZ);
@@ -305,7 +308,9 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 	}
 	
 	//TODO: Don't display metal cap when not pointing to wards a block
-	public void renderConveyor(TileEntityConveyor tileEntity, double x, double y, double z) {
+	public void renderConveyor(TileEntityConveyor tileEntity, double x, double y, double z, int meta) {
+		
+		//TODO: Rendering depend on meta(=speedlevel)
 		
 		conveyorPrepareRendering(tileEntity, x, y, z);
 		

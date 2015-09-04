@@ -128,38 +128,47 @@ public abstract class ApplianceInventory implements IConveyorAppliance {
 	 * IInventory
 	 */
 
+	@Override
 	public int getSizeInventory() {
 		return inventory.getSizeInventory();
 	}
 
+	@Override
 	public ItemStack getStackInSlot(int p_70301_1_) {
 		return inventory.getStackInSlot(p_70301_1_);
 	}
 
+	@Override
 	public ItemStack decrStackSize(int p_70298_1_, int p_70298_2_) {
 		return inventory.decrStackSize(p_70298_1_, p_70298_2_);
 	}
 
+	@Override
 	public ItemStack getStackInSlotOnClosing(int p_70304_1_) {
 		return inventory.getStackInSlotOnClosing(p_70304_1_);
 	}
 
+	@Override
 	public void setInventorySlotContents(int p_70299_1_, ItemStack p_70299_2_) {
 		inventory.setInventorySlotContents(p_70299_1_, p_70299_2_);
 	}
 
+	@Override
 	public int getInventoryStackLimit() {
 		return inventory.getInventoryStackLimit();
 	}
 
+	@Override
 	public void openInventory() {
 		inventory.openInventory();
 	}
 
+	@Override
 	public void closeInventory() {
 		inventory.closeInventory();
 	}
 
+	@Override
 	public void markDirty() {
 		inventory.markDirty();
 	}

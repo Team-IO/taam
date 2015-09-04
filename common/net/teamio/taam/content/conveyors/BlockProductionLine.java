@@ -75,26 +75,33 @@ public class BlockProductionLine extends BaseBlock {
 		return false;
 	}
 
+	@Override
 	public TileEntity createTileEntity(World world, int metadata) {
 		if(metadata == 0) {
-			// Plain Conveyor
-			return new TileEntityConveyor();
+			// Plain Conveyor, Tier 1
+			return new TileEntityConveyor(0);
 		} else if(metadata == 1) {
+			// Plain Conveyor, Tier 2
+			return new TileEntityConveyor(1);
+		} else if(metadata == 2) {
+			// Plain Conveyor, Tier 2
+			return new TileEntityConveyor(2);
+		} else if(metadata == 3) {
 			// Hopper, Regular
 			return new TileEntityConveyorHopper(false);
-		} else if(metadata == 2) {
+		} else if(metadata == 4) {
 			// Hopper, High-Speed
 			return new TileEntityConveyorHopper(true);
-		} else if(metadata == 3) {
+		} else if(metadata == 5) {
 			// Sieve
 			return null;
-		} else if(metadata == 4) {
+		} else if(metadata == 6) {
 			// Shredder
 			return new TileEntityConveyorProcessor(TileEntityConveyorProcessor.Shredder);
-		} else if(metadata == 5) {
+		} else if(metadata == 7) {
 			// Grinder
 			return new TileEntityConveyorProcessor(TileEntityConveyorProcessor.Grinder);
-		} else if(metadata == 6) {
+		} else if(metadata == 8) {
 			// Crusher
 			return new TileEntityConveyorProcessor(TileEntityConveyorProcessor.Crusher);
 		}

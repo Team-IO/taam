@@ -7,7 +7,7 @@ public interface IConveyorAwareTE {
 	
 	boolean canSlotMove(int slot);
 	int getMovementProgress(int slot);
-	int getMaxMovementProgress();
+	int getSpeedsteps();
 	
 	IItemFilter getSlotFilter(int slot);
 	
