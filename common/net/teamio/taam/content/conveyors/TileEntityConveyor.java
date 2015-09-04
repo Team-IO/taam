@@ -464,6 +464,9 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 			applianceType = null;
 			return true;
 		}
+		if(!canAcceptAppliance(type)) {
+			return false;
+		}
 		if(type.equals(applianceType)) {
 			return false;
 		}
