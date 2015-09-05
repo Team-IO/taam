@@ -43,6 +43,9 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 	public final WavefrontObject modelConveyor;
 	public final ResourceLocation textureConveyor;
 	
+	public final WavefrontObject modelChute;
+	public final ResourceLocation textureChute;
+	
 	private RenderItem ri;
 	private EntityItem ei;
 	private float rot = 0;
@@ -59,13 +62,15 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 		ei.rotationYaw = 0;
 		ri.setRenderManager(RenderManager.instance);
 		
-		
 		modelSensor = new TechneModel(new ResourceLocation(Taam.MOD_ID + ":models/sensor.tcn"));
 		textureSensor = new ResourceLocation(Taam.MOD_ID + ":textures/models/sensor.png");
 		textureSensorBlink = new ResourceLocation(Taam.MOD_ID + ":textures/models/sensor_blink.png");
 
 		modelConveyor = new WavefrontObject(new ResourceLocation(Taam.MOD_ID + ":models/conveyor.obj"));
 		textureConveyor = new ResourceLocation(Taam.MOD_ID + ":textures/models/conveyor.png");
+
+		modelChute = new WavefrontObject(new ResourceLocation(Taam.MOD_ID + ":models/chute.obj"));
+		textureChute = textureConveyor;
 
 	}
 	
@@ -372,6 +377,25 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 
 		//TODO: Rotate Walzes (need to remove mirror first)
 		
+
+
+		
+		renderConveyorProcessorWalz(mode);
+		
+		GL11.glTranslated(0.5, 0, 0.5);
+		GL11.glRotatef(180, 0, 1, 0);
+		GL11.glTranslated(-0.5, 0, -0.5);
+
+		renderConveyorProcessorWalz(mode);
+		
+		conveyorEndRendering();
+	}
+	
+	private void renderConveyorProcessorWalz(byte mode) {
+		GL11.glPushMatrix();
+		GL11.glTranslated(0.5, 0.25683, 0.61245);
+		GL11.glRotatef(-rot*16, 1, 0, 0);
+		GL11.glTranslated(-0.5, -0.25683, -0.61245);
 		modelConveyor.renderPart("Processor_Walzes");
 		
 		switch(mode) {
@@ -385,8 +409,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 			modelConveyor.renderPart("BumpsShredder");
 			break;
 		}
-		
-		conveyorEndRendering();
+		GL11.glPopMatrix();
 	}
 	
 	public void renderSensor(double x, double y, double z, int rotation, boolean fixBlink) {
