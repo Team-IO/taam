@@ -21,6 +21,12 @@ import codechicken.lib.vec.Vector3;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
+/**
+ * Debug Tool, currently used for debugging conveyors.
+ * 
+ * @author founderio
+ *
+ */
 public class ItemDebugTool extends Item {
 
 	public ItemDebugTool() {
@@ -37,15 +43,15 @@ public class ItemDebugTool extends Item {
 			EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
 
 		par3List.add(EnumChatFormatting.DARK_GREEN + I18n.format("lore.taam.debugtool", new Object[0]));
-		if (!GuiScreen.isShiftKeyDown()) {
-			par3List.add(EnumChatFormatting.DARK_PURPLE + I18n.format("lore.taam.shift", new Object[0]));
-		} else {
+		if (GuiScreen.isShiftKeyDown()) {
 			String usage = I18n.format("lore.taam.debugtool.usage", new Object[0]);
 			//Split at literal \n in the translated text. a lot of escaping here.
 			String[] split = usage.split("\\\\n");
 			for(int i = 0;i < split.length; i++) {
 				par3List.add(split[i]);
 			}
+		} else {
+			par3List.add(EnumChatFormatting.DARK_PURPLE + I18n.format("lore.taam.shift", new Object[0]));
 		}
 	}
 		

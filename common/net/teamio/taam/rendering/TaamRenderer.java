@@ -314,7 +314,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 		
 		conveyorPrepareRendering(tileEntity, x, y, z);
 		
-		if(tileEntity == null || !tileEntity.isEnd()) {
+		if(tileEntity != null && !tileEntity.isEnd()) {
 			modelConveyor.renderPart("Conveyor_Straight_csmdl");
 		} else {
 			modelConveyor.renderPart("Conveyor_End_cemdl");
@@ -325,7 +325,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 		GL11.glRotatef(180, 0, 1, 0);
 		GL11.glTranslated(-0.5, 0, -0.5);
 		
-		if(tileEntity == null || !tileEntity.isBegin()) {
+		if(tileEntity != null && !tileEntity.isBegin()) {
 			modelConveyor.renderPart("Conveyor_Straight_csmdl");
 		} else {
 			modelConveyor.renderPart("Conveyor_End_cemdl");

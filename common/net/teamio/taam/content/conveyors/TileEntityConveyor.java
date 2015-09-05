@@ -51,11 +51,15 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	private IConveyorAppliance appliance;
 
 
-	public TileEntityConveyor(int speedLevel) {
+	public TileEntityConveyor() {
 		items = new ItemWrapper[9];
 		for(int i = 0; i < items.length; i++) {
 			items[i] = new ItemWrapper(null);
 		}
+	}
+	
+	public TileEntityConveyor(int speedLevel) {
+		this();
 		this.speedLevel = speedLevel;
 	}
 	
@@ -79,8 +83,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	@Override
 	public void updateContainingBlockInfo() {
 		super.updateContainingBlockInfo();
-		//TODO: Store in bitfield & load from NBT? -> will prevent visual glitch at load time
-		
+
 		if(worldObj != null) {
 			// Check in front
 			TileEntity te = worldObj.getTileEntity(xCoord + direction.offsetX, yCoord + direction.offsetY, zCoord + direction.offsetZ);
@@ -103,16 +106,27 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 		}
 	}
 
+	/**
+	 * Get all items. Danger! Returns the array directly!
+	 * @return
+	 */
 	public ItemWrapper[] getItems() {
 		return items;
 	}
 
+	/**
+	 * Drops all contained items, exactly where they are rendered now.
+	 */
 	public void dropItems() {
 		for (int index = 0; index < items.length; index++) {
 			dropItem(index);
 		}
 	}
 	
+	/**
+	 * Drops the item in the passed slot, exactly where it is rendered now.
+	 * @param slot The slot to be dropped.
+	 */
 	public void dropItem(int slot) {
 		ItemWrapper slotObject = items[slot];
 		// System.out.println("Dropping slot " + slot + " >>" + slotObject.itemStack);
@@ -260,23 +274,21 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 			
 			// check next slot.
 			if(!wrapper.isBlocked() && (nextSlotFree || nextSlotMovable)) {
-				if(wrapper.movementProgress == getSpeedsteps()) {
-					if(nextSlotFree) {
-						if(slotWrapped && nextBlock == null) {
-							// No next block, drop it.
-							dropItem(slot);
+				if(wrapper.movementProgress == getSpeedsteps() && nextSlotFree) {
+					if(slotWrapped && nextBlock == null) {
+						// No next block, drop it.
+						dropItem(slot);
+					} else {
+						boolean completeTransfer;
+						if(slotWrapped) {
+							completeTransfer = transferSlot(slot, nextBlock, nextSlot);
 						} else {
-							boolean completeTransfer;
-							if(slotWrapped) {
-								completeTransfer = transferSlot(slot, nextBlock, nextSlot);
-							} else {
-								completeTransfer = transferSlot(slot, nextSlot);
-							}
-							if(!completeTransfer) {
-								// We still have some items pending here..
-								nextSlotFree = false;
-								nextSlotMovable = false;
-							}
+							completeTransfer = transferSlot(slot, nextSlot);
+						}
+						if(!completeTransfer) {
+							// We still have some items pending here..
+							nextSlotFree = false;
+							nextSlotMovable = false;
 						}
 					}
 				}
