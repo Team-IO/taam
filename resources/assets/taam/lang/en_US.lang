@@ -39,6 +39,7 @@ itemGroup.taam=Taam
 # Block localization
 tile.taam.sensor.name=Motion Sensor
 tile.taam.slidingdoor.name=Sliding Door
+tile.taam.chute.name=Chute
 # Ores
 tile.taam.ore.copper.name=Copper Ore
 tile.taam.ore.tin.name=Tin Ore

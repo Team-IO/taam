@@ -20,7 +20,9 @@ import net.minecraftforge.common.util.ForgeDirection;
 import net.teamio.taam.Taam;
 import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.IRotatable;
+import net.teamio.taam.content.common.BlockChute;
 import net.teamio.taam.content.common.BlockSensor;
+import net.teamio.taam.content.common.TileEntityChute;
 import net.teamio.taam.content.common.TileEntitySensor;
 import net.teamio.taam.content.conveyors.BlockProductionLine;
 import net.teamio.taam.content.conveyors.TileEntityConveyor;
@@ -90,6 +92,8 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 		if(block instanceof BlockSensor) {
 			return true;
 		} else if(block instanceof BlockProductionLine) {
+			return true;
+		} else if(block instanceof BlockChute) {
 			return true;
 		}
 		return false;
@@ -172,6 +176,8 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 				conveyorEndRendering();
 				break;
 			}
+		} else if(item.getItem() == Item.getItemFromBlock(TaamMain.blockChute)) {
+			renderChute(x, y, z);
 		}
 		
 	}
@@ -196,11 +202,26 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 			renderConveyorHopper((TileEntityConveyorHopper)tileEntity, x, y, z, false);
 		} else if (tileEntity instanceof TileEntityConveyorProcessor) {
 			renderConveyorProcessor((TileEntityConveyorProcessor) tileEntity, x, y, z, (byte)0);
+		} else if(tileEntity instanceof TileEntityChute) {
+			renderChute(x, y, z);
 		}
 		
 		if(tileEntity instanceof IConveyorAwareTE) {
 			renderConveyorItems((IConveyorAwareTE) tileEntity, x, y, z);
 		}
+	}
+
+	private void renderChute(double x, double y, double z) {
+		GL11.glPushMatrix();
+		/*
+		 * Translate to coordinates
+		 */
+		GL11.glTranslated(x, y, z);
+		
+		Minecraft.getMinecraft().renderEngine.bindTexture(textureChute);
+		modelChute.renderAll();
+		
+		GL11.glPopMatrix();
 	}
 	
 	private void conveyorPrepareRendering(IConveyorAwareTE tileEntity, double x, double y, double z) {

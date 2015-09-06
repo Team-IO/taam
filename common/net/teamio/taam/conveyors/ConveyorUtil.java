@@ -5,21 +5,71 @@ import java.util.List;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.teamio.taam.conveyors.api.IConveyorApplianceHost;
 import net.teamio.taam.conveyors.api.IConveyorAwareTE;
 import net.teamio.taam.util.TaamUtil;
+import codechicken.lib.inventory.InventoryRange;
 import codechicken.lib.inventory.InventoryUtils;
 import codechicken.lib.vec.Vector3;
 
 public class ConveyorUtil {
+	
+	private static boolean tryInsert(TileEntity tileEntity, EntityItem ei) {
+		ItemStack entityItemStack = ei.getEntityItem();
+		if(entityItemStack == null || entityItemStack.getItem() == null) {
+			return false;
+		}
+		
+		int previousStackSize = entityItemStack.stackSize;
+		int added = 0;
+		
+		double relativeX = ei.posX - tileEntity.xCoord;
+		double relativeY = ei.posY - tileEntity.yCoord;
+		double relativeZ = ei.posZ - tileEntity.zCoord;
+		
+		if(tileEntity instanceof IConveyorAwareTE) {
+			IConveyorAwareTE conveyorTE = (IConveyorAwareTE) tileEntity;
+			
+			int slot = getSlotForRelativeCoordinates(relativeX, relativeZ);
+
+			if(slot >= 0 && slot < 9 && relativeY > 0.3 && relativeY < 1.0) {
+				added = conveyorTE.insertItemAt(entityItemStack, slot);
+			}
+		} else if(tileEntity instanceof IInventory) {
+			if(
+				relativeX >= 0 && relativeX < 1 &&
+				relativeY >= 0.9 && relativeY < 1.2 &&
+				relativeZ >= 0 && relativeZ < 1
+				) {
+				IInventory inventory = (IInventory)tileEntity;
+				InventoryRange range = new InventoryRange(inventory, ForgeDirection.UP.ordinal());
+				added = previousStackSize - InventoryUtils.insertItem(range, entityItemStack, false);
+			}
+		}
+		if(added == previousStackSize) {
+			ei.setDead();
+			return true;
+		} else if(added > 0) {
+			entityItemStack.stackSize = previousStackSize - added;
+			ei.setEntityItemStack(entityItemStack);
+			return true;
+		} else {
+			return false;
+		}
+		
+	}
+	
 	/**
-	 * Tries to insert item entities from the world into the conveyor system.
+	 * Tries to insert item entities from the world into an entity.
+	 * Respects the conveyor system.
 	 * 
-	 * @param conveyorTE
+	 * @param tileEntity
 	 * @param world
 	 * @param bounds
 	 *            Optionally give an AABB Instance to speed up the search &
@@ -30,7 +80,7 @@ public class ConveyorUtil {
 	 *            
 	 */
 	public static boolean tryInsertItemsFromWorld(
-			IConveyorAwareTE conveyorTE,
+			TileEntity tileEntity,
 			World world,
 			AxisAlignedBB bounds,
 			boolean stopAtFirstMatch) {
@@ -44,39 +94,16 @@ public class ConveyorUtil {
 		if(bounds != null) {
 			entities = world.getEntitiesWithinAABB(EntityItem.class, bounds);
 		}
-		for(Object obj : entities) {
-			Entity ent = (Entity)obj;
+		for(int i = 0; i < entities.size(); i++) {
+			Entity ent = (Entity)entities.get(i);
 			
 			if(ent instanceof EntityItem) {
 				EntityItem ei = (EntityItem)ent;
-				ItemStack entityItemStack = ei.getEntityItem();
-				if(entityItemStack == null || entityItemStack.getItem() == null) {
-					continue;
-				}
-				int previousStackSize = entityItemStack.stackSize;
-				double relativeX = ent.posX - conveyorTE.posX();
-				double relativeY = ent.posY - conveyorTE.posY();
-				double relativeZ = ent.posZ - conveyorTE.posZ();
 				
+				didAdd = tryInsert(tileEntity, ei) | didAdd;
 				
-				int slot = getSlotForRelativeCoordinates(relativeX, relativeZ);
-
-				if(slot >= 0 && slot < 9 && relativeY > 0.3 && relativeY < 1.0) {
-					int added = conveyorTE.insertItemAt(entityItemStack, slot);
-					if(added == previousStackSize) {
-						didAdd = true;
-						ent.setDead();
-						if(stopAtFirstMatch) {
-							break;
-						}
-					} else if(added > 0) {
-						didAdd = true;
-						entityItemStack.stackSize = previousStackSize - added;
-						ei.setEntityItemStack(entityItemStack);
-						if(stopAtFirstMatch) {
-							break;
-						}
-					}
+				if(stopAtFirstMatch && didAdd) {
+					break;
 				}
 			}
 		}

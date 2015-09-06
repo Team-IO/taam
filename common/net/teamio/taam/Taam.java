@@ -17,6 +17,7 @@ public final class Taam {
 	public static final String GUI_FACTORY_CLASS = "net.teamio.taam.gui.GuiFactory";
 
 	public static final String BLOCK_SENSOR = "taam.sensor";
+	public static final String BLOCK_CHUTE = "taam.chute";
 	public static final String BLOCK_PRODUCTIONLINE = "taam.productionline";
 	public static final String BLOCK_LOGISTICS = "taam.logistics";
 	public static final String BLOCK_SLIDINGDOOR = "taam.slidingdoor";
@@ -104,6 +105,7 @@ public final class Taam {
 	};
 	
 	public static final String TILEENTITY_SENSOR = "taam.sensor";
+	public static final String TILEENTITY_CHUTE = "taam.chute";
 	public static final String TILEENTITY_SLIDINGDOOR = "taam.slidingdoor";
 	public static final String TILEENTITY_CONVEYOR = "taam.conveyor";
 	public static final String TILEENTITY_CONVEYOR_HOPPER = "taam.conveyor_hopper";
