@@ -280,30 +280,13 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 	}
 
 	@Override
-	public FluidStack drain(ForgeDirection from, FluidStack resource,
-			boolean doDrain) {
-		if(from != ForgeDirection.UP) {
-			return null;
-		}
-		IFluidHandler target = getTargetFluidHandler();
-		if(target != null ) {
-			return target.drain(from, resource, doDrain);
-		} else {
-			return null;
-		}
+	public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
+		return null;
 	}
 
 	@Override
 	public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
-		if(from != ForgeDirection.UP) {
-			return null;
-		}
-		IFluidHandler target = getTargetFluidHandler();
-		if(target != null ) {
-			return target.drain(from, maxDrain, doDrain);
-		} else {
-			return null;
-		}
+		return null;
 	}
 
 	@Override
@@ -321,15 +304,7 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 
 	@Override
 	public boolean canDrain(ForgeDirection from, Fluid fluid) {
-		if(from != ForgeDirection.UP) {
-			return false;
-		}
-		IFluidHandler target = getTargetFluidHandler();
-		if(target != null ) {
-			return target.canDrain(from, fluid);
-		} else {
-			return false;
-		}
+		return false;
 	}
 
 	@Override
