@@ -280,32 +280,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 		GL11.glTranslated(x, y, z);
 		
 		if(tileEntity != null) {
-			for(int slot = 0; slot < 9; slot++) {
-				ItemStack itemStack = tileEntity.getItemAt(slot);
-				if(itemStack == null) {
-					continue;
-				}
-				
-				int movementProgress = tileEntity.getMovementProgress(slot);
-				if(movementProgress < 0) {
-					movementProgress = 0;
-				}
-				float speedsteps = tileEntity.getSpeedsteps();
-				
-				float posX = (float)ConveyorUtil.getItemPositionX(slot, movementProgress / speedsteps, direction);
-				float posY = 0.1f;
-				float posZ = (float)ConveyorUtil.getItemPositionZ(slot, movementProgress / speedsteps, direction);
-				
-				GL11.glPushMatrix();
-				GL11.glTranslatef(posX, posY, posZ);
-				
-				ei.setEntityItemStack(itemStack);
 
-				RenderItem.renderInFrame = true;
-				ri.doRender(ei, 0, .5f, 0, 0, 0);
-				
-				GL11.glPopMatrix();
-			}
 			if(tileEntity instanceof TileEntityConveyorProcessor) {
 				TileEntityConveyorProcessor processor = (TileEntityConveyorProcessor) tileEntity;
 				ItemStack processingStack = processor.getStackInSlot(0);
@@ -322,6 +297,34 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 					
 					ei.setEntityItemStack(processingStack);
 
+					RenderItem.renderInFrame = true;
+					ri.doRender(ei, 0, .5f, 0, 0, 0);
+					
+					GL11.glPopMatrix();
+				}
+			}
+			if(tileEntity.shouldRenderItemsDefault()) {
+				for(int slot = 0; slot < 9; slot++) {
+					ItemStack itemStack = tileEntity.getItemAt(slot);
+					if(itemStack == null) {
+						continue;
+					}
+					
+					int movementProgress = tileEntity.getMovementProgress(slot);
+					if(movementProgress < 0) {
+						movementProgress = 0;
+					}
+					float speedsteps = tileEntity.getSpeedsteps();
+					
+					float posX = (float)ConveyorUtil.getItemPositionX(slot, movementProgress / speedsteps, direction);
+					float posY = 0.1f;
+					float posZ = (float)ConveyorUtil.getItemPositionZ(slot, movementProgress / speedsteps, direction);
+					
+					GL11.glPushMatrix();
+					GL11.glTranslatef(posX, posY, posZ);
+					
+					ei.setEntityItemStack(itemStack);
+	
 					RenderItem.renderInFrame = true;
 					ri.doRender(ei, 0, .5f, 0, 0, 0);
 					

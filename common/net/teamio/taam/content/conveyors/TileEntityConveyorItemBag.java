@@ -132,6 +132,11 @@ public class TileEntityConveyorItemBag extends BaseTileEntity implements IConvey
 	 */
 
 	@Override
+	public boolean shouldRenderItemsDefault() {
+		return false;
+	}
+
+	@Override
 	public ForgeDirection getMovementDirection() {
 		return ForgeDirection.DOWN;
 	}

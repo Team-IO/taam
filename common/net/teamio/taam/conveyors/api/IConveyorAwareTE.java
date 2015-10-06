@@ -24,5 +24,11 @@ public interface IConveyorAwareTE {
 	int insertItemAt(ItemStack item, int slot);
 	ItemStack getItemAt(int slot);
 	ForgeDirection getMovementDirection();
+	/**
+	 * Used to skip default item rendering on select machines,
+	 * e.g. the processors.
+	 * @return
+	 */
+	boolean shouldRenderItemsDefault();
 	
 }

@@ -8,11 +8,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.IHopper;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IRedstoneControlled;
+import net.teamio.taam.content.IWorldInteractable;
 import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.conveyors.api.IConveyorAwareTE;
 import net.teamio.taam.conveyors.api.IItemFilter;
@@ -25,7 +27,7 @@ import codechicken.lib.inventory.InventoryRange;
 import codechicken.lib.inventory.InventorySimple;
 import codechicken.lib.inventory.InventoryUtils;
 
-public class TileEntityConveyorProcessor extends BaseTileEntity implements ISidedInventory, IConveyorAwareTE, IHopper, IRedstoneControlled {
+public class TileEntityConveyorProcessor extends BaseTileEntity implements ISidedInventory, IConveyorAwareTE, IHopper, IRedstoneControlled, IWorldInteractable {
 
 	public static final byte Shredder = 0;
 	public static final byte Grinder = 1;
@@ -307,6 +309,11 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 	/*
 	 * IConveyorAwareTE
 	 */
+
+	@Override
+	public boolean shouldRenderItemsDefault() {
+		return false;
+	}
 	
 	@Override
 	public boolean canSlotMove(int slot) {
@@ -356,7 +363,11 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 
 	@Override
 	public ItemStack getItemAt(int slot) {
-		return null;
+		if(slot == 0) {
+			return inventory.getStackInSlot(slot);
+		} else {
+			return null;
+		}
 	}
 
 	@Override
@@ -403,7 +414,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 
 	@Override
 	public boolean canExtractItem(int slot, ItemStack stack, int side) {
-		return false;
+		return side == ForgeDirection.UP.ordinal();
 	}
 	
 	/*
@@ -451,4 +462,37 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 		}
 	}
 
+	/*
+	 * IWorldInteractable implementation
+	 */
+	
+	@Override
+	public boolean onBlockActivated(World world, int x, int y, int z,
+			EntityPlayer player, boolean playerHasWrench, int side, float hitX, float hitY, float hitZ) {
+		if(side != ForgeDirection.UP.ordinal()) {
+			return false;
+		}
+		int clickedSlot = 0;
+		int playerSlot = player.inventory.currentItem;
+		ItemStack playerStack = player.inventory.getCurrentItem();
+		if(playerStack == null) {
+			// Take from Processor
+			ItemStack taken = getItemAt(clickedSlot);
+			if(taken != null) {
+				player.inventory.setInventorySlotContents(playerSlot, taken);
+				setInventorySlotContents(clickedSlot, null);
+			}
+		} else {
+			// Put into processor
+			int inserted = insertItemAt(playerStack, clickedSlot);
+			if(inserted == playerStack.stackSize) {
+				player.inventory.setInventorySlotContents(playerSlot, null);
+			} else {
+				playerStack.stackSize -= inserted;
+				player.inventory.setInventorySlotContents(playerSlot, playerStack);
+			}
+		}
+		return true;
+	}
+	
 }

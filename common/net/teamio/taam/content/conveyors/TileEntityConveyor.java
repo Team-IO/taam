@@ -345,6 +345,11 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	/*
 	 * IConveyorAwareTE implementation
 	 */
+
+	@Override
+	public boolean shouldRenderItemsDefault() {
+		return true;
+	}
 	
 	@Override
 	public int insertItemAt(ItemStack item, int slot) {

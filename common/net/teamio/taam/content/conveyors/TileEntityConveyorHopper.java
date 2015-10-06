@@ -321,6 +321,11 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 	 */
 
 	@Override
+	public boolean shouldRenderItemsDefault() {
+		return false;
+	}
+
+	@Override
 	public ForgeDirection getMovementDirection() {
 		return ForgeDirection.DOWN;
 	}
