@@ -4,12 +4,14 @@ import net.minecraft.block.material.Material;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.teamio.taam.Taam;
 import net.teamio.taam.content.BaseBlock;
 
 public class BlockChute extends BaseBlock {
 
 	public BlockChute() {
-		super(Material.rock);
+		super(Material.gourd);
+		this.setBlockTextureName(Taam.MOD_ID + ":tech_block");
 	}
 	
 	@Override
