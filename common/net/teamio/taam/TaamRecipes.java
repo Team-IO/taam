@@ -1,5 +1,6 @@
 package net.teamio.taam;
 
+import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -8,7 +9,6 @@ import net.minecraftforge.oredict.ShapelessOreRecipe;
 import net.teamio.taam.conveyors.api.ChanceBasedRecipe;
 import net.teamio.taam.conveyors.api.ChancedOutput;
 import net.teamio.taam.conveyors.api.ProcessingRegistry;
-import cpw.mods.fml.common.registry.GameRegistry;
 
 public class TaamRecipes {
 
@@ -187,10 +187,14 @@ public class TaamRecipes {
 				'S', new ItemStack(TaamMain.itemPart, 1, 2),
 				'A', "ingotAluminum",
 				'B', new ItemStack(TaamMain.itemPart, 1, 3)));
-//			conveyor hopper
+//		conveyor hopper
 		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(TaamMain.blockProductionLine, 1, 1),
 				Blocks.hopper, new ItemStack(TaamMain.itemPart, 1, 2)));
 	
+//		chute
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.blockChute, 1, 0), 
+				"InI","InI","nIn",
+				'I', "ingotIron"));
 	}
 	
 	
