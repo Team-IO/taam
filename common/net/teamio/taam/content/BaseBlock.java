@@ -40,6 +40,11 @@ public abstract class BaseBlock extends Block {
 			world.markBlockForUpdate(x, y, z);
 		}
 	}
+
+	@Override
+	public int damageDropped(int meta) {
+		return meta;
+	}
 	
 	@Override
 	public void breakBlock(World world, int x, int y, int z, Block block, int meta) {
