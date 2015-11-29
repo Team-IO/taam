@@ -653,12 +653,12 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	@Override
 	public int[] getAccessibleSlotsFromSide(int side) {
 		if(appliance == null) {
-			ForgeDirection dir = ForgeDirection.getOrientation(side);
-			int slot = ConveyorUtil.getSlot(dir);
-			if(slot != -1) {
-				return new int[] { slot };
-			} else {
+			final ForgeDirection dir = ForgeDirection.getOrientation(side);
+			final int slot = ConveyorUtil.getSlot(dir);
+			if(slot == -1) {
 				return new int[0];
+			} else {
+				return new int[] { slot };
 			}
 		} else {
 			return appliance.getAccessibleSlotsFromSide(side);
