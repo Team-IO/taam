@@ -119,11 +119,25 @@ public class ConveyorUtil {
 		}
 		return slot;
 	}
+
+	
+	public static int getNextSlotHighspeed(int slot, ForgeDirection dir) {
+		slot = getNextSlotUnwrappedHighspeed(slot, dir);
+		if(slot < 0) {
+			slot += 9;
+		} else if(slot > 8) {
+			slot -= 9;
+		}
+		return slot;
+	}
 	
 	public static int getNextSlotUnwrapped(int slot, ForgeDirection dir) {
+		// X-Offset skips whole rows
 		if(dir.offsetX != 0) {
 			slot += dir.offsetX * 3;
 		}
+		// Z-Offset translates only regular,
+		// but certain ones skip to the next row
 		if(dir.offsetZ != 0) {
 			int col = slot % 3;
 			col += dir.offsetZ;
@@ -136,6 +150,36 @@ public class ConveyorUtil {
 			}
 		}
 		return slot;
+	}
+	
+	
+
+	public static int getNextSlotUnwrappedHighspeed(int slot, ForgeDirection direction) {
+		ForgeDirection transition = getHighspeedTransition(slot, direction);
+		return getNextSlotUnwrapped(slot, transition);
+	}
+	
+	public static ForgeDirection getHighspeedTransition(int slot,
+			ForgeDirection direction) {
+		ForgeDirection transition = direction;
+		switch(direction) {
+		case NORTH:
+			transition = highSpeedTransition[0][slot];
+			break;
+		case EAST:
+			transition = highSpeedTransition[1][slot];
+			break;
+		case SOUTH:
+			transition = highSpeedTransition[2][slot];
+			break;
+		case WEST:
+			transition = highSpeedTransition[3][slot];
+			break;
+		default:
+			transition = direction;
+			break;
+		}
+		return transition;
 	}
 	
 	public static int getSlot(ForgeDirection dir) {
@@ -185,7 +229,7 @@ public class ConveyorUtil {
 	}
 	
 	private static final int[][] slotOrders;
-	
+	private static final ForgeDirection[][] highSpeedTransition;
 	static {
 		slotOrders = new int[2][];
 		slotOrders[0] = new int[] {
@@ -201,6 +245,36 @@ public class ConveyorUtil {
 				6, 7, 8,
 				3, 4, 5,
 				0, 1, 2
+		};
+		
+		/*
+		 * Mind Map:
+		 *        NORTH
+		 *      0	3	6
+		 * WEST 1	4	7  EAST
+		 *      2	5	8
+		 *        SOUTH
+		 */
+		highSpeedTransition = new ForgeDirection[4][];
+		highSpeedTransition[0] = new ForgeDirection[] {
+				ForgeDirection.EAST, ForgeDirection.EAST, ForgeDirection.EAST,
+				ForgeDirection.NORTH, ForgeDirection.NORTH, ForgeDirection.NORTH,
+				ForgeDirection.WEST, ForgeDirection.WEST, ForgeDirection.WEST
+		};
+		highSpeedTransition[1] = new ForgeDirection[] {
+				ForgeDirection.SOUTH, ForgeDirection.EAST, ForgeDirection.NORTH,
+				ForgeDirection.SOUTH, ForgeDirection.EAST, ForgeDirection.NORTH,
+				ForgeDirection.SOUTH, ForgeDirection.EAST, ForgeDirection.NORTH
+		};
+		highSpeedTransition[2] = new ForgeDirection[] {
+				ForgeDirection.EAST, ForgeDirection.EAST, ForgeDirection.EAST,
+				ForgeDirection.SOUTH, ForgeDirection.SOUTH, ForgeDirection.SOUTH,
+				ForgeDirection.WEST, ForgeDirection.WEST, ForgeDirection.WEST
+		};
+		highSpeedTransition[3] = new ForgeDirection[] {
+				ForgeDirection.SOUTH, ForgeDirection.WEST, ForgeDirection.NORTH,
+				ForgeDirection.SOUTH, ForgeDirection.WEST, ForgeDirection.NORTH,
+				ForgeDirection.SOUTH, ForgeDirection.WEST, ForgeDirection.NORTH
 		};
 	}
 	

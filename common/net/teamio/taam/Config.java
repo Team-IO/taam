@@ -20,7 +20,7 @@ public class Config {
 	public static final byte[] pl_conveyor_speedsteps = new byte[] {
 		80,
 		40,
-		10
+		5
 	};
 	
 	public static int pl_hopper_highspeed_delay = 1;
@@ -56,7 +56,7 @@ public class Config {
 		
 		pl_conveyor_speedsteps[0] = (byte)config.getInt("pl_conveyor_speedsteps_1", "production_line", 80, 1, Byte.MAX_VALUE, "Speedsteps (1/speed) for tier 1 conveyors");
 		pl_conveyor_speedsteps[1] = (byte)config.getInt("pl_conveyor_speedsteps_2", "production_line", 40, 1, Byte.MAX_VALUE, "Speedsteps (1/speed) for tier 2 conveyors");
-		pl_conveyor_speedsteps[2] = (byte)config.getInt("pl_conveyor_speedsteps_3", "production_line", 10, 1, Byte.MAX_VALUE, "Speedsteps (1/speed) for tier 3 conveyors");
+		pl_conveyor_speedsteps[2] = (byte)config.getInt("pl_conveyor_speedsteps_3", "production_line", 5, 1, Byte.MAX_VALUE, "Speedsteps (1/speed) for tier 3 conveyors");
 		
 		pl_hopper_delay = config.getInt("hopper_delay", "production_line", 8, 1, 500, "Maximum processing steps for the sprayer appliance.");
 		pl_hopper_highspeed_delay = config.getInt("hopper_highspeed_delay", "production_line", 0, 1, 500, "Maximum processing steps for the sprayer appliance.");

@@ -303,6 +303,15 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 					GL11.glPopMatrix();
 				}
 			}
+			TileEntityConveyor conveyor;
+			if(tileEntity instanceof TileEntityConveyor) {
+				conveyor = (TileEntityConveyor) tileEntity;
+				if(conveyor.getSpeedLevel() < 2) {
+					conveyor = null;
+				}
+			} else {
+				conveyor = null;
+			}
 			if(tileEntity.shouldRenderItemsDefault()) {
 				for(int slot = 0; slot < 9; slot++) {
 					ItemStack itemStack = tileEntity.getItemAt(slot);
@@ -316,9 +325,16 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 					}
 					float speedsteps = tileEntity.getSpeedsteps();
 					
-					float posX = (float)ConveyorUtil.getItemPositionX(slot, movementProgress / speedsteps, direction);
+					ForgeDirection renderDirection;
+					if(conveyor == null) {
+						renderDirection = direction;
+					} else {
+						renderDirection = ConveyorUtil.getHighspeedTransition(slot, direction);
+					}
+					
+					float posX = (float)ConveyorUtil.getItemPositionX(slot, movementProgress / speedsteps, renderDirection);
 					float posY = 0.1f;
-					float posZ = (float)ConveyorUtil.getItemPositionZ(slot, movementProgress / speedsteps, direction);
+					float posZ = (float)ConveyorUtil.getItemPositionZ(slot, movementProgress / speedsteps, renderDirection);
 					
 					GL11.glPushMatrix();
 					GL11.glTranslatef(posX, posY, posZ);

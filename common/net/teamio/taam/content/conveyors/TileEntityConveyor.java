@@ -232,7 +232,13 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 			
 			IConveyorAwareTE nextBlock = null;
 			
-			int nextSlot = ConveyorUtil.getNextSlotUnwrapped(slot, direction);
+			int nextSlot;
+			if(speedLevel >= 2) {
+				nextSlot = ConveyorUtil.getNextSlotUnwrappedHighspeed(slot, direction);
+			} else {
+				nextSlot = ConveyorUtil.getNextSlotUnwrapped(slot, direction);
+			}
+			
 			
 			if(nextSlot < 0) {
 				nextSlot += 9;
