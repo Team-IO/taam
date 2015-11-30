@@ -27,7 +27,11 @@ import net.teamio.taam.content.conveyors.TileEntityConveyorProcessor;
 import net.teamio.taam.conveyors.ApplianceRegistry;
 import net.teamio.taam.conveyors.appliances.ApplianceSprayer;
 import net.teamio.taam.gui.GuiHandler;
+
+import com.sun.org.apache.bcel.internal.generic.LLOAD;
+
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -192,7 +196,7 @@ public class TaamMain {
 		TaamRecipes.addRecipes();
 		TaamRecipes.addSmeltingRecipes();
 		TaamRecipes.addOreRecipes();
-		
+				
 	}
 
 	@EventHandler

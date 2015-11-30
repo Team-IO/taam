@@ -10,8 +10,9 @@ import net.teamio.taam.content.BaseBlock;
 public class BlockChute extends BaseBlock {
 
 	public BlockChute() {
-		super(Material.gourd);
+		super(Material.wood);
 		this.setBlockTextureName(Taam.MOD_ID + ":tech_block");
+		this.setStepSound(soundTypeWood);
 	}
 	
 	@Override
@@ -28,7 +29,7 @@ public class BlockChute extends BaseBlock {
 	public boolean isOpaqueCube() {
 		return false;
 	}
-	
+		
 	@Override
 	public boolean renderAsNormalBlock() {
 		return false;
