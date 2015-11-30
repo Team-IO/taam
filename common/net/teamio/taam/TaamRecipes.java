@@ -1,6 +1,7 @@
 package net.teamio.taam;
 
 import cpw.mods.fml.common.registry.GameRegistry;
+import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -103,22 +104,22 @@ public class TaamRecipes {
 //		sprayer
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemConveyorAppliance, 1, 0),
 				"NFN", "N N", "TCT",
-				'N', new ItemStack(TaamMain.itemPart, 1, 9),
+				'N', new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.nozzle.ordinal()),
 				'C', "partBasicCircuit",
-				'T', new ItemStack(TaamMain.itemPart, 1 ,8),
-				'F', new ItemStack(TaamMain.itemPart, 1, 11)));
+				'T', new ItemStack(TaamMain.itemPart, 1 ,Taam.ITEM_PART_META.pump.ordinal()),
+				'F', new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.iron_frame.ordinal())));
 		
 //		conveyor1 (Wood)
 		//TODO recipe for conveyor1 (Wood)
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.blockProductionLine, 1, Taam.BLOCK_PRODUCTIONLINE_META.conveyor2.ordinal()),
-				"rRM", "wSw", "WsW",
-				'M', new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.motor.ordinal()),
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.blockProductionLine, 1, Taam.BLOCK_PRODUCTIONLINE_META.conveyor1.ordinal()),
+				"rRP", "wSw", "WsW",
+				'P', new ItemStack(Blocks.piston, 1, 0),
 				'R', new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.rubber_band.ordinal()),
-				'w', new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_MATERIAL_META.wooden_board.ordinal()),
+				'w', new ItemStack(TaamMain.itemMaterial, 1, Taam.ITEM_MATERIAL_META.wooden_board.ordinal()),
 				'S', new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.support_frame_wood.ordinal()),
-				'W', "materialWood",
-				's', "materialStick",
-				'r', "materialRedstone"
+				'W', "plankWood",
+				's', "stickWood",
+				'r', "dustRedstone"
 				));
 //		conveyor2 (Aluminum)
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.blockProductionLine, 1, Taam.BLOCK_PRODUCTIONLINE_META.conveyor2.ordinal()),
@@ -141,7 +142,7 @@ public class TaamRecipes {
 		));
 //		conveyor hopper
 		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(TaamMain.blockProductionLine, 1, Taam.BLOCK_PRODUCTIONLINE_META.hopper.ordinal()),
-				Blocks.hopper, new ItemStack(TaamMain.itemPart, 1, 2)));
+				Blocks.hopper, new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.support_frame.ordinal())));
 
 //		conveyor hopper highspeed
 		//TODO recipe for hopper_h2
@@ -177,6 +178,11 @@ public class TaamRecipes {
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1 ,Taam.ITEM_PART_META.support_frame.ordinal()),
 				"*A*", "A*A", "AAA",
 				'A', "ingotAluminum"));
+//		support frame wood
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1 ,Taam.ITEM_PART_META.support_frame_wood.ordinal()),
+				"*S*", "S*S", "WWW",
+				'W', "plankWood",
+				'S', "stickWood"));
 //		copper wire
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 12, Taam.ITEM_PART_META.copper_wire.ordinal()), 
 				"CCC",
@@ -189,7 +195,7 @@ public class TaamRecipes {
 				'K', Blocks.chest,
 				'H', Blocks.hopper,
 				'V', Items.comparator,
-				'C', new ItemStack(TaamMain.itemPart, 1, 4)));
+				'C', new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.circuit_advanced.ordinal())));
 //		basic circuit
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.circuit_basic.ordinal()),
 				"CCC", "RGR", "CCC",
@@ -201,7 +207,7 @@ public class TaamRecipes {
 				"RGR", "GCG", "RGR",
 				'R', Items.redstone,
 				'G', Items.gold_ingot,
-				'C', new ItemStack(TaamMain.itemPart, 1, 3)));
+				'C', new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.circuit_basic.ordinal())));
 //		iron frame
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.iron_frame.ordinal()),
 				"III", "I I", "I I",
@@ -225,8 +231,8 @@ public class TaamRecipes {
 //		wooden board
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemMaterial, 6 ,Taam.ITEM_MATERIAL_META.wooden_board.ordinal()),
 				"www", "s s",
-				'w', "materialWood",
-				's', "materialStick"));
+				'w', "plankWood",
+				's', "stickWood"));
 //		aluminum plate
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemMaterial, 6 ,Taam.ITEM_MATERIAL_META.aluminum_plate.ordinal()),
 				"aaa", " a ",
