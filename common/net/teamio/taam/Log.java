@@ -3,7 +3,7 @@ package net.teamio.taam;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class Log {
+public final class Log {
 
 	public static final Logger LOGGER = LogManager.getLogger(Taam.MOD_ID);
 	
