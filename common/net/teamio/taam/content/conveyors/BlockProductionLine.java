@@ -242,9 +242,10 @@ public class BlockProductionLine extends BaseBlock {
 				if(intercepted) {
 					return true;
 				}
-			}
-			if(te instanceof TileEntityConveyorHopper) {
+			} else if(te instanceof TileEntityConveyorHopper || te instanceof TileEntityConveyorItemBag) {
 				player.openGui(TaamMain.instance, 0, world, x, y, z);
+			} else if(te instanceof TileEntityConveyorTrashCan) {
+				((TileEntityConveyorTrashCan)te).clearOut();
 			}
 		}
 		return true;

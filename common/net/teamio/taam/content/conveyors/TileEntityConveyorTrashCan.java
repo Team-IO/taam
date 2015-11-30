@@ -4,103 +4,74 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.common.util.ForgeDirection;
+import net.teamio.taam.Config;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.conveyors.api.IConveyorAwareTE;
 import net.teamio.taam.conveyors.api.IItemFilter;
-import codechicken.lib.inventory.InventorySimple;
-import codechicken.lib.inventory.InventoryUtils;
 
 
-public class TileEntityConveyorItemBag extends ATileEntityAttachable implements IConveyorAwareTE, IInventory, IRotatable {
+public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements IConveyorAwareTE, IInventory, IRotatable {
 
-	private InventorySimple inventory;
-	
-	public float fillPercent;
-	public TileEntityConveyorItemBag() {
-		inventory = new InventorySimple(5);
+	public int fillPercent;
+	public TileEntityConveyorTrashCan() {
 	}
 	
 	@Override
 	public void updateEntity() {
-		if(worldObj.isRemote) {
-			
-			/*
-			 * Fill display calculation is only needed on the client..
-			 */
-			
-			float stackFactor = 1f / this.inventory.getSizeInventory();
-			float fillFactor = 0;
-		
-			for(int i = 0; i < this.inventory.getSizeInventory(); i++) {
-				ItemStack stack = this.inventory.getStackInSlot(i);
-				if(stack != null && stack.getItem() != null && stack.getMaxStackSize() > 0) {
-					float singleFillFactor = stack.stackSize / (float)stack.getMaxStackSize();
-					fillFactor += singleFillFactor * stackFactor;
-				}
-			}
-			float fillPercent = fillFactor;
-			if(this.fillPercent != fillPercent) {
-				this.fillPercent = fillPercent;
-			}
-			
-			return;
-		}
-		
-		
+//		if(worldObj.isRemote) {
+//			return;
+//		}
 	}
 	
 	@Override
 	protected void writePropertiesToNBT(NBTTagCompound tag) {
-		tag.setTag("items", InventoryUtils.writeItemStacksToTag(inventory.items));
+		tag.setInteger("fillPercent", fillPercent);
 		tag.setInteger("direction", direction.ordinal());
 	}
 
 	@Override
 	protected void readPropertiesFromNBT(NBTTagCompound tag) {
-		inventory.items = new ItemStack[inventory.getSizeInventory()];
-		InventoryUtils.readItemStacksFromTag(inventory.items, tag.getTagList("items", NBT.TAG_COMPOUND));
+		fillPercent = tag.getInteger("fillPercent");
 		direction = ForgeDirection.getOrientation(tag.getInteger("direction"));
 	}
-
+	
 	/*
 	 * IInventory implementation
 	 */
 	
 	@Override
 	public int getSizeInventory() {
-		return inventory.getSizeInventory();
+		return 1;
 	}
 
 	@Override
 	public ItemStack getStackInSlot(int slot) {
-		return inventory.getStackInSlot(slot);
+		return null;
 	}
 
 	@Override
 	public ItemStack decrStackSize(int slot, int amount) {
-		ItemStack stack = inventory.decrStackSize(slot, amount);
-		System.out.println("Dec " + slot);
-		updateState();
-		return stack;
+		return null;
 	}
 
 	@Override
 	public ItemStack getStackInSlotOnClosing(int slot) {
-		return inventory.getStackInSlotOnClosing(slot);
+		return null;
 	}
 
 	@Override
 	public void setInventorySlotContents(int slot, ItemStack stack) {
-		inventory.setInventorySlotContents(slot, stack);
-		System.out.println("Set " + slot + " " + stack);
-		updateState();
+		float added = stack.stackSize / (float)stack.getMaxStackSize();
+		if(fillPercent + added < Config.pl_trashcan_maxfill) {
+			fillPercent += added;
+			updateState();
+		}
 	}
 
 	@Override
 	public String getInventoryName() {
-		return "tile.taam.productionline_attachable.itembag.name";
+		return "tile.taam.productionline_attachable.trashcan.name";
 	}
 
 	@Override
@@ -110,7 +81,7 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable implements 
 
 	@Override
 	public int getInventoryStackLimit() {
-		return inventory.getInventoryStackLimit();
+		return 64;
 	}
 
 	@Override
@@ -130,7 +101,8 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable implements 
 
 	@Override
 	public boolean isItemValidForSlot(int slot, ItemStack stack) {
-		return inventory.isItemValidForSlot(slot, stack);
+		float add = stack.stackSize / (float)stack.getMaxStackSize();
+		return fillPercent + add < Config.pl_trashcan_maxfill;
 	}
 
 	/*
@@ -150,10 +122,13 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable implements 
 	@Override
 	public int insertItemAt(ItemStack item, int slot) {
 		// insertItem returns item count unable to insert.
-		int inserted = item.stackSize - InventoryUtils.insertItem(inventory, item, false);
-		System.out.println("Insert " + slot + " " + item);
-		updateState();
-		return inserted;
+		float added = item.stackSize / (float)item.getMaxStackSize();
+		if(fillPercent + added < Config.pl_trashcan_maxfill) {
+			fillPercent += added;
+			updateState();
+			return item.stackSize;
+		}
+		return 0;
 	}
 	
 	@Override
@@ -194,6 +169,11 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable implements 
 	@Override
 	public ItemStack getItemAt(int slot) {
 		return null;
+	}
+
+	public void clearOut() {
+		fillPercent = 0;
+		updateState();
 	}
 
 

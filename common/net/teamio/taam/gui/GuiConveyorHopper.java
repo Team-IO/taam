@@ -23,7 +23,7 @@ public class GuiConveyorHopper extends CustomGui {
 	private GuiCheckBox cbLinearMode;
 	
 	public GuiConveyorHopper(InventoryPlayer inventoryPlayer, TileEntityConveyorHopper tileEntity) {
-		super(new ContainerConveyorHopper(inventoryPlayer, tileEntity));
+		super(new ContainerConveyorSmallInventory(inventoryPlayer, tileEntity));
 		this.tileEntity = tileEntity;
 		this.inventoryPlayer = inventoryPlayer;
         this.ySize = 133;

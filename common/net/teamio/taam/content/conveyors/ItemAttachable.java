@@ -39,8 +39,6 @@ public class ItemAttachable extends ItemMultiTexture {
 				meta = 3;
 				break;
 			}
-			System.out.println(meta);
-			System.out.println((metadata & 3) + (meta << 2));
 			boolean success = super.placeBlockAt(stack, player, world, x, y, z, side, hitX, hitY, hitZ, (metadata & 3) + (meta << 2));
 			if(success) {
 				TileEntity te = world.getTileEntity(x, y, z);

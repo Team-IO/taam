@@ -3,15 +3,15 @@ package net.teamio.taam.gui;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import net.teamio.taam.content.conveyors.TileEntityConveyorHopper;
 
-public class ContainerConveyorHopper extends Container {
-	 protected TileEntityConveyorHopper tileEntity;
+public class ContainerConveyorSmallInventory extends Container {
+	protected IInventory tileEntity;
 
-	public ContainerConveyorHopper(InventoryPlayer inventoryPlayer,
-			TileEntityConveyorHopper te) {
+	public ContainerConveyorSmallInventory(InventoryPlayer inventoryPlayer,
+			IInventory te) {
 		tileEntity = te;
 
 		for (int i = 0; i < te.getSizeInventory(); i++) {

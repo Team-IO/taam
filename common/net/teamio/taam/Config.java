@@ -17,6 +17,8 @@ public class Config {
 	public static int sensor_delay = 30;
 	public static int sensor_placement_mode = 1;
 	
+	public static float pl_trashcan_maxfill = 64f;
+	
 	public static int pl_conveyor_supportrange = 2;
 	public static final byte[] pl_conveyor_speedsteps = new byte[] {
 		80,
@@ -54,6 +56,8 @@ public class Config {
 		
 		sensor_delay = config.getInt("sensor_delay", "multitronix", 30, 10, 100, Taam.CFG_COMMENT_SENSOR_DELAY);
 		sensor_placement_mode = config.getInt("sensor_placement_mode", "multitronix", 1, 1, 2, Taam.CFG_COMMENT_SENSOR_PLACEMENT_MODE);
+		
+		pl_trashcan_maxfill = config.getFloat("pl_trashcan_maxfill", "production_line", 64f, 1f, Float.MAX_VALUE, "Maximum fill level of trashcans. This counts stacks. (Fill Level 1 == 1 stack and it is full)");
 		
 		pl_conveyor_supportrange = config.getInt("pl_conveyor_supportrange", "production_line", 2, 0, Integer.MAX_VALUE, "!!Performance critical!! Keep this value low! Determines, how many blocks away a conveyor can be supported by other conveyors in the same direction.");
 		pl_conveyor_speedsteps[0] = (byte)config.getInt("pl_conveyor_speedsteps_1", "production_line", 80, 1, Byte.MAX_VALUE, "Speedsteps (1/speed) for tier 1 conveyors (wooden)");

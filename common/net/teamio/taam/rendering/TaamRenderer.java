@@ -4,7 +4,6 @@ import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
@@ -18,6 +17,7 @@ import net.minecraftforge.client.IItemRenderer;
 import net.minecraftforge.client.model.obj.WavefrontObject;
 import net.minecraftforge.client.model.techne.TechneModel;
 import net.minecraftforge.common.util.ForgeDirection;
+import net.teamio.taam.Config;
 import net.teamio.taam.Taam;
 import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.IRotatable;
@@ -32,6 +32,7 @@ import net.teamio.taam.content.conveyors.TileEntityConveyor;
 import net.teamio.taam.content.conveyors.TileEntityConveyorHopper;
 import net.teamio.taam.content.conveyors.TileEntityConveyorItemBag;
 import net.teamio.taam.content.conveyors.TileEntityConveyorProcessor;
+import net.teamio.taam.content.conveyors.TileEntityConveyorTrashCan;
 import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.conveyors.api.IConveyorAwareTE;
 
@@ -205,6 +206,15 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 		GL11.glPushMatrix();
 		GL11.glTranslated(x, y, z);
 
+		float fillPercent = 0;
+		if(tileEntity instanceof TileEntityConveyorTrashCan) {
+			fillPercent = ((TileEntityConveyorTrashCan) tileEntity).fillPercent;
+			float maxFillPercent = Config.pl_trashcan_maxfill;
+			fillPercent = fillPercent / maxFillPercent;
+		} else if(tileEntity instanceof TileEntityConveyorItemBag) {
+			fillPercent = ((TileEntityConveyorItemBag) tileEntity).fillPercent;
+		}
+		
 		GL11.glTranslatef(0.5f, 0, 0.5f);
 		
 		int type = meta & 3;
@@ -245,6 +255,10 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 			modelConveyor.renderPart("BagTrash_btmdl");
 			break;
 		}
+		if(fillPercent > 0) {
+			GL11.glTranslatef(0, fillPercent * 0.3f, 0);
+			modelConveyor.renderPart("Bag_Filling_bfmdl");
+		}
 		
 		GL11.glPopMatrix();
 	}
@@ -271,7 +285,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 			renderConveyorProcessor((TileEntityConveyorProcessor) tileEntity, x, y, z, (byte)0);
 		} else if(tileEntity instanceof TileEntityChute) {
 			renderChute(x, y, z);
-		} else if(tileEntity instanceof TileEntityConveyorItemBag) {
+		} else if(tileEntity instanceof TileEntityConveyorItemBag || tileEntity instanceof TileEntityConveyorTrashCan) {
 			int meta = tileEntity.getBlockMetadata();
 			renderItemBag((ATileEntityAttachable)tileEntity, x, y, z, meta, false);
 		}
