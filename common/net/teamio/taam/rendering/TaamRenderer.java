@@ -380,9 +380,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 		conveyorPrepareRendering(tileEntity, x, y, z, isWood);
 		
 		if(tileEntity != null && !tileEntity.isEnd()) {
-			Tessellator.instance.setTextureUV(rot / 360, 0);
 			modelConveyor.renderPart("Conveyor_Straight_csmdl");
-			Tessellator.instance.setTextureUV(0, 0);
 			if(isWood) {
 				modelConveyor.renderPart("Conveyor_Straight_Framing_Wood_csmdl_wood");
 				modelConveyor.renderPart("Conveyor_Straight_Walz_Wood_cwalzmdl_wood");
@@ -391,9 +389,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 				modelConveyor.renderPart("Conveyor_Straight_Walz_Alu_cwalzmdl_alu");
 			}
 		} else {
-			Tessellator.instance.setTextureUV(rot / 360, 0);
 			modelConveyor.renderPart("Conveyor_End_cemdl");
-			Tessellator.instance.setTextureUV(0, 0);
 			if(isWood) {
 				modelConveyor.renderPart("Conveyor_End_Framing_Wood_cemdl_wood");
 				modelConveyor.renderPart("Conveyor_End_Walz_Wood_cwalzmdl_wood");
@@ -405,6 +401,9 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 				modelConveyor.renderPart("Conveyor_End_Cap_Alu_cecmdl_alu");
 				modelConveyor.renderPart("Support_Caps_Alu_scmdl_alu");
 			}
+		}
+		if(isHighSpeed) {
+			modelConveyor.renderPart("Conveyor_High_Throughput_Framing_Alu_chtpmdl_alu");
 		}
 		
 		GL11.glTranslated(0.5, 0, 0.5);
