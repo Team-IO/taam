@@ -309,6 +309,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 
 					RenderItem.renderInFrame = true;
 					ri.doRender(ei, 0, .5f, 0, 0, 0);
+					RenderItem.renderInFrame = false;
 					
 					GL11.glPopMatrix();
 				}
@@ -353,6 +354,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 	
 					RenderItem.renderInFrame = true;
 					ri.doRender(ei, 0, .5f, 0, 0, 0);
+					RenderItem.renderInFrame = false;
 					
 					GL11.glPopMatrix();
 				}
