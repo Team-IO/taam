@@ -10,6 +10,7 @@ item.taam.ingot.kaolinite.name=The Impossible Kaolinite Ingot
 # Parts (Crafting Items)
 item.taam.part.photocell.name=Photo Cell
 item.taam.part.motor.name=Motor
+item.taam.part.support_frame_wood.name=Wooden Support Frame
 item.taam.part.support_frame.name=Support Frame
 item.taam.part.circuit_basic.name=Basic Circuit
 item.taam.part.circuit_advanced.name=Advanced Circuit
@@ -22,7 +23,6 @@ item.taam.part.magnetic_coil.name=Magnetic Coil
 item.taam.part.iron_frame.name=Iron Frame
 item.taam.part.metal_bearing.name=Metal Bearing
 item.taam.part.copper_wire.name=Copper Wire
-item.taam.part.iron_nugget.name=Iron Nugget
 # Materials
 item.taam.material.plastic_sheet.name=Plastic Sheet
 item.taam.material.plastic_bar.name=Plastic Bar
@@ -30,6 +30,9 @@ item.taam.material.rubber_bar.name=Rubber Bar
 item.taam.material.rubber_sheet.name=Rubber Sheet
 item.taam.material.graphite.name=Graphite Bar
 item.taam.material.silicon_wafer.name=Silicon Wafer
+item.taam.material.iron_nugget.name=Iron Nugget
+item.taam.material.wooden_board.name=Wooden Board
+item.taam.material.aluminum_plate.name=Aluminum Plate
 # Conveyor Appliances
 item.taam.conveyor_appliance.sprayer.name=Sprayer
 
