@@ -4,6 +4,7 @@ import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
@@ -51,6 +52,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 	private RenderItem ri;
 	private EntityItem ei;
 	private float rot = 0;
+	private float rot_sensor = 0;
 	
 	public TaamRenderer() {
 		ri = new RenderItem() {
@@ -80,6 +82,10 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 	public void onClientTick(TickEvent.ClientTickEvent event) {
 	    if (event.phase == TickEvent.Phase.END) {
 	    	rot++;
+	    	rot_sensor++;
+	    	if(rot_sensor > 360) {
+	    		rot_sensor -= 360;
+	    	}
 	    }
 	}
 
@@ -166,12 +172,12 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 			default:
 				break;
 			case 0:
-				conveyorPrepareRendering(null, x, y, z);
+				conveyorPrepareRendering(null, x, y, z, false);
 				renderConveyorAppliance(Taam.APPLIANCE_SPRAYER);
 				conveyorEndRendering();
 				break;
 			case 1:
-				conveyorPrepareRendering(null, x, y, z);
+				conveyorPrepareRendering(null, x, y, z, false);
 				//TODO: Render.
 				conveyorEndRendering();
 				break;
@@ -224,7 +230,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 		GL11.glPopMatrix();
 	}
 	
-	private void conveyorPrepareRendering(IConveyorAwareTE tileEntity, double x, double y, double z) {
+	private void conveyorPrepareRendering(IConveyorAwareTE tileEntity, double x, double y, double z, boolean isWood) {
 		ForgeDirection direction = conveyorGetDirection(tileEntity);
 		
 		GL11.glPushMatrix();
@@ -256,7 +262,11 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 		/*
 		 * Render Support Frame
 		 */
-		modelConveyor.renderPart("Support_smdl");
+		if(isWood) {
+			modelConveyor.renderPart("Support_Wood_smdl_wood");
+		} else {
+			modelConveyor.renderPart("Support_Alu_smdl_alu");
+		}
 	}
 	
 	private void conveyorEndRendering() {
@@ -357,13 +367,44 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 		
 		//TODO: Rendering depend on meta(=speedlevel)
 		
-		conveyorPrepareRendering(tileEntity, x, y, z);
+		boolean isWood;
+		boolean isHighSpeed;
+		if(tileEntity == null) {
+			isWood = meta == 0;
+			isHighSpeed = meta == 2;
+		} else {
+			isWood = tileEntity.getSpeedLevel() == 0;
+			isHighSpeed = tileEntity.getSpeedLevel() >= 2;
+		}
+		
+		conveyorPrepareRendering(tileEntity, x, y, z, isWood);
 		
 		if(tileEntity != null && !tileEntity.isEnd()) {
+			Tessellator.instance.setTextureUV(rot / 360, 0);
 			modelConveyor.renderPart("Conveyor_Straight_csmdl");
+			Tessellator.instance.setTextureUV(0, 0);
+			if(isWood) {
+				modelConveyor.renderPart("Conveyor_Straight_Framing_Wood_csmdl_wood");
+				modelConveyor.renderPart("Conveyor_Straight_Walz_Wood_cwalzmdl_wood");
+			} else {
+				modelConveyor.renderPart("Conveyor_Straight_Framing_Alu_csmdl_alu");
+				modelConveyor.renderPart("Conveyor_Straight_Walz_Alu_cwalzmdl_alu");
+			}
 		} else {
+			Tessellator.instance.setTextureUV(rot / 360, 0);
 			modelConveyor.renderPart("Conveyor_End_cemdl");
-			modelConveyor.renderPart("Conveyor_End_Cap_cecmdl");
+			Tessellator.instance.setTextureUV(0, 0);
+			if(isWood) {
+				modelConveyor.renderPart("Conveyor_End_Framing_Wood_cemdl_wood");
+				modelConveyor.renderPart("Conveyor_End_Walz_Wood_cwalzmdl_wood");
+				modelConveyor.renderPart("Conveyor_End_Cap_Wood_cecmdl_wood");
+				modelConveyor.renderPart("Support_Caps_Wood_scmdl_wood");
+			} else {
+				modelConveyor.renderPart("Conveyor_End_Framing_Alu_cemdl_alu");
+				modelConveyor.renderPart("Conveyor_End_Walz_Alu_cwalzmdl_alu");
+				modelConveyor.renderPart("Conveyor_End_Cap_Alu_cecmdl_alu");
+				modelConveyor.renderPart("Support_Caps_Alu_scmdl_alu");
+			}
 		}
 		
 		GL11.glTranslated(0.5, 0, 0.5);
@@ -372,8 +413,24 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 		
 		if(tileEntity != null && !tileEntity.isBegin()) {
 			modelConveyor.renderPart("Conveyor_Straight_csmdl");
+			if(isWood) {
+				modelConveyor.renderPart("Conveyor_Straight_Framing_Wood_csmdl_wood");
+				modelConveyor.renderPart("Conveyor_Straight_Walz_Wood_cwalzmdl_wood");
+			} else {
+				modelConveyor.renderPart("Conveyor_Straight_Framing_Alu_csmdl_alu");
+				modelConveyor.renderPart("Conveyor_Straight_Walz_Alu_cwalzmdl_alu");
+			}
 		} else {
 			modelConveyor.renderPart("Conveyor_End_cemdl");
+			if(isWood) {
+				modelConveyor.renderPart("Conveyor_End_Framing_Wood_cemdl_wood");
+				modelConveyor.renderPart("Conveyor_End_Walz_Wood_cwalzmdl_wood");
+				modelConveyor.renderPart("Support_Caps_Wood_scmdl_wood");
+			} else {
+				modelConveyor.renderPart("Conveyor_End_Framing_Alu_cemdl_alu");
+				modelConveyor.renderPart("Conveyor_End_Walz_Alu_cwalzmdl_alu");
+				modelConveyor.renderPart("Support_Caps_Alu_scmdl_alu");
+			}
 		}
 		
 		if(tileEntity != null) {
@@ -397,10 +454,17 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 		if(tileEntity != null) {
 			forceHighSpeed = forceHighSpeed || tileEntity.isHighSpeed();
 		}
-		conveyorPrepareRendering(tileEntity, x, y, z);
+		conveyorPrepareRendering(tileEntity, x, y, z, false);
 		
 		modelConveyor.renderPart("Conveyor_Hopper_chmdl");
+		modelConveyor.renderPart("Support_Caps_Alu_scmdl_alu");
+
 		
+		GL11.glTranslated(0.5, 0, 0.5);
+		GL11.glRotatef(180, 0, 1, 0);
+		GL11.glTranslated(-0.5, 0, -0.5);
+
+		modelConveyor.renderPart("Support_Caps_Alu_scmdl_alu");
 		//TODO: Render HighSpeed features
 		
 		conveyorEndRendering();
@@ -411,9 +475,10 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 		if(forceMode == 0 && tileEntity != null) {
 			mode = tileEntity.getMode();
 		}
-		conveyorPrepareRendering(tileEntity, x, y, z);
+		conveyorPrepareRendering(tileEntity, x, y, z, false);
 		
 		modelConveyor.renderPart("Conveyor_Processing_Chute_chutemdl");
+		modelConveyor.renderPart("Support_Caps_Alu_scmdl_alu");
 
 		//TODO: Rotate Walzes (need to remove mirror first)
 		
@@ -427,6 +492,8 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 		GL11.glTranslated(-0.5, 0, -0.5);
 
 		renderConveyorProcessorWalz(mode);
+
+		modelConveyor.renderPart("Support_Caps_Alu_scmdl_alu");
 		
 		conveyorEndRendering();
 	}
@@ -458,8 +525,8 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 		GL11.glTranslatef((float) x + 0.5f, (float) y,
 				(float) z + 0.5f);
 		
-		if((rot % 40) == 0 || fixBlink) {
-			rot = 0;
+		if((rot_sensor % 40) == 0 || fixBlink) {
+			rot_sensor = 0;
 			Minecraft.getMinecraft().renderEngine.bindTexture(textureSensorBlink);
 		} else {
 			Minecraft.getMinecraft().renderEngine.bindTexture(textureSensor);
