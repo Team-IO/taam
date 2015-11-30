@@ -51,6 +51,7 @@ public abstract class BaseBlock extends Block {
 		if (world.isRemote) {
 			return;
 		}
+		
 		TileEntity te = world.getTileEntity(x, y, z);
 
 		if(te instanceof TileEntityConveyor) {

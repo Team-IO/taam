@@ -448,6 +448,9 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 		this.direction = direction;
 		updateState();
 		worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, blockType);
+		if(blockType != null) {
+			blockType.onNeighborBlockChange(worldObj, xCoord, yCoord, zCoord, blockType);
+		}
 	}
 
 	@Override

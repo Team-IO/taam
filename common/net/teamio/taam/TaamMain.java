@@ -22,7 +22,9 @@ import net.teamio.taam.content.common.TileEntityChute;
 import net.teamio.taam.content.common.TileEntitySensor;
 import net.teamio.taam.content.conveyors.BlockProductionLine;
 import net.teamio.taam.content.conveyors.BlockProductionLineAttachable;
+import net.teamio.taam.content.conveyors.ItemAttachable;
 import net.teamio.taam.content.conveyors.ItemConveyorAppliance;
+import net.teamio.taam.content.conveyors.ItemProductionLine;
 import net.teamio.taam.content.conveyors.TileEntityConveyor;
 import net.teamio.taam.content.conveyors.TileEntityConveyorHopper;
 import net.teamio.taam.content.conveyors.TileEntityConveyorItemBag;
@@ -171,8 +173,8 @@ public class TaamMain {
 		GameRegistry.registerBlock(blockProductionLine, null, Taam.BLOCK_PRODUCTIONLINE);
 		GameRegistry.registerBlock(blockProductionLineAttachable, null, Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE);
 		//TODO: custom item implementation for production line with lore (see ItemConveyorAppliance), because of Lore
-		GameRegistry.registerItem(new ItemMultiTexture(blockProductionLine, blockProductionLine, Taam.BLOCK_PRODUCTIONLINE_META.valuesAsString()), Taam.BLOCK_PRODUCTIONLINE, Taam.MOD_ID);
-		GameRegistry.registerItem(new ItemMultiTexture(blockProductionLineAttachable, blockProductionLineAttachable, Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META.valuesAsString()), Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE, Taam.MOD_ID);
+		GameRegistry.registerItem(new ItemProductionLine(blockProductionLine, blockProductionLine, Taam.BLOCK_PRODUCTIONLINE_META.valuesAsString()), Taam.BLOCK_PRODUCTIONLINE, Taam.MOD_ID);
+		GameRegistry.registerItem(new ItemAttachable(blockProductionLineAttachable, blockProductionLineAttachable, Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META.valuesAsString()), Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE, Taam.MOD_ID);
 //		GameRegistry.registerBlock(blockSlidingDoor, ItemBlock.class, Taam.BLOCK_SLIDINGDOOR);
 		GameRegistry.registerBlock(blockOre, null, Taam.BLOCK_ORE);
 		GameRegistry.registerItem(new ItemMultiTexture(blockOre, blockOre, Taam.BLOCK_ORE_META.valuesAsString()), Taam.BLOCK_ORE, Taam.MOD_ID);

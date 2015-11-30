@@ -6,7 +6,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.common.util.ForgeDirection;
-import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.conveyors.api.IConveyorAwareTE;
 import net.teamio.taam.conveyors.api.IItemFilter;
@@ -14,13 +13,11 @@ import codechicken.lib.inventory.InventorySimple;
 import codechicken.lib.inventory.InventoryUtils;
 
 
-public class TileEntityConveyorItemBag extends BaseTileEntity implements IConveyorAwareTE, IInventory, IRotatable {
+public class TileEntityConveyorItemBag extends ATileEntityAttachable implements IConveyorAwareTE, IInventory, IRotatable {
 
 	private InventorySimple inventory;
 	
 	public int fillPercent;
-	private ForgeDirection direction = ForgeDirection.NORTH;
-	
 	public TileEntityConveyorItemBag() {
 		inventory = new InventorySimple(5);
 	}
@@ -161,21 +158,6 @@ public class TileEntityConveyorItemBag extends BaseTileEntity implements IConvey
 	}
 	
 	@Override
-	public boolean isSlotAvailable(int slot) {
-		switch(direction) {
-		default:
-		case NORTH:
-			return slot == 2 || slot == 5 || slot == 8;
-		case EAST:
-			return slot == 6 || slot == 7 || slot == 8;
-		case SOUTH:
-			return slot == 0 || slot == 3 || slot == 6;
-		case WEST:
-			return slot == 0 || slot == 1 || slot == 2;
-		}
-	}
-
-	@Override
 	public int getMovementProgress(int slot) {
 		return 0;
 	}
@@ -210,59 +192,6 @@ public class TileEntityConveyorItemBag extends BaseTileEntity implements IConvey
 		return null;
 	}
 
-	/*
-	 * IRotatable implementation
-	 */
-	
-	@Override
-	public ForgeDirection getFacingDirection() {
-		return direction;
-	}
 
-	@Override
-	public ForgeDirection getMountDirection() {
-		return ForgeDirection.DOWN;
-	}
-
-	@Override
-	public ForgeDirection getNextFacingDirection() {
-		return direction.getRotation(ForgeDirection.UP);
-	}
-
-	@Override
-	public ForgeDirection getNextMountDirection() {
-		return ForgeDirection.DOWN;
-	}
-
-	@Override
-	public void setFacingDirection(ForgeDirection direction) {
-		this.direction = direction;
-		//if(!worldObj.isRemote) {
-			int dir;
-			switch(direction) {
-			default:
-			case NORTH:
-				dir = 0;
-				break;
-			case SOUTH:
-				dir = 1;
-				break;
-			case WEST:
-				dir = 2;
-				break;
-			case EAST:
-				dir = 3;
-				break;
-			}
-			int worldMeta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
-			worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, (worldMeta & 3) + (dir << 2), 3);
-			updateState();
-		//}
-	}
-
-	@Override
-	public void setMountDirection(ForgeDirection direction) {
-		// Nope, will not change that.
-	}
 	
 }
