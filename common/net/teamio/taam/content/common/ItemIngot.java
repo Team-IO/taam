@@ -5,7 +5,7 @@ import net.teamio.taam.content.ItemWithMetadata;
 
 public class ItemIngot extends ItemWithMetadata {
 
-	public ItemIngot(String baseName, String[] metaValues) {
+	public ItemIngot(String baseName, Enum<?>[] metaValues) {
 		super(baseName, metaValues);
 	}
 

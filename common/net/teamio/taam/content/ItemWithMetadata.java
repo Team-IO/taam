@@ -14,10 +14,10 @@ import net.teamio.taam.Taam;
 public class ItemWithMetadata extends Item {
 
 	private IIcon[] iconList;
-	private String[] metaValues;
+	private Enum<?>[] metaValues;
 	private String baseName;
 	
-	public ItemWithMetadata(String baseName, String[] metaValues) {
+	public ItemWithMetadata(String baseName, Enum<?>[] metaValues) {
 		super();
 		this.baseName = baseName;
 		this.metaValues = metaValues;
@@ -44,7 +44,7 @@ public class ItemWithMetadata extends Item {
 			i = 0;
 		}
 	
-		return this.getUnlocalizedName() + "." + metaValues[i];
+		return this.getUnlocalizedName() + "." + metaValues[i].name();
 	}
 
 	@Override
@@ -52,7 +52,7 @@ public class ItemWithMetadata extends Item {
 	public void registerIcons(IIconRegister ir) {
 		iconList = new IIcon[metaValues.length];
 		for (int i = 0; i < metaValues.length; i++) {
-			iconList[i] = ir.registerIcon(Taam.MOD_ID + ":" + baseName + "." + metaValues[i]);
+			iconList[i] = ir.registerIcon(Taam.MOD_ID + ":" + baseName + "." + metaValues[i].name());
 		}
 	}
 

@@ -28,7 +28,7 @@ public class BlockOre extends Block {
 	
 	@Override
 	public int damageDropped(int meta) {
-		if (meta < 0 || meta >= Taam.BLOCK_ORE_META.length) {
+		if (meta < 0 || meta >= Taam.BLOCK_ORE_META.values().length) {
 			meta = 0;
 		}
 		return meta;
@@ -46,20 +46,22 @@ public class BlockOre extends Block {
 
 	public String getUnlocalizedName(ItemStack itemStack) {
 		int i = itemStack.getItemDamage();
+		Enum<?>[] values = Taam.BLOCK_ORE_META.values();
 
-		if (i < 0 || i >= Taam.BLOCK_ORE_META.length) {
+		if (i < 0 || i >= values.length) {
 			i = 0;
 		}
 
-		return super.getUnlocalizedName() + "." + Taam.BLOCK_ORE_META[i];
+		return super.getUnlocalizedName() + "." + values[i].name();
 	}
 	
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerBlockIcons(IIconRegister ir) {
-		iconList = new IIcon[Taam.BLOCK_ORE_META.length];
-		for (int i = 0; i < Taam.BLOCK_ORE_META.length; i++) {
-			iconList[i] = ir.registerIcon(Taam.MOD_ID + ":ore." + Taam.BLOCK_ORE_META[i]);
+		Enum<?>[] values = Taam.BLOCK_ORE_META.values();
+		iconList = new IIcon[values.length];
+		for (int i = 0; i < values.length; i++) {
+			iconList[i] = ir.registerIcon(Taam.MOD_ID + ":ore." + values[i].name());
 		}
 	}
 	
@@ -67,7 +69,8 @@ public class BlockOre extends Block {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void getSubBlocks(Item item, CreativeTabs creativeTab, List list) {
-		for (int i = 0; i < Taam.BLOCK_ORE_META.length; i++) {
+		Enum<?>[] values = Taam.BLOCK_ORE_META.values();
+		for (int i = 0; i < values.length; i++) {
 			list.add(new ItemStack(item, 1, i));
 		}
 	}

@@ -21,7 +21,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class ItemConveyorAppliance extends ItemWithMetadata {
 
 	public ItemConveyorAppliance() {
-		super("conveyor_appliance", Taam.ITEM_CONVEYOR_APPLIANCE_META);
+		super("conveyor_appliance", Taam.ITEM_CONVEYOR_APPLIANCE_META.values());
 	}
 
 	@Override
@@ -53,15 +53,16 @@ public class ItemConveyorAppliance extends ItemWithMetadata {
 	public boolean onItemUse(ItemStack stack, EntityPlayer player, World world,
 			int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
 		int i = stack.getItemDamage();
+		Enum<?>[] values = Taam.ITEM_CONVEYOR_APPLIANCE_META.values();
 
-		if (i < 0 || i >= Taam.ITEM_CONVEYOR_APPLIANCE_META.length) {
+		if (i < 0 || i >= values.length) {
 			i = 0;
 		}
 		TileEntity te = world.getTileEntity(x, y, z);
 		if(te instanceof IConveyorApplianceHost) {
 			IConveyorApplianceHost host = (IConveyorApplianceHost) te;
-			System.out.println("Item Setting up Appliance " + "taam." + Taam.ITEM_CONVEYOR_APPLIANCE_META[i]);
-			boolean result = host.initAppliance("taam." + Taam.ITEM_CONVEYOR_APPLIANCE_META[i]);
+			System.out.println("Item Setting up Appliance " + "taam." + values[i].name());
+			boolean result = host.initAppliance("taam." + values[i].name());
 			if(result) {
 				System.out.println("Appliance set up.");
 				if(!player.capabilities.isCreativeMode) {

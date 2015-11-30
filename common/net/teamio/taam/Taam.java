@@ -26,12 +26,21 @@ public final class Taam {
 	public static final String BLOCK_ORE = "taam.ore";
 	public static final String BLOCK_MAGNET_RAIL = "taam.magnet_rail";
 	
-	public static final String[] BLOCK_ORE_META = new String[] {
-		"copper",
-		"tin",
-		"aluminum",
-		"bauxite",//Ore Only!
-		"kaolinite"//Ore Only!
+	public static enum BLOCK_ORE_META {
+		copper,
+		tin,
+		aluminum,
+		bauxite,  //Ore Only!
+		kaolinite //Ore Only!
+		;
+		public static String[] valuesAsString() {
+			Enum<?>[] valuesAsEnum = values();
+			String[] valuesAsString = new String[valuesAsEnum.length];
+			for(int i = 0; i < valuesAsEnum.length; i++) {
+				valuesAsString[i] = valuesAsEnum[i].name();
+			}
+			return valuesAsString;
+		}
 	};
 	
 	/**
@@ -43,21 +52,39 @@ public final class Taam {
 		return meta == 3 || meta == 4;
 	}
 	
-	public static final String[] BLOCK_PRODUCTIONLINE_META = new String[] {
-		"conveyor1",
-		"conveyor2",
-		"conveyor3",
-		"hopper",
-		"hopper_hs",
-		"sieve",
-		"shredder",
-		"grinder",
-		"crusher",
+	public static enum BLOCK_PRODUCTIONLINE_META {
+		conveyor1,
+		conveyor2,
+		conveyor3,
+		hopper,
+		hopper_hs,
+		sieve,
+		shredder,
+		grinder,
+		crusher,
+		;
+		public static String[] valuesAsString() {
+			Enum<?>[] valuesAsEnum = values();
+			String[] valuesAsString = new String[valuesAsEnum.length];
+			for(int i = 0; i < valuesAsEnum.length; i++) {
+				valuesAsString[i] = valuesAsEnum[i].name();
+			}
+			return valuesAsString;
+		}
 	};
 	
-	public static final String[] BLOCK_LOGISTICS_META = new String[] {
-		"logistics_manager",
-		"logistics_station",
+	public static enum BLOCK_LOGISTICS_META {
+		logistics_manager,
+		logistics_station
+		;
+		public static String[] valuesAsString() {
+			Enum<?>[] valuesAsEnum = values();
+			String[] valuesAsString = new String[valuesAsEnum.length];
+			for(int i = 0; i < valuesAsEnum.length; i++) {
+				valuesAsString[i] = valuesAsEnum[i].name();
+			}
+			return valuesAsString;
+		}
 	};
 	
 	public static final String MULTIPART_MULTINET_CABLE = "taam.multinet.cable";
@@ -73,35 +100,75 @@ public final class Taam {
 	public static final String ITEM_CONVEYOR_APPLIANCE = "taam.conveyor_appliance";
 	public static final String ITEM_LOGISTICS_CART = "taam.logistics_cart";
 	
-	public static final String[] ITEM_CONVEYOR_APPLIANCE_META = new String[] {
-		"sprayer",
-		"inserter"
+	public static enum ITEM_CONVEYOR_APPLIANCE_META {
+		sprayer,
+		inserter
+		;
+		public static String[] valuesAsString() {
+			Enum<?>[] valuesAsEnum = values();
+			String[] valuesAsString = new String[valuesAsEnum.length];
+			for(int i = 0; i < valuesAsEnum.length; i++) {
+				valuesAsString[i] = valuesAsEnum[i].name();
+			}
+			return valuesAsString;
+		}
 	};
-	public static final String[] ITEM_LOGISTICS_CART_META = new String[] {
-		"basic"
+	public static enum ITEM_LOGISTICS_CART_META {
+		basic
+		;
+		public static String[] valuesAsString() {
+			Enum<?>[] valuesAsEnum = values();
+			String[] valuesAsString = new String[valuesAsEnum.length];
+			for(int i = 0; i < valuesAsEnum.length; i++) {
+				valuesAsString[i] = valuesAsEnum[i].name();
+			}
+			return valuesAsString;
+		}
 	};
-	public static final String[] ITEM_MATERIAL_META = new String[] {
-		"plastic_sheet",
-		"rubber_bar",
-		"graphite",
-		"silicon_wafer"
+	
+	public static enum ITEM_MATERIAL_META {
+		plastic_sheet,
+		rubber_bar,
+		graphite,
+		iron_nugget,
+		silicon_wafer,
+		wooden_board,
+		aluminum_plate
+		;
+		public static String[] valuesAsString() {
+			Enum<?>[] valuesAsEnum = values();
+			String[] valuesAsString = new String[valuesAsEnum.length];
+			for(int i = 0; i < valuesAsEnum.length; i++) {
+				valuesAsString[i] = valuesAsEnum[i].name();
+			}
+			return valuesAsString;
+		}
 	};
-	public static final String[] ITEM_PART_META = new String[] {
-		"photocell",
-		"motor",
-		"support_frame",
-		"circuit_basic",
-		"circuit_advanced",
-		"logistics_chip",
-		"rubber_band",
-		"pump",
-		"tank",
-		"nozzle",
-		"magnetic_coil",
-		"iron_frame",
-		"metal_bearing",
-		"copper_wire",
-		"iron_nugget"
+	public static enum ITEM_PART_META {
+		photocell,
+		motor,
+		support_frame_wood,
+		support_frame,
+		circuit_basic,
+		circuit_advanced,
+		logistics_chip,
+		rubber_band,
+		pump,
+		tank,
+		nozzle,
+		magnetic_coil,
+		iron_frame,
+		metal_bearing,
+		copper_wire
+		;
+		public static String[] valuesAsString() {
+			Enum<?>[] valuesAsEnum = values();
+			String[] valuesAsString = new String[valuesAsEnum.length];
+			for(int i = 0; i < valuesAsEnum.length; i++) {
+				valuesAsString[i] = valuesAsEnum[i].name();
+			}
+			return valuesAsString;
+		}
 	};
 	
 	public static final String TILEENTITY_SENSOR = "taam.sensor";
@@ -123,23 +190,32 @@ public final class Taam {
 	
 	public static final String APPLIANCE_SPRAYER = "taam.sprayer";
 
-	public static final String[] FLUID_DYE_META = new String[] {
-		"black",
-		"red",
-		"green",
-		"brown",
-		"blue",
-		"purple",
-		"cyan",
-		"lightGray",
-		"gray",
-		"pink",
-		"lime",
-		"yellow",
-		"lightBlue",
-		"magenta",
-		"orange",
-		"white"
+	public static enum FLUID_DYE_META {
+		black,
+		red,
+		green,
+		brown,
+		blue,
+		purple,
+		cyan,
+		lightGray,
+		gray,
+		pink,
+		lime,
+		yellow,
+		lightBlue,
+		magenta,
+		orange,
+		white
+		;
+		public static String[] valuesAsString() {
+			Enum<?>[] valuesAsEnum = values();
+			String[] valuesAsString = new String[valuesAsEnum.length];
+			for(int i = 0; i < valuesAsEnum.length; i++) {
+				valuesAsString[i] = valuesAsEnum[i].name();
+			}
+			return valuesAsString;
+		}
 	};
 
 	public static final String FLUID_DYE = "taam.dye";
