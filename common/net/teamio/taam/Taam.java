@@ -19,6 +19,7 @@ public final class Taam {
 	public static final String BLOCK_SENSOR = "taam.sensor";
 	public static final String BLOCK_CHUTE = "taam.chute";
 	public static final String BLOCK_PRODUCTIONLINE = "taam.productionline";
+	public static final String BLOCK_PRODUCTIONLINE_ATTACHABLE = "taam.productionline_attachable";
 	public static final String BLOCK_LOGISTICS = "taam.logistics";
 	public static final String BLOCK_SLIDINGDOOR = "taam.slidingdoor";
 	public static final String BLOCK_SENSOR_MOTION = "taam.sensor.motion";
@@ -62,6 +63,20 @@ public final class Taam {
 		shredder,
 		grinder,
 		crusher,
+		;
+		public static String[] valuesAsString() {
+			Enum<?>[] valuesAsEnum = values();
+			String[] valuesAsString = new String[valuesAsEnum.length];
+			for(int i = 0; i < valuesAsEnum.length; i++) {
+				valuesAsString[i] = valuesAsEnum[i].name();
+			}
+			return valuesAsString;
+		}
+	};
+	
+	public static enum BLOCK_PRODUCTIONLINE_ATTACHABLE_META {
+		itembag,
+		trashcan,
 		;
 		public static String[] valuesAsString() {
 			Enum<?>[] valuesAsEnum = values();
@@ -179,6 +194,8 @@ public final class Taam {
 	public static final String TILEENTITY_CONVEYOR_PROCESSOR = "taam.conveyor_processor";
 	public static final String TILEENTITY_LOGISTICS_STATION = "taam.logistics_station";
 	public static final String TILEENTITY_LOGISTICS_MANAGER = "taam.logistics_manager";
+	public static final String TILEENTITY_CONVEYOR_ITEMBAG = "taam.itembag";
+	public static final String TILEENTITY_CONVEYOR_TRASHCAN = "taam.trashcan";
 
 	public static final String ENTITY_LOGISTICS_CART = "taam.logistics_manager";
 	

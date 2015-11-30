@@ -281,7 +281,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 			// check next slot.
 			if(!wrapper.isBlocked() && (nextSlotFree || nextSlotMovable)) {
 				if(wrapper.movementProgress == getSpeedsteps() && nextSlotFree) {
-					if(slotWrapped && nextBlock == null) {
+					if(slotWrapped && (nextBlock == null || !nextBlock.isSlotAvailable(nextSlot))) {
 						// No next block, drop it.
 						dropItem(slot);
 					} else {
@@ -386,6 +386,11 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 		ItemWrapper slotObject = items[slot];
 		return !slotObject.isBlocked();
 	};
+	
+	@Override
+	public boolean isSlotAvailable(int slot) {
+		return true;
+	}
 	
 	@Override
 	public ItemStack getItemAt(int slot) {

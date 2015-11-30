@@ -319,6 +319,11 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 	public boolean canSlotMove(int slot) {
 		return false;
 	}
+	
+	@Override
+	public boolean isSlotAvailable(int slot) {
+		return true;
+	}
 
 	@Override
 	public int getMovementProgress(int slot) {

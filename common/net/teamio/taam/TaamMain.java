@@ -20,9 +20,11 @@ import net.teamio.taam.content.common.ItemWrench;
 import net.teamio.taam.content.common.TileEntityChute;
 import net.teamio.taam.content.common.TileEntitySensor;
 import net.teamio.taam.content.conveyors.BlockProductionLine;
+import net.teamio.taam.content.conveyors.BlockProductionLineAttachable;
 import net.teamio.taam.content.conveyors.ItemConveyorAppliance;
 import net.teamio.taam.content.conveyors.TileEntityConveyor;
 import net.teamio.taam.content.conveyors.TileEntityConveyorHopper;
+import net.teamio.taam.content.conveyors.TileEntityConveyorItemBag;
 import net.teamio.taam.content.conveyors.TileEntityConveyorProcessor;
 import net.teamio.taam.conveyors.ApplianceRegistry;
 import net.teamio.taam.conveyors.appliances.ApplianceSprayer;
@@ -65,6 +67,7 @@ public class TaamMain {
 	public static BlockSensor blockSensor;
 	public static BlockChute blockChute;
 	public static BlockProductionLine blockProductionLine;
+	public static BlockProductionLineAttachable blockProductionLineAttachable;
 	public static BlockSlidingDoor blockSlidingDoor;
 	public static BlockOre blockOre;
 	
@@ -111,6 +114,10 @@ public class TaamMain {
 		blockProductionLine.setBlockName(Taam.BLOCK_PRODUCTIONLINE);
 		blockProductionLine.setCreativeTab(creativeTab);
 		
+		blockProductionLineAttachable = new BlockProductionLineAttachable();
+		blockProductionLineAttachable.setBlockName(Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE);
+		blockProductionLineAttachable.setCreativeTab(creativeTab);
+		
 		blockSlidingDoor = new BlockSlidingDoor();
 		blockSlidingDoor.setBlockName(Taam.BLOCK_SLIDINGDOOR);
 		blockSlidingDoor.setCreativeTab(creativeTab);
@@ -155,8 +162,10 @@ public class TaamMain {
 		GameRegistry.registerBlock(blockSensor, ItemBlock.class, Taam.BLOCK_SENSOR);
 		GameRegistry.registerBlock(blockChute, ItemBlock.class, Taam.BLOCK_CHUTE);
 		GameRegistry.registerBlock(blockProductionLine, null, Taam.BLOCK_PRODUCTIONLINE);
+		GameRegistry.registerBlock(blockProductionLineAttachable, null, Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE);
 		//TODO: custom item implementation for production line with lore (see ItemConveyorAppliance), because of Lore
 		GameRegistry.registerItem(new ItemMultiTexture(blockProductionLine, blockProductionLine, Taam.BLOCK_PRODUCTIONLINE_META.valuesAsString()), Taam.BLOCK_PRODUCTIONLINE, Taam.MOD_ID);
+		GameRegistry.registerItem(new ItemMultiTexture(blockProductionLineAttachable, blockProductionLineAttachable, Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META.valuesAsString()), Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE, Taam.MOD_ID);
 //		GameRegistry.registerBlock(blockSlidingDoor, ItemBlock.class, Taam.BLOCK_SLIDINGDOOR);
 		GameRegistry.registerBlock(blockOre, null, Taam.BLOCK_ORE);
 		GameRegistry.registerItem(new ItemMultiTexture(blockOre, blockOre, Taam.BLOCK_ORE_META.valuesAsString()), Taam.BLOCK_ORE, Taam.MOD_ID);
@@ -166,6 +175,7 @@ public class TaamMain {
 		GameRegistry.registerTileEntity(TileEntityConveyor.class, Taam.TILEENTITY_CONVEYOR);
 		GameRegistry.registerTileEntity(TileEntityConveyorHopper.class, Taam.TILEENTITY_CONVEYOR_HOPPER);
 		GameRegistry.registerTileEntity(TileEntityConveyorProcessor.class, Taam.TILEENTITY_CONVEYOR_PROCESSOR);
+		GameRegistry.registerTileEntity(TileEntityConveyorItemBag.class, Taam.TILEENTITY_CONVEYOR_ITEMBAG);
 //		GameRegistry.registerTileEntity(TileEntitySlidingDoor.class, Taam.TILEENTITY_SLIDINGDOOR);
 		
 		GameRegistry.registerWorldGenerator(new OreGenerator(), 2);

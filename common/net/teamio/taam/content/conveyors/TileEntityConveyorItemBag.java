@@ -79,7 +79,10 @@ public class TileEntityConveyorItemBag extends BaseTileEntity implements IConvey
 
 	@Override
 	public ItemStack decrStackSize(int slot, int amount) {
-		return inventory.decrStackSize(slot, amount);
+		ItemStack stack = inventory.decrStackSize(slot, amount);
+		System.out.println("Dec " + slot);
+		updateState();
+		return stack;
 	}
 
 	@Override
@@ -90,6 +93,8 @@ public class TileEntityConveyorItemBag extends BaseTileEntity implements IConvey
 	@Override
 	public void setInventorySlotContents(int slot, ItemStack stack) {
 		inventory.setInventorySlotContents(slot, stack);
+		System.out.println("Set " + slot + " " + stack);
+		updateState();
 	}
 
 	@Override
@@ -145,12 +150,29 @@ public class TileEntityConveyorItemBag extends BaseTileEntity implements IConvey
 	public int insertItemAt(ItemStack item, int slot) {
 		// insertItem returns item count unable to insert.
 		int inserted = item.stackSize - InventoryUtils.insertItem(inventory, item, false);
+		System.out.println("Insert " + slot + " " + item);
+		updateState();
 		return inserted;
 	}
 	
 	@Override
 	public boolean canSlotMove(int slot) {
 		return false;
+	}
+	
+	@Override
+	public boolean isSlotAvailable(int slot) {
+		switch(direction) {
+		default:
+		case NORTH:
+			return slot == 2 || slot == 5 || slot == 8;
+		case EAST:
+			return slot == 6 || slot == 7 || slot == 8;
+		case SOUTH:
+			return slot == 0 || slot == 3 || slot == 6;
+		case WEST:
+			return slot == 0 || slot == 1 || slot == 2;
+		}
 	}
 
 	@Override
@@ -215,6 +237,27 @@ public class TileEntityConveyorItemBag extends BaseTileEntity implements IConvey
 	@Override
 	public void setFacingDirection(ForgeDirection direction) {
 		this.direction = direction;
+		//if(!worldObj.isRemote) {
+			int dir;
+			switch(direction) {
+			default:
+			case NORTH:
+				dir = 0;
+				break;
+			case SOUTH:
+				dir = 1;
+				break;
+			case WEST:
+				dir = 2;
+				break;
+			case EAST:
+				dir = 3;
+				break;
+			}
+			int worldMeta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+			worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, (worldMeta & 3) + (dir << 2), 3);
+			updateState();
+		//}
 	}
 
 	@Override

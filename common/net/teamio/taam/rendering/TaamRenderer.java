@@ -26,8 +26,10 @@ import net.teamio.taam.content.common.BlockSensor;
 import net.teamio.taam.content.common.TileEntityChute;
 import net.teamio.taam.content.common.TileEntitySensor;
 import net.teamio.taam.content.conveyors.BlockProductionLine;
+import net.teamio.taam.content.conveyors.BlockProductionLineAttachable;
 import net.teamio.taam.content.conveyors.TileEntityConveyor;
 import net.teamio.taam.content.conveyors.TileEntityConveyorHopper;
+import net.teamio.taam.content.conveyors.TileEntityConveyorItemBag;
 import net.teamio.taam.content.conveyors.TileEntityConveyorProcessor;
 import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.conveyors.api.IConveyorAwareTE;
@@ -99,6 +101,8 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 			return true;
 		} else if(block instanceof BlockProductionLine) {
 			return true;
+		} else if(block instanceof BlockProductionLineAttachable) {
+			return true;
 		} else if(block instanceof BlockChute) {
 			return true;
 		}
@@ -166,6 +170,14 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 				renderConveyorProcessor(null, x, y, z, TileEntityConveyorProcessor.Crusher);
 				break;
 			}
+		} else if(item.getItem() == Item.getItemFromBlock(TaamMain.blockProductionLineAttachable)) {
+			int meta = item.getItemDamage() & 3;
+			switch(meta) {
+			default:
+			case 0:
+			case 1:
+				renderItemBag(null, x, y, z, meta, true);
+			}
 		} else if(item.getItem() == TaamMain.itemConveyorAppliance) {
 			int meta = item.getItemDamage();
 			switch(meta) {
@@ -186,6 +198,54 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 			renderChute(x, y, z);
 		}
 		
+	}
+
+	private void renderItemBag(TileEntityConveyorItemBag tileEntity, double x, double y, double z, int meta, boolean rotated) {
+		GL11.glPushMatrix();
+		GL11.glTranslated(x, y, z);
+
+		GL11.glTranslatef(0.5f, 0, 0.5f);
+		
+		int type = meta & 3;
+		int rot = (meta & 12) >> 2;
+		switch(rot) {
+		default:
+		case 0: // NORTH
+			break;
+		case 1: // SOUTH
+			GL11.glRotatef(180, 0, 1, 0);
+			break;
+		case 2: // WEST
+			GL11.glRotatef(270, 0, 1, 0);
+			break;
+		case 3: // EAST
+			GL11.glRotatef(90, 0, 1, 0);
+			break;
+		}
+		if(rotated) {
+			GL11.glRotatef(180, 0, 1, 0);
+		}
+
+		GL11.glTranslated(-0.5, 0, -0.5);
+		/*
+		 * Bind Texture
+		 */
+		Minecraft.getMinecraft().renderEngine.bindTexture(textureConveyor);
+
+		/*
+		 * Render Support Frame
+		 */
+		switch(type) {
+		default:
+		case 0: // Bag
+			modelConveyor.renderPart("Bag_bmdl");
+			break;
+		case 1: // TrashCan
+			modelConveyor.renderPart("BagTrash_btmdl");
+			break;
+		}
+		
+		GL11.glPopMatrix();
 	}
 
 	@Override
@@ -210,6 +270,9 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 			renderConveyorProcessor((TileEntityConveyorProcessor) tileEntity, x, y, z, (byte)0);
 		} else if(tileEntity instanceof TileEntityChute) {
 			renderChute(x, y, z);
+		} else if(tileEntity instanceof TileEntityConveyorItemBag) {
+			int meta = tileEntity.getBlockMetadata();
+			renderItemBag((TileEntityConveyorItemBag)tileEntity, x, y, z, meta, false);
 		}
 		
 		if(tileEntity instanceof IConveyorAwareTE) {

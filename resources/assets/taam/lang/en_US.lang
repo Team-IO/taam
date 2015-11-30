@@ -61,6 +61,10 @@ tile.taam.productionline.shredder.name=Conveyor Shredder
 tile.taam.productionline.grinder.name=Conveyor Grinder
 tile.taam.productionline.crusher.name=Conveyor Crusher
 
+tile.taam.productionline_attachable.itembag=Conveyor Item Bag
+tile.taam.productionline_attachable.trashcan=Conveyor Trash Can
+tile.taam.productionline_attachable.lamp=Conveyor Lamp
+
 # Lore localization
 lore.taam.shift=Hold Shift
 lore.taam.conveyor_appliance=Conveyor Appliance
