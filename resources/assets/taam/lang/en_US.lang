@@ -33,6 +33,7 @@ item.taam.material.silicon_wafer.name=Silicon Wafer
 item.taam.material.iron_nugget.name=Iron Nugget
 item.taam.material.wooden_board.name=Wooden Board
 item.taam.material.aluminum_plate.name=Aluminum Plate
+item.taam.material.resin.name=Resin
 # Conveyor Appliances
 item.taam.conveyor_appliance.sprayer.name=Sprayer
 

@@ -77,8 +77,12 @@ public class TaamRecipes {
 						new ChancedOutput(new ItemStack(Items.pumpkin_seeds), 0.05f),
 						new ChancedOutput(new ItemStack(Items.melon_seeds), 0.05f),
 						new ChancedOutput(new ItemStack(Blocks.vine), 0.005f)
-				)
-		);
+				));
+		ProcessingRegistry.registerRecipe(ProcessingRegistry.GRINDER, new ChanceBasedRecipe(new ItemStack(Blocks.leaves), 
+					new ChancedOutput(new ItemStack(Items.stick), 1.0f),
+					new ChancedOutput(new ItemStack(TaamMain.itemMaterial, 1, Taam.ITEM_MATERIAL_META.resin.ordinal()), 0.1f )
+				));
+		
 		
 	}
 	public static void addSmeltingRecipes(){
@@ -89,6 +93,9 @@ public class TaamRecipes {
 			}
 			GameRegistry.addSmelting(new ItemStack(TaamMain.blockOre, 1, meta), new ItemStack(TaamMain.itemIngot, 1, meta), 1);
 		}
+	
+		GameRegistry.addSmelting(new ItemStack(TaamMain.itemMaterial,1,Taam.ITEM_MATERIAL_META.resin.ordinal()), new ItemStack(TaamMain.itemMaterial, 1, Taam.ITEM_MATERIAL_META.rubber_bar.ordinal()), 1);
+	
 	}
 
 	public static void addOreRecipes(){
@@ -144,8 +151,6 @@ public class TaamRecipes {
 		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(TaamMain.blockProductionLine, 1, Taam.BLOCK_PRODUCTIONLINE_META.hopper.ordinal()),
 				Blocks.hopper, new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.support_frame.ordinal())));
 
-//		conveyor hopper highspeed
-		//TODO recipe for hopper_h2
 		
 //		chute
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.blockChute, 1, 0), 
@@ -240,10 +245,55 @@ public class TaamRecipes {
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemMaterial, 6 ,Taam.ITEM_MATERIAL_META.aluminum_plate.ordinal()),
 				"aaa", " a ",
 				'a', "ingotAluminium"));
+//		Conveyor Item Bag
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.blockProductionLineAttachable, 1, Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META.itembag.ordinal()),
+				"PLP","PIP","PPP",
+				'P', "materialPlastic",
+				'L', "dyeBlue",
+				'I', new ItemStack(TaamMain.itemPart,1,Taam.ITEM_PART_META.iron_frame.ordinal())
+				));
+//		Conveyor Trash Bag
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.blockProductionLineAttachable, 1, Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META.trashcan.ordinal()),
+				"PLP","PIP","PPP",
+				'P', "materialPlastic",
+				'L', "dyeGreen",
+				'I', new ItemStack(TaamMain.itemPart,1,Taam.ITEM_PART_META.iron_frame.ordinal())
+				));
+//		Pump
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.pump.ordinal()),
+				"AAA","PMP", "AAA",
+				'M', new ItemStack(TaamMain.itemPart,1,Taam.ITEM_PART_META.motor.ordinal()),
+				'P', Blocks.piston,
+				'A', "ingotAluminum"
+				));
+//		Motor
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.motor.ordinal()),
+				"ACA", "CIC", "ACA",
+				'C', new ItemStack(TaamMain.itemPart,1,Taam.ITEM_PART_META.magnetic_coil.ordinal()),
+				'I', Items.iron_ingot,
+				'A', "ingotAluminum"
+				));
+//		Higt Speed Conveyor Hopper
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.pump.ordinal()),
+				"C C"," H ", " I ",
+				'C', new ItemStack(TaamMain.blockProductionLine,1,Taam.BLOCK_PRODUCTIONLINE_META.conveyor2.ordinal()),
+				'H', Blocks.hopper,
+				'I', new ItemStack(TaamMain.itemPart,1,Taam.ITEM_PART_META.support_frame.ordinal())
+				));
+//		Grinder
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.pump.ordinal()),
+				"PAP","MCB", "bSb",
+				'P', new ItemStack(TaamMain.itemMaterial,1,Taam.ITEM_MATERIAL_META.aluminum_plate.ordinal()),
+				'A', new ItemStack(TaamMain.itemPart,1,Taam.ITEM_PART_META.circuit_advanced.ordinal()),
+				'M', new ItemStack(TaamMain.itemPart,1,Taam.ITEM_PART_META.motor.ordinal()),
+				'C', new ItemStack(TaamMain.blockChute,1,0),
+				'B', new ItemStack(TaamMain.itemPart,1,Taam.ITEM_PART_META.metal_bearing.ordinal()),
+				'b', new ItemStack(TaamMain.itemPart,1,Taam.ITEM_PART_META.circuit_basic.ordinal()),
+				'S', new ItemStack(TaamMain.itemPart,1,Taam.ITEM_PART_META.support_frame.ordinal())
+				
+				
+				));
+	
 	}
-	
-	
-	
-	
 
 }
