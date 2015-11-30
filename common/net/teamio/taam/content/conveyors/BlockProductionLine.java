@@ -14,6 +14,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.teamio.taam.Taam;
 import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.BaseBlock;
@@ -112,10 +113,18 @@ public class BlockProductionLine extends BaseBlock {
 	@Override
 	public void setBlockBoundsBasedOnState(IBlockAccess world,
 			int x, int y, int z) {
-//		int meta = world.getBlockMetadata(x, y, z);
-//		int rotation = meta & 7;
-//		ForgeDirection dir = ForgeDirection.getOrientation(rotation);
-		
+		int meta = world.getBlockMetadata(x, y, z);
+		this.minX = 0;
+		this.maxX = 1;
+		this.minZ = 0;
+		this.maxZ = 1;
+		if(meta == 20) {
+			// Standalone (not in use at the moment)
+			this.maxY = 1;
+		} else {
+			// Conveyor Machinery
+			this.maxY = 0.5f;
+		}		
 		super.setBlockBoundsBasedOnState(world, x, y, z);
 	}
 //	@Override
@@ -174,14 +183,7 @@ public class BlockProductionLine extends BaseBlock {
 	@Override
 	public AxisAlignedBB getCollisionBoundingBoxFromPool(World world,
 			int x, int y, int z) {
-		int meta = world.getBlockMetadata(x, y, z);
-		if(meta == 20) {
-			// Standalone (not in use at the moment)
-			this.maxY = 1;
-		} else {
-			// Conveyor Machinery
-			this.maxY = 0.5f;
-		}
+		setBlockBoundsBasedOnState(world, x, y, z);
 		return super.getCollisionBoundingBoxFromPool(world, x, y, z);
 	}
 	
@@ -247,26 +249,65 @@ public class BlockProductionLine extends BaseBlock {
 		return true;
 	}
 
-//	@Override
-//	public int onBlockPlaced(World par1World, int x, int y, int z,
-//			int side, float hitx, float hity, float hitz, int meta) {
-//		int metaPart = meta & 8;
-//        int resultingRotation = side;
-//        return metaPart | resultingRotation;
-//	}
+	@Override
+	public void onNeighborBlockChange(World world, int x, int y, int z,
+			Block neighborBlock) {
+		super.onNeighborBlockChange(world, x, y, z, neighborBlock);
+		if(!canBlockStay(world, x, y, z)) {
+			breakBlock(world, x, y, z, this, world.getBlockMetadata(x, y, z));
+			this.dropBlockAsItem(world, x, y, z, world.getBlockMetadata(x, y, z), 0);
+			world.setBlockToAir(x, y, z);
+		}
+	}
+
 	
 	@Override
-	public void breakBlock(World world, int x, int y,
-			int z, Block block, int meta) {
-		//TODO: Drop Items
-		super.breakBlock(world, x, y, z, block, meta);
+	public boolean canBlockStay(World world, int x, int y, int z) {
+		TileEntity ent = world.getTileEntity(x, y, z);
+		
+		ForgeDirection myDir = null;
+		if(ent instanceof TileEntityConveyor) {
+			myDir = ((TileEntityConveyor) ent).getFacingDirection();
+		}
+		return canBlockStay(world, x, y, z, myDir);
 	}
 	
-	@Override
-	public void onNeighborChange(IBlockAccess world, int x, int y, int z,
-			int tileX, int tileY, int tileZ) {
-		// TODO Auto-generated method stub
-		super.onNeighborChange(world, x, y, z, tileX, tileY, tileZ);
+	public static boolean canBlockStay(World world, int x, int y, int z, ForgeDirection myDir) {
+		if(World.doesBlockHaveSolidTopSurface(world, x, y - 1, z)) {
+			return true;
+		}
+		
+		return checkSide(world, x, y, z, ForgeDirection.NORTH, myDir, 2) ||
+				checkSide(world, x, y, z, ForgeDirection.SOUTH, myDir, 2) ||
+				checkSide(world, x, y, z, ForgeDirection.WEST, myDir, 2) ||
+				checkSide(world, x, y, z, ForgeDirection.EAST, myDir, 2);
 	}
 	
+	public static boolean checkSide(World world, int x, int y, int z, ForgeDirection side, ForgeDirection myDir, int supportCount) {
+		ForgeDirection otherDir = null;
+		
+		if(world.isSideSolid(x + side.offsetX, y + side.offsetY, z + side.offsetZ, side.getOpposite())) {
+			return true;
+		} else {
+			TileEntity ent = world.getTileEntity(x + side.offsetX, y + side.offsetY, z + side.offsetZ);
+			if(ent instanceof TileEntityConveyor) {
+				otherDir = ((TileEntityConveyor) ent).getFacingDirection();
+				// The other conveyor is facing us (end cap lock), and we are not a conveyor (no myDir)
+				if(myDir == null && otherDir == side.getOpposite()) {
+					return true;
+				}
+				// We are facing the other conveyor, or the other is facing us in the syme direction (direction lock)
+				if(supportCount > 0 && myDir == otherDir && (myDir == side || myDir == side.getOpposite())) {
+					if(World.doesBlockHaveSolidTopSurface(world, x + side.offsetX, y + side.offsetY - 1, z + side.offsetZ)) {
+						return true;
+					} else {
+						if(checkSide(world, x + side.offsetX, y + side.offsetY, z + side.offsetZ, side, myDir, supportCount - 1)) {
+							return true;
+						}
+					}
+				}
+			}
+		}
+		return false;
+	}
 }

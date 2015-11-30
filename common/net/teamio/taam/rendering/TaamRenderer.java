@@ -25,6 +25,7 @@ import net.teamio.taam.content.common.BlockChute;
 import net.teamio.taam.content.common.BlockSensor;
 import net.teamio.taam.content.common.TileEntityChute;
 import net.teamio.taam.content.common.TileEntitySensor;
+import net.teamio.taam.content.conveyors.ATileEntityAttachable;
 import net.teamio.taam.content.conveyors.BlockProductionLine;
 import net.teamio.taam.content.conveyors.BlockProductionLineAttachable;
 import net.teamio.taam.content.conveyors.TileEntityConveyor;
@@ -200,7 +201,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 		
 	}
 
-	private void renderItemBag(TileEntityConveyorItemBag tileEntity, double x, double y, double z, int meta, boolean rotated) {
+	private void renderItemBag(ATileEntityAttachable tileEntity, double x, double y, double z, int meta, boolean rotated) {
 		GL11.glPushMatrix();
 		GL11.glTranslated(x, y, z);
 
@@ -211,15 +212,15 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 		switch(rot) {
 		default:
 		case 0: // NORTH
-			break;
-		case 1: // SOUTH
 			GL11.glRotatef(180, 0, 1, 0);
 			break;
-		case 2: // WEST
-			GL11.glRotatef(270, 0, 1, 0);
+		case 1: // SOUTH
 			break;
-		case 3: // EAST
+		case 2: // EAST
 			GL11.glRotatef(90, 0, 1, 0);
+			break;
+		case 3: // WEST
+			GL11.glRotatef(270, 0, 1, 0);
 			break;
 		}
 		if(rotated) {
@@ -272,7 +273,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 			renderChute(x, y, z);
 		} else if(tileEntity instanceof TileEntityConveyorItemBag) {
 			int meta = tileEntity.getBlockMetadata();
-			renderItemBag((TileEntityConveyorItemBag)tileEntity, x, y, z, meta, false);
+			renderItemBag((ATileEntityAttachable)tileEntity, x, y, z, meta, false);
 		}
 		
 		if(tileEntity instanceof IConveyorAwareTE) {

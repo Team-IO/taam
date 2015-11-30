@@ -92,11 +92,38 @@ public class BlockProductionLineAttachable extends BaseBlock {
 	@Override
 	public void setBlockBoundsBasedOnState(IBlockAccess world,
 			int x, int y, int z) {
-//		int meta = world.getBlockMetadata(x, y, z);
-//		int rotation = meta & 7;
-//		ForgeDirection dir = ForgeDirection.getOrientation(rotation);
-		
-		super.setBlockBoundsBasedOnState(world, x, y, z);
+		int meta = world.getBlockMetadata(x, y, z);
+		int rot = (meta & 12) >> 2;
+		//int type = meta & 3;
+		this.minY = 0f;
+		this.maxY = 0.5f;
+		switch(rot) {
+		default:
+		case 0: //NORTH
+			this.minX = 0;
+			this.maxX = 1;
+			this.minZ = 0;
+			this.maxZ = 0.35f;
+			break;
+		case 1: //SOUTH
+			this.minX = 0;
+			this.maxX = 1;
+			this.minZ = 0.65f;
+			this.maxZ = 1;
+			break;
+		case 2: //EAST
+			this.minX = 0.65f;
+			this.maxX = 1;
+			this.minZ = 0;
+			this.maxZ = 1;
+			break;
+		case 3: //WEST
+			this.minX = 0;
+			this.maxX = 0.35f;
+			this.minZ = 0;
+			this.maxZ = 1;
+			break;
+		}
 	}
 //	@Override
 //	public boolean canProvidePower() {
@@ -146,47 +173,9 @@ public class BlockProductionLineAttachable extends BaseBlock {
 	}
 	
 	@Override
-	public void onPostBlockPlaced(World par1World, int par2, int par3,
-			int par4, int par5) {
-//		updateBlocksAround(par1World, par2, par3, par4);
-	}
-	
-	@Override
 	public AxisAlignedBB getCollisionBoundingBoxFromPool(World world,
 			int x, int y, int z) {
-		
-		int meta = world.getBlockMetadata(x, y, z);
-		int rot = (meta & 12) >> 2;
-		//int type = meta & 3;
-		this.minY = 0f;
-		this.maxY = 0.5f;
-		switch(rot) {
-		default:
-		case 0: //NORTH
-			this.minX = 0;
-			this.maxX = 1;
-			this.minZ = 0.65f;
-			this.maxZ = 1;
-			break;
-		case 1: //SOUTH
-			this.minX = 0;
-			this.maxX = 1;
-			this.minZ = 0;
-			this.maxZ = 0.35f;
-			break;
-		case 2: //WEST
-			this.minX = 0;
-			this.maxX = 0.35f;
-			this.minZ = 0;
-			this.maxZ = 1;
-			break;
-		case 3: //EAST
-			this.minX = 0.65f;
-			this.maxX = 1;
-			this.minZ = 0;
-			this.maxZ = 1;
-			break;
-		}
+		setBlockBoundsBasedOnState(world, x, y, z);
 		return super.getCollisionBoundingBoxFromPool(world, x, y, z);
 	}
 	
@@ -261,17 +250,29 @@ public class BlockProductionLineAttachable extends BaseBlock {
 //	}
 	
 	@Override
-	public void breakBlock(World world, int x, int y,
-			int z, Block block, int meta) {
-		//TODO: Drop Items
-		super.breakBlock(world, x, y, z, block, meta);
+	public int damageDropped(int meta) {
+		return meta & 3;
 	}
 	
 	@Override
-	public void onNeighborChange(IBlockAccess world, int x, int y, int z,
-			int tileX, int tileY, int tileZ) {
-		// TODO Auto-generated method stub
-		super.onNeighborChange(world, x, y, z, tileX, tileY, tileZ);
+	public void onNeighborBlockChange(World world, int x, int y, int z,
+			Block neighborBlock) {
+		super.onNeighborBlockChange(world, x, y, z, neighborBlock);
+		if(!canBlockStay(world, x, y, z)) {
+			breakBlock(world, x, y, z, this, world.getBlockMetadata(x, y, z));
+			this.dropBlockAsItem(world, x, y, z, world.getBlockMetadata(x, y, z), 0);
+			world.setBlockToAir(x, y, z);
+		}
+	}
+	
+	@Override
+	public boolean canBlockStay(World world, int x, int y, int z) {
+		TileEntity te = world.getTileEntity(x, y, z);
+		if(te instanceof IRotatable) {
+			return ATileEntityAttachable.canAttach(world, x, y, z, ((IRotatable) te).getFacingDirection());
+		} else {
+			return true;
+		}
 	}
 	
 }
