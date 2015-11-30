@@ -15,6 +15,7 @@ import net.teamio.taam.content.common.BlockSensor;
 import net.teamio.taam.content.common.BlockSlidingDoor;
 import net.teamio.taam.content.common.FluidDye;
 import net.teamio.taam.content.common.ItemDebugTool;
+import net.teamio.taam.content.common.ItemDust;
 import net.teamio.taam.content.common.ItemIngot;
 import net.teamio.taam.content.common.ItemWrench;
 import net.teamio.taam.content.common.TileEntityChute;
@@ -60,6 +61,7 @@ public class TaamMain {
 	public static ItemWithMetadata itemMaterial;
 	public static ItemWithMetadata itemPart;
 	public static ItemIngot itemIngot;
+	public static ItemDust itemDust;
 	public static ItemConveyorAppliance itemConveyorAppliance;
 	
 	public static CreativeTabs creativeTab;
@@ -146,6 +148,10 @@ public class TaamMain {
 		itemIngot.setUnlocalizedName(Taam.ITEM_INGOT);
 		itemIngot.setCreativeTab(creativeTab);
 		
+		itemDust = new ItemDust("dust",Taam.BLOCK_ORE_META.values());
+		itemDust.setUnlocalizedName(Taam.ITEM_DUST);
+		itemDust.setCreativeTab(creativeTab);
+		
 		itemConveyorAppliance = new ItemConveyorAppliance();
 		itemConveyorAppliance.setUnlocalizedName(Taam.ITEM_CONVEYOR_APPLIANCE);
 		itemConveyorAppliance.setCreativeTab(creativeTab);
@@ -153,6 +159,7 @@ public class TaamMain {
 		GameRegistry.registerItem(itemMaterial, Taam.ITEM_MATERIAL, Taam.MOD_ID);
 		GameRegistry.registerItem(itemPart, Taam.ITEM_PART, Taam.MOD_ID);
 		GameRegistry.registerItem(itemIngot, Taam.ITEM_INGOT, Taam.MOD_ID);
+		GameRegistry.registerItem(itemDust, Taam.ITEM_DUST,Taam.MOD_ID); 
 
 		GameRegistry.registerItem(itemDebugTool, Taam.ITEM_DEBUG_TOOL, Taam.MOD_ID);
 		GameRegistry.registerItem(itemWrench, Taam.ITEM_WRENCH, Taam.MOD_ID);

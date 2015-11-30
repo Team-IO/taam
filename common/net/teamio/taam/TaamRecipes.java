@@ -1,7 +1,6 @@
 package net.teamio.taam;
 
 import cpw.mods.fml.common.registry.GameRegistry;
-import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -18,6 +17,18 @@ public class TaamRecipes {
 		/*
 		 * Crusher
 		 */
+		
+		for(int meta = 0 ; meta < Taam.BLOCK_ORE_META.values().length;meta++) {
+			if (Taam.isOreOnly(meta)) {
+				continue;
+			}
+			ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
+					new ChanceBasedRecipe(new ItemStack(TaamMain.blockOre, 1, meta),
+						new ChancedOutput(new ItemStack(TaamMain.itemDust, 2, meta), 1.0f),
+						new ChancedOutput(new ItemStack(Blocks.cobblestone), 0.4f),
+						new ChancedOutput(new ItemStack(Blocks.mossy_cobblestone), 0.0001f)
+						));
+		}
 		
 		ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
 				new ChanceBasedRecipe(new ItemStack(Blocks.stone),

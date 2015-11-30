@@ -112,6 +112,7 @@ public final class Taam {
 	public static final String ITEM_MATERIAL = "taam.material";
 	public static final String ITEM_PART = "taam.part";
 	public static final String ITEM_INGOT = "taam.ingot";
+	public static final String ITEM_DUST = "taam.dust";
 	public static final String ITEM_CONVEYOR_APPLIANCE = "taam.conveyor_appliance";
 	public static final String ITEM_LOGISTICS_CART = "taam.logistics_cart";
 	
