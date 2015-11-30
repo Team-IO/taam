@@ -212,26 +212,26 @@ public class TaamMain {
 	}
 	
 	public static void oreRegistration(){
-		OreDictionary.registerOre("oreCopper", new ItemStack(blockOre, 1, 0));
-		OreDictionary.registerOre("oreTin", new ItemStack(blockOre, 1, 1));
-		OreDictionary.registerOre("oreAluminum", new ItemStack(blockOre, 1, 2));
+		OreDictionary.registerOre("oreCopper", new ItemStack(blockOre, 1, Taam.BLOCK_ORE_META.copper.ordinal()));
+		OreDictionary.registerOre("oreTin", new ItemStack(blockOre, 1, Taam.BLOCK_ORE_META.tin.ordinal()));
+		OreDictionary.registerOre("oreAluminum", new ItemStack(blockOre, 1, Taam.BLOCK_ORE_META.aluminum.ordinal()));
 		
-		OreDictionary.registerOre("ingotCopper", new ItemStack(itemIngot, 1, 0));
-		OreDictionary.registerOre("ingotTin", new ItemStack(itemIngot, 1, 1));
-		OreDictionary.registerOre("ingotAluminum", new ItemStack(itemIngot, 1, 2));
+		OreDictionary.registerOre("ingotCopper", new ItemStack(itemIngot, 1, Taam.BLOCK_ORE_META.copper.ordinal()));
+		OreDictionary.registerOre("ingotTin", new ItemStack(itemIngot, 1, Taam.BLOCK_ORE_META.tin.ordinal()));
+		OreDictionary.registerOre("ingotAluminum", new ItemStack(itemIngot, 1, Taam.BLOCK_ORE_META.aluminum.ordinal()));
 		
-		OreDictionary.registerOre("nuggetIron", new ItemStack(itemPart, 1, 14));
+		OreDictionary.registerOre("nuggetIron", new ItemStack(itemMaterial, 1, Taam.ITEM_MATERIAL_META.iron_nugget.ordinal()));
 		
-		OreDictionary.registerOre("materialPlastic", new ItemStack(itemMaterial, 1, 0));
-		OreDictionary.registerOre("materialRubber", new ItemStack(itemMaterial, 1, 1));
-		OreDictionary.registerOre("itemRubber", new ItemStack(itemMaterial, 1, 1));
-		OreDictionary.registerOre("materialGraphite", new ItemStack(itemMaterial, 1, 2));
-		OreDictionary.registerOre("materialSiliconWafer", new ItemStack(itemMaterial, 1, 3));
+		OreDictionary.registerOre("materialPlastic", new ItemStack(itemMaterial, 1, Taam.ITEM_MATERIAL_META.plastic_sheet.ordinal()));
+		OreDictionary.registerOre("materialRubber", new ItemStack(itemMaterial, 1, Taam.ITEM_MATERIAL_META.rubber_bar.ordinal()));
+		OreDictionary.registerOre("itemRubber", new ItemStack(itemMaterial, 1, Taam.ITEM_MATERIAL_META.rubber_bar.ordinal()));
+		OreDictionary.registerOre("materialGraphite", new ItemStack(itemMaterial, 1, Taam.ITEM_MATERIAL_META.graphite.ordinal()));
+		OreDictionary.registerOre("materialSiliconWafer", new ItemStack(itemMaterial, 1, Taam.ITEM_MATERIAL_META.silicon_wafer.ordinal()));
 		
-		OreDictionary.registerOre("partPhotocell", new ItemStack(itemPart, 1, 0));
-		OreDictionary.registerOre("partMotor", new ItemStack(itemPart, 1, 1));
-		OreDictionary.registerOre("partBasicCircuit", new ItemStack(itemPart, 1, 3));
-		OreDictionary.registerOre("partAdvancedCircuit", new ItemStack(itemPart, 1, 4));
+		OreDictionary.registerOre("partPhotocell", new ItemStack(itemPart, 1, Taam.ITEM_PART_META.photocell.ordinal()));
+		OreDictionary.registerOre("partMotor", new ItemStack(itemPart, 1, Taam.ITEM_PART_META.motor.ordinal()));
+		OreDictionary.registerOre("partBasicCircuit", new ItemStack(itemPart, 1, Taam.ITEM_PART_META.circuit_basic.ordinal()));
+		OreDictionary.registerOre("partAdvancedCircuit", new ItemStack(itemPart, 1, Taam.ITEM_PART_META.circuit_advanced.ordinal()));
 	}
 }
 

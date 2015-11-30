@@ -148,7 +148,8 @@ public final class Taam {
 		iron_nugget,
 		silicon_wafer,
 		wooden_board,
-		aluminum_plate
+		aluminum_plate,
+		resin
 		;
 		public static String[] valuesAsString() {
 			Enum<?>[] valuesAsEnum = values();
