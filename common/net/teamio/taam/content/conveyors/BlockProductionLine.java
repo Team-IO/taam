@@ -15,6 +15,7 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import net.teamio.taam.Config;
 import net.teamio.taam.Taam;
 import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.BaseBlock;
@@ -277,10 +278,10 @@ public class BlockProductionLine extends BaseBlock {
 			return true;
 		}
 		
-		return checkSide(world, x, y, z, ForgeDirection.NORTH, myDir, 2) ||
-				checkSide(world, x, y, z, ForgeDirection.SOUTH, myDir, 2) ||
-				checkSide(world, x, y, z, ForgeDirection.WEST, myDir, 2) ||
-				checkSide(world, x, y, z, ForgeDirection.EAST, myDir, 2);
+		return checkSide(world, x, y, z, ForgeDirection.NORTH, myDir, Config.pl_conveyor_supportrange) ||
+				checkSide(world, x, y, z, ForgeDirection.SOUTH, myDir, Config.pl_conveyor_supportrange) ||
+				checkSide(world, x, y, z, ForgeDirection.WEST, myDir, Config.pl_conveyor_supportrange) ||
+				checkSide(world, x, y, z, ForgeDirection.EAST, myDir, Config.pl_conveyor_supportrange);
 	}
 	
 	public static boolean checkSide(World world, int x, int y, int z, ForgeDirection side, ForgeDirection myDir, int supportCount) {
