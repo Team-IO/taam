@@ -25,4 +25,10 @@ public final class Log {
 	private Log(){
 	}
 	
+	public static void setLogLevel(Level level) {
+		if(LOGGER instanceof org.apache.logging.log4j.core.Logger) {
+			((org.apache.logging.log4j.core.Logger) LOGGER).setLevel(level);
+		}
+	}
+	
 }

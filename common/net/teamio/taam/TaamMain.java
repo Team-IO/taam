@@ -1,5 +1,7 @@
 package net.teamio.taam;
 
+import org.apache.logging.log4j.Level;
+
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -91,7 +93,9 @@ public class TaamMain {
 		FMLCommonHandler.instance().bus().register(new Config());
 		
 		Config.init(event.getSuggestedConfigurationFile());
-		
+		if(Config.debug) {
+			Log.setLogLevel(Level.ALL);
+		}
 		creativeTab = new CreativeTabs(Taam.MOD_ID) {
 
 			@Override
