@@ -17,7 +17,7 @@ public final class Taam {
 	public static final String GUI_FACTORY_CLASS = "net.teamio.taam.gui.GuiFactory";
 
 	public static final String BLOCK_SENSOR = "taam.sensor";
-	public static final String BLOCK_CHUTE = "taam.chute";
+	public static final String BLOCK_MACHINES = "taam.machines";
 	public static final String BLOCK_PRODUCTIONLINE = "taam.productionline";
 	public static final String BLOCK_PRODUCTIONLINE_ATTACHABLE = "taam.productionline_attachable";
 	public static final String BLOCK_LOGISTICS = "taam.logistics";
@@ -26,6 +26,12 @@ public final class Taam {
 	public static final String BLOCK_SENSOR_MINECT = "taam.sensor.minect";
 	public static final String BLOCK_ORE = "taam.ore";
 	public static final String BLOCK_MAGNET_RAIL = "taam.magnet_rail";
+
+	/**
+	 * Implementation removed
+	 */
+	@Deprecated
+	public static final String BLOCK_CHUTE = "taam.chute";
 	
 	public static enum BLOCK_ORE_META {
 		copper(true, true, true),
@@ -37,6 +43,7 @@ public final class Taam {
 		//Vanilla requires only the "custom" stuff
 		gold(false, false, true),
 		iron(false, false, true),
+		coal(false, false, true),
 		;
 		
 		public final boolean ore, ingot, dust;
@@ -73,6 +80,20 @@ public final class Taam {
 //	public static boolean isOreOnly(int meta) {
 //		return meta == 3 || meta == 4;
 //	}
+	
+	public static enum BLOCK_MACHINES_META {
+		chute,
+		creativecache,
+		;
+		public static String[] valuesAsString() {
+			Enum<?>[] valuesAsEnum = values();
+			String[] valuesAsString = new String[valuesAsEnum.length];
+			for(int i = 0; i < valuesAsEnum.length; i++) {
+				valuesAsString[i] = valuesAsEnum[i].name();
+			}
+			return valuesAsString;
+		}
+	};
 	
 	public static enum BLOCK_PRODUCTIONLINE_META {
 		conveyor1,
@@ -211,6 +232,7 @@ public final class Taam {
 	
 	public static final String TILEENTITY_SENSOR = "taam.sensor";
 	public static final String TILEENTITY_CHUTE = "taam.chute";
+	public static final String TILEENTITY_CREATIVECACHE = "taam.creativecache";
 	public static final String TILEENTITY_SLIDINGDOOR = "taam.slidingdoor";
 	public static final String TILEENTITY_CONVEYOR = "taam.conveyor";
 	public static final String TILEENTITY_CONVEYOR_HOPPER = "taam.conveyor_hopper";

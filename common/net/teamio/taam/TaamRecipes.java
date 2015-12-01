@@ -224,7 +224,6 @@ public class TaamRecipes {
 		 */
 		
 //		conveyor1 (Wood)
-		//TODO recipe for conveyor1 (Wood)
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.blockProductionLine, 1, Taam.BLOCK_PRODUCTIONLINE_META.conveyor1.ordinal()),
 				"rRP", "wSw", "WsW",
 				'P', new ItemStack(Blocks.piston, 1, 0),
@@ -245,7 +244,6 @@ public class TaamRecipes {
 				'A', "ingotAluminum",
 				'B', new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_MATERIAL_META.plastic_sheet.ordinal())));
 //		conveyor3 (High Througput)
-		//TODO recipe for conveyor1 (Wood)
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.blockProductionLine, 1, Taam.BLOCK_PRODUCTIONLINE_META.conveyor3.ordinal()),
 				"YBY", "F F", "MCM",
 				'M', new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.motor.ordinal()),
@@ -282,7 +280,7 @@ public class TaamRecipes {
 				'P', new ItemStack(TaamMain.itemMaterial,1,Taam.ITEM_MATERIAL_META.wooden_board.ordinal()),
 				'A', new ItemStack(TaamMain.itemPart,1,Taam.ITEM_PART_META.circuit_advanced.ordinal()),
 				'M', new ItemStack(TaamMain.itemPart,1,Taam.ITEM_PART_META.motor.ordinal()),
-				'C', new ItemStack(TaamMain.blockChute,1),
+				'C', new ItemStack(TaamMain.blockMachines,1),
 				'B', new ItemStack(TaamMain.itemPart,1,Taam.ITEM_PART_META.metal_bearing.ordinal()),
 				'b', new ItemStack(TaamMain.itemPart,1,Taam.ITEM_PART_META.circuit_basic.ordinal()),
 				'S', new ItemStack(TaamMain.itemPart,1,Taam.ITEM_PART_META.support_frame.ordinal())
@@ -293,7 +291,7 @@ public class TaamRecipes {
 				'P', new ItemStack(TaamMain.itemMaterial,1,Taam.ITEM_MATERIAL_META.aluminum_plate.ordinal()),
 				'A', new ItemStack(TaamMain.itemPart,1,Taam.ITEM_PART_META.circuit_advanced.ordinal()),
 				'M', new ItemStack(TaamMain.itemPart,1,Taam.ITEM_PART_META.motor.ordinal()),
-				'C', new ItemStack(TaamMain.blockChute,1,0),
+				'C', new ItemStack(TaamMain.blockMachines,1,0),
 				'B', new ItemStack(TaamMain.itemPart,1,Taam.ITEM_PART_META.metal_bearing.ordinal()),
 				'b', new ItemStack(TaamMain.itemPart,1,Taam.ITEM_PART_META.circuit_basic.ordinal()),
 				'S', new ItemStack(TaamMain.itemPart,1,Taam.ITEM_PART_META.support_frame.ordinal())
@@ -335,7 +333,7 @@ public class TaamRecipes {
 		 */
 		
 //		chute
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.blockChute, 1, 0), 
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.blockMachines, 1, Taam.BLOCK_MACHINES_META.chute.ordinal()), 
 				"InI","InI","nIn",
 				'I', "ingotIron"));
 		

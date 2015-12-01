@@ -7,6 +7,9 @@ item.taam.ingot.copper.name=Copper Ingot
 item.taam.ingot.aluminum.name=Aluminum Ingot
 item.taam.ingot.bauxite.name=The Impossible Bauxite Ingot
 item.taam.ingot.kaolinite.name=The Impossible Kaolinite Ingot
+item.taam.ingot.gold.name=Cheated Gold Ingot
+item.taam.ingot.iron.name=Cheated Iron Ingot
+item.taam.ingot.coal.name=Cheated Coal Ingot (what is that?)
 # Dusts
 item.taam.dust.tin.name=Tin Dust
 item.taam.dust.copper.name=Copper Dust
@@ -15,6 +18,7 @@ item.taam.dust.bauxite.name=Bauxite Dust
 item.taam.dust.kaolinite.name=The Impossible Kaolinite Dust
 item.taam.dust.gold.name=Gold Dust
 item.taam.dust.iron.name=Iron Dust
+item.taam.dust.coal.name=Coal Dust
 # Parts (Crafting Items)
 item.taam.part.photocell.name=Photo Cell
 item.taam.part.motor.name=Motor
@@ -48,10 +52,13 @@ item.taam.conveyor_appliance.sprayer.name=Sprayer
 #Creative Tab localization
 itemGroup.taam=Taam
 
+#Non-Productionline Machines
+tile.taam.machines.chute.name=Chute
+tile.taam.machines.creativecache.name=Creative Item Cache
+
 # Block localization
 tile.taam.sensor.name=Motion Sensor
 tile.taam.slidingdoor.name=Sliding Door
-tile.taam.chute.name=Chute
 # Ores
 tile.taam.ore.copper.name=Copper Ore
 tile.taam.ore.tin.name=Tin Ore

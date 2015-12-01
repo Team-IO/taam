@@ -21,9 +21,10 @@ import net.teamio.taam.Config;
 import net.teamio.taam.Taam;
 import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.IRotatable;
-import net.teamio.taam.content.common.BlockChute;
+import net.teamio.taam.content.common.BlockMachines;
 import net.teamio.taam.content.common.BlockSensor;
 import net.teamio.taam.content.common.TileEntityChute;
+import net.teamio.taam.content.common.TileEntityCreativeCache;
 import net.teamio.taam.content.common.TileEntitySensor;
 import net.teamio.taam.content.conveyors.ATileEntityAttachable;
 import net.teamio.taam.content.conveyors.BlockProductionLine;
@@ -50,8 +51,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 	public final WavefrontObject modelConveyor;
 	public final ResourceLocation textureConveyor;
 	
-	public final WavefrontObject modelChute;
-	public final ResourceLocation textureChute;
+	public final WavefrontObject modelMachines;
 	
 	private RenderItem ri;
 	private EntityItem ei;
@@ -77,8 +77,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 		modelConveyor = new WavefrontObject(new ResourceLocation(Taam.MOD_ID + ":models/conveyor.obj"));
 		textureConveyor = new ResourceLocation(Taam.MOD_ID + ":textures/models/conveyor.png");
 
-		modelChute = new WavefrontObject(new ResourceLocation(Taam.MOD_ID + ":models/chute.obj"));
-		textureChute = textureConveyor;
+		modelMachines = new WavefrontObject(new ResourceLocation(Taam.MOD_ID + ":models/machines.obj"));
 
 	}
 	
@@ -105,7 +104,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 			return true;
 		} else if(block instanceof BlockProductionLineAttachable) {
 			return true;
-		} else if(block instanceof BlockChute) {
+		} else if(block instanceof BlockMachines) {
 			return true;
 		}
 		return false;
@@ -196,8 +195,16 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 				conveyorEndRendering();
 				break;
 			}
-		} else if(item.getItem() == Item.getItemFromBlock(TaamMain.blockChute)) {
-			renderChute(x, y, z);
+		} else if(item.getItem() == Item.getItemFromBlock(TaamMain.blockMachines)) {
+			int meta = item.getItemDamage();
+			switch(meta) {
+			case 0:
+				renderChute(x, y, z);
+				break;
+			case 1:
+				renderCreativeItemCache(x, y, z);
+				break;
+			}
 		}
 		
 	}
@@ -282,6 +289,8 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 			renderConveyorProcessor((TileEntityConveyorProcessor) tileEntity, x, y, z, (byte)0);
 		} else if(tileEntity instanceof TileEntityChute) {
 			renderChute(x, y, z);
+		} else if(tileEntity instanceof TileEntityCreativeCache) {
+			renderCreativeItemCache(x, y, z);
 		} else if(tileEntity instanceof TileEntityConveyorItemBag || tileEntity instanceof TileEntityConveyorTrashCan) {
 			int meta = tileEntity.getBlockMetadata();
 			renderItemBag((ATileEntityAttachable)tileEntity, x, y, z, meta);
@@ -299,8 +308,21 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 		 */
 		GL11.glTranslated(x, y, z);
 		
-		Minecraft.getMinecraft().renderEngine.bindTexture(textureChute);
-		modelChute.renderAll();
+		Minecraft.getMinecraft().renderEngine.bindTexture(textureConveyor);
+		modelMachines.renderPart("Chute_chutemdl");
+		
+		GL11.glPopMatrix();
+	}
+
+	private void renderCreativeItemCache(double x, double y, double z) {
+		GL11.glPushMatrix();
+		/*
+		 * Translate to coordinates
+		 */
+		GL11.glTranslated(x, y, z);
+		
+		Minecraft.getMinecraft().renderEngine.bindTexture(textureConveyor);
+		modelMachines.renderPart("Creative_Cache_ccmdl");
 		
 		GL11.glPopMatrix();
 	}

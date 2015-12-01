@@ -3,6 +3,7 @@ package net.teamio.taam;
 import net.minecraft.item.Item;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.teamio.taam.content.common.TileEntityChute;
+import net.teamio.taam.content.common.TileEntityCreativeCache;
 import net.teamio.taam.content.common.TileEntitySensor;
 import net.teamio.taam.content.conveyors.TileEntityConveyor;
 import net.teamio.taam.content.conveyors.TileEntityConveyorHopper;
@@ -24,6 +25,7 @@ public class TaamClientProxy extends TaamCommonProxy {
 		// Tile Entity Rendering
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySensor.class, taamRenderer);
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityChute.class, taamRenderer);
+		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCreativeCache.class, taamRenderer);
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityConveyor.class, taamRenderer);
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityConveyorHopper.class, taamRenderer);
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityConveyorProcessor.class, taamRenderer);
@@ -32,7 +34,7 @@ public class TaamClientProxy extends TaamCommonProxy {
 		
 		// Item Rendering
 		MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(TaamMain.blockSensor), taamRenderer);
-		MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(TaamMain.blockChute), taamRenderer);
+		MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(TaamMain.blockMachines), taamRenderer);
 		MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(TaamMain.blockProductionLine), taamRenderer);
 		MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(TaamMain.blockProductionLineAttachable), taamRenderer);
 		MinecraftForgeClient.registerItemRenderer(TaamMain.itemConveyorAppliance, taamRenderer);

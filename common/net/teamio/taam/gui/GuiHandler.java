@@ -4,6 +4,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.teamio.taam.content.common.TileEntityCreativeCache;
 import net.teamio.taam.content.conveyors.TileEntityConveyorHopper;
 import cpw.mods.fml.common.network.IGuiHandler;
 
@@ -19,6 +20,7 @@ public class GuiHandler implements IGuiHandler {
 			if (tileEntity instanceof TileEntityConveyorHopper) {
 				return new ContainerConveyorSmallInventory(player.inventory, (TileEntityConveyorHopper) tileEntity);
 			}
+			
 			if (tileEntity instanceof IInventory) {
 				return new ContainerConveyorSmallInventory(player.inventory, (IInventory) tileEntity);
 			}
@@ -39,6 +41,7 @@ public class GuiHandler implements IGuiHandler {
 			if (tileEntity instanceof TileEntityConveyorHopper) {
 				return new GuiConveyorHopper(player.inventory, (TileEntityConveyorHopper) tileEntity);
 			}
+			
 			if (tileEntity instanceof IInventory) {
 				return new GuiConveyorSmallInventory(player.inventory, (IInventory) tileEntity);
 			}
