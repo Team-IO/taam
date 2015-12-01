@@ -172,7 +172,6 @@ public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements
 	}
 
 	public void clearOut() {
-		System.out.println(fillLevel);
 		fillLevel = 0;
 		updateState();
 	}

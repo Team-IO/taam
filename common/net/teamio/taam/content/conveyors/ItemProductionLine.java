@@ -26,26 +26,20 @@ public class ItemProductionLine extends ItemMultiTexture {
 		boolean defaultPlacement = false;
 		
 		if(dir == ForgeDirection.UP || dir == ForgeDirection.DOWN) {
-			System.out.println("Default Placement, UP DOWN");
 			defaultPlacement = true;
 		} else {
 			TileEntity ent = world.getTileEntity(x + dir.offsetX, y, z + dir.offsetZ);
 			if(ent instanceof TileEntityConveyor) {
-				System.out.println("Conveyor Placement");
 				ForgeDirection otherDir = ((TileEntityConveyor) ent).getFacingDirection();
 				if(otherDir == dir || otherDir == dir.getOpposite()) {
-					System.out.println("Same Direction");
 					placeDir = otherDir;
 				} else {
-					System.out.println("Face Direction");
 					placeDir = dir;
 				}
 			} else if(ent instanceof IConveyorAwareTE) {
 				placeDir = dir;
-				System.out.println("Face Direction IConveyorAwareTE");
 			} else {
 				defaultPlacement = true;
-				System.out.println("Default Placement, unknown block");
 			}
 		}
 		
@@ -66,7 +60,6 @@ public class ItemProductionLine extends ItemMultiTexture {
 					placeDir = ForgeDirection.NORTH;
 				}
 			}
-			System.out.println("Default: " + placeDir);
 		}
 		
 		boolean canStay;
@@ -84,7 +77,6 @@ public class ItemProductionLine extends ItemMultiTexture {
 			if(success) {
 				TileEntity te = world.getTileEntity(x, y, z);
 				if(te instanceof IRotatable) {
-					System.out.println("Setting direction " + placeDir);
 					((IRotatable) te).setFacingDirection(placeDir);
 				}
 			}

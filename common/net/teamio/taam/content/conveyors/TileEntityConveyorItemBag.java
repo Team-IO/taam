@@ -81,7 +81,6 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable implements 
 	@Override
 	public ItemStack decrStackSize(int slot, int amount) {
 		ItemStack stack = inventory.decrStackSize(slot, amount);
-		System.out.println("Dec " + slot);
 		updateState();
 		return stack;
 	}
@@ -94,7 +93,6 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable implements 
 	@Override
 	public void setInventorySlotContents(int slot, ItemStack stack) {
 		inventory.setInventorySlotContents(slot, stack);
-		System.out.println("Set " + slot + " " + stack);
 		updateState();
 	}
 
@@ -151,7 +149,6 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable implements 
 	public int insertItemAt(ItemStack item, int slot) {
 		// insertItem returns item count unable to insert.
 		int inserted = item.stackSize - InventoryUtils.insertItem(inventory, item, false);
-		System.out.println("Insert " + slot + " " + item);
 		updateState();
 		return inserted;
 	}
