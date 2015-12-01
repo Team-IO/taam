@@ -94,7 +94,8 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 			if(te instanceof TileEntityConveyor) {
 				TileEntityConveyor next = (TileEntityConveyor)te;
 				renderEnd = next.speedLevel != speedLevel;
-				isEnd = renderEnd || next.getFacingDirection() != direction;
+				renderEnd = renderEnd || next.getFacingDirection() != direction;
+				isEnd = renderEnd;
 			} else {
 				isEnd = true;
 				renderEnd = te instanceof IConveyorAwareTE;
@@ -106,7 +107,8 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 			if(te instanceof TileEntityConveyor) {
 				TileEntityConveyor next = (TileEntityConveyor)te;
 				renderBegin = next.speedLevel != speedLevel;
-				isBegin = renderBegin || next.getFacingDirection() != direction;
+				renderBegin = renderBegin || next.getFacingDirection() != direction;
+				isBegin = renderBegin;
 			} else {
 				isBegin = true;
 				renderBegin = te instanceof IConveyorAwareTE;
@@ -119,7 +121,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 			if(te instanceof TileEntityConveyor) {
 				TileEntityConveyor next = (TileEntityConveyor)te;
 				ForgeDirection nextFacing = next.getFacingDirection();
-				renderRight = next.speedLevel != speedLevel && nextFacing != direction && nextFacing != direction.getOpposite();
+				renderRight = nextFacing != direction && nextFacing != direction.getOpposite();
 			} else {
 				renderRight = te instanceof IConveyorAwareTE;
 			}
@@ -131,7 +133,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 			if(te instanceof TileEntityConveyor) {
 				TileEntityConveyor next = (TileEntityConveyor)te;
 				ForgeDirection nextFacing = next.getFacingDirection();
-				renderLeft = next.speedLevel != speedLevel && nextFacing != direction && nextFacing != direction.getOpposite();
+				renderLeft = nextFacing != direction && nextFacing != direction.getOpposite();
 			} else {
 				renderLeft = te instanceof IConveyorAwareTE;
 			}
