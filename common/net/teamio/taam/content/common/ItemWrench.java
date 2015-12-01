@@ -24,10 +24,7 @@ public class ItemWrench extends Item {
 		setMaxDamage(0);
 		setTextureName(Taam.MOD_ID + ":wrench");
 		setFull3D();
-		shouldRotateAroundWhenRendering();
 	}
-
-
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
