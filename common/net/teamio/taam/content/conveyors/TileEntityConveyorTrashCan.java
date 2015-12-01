@@ -13,7 +13,7 @@ import net.teamio.taam.conveyors.api.IItemFilter;
 
 public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements IConveyorAwareTE, IInventory, IRotatable {
 
-	public int fillPercent;
+	public float fillLevel;
 	public TileEntityConveyorTrashCan() {
 	}
 	
@@ -26,13 +26,13 @@ public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements
 	
 	@Override
 	protected void writePropertiesToNBT(NBTTagCompound tag) {
-		tag.setInteger("fillPercent", fillPercent);
+		tag.setFloat("fillLevel", fillLevel);
 		tag.setInteger("direction", direction.ordinal());
 	}
 
 	@Override
 	protected void readPropertiesFromNBT(NBTTagCompound tag) {
-		fillPercent = tag.getInteger("fillPercent");
+		fillLevel = tag.getFloat("fillLevel");
 		direction = ForgeDirection.getOrientation(tag.getInteger("direction"));
 	}
 	
@@ -63,8 +63,8 @@ public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements
 	@Override
 	public void setInventorySlotContents(int slot, ItemStack stack) {
 		float added = stack.stackSize / (float)stack.getMaxStackSize();
-		if(fillPercent + added < Config.pl_trashcan_maxfill) {
-			fillPercent += added;
+		if(fillLevel + added < Config.pl_trashcan_maxfill) {
+			fillLevel += added;
 			updateState();
 		}
 	}
@@ -102,7 +102,7 @@ public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements
 	@Override
 	public boolean isItemValidForSlot(int slot, ItemStack stack) {
 		float add = stack.stackSize / (float)stack.getMaxStackSize();
-		return fillPercent + add < Config.pl_trashcan_maxfill;
+		return fillLevel + add < Config.pl_trashcan_maxfill;
 	}
 
 	/*
@@ -123,8 +123,8 @@ public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements
 	public int insertItemAt(ItemStack item, int slot) {
 		// insertItem returns item count unable to insert.
 		float added = item.stackSize / (float)item.getMaxStackSize();
-		if(fillPercent + added < Config.pl_trashcan_maxfill) {
-			fillPercent += added;
+		if(fillLevel + added < Config.pl_trashcan_maxfill) {
+			fillLevel += added;
 			updateState();
 			return item.stackSize;
 		}
@@ -172,7 +172,8 @@ public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements
 	}
 
 	public void clearOut() {
-		fillPercent = 0;
+		System.out.println(fillLevel);
+		fillLevel = 0;
 		updateState();
 	}
 
