@@ -22,7 +22,6 @@ public class ItemAttachable extends ItemMultiTexture {
 			float hitZ, int metadata) {
 		ForgeDirection dir = ForgeDirection.getOrientation(side).getOpposite();
 		if(ATileEntityAttachable.canAttach(world, x, y, z, dir)) {
-			System.out.println(dir);
 			int meta;
 			switch(dir) {
 			default:

@@ -60,6 +60,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.asm.transformers.ModAccessTransformer;
 import cpw.mods.fml.common.versioning.ComparableVersion;
 import cpw.mods.fml.relauncher.CoreModManager;
@@ -374,7 +375,7 @@ public class DepLoader implements IFMLLoadingPlugin, IFMLCallHook {
                 if (!GraphicsEnvironment.isHeadless())
                     JOptionPane.showMessageDialog(null, msg, "An update error has occured", JOptionPane.ERROR_MESSAGE);
 
-                System.exit(1);
+                FMLCommonHandler.instance().exitJava(1, false);
             }
         }
 
@@ -438,7 +439,7 @@ public class DepLoader implements IFMLLoadingPlugin, IFMLCallHook {
         private void installError(Exception e, Dependency dep, String s) {
             if (downloadMonitor.shouldStopIt()) {
                 logger.error("You have stopped the "+s+" before it could complete");
-                System.exit(1);
+                FMLCommonHandler.instance().exitJava(1, false);
             }
             downloadMonitor.showErrorDialog(dep.file.filename, dep.repo + '/' + dep.file.filename);
             throw new RuntimeException(s+" error", e);
