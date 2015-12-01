@@ -178,7 +178,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 			default:
 			case 0:
 			case 1:
-				renderItemBag(null, x, y, z, meta, true);
+				renderItemBag(null, x, y, z, meta);
 			}
 		} else if(item.getItem() == TaamMain.itemConveyorAppliance) {
 			int meta = item.getItemDamage();
@@ -202,13 +202,13 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 		
 	}
 
-	private void renderItemBag(ATileEntityAttachable tileEntity, double x, double y, double z, int meta, boolean rotated) {
+	private void renderItemBag(ATileEntityAttachable tileEntity, double x, double y, double z, int meta) {
 		GL11.glPushMatrix();
 		GL11.glTranslated(x, y, z);
 
 		float fillPercent = 0;
 		if(tileEntity instanceof TileEntityConveyorTrashCan) {
-			fillPercent = ((TileEntityConveyorTrashCan) tileEntity).fillPercent;
+			fillPercent = ((TileEntityConveyorTrashCan) tileEntity).fillLevel;
 			float maxFillPercent = Config.pl_trashcan_maxfill;
 			fillPercent = fillPercent / maxFillPercent;
 		} else if(tileEntity instanceof TileEntityConveyorItemBag) {
@@ -232,9 +232,6 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 		case 3: // WEST
 			GL11.glRotatef(270, 0, 1, 0);
 			break;
-		}
-		if(rotated) {
-			GL11.glRotatef(180, 0, 1, 0);
 		}
 
 		GL11.glTranslated(-0.5, 0, -0.5);
@@ -287,7 +284,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 			renderChute(x, y, z);
 		} else if(tileEntity instanceof TileEntityConveyorItemBag || tileEntity instanceof TileEntityConveyorTrashCan) {
 			int meta = tileEntity.getBlockMetadata();
-			renderItemBag((ATileEntityAttachable)tileEntity, x, y, z, meta, false);
+			renderItemBag((ATileEntityAttachable)tileEntity, x, y, z, meta);
 		}
 		
 		if(tileEntity instanceof IConveyorAwareTE) {
@@ -442,10 +439,8 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 		GL11.glPopMatrix();
 	}
 	
-	//TODO: Don't display metal cap when not pointing to wards a block
+	//TODO: Don't display end cap when not pointing to wards a block
 	public void renderConveyor(TileEntityConveyor tileEntity, double x, double y, double z, int meta) {
-		
-		//TODO: Rendering depend on meta(=speedlevel)
 		
 		boolean isWood;
 		boolean isHighSpeed;
@@ -531,11 +526,15 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 	public void renderConveyorHopper(TileEntityConveyorHopper tileEntity, double x, double y, double z, boolean forceHighSpeed) {
 		boolean highSpeed = forceHighSpeed;
 		if(tileEntity != null) {
-			forceHighSpeed = forceHighSpeed || tileEntity.isHighSpeed();
+			highSpeed = highSpeed || tileEntity.isHighSpeed();
 		}
 		conveyorPrepareRendering(tileEntity, x, y, z, false);
 		
-		modelConveyor.renderPart("Conveyor_Hopper_chmdl");
+		if(highSpeed) {
+			modelConveyor.renderPart("Conveyor_Hopper_High_Speed_chmdl_hs");
+		} else {
+			modelConveyor.renderPart("Conveyor_Hopper_chmdl");
+		}
 		modelConveyor.renderPart("Support_Caps_Alu_scmdl_alu");
 
 		
@@ -559,11 +558,6 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 		modelConveyor.renderPart("Conveyor_Processing_Chute_chutemdl");
 		modelConveyor.renderPart("Support_Caps_Alu_scmdl_alu");
 
-		//TODO: Rotate Walzes (need to remove mirror first)
-		
-
-
-		
 		renderConveyorProcessorWalz(mode);
 		
 		GL11.glTranslated(0.5, 0, 0.5);
