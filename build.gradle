@@ -17,7 +17,7 @@ buildscript {
 
 apply plugin: 'forge'
 
-version = "0.1"
+version = "0.2"
 group = "net.teamio.taam"
 archivesBaseName = "taam-1.7.10"
 cclversion = "1.1.1.104"
