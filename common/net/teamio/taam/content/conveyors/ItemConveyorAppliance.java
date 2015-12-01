@@ -78,7 +78,7 @@ public class ItemConveyorAppliance extends ItemWithMetadata {
 	
 	@Override
 	protected String getIconString() {
-		return "tech_item";
+		return Taam.MOD_ID + ":tech_item";
 	}
 	
 	@Override
