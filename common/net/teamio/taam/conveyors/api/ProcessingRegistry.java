@@ -6,6 +6,7 @@ import java.util.Map;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.teamio.taam.Log;
 
 @SuppressWarnings("unchecked")
 public final class ProcessingRegistry {
@@ -13,25 +14,27 @@ public final class ProcessingRegistry {
 		// Util Class
 	}
 
-	private static Map<Integer, IProcessingRecipe[]>[] recipes;
+	private static Map<Item, IProcessingRecipe[]>[] recipes;
 	
 	public static final int GRINDER = 0;
 	public static final int CRUSHER = 1;
 	
 	static {
 		recipes = new Map[2];
-		recipes[GRINDER] = new HashMap<Integer, IProcessingRecipe[]>();
-		recipes[CRUSHER] = new HashMap<Integer, IProcessingRecipe[]>();
+		recipes[GRINDER] = new HashMap<Item, IProcessingRecipe[]>();
+		recipes[CRUSHER] = new HashMap<Item, IProcessingRecipe[]>();
 	}
 	
 	public static IProcessingRecipe getRecipe(int machine, ItemStack input) {
-		Map<Integer, IProcessingRecipe[]> recipes = ProcessingRegistry.recipes[machine];
+		Map<Item, IProcessingRecipe[]> recipes = ProcessingRegistry.recipes[machine];
 		
-		IProcessingRecipe[] matches = recipes.get(Item.getIdFromItem(input.getItem()));
-		
+		IProcessingRecipe[] matches = recipes.get(input.getItem());
+		Log.debug("Fetching recipe for machine " + machine + ": " + input + "->" + matches);
+
 		if(matches != null) {
 			for(IProcessingRecipe recipe : matches) {
 				if(recipe != null && recipe.inputMatches(input)) {
+					Log.debug("Matching recipe " + recipe);
 					return recipe;
 				}
 			}
@@ -41,15 +44,19 @@ public final class ProcessingRegistry {
 	}
 	
 	public static void registerRecipe(int machine, IProcessingRecipe recipe) {
-		Map<Integer, IProcessingRecipe[]> recipes = ProcessingRegistry.recipes[machine];
+		Map<Item, IProcessingRecipe[]> recipes = ProcessingRegistry.recipes[machine];
 
-		Integer key = Item.getIdFromItem(recipe.getInput().getItem());
+		Item key = recipe.getInput().getItem();
+		
+		Log.debug("Registering recipe for machine " + machine + ": " + recipe.getInput().getItem() + "->" + recipe);
 		
 		IProcessingRecipe[] matches = recipes.get(key);
 		
 		if(matches == null) {
+			Log.debug("First recipe for this item.");
 			matches = new IProcessingRecipe[1];
 		} else {
+			Log.debug(matches.length + ". recipe for this item.");
 			matches = Arrays.copyOf(matches, matches.length + 1);
 		}
 		matches[matches.length - 1] = recipe;

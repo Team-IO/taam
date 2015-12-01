@@ -7,6 +7,14 @@ item.taam.ingot.copper.name=Copper Ingot
 item.taam.ingot.aluminum.name=Aluminum Ingot
 item.taam.ingot.bauxite.name=The Impossible Bauxite Ingot
 item.taam.ingot.kaolinite.name=The Impossible Kaolinite Ingot
+# Dusts
+item.taam.dust.tin.name=Tin Dust
+item.taam.dust.copper.name=Copper Dust
+item.taam.dust.aluminum.name=Aluminum Dust
+item.taam.dust.bauxite.name=Bauxite Dust
+item.taam.dust.kaolinite.name=The Impossible Kaolinite Dust
+item.taam.dust.gold.name=Gold Dust
+item.taam.dust.iron.name=Iron Dust
 # Parts (Crafting Items)
 item.taam.part.photocell.name=Photo Cell
 item.taam.part.motor.name=Motor

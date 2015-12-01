@@ -13,9 +13,9 @@ import net.teamio.taam.Taam;
 
 public class ItemWithMetadata extends Item {
 
-	private IIcon[] iconList;
+	protected IIcon[] iconList;
 	private Enum<?>[] metaValues;
-	private String baseName;
+	protected String baseName;
 	
 	public ItemWithMetadata(String baseName, Enum<?>[] metaValues) {
 		super();

@@ -2,8 +2,6 @@ package net.teamio.taam.content.common;
 
 import java.util.List;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -12,6 +10,9 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 import net.teamio.taam.Taam;
+import net.teamio.taam.Taam.BLOCK_ORE_META;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockOre extends Block {
 
@@ -58,10 +59,14 @@ public class BlockOre extends Block {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerBlockIcons(IIconRegister ir) {
-		Enum<?>[] values = Taam.BLOCK_ORE_META.values();
+		BLOCK_ORE_META[] values = Taam.BLOCK_ORE_META.values();
 		iconList = new IIcon[values.length];
 		for (int i = 0; i < values.length; i++) {
-			iconList[i] = ir.registerIcon(Taam.MOD_ID + ":ore." + values[i].name());
+			if(values[i].ore) {
+				iconList[i] = ir.registerIcon(Taam.MOD_ID + ":ore." + values[i].name());
+			} else {
+				iconList[i] = ir.registerIcon(Taam.MOD_ID + ":ore.impossible");
+			}
 		}
 	}
 	
@@ -69,9 +74,11 @@ public class BlockOre extends Block {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void getSubBlocks(Item item, CreativeTabs creativeTab, List list) {
-		Enum<?>[] values = Taam.BLOCK_ORE_META.values();
+		BLOCK_ORE_META[] values = Taam.BLOCK_ORE_META.values();
 		for (int i = 0; i < values.length; i++) {
-			list.add(new ItemStack(item, 1, i));
+			if(values[i].ore) {
+				list.add(new ItemStack(item, 1, i));
+			}
 		}
 	}
 

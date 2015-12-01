@@ -414,7 +414,8 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 			return null;
 		}
 		
-		return ProcessingRegistry.getRecipe(machine, input);
+		IProcessingRecipe recipe = ProcessingRegistry.getRecipe(machine, input);
+		return recipe;
 	}
 
 	@Override

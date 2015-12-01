@@ -177,8 +177,8 @@ public class TaamMain {
 		GameRegistry.registerItem(new ItemProductionLine(blockProductionLine, blockProductionLine, Taam.BLOCK_PRODUCTIONLINE_META.valuesAsString()), Taam.BLOCK_PRODUCTIONLINE, Taam.MOD_ID);
 		GameRegistry.registerItem(new ItemAttachable(blockProductionLineAttachable, blockProductionLineAttachable, Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META.valuesAsString()), Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE, Taam.MOD_ID);
 //		GameRegistry.registerBlock(blockSlidingDoor, ItemBlock.class, Taam.BLOCK_SLIDINGDOOR);
-		GameRegistry.registerBlock(blockOre, null, Taam.BLOCK_ORE);
 		GameRegistry.registerItem(new ItemMultiTexture(blockOre, blockOre, Taam.BLOCK_ORE_META.valuesAsString()), Taam.BLOCK_ORE, Taam.MOD_ID);
+		GameRegistry.registerBlock(blockOre, null, Taam.BLOCK_ORE);
 		
 		GameRegistry.registerTileEntity(TileEntitySensor.class, Taam.TILEENTITY_SENSOR);
 		GameRegistry.registerTileEntity(TileEntityChute.class, Taam.TILEENTITY_CHUTE);
@@ -219,7 +219,6 @@ public class TaamMain {
 
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
-
 	}
 	
 	public static void oreRegistration(){

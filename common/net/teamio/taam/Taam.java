@@ -28,12 +28,25 @@ public final class Taam {
 	public static final String BLOCK_MAGNET_RAIL = "taam.magnet_rail";
 	
 	public static enum BLOCK_ORE_META {
-		copper,
-		tin,
-		aluminum,
-		bauxite,  //Ore Only!
-		kaolinite //Ore Only!
+		copper(true, true, true),
+		tin(true, true, true),
+		aluminum(true, true, true),
+		bauxite(true, false, true),  //No Ingot
+		kaolinite(true, false, false), //Currently, Ore Only!
+		
+		//Vanilla requires only the "custom" stuff
+		gold(false, false, true),
+		iron(false, false, true),
 		;
+		
+		public final boolean ore, ingot, dust;
+		
+		private BLOCK_ORE_META(boolean ore, boolean ingot, boolean dust) {
+			this.ore = ore;
+			this.ingot = ingot;
+			this.dust = dust;
+		}
+		
 		public static String[] valuesAsString() {
 			Enum<?>[] valuesAsEnum = values();
 			String[] valuesAsString = new String[valuesAsEnum.length];
@@ -42,16 +55,24 @@ public final class Taam {
 			}
 			return valuesAsString;
 		}
+		
+		public static BLOCK_ORE_META valueOf(int meta) {
+			BLOCK_ORE_META[] valuesAsEnum = values();
+			if(meta < 0 || meta > valuesAsEnum.length) {
+				return copper;
+			}
+			return valuesAsEnum[meta];
+		}
 	};
 	
-	/**
-	 * Skip non-ingot stuff when registering ingots & smelting recipes
-	 * @param meta
-	 * @return
-	 */
-	public static boolean isOreOnly(int meta) {
-		return meta == 3 || meta == 4;
-	}
+//	/**
+//	 * Skip non-ingot stuff when registering ingots & smelting recipes
+//	 * @param meta
+//	 * @return
+//	 */
+//	public static boolean isOreOnly(int meta) {
+//		return meta == 3 || meta == 4;
+//	}
 	
 	public static enum BLOCK_PRODUCTIONLINE_META {
 		conveyor1,

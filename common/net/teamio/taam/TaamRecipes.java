@@ -6,6 +6,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
+import net.teamio.taam.Taam.BLOCK_ORE_META;
 import net.teamio.taam.conveyors.api.ChanceBasedRecipe;
 import net.teamio.taam.conveyors.api.ChancedOutput;
 import net.teamio.taam.conveyors.api.ProcessingRegistry;
@@ -18,16 +19,25 @@ public class TaamRecipes {
 		 * Crusher
 		 */
 		
-		for(int meta = 0 ; meta < Taam.BLOCK_ORE_META.values().length;meta++) {
-			if (Taam.isOreOnly(meta)) {
+		BLOCK_ORE_META[] values = Taam.BLOCK_ORE_META.values();
+		for(int meta = 0; meta < values.length; meta++) {
+			if(!values[meta].dust) {
 				continue;
 			}
-			ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
-					new ChanceBasedRecipe(new ItemStack(TaamMain.blockOre, 1, meta),
-						new ChancedOutput(new ItemStack(TaamMain.itemDust, 2, meta), 1.0f),
-						new ChancedOutput(new ItemStack(Blocks.cobblestone), 0.4f),
-						new ChancedOutput(new ItemStack(Blocks.mossy_cobblestone), 0.0001f)
-						));
+			if(values[meta].ore) {
+				ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
+						new ChanceBasedRecipe(new ItemStack(TaamMain.blockOre, 1, meta),
+							new ChancedOutput(new ItemStack(TaamMain.itemDust, 2, meta), 1.0f),
+							new ChancedOutput(new ItemStack(Blocks.cobblestone), 0.4f),
+							new ChancedOutput(new ItemStack(Blocks.mossy_cobblestone), 0.0001f)
+							));
+			}
+			if(values[meta].ingot) {
+				ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
+						new ChanceBasedRecipe(new ItemStack(TaamMain.itemIngot, 1, meta),
+							new ChancedOutput(new ItemStack(TaamMain.itemDust, 1, meta), 1.0f)
+							));
+			}
 		}
 		
 		ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
@@ -97,14 +107,14 @@ public class TaamRecipes {
 		
 	}
 	public static void addSmeltingRecipes(){
-		//TODO: Remove Bauxite and Kaolinit ore furnace recipes
-		for(int meta = 0; meta < Taam.BLOCK_ORE_META.values().length; meta++) {
-			if(Taam.isOreOnly(meta)) {
+		BLOCK_ORE_META[] values = Taam.BLOCK_ORE_META.values();
+		for(int meta = 0; meta < values.length; meta++) {
+			if(!values[meta].ingot || !values[meta].ore) {
 				continue;
 			}
 			GameRegistry.addSmelting(new ItemStack(TaamMain.blockOre, 1, meta), new ItemStack(TaamMain.itemIngot, 1, meta), 1);
 		}
-	
+		// Resin -> Rubber Bar
 		GameRegistry.addSmelting(new ItemStack(TaamMain.itemMaterial,1,Taam.ITEM_MATERIAL_META.resin.ordinal()), new ItemStack(TaamMain.itemMaterial, 1, Taam.ITEM_MATERIAL_META.rubber_bar.ordinal()), 1);
 	
 	}

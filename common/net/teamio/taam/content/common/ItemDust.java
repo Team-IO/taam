@@ -1,6 +1,11 @@
 package net.teamio.taam.content.common;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.util.IIcon;
 import net.teamio.taam.Taam;
+import net.teamio.taam.Taam.BLOCK_ORE_META;
 import net.teamio.taam.content.ItemWithMetadata;
 
 public class ItemDust extends ItemWithMetadata {
@@ -10,7 +15,21 @@ public class ItemDust extends ItemWithMetadata {
 
 	@Override
 	public boolean isValidMetadata(int meta) {
-		return !Taam.isOreOnly(meta) && super.isValidMetadata(meta);
+		return Taam.BLOCK_ORE_META.valueOf(meta).dust && super.isValidMetadata(meta);
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void registerIcons(IIconRegister ir) {
+		BLOCK_ORE_META[] values = Taam.BLOCK_ORE_META.values();
+		iconList = new IIcon[values.length];
+		for (int i = 0; i < values.length; i++) {
+			if(values[i].dust) {
+				iconList[i] = ir.registerIcon(Taam.MOD_ID + ":" + baseName + "." + values[i].name());
+			} else {
+				iconList[i] = ir.registerIcon(Taam.MOD_ID + ":" + baseName + ".impossible");
+			}
+		}
 	}
 
 }
