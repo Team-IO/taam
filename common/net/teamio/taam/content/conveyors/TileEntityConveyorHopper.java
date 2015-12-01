@@ -158,7 +158,7 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 					int unableToInsert = InventoryUtils.insertItem(range, ejectStack, false);
 					
 					// If we fit anything, decrease inventory accordingly
-					if(unableToInsert < stack.stackSize) {
+					if(unableToInsert < ejectStack.stackSize) {
 						slotToDecrease = i;
 						amountToDecrease = ejectStack.stackSize - unableToInsert;
 						break;
