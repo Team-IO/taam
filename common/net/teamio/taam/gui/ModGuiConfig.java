@@ -31,11 +31,13 @@ public class ModGuiConfig extends GuiConfig {
 		List<IConfigElement> elements = new ArrayList<IConfigElement>();
 		ConfigElement<Object> cfgEl = new ConfigElement<Object>(Config.config.getCategory(Configuration.CATEGORY_GENERAL));
 		ConfigElement<Object> cfgElMultitronix = new ConfigElement<Object>(Config.config.getCategory("multitronix"));
-		ConfigElement<Object> cfgElProductionline = new ConfigElement<Object>(Config.config.getCategory("production_line_appliances"));
+		ConfigElement<Object> cfgElProductionline = new ConfigElement<Object>(Config.config.getCategory("production_line"));
+		ConfigElement<Object> cfgElProductionline_appliances = new ConfigElement<Object>(Config.config.getCategory("production_line_appliances"));
 		ConfigElement<Object> cfgElWorldgen = new ConfigElement<Object>(Config.config.getCategory("worldgen"));
 		elements.addAll(cfgEl.getChildElements());
 		elements.addAll(cfgElMultitronix.getChildElements());
 		elements.addAll(cfgElProductionline.getChildElements());
+		elements.addAll(cfgElProductionline_appliances.getChildElements());
 		elements.addAll(cfgElWorldgen.getChildElements());
 		return elements;
 	}
