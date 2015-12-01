@@ -42,7 +42,11 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	
 	private boolean isEnd = false;
 	private boolean isBegin = false;
-	//TODO: More State to fill Gaps between conveyors (sideways fillers)
+	public boolean renderEnd = false;
+	public boolean renderBegin = false;
+	public boolean renderRight = false;
+	public boolean renderLeft = false;
+	public boolean renderAbove = false;
 	
 	/*
 	 * Appliance state
@@ -89,9 +93,11 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 			TileEntity te = worldObj.getTileEntity(xCoord + direction.offsetX, yCoord + direction.offsetY, zCoord + direction.offsetZ);
 			if(te instanceof TileEntityConveyor) {
 				TileEntityConveyor next = (TileEntityConveyor)te;
-				isEnd = next.speedLevel != speedLevel || next.getFacingDirection() != direction;
+				renderEnd = next.speedLevel != speedLevel;
+				isEnd = renderEnd || next.getFacingDirection() != direction;
 			} else {
 				isEnd = true;
+				renderEnd = te instanceof IConveyorAwareTE;
 			}
 			
 			// Check behind
@@ -99,10 +105,40 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 			te = worldObj.getTileEntity(xCoord + inverse.offsetX, yCoord + inverse.offsetY, zCoord + inverse.offsetZ);
 			if(te instanceof TileEntityConveyor) {
 				TileEntityConveyor next = (TileEntityConveyor)te;
-				isBegin = next.speedLevel != speedLevel || next.getFacingDirection() != direction;
+				renderBegin = next.speedLevel != speedLevel;
+				isBegin = renderBegin || next.getFacingDirection() != direction;
 			} else {
 				isBegin = true;
+				renderBegin = te instanceof IConveyorAwareTE;
 			}
+			
+			// Check right
+			inverse = direction.getRotation(ForgeDirection.UP);
+			te = worldObj.getTileEntity(xCoord + inverse.offsetX, yCoord + inverse.offsetY, zCoord + inverse.offsetZ);
+			
+			if(te instanceof TileEntityConveyor) {
+				TileEntityConveyor next = (TileEntityConveyor)te;
+				ForgeDirection nextFacing = next.getFacingDirection();
+				renderRight = next.speedLevel != speedLevel && nextFacing != direction && nextFacing != direction.getOpposite();
+			} else {
+				renderRight = te instanceof IConveyorAwareTE;
+			}
+			
+			// Check left
+			inverse = direction.getRotation(ForgeDirection.DOWN);
+			te = worldObj.getTileEntity(xCoord + inverse.offsetX, yCoord + inverse.offsetY, zCoord + inverse.offsetZ);
+			
+			if(te instanceof TileEntityConveyor) {
+				TileEntityConveyor next = (TileEntityConveyor)te;
+				ForgeDirection nextFacing = next.getFacingDirection();
+				renderLeft = next.speedLevel != speedLevel && nextFacing != direction && nextFacing != direction.getOpposite();
+			} else {
+				renderLeft = te instanceof IConveyorAwareTE;
+			}
+			
+			// Check above
+			renderAbove = worldObj.isSideSolid(xCoord, yCoord + 1, zCoord, ForgeDirection.DOWN) ||
+					worldObj.getTileEntity(xCoord, yCoord + 1, zCoord) instanceof IConveyorAwareTE;
 		}
 	}
 

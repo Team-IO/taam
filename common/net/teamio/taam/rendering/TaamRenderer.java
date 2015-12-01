@@ -439,22 +439,70 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 		GL11.glPopMatrix();
 	}
 	
-	//TODO: Don't display end cap when not pointing to wards a block
 	public void renderConveyor(TileEntityConveyor tileEntity, double x, double y, double z, int meta) {
 		
 		boolean isWood;
 		boolean isHighSpeed;
+		
+		boolean renderEnd = false;
+		boolean renderBegin = false;
+		boolean end = true;
+		boolean begin = true;
+		boolean renderAbove = false;
+		boolean renderLeft = false;
+		boolean renderRight = false;
+
 		if(tileEntity == null) {
 			isWood = meta == 0;
 			isHighSpeed = meta == 2;
 		} else {
 			isWood = tileEntity.getSpeedLevel() == 0;
 			isHighSpeed = tileEntity.getSpeedLevel() >= 2;
+
+			end = tileEntity.isEnd();
+			begin = tileEntity.isBegin();
+			renderEnd = tileEntity.renderEnd;
+			renderBegin = tileEntity.renderBegin;
+			
+			renderAbove = tileEntity.renderAbove;
+			renderLeft = tileEntity.renderLeft;
+			renderRight = tileEntity.renderRight;
 		}
 		
 		conveyorPrepareRendering(tileEntity, x, y, z, isWood);
 		
-		if(tileEntity != null && !tileEntity.isEnd()) {
+		if(!renderLeft && !renderRight) {
+			if(isWood) {
+				modelConveyor.renderPart("Conveyor_Direction_Marker_Wood_cdmdl_wood");
+			} else {
+				modelConveyor.renderPart("Conveyor_Direction_Marker_Alu_cdmdl_alu");
+			}
+		}
+		
+		if(renderAbove) {
+			if(isWood) {
+				modelConveyor.renderPart("Support_Above_Wood_samdl_wood");
+			} else {
+				modelConveyor.renderPart("Support_Above_Alu_samdl_alu");
+			}
+		}
+		
+		if(end) {
+			modelConveyor.renderPart("Conveyor_End_cemdl");
+			if(isWood) {
+				modelConveyor.renderPart("Conveyor_End_Framing_Wood_cemdl_wood");
+				modelConveyor.renderPart("Conveyor_End_Walz_Wood_cwalzmdl_wood");
+				modelConveyor.renderPart("Support_Caps_Wood_scmdl_wood");
+				if(renderEnd)
+					modelConveyor.renderPart("Conveyor_End_Cap_Wood_cecmdl_wood");
+			} else {
+				modelConveyor.renderPart("Conveyor_End_Framing_Alu_cemdl_alu");
+				modelConveyor.renderPart("Conveyor_End_Walz_Alu_cwalzmdl_alu");
+				modelConveyor.renderPart("Support_Caps_Alu_scmdl_alu");
+				if(renderEnd)
+					modelConveyor.renderPart("Conveyor_End_Cap_Alu_cecmdl_alu");
+			}
+		} else {
 			modelConveyor.renderPart("Conveyor_Straight_csmdl");
 			if(isWood) {
 				modelConveyor.renderPart("Conveyor_Straight_Framing_Wood_csmdl_wood");
@@ -462,19 +510,6 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 			} else {
 				modelConveyor.renderPart("Conveyor_Straight_Framing_Alu_csmdl_alu");
 				modelConveyor.renderPart("Conveyor_Straight_Walz_Alu_cwalzmdl_alu");
-			}
-		} else {
-			modelConveyor.renderPart("Conveyor_End_cemdl");
-			if(isWood) {
-				modelConveyor.renderPart("Conveyor_End_Framing_Wood_cemdl_wood");
-				modelConveyor.renderPart("Conveyor_End_Walz_Wood_cwalzmdl_wood");
-				modelConveyor.renderPart("Conveyor_End_Cap_Wood_cecmdl_wood");
-				modelConveyor.renderPart("Support_Caps_Wood_scmdl_wood");
-			} else {
-				modelConveyor.renderPart("Conveyor_End_Framing_Alu_cemdl_alu");
-				modelConveyor.renderPart("Conveyor_End_Walz_Alu_cwalzmdl_alu");
-				modelConveyor.renderPart("Conveyor_End_Cap_Alu_cecmdl_alu");
-				modelConveyor.renderPart("Support_Caps_Alu_scmdl_alu");
 			}
 		}
 		if(isHighSpeed) {
@@ -485,7 +520,22 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 		GL11.glRotatef(180, 0, 1, 0);
 		GL11.glTranslated(-0.5, 0, -0.5);
 		
-		if(tileEntity != null && !tileEntity.isBegin()) {
+		if(begin) {
+			modelConveyor.renderPart("Conveyor_End_cemdl");
+			if(isWood) {
+				modelConveyor.renderPart("Conveyor_End_Framing_Wood_cemdl_wood");
+				modelConveyor.renderPart("Conveyor_End_Walz_Wood_cwalzmdl_wood");
+				modelConveyor.renderPart("Support_Caps_Wood_scmdl_wood");
+				if(renderBegin)
+					modelConveyor.renderPart("Conveyor_End_Cap_Wood_cecmdl_wood");
+			} else {
+				modelConveyor.renderPart("Conveyor_End_Framing_Alu_cemdl_alu");
+				modelConveyor.renderPart("Conveyor_End_Walz_Alu_cwalzmdl_alu");
+				modelConveyor.renderPart("Support_Caps_Alu_scmdl_alu");
+				if(renderBegin)
+					modelConveyor.renderPart("Conveyor_End_Cap_Alu_cecmdl_alu");
+			}
+		} else {
 			modelConveyor.renderPart("Conveyor_Straight_csmdl");
 			if(isWood) {
 				modelConveyor.renderPart("Conveyor_Straight_Framing_Wood_csmdl_wood");
@@ -494,17 +544,37 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 				modelConveyor.renderPart("Conveyor_Straight_Framing_Alu_csmdl_alu");
 				modelConveyor.renderPart("Conveyor_Straight_Walz_Alu_cwalzmdl_alu");
 			}
-		} else {
-			modelConveyor.renderPart("Conveyor_End_cemdl");
+		}
+		
+		if(renderRight) {
+			GL11.glTranslated(0.5, 0, 0.5);
+			GL11.glRotatef(90, 0, 1, 0);
+			GL11.glTranslated(-0.5, 0, -0.5);
+
 			if(isWood) {
-				modelConveyor.renderPart("Conveyor_End_Framing_Wood_cemdl_wood");
-				modelConveyor.renderPart("Conveyor_End_Walz_Wood_cwalzmdl_wood");
-				modelConveyor.renderPart("Support_Caps_Wood_scmdl_wood");
+				modelConveyor.renderPart("Conveyor_End_Cap_Wood_cecmdl_wood");
 			} else {
-				modelConveyor.renderPart("Conveyor_End_Framing_Alu_cemdl_alu");
-				modelConveyor.renderPart("Conveyor_End_Walz_Alu_cwalzmdl_alu");
-				modelConveyor.renderPart("Support_Caps_Alu_scmdl_alu");
+				modelConveyor.renderPart("Conveyor_End_Cap_Alu_cecmdl_alu");
 			}
+
+			GL11.glTranslated(0.5, 0, 0.5);
+			GL11.glRotatef(-90, 0, 1, 0);
+			GL11.glTranslated(-0.5, 0, -0.5);
+		}
+		if(renderLeft) {
+			GL11.glTranslated(0.5, 0, 0.5);
+			GL11.glRotatef(-90, 0, 1, 0);
+			GL11.glTranslated(-0.5, 0, -0.5);
+
+			if(isWood) {
+				modelConveyor.renderPart("Conveyor_End_Cap_Wood_cecmdl_wood");
+			} else {
+				modelConveyor.renderPart("Conveyor_End_Cap_Alu_cecmdl_alu");
+			}
+
+			GL11.glTranslated(0.5, 0, 0.5);
+			GL11.glRotatef(90, 0, 1, 0);
+			GL11.glTranslated(-0.5, 0, -0.5);
 		}
 		
 		if(tileEntity != null) {
