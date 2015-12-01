@@ -1,0 +1,8 @@
+{
+	"repo": "http://files.minecraftforge.net/maven/codechicken/CodeChickenLib/${mcversion}-${cclversion}/",
+	"packed": "lib/",
+	"file": "CodeChickenLib-${mcversion}-${cclversion}-universal.jar",
+	"dev": "CodeChickenLib-${mcversion}-${cclversion}-dev.jar",
+	"class": "codechicken.lib.asm.ASMHelper",
+	"coreLib": true
+}

@@ -80,6 +80,10 @@ public class TaamMain {
 	
 	public static FluidDye[] fluidsDye;
 	
+	public TaamMain() {
+        DepLoader.load();
+	}
+	
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
 		ModMetadata meta = event.getModMetadata();
