@@ -11,13 +11,11 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 import net.teamio.taam.Config;
 import net.teamio.taam.Taam;
 import net.teamio.taam.content.conveyors.TileEntityConveyor;
 import net.teamio.taam.conveyors.IConveyorAppliance;
 import net.teamio.taam.conveyors.api.IConveyorApplianceHost;
-import codechicken.lib.vec.Vector3;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -72,10 +70,10 @@ public class ItemDebugTool extends Item {
 			return true;
 		}
 					
-		ForgeDirection dir = ForgeDirection.getOrientation(side);
-        ForgeDirection dirOpp = dir.getOpposite();
+		//ForgeDirection dir = ForgeDirection.getOrientation(side);
+        //ForgeDirection dirOpp = dir.getOpposite();
 
-        Vector3 localHit = new Vector3(hitx, hity, hitz);
+        //Vector3 localHit = new Vector3(hitx, hity, hitz);
         
 		
         boolean didSomething = false;

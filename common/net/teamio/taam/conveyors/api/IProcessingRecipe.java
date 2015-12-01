@@ -9,6 +9,8 @@ public interface IProcessingRecipe {
 	public boolean inputMatches(ItemStack itemStack);
 	
 	public ItemStack getInput();
+	
+	public String getInputOreDict();
 
 	public ChancedOutput[] getOutput();
 

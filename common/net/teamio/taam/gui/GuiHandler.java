@@ -1,6 +1,5 @@
 package net.teamio.taam.gui;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.tileentity.TileEntity;
@@ -25,7 +24,7 @@ public class GuiHandler implements IGuiHandler {
 			}
 			break;
 		case 1://Entity
-			Entity entity = world.getEntityByID(x);
+			//Entity entity = world.getEntityByID(x);
 			break;
 		}
 		return null;
@@ -45,7 +44,7 @@ public class GuiHandler implements IGuiHandler {
 			}
 			break;
 		case 1://Entity
-			Entity entity = world.getEntityByID(x);
+			//Entity entity = world.getEntityByID(x);
 			break;
 		}
 		return null;

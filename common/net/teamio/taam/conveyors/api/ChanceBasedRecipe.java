@@ -5,16 +5,23 @@ import java.util.Arrays;
 import java.util.Random;
 
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.oredict.OreDictionary;
+
+import org.apache.commons.lang3.ArrayUtils;
 
 public class ChanceBasedRecipe implements IProcessingRecipe {
 
 	private ItemStack input;
+	private String inputOreDict;
 	private ChancedOutput[] output;
 	
-	
+
+	public ChanceBasedRecipe(String inputOreDict, ChancedOutput... output) {
+		this.inputOreDict = inputOreDict;
+		this.output = output;
+	}
 	
 	public ChanceBasedRecipe(ItemStack input, ChancedOutput... output) {
-		super();
 		this.input = input;
 		this.output = output;
 	}
@@ -23,6 +30,7 @@ public class ChanceBasedRecipe implements IProcessingRecipe {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + ((inputOreDict == null) ? 0 : inputOreDict.hashCode());
 		result = prime * result + ((input == null) ? 0 : input.hashCode());
 		result = prime * result + Arrays.hashCode(output);
 		return result;
@@ -51,6 +59,11 @@ public class ChanceBasedRecipe implements IProcessingRecipe {
 	public ItemStack getInput() {
 		return input;
 	}
+	
+	@Override
+	public String getInputOreDict() {
+		return inputOreDict;
+	}
 
 	@Override
 	public ChancedOutput[] getOutput() {
@@ -73,9 +86,15 @@ public class ChanceBasedRecipe implements IProcessingRecipe {
 	@Override
 	public boolean inputMatches(ItemStack itemStack) {
 		if(itemStack == null) {
-			return input != null;
+			return input != null || inputOreDict != null;
 		} else {
-			return input.isItemEqual(itemStack);
+			if(input == null) {
+				int[] oreIDs = OreDictionary.getOreIDs(itemStack);
+				int myID = OreDictionary.getOreID(inputOreDict);
+				return ArrayUtils.contains(oreIDs, myID);
+			} else {
+				return input.isItemEqual(itemStack) || OreDictionary.itemMatches(itemStack, input, true);
+			}
 		}
 	}
 	
