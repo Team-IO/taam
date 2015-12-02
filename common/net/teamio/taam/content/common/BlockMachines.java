@@ -2,6 +2,8 @@ package net.teamio.taam.content.common;
 
 import java.util.List;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -16,8 +18,6 @@ import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.BaseBlock;
 import net.teamio.taam.content.IWorldInteractable;
 import net.teamio.taam.util.TaamUtil;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockMachines extends BaseBlock {
 
@@ -25,6 +25,8 @@ public class BlockMachines extends BaseBlock {
 		super(Material.wood);
 		this.setBlockTextureName(Taam.MOD_ID + ":tech_block");
 		this.setStepSound(soundTypeWood);
+		this.setHardness(6);
+		this.setHarvestLevel("pickaxe", 2);
 	}
 	
 	@Override
