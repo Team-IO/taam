@@ -168,7 +168,11 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 				
 				outputQueue = recipe.getOutput(input, worldObj.rand);
 				
-				timeout += 15;
+				if(mode == Grinder) {
+					timeout += Config.pl_processor_grinder_timeout;
+				} else {
+					timeout += Config.pl_processor_crusher_timeout;
+				}
 			}
 		}
 		
@@ -228,14 +232,30 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 		if(input == null) {
 			return false;
 		}
-		//TODO: Config
-		timeout += 1;
+		timeout += Config.pl_processor_shredder_timeout;
 		
 		return true;
 	}
 
 	public byte getMode() {
 		return mode;
+	}
+
+	private IProcessingRecipe getRecipe(ItemStack input) {
+		int machine;
+		switch(mode) {
+		case Crusher:
+			machine = ProcessingRegistry.CRUSHER;
+			break;
+		case Grinder:
+			machine = ProcessingRegistry.GRINDER;
+			break;
+		default:
+			return null;
+		}
+		
+		IProcessingRecipe recipe = ProcessingRegistry.getRecipe(machine, input);
+		return recipe;
 	}
 	
 	@Override
@@ -422,6 +442,20 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 	}
 
 	@Override
+	public double getInsertMaxY() {
+		return 0.9;
+	}
+
+	@Override
+	public double getInsertMinY() {
+		return 0.3;
+	}
+	
+	/*
+	 * ISidedInventory implementation
+	 */
+
+	@Override
 	public int[] getAccessibleSlotsFromSide(int side) {
 		if(side == ForgeDirection.UP.ordinal()) {
 			return new int[] { 0 };
@@ -440,23 +474,6 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 		} else {
 			return false;
 		}
-	}
-
-	private IProcessingRecipe getRecipe(ItemStack input) {
-		int machine;
-		switch(mode) {
-		case Crusher:
-			machine = ProcessingRegistry.CRUSHER;
-			break;
-		case Grinder:
-			machine = ProcessingRegistry.GRINDER;
-			break;
-		default:
-			return null;
-		}
-		
-		IProcessingRecipe recipe = ProcessingRegistry.getRecipe(machine, input);
-		return recipe;
 	}
 
 	@Override

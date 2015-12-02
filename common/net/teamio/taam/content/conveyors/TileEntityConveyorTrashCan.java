@@ -35,6 +35,11 @@ public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements
 		fillLevel = tag.getFloat("fillLevel");
 		direction = ForgeDirection.getOrientation(tag.getInteger("direction"));
 	}
+
+	public void clearOut() {
+		fillLevel = 0;
+		updateState();
+	}
 	
 	/*
 	 * IInventory implementation
@@ -171,9 +176,14 @@ public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements
 		return null;
 	}
 
-	public void clearOut() {
-		fillLevel = 0;
-		updateState();
+	@Override
+	public double getInsertMaxY() {
+		return 0.9;
+	}
+
+	@Override
+	public double getInsertMinY() {
+		return 0.3;
 	}
 
 

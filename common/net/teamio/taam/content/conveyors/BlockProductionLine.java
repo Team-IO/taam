@@ -21,6 +21,7 @@ import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.BaseBlock;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.content.IWorldInteractable;
+import net.teamio.taam.content.common.TileEntityChute;
 import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.conveyors.api.IConveyorApplianceHost;
 import net.teamio.taam.util.TaamUtil;
@@ -108,6 +109,9 @@ public class BlockProductionLine extends BaseBlock {
 		} else if(metadata == 8) {
 			// Crusher
 			return new TileEntityConveyorProcessor(TileEntityConveyorProcessor.Crusher);
+		} else if(metadata == 9) {
+			// Chute
+			return new TileEntityChute();
 		}
 		return null;
 	}
