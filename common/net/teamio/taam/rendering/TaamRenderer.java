@@ -663,6 +663,18 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 
 		renderConveyorProcessorWalz(mode, spinning);
 
+		switch(mode) {
+		case TileEntityConveyorProcessor.Crusher:
+			modelConveyor.renderPart("Processor_Marker_Crusher_pmmdl_cru");
+			break;
+		case TileEntityConveyorProcessor.Grinder:
+			modelConveyor.renderPart("Processor_Marker_Grinder_pmmdl_gri");
+			break;
+		case TileEntityConveyorProcessor.Shredder:
+			modelConveyor.renderPart("Processor_Marker_Shredder_pmmdl_shr");
+			break;
+		}
+		
 		modelConveyor.renderPart("Support_Caps_Alu_scmdl_alu");
 		
 		conveyorEndRendering();
