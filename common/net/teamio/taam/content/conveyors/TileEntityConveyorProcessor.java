@@ -1,5 +1,8 @@
 package net.teamio.taam.content.conveyors;
 
+import java.util.List;
+
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -8,9 +11,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.IHopper;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.common.util.ForgeDirection;
+import net.teamio.taam.Config;
 import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IRedstoneControlled;
@@ -36,7 +42,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 	private InventorySimple inventory;
 	private byte mode;
 
-	private byte redstoneMode;
+	private byte redstoneMode = IRedstoneControlled.MODE_ACTIVE_ON_LOW;
 	
 	private byte progress;
 	private int timeout;
@@ -69,36 +75,69 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 
 		ConveyorUtil.tryInsertItemsFromWorld(this, worldObj, null, false);
 		
-		isShutdown = false;
-		
+		boolean newShutdown = false;
 		
 		boolean redstoneHigh = worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
 		
 		// Redstone. Other criteria?
 		if(redstoneMode == IRedstoneControlled.MODE_ACTIVE_ON_HIGH && !redstoneHigh) {
-			isShutdown = true;
+			newShutdown = true;
 		} else if(redstoneMode == IRedstoneControlled.MODE_ACTIVE_ON_LOW && redstoneHigh) {
-			isShutdown = true;
+			newShutdown = true;
 		} else if(redstoneMode > 4 || redstoneMode < 0) {
-			isShutdown = worldObj.rand.nextBoolean();
+			newShutdown = worldObj.rand.nextBoolean();
 		}
 		
-		if(isShutdown) {
-			return;
+		boolean needsUpdate = false;
+		
+		if(isShutdown != newShutdown) {
+			isShutdown = newShutdown;
+			needsUpdate = true;
 		}
 		
-		boolean decrease = false;
-		
-		if(mode == Shredder) {
-			decrease = processShredder();
-		} else {
-			decrease = processOther();
+		if(!isShutdown) {
+			boolean decrease = false;
+			
+			if(mode == Shredder) {
+				decrease = processShredder();
+			} else {
+				decrease = processOther();
+			}
+			
+			if(decrease) {
+				decrStackSize(0, 1);
+				needsUpdate = false; // decrStackSize already updates
+			}
+			
+			if(worldObj.rand.nextFloat() < Config.pl_processor_hurt_chance) {
+				hurtEntities();
+			}
 		}
 		
-		if(decrease) {
-			decrStackSize(0, 1);
+		if(needsUpdate) {
+			updateState();
 		}
 		
+	}
+	
+	private void hurtEntities() {
+		@SuppressWarnings("unchecked")
+		List<EntityLivingBase> entitites = worldObj.getEntitiesWithinAABB(EntityLivingBase.class, AxisAlignedBB.getBoundingBox(xCoord, yCoord, zCoord, xCoord + 1, yCoord + 1, zCoord + 1));
+		for(EntityLivingBase living : entitites) {
+			DamageSource ds = TaamMain.ds_processed;
+			switch(mode) {
+			case Shredder:
+				ds = TaamMain.ds_shredded;
+				break;
+			case Grinder:
+				ds = TaamMain.ds_ground;
+				break;
+			case Crusher:
+				ds = TaamMain.ds_crushed;
+				break;
+			}
+			living.attackEntityFrom(ds, 5);
+		}
 	}
 	
 	private boolean processOther() {
@@ -206,9 +245,10 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 			tag.setTag("holdback", InventoryUtils.writeItemStacksToTag(holdback));
 		}
 		tag.setByte("mode", mode);
-		tag.setByte("redstoneMode", redstoneMode);
+//		tag.setByte("redstoneMode", redstoneMode);
 		tag.setByte("progress", progress);
 		tag.setInteger("timeout", timeout);
+		tag.setBoolean("isShutdown", isShutdown);
 	}
 
 	@Override
@@ -225,9 +265,10 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 		}
 
 		mode = tag.getByte("mode");
-		redstoneMode = tag.getByte("redstoneMode");
+//		redstoneMode = tag.getByte("redstoneMode");
 		progress = tag.getByte("progress");
 		timeout = tag.getInteger("timeout");
+		isShutdown = tag.getBoolean("isShutdown");
 	}
 
 	/*

@@ -5,6 +5,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemMultiTexture;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.DamageSource;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.oredict.OreDictionary;
@@ -81,6 +82,12 @@ public class TaamMain {
 	public static BlockOre blockOre;
 	
 	public static FluidDye[] fluidsDye;
+	
+	public static DamageSource ds_processed = new DamageSource("taam.processed").setDamageBypassesArmor();
+	public static DamageSource ds_shredded = new DamageSource("taam.shredded").setDamageBypassesArmor();
+	public static DamageSource ds_ground = new DamageSource("taam.ground").setDamageBypassesArmor();
+	public static DamageSource ds_crushed = new DamageSource("taam.crushed").setDamageBypassesArmor();
+	public static DamageSource ds_reconfigured = new DamageSource("taam.reconfigured").setDamageIsAbsolute();
 	
 	public TaamMain() {
         DepLoader.load();

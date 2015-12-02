@@ -29,6 +29,9 @@ public class Config {
 	public static int pl_hopper_highspeed_delay = 1;
 	public static int pl_hopper_delay = 8;
 	public static boolean pl_hopper_stackmode_normal_speed = false;
+
+	public static boolean pl_processor_hurt = true;
+	public static float pl_processor_hurt_chance = 0.2f;
 	
 	public static int pl_appl_sprayer_maxProgress = 1;
 	//TODO: Change to mB
@@ -67,6 +70,9 @@ public class Config {
 		pl_hopper_delay = config.getInt("hopper_delay", "production_line", 8, 1, 500, "Drop Delay (ticks) for the conveyor hopper.");
 		pl_hopper_highspeed_delay = config.getInt("hopper_highspeed_delay", "production_line", 0, 1, 500, "Drop Delay (ticks) for the high-speed conveyor hopper.");
 		pl_hopper_stackmode_normal_speed = config.getBoolean("hopper_stackmode_normal_speed", "production_line", true, "Disabling this makes the High-Speed Hoppers eject in 'slow' speed when in stack-mode. (Same delay as the regular conveyor hopper)");
+		
+		pl_processor_hurt = config.getBoolean("pl_processor_hurt", "production_line", true, "Decides, whether standing on conveyor processors (Grinder, Crusher, Shredder) should hurt players/NPCs.");
+		pl_processor_hurt_chance = config.getFloat("pl_processor_hurt_chance", "production_line", 0.2f, 0.00001f, 1f, "The likelyhood of being hurt by a processor. Calculated every tick.");
 		
 		pl_appl_sprayer_maxProgress = config.getInt("sprayer_maxProgress", "production_line_appliances", 20, 1, 500, "Maximum processing steps for the sprayer appliance.");
 		pl_appl_sprayer_resourceUsage = config.getInt("sprayer_resourceUsage", "production_line_appliances", 1, 1, 500, "Resource usage per spray step in the sprayer.");

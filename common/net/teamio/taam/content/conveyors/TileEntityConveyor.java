@@ -180,7 +180,6 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 				EntityItem item = new EntityItem(worldObj, posX, posY, posZ, slotObject.itemStack);
 				if(withVelocity) {
 					float speed = (Byte.MAX_VALUE - getSpeedsteps()) * 0.0019f;
-					System.out.println(speed);
 					item.motionX = direction.offsetX * speed;
 					item.motionY = direction.offsetY * speed;
 					item.motionZ = direction.offsetZ * speed;

@@ -642,32 +642,39 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 	
 	public void renderConveyorProcessor(TileEntityConveyorProcessor tileEntity, double x, double y, double z, byte forceMode) {
 		byte mode = forceMode;
-		if(forceMode == 0 && tileEntity != null) {
-			mode = tileEntity.getMode();
+		boolean spinning = true;
+		if(tileEntity != null) {
+			if(forceMode == 0) {
+				mode = tileEntity.getMode();
+			}
+			spinning = !tileEntity.isShutdown;
 		}
+		
 		conveyorPrepareRendering(tileEntity, x, y, z, false);
 		
 		modelConveyor.renderPart("Conveyor_Processing_Chute_chutemdl");
 		modelConveyor.renderPart("Support_Caps_Alu_scmdl_alu");
 
-		renderConveyorProcessorWalz(mode);
+		renderConveyorProcessorWalz(mode, spinning);
 		
 		GL11.glTranslated(0.5, 0, 0.5);
 		GL11.glRotatef(180, 0, 1, 0);
 		GL11.glTranslated(-0.5, 0, -0.5);
 
-		renderConveyorProcessorWalz(mode);
+		renderConveyorProcessorWalz(mode, spinning);
 
 		modelConveyor.renderPart("Support_Caps_Alu_scmdl_alu");
 		
 		conveyorEndRendering();
 	}
 	
-	private void renderConveyorProcessorWalz(byte mode) {
+	private void renderConveyorProcessorWalz(byte mode, boolean spinning) {
 		GL11.glPushMatrix();
-		GL11.glTranslated(0.5, 0.25683, 0.61245);
-		GL11.glRotatef(-rot*16, 1, 0, 0);
-		GL11.glTranslated(-0.5, -0.25683, -0.61245);
+		if(spinning) {
+			GL11.glTranslated(0.5, 0.25683, 0.61245);
+			GL11.glRotatef(-rot*16, 1, 0, 0);
+			GL11.glTranslated(-0.5, -0.25683, -0.61245);
+		}
 		modelConveyor.renderPart("Processor_Walzes");
 		
 		switch(mode) {

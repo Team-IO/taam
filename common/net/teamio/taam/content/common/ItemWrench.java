@@ -4,11 +4,13 @@ import java.util.List;
 
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
 import net.teamio.taam.Taam;
@@ -52,13 +54,21 @@ public class ItemWrench extends Item {
 	};
 
 	@Override
+	public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player, Entity entity) {
+		if(player.isSneaking() && entity instanceof EntityLivingBase) {
+			EntityLivingBase entLiving = (EntityLivingBase)entity;
+			entLiving.rotationYawHead = (entLiving.rotationYawHead + 180) % 360f;
+		} else {
+			entity.rotationYaw = (entity.rotationYaw + 180) % 360f;
+		}
+		entity.attackEntityFrom(new EntityDamageSource("taam.reconfigured", player), 3f);
+		return true;
+	}
+	
+	@Override
 	public boolean hitEntity(ItemStack stack, EntityLivingBase source,
 			EntityLivingBase target) {
-		if(target.isSneaking()) {
-			source.rotationYawHead = (source.rotationYawHead + 180) % 360f;
-		} else {
-			source.rotationYaw = (source.rotationYaw + 180) % 360f;
-		}
+		
 		return true;
 	}
 
