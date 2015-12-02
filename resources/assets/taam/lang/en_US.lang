@@ -76,6 +76,7 @@ tile.taam.productionline.sieve.name=Conveyor Sieve
 tile.taam.productionline.shredder.name=Conveyor Shredder
 tile.taam.productionline.grinder.name=Conveyor Grinder
 tile.taam.productionline.crusher.name=Conveyor Crusher
+tile.taam.productionline.chute.name=Conveyor Chute
 
 tile.taam.productionline_attachable.itembag.name=Conveyor Item Bag
 tile.taam.productionline_attachable.trashcan.name=Conveyor Trash Can
