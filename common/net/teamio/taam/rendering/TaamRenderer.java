@@ -338,6 +338,21 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 		GL11.glPushMatrix();
 		GL11.glTranslated(x, y, z);
 		
+		/*
+		 * Rotate if needed
+		 */
+		GL11.glTranslatef(0.5f, 0, 0.5f);
+		
+		if(direction == ForgeDirection.WEST) {
+			GL11.glRotatef(270, 0, 1, 0);
+		} else if(direction == ForgeDirection.NORTH) {
+			GL11.glRotatef(180, 0, 1, 0);
+		} else if(direction == ForgeDirection.EAST) {
+			GL11.glRotatef(90, 0, 1, 0);
+		}
+
+		GL11.glTranslated(-0.5, 0, -0.5);
+		
 		if(tileEntity != null) {
 
 			if(tileEntity instanceof TileEntityConveyorProcessor) {
