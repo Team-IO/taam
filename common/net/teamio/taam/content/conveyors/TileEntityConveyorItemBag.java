@@ -164,7 +164,7 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable implements 
 	}
 
 	@Override
-	public int getSpeedsteps() {
+	public byte getSpeedsteps() {
 		return 1;
 	}
 

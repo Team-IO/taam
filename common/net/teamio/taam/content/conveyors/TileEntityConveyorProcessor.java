@@ -331,7 +331,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 	}
 
 	@Override
-	public int getSpeedsteps() {
+	public byte getSpeedsteps() {
 		return 1;
 	}
 

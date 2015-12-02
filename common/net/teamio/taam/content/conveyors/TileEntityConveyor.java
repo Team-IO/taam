@@ -76,7 +76,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	}
 	
 	@Override
-	public int getSpeedsteps() {
+	public byte getSpeedsteps() {
 		return Config.pl_conveyor_speedsteps[speedLevel];
 	}
 
@@ -267,6 +267,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 			boolean nextSlotFree = false;
 			boolean nextSlotMovable = false;
 			int nextSlotProgress = 0;
+			boolean wrappedIsSameDirection = true;
 			
 			IConveyorAwareTE nextBlock = null;
 			
@@ -299,12 +300,19 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 					nextBlock = (IConveyorAwareTE) te;
 					
 					nextSlotFree = nextBlock.getItemAt(nextSlot) == null;
-					nextSlotMovable = 
-							(
-								nextBlock.canSlotMove(nextSlot) &&
-								nextBlock.getMovementDirection() == direction
-							);
+					wrappedIsSameDirection = nextBlock.getMovementDirection() == direction;
+					nextSlotMovable = nextBlock.canSlotMove(nextSlot) && wrappedIsSameDirection;
 					nextSlotProgress = nextBlock.getMovementProgress(nextSlot);
+					byte nextSpeedSteps = nextBlock.getSpeedsteps();
+					if(nextSpeedSteps != getSpeedsteps()) {
+						if(nextSpeedSteps == 0) {
+							nextSlotProgress = 0;
+						} else {
+							nextSlotProgress = Math.round((nextSlotProgress / (float)nextSpeedSteps) * getSpeedsteps());
+						}
+						System.out.println(nextSlotProgress);
+					}
+					
 				} else {
 					// Drop it
 					nextSlotFree = true;
@@ -337,10 +345,10 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 					}
 				}
 			}
-			if(nextSlotFree || (nextSlotMovable && wrapper.movementProgress < nextSlotProgress)) {
+			if(nextSlotFree || (nextSlotMovable && wrappedIsSameDirection && wrapper.movementProgress < nextSlotProgress)) {
 				wrapper.movementProgress++;
 				if(wrapper.movementProgress > getSpeedsteps()) {
-					wrapper.movementProgress = 0;
+					wrapper.movementProgress = 0;//(byte) getSpeedsteps();
 				}
 			}
 		}
@@ -397,19 +405,27 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	
 	@Override
 	public int insertItemAt(ItemStack item, int slot) {
+		return insertItemAt(item, slot, false);
+	}
+	
+	private int insertItemAt(ItemStack item, int slot, boolean simulate) {
 		ItemWrapper slotObject = items[slot];
 		if(slotObject.itemStack == null) {
-			slotObject.itemStack = item.copy();
-			slotObject.unblock();
-			slotObject.resetMovement();
-			updateState();
-			return slotObject.itemStack.stackSize;
+			if(!simulate) {
+				slotObject.itemStack = item.copy();
+				slotObject.unblock();
+				slotObject.resetMovement();
+				updateState();
+			}
+			return item.stackSize;
 		} else if(slotObject.itemStack.isItemEqual(item)) {
 			int availableSpace = slotObject.itemStack.getMaxStackSize() - slotObject.itemStack.stackSize;
 			if(availableSpace > 0) {
 				availableSpace = Math.min(availableSpace, item.stackSize);
-				slotObject.itemStack.stackSize += availableSpace;
-				updateState();
+				if(!simulate) {
+					slotObject.itemStack.stackSize += availableSpace;
+					updateState();
+				}
 				return availableSpace;
 			} else {
 				return 0;
@@ -714,8 +730,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	@Override
 	public boolean canInsertItem(int slot, ItemStack itemStack, int side) {
 		if(appliance == null) {
-			//TODO: same check as in insertItemAt()
-			return true;
+			return insertItemAt(itemStack, slot, true) > 0;
 		} else {
 			return appliance.canInsertItem(slot, itemStack, side);
 		}

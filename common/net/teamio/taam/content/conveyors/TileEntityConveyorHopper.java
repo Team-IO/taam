@@ -353,7 +353,7 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 	}
 
 	@Override
-	public int getSpeedsteps() {
+	public byte getSpeedsteps() {
 		return 1;
 	}
 
