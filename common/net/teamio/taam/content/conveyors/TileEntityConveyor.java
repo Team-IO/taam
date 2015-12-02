@@ -157,7 +157,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	 */
 	public void dropItems() {
 		for (int index = 0; index < items.length; index++) {
-			dropItem(index);
+			dropItem(index, false);
 		}
 	}
 	
@@ -165,7 +165,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	 * Drops the item in the passed slot, exactly where it is rendered now.
 	 * @param slot The slot to be dropped.
 	 */
-	public void dropItem(int slot) {
+	public void dropItem(int slot, boolean withVelocity) {
 		ItemWrapper slotObject = items[slot];
 		// System.out.println("Dropping slot " + slot + " >>" + slotObject.itemStack);
 		
@@ -173,14 +173,22 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 			float speedsteps = getSpeedsteps();
 			
 			double posX = xCoord + ConveyorUtil.getItemPositionX(slot, slotObject.movementProgress / speedsteps, direction);
-			double posY = yCoord + 0.4f;
+			double posY = yCoord + 0.5f;
 			double posZ = zCoord + ConveyorUtil.getItemPositionZ(slot, slotObject.movementProgress / speedsteps, direction);
 			
 			if(slotObject.itemStack != null) {
 				EntityItem item = new EntityItem(worldObj, posX, posY, posZ, slotObject.itemStack);
-				item.motionX = 0; 
-		        item.motionY = 0; 
-		        item.motionZ = 0; 
+				if(withVelocity) {
+					float speed = (Byte.MAX_VALUE - getSpeedsteps()) * 0.0019f;
+					System.out.println(speed);
+					item.motionX = direction.offsetX * speed;
+					item.motionY = direction.offsetY * speed;
+					item.motionZ = direction.offsetZ * speed;
+				} else {
+					item.motionX = 0; 
+			        item.motionY = 0; 
+			        item.motionZ = 0; 
+				}
 				worldObj.spawnEntityInWorld(item);
 			}
 		}
@@ -310,7 +318,6 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 						} else {
 							nextSlotProgress = Math.round((nextSlotProgress / (float)nextSpeedSteps) * getSpeedsteps());
 						}
-						System.out.println(nextSlotProgress);
 					}
 					
 				} else {
@@ -329,7 +336,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 				if(wrapper.movementProgress == getSpeedsteps() && nextSlotFree) {
 					if(slotWrapped && (nextBlock == null || !nextBlock.isSlotAvailable(nextSlot))) {
 						// No next block, drop it.
-						dropItem(slot);
+						dropItem(slot, true);
 					} else {
 						boolean completeTransfer;
 						if(slotWrapped) {
