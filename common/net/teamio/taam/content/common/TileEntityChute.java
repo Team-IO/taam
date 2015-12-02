@@ -14,6 +14,7 @@ import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.BaseTileEntity;
+import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.conveyors.api.IConveyorAwareTE;
 import net.teamio.taam.conveyors.api.IItemFilter;
@@ -21,13 +22,17 @@ import net.teamio.taam.util.TaamUtil;
 import codechicken.lib.inventory.InventoryRange;
 import codechicken.lib.inventory.InventoryUtils;
 
-public class TileEntityChute extends BaseTileEntity implements IInventory, ISidedInventory, IFluidHandler, IConveyorAwareTE {
+public class TileEntityChute extends BaseTileEntity implements IInventory, ISidedInventory, IFluidHandler, IConveyorAwareTE, IRotatable {
 
 	public boolean isConveyorVersion = false;
+	private ForgeDirection direction = ForgeDirection.NORTH;
 	
 	@Override
 	public void updateContainingBlockInfo() {
 		isConveyorVersion = worldObj.getBlock(xCoord, yCoord, zCoord) == TaamMain.blockProductionLine;
+		if(!isConveyorVersion) {
+			direction = ForgeDirection.NORTH;
+		}
 	}
 	
 	@Override
@@ -37,10 +42,17 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 	
 	@Override
 	protected void writePropertiesToNBT(NBTTagCompound tag) {
+		if(isConveyorVersion) {
+			tag.setInteger("direction", direction.ordinal());
+		}
 	}
 
 	@Override
 	protected void readPropertiesFromNBT(NBTTagCompound tag) {
+		direction = ForgeDirection.getOrientation(tag.getInteger("direction"));
+		if(direction == ForgeDirection.UP || direction == ForgeDirection.DOWN || direction == ForgeDirection.UNKNOWN) {
+			direction = ForgeDirection.NORTH;
+		}
 	}
 	
 	private TileEntity getTarget() {
@@ -93,12 +105,13 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 
 	@Override
 	public ItemStack getStackInSlot(int slot) {
-		InventoryRange target = getTargetRange();
+		/*InventoryRange target = getTargetRange();
 		if(target == null) {
 			return null;
 		} else {
 			return InventoryUtils.getExtractableStack(target, target.slots[slot]);
-		}
+		}*/
+		return null;
 	}
 
 	@Override
@@ -399,6 +412,44 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 		} else {
 			return 0.9;
 		}
+	}
+	/*
+	 * IRotatable Implementation
+	 */
+	
+	@Override
+	public ForgeDirection getFacingDirection() {
+		return direction;
+	}
+
+	@Override
+	public ForgeDirection getMountDirection() {
+		return ForgeDirection.DOWN;
+	}
+
+	@Override
+	public ForgeDirection getNextFacingDirection() {
+		return direction.getRotation(ForgeDirection.UP);
+	}
+
+	@Override
+	public ForgeDirection getNextMountDirection() {
+		return ForgeDirection.DOWN;
+	}
+
+	@Override
+	public void setFacingDirection(ForgeDirection direction) {
+		if(isConveyorVersion) {
+			this.direction = direction;
+			if(direction == ForgeDirection.UP || direction == ForgeDirection.DOWN || direction == ForgeDirection.UNKNOWN) {
+				direction = ForgeDirection.NORTH;
+			}
+			updateState();
+		}
+	}
+
+	@Override
+	public void setMountDirection(ForgeDirection direction) {
 	}
 
 }

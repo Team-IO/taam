@@ -12,6 +12,7 @@ import net.teamio.taam.Config;
 import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IRedstoneControlled;
+import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.conveyors.api.IConveyorAwareTE;
 import net.teamio.taam.conveyors.api.IItemFilter;
@@ -23,7 +24,7 @@ import codechicken.lib.inventory.InventorySimple;
 import codechicken.lib.inventory.InventoryUtils;
 
 
-public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyorAwareTE, IInventory, IHopper, IRedstoneControlled {
+public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyorAwareTE, IInventory, IHopper, IRedstoneControlled, IRotatable {
 
 	private InventorySimple inventory;
 	
@@ -33,6 +34,8 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 	private boolean stackMode;
 	private boolean linearMode;
 	private byte redstoneMode;
+	
+	private ForgeDirection direction;
 	
 	private boolean pulseWasSent = false;
 	
@@ -213,6 +216,7 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 		tag.setByte("redstoneMode", redstoneMode);
 		
 		tag.setBoolean("pulseWasSent", pulseWasSent);
+		tag.setInteger("direction", direction.ordinal());
 	}
 
 	@Override
@@ -227,6 +231,10 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 		redstoneMode = tag.getByte("redstoneMode");
 
 		pulseWasSent = tag.getBoolean("pulseWasSent");
+		direction = ForgeDirection.getOrientation(tag.getInteger("direction"));
+		if(direction == ForgeDirection.UP || direction == ForgeDirection.DOWN || direction == ForgeDirection.UNKNOWN) {
+			direction = ForgeDirection.NORTH;
+		}
 	}
 
 	/*
@@ -470,6 +478,40 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 		} else {
 			this.markDirty();
 		}
+	}
+
+	/*
+	 * IRotatable Implementation
+	 */
+	
+	@Override
+	public ForgeDirection getFacingDirection() {
+		return direction;
+	}
+
+	@Override
+	public ForgeDirection getMountDirection() {
+		return ForgeDirection.DOWN;
+	}
+
+	@Override
+	public ForgeDirection getNextFacingDirection() {
+		return direction.getRotation(ForgeDirection.UP);
+	}
+
+	@Override
+	public ForgeDirection getNextMountDirection() {
+		return ForgeDirection.DOWN;
+	}
+
+	@Override
+	public void setFacingDirection(ForgeDirection direction) {
+		this.direction = direction;
+		updateState();
+	}
+
+	@Override
+	public void setMountDirection(ForgeDirection direction) {
 	}
 
 }

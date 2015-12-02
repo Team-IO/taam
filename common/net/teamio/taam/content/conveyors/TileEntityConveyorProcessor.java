@@ -20,6 +20,7 @@ import net.teamio.taam.Config;
 import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IRedstoneControlled;
+import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.content.IWorldInteractable;
 import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.conveyors.api.IConveyorAwareTE;
@@ -33,7 +34,7 @@ import codechicken.lib.inventory.InventoryRange;
 import codechicken.lib.inventory.InventorySimple;
 import codechicken.lib.inventory.InventoryUtils;
 
-public class TileEntityConveyorProcessor extends BaseTileEntity implements ISidedInventory, IConveyorAwareTE, IHopper, IRedstoneControlled, IWorldInteractable {
+public class TileEntityConveyorProcessor extends BaseTileEntity implements ISidedInventory, IConveyorAwareTE, IHopper, IRedstoneControlled, IWorldInteractable, IRotatable {
 
 	public static final byte Shredder = 0;
 	public static final byte Grinder = 1;
@@ -43,6 +44,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 	private byte mode;
 
 	private byte redstoneMode = IRedstoneControlled.MODE_ACTIVE_ON_LOW;
+	private ForgeDirection direction = ForgeDirection.NORTH;
 	
 	private byte progress;
 	private int timeout;
@@ -269,6 +271,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 		tag.setByte("progress", progress);
 		tag.setInteger("timeout", timeout);
 		tag.setBoolean("isShutdown", isShutdown);
+		tag.setInteger("direction", direction.ordinal());
 	}
 
 	@Override
@@ -289,6 +292,10 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 		progress = tag.getByte("progress");
 		timeout = tag.getInteger("timeout");
 		isShutdown = tag.getBoolean("isShutdown");
+		direction = ForgeDirection.getOrientation(tag.getInteger("direction"));
+		if(direction == ForgeDirection.UP || direction == ForgeDirection.DOWN || direction == ForgeDirection.UNKNOWN) {
+			direction = ForgeDirection.NORTH;
+		}
 	}
 
 	/*
@@ -557,6 +564,40 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 			}
 		}
 		return true;
+	}
+
+	/*
+	 * IRotatable Implementation
+	 */
+	
+	@Override
+	public ForgeDirection getFacingDirection() {
+		return direction;
+	}
+
+	@Override
+	public ForgeDirection getMountDirection() {
+		return ForgeDirection.DOWN;
+	}
+
+	@Override
+	public ForgeDirection getNextFacingDirection() {
+		return direction.getRotation(ForgeDirection.UP);
+	}
+
+	@Override
+	public ForgeDirection getNextMountDirection() {
+		return ForgeDirection.DOWN;
+	}
+
+	@Override
+	public void setFacingDirection(ForgeDirection direction) {
+		this.direction = direction;
+		updateState();
+	}
+
+	@Override
+	public void setMountDirection(ForgeDirection direction) {
 	}
 	
 }

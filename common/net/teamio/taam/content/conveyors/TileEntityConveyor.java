@@ -382,6 +382,9 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	@Override
 	protected void readPropertiesFromNBT(NBTTagCompound tag) {
 		direction = ForgeDirection.getOrientation(tag.getInteger("direction"));
+		if(direction == ForgeDirection.UP || direction == ForgeDirection.DOWN || direction == ForgeDirection.UNKNOWN) {
+			direction = ForgeDirection.NORTH;
+		}
 		speedLevel = tag.getInteger("speedLevel");
 		NBTTagList itemsTag = tag.getTagList("items", NBT.TAG_COMPOUND);
 		if(itemsTag != null) {
@@ -516,6 +519,9 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	@Override
 	public void setFacingDirection(ForgeDirection direction) {
 		this.direction = direction;
+		if(direction == ForgeDirection.UP || direction == ForgeDirection.DOWN || direction == ForgeDirection.UNKNOWN) {
+			direction = ForgeDirection.NORTH;
+		}
 		updateState();
 		worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, blockType);
 		if(blockType != null) {
