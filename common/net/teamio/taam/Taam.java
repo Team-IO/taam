@@ -105,6 +105,7 @@ public final class Taam {
 		shredder,
 		grinder,
 		crusher,
+		chute,
 		;
 		public static String[] valuesAsString() {
 			Enum<?>[] valuesAsEnum = values();

@@ -31,5 +31,15 @@ public interface IConveyorAwareTE {
 	 * @return
 	 */
 	boolean shouldRenderItemsDefault();
+	/**
+	 * The minimum relative Y coord for items to be inserted
+	 * @return
+	 */
+	double getInsertMaxY();
+	/**
+	 * The maximum relative Y coord for items to be inserted
+	 * @return
+	 */
+	double getInsertMinY();
 	
 }

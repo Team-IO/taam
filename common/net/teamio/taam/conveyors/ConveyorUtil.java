@@ -38,7 +38,7 @@ public class ConveyorUtil {
 			
 			int slot = getSlotForRelativeCoordinates(relativeX, relativeZ);
 
-			if(slot >= 0 && slot < 9 && relativeY > 0.3 && relativeY < 1.0) {
+			if(slot >= 0 && slot < 9 && relativeY > conveyorTE.getInsertMinY() && relativeY < conveyorTE.getInsertMaxY()) {
 				added = conveyorTE.insertItemAt(entityItemStack, slot);
 			}
 		} else if(tileEntity instanceof IInventory) {
@@ -74,7 +74,7 @@ public class ConveyorUtil {
 	 * @param bounds
 	 *            Optionally give an AABB Instance to speed up the search &
 	 *            extend to unloaded chunks. Else only loaded entities are
-	 *            respected. TODO: Implement this.
+	 *            respected.
 	 * @param stopAtFirstMatch
 	 *            Stop processing items after the first one was added?
 	 *            

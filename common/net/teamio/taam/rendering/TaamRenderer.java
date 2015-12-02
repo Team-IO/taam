@@ -170,6 +170,9 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 			case 8:
 				renderConveyorProcessor(null, x, y, z, TileEntityConveyorProcessor.Crusher);
 				break;
+			case 9:
+				renderConveyorChute(null, x, y, z);
+				break;
 			}
 		} else if(item.getItem() == Item.getItemFromBlock(TaamMain.blockProductionLineAttachable)) {
 			int meta = item.getItemDamage() & 3;
@@ -208,64 +211,8 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 		}
 		
 	}
-
-	private void renderItemBag(ATileEntityAttachable tileEntity, double x, double y, double z, int meta) {
-		GL11.glPushMatrix();
-		GL11.glTranslated(x, y, z);
-
-		float fillPercent = 0;
-		if(tileEntity instanceof TileEntityConveyorTrashCan) {
-			fillPercent = ((TileEntityConveyorTrashCan) tileEntity).fillLevel;
-			float maxFillPercent = Config.pl_trashcan_maxfill;
-			fillPercent = fillPercent / maxFillPercent;
-		} else if(tileEntity instanceof TileEntityConveyorItemBag) {
-			fillPercent = ((TileEntityConveyorItemBag) tileEntity).fillPercent;
-		}
-		
-		GL11.glTranslatef(0.5f, 0, 0.5f);
-		
-		int type = meta & 3;
-		int rot = (meta & 12) >> 2;
-		switch(rot) {
-		default:
-		case 0: // NORTH
-			GL11.glRotatef(180, 0, 1, 0);
-			break;
-		case 1: // SOUTH
-			break;
-		case 2: // EAST
-			GL11.glRotatef(90, 0, 1, 0);
-			break;
-		case 3: // WEST
-			GL11.glRotatef(270, 0, 1, 0);
-			break;
-		}
-
-		GL11.glTranslated(-0.5, 0, -0.5);
-		/*
-		 * Bind Texture
-		 */
-		Minecraft.getMinecraft().renderEngine.bindTexture(textureConveyor);
-
-		/*
-		 * Render Support Frame
-		 */
-		switch(type) {
-		default:
-		case 0: // Bag
-			modelConveyor.renderPart("Bag_bmdl");
-			break;
-		case 1: // TrashCan
-			modelConveyor.renderPart("BagTrash_btmdl");
-			break;
-		}
-		if(fillPercent > 0) {
-			GL11.glTranslatef(0, fillPercent * 0.3f, 0);
-			modelConveyor.renderPart("Bag_Filling_bfmdl");
-		}
-		
-		GL11.glPopMatrix();
-	}
+	
+	
 
 	@Override
 	public void renderTileEntityAt(TileEntity tileEntity, double x, double y, double z, float partialTickTime) {
@@ -288,7 +235,12 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 		} else if (tileEntity instanceof TileEntityConveyorProcessor) {
 			renderConveyorProcessor((TileEntityConveyorProcessor) tileEntity, x, y, z, (byte)0);
 		} else if(tileEntity instanceof TileEntityChute) {
-			renderChute(x, y, z);
+			TileEntityChute teChute = (TileEntityChute) tileEntity;
+			if(teChute.isConveyorVersion) {
+				renderConveyorChute(teChute, x, y, z);
+			} else {
+				renderChute(x, y, z);
+			}
 		} else if(tileEntity instanceof TileEntityCreativeCache) {
 			renderCreativeItemCache(x, y, z);
 		} else if(tileEntity instanceof TileEntityConveyorItemBag || tileEntity instanceof TileEntityConveyorTrashCan) {
@@ -635,7 +587,6 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 		GL11.glTranslated(-0.5, 0, -0.5);
 
 		modelConveyor.renderPart("Support_Caps_Alu_scmdl_alu");
-		//TODO: Render HighSpeed features
 		
 		conveyorEndRendering();
 	}
@@ -700,6 +651,79 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 			modelConveyor.renderPart("BumpsShredder");
 			break;
 		}
+		GL11.glPopMatrix();
+	}
+	
+	private void renderConveyorChute(TileEntityChute tileEntity, double x, double y, double z) {
+		conveyorPrepareRendering(tileEntity, x, y, z, false);
+		
+		modelConveyor.renderPart("Conveyor_Chute_cchmdl");
+		modelConveyor.renderPart("Support_Caps_Alu_scmdl_alu");
+		
+		GL11.glTranslated(0.5, 0, 0.5);
+		GL11.glRotatef(180, 0, 1, 0);
+		GL11.glTranslated(-0.5, 0, -0.5);
+
+		modelConveyor.renderPart("Support_Caps_Alu_scmdl_alu");
+		
+		conveyorEndRendering();
+	}
+
+	private void renderItemBag(ATileEntityAttachable tileEntity, double x, double y, double z, int meta) {
+		GL11.glPushMatrix();
+		GL11.glTranslated(x, y, z);
+
+		float fillPercent = 0;
+		if(tileEntity instanceof TileEntityConveyorTrashCan) {
+			fillPercent = ((TileEntityConveyorTrashCan) tileEntity).fillLevel;
+			float maxFillPercent = Config.pl_trashcan_maxfill;
+			fillPercent = fillPercent / maxFillPercent;
+		} else if(tileEntity instanceof TileEntityConveyorItemBag) {
+			fillPercent = ((TileEntityConveyorItemBag) tileEntity).fillPercent;
+		}
+		
+		GL11.glTranslatef(0.5f, 0, 0.5f);
+		
+		int type = meta & 3;
+		int rot = (meta & 12) >> 2;
+		switch(rot) {
+		default:
+		case 0: // NORTH
+			GL11.glRotatef(180, 0, 1, 0);
+			break;
+		case 1: // SOUTH
+			break;
+		case 2: // EAST
+			GL11.glRotatef(90, 0, 1, 0);
+			break;
+		case 3: // WEST
+			GL11.glRotatef(270, 0, 1, 0);
+			break;
+		}
+
+		GL11.glTranslated(-0.5, 0, -0.5);
+		/*
+		 * Bind Texture
+		 */
+		Minecraft.getMinecraft().renderEngine.bindTexture(textureConveyor);
+
+		/*
+		 * Render Support Frame
+		 */
+		switch(type) {
+		default:
+		case 0: // Bag
+			modelConveyor.renderPart("Bag_bmdl");
+			break;
+		case 1: // TrashCan
+			modelConveyor.renderPart("BagTrash_btmdl");
+			break;
+		}
+		if(fillPercent > 0) {
+			GL11.glTranslatef(0, fillPercent * 0.3f, 0);
+			modelConveyor.renderPart("Bag_Filling_bfmdl");
+		}
+		
 		GL11.glPopMatrix();
 	}
 	

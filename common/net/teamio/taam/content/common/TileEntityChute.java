@@ -12,13 +12,24 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.conveyors.ConveyorUtil;
+import net.teamio.taam.conveyors.api.IConveyorAwareTE;
+import net.teamio.taam.conveyors.api.IItemFilter;
 import net.teamio.taam.util.TaamUtil;
+import codechicken.lib.inventory.InventoryRange;
 import codechicken.lib.inventory.InventoryUtils;
 
-public class TileEntityChute extends BaseTileEntity implements IInventory, ISidedInventory, IFluidHandler {
+public class TileEntityChute extends BaseTileEntity implements IInventory, ISidedInventory, IFluidHandler, IConveyorAwareTE {
 
+	public boolean isConveyorVersion = false;
+	
+	@Override
+	public void updateContainingBlockInfo() {
+		isConveyorVersion = worldObj.getBlock(xCoord, yCoord, zCoord) == TaamMain.blockProductionLine;
+	}
+	
 	@Override
 	public void updateEntity() {
 		ConveyorUtil.tryInsertItemsFromWorld(this, worldObj, null, false);
@@ -36,6 +47,15 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 		return worldObj.getTileEntity(xCoord, yCoord - 1, zCoord);
 	}
 	
+	private InventoryRange getTargetRange() {
+		IInventory inventory = getTargetInventory();
+		if(inventory == null) {
+			return null;
+		} else {
+			return new InventoryRange(inventory, ForgeDirection.UP.ordinal());
+		}
+	}
+	
 	private IInventory getTargetInventory() {
 		return InventoryUtils.getInventory(worldObj, xCoord, yCoord - 1, zCoord);
 	}
@@ -44,15 +64,6 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 		TileEntity target = getTarget();
 		if(target instanceof IFluidHandler) {
 			return (IFluidHandler) target;
-		} else {
-			return null;
-		}
-	}
-	
-	private ISidedInventory getTargetSidedInventory() {
-		IInventory target = getTargetInventory();
-		if(target instanceof ISidedInventory) {
-			return (ISidedInventory) target;
 		} else {
 			return null;
 		}
@@ -68,7 +79,7 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 	
 	@Override
 	public int getSizeInventory() {
-		IInventory target = getTargetInventory();
+		InventoryRange target = getTargetRange();
 		if(target == null) {
 			if(canDrop()) {
 				return 1;
@@ -76,43 +87,33 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 				return 0;
 			}
 		} else {
-			return target.getSizeInventory();
+			return target.slots.length;
 		}
 	}
 
 	@Override
 	public ItemStack getStackInSlot(int slot) {
-		IInventory target = getTargetInventory();
+		InventoryRange target = getTargetRange();
 		if(target == null) {
 			return null;
 		} else {
-			return target.getStackInSlot(slot);
+			return InventoryUtils.getExtractableStack(target, target.slots[slot]);
 		}
 	}
 
 	@Override
 	public ItemStack decrStackSize(int slot, int amount) {
-		IInventory target = getTargetInventory();
-		if(target == null) {
-			return null;
-		} else {
-			return target.decrStackSize(slot, amount);
-		}
+		return null;
 	}
 
 	@Override
 	public ItemStack getStackInSlotOnClosing(int slot) {
-		IInventory target = getTargetInventory();
-		if(target == null) {
-			return null;
-		} else {
-			return target.getStackInSlotOnClosing(slot);
-		}
+		return null;
 	}
 
 	@Override
 	public void setInventorySlotContents(int slot, ItemStack stack) {
-		IInventory target = getTargetInventory();
+		InventoryRange target = getTargetRange();
 		if(target == null) {
 			if(!worldObj.isRemote && canDrop()) {
 				EntityItem item = new EntityItem(worldObj, xCoord + 0.5, yCoord - 0.3, zCoord + 0.5, stack);
@@ -122,7 +123,7 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 		        worldObj.spawnEntityInWorld(item);
 			}
 		} else {
-			target.setInventorySlotContents(slot, stack);
+			target.inv.setInventorySlotContents(target.slots[slot], stack);
 		}
 	}
 
@@ -184,11 +185,11 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 
 	@Override
 	public boolean isItemValidForSlot(int slot, ItemStack stack) {
-		IInventory target = getTargetInventory();
+		InventoryRange target = getTargetRange();
 		if(target == null) {
 			return canDrop();
 		} else {
-			return target.isItemValidForSlot(slot, stack);
+			return target.canInsertItem(target.slots[slot], stack);
 		}
 	}
 
@@ -201,25 +202,16 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 		if(side != ForgeDirection.UP.ordinal()) {
 			return new int[0];
 		}
-		ISidedInventory target = getTargetSidedInventory();
+		InventoryRange target = getTargetRange();
 		if(target == null) {
-			IInventory invTarget = getTargetInventory();
-			if(invTarget == null) {
-				if(canDrop()) {
-					return new int[] {0};
-				}
+			if(canDrop()) {
+				return new int[] {0};
 			} else {
-				int slots = invTarget.getSizeInventory();
-				int[] accessible = new int[slots];
-				for(int s = 0; s < slots; s++) {
-					accessible[s] = s;
-				}
-				return accessible;
+				return new int[0];
 			}
 		} else {
-			return target.getAccessibleSlotsFromSide(side);
+			return target.slots;
 		}
-		return new int[0];
 	}
 
 	@Override
@@ -228,26 +220,18 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 		if(side != ForgeDirection.UP.ordinal()) {
 			return false;
 		}
-		ISidedInventory target = getTargetSidedInventory();
+		InventoryRange target = getTargetRange();
 		if(target == null) {
-			IInventory invTarget = getTargetInventory();
-			if(invTarget == null) {
-				if(canDrop()) {
-					return true;
-				}
-			} else {
-				return invTarget.isItemValidForSlot(slot, stack);
-			}
+			return canDrop();
 		} else {
-			return target.canInsertItem(slot, stack, side);
+			return target.canInsertItem(target.slots[slot], stack);
 		}
-		return false;
 	}
 
 	@Override
 	public boolean canExtractItem(int slot, ItemStack stack,
 			int side) {
-		if(side != ForgeDirection.UP.ordinal()) {
+		/*if(side != ForgeDirection.UP.ordinal()) {
 			return false;
 		}
 		ISidedInventory target = getTargetSidedInventory();
@@ -258,7 +242,7 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 			}
 		} else {
 			return target.canExtractItem(slot, stack, side);
-		}
+		}*/
 		return false;
 	}
 
@@ -320,8 +304,101 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 		}
 	}
 
+
+
 	/*
-	 * -
+	 * IConveyorAwareTE implementation
 	 */
+	
+	@Override
+	public boolean canSlotMove(int slot) {
+		return false;
+	}
+
+	@Override
+	public boolean isSlotAvailable(int slot) {
+		return true;
+	}
+
+	@Override
+	public int getMovementProgress(int slot) {
+		return 0;
+	}
+
+	@Override
+	public byte getSpeedsteps() {
+		return 0;
+	}
+
+	@Override
+	public IItemFilter getSlotFilter(int slot) {
+		return null;
+	}
+
+	@Override
+	public int posX() {
+		return xCoord;
+	}
+
+	@Override
+	public int posY() {
+		return yCoord;
+	}
+
+	@Override
+	public int posZ() {
+		return zCoord;
+	}
+
+	@Override
+	public int insertItemAt(ItemStack stack, int slot) {
+		InventoryRange target = getTargetRange();
+		if(target == null) {
+			if(!worldObj.isRemote && canDrop()) {
+				EntityItem item = new EntityItem(worldObj, xCoord + 0.5, yCoord - 0.3, zCoord + 0.5, stack);
+		        item.motionX = 0;
+		        item.motionY = 0;
+		        item.motionZ = 0;
+		        worldObj.spawnEntityInWorld(item);
+		        return stack.stackSize;
+			}
+			return 0;
+		} else {
+			return stack.stackSize - InventoryUtils.insertItem(target, stack, false);
+		}
+	}
+
+	@Override
+	public ItemStack getItemAt(int slot) {
+		return null;
+	}
+
+	@Override
+	public ForgeDirection getMovementDirection() {
+		return ForgeDirection.DOWN;
+	}
+
+	@Override
+	public boolean shouldRenderItemsDefault() {
+		return false;
+	}
+
+	@Override
+	public double getInsertMaxY() {
+		if(isConveyorVersion) {
+			return 0.9;
+		} else {
+			return 1.3;
+		}
+	}
+
+	@Override
+	public double getInsertMinY() {
+		if(isConveyorVersion) {
+			return 0.3;
+		} else {
+			return 0.9;
+		}
+	}
 
 }

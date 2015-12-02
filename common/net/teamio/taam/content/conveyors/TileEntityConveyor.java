@@ -488,6 +488,16 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 		ItemWrapper slotObject = items[slot];
 		return slotObject.movementProgress;
 	}
+
+	@Override
+	public double getInsertMaxY() {
+		return 0.9;
+	}
+
+	@Override
+	public double getInsertMinY() {
+		return 0.3;
+	}
 	
 	/*
 	 * IRotatable implementation

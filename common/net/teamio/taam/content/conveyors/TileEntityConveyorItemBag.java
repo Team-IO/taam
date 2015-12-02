@@ -193,6 +193,16 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable implements 
 		return null;
 	}
 
+	@Override
+	public double getInsertMaxY() {
+		return 0.9;
+	}
+
+	@Override
+	public double getInsertMinY() {
+		return 0.3;
+	}
+
 
 	
 }
