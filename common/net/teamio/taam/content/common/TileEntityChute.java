@@ -223,7 +223,12 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 				return new int[0];
 			}
 		} else {
-			return target.slots;
+			// We reorder the slots from 0 onwards, then convert back later.
+			int[] slots = new int[target.slots.length];
+			for(int i = 0; i < slots.length; i++) {
+				slots[i] = i;
+			}
+			return slots;
 		}
 	}
 
