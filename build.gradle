@@ -20,7 +20,9 @@ apply plugin: 'forge'
 version = "0.2"
 group = "net.teamio.taam"
 archivesBaseName = "taam-1.7.10"
-cclversion = "1.1.1.104"
+project.ext {
+	cclversion = "1.1.1.104"
+}
 
 minecraft {
     version = "1.7.10-10.13.4.1558-1.7.10"
