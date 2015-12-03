@@ -247,7 +247,6 @@ public class BlockProductionLine extends BaseBlock {
 	public static boolean checkDirectSupport(World world, int x, int y, int z) {
 		for(ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
 			if(world.isSideSolid(x + side.offsetX, y + side.offsetY, z + side.offsetZ, side.getOpposite())) {
-				System.out.println(side);
 				return true;
 			}
 		}

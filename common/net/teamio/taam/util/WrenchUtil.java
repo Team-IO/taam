@@ -32,7 +32,7 @@ public class WrenchUtil {
 			int y, int z, EntityPlayer player,
 			int side, float hitX, float hitY,
 			float hitZ) {
-		Log.info("Checking for wrench activity.");
+		Log.debug("Checking for wrench activity.");
 		
 		boolean playerHasWrench = WrenchUtil.playerHasWrench(player);
 		Log.debug("Player has wrench: " + playerHasWrench);
