@@ -101,7 +101,7 @@ public final class ProcessingRegistry {
 			Log.debug("First recipe for this item.");
 			matches = new IProcessingRecipe[1];
 		} else {
-			Log.debug(matches.length + ". recipe for this item.");
+			Log.debug((matches.length + 1) + ". recipe for this item.");
 			matches = Arrays.copyOf(matches, matches.length + 1);
 		}
 		matches[matches.length - 1] = recipe;
