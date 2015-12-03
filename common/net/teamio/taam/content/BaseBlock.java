@@ -26,8 +26,7 @@ public abstract class BaseBlock extends Block {
 		// Update Owner
 		if (entity instanceof EntityPlayer) {
 			BaseTileEntity te = (BaseTileEntity) world.getTileEntity(x, y, z);
-			// TODO: Change to UUID
-			te.setOwner(((EntityPlayer) entity).getDisplayName());
+			te.setOwner((EntityPlayer) entity);
 		}
 	}
 
@@ -37,7 +36,6 @@ public abstract class BaseBlock extends Block {
 		// Update stuff like conveyors if something changes
 		if(te != null) {
 			te.updateContainingBlockInfo();
-			world.markBlockForUpdate(x, y, z);
 		}
 	}
 

@@ -1,10 +1,16 @@
 package net.teamio.taam.content;
 
+import java.util.UUID;
+
+import org.apache.logging.log4j.Level;
+
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.teamio.taam.Log;
 
 /**
  * Base class for Taam's TileEntities. Keeps track of the block owner, manages
@@ -15,13 +21,21 @@ import net.minecraft.tileentity.TileEntity;
  */
 public abstract class BaseTileEntity extends TileEntity {
 
-	private String owner = "";
+	private UUID owner = null;
 
-	public void setOwner(String owner) {
+	public void setOwner(EntityPlayer player) {
+		if(player == null) {
+			owner = null;
+		} else {
+			owner = player.getUniqueID();
+		}
+	}
+	
+	public void setOwner(UUID owner) {
 		this.owner = owner;
 	}
 
-	public String getOwner() {
+	public UUID getOwner() {
 		return owner;
 	}
 
@@ -83,7 +97,9 @@ public abstract class BaseTileEntity extends TileEntity {
 	 * @param tag
 	 */
 	private void writePropertiesToNBTInternal(NBTTagCompound tag) {
-		tag.setString("owner", owner);
+		if(owner != null) {
+			tag.setString("owner", owner.toString());
+		}
 		writePropertiesToNBT(tag);
 	}
 
@@ -101,7 +117,16 @@ public abstract class BaseTileEntity extends TileEntity {
 	 * @param tag
 	 */
 	private void readPropertiesFromNBTInternal(NBTTagCompound tag) {
-		owner = tag.getString("owner");
+		String ownerString = tag.getString("owner");
+		if(ownerString != null && !ownerString.isEmpty()) {
+			try {
+				owner = UUID.fromString(ownerString);
+			} catch (IllegalArgumentException e) {
+				Log.warn("Trouble reading owner UUID. This might not be an issue. (Owner will be set to null. If this issue keeps reappering for the same blocks, notify the authors!");
+				Log.LOGGER.catching(Level.DEBUG, e);
+				owner = null;
+			}
+		}
 		readPropertiesFromNBT(tag);
 	}
 
