@@ -16,26 +16,6 @@ public class BlockSlidingDoor extends BaseBlock {
 	}
 
 	@Override
-	public boolean hasTileEntity(int metadata) {
-		return true;
-	}
-
-	@Override
-	public int getRenderType() {
-		return -1;
-	}
-
-	@Override
-	public boolean isOpaqueCube() {
-		return false;
-	}
-
-	@Override
-	public boolean renderAsNormalBlock() {
-		return false;
-	}
-
-	@Override
 	public TileEntity createTileEntity(World world, int metadata) {
 		return new TileEntitySlidingDoor();
 	}

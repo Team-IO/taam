@@ -9,12 +9,10 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
 import net.teamio.taam.Taam;
-import net.teamio.taam.content.conveyors.TileEntityConveyor;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -47,12 +45,6 @@ public class ItemWrench extends Item {
 		}
 	}
 
-
-	@Override
-	public boolean doesSneakBypassUse(World world, int x, int y, int z, EntityPlayer player) {
-		return true;
-	};
-
 	@Override
 	public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player, Entity entity) {
 		if(player.isSneaking() && entity instanceof EntityLivingBase) {
@@ -65,36 +57,26 @@ public class ItemWrench extends Item {
 		return true;
 	}
 	
+//	@Override
+//	public boolean hitEntity(ItemStack stack, EntityLivingBase source,
+//			EntityLivingBase target) {
+//	Not used, as we skip the default attack code by implementing the function onLeftClickEntity
+//		return true;
+//	}
+
 	@Override
-	public boolean hitEntity(ItemStack stack, EntityLivingBase source,
-			EntityLivingBase target) {
-		
+	public boolean doesSneakBypassUse(World world, int x, int y, int z, EntityPlayer player) {
+		// Required for disassembling, as we need shift click on the target block
 		return true;
-	}
-
-	@Override
-	public boolean onItemUse(ItemStack itemStack,
-			EntityPlayer player, World world,
-			int x, int y, int z,
-			int side,
-			float hitx, float hity, float hitz) {
-
-		boolean didSomething = false;
-
-		TileEntity te = world.getTileEntity(x, y, z);
-
-		if(te instanceof TileEntityConveyor) {
-			//Rotation Logic is in the block implementation.
-			didSomething = true;
-			TileEntityConveyor tec = (TileEntityConveyor) te;
-			tec.updateContainingBlockInfo();
-		}
-		if (didSomething && !world.isRemote) {
-			// TODO: play custom sound
-			world.playSound(player.posX, player.posY, player.posZ, "note.hat", 1, 1, false);
-		}
-
-		return !didSomething;
-	}
+	};
+	
+//	@Override
+//	public boolean onItemUse(ItemStack itemStack,
+//			EntityPlayer player, World world,
+//			int x, int y, int z,
+//			int side,
+//			float hitx, float hity, float hitz) {
+//	Not used, all handling is done by the >blocks< and / or central Utils.
+//	}
 
 }

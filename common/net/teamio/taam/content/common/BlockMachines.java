@@ -6,7 +6,6 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -14,10 +13,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.teamio.taam.Taam;
 import net.teamio.taam.Taam.BLOCK_MACHINES_META;
-import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.BaseBlock;
-import net.teamio.taam.content.IWorldInteractable;
-import net.teamio.taam.util.TaamUtil;
 
 public class BlockMachines extends BaseBlock {
 
@@ -27,26 +23,6 @@ public class BlockMachines extends BaseBlock {
 		this.setStepSound(soundTypeWood);
 		this.setHardness(6);
 		this.setHarvestLevel("pickaxe", 2);
-	}
-	
-	@Override
-	public boolean hasTileEntity(int metadata) {
-		return true;
-	}
-	
-	@Override
-	public int getRenderType() {
-		return -1;
-	}
-
-	@Override
-	public boolean isOpaqueCube() {
-		return false;
-	}
-		
-	@Override
-	public boolean renderAsNormalBlock() {
-		return false;
 	}
 	
 	@Override
@@ -110,35 +86,6 @@ public class BlockMachines extends BaseBlock {
 		for (int i = 0; i < values.length; i++) {
 			list.add(new ItemStack(item, 1, i));
 		}
-	}
-	
-	@Override
-	public boolean onBlockActivated(World world, int x,
-			int y, int z, EntityPlayer player,
-			int side, float hitX, float hitY,
-			float hitZ) {
-			
-		boolean playerHasWrench = TaamUtil.playerHasWrench(player);
-		boolean playerIsSneaking = player.isSneaking();
-		
-		TileEntity te = world.getTileEntity(x, y, z);
-		
-		if(playerIsSneaking) {
-			return false;
-		}
-
-		if(!world.isRemote) {
-			if(te instanceof IWorldInteractable) {
-				IWorldInteractable interactable = ((IWorldInteractable) te);
-				boolean intercepted = interactable.onBlockActivated(world, x, y, z, player, playerHasWrench, side, hitX, hitY, hitZ);
-				if(intercepted) {
-					return true;
-				}
-			} else if(te instanceof TileEntityCreativeCache) {
-				player.openGui(TaamMain.instance, 0, world, x, y, z);
-			}
-		}
-		return true;
 	}
 
 }

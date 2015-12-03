@@ -35,7 +35,7 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 	private boolean linearMode;
 	private byte redstoneMode;
 	
-	private ForgeDirection direction;
+	private ForgeDirection direction = ForgeDirection.NORTH;
 	
 	private boolean pulseWasSent = false;
 	

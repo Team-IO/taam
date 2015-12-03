@@ -1,9 +1,11 @@
 package net.teamio.taam.util;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.IBlockAccess;
-import net.teamio.taam.TaamMain;
+import net.minecraft.world.World;
 import codechicken.lib.inventory.InventoryUtils;
 import codechicken.lib.vec.Vector3;
 
@@ -15,20 +17,6 @@ import codechicken.lib.vec.Vector3;
 public final class TaamUtil {
 	private TaamUtil() {
 		// Util class
-	}
-
-	/**
-	 * Returns true if the player is holding a wrench in his hand.
-	 * @param player
-	 * @return
-	 */
-	public static boolean playerHasWrench(EntityPlayer player) {
-		ItemStack held = player.getHeldItem();
-		if(held == null) {
-			return false;
-		}
-		//TODO: Check other wrench types once supported
-		return held.getItem() == TaamMain.itemWrench;
 	}
 
 	/**
@@ -53,6 +41,43 @@ public final class TaamUtil {
 
 	public static boolean canDropIntoWorld(IBlockAccess world, int x, int y, int z) {
 		return world.isAirBlock(x, y, z) || world.getBlock(x, y, z).getMaterial().isLiquid();
+	}
+
+	public static void breakBlockInWorld(World world, int x, int y, int z) {
+		Block block = world.getBlock(x, y, z);
+		breakBlockInWorld(world, x, y, z, block);
+	}
+
+	public static void breakBlockInWorld(World world, int x, int y, int z, Block block) {
+		block.breakBlock(world, x, y, z, block, world.getBlockMetadata(x, y, z));
+		block.dropBlockAsItem(world, x, y, z, world.getBlockMetadata(x, y, z), 0);
+		world.setBlockToAir(x, y, z);
+	}
+	
+	public static void breakBlockToInventory(EntityPlayer player, World world, int x, int y, int z) {
+		Block block = world.getBlock(x, y, z);
+		breakBlockToInventory(player, world, x, y, z, block);
+	}
+
+	public static void breakBlockToInventory(EntityPlayer player, World world, int x, int y, int z, Block block) {
+		block.breakBlock(world, x, y, z, block, world.getBlockMetadata(x, y, z));
+		ItemStack toDrop = getItemStackFromWorld(world, x, y, z, block);
+		if(toDrop != null) {
+			tryDropToInventory(player, toDrop, x, y, z);
+		}
+		world.setBlockToAir(x, y, z);
+	}
+	
+	public static ItemStack getItemStackFromWorld(World world, int x, int y, int z, Block block) {
+		int metadata = world.getBlockMetadata(x, y, z);
+        Item item = block.getItem(world, x, y, z);
+        if (item == null)
+        {
+        	return null;
+        } else {
+        	int damage = block.damageDropped(metadata);
+        	return new ItemStack(block, 1, damage);
+        }
 	}
 	
 	

@@ -7,10 +7,17 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
+import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.conveyors.TileEntityConveyor;
+import net.teamio.taam.content.conveyors.TileEntityConveyorHopper;
+import net.teamio.taam.content.conveyors.TileEntityConveyorItemBag;
+import net.teamio.taam.content.conveyors.TileEntityConveyorTrashCan;
 import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.conveyors.api.IConveyorApplianceHost;
+import net.teamio.taam.util.TaamUtil;
+import net.teamio.taam.util.WrenchUtil;
 import codechicken.lib.inventory.InventoryUtils;
 import codechicken.lib.vec.Vector3;
 
@@ -36,6 +43,10 @@ public abstract class BaseBlock extends Block {
 		// Update stuff like conveyors if something changes
 		if(te != null) {
 			te.updateContainingBlockInfo();
+			world.markBlockForUpdate(x, y, z);
+		}
+		if(!canBlockStay(world, x, y, z)) {
+			TaamUtil.breakBlockInWorld(world, x, y, z, this);
 		}
 	}
 
@@ -82,6 +93,66 @@ public abstract class BaseBlock extends Block {
 		super.breakBlock(world, x, y, z, block, meta);
 	}
 	
+	@Override
+	public boolean onBlockActivated(World world, int x, int y,
+			int z, EntityPlayer player, int side, float hitX, float hitY,
+			float hitZ) {
+				
+		if(WrenchUtil.wrenchBlock(world, x, y, z, player, side, hitX, hitY, hitZ)) {
+			return true;
+		}
+		
+		if(player.isSneaking()) {
+			return false;
+		}
+	
+		if(!world.isRemote) {
+			TileEntity te = world.getTileEntity(x, y, z);
+			
+			if(te instanceof IWorldInteractable) {
+				// All world interaction (perform action, open gui, etc.) is handled within the entity
+				IWorldInteractable interactable = ((IWorldInteractable) te);
+				boolean playerHasWrench = WrenchUtil.playerHasWrench(player);
+				boolean intercepted = interactable.onBlockActivated(world, x, y, z, player, playerHasWrench, side, hitX, hitY, hitZ);
+				if(intercepted) {
+					return true;
+				}
+			} else if(te instanceof TileEntityConveyorHopper || te instanceof TileEntityConveyorItemBag) {
+				player.openGui(TaamMain.instance, 0, world, x, y, z);
+			} else if(te instanceof TileEntityConveyorTrashCan) {
+				((TileEntityConveyorTrashCan)te).clearOut();
+			}
+		}
+		return true;
+	}
+
+	@Override
+	public boolean renderAsNormalBlock() {
+		return false;
+	}
+
+	@Override
+	public boolean hasTileEntity(int metadata) {
+		return true;
+	}
+
+	@Override
+	public int getRenderType() {
+		return -1;
+	}
+
+	@Override
+	public boolean isOpaqueCube() {
+		return false;
+	}
+
+	@Override
+	public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int x,
+			int y, int z) {
+				setBlockBoundsBasedOnState(world, x, y, z);
+				return super.getCollisionBoundingBoxFromPool(world, x, y, z);
+			}
+
 	/**
 	 * Updates a block and all surrounding blocks (meaning, pushes a block
 	 * update for this block and for all directly adjacent blocks)

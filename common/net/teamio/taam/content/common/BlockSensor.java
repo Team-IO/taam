@@ -2,7 +2,6 @@ package net.teamio.taam.content.common;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.IBlockAccess;
@@ -39,26 +38,6 @@ public class BlockSensor extends BaseBlock {
 		this.setStepSound(Block.soundTypeMetal);
 		this.setHarvestLevel("pickaxe", 1);
 		this.setBlockTextureName(Taam.MOD_ID + ":tech_block");
-	}
-	
-	@Override
-	public boolean hasTileEntity(int metadata) {
-		return true;
-	}
-	
-	@Override
-	public int getRenderType() {
-		return -1;
-	}
-
-	@Override
-	public boolean isOpaqueCube() {
-		return false;
-	}
-	
-	@Override
-	public boolean renderAsNormalBlock() {
-		return false;
 	}
 	
 	@Override
@@ -217,16 +196,6 @@ public class BlockSensor extends BaseBlock {
 			int z, int side) {
 		ForgeDirection dir = ForgeDirection.getOrientation(side).getOpposite();
 		return world.isSideSolid(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ, dir);
-	}
-	
-	@Override
-	public void onNeighborBlockChange(World world, int x, int y,
-			int z, Block neighbor) {
-		if(!canBlockStay(world, x, y, z)) {
-			int meta = world.getBlockMetadata(x, y, z);
-            dropBlockAsItem(world, x, y, z, meta, 0);
-            world.setBlock(x, y, z, Blocks.air, 0, 3);
-		}
 	}
 	
 	

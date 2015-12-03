@@ -520,7 +520,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	public void setFacingDirection(ForgeDirection direction) {
 		this.direction = direction;
 		if(direction == ForgeDirection.UP || direction == ForgeDirection.DOWN || direction == ForgeDirection.UNKNOWN) {
-			direction = ForgeDirection.NORTH;
+			this.direction = ForgeDirection.NORTH;
 		}
 		updateState();
 		worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, blockType);

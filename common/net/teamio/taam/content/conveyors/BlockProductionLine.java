@@ -5,26 +5,19 @@ import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.teamio.taam.Config;
+import net.teamio.taam.Log;
 import net.teamio.taam.Taam;
-import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.BaseBlock;
-import net.teamio.taam.content.IRotatable;
-import net.teamio.taam.content.IWorldInteractable;
 import net.teamio.taam.content.common.TileEntityChute;
-import net.teamio.taam.conveyors.ConveyorUtil;
-import net.teamio.taam.conveyors.api.IConveyorApplianceHost;
-import net.teamio.taam.util.TaamUtil;
 import codechicken.lib.inventory.InventoryUtils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -61,26 +54,6 @@ public class BlockProductionLine extends BaseBlock {
 	}
 	
 	@Override
-	public boolean hasTileEntity(int metadata) {
-		return true;
-	}
-	
-	@Override
-	public int getRenderType() {
-		return -1;
-	}
-
-	@Override
-	public boolean isOpaqueCube() {
-		return false;
-	}
-	
-	@Override
-	public boolean renderAsNormalBlock() {
-		return false;
-	}
-
-	@Override
 	public TileEntity createTileEntity(World world, int metadata) {
 		if(metadata == 0) {
 			// Plain Conveyor, Tier 1
@@ -113,6 +86,7 @@ public class BlockProductionLine extends BaseBlock {
 			// Chute
 			return new TileEntityChute();
 		}
+		Log.error("Was not able to create a TileEntity for " + getClass().getName());
 		return null;
 	}
 	@Override
@@ -186,13 +160,6 @@ public class BlockProductionLine extends BaseBlock {
 	}
 	
 	@Override
-	public AxisAlignedBB getCollisionBoundingBoxFromPool(World world,
-			int x, int y, int z) {
-		setBlockBoundsBasedOnState(world, x, y, z);
-		return super.getCollisionBoundingBoxFromPool(world, x, y, z);
-	}
-	
-	@Override
 	public boolean hasComparatorInputOverride() {
 		return true;
 	}
@@ -208,66 +175,6 @@ public class BlockProductionLine extends BaseBlock {
 	}
 	
 	@Override
-	public boolean onBlockActivated(World world, int x,
-			int y, int z, EntityPlayer player,
-			int side, float hitX, float hitY,
-			float hitZ) {
-			
-		boolean playerHasWrench = TaamUtil.playerHasWrench(player);
-		boolean playerIsSneaking = player.isSneaking();
-		
-		TileEntity te = world.getTileEntity(x, y, z);
-		
-		if(playerHasWrench) {
-			if(te instanceof IConveyorApplianceHost) {
-				TileEntityConveyor conveyor = (TileEntityConveyor) te;
-				if(playerIsSneaking) {
-					if(ConveyorUtil.dropAppliance(conveyor, player, world, x, y, z)) {
-						conveyor.removeAppliance();
-						return true;
-					}
-				}
-			}
-			if(!playerIsSneaking && te instanceof IRotatable) {
-				IRotatable rotatable = (IRotatable) te;
-				rotatable.setFacingDirection(rotatable.getNextFacingDirection());
-				return true;
-			}
-		}
-		
-		if(playerIsSneaking) {
-			return false;
-		}
-
-		if(!world.isRemote) {
-			if(te instanceof IWorldInteractable) {
-				IWorldInteractable interactable = ((IWorldInteractable) te);
-				boolean intercepted = interactable.onBlockActivated(world, x, y, z, player, playerHasWrench, side, hitX, hitY, hitZ);
-				if(intercepted) {
-					return true;
-				}
-			} else if(te instanceof TileEntityConveyorHopper || te instanceof TileEntityConveyorItemBag) {
-				player.openGui(TaamMain.instance, 0, world, x, y, z);
-			} else if(te instanceof TileEntityConveyorTrashCan) {
-				((TileEntityConveyorTrashCan)te).clearOut();
-			}
-		}
-		return true;
-	}
-
-	@Override
-	public void onNeighborBlockChange(World world, int x, int y, int z,
-			Block neighborBlock) {
-		super.onNeighborBlockChange(world, x, y, z, neighborBlock);
-		if(!canBlockStay(world, x, y, z)) {
-			breakBlock(world, x, y, z, this, world.getBlockMetadata(x, y, z));
-			this.dropBlockAsItem(world, x, y, z, world.getBlockMetadata(x, y, z), 0);
-			world.setBlockToAir(x, y, z);
-		}
-	}
-
-	
-	@Override
 	public boolean canBlockStay(World world, int x, int y, int z) {
 		TileEntity ent = world.getTileEntity(x, y, z);
 		
@@ -279,39 +186,71 @@ public class BlockProductionLine extends BaseBlock {
 	}
 	
 	public static boolean canBlockStay(World world, int x, int y, int z, ForgeDirection myDir) {
-		if(World.doesBlockHaveSolidTopSurface(world, x, y - 1, z)) {
-			return true;
-		}
-		
-		return checkSide(world, x, y, z, ForgeDirection.NORTH, myDir, Config.pl_conveyor_supportrange) ||
-				checkSide(world, x, y, z, ForgeDirection.SOUTH, myDir, Config.pl_conveyor_supportrange) ||
-				checkSide(world, x, y, z, ForgeDirection.WEST, myDir, Config.pl_conveyor_supportrange) ||
-				checkSide(world, x, y, z, ForgeDirection.EAST, myDir, Config.pl_conveyor_supportrange);
+		return checkSupport(world, x, y, z, ForgeDirection.DOWN, myDir, Config.pl_conveyor_supportrange, false) ||
+				checkSupport(world, x, y, z, ForgeDirection.UP, myDir, Config.pl_conveyor_supportrange, false) ||
+				checkSupport(world, x, y, z, ForgeDirection.NORTH, myDir, Config.pl_conveyor_supportrange, false) ||
+				checkSupport(world, x, y, z, ForgeDirection.SOUTH, myDir, Config.pl_conveyor_supportrange, false) ||
+				checkSupport(world, x, y, z, ForgeDirection.WEST, myDir, Config.pl_conveyor_supportrange, false) ||
+				checkSupport(world, x, y, z, ForgeDirection.EAST, myDir, Config.pl_conveyor_supportrange, false);
 	}
 	
-	public static boolean checkSide(World world, int x, int y, int z, ForgeDirection side, ForgeDirection myDir, int supportCount) {
+	public static boolean checkSupport(World world, int x, int y, int z, ForgeDirection side, ForgeDirection myDir, int supportCount, boolean conveyorOnly) {
 		ForgeDirection otherDir = null;
 		
-		if(world.isSideSolid(x + side.offsetX, y + side.offsetY, z + side.offsetZ, side.getOpposite())) {
+		if(checkDirectSupport(world, x, y, z)) {
 			return true;
 		} else {
 			TileEntity ent = world.getTileEntity(x + side.offsetX, y + side.offsetY, z + side.offsetZ);
 			if(ent instanceof TileEntityConveyor) {
-				otherDir = ((TileEntityConveyor) ent).getFacingDirection();
-				// The other conveyor is facing us (end cap lock), and we are not a conveyor (no myDir)
-				if(myDir == null && otherDir == side.getOpposite()) {
-					return true;
+				
+				boolean checkFurther = false;
+				
+				// The other is a conveyor and we are not a conveyor (no myDir)
+				if(myDir == null && !conveyorOnly) {
+					switch(side) {
+					case UP:
+					default:
+						// Up is usually not connected
+						return false;
+					case NORTH:
+					case EAST:
+					case SOUTH:
+					case WEST:
+					case DOWN:
+						System.out.println("Side directly");
+						// Attach to the side of or above a conveyor
+						return true;
+					}
+				} else {
+					if(side == ForgeDirection.UP || side == ForgeDirection.DOWN) {
+						// Up and Down are connected by the supports
+						checkFurther = true;
+					} else {
+						// Only connect conveyors directly working with each other (no sidealongs)
+						otherDir = ((TileEntityConveyor) ent).getFacingDirection();
+						checkFurther = myDir == otherDir && (myDir == side || myDir == side.getOpposite());
+					}
 				}
-				// We are facing the other conveyor, or the other is facing us in the syme direction (direction lock)
-				if(supportCount > 0 && myDir == otherDir && (myDir == side || myDir == side.getOpposite())) {
-					if(World.doesBlockHaveSolidTopSurface(world, x + side.offsetX, y + side.offsetY - 1, z + side.offsetZ)) {
+				if(checkFurther && supportCount > 0) {
+					if(checkDirectSupport(world, x + side.offsetX, y + side.offsetY, z + side.offsetZ)) {
+						System.out.println("Direct support");
 						return true;
 					} else {
-						if(checkSide(world, x + side.offsetX, y + side.offsetY, z + side.offsetZ, side, myDir, supportCount - 1)) {
+						if(checkSupport(world, x + side.offsetX, y + side.offsetY, z + side.offsetZ, side, myDir, supportCount - 1, conveyorOnly)) {
 							return true;
 						}
 					}
 				}
+			}
+		}
+		return false;
+	}
+	
+	public static boolean checkDirectSupport(World world, int x, int y, int z) {
+		for(ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+			if(world.isSideSolid(x + side.offsetX, y + side.offsetY, z + side.offsetZ, side.getOpposite())) {
+				System.out.println(side);
+				return true;
 			}
 		}
 		return false;
