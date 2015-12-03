@@ -226,6 +226,8 @@ public class TaamRecipes {
 		GameRegistry.addSmelting(new ItemStack(TaamMain.itemDust, 1, Taam.BLOCK_ORE_META.iron.ordinal()), new ItemStack(TaamMain.itemIngot, 1, Taam.BLOCK_ORE_META.iron.ordinal()), 1);
 		//Gold Dust -> Gold Ingot
 		GameRegistry.addSmelting(new ItemStack(TaamMain.itemDust, 1, Taam.BLOCK_ORE_META.gold.ordinal()), new ItemStack(TaamMain.itemIngot, 1, Taam.BLOCK_ORE_META.gold.ordinal()), 1);
+		//Rubber Bar -> Plastic sheets
+		GameRegistry.addSmelting(new ItemStack(TaamMain.itemMaterial, 1, Taam.ITEM_MATERIAL_META.rubber_bar.ordinal()),new ItemStack(TaamMain.itemMaterial, 1, Taam.ITEM_MATERIAL_META.plastic_sheet.ordinal()) , 1);
 	}
 
 	public static void addOreRecipes(){
@@ -273,10 +275,6 @@ public class TaamRecipes {
 				'H', Blocks.hopper,
 				'I', new ItemStack(TaamMain.itemPart,1,Taam.ITEM_PART_META.support_frame.ordinal())
 				));
-//		conveyor chute
-		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(TaamMain.blockProductionLine, 1, Taam.BLOCK_PRODUCTIONLINE_META.chute.ordinal()),
-				new ItemStack(TaamMain.blockMachines,1,Taam.BLOCK_MACHINES_META.chute.ordinal()),
-				new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.support_frame.ordinal())));
 //		Shredder
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.blockProductionLine, 1, Taam.BLOCK_PRODUCTIONLINE_META.shredder.ordinal()),
 				"PAP","MTB", "bSb",
