@@ -4,6 +4,7 @@ import java.util.List;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
@@ -37,29 +38,6 @@ public class BlockMachines extends BaseBlock {
 	}
 	
 	@Override
-	public void setBlockBoundsBasedOnState(IBlockAccess world, int x, int y, int z) {
-		int metadata = world.getBlockMetadata(x, y, z);
-		switch(metadata) {
-		case 0:
-			this.minX = 0.10;
-			this.minY = 0;
-			this.minZ = 0.10;
-			this.maxX = 0.9;
-			this.maxY = 1;
-			this.maxZ = 0.9;
-			break;
-		case 1:
-			this.minX = 0;
-			this.minY = 0;
-			this.minZ = 0;
-			this.maxX = 1;
-			this.maxY = 1;
-			this.maxZ = 1;
-			break;
-		}
-		
-	}
-	@Override
 	public int damageDropped(int meta) {
 		if (meta < 0 || meta >= Taam.BLOCK_MACHINES_META.values().length) {
 			meta = 0;
@@ -86,6 +64,39 @@ public class BlockMachines extends BaseBlock {
 		for (int i = 0; i < values.length; i++) {
 			list.add(new ItemStack(item, 1, i));
 		}
+	}
+	
+	@Override
+	public void setBlockBoundsBasedOnState(IBlockAccess world, int x, int y, int z) {
+		int metadata = world.getBlockMetadata(x, y, z);
+		switch(metadata) {
+		case 0:
+			this.minX = 0.10;
+			this.minY = 0;
+			this.minZ = 0.10;
+			this.maxX = 0.9;
+			this.maxY = 1;
+			this.maxZ = 0.9;
+			break;
+		case 1:
+			this.minX = 0;
+			this.minY = 0;
+			this.minZ = 0;
+			this.maxX = 1;
+			this.maxY = 1;
+			this.maxZ = 1;
+			break;
+		}
+	}
+	
+	@Override
+	public void breakBlock(World world, int x, int y, int z, Block block,
+			int meta) {
+		if(meta == 1) {
+			// Do not drop anything for the creative cache (fake items...)
+			return;
+		}
+		super.breakBlock(world, x, y, z, block, meta);
 	}
 
 }
