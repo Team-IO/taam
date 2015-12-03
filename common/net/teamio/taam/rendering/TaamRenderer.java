@@ -335,23 +335,20 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 	public void renderConveyorItems(IConveyorAwareTE tileEntity, double x, double y, double z) {
 		ForgeDirection direction = conveyorGetDirection(tileEntity);
 		
-		GL11.glPushMatrix();
-		GL11.glTranslated(x, y, z);
-		
 		/*
 		 * Rotate if needed
 		 */
-		GL11.glTranslatef(0.5f, 0, 0.5f);
-		
+		float rotationDegrees = 0;
 		if(direction == ForgeDirection.WEST) {
-			GL11.glRotatef(270, 0, 1, 0);
+			rotationDegrees = 270;
 		} else if(direction == ForgeDirection.NORTH) {
-			GL11.glRotatef(180, 0, 1, 0);
+			rotationDegrees = 180;
 		} else if(direction == ForgeDirection.EAST) {
-			GL11.glRotatef(90, 0, 1, 0);
+			rotationDegrees = 90;
 		}
-
-		GL11.glTranslated(-0.5, 0, -0.5);
+		
+		GL11.glPushMatrix();
+		GL11.glTranslated(x, y, z);
 		
 		if(tileEntity != null) {
 
@@ -362,6 +359,13 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 					GL11.glPushMatrix();
 					Random rand = processor.getWorldObj().rand;
 					GL11.glTranslatef(0.5f, -0.1f, 0.5f);
+					
+					/*
+					 * Rotate if needed
+					 */
+					
+					GL11.glRotatef(rotationDegrees, 0, 1, 0);
+
 					if(!processor.isShutdown) {
 						GL11.glTranslatef(
 								0.015f * (1-rand.nextFloat()),
@@ -379,11 +383,10 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 				}
 			}
 			TileEntityConveyor conveyor;
+			boolean useHighSpeed = false;
 			if(tileEntity instanceof TileEntityConveyor) {
 				conveyor = (TileEntityConveyor) tileEntity;
-				if(conveyor.getSpeedLevel() < 2) {
-					conveyor = null;
-				}
+				useHighSpeed = conveyor.getSpeedLevel() >= 2;
 			} else {
 				conveyor = null;
 			}
@@ -401,10 +404,10 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 					float speedsteps = tileEntity.getSpeedsteps();
 					
 					ForgeDirection renderDirection;
-					if(conveyor == null) {
-						renderDirection = direction;
-					} else {
+					if(useHighSpeed) {
 						renderDirection = ConveyorUtil.getHighspeedTransition(slot, direction);
+					} else {
+						renderDirection = direction;
 					}
 					
 					float posX = (float)ConveyorUtil.getItemPositionX(slot, movementProgress / speedsteps, renderDirection);
@@ -414,11 +417,15 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 					GL11.glPushMatrix();
 					GL11.glTranslatef(posX, posY, posZ);
 					
+					//Don't rotate on the conveyors, as that makes transitions jumpy
+					//GL11.glRotatef(rotationDegrees, 0, 1, 0);
+					
 					ei.setEntityItemStack(itemStack);
 	
-					RenderItem.renderInFrame = true;
-					ri.doRender(ei, 0, .5f, 0, 0, 0);
+					// Used to be true, but blocks are too big that way..
 					RenderItem.renderInFrame = false;
+					ri.doRender(ei, 0, .5f, 0, 0, 0);
+					//RenderItem.renderInFrame = false;
 					
 					GL11.glPopMatrix();
 				}
