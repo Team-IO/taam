@@ -359,7 +359,8 @@ public class DepLoader implements IFMLLoadingPlugin, IFMLCallHook {
                 f_lmap.setAccessible(true);
 
                 URLClassPath ucp = (URLClassPath) f_ucp.get(loader);
-                Closeable loader = ((Map<String, Closeable>) f_lmap.get(ucp)).remove(URLUtil.urlNoFragString(url));
+                @SuppressWarnings("unchecked")
+				Closeable loader = ((Map<String, Closeable>) f_lmap.get(ucp)).remove(URLUtil.urlNoFragString(url));
                 if (loader != null) {
                     loader.close();
                     ((List<?>) f_loaders.get(ucp)).remove(loader);
@@ -540,7 +541,8 @@ public class DepLoader implements IFMLLoadingPlugin, IFMLCallHook {
         /**
          * Looks for FMLCorePlugin attributes and adds to CoreModManager
          */
-        private boolean searchCoreMod(File coreMod) {
+        @SuppressWarnings("unchecked")
+		private boolean searchCoreMod(File coreMod) {
             JarFile jar = null;
             Attributes mfAttributes;
             try {
@@ -571,12 +573,12 @@ public class DepLoader implements IFMLLoadingPlugin, IFMLCallHook {
                     FMLRelaunchLog.finer("Adding %s to the list of known coremods, it will not be examined again", coreMod.getName());
                     Field f_loadedCoremods = c.getDeclaredField("loadedCoremods");
                     f_loadedCoremods.setAccessible(true);
-                    ((List)f_loadedCoremods.get(null)).add(coreMod.getName());
+                    ((List<String>)f_loadedCoremods.get(null)).add(coreMod.getName());
                 } else {
                     FMLRelaunchLog.finer("Found FMLCorePluginContainsFMLMod marker in %s, it will be examined later for regular @Mod instances", coreMod.getName());
                     Field f_reparsedCoremods = c.getDeclaredField("reparsedCoremods");
                     f_reparsedCoremods.setAccessible(true);
-                    ((List)f_reparsedCoremods.get(null)).add(coreMod.getName());
+                    ((List<String>)f_reparsedCoremods.get(null)).add(coreMod.getName());
                 }
                 Method m_loadCoreMod = c.getDeclaredMethod("loadCoreMod", LaunchClassLoader.class, String.class, File.class);
                 m_loadCoreMod.setAccessible(true);
