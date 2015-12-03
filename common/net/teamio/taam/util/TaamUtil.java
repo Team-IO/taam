@@ -70,9 +70,8 @@ public final class TaamUtil {
 	
 	public static ItemStack getItemStackFromWorld(World world, int x, int y, int z, Block block) {
 		int metadata = world.getBlockMetadata(x, y, z);
-        Item item = block.getItem(world, x, y, z);
-        if (item == null)
-        {
+        Item item = Item.getItemFromBlock(block);
+        if (item == null) {
         	return null;
         } else {
         	int damage = block.damageDropped(metadata);
