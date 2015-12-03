@@ -106,9 +106,6 @@ public class TaamMain {
 		FMLCommonHandler.instance().bus().register(new Config());
 		
 		Config.init(event.getSuggestedConfigurationFile());
-		if(Config.debug) {
-			Log.setLogLevel(Level.ALL);
-		}
 		creativeTab = new CreativeTabs(Taam.MOD_ID) {
 
 			@Override
