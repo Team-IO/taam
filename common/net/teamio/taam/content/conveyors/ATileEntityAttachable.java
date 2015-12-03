@@ -19,11 +19,11 @@ public abstract class ATileEntityAttachable extends BaseTileEntity implements IC
 	public boolean isSlotAvailable(int slot) {
 		switch(direction) {
 		default:
-		case NORTH:
+		case SOUTH:
 			return slot == 2 || slot == 5 || slot == 8;
 		case EAST:
 			return slot == 6 || slot == 7 || slot == 8;
-		case SOUTH:
+		case NORTH:
 			return slot == 0 || slot == 3 || slot == 6;
 		case WEST:
 			return slot == 0 || slot == 1 || slot == 2;

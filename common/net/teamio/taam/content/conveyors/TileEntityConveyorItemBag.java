@@ -31,21 +31,15 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable implements 
 			 */
 			
 			float stackFactor = 1f / this.inventory.getSizeInventory();
-			float fillFactor = 0;
+			this.fillPercent = 0;
 		
 			for(int i = 0; i < this.inventory.getSizeInventory(); i++) {
 				ItemStack stack = this.inventory.getStackInSlot(i);
 				if(stack != null && stack.getItem() != null && stack.getMaxStackSize() > 0) {
 					float singleFillFactor = stack.stackSize / (float)stack.getMaxStackSize();
-					fillFactor += singleFillFactor * stackFactor;
+					this.fillPercent += singleFillFactor * stackFactor;
 				}
 			}
-			float fillPercent = fillFactor;
-			if(this.fillPercent != fillPercent) {
-				this.fillPercent = fillPercent;
-			}
-			
-			return;
 		}
 		
 		
