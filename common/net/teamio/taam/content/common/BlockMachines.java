@@ -12,6 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.teamio.taam.Taam;
 import net.teamio.taam.Taam.BLOCK_MACHINES_META;
 import net.teamio.taam.content.BaseBlock;
@@ -71,13 +72,14 @@ public class BlockMachines extends BaseBlock {
 		int metadata = world.getBlockMetadata(x, y, z);
 		switch(metadata) {
 		case 0:
-			this.minX = 0.10;
+			// Have chute as full model for now..
+			/*this.minX = 0.10;
 			this.minY = 0;
 			this.minZ = 0.10;
 			this.maxX = 0.9;
 			this.maxY = 1;
 			this.maxZ = 0.9;
-			break;
+			break;*/
 		case 1:
 			this.minX = 0;
 			this.minY = 0;
@@ -97,6 +99,17 @@ public class BlockMachines extends BaseBlock {
 			return;
 		}
 		super.breakBlock(world, x, y, z, block, meta);
+	}
+	
+	@Override
+	public boolean isSideSolid(IBlockAccess world, int x, int y, int z,
+			ForgeDirection side) {
+		int meta = world.getBlockMetadata(x, y, z);
+		if(meta == 0) {
+			return side == ForgeDirection.DOWN || side == ForgeDirection.UP;
+		} else {
+			return true;
+		}
 	}
 
 }

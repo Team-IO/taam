@@ -217,7 +217,6 @@ public class BlockProductionLine extends BaseBlock {
 					case SOUTH:
 					case WEST:
 					case DOWN:
-						System.out.println("Side directly");
 						// Attach to the side of or above a conveyor
 						return true;
 					}
@@ -233,7 +232,6 @@ public class BlockProductionLine extends BaseBlock {
 				}
 				if(checkFurther && supportCount > 0) {
 					if(checkDirectSupport(world, x + side.offsetX, y + side.offsetY, z + side.offsetZ)) {
-						System.out.println("Direct support");
 						return true;
 					} else {
 						if(checkSupport(world, x + side.offsetX, y + side.offsetY, z + side.offsetZ, side, myDir, supportCount - 1, conveyorOnly)) {
