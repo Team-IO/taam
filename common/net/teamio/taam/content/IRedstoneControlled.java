@@ -1,5 +1,6 @@
 package net.teamio.taam.content;
 
+
 public interface IRedstoneControlled {
 	public static final byte MODE_IGNORE = 0;
 	public static final byte MODE_ACTIVE_ON_HIGH = 1;

@@ -120,17 +120,6 @@ public class ConveyorUtil {
 		return slot;
 	}
 
-	
-	public static int getNextSlotHighspeed(int slot, ForgeDirection dir) {
-		slot = getNextSlotUnwrappedHighspeed(slot, dir);
-		if(slot < 0) {
-			slot += 9;
-		} else if(slot > 8) {
-			slot -= 9;
-		}
-		return slot;
-	}
-	
 	public static int getNextSlotUnwrapped(int slot, ForgeDirection dir) {
 		// X-Offset skips whole rows
 		if(dir.offsetX != 0) {
@@ -150,13 +139,6 @@ public class ConveyorUtil {
 			}
 		}
 		return slot;
-	}
-	
-	
-
-	public static int getNextSlotUnwrappedHighspeed(int slot, ForgeDirection direction) {
-		ForgeDirection transition = getHighspeedTransition(slot, direction);
-		return getNextSlotUnwrapped(slot, transition);
 	}
 	
 	public static ForgeDirection getHighspeedTransition(int slot,
@@ -351,5 +333,244 @@ public class ConveyorUtil {
 			}
 		}
 		return true;
+	}
+
+	/**
+	 * Drops the item in the passed slot, exactly where it is rendered now.
+	 * @param slot The slot to be dropped.
+	 */
+	public static void dropItem(World world, IConveyorAwareTE tileEntity, int slot, boolean withVelocity) {
+		ItemWrapper slotObject = tileEntity.getSlot(slot);
+		// System.out.println("Dropping slot " + slot + " >>" + slotObject.itemStack);
+		
+		if(!world.isRemote) {
+			float speedsteps = tileEntity.getSpeedsteps();
+			ForgeDirection direction = tileEntity.getMovementDirection();
+			
+			double posX = tileEntity.posX() + getItemPositionX(slot, slotObject.movementProgress / speedsteps, direction);
+			double posY = tileEntity.posY() + 0.5f;
+			double posZ = tileEntity.posZ() + getItemPositionZ(slot, slotObject.movementProgress / speedsteps, direction);
+			
+			if(slotObject.itemStack != null) {
+				EntityItem item = new EntityItem(world, posX, posY, posZ, slotObject.itemStack);
+				if(withVelocity) {
+					float speed = (Byte.MAX_VALUE - speedsteps) * 0.0019f;
+					item.motionX = direction.offsetX * speed;
+					item.motionY = direction.offsetY * speed;
+					item.motionZ = direction.offsetZ * speed;
+				} else {
+					item.motionX = 0; 
+			        item.motionY = 0; 
+			        item.motionZ = 0; 
+				}
+				world.spawnEntityInWorld(item);
+			}
+		}
+		
+		slotObject.itemStack = null;
+	}
+
+	public static boolean transferSlot(IConveyorAwareTE tileEntity, int slot, IConveyorAwareTE nextBlock, int nextSlot) {
+		// System.out.println("Transfer external " + slot + " to " + nextSlot);
+		
+		ItemWrapper slotObject = tileEntity.getSlot(slot);
+		
+		int transferred = nextBlock.insertItemAt(slotObject.itemStack.copy(), nextSlot);
+		if(transferred > 0) {
+			slotObject.itemStack.stackSize -= transferred;
+			if(slotObject.itemStack.stackSize <= 0) {
+				slotObject.itemStack = null;
+	
+				// Reset processing state, so next item starts "fresh"
+				slotObject.processing = 0;
+				
+				// Stack moved completely
+				return true;
+			}
+		}
+		// Stack not moved at all, or has backlog
+		return false;
+	}
+
+	public static boolean transferSlot(IConveyorAwareTE tileEntity, int slot, int nextSlot) {
+		// System.out.println("Transfer internal " + slot + " to " + nextSlot);
+		
+		ItemWrapper slotObject = tileEntity.getSlot(slot);
+		ItemWrapper nextSlotObject = tileEntity.getSlot(nextSlot);
+		if(nextSlotObject.itemStack == null) {
+			nextSlotObject.itemStack = slotObject.itemStack;
+			
+			slotObject.itemStack = null;
+	
+			// Reset processing state, so next item starts "fresh"
+			slotObject.processing = 0;
+			
+			// Stack moved completely
+			return true;
+		}
+		return false;
+	}
+
+	public static int insertItemAt(IConveyorAwareTE tileEntity, ItemStack item, int slot, boolean simulate) {
+		ItemWrapper slotObject = tileEntity.getSlot(slot);
+		if(slotObject.itemStack == null) {
+			if(!simulate) {
+				slotObject.itemStack = item.copy();
+				slotObject.unblock();
+				slotObject.resetMovement();
+			}
+			return item.stackSize;
+		} else if(slotObject.itemStack.isItemEqual(item)) {
+			int availableSpace = slotObject.itemStack.getMaxStackSize() - slotObject.itemStack.stackSize;
+			if(availableSpace > 0) {
+				availableSpace = Math.min(availableSpace, item.stackSize);
+				if(!simulate) {
+					slotObject.itemStack.stackSize += availableSpace;
+				}
+				return availableSpace;
+			} else {
+				return 0;
+			}
+		} else {
+			return 0;
+		}
+	}
+
+	public static boolean defaultTransition(World world, IConveyorAwareTE tileEntity, int[] slotOrder) {
+		IConveyorApplianceHost applianceHost = null;
+		if(tileEntity instanceof IConveyorApplianceHost) {
+			applianceHost = (IConveyorApplianceHost)tileEntity;
+		}
+		boolean needsUpdate = false;
+		for(int index = 0; index < slotOrder.length; index++) {
+		
+			int slot = slotOrder[index];
+			
+			ItemWrapper wrapper = tileEntity.getSlot(slot);
+			
+			if(wrapper.isEmpty()) {
+				continue;
+			}
+			
+			if(applianceHost != null) {
+				IConveyorAppliance appliance = applianceHost.getAppliance();
+				if(appliance != null) {
+					// System.out.println("Process");
+					appliance.processItem(applianceHost, slot, wrapper);
+				}
+			}
+			
+			ForgeDirection direction = tileEntity.getMovementDirection();
+			byte speedsteps = tileEntity.getSpeedsteps();
+			
+			boolean slotWrapped = false;
+			boolean nextSlotFree = false;
+			boolean nextSlotMovable = false;
+			int nextSlotProgress = 0;
+			boolean wrappedIsSameDirection = true;
+			
+			IConveyorAwareTE nextBlock = null;
+			
+			ForgeDirection nextSlotDir = tileEntity.getNextSlot(slot);
+			int nextSlot = getNextSlotUnwrapped(slot, nextSlotDir);
+			
+			if(nextSlot < 0) {
+				nextSlot += 9;
+				slotWrapped = true;
+			} else if(nextSlot > 8) {
+				nextSlot -= 9;
+				slotWrapped = true;
+			}
+			
+			// Slot wrapped to next block
+			if(slotWrapped) {
+				// Next block, potentially a conveyor-aware block.
+				int nextBlockX = tileEntity.posX() + direction.offsetX;
+				int nextBlockY = tileEntity.posY() + direction.offsetY;
+				int nextBlockZ = tileEntity.posZ() + direction.offsetZ;
+				
+				TileEntity te = world.getTileEntity(nextBlockX, nextBlockY, nextBlockZ);
+				
+				if(te instanceof IConveyorAwareTE) {
+					nextBlock = (IConveyorAwareTE) te;
+					
+					nextSlotFree = nextBlock.getSlot(nextSlot).isEmpty();
+					wrappedIsSameDirection = nextBlock.getMovementDirection() == direction;
+					nextSlotMovable = nextBlock.canSlotMove(nextSlot) && wrappedIsSameDirection;
+					nextSlotProgress = nextBlock.getMovementProgress(nextSlot);
+					byte nextSpeedSteps = nextBlock.getSpeedsteps();
+					if(nextSpeedSteps != speedsteps) {
+						if(nextSpeedSteps == 0) {
+							nextSlotProgress = 0;
+						} else {
+							nextSlotProgress = Math.round((nextSlotProgress / (float)nextSpeedSteps) * speedsteps);
+						}
+					}
+					
+				} else {
+					// Drop it
+					nextSlotFree = true;
+					nextSlotMovable = true;
+				}
+			} else {
+				ItemWrapper nextWrapper = tileEntity.getSlot(nextSlot);
+				nextSlotFree = nextWrapper.itemStack == null;
+				nextSlotMovable = !nextWrapper.isBlocked();
+				nextSlotProgress = nextWrapper.movementProgress;
+			}
+			
+			// check next slot.
+			if(!wrapper.isBlocked() && (nextSlotFree || nextSlotMovable)) {
+				if(wrapper.movementProgress == speedsteps && nextSlotFree) {
+					if(slotWrapped && (nextBlock == null || !nextBlock.isSlotAvailable(nextSlot))) {
+						// No next block, drop it.
+						dropItem(world, tileEntity, slot, true);
+					} else {
+						boolean completeTransfer;
+						if(slotWrapped) {
+							completeTransfer = transferSlot(tileEntity, slot, nextBlock, nextSlot);
+						} else {
+							completeTransfer = transferSlot(tileEntity,slot, nextSlot);
+						}
+						if(!completeTransfer) {
+							// We still have some items pending here..
+							nextSlotFree = false;
+							nextSlotMovable = false;
+						}
+					}
+					needsUpdate = true;
+				}
+			}
+			if(nextSlotFree || (nextSlotMovable && wrappedIsSameDirection && wrapper.movementProgress < nextSlotProgress)) {
+				wrapper.movementProgress++;
+				if(wrapper.movementProgress > speedsteps) {
+					wrapper.movementProgress = 0;
+				}
+			}
+		}
+		return needsUpdate;
+	}
+
+	public static void defaultPlayerInteraction(EntityPlayer player, IConveyorAwareTE tileEntity, float hitX, float hitZ) {
+		int clickedSlot = getSlotForRelativeCoordinates(hitX, hitZ);
+		int playerSlot = player.inventory.currentItem;
+		ItemStack playerStack = player.inventory.getCurrentItem();
+		if(playerStack == null) {
+			// Take from Conveyor
+			ItemWrapper wrapper = tileEntity.getSlot(clickedSlot);
+			if(!wrapper.isEmpty()) {
+				player.inventory.setInventorySlotContents(playerSlot, wrapper.itemStack);
+				wrapper.itemStack = null;
+			}
+		} else {
+			// Put on conveyor
+			int inserted = tileEntity.insertItemAt(playerStack, clickedSlot);
+			if(inserted == playerStack.stackSize) {
+				player.inventory.setInventorySlotContents(playerSlot, null);
+			} else {
+				playerStack.stackSize -= inserted;
+				player.inventory.setInventorySlotContents(playerSlot, playerStack);
+			}
+		}
 	}
 }

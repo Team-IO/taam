@@ -14,8 +14,8 @@ import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IRedstoneControlled;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.conveyors.ConveyorUtil;
+import net.teamio.taam.conveyors.ItemWrapper;
 import net.teamio.taam.conveyors.api.IConveyorAwareTE;
-import net.teamio.taam.conveyors.api.IItemFilter;
 import net.teamio.taam.network.TPMachineConfiguration;
 import net.teamio.taam.util.TaamUtil;
 import net.teamio.taam.util.WorldCoord;
@@ -366,11 +366,6 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 	}
 
 	@Override
-	public IItemFilter getSlotFilter(int slot) {
-		return null;
-	}
-
-	@Override
 	public int posX() {
 		return xCoord;
 	}
@@ -386,8 +381,8 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 	}
 
 	@Override
-	public ItemStack getItemAt(int slot) {
-		return null;
+	public ItemWrapper getSlot(int slot) {
+		return ItemWrapper.EMPTY;
 	}
 
 	@Override
@@ -512,6 +507,10 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 
 	@Override
 	public void setMountDirection(ForgeDirection direction) {
+	}
+
+	public ForgeDirection getNextSlot(int slot) {
+		return ForgeDirection.UNKNOWN;
 	}
 
 }

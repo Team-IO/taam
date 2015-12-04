@@ -1,11 +1,14 @@
 package net.teamio.taam.util;
 
+import java.util.Random;
+
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.teamio.taam.content.IRedstoneControlled;
 import codechicken.lib.inventory.InventoryUtils;
 import codechicken.lib.vec.Vector3;
 
@@ -77,6 +80,19 @@ public final class TaamUtil {
         	int damage = block.damageDropped(metadata);
         	return new ItemStack(block, 1, damage);
         }
+	}
+
+	public static boolean isShutdown(Random rand, int redstoneMode, boolean redstoneHigh) {
+		boolean newShutdown = false;
+		// Redstone. Other criteria?
+		if(redstoneMode == IRedstoneControlled.MODE_ACTIVE_ON_HIGH && !redstoneHigh) {
+			newShutdown = true;
+		} else if(redstoneMode == IRedstoneControlled.MODE_ACTIVE_ON_LOW && redstoneHigh) {
+			newShutdown = true;
+		} else if(redstoneMode > 4 || redstoneMode < 0) {
+			newShutdown = rand.nextBoolean();
+		}
+		return newShutdown;
 	}
 	
 	

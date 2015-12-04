@@ -72,7 +72,7 @@ public class BlockProductionLine extends BaseBlock {
 			return new TileEntityConveyorHopper(true);
 		} else if(metadata == 5) {
 			// Sieve
-			return null;
+			return new TileEntityConveyorSieve();
 		} else if(metadata == 6) {
 			// Shredder
 			return new TileEntityConveyorProcessor(TileEntityConveyorProcessor.Shredder);

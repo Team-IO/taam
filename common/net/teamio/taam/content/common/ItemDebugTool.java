@@ -88,7 +88,7 @@ public class ItemDebugTool extends Item {
         	tec.updateContainingBlockInfo();
         	
         	String text = String.format(remoteState + " Conveyor facing %s. isEnd: %b isBegin: %b",
-        			tec.getFacingDirection().toString(), tec.isEnd(), tec.isBegin());
+        			tec.getFacingDirection().toString(), tec.isEnd, tec.isBegin);
 
         	player.addChatMessage(new ChatComponentText(text));
 

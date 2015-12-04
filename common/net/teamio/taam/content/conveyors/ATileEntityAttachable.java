@@ -97,4 +97,8 @@ public abstract class ATileEntityAttachable extends BaseTileEntity implements IC
 		//}
 	}
 
+	public ForgeDirection getNextSlot(int slot) {
+		return null;
+	}
+
 }

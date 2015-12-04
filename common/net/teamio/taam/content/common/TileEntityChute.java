@@ -16,8 +16,8 @@ import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.conveyors.ConveyorUtil;
+import net.teamio.taam.conveyors.ItemWrapper;
 import net.teamio.taam.conveyors.api.IConveyorAwareTE;
-import net.teamio.taam.conveyors.api.IItemFilter;
 import net.teamio.taam.util.TaamUtil;
 import codechicken.lib.inventory.InventoryRange;
 import codechicken.lib.inventory.InventoryUtils;
@@ -349,8 +349,8 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 	}
 
 	@Override
-	public IItemFilter getSlotFilter(int slot) {
-		return null;
+	public ItemWrapper getSlot(int slot) {
+		return ItemWrapper.EMPTY;
 	}
 
 	@Override
@@ -384,11 +384,6 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 		} else {
 			return stack.stackSize - InventoryUtils.insertItem(target, stack, false);
 		}
-	}
-
-	@Override
-	public ItemStack getItemAt(int slot) {
-		return null;
 	}
 
 	@Override
@@ -447,7 +442,7 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 		if(isConveyorVersion) {
 			this.direction = direction;
 			if(direction == ForgeDirection.UP || direction == ForgeDirection.DOWN || direction == ForgeDirection.UNKNOWN) {
-				direction = ForgeDirection.NORTH;
+				this.direction = ForgeDirection.NORTH;
 			}
 			updateState();
 		}
@@ -455,6 +450,10 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 
 	@Override
 	public void setMountDirection(ForgeDirection direction) {
+	}
+
+	public ForgeDirection getNextSlot(int slot) {
+		return null;
 	}
 
 }

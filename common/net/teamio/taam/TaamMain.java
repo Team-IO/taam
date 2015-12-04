@@ -31,13 +31,11 @@ import net.teamio.taam.content.conveyors.TileEntityConveyor;
 import net.teamio.taam.content.conveyors.TileEntityConveyorHopper;
 import net.teamio.taam.content.conveyors.TileEntityConveyorItemBag;
 import net.teamio.taam.content.conveyors.TileEntityConveyorProcessor;
+import net.teamio.taam.content.conveyors.TileEntityConveyorSieve;
 import net.teamio.taam.content.conveyors.TileEntityConveyorTrashCan;
 import net.teamio.taam.conveyors.ApplianceRegistry;
 import net.teamio.taam.conveyors.appliances.ApplianceSprayer;
 import net.teamio.taam.gui.GuiHandler;
-
-import org.apache.logging.log4j.Level;
-
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -204,6 +202,7 @@ public class TaamMain {
 		GameRegistry.registerTileEntity(TileEntityConveyorProcessor.class, Taam.TILEENTITY_CONVEYOR_PROCESSOR);
 		GameRegistry.registerTileEntity(TileEntityConveyorItemBag.class, Taam.TILEENTITY_CONVEYOR_ITEMBAG);
 		GameRegistry.registerTileEntity(TileEntityConveyorTrashCan.class, Taam.TILEENTITY_CONVEYOR_TRASHCAN);
+		GameRegistry.registerTileEntity(TileEntityConveyorSieve.class, Taam.TILEENTITY_CONVEYOR_SIEVE);
 //		GameRegistry.registerTileEntity(TileEntitySlidingDoor.class, Taam.TILEENTITY_SLIDINGDOOR);
 		
 		GameRegistry.registerWorldGenerator(new OreGenerator(), 2);

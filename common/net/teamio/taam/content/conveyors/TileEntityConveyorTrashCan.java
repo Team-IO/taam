@@ -7,8 +7,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.teamio.taam.Config;
 import net.teamio.taam.content.IRotatable;
+import net.teamio.taam.conveyors.ItemWrapper;
 import net.teamio.taam.conveyors.api.IConveyorAwareTE;
-import net.teamio.taam.conveyors.api.IItemFilter;
 
 
 public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements IConveyorAwareTE, IInventory, IRotatable {
@@ -152,11 +152,6 @@ public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements
 	}
 
 	@Override
-	public IItemFilter getSlotFilter(int slot) {
-		return null;
-	}
-
-	@Override
 	public int posX() {
 		return xCoord;
 	}
@@ -172,8 +167,8 @@ public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements
 	}
 
 	@Override
-	public ItemStack getItemAt(int slot) {
-		return null;
+	public ItemWrapper getSlot(int slot) {
+		return ItemWrapper.EMPTY;
 	}
 
 	@Override
@@ -184,6 +179,10 @@ public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements
 	@Override
 	public double getInsertMinY() {
 		return 0.3;
+	}
+
+	public ForgeDirection getNextSlot(int slot) {
+		return ForgeDirection.UNKNOWN;
 	}
 
 

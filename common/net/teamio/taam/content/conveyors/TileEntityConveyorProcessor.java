@@ -23,8 +23,8 @@ import net.teamio.taam.content.IRedstoneControlled;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.content.IWorldInteractable;
 import net.teamio.taam.conveyors.ConveyorUtil;
+import net.teamio.taam.conveyors.ItemWrapper;
 import net.teamio.taam.conveyors.api.IConveyorAwareTE;
-import net.teamio.taam.conveyors.api.IItemFilter;
 import net.teamio.taam.conveyors.api.IProcessingRecipe;
 import net.teamio.taam.conveyors.api.ProcessingRegistry;
 import net.teamio.taam.network.TPMachineConfiguration;
@@ -77,18 +77,9 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 
 		ConveyorUtil.tryInsertItemsFromWorld(this, worldObj, null, false);
 		
-		boolean newShutdown = false;
-		
 		boolean redstoneHigh = worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
 		
-		// Redstone. Other criteria?
-		if(redstoneMode == IRedstoneControlled.MODE_ACTIVE_ON_HIGH && !redstoneHigh) {
-			newShutdown = true;
-		} else if(redstoneMode == IRedstoneControlled.MODE_ACTIVE_ON_LOW && redstoneHigh) {
-			newShutdown = true;
-		} else if(redstoneMode > 4 || redstoneMode < 0) {
-			newShutdown = worldObj.rand.nextBoolean();
-		}
+		boolean newShutdown = TaamUtil.isShutdown(worldObj.rand, redstoneMode, redstoneHigh);
 		
 		boolean needsUpdate = false;
 		
@@ -121,7 +112,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 		}
 		
 	}
-	
+
 	private void hurtEntities() {
 		@SuppressWarnings("unchecked")
 		List<EntityLivingBase> entitites = worldObj.getEntitiesWithinAABB(EntityLivingBase.class, AxisAlignedBB.getBoundingBox(xCoord, yCoord, zCoord, xCoord + 1, yCoord + 1, zCoord + 1));
@@ -149,6 +140,9 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 		if(outputInventory == null && !TaamUtil.canDropIntoWorld(worldObj, xCoord, yCoord - 1, zCoord)) {
 			return false;
 		}
+		
+		// If output finished, continue processing.
+		// else, the holdback queue will be processed below.
 		
 		if(outputQueue == null) {
 			
@@ -178,11 +172,14 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 			}
 		}
 		
+		// No output, we can skip.
+		
 		if(outputQueue == null) {
 			return false;
 		}
 		
 		if(outputInventory == null) {
+			// Output to world
 			for(ItemStack itemStack : outputQueue) {
 				if(itemStack == null) {
 					continue;
@@ -196,6 +193,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 
 			holdback = null;
 		} else {
+			// Output to inventory
 			boolean hasOutputLeft = false;
 			InventoryRange range = new InventoryRange(outputInventory, ForgeDirection.UP.ordinal());
 			
@@ -404,11 +402,6 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 	}
 
 	@Override
-	public IItemFilter getSlotFilter(int slot) {
-		return null;
-	}
-
-	@Override
 	public int posX() {
 		return xCoord;
 	}
@@ -435,12 +428,8 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 	}
 
 	@Override
-	public ItemStack getItemAt(int slot) {
-		if(slot == 0) {
-			return inventory.getStackInSlot(slot);
-		} else {
-			return null;
-		}
+	public ItemWrapper getSlot(int slot) {
+		return ItemWrapper.EMPTY;
 	}
 
 	@Override
@@ -548,19 +537,21 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 		ItemStack playerStack = player.inventory.getCurrentItem();
 		if(playerStack == null) {
 			// Take from Processor
-			ItemStack taken = getItemAt(clickedSlot);
+			ItemStack taken = getStackInSlot(0);
 			if(taken != null) {
 				player.inventory.setInventorySlotContents(playerSlot, taken);
 				setInventorySlotContents(clickedSlot, null);
 			}
 		} else {
-			// Put into processor
-			int inserted = insertItemAt(playerStack, clickedSlot);
-			if(inserted == playerStack.stackSize) {
-				player.inventory.setInventorySlotContents(playerSlot, null);
-			} else {
-				playerStack.stackSize -= inserted;
-				player.inventory.setInventorySlotContents(playerSlot, playerStack);
+			if(mode != Shredder) {
+				// Put into processor
+				int inserted = insertItemAt(playerStack, clickedSlot);
+				if(inserted == playerStack.stackSize) {
+					player.inventory.setInventorySlotContents(playerSlot, null);
+				} else {
+					playerStack.stackSize -= inserted;
+					player.inventory.setInventorySlotContents(playerSlot, playerStack);
+				}
 			}
 		}
 		return true;
@@ -598,6 +589,10 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 
 	@Override
 	public void setMountDirection(ForgeDirection direction) {
+	}
+
+	public ForgeDirection getNextSlot(int slot) {
+		return ForgeDirection.UNKNOWN;
 	}
 	
 }

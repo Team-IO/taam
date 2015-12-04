@@ -9,6 +9,7 @@ import net.teamio.taam.content.conveyors.TileEntityConveyor;
 import net.teamio.taam.content.conveyors.TileEntityConveyorHopper;
 import net.teamio.taam.content.conveyors.TileEntityConveyorItemBag;
 import net.teamio.taam.content.conveyors.TileEntityConveyorProcessor;
+import net.teamio.taam.content.conveyors.TileEntityConveyorSieve;
 import net.teamio.taam.content.conveyors.TileEntityConveyorTrashCan;
 import net.teamio.taam.rendering.TaamRenderer;
 import cpw.mods.fml.client.registry.ClientRegistry;
@@ -29,6 +30,7 @@ public class TaamClientProxy extends TaamCommonProxy {
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityConveyor.class, taamRenderer);
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityConveyorHopper.class, taamRenderer);
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityConveyorProcessor.class, taamRenderer);
+		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityConveyorSieve.class, taamRenderer);
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityConveyorItemBag.class, taamRenderer);
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityConveyorTrashCan.class, taamRenderer);
 		

@@ -242,6 +242,7 @@ public final class Taam {
 	public static final String TILEENTITY_LOGISTICS_MANAGER = "taam.logistics_manager";
 	public static final String TILEENTITY_CONVEYOR_ITEMBAG = "taam.itembag";
 	public static final String TILEENTITY_CONVEYOR_TRASHCAN = "taam.trashcan";
+	public static final String TILEENTITY_CONVEYOR_SIEVE = "taam.sieve";
 
 	public static final String ENTITY_LOGISTICS_CART = "taam.logistics_manager";
 	

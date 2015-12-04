@@ -25,6 +25,7 @@ public class Config {
 		40,
 		5
 	};
+	public static byte pl_sieve_speedsteps = 20;
 	
 	public static int pl_hopper_highspeed_delay = 1;
 	public static int pl_hopper_delay = 8;
@@ -79,6 +80,7 @@ public class Config {
 		pl_processor_shredder_timeout = config.getInt("pl_processor_shredder_timeout", "production_line", 1, 1, 200, "Ticks between each shredded item in the conveyor shredder.");
 		pl_processor_grinder_timeout = config.getInt("pl_processor_grinder_timeout", "production_line", 15, 1, 200, "Ticks between each shredded item in the conveyor grinder.");
 		pl_processor_crusher_timeout = config.getInt("pl_processor_crusher_timeout", "production_line", 15, 1, 200, "Ticks between each shredded item in the conveyor crusher.");
+		pl_sieve_speedsteps = (byte)config.getInt("pl_sieve_speedsteps", "production_line", 20, 1, Byte.MAX_VALUE, "Speedsteps (1/speed) for conveyor sieves.");
 		
 		pl_appl_sprayer_maxProgress = config.getInt("sprayer_maxProgress", "production_line_appliances", 20, 1, 500, "Maximum processing steps for the sprayer appliance.");
 		pl_appl_sprayer_resourceUsage = config.getInt("sprayer_resourceUsage", "production_line_appliances", 1, 1, 500, "Resource usage per spray step in the sprayer.");

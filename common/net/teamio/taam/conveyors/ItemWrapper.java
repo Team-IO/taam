@@ -3,6 +3,7 @@ package net.teamio.taam.conveyors;
 import codechicken.lib.inventory.InventoryUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.teamio.taam.conveyors.api.IItemFilter;
 
 /**
  * Wrapper for item stacks on the conveyor system. Keeps track of movement,
@@ -11,13 +12,25 @@ import net.minecraft.nbt.NBTTagCompound;
  * @author oliverkahrmann
  */
 public class ItemWrapper {
+	public static ItemWrapper EMPTY = new ItemWrapper(null) {
+		@Override
+		public boolean isEmpty() {
+			return true;
+		}
+	};
+	
 	public ItemStack itemStack;
+	// TODO: Write filter to NBT
+	public IItemFilter filter;
 	public int processing;
 	public byte movementProgress;
 
 	public ItemWrapper(ItemStack itemStack) {
-		super();
 		this.itemStack = itemStack;
+	}
+	
+	public boolean isEmpty() {
+		return itemStack == null;
 	}
 
 	public int getStackSize() {

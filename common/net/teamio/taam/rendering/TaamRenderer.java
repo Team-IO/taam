@@ -33,8 +33,10 @@ import net.teamio.taam.content.conveyors.TileEntityConveyor;
 import net.teamio.taam.content.conveyors.TileEntityConveyorHopper;
 import net.teamio.taam.content.conveyors.TileEntityConveyorItemBag;
 import net.teamio.taam.content.conveyors.TileEntityConveyorProcessor;
+import net.teamio.taam.content.conveyors.TileEntityConveyorSieve;
 import net.teamio.taam.content.conveyors.TileEntityConveyorTrashCan;
 import net.teamio.taam.conveyors.ConveyorUtil;
+import net.teamio.taam.conveyors.ItemWrapper;
 import net.teamio.taam.conveyors.api.IConveyorAwareTE;
 
 import org.lwjgl.opengl.GL11;
@@ -159,7 +161,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 				renderConveyorHopper(null, x, y, z, true);
 				break;
 			case 5:
-				// Sieve
+				renderConveyorSieve(null, x, y, z);
 				break;
 			case 6:
 				renderConveyorProcessor(null, x, y, z, TileEntityConveyorProcessor.Shredder);
@@ -211,8 +213,6 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 		}
 		
 	}
-	
-	
 
 	@Override
 	public void renderTileEntityAt(TileEntity tileEntity, double x, double y, double z, float partialTickTime) {
@@ -234,6 +234,8 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 			renderConveyorHopper((TileEntityConveyorHopper)tileEntity, x, y, z, false);
 		} else if (tileEntity instanceof TileEntityConveyorProcessor) {
 			renderConveyorProcessor((TileEntityConveyorProcessor) tileEntity, x, y, z, (byte)0);
+		} else if (tileEntity instanceof TileEntityConveyorSieve) {
+			renderConveyorSieve((TileEntityConveyorSieve) tileEntity, x, y, z);
 		} else if(tileEntity instanceof TileEntityChute) {
 			TileEntityChute teChute = (TileEntityChute) tileEntity;
 			if(teChute.isConveyorVersion) {
@@ -382,17 +384,24 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 					GL11.glPopMatrix();
 				}
 			}
-			TileEntityConveyor conveyor;
-			boolean useHighSpeed = false;
-			if(tileEntity instanceof TileEntityConveyor) {
-				conveyor = (TileEntityConveyor) tileEntity;
-				useHighSpeed = conveyor.getSpeedLevel() >= 2;
-			} else {
-				conveyor = null;
-			}
 			if(tileEntity.shouldRenderItemsDefault()) {
+				float posY = 0.1f;
+				if(tileEntity instanceof TileEntityConveyorSieve) {
+					//TODO extract into separate method getItemRenderPosY() in IConveyorAwareTE
+					if(((TileEntityConveyorSieve) tileEntity).isShutdown) {
+						//posY = 0;
+					} else {
+						double val = Math.sin(Math.toRadians(rot*32));
+						posY += (float)(val*0.04);
+					}
+				}
 				for(int slot = 0; slot < 9; slot++) {
-					ItemStack itemStack = tileEntity.getItemAt(slot);
+					ItemWrapper wrapper = tileEntity.getSlot(slot);
+					
+					if(wrapper == null || wrapper.isEmpty()) {
+						continue;
+					}
+					ItemStack itemStack = wrapper.itemStack;
 					if(itemStack == null) {
 						continue;
 					}
@@ -403,15 +412,11 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 					}
 					float speedsteps = tileEntity.getSpeedsteps();
 					
-					ForgeDirection renderDirection;
-					if(useHighSpeed) {
-						renderDirection = ConveyorUtil.getHighspeedTransition(slot, direction);
-					} else {
-						renderDirection = direction;
-					}
+					ForgeDirection renderDirection = tileEntity.getNextSlot(slot);
 					
 					float posX = (float)ConveyorUtil.getItemPositionX(slot, movementProgress / speedsteps, renderDirection);
-					float posY = 0.1f;
+					
+					
 					float posZ = (float)ConveyorUtil.getItemPositionZ(slot, movementProgress / speedsteps, renderDirection);
 					
 					GL11.glPushMatrix();
@@ -455,8 +460,8 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 			isWood = tileEntity.getSpeedLevel() == 0;
 			isHighSpeed = tileEntity.getSpeedLevel() >= 2;
 
-			end = tileEntity.isEnd();
-			begin = tileEntity.isBegin();
+			end = tileEntity.isEnd;
+			begin = tileEntity.isBegin;
 			renderEnd = tileEntity.renderEnd;
 			renderBegin = tileEntity.renderBegin;
 			
@@ -609,6 +614,32 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 		GL11.glTranslated(-0.5, 0, -0.5);
 
 		modelConveyor.renderPart("Support_Caps_Alu_scmdl_alu");
+		
+		conveyorEndRendering();
+	}
+	
+	
+	public void renderConveyorSieve(TileEntityConveyorSieve tileEntity, double x, double y, double z) {
+		boolean spinning = true;
+		if(tileEntity != null) {
+			spinning = !tileEntity.isShutdown;
+		}
+		conveyorPrepareRendering(tileEntity, x, y, z, false);
+		modelConveyor.renderPart("Conveyor_Sieve_Chute_cscmdl");
+		modelConveyor.renderPart("Support_Caps_Alu_scmdl_alu");
+		
+		GL11.glTranslated(0.5, 0, 0.5);
+		GL11.glRotatef(180, 0, 1, 0);
+		GL11.glTranslated(-0.5, 0, -0.5);
+		
+		modelConveyor.renderPart("Support_Caps_Alu_scmdl_alu");
+
+		if(spinning) {
+			double val = Math.sin(Math.toRadians(rot*32));
+			GL11.glTranslated(0, 0.01 + val*0.04, 0);
+		}
+		
+		modelConveyor.renderPart("Conveyor_Sieve_csvmdl");
 		
 		conveyorEndRendering();
 	}

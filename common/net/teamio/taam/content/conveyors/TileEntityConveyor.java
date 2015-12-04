@@ -1,6 +1,5 @@
 package net.teamio.taam.content.conveyors;
 
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
@@ -25,7 +24,6 @@ import net.teamio.taam.conveyors.IConveyorApplianceFactory;
 import net.teamio.taam.conveyors.ItemWrapper;
 import net.teamio.taam.conveyors.api.IConveyorApplianceHost;
 import net.teamio.taam.conveyors.api.IConveyorAwareTE;
-import net.teamio.taam.conveyors.api.IItemFilter;
 
 public class TileEntityConveyor extends BaseTileEntity implements ISidedInventory, IFluidHandler, IConveyorAwareTE, IRotatable, IConveyorApplianceHost, IWorldInteractable {
 
@@ -40,8 +38,8 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	private ForgeDirection direction = ForgeDirection.NORTH;
 	private int speedLevel = 0;
 	
-	private boolean isEnd = false;
-	private boolean isBegin = false;
+	public boolean isEnd = false;
+	public boolean isBegin = false;
 	public boolean renderEnd = false;
 	public boolean renderBegin = false;
 	public boolean renderRight = false;
@@ -65,14 +63,6 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	public TileEntityConveyor(int speedLevel) {
 		this();
 		this.speedLevel = speedLevel;
-	}
-	
-	public boolean isBegin() {
-		return isBegin;
-	}
-	
-	public boolean isEnd() {
-		return isEnd;
 	}
 	
 	@Override
@@ -157,83 +147,8 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	 */
 	public void dropItems() {
 		for (int index = 0; index < items.length; index++) {
-			dropItem(index, false);
+			ConveyorUtil.dropItem(worldObj, this, index, false);
 		}
-	}
-	
-	/**
-	 * Drops the item in the passed slot, exactly where it is rendered now.
-	 * @param slot The slot to be dropped.
-	 */
-	public void dropItem(int slot, boolean withVelocity) {
-		ItemWrapper slotObject = items[slot];
-		// System.out.println("Dropping slot " + slot + " >>" + slotObject.itemStack);
-		
-		if(!worldObj.isRemote) {
-			float speedsteps = getSpeedsteps();
-			
-			double posX = xCoord + ConveyorUtil.getItemPositionX(slot, slotObject.movementProgress / speedsteps, direction);
-			double posY = yCoord + 0.5f;
-			double posZ = zCoord + ConveyorUtil.getItemPositionZ(slot, slotObject.movementProgress / speedsteps, direction);
-			
-			if(slotObject.itemStack != null) {
-				EntityItem item = new EntityItem(worldObj, posX, posY, posZ, slotObject.itemStack);
-				if(withVelocity) {
-					float speed = (Byte.MAX_VALUE - getSpeedsteps()) * 0.0019f;
-					item.motionX = direction.offsetX * speed;
-					item.motionY = direction.offsetY * speed;
-					item.motionZ = direction.offsetZ * speed;
-				} else {
-					item.motionX = 0; 
-			        item.motionY = 0; 
-			        item.motionZ = 0; 
-				}
-				worldObj.spawnEntityInWorld(item);
-			}
-		}
-		
-		slotObject.itemStack = null;
-	}
-	
-	private boolean transferSlot(int slot, IConveyorAwareTE nextBlock, int nextSlot) {
-		// System.out.println("Transfer external " + slot + " to " + nextSlot);
-		
-		ItemWrapper slotObject = items[slot];
-		
-		int transferred = nextBlock.insertItemAt(slotObject.itemStack.copy(), nextSlot);
-		if(transferred > 0) {
-			slotObject.itemStack.stackSize -= transferred;
-			if(slotObject.itemStack.stackSize <= 0) {
-				slotObject.itemStack = null;
-
-				// Reset processing state, so next item starts "fresh"
-				slotObject.processing = 0;
-				
-				// Stack moved completely
-				return true;
-			}
-		}
-		// Stack not moved at all, or has backlog
-		return false;
-	}
-
-	private boolean transferSlot(int slot, int nextSlot) {
-		// System.out.println("Transfer internal " + slot + " to " + nextSlot);
-		
-		ItemWrapper slotObject = items[slot];
-		ItemWrapper nextSlotObject = items[nextSlot];
-		if(nextSlotObject.itemStack == null) {
-			nextSlotObject.itemStack = slotObject.itemStack;
-			
-			slotObject.itemStack = null;
-
-			// Reset processing state, so next item starts "fresh"
-			slotObject.processing = 0;
-			
-			// Stack moved completely
-			return true;
-		}
-		return false;
 	}
 	
 	@Override
@@ -242,121 +157,33 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 		/*
 		 * Find items laying on the conveyor.
 		 */
-
+		boolean needsUpdate = false;
+		
 		if(ConveyorUtil.tryInsertItemsFromWorld(this, worldObj, null, false)) {
-			updateState();
+			needsUpdate = true;
 		}
 
 		/*
 		 * Move items already on the conveyor
 		 */
 		
-		
 		// process from movement direction backward to keep slot order inside one conveyor,
 		// as we depend on the status of the next slot
 		int[] slotOrder = ConveyorUtil.getSlotOrderForDirection(direction);
-		for(int index = 0; index < slotOrder.length; index++) {
-		
-			int slot = slotOrder[index];
-			
-			ItemWrapper wrapper = items[slot];
-			
-			if(wrapper.itemStack == null) {
-				continue;
-			}
-			
-			if(appliance != null) {
-				// System.out.println("Process");
-				appliance.processItem(this, slot, wrapper);
-			}
-			
-			boolean slotWrapped = false;
-			boolean nextSlotFree = false;
-			boolean nextSlotMovable = false;
-			int nextSlotProgress = 0;
-			boolean wrappedIsSameDirection = true;
-			
-			IConveyorAwareTE nextBlock = null;
-			
-			int nextSlot;
-			if(speedLevel >= 2) {
-				nextSlot = ConveyorUtil.getNextSlotUnwrappedHighspeed(slot, direction);
-			} else {
-				nextSlot = ConveyorUtil.getNextSlotUnwrapped(slot, direction);
-			}
-			
-			
-			if(nextSlot < 0) {
-				nextSlot += 9;
-				slotWrapped = true;
-			} else if(nextSlot > 8) {
-				nextSlot -= 9;
-				slotWrapped = true;
-			}
-			
-			// Slot wrapped to next block
-			if(slotWrapped) {
-				// Next block, potentially a conveyor-aware block.
-				int nextBlockX = xCoord + direction.offsetX;
-				int nextBlockY = yCoord + direction.offsetY;
-				int nextBlockZ = zCoord + direction.offsetZ;
-				
-				TileEntity te = worldObj.getTileEntity(nextBlockX, nextBlockY, nextBlockZ);
-				
-				if(te instanceof IConveyorAwareTE) {
-					nextBlock = (IConveyorAwareTE) te;
-					
-					nextSlotFree = nextBlock.getItemAt(nextSlot) == null;
-					wrappedIsSameDirection = nextBlock.getMovementDirection() == direction;
-					nextSlotMovable = nextBlock.canSlotMove(nextSlot) && wrappedIsSameDirection;
-					nextSlotProgress = nextBlock.getMovementProgress(nextSlot);
-					byte nextSpeedSteps = nextBlock.getSpeedsteps();
-					if(nextSpeedSteps != getSpeedsteps()) {
-						if(nextSpeedSteps == 0) {
-							nextSlotProgress = 0;
-						} else {
-							nextSlotProgress = Math.round((nextSlotProgress / (float)nextSpeedSteps) * getSpeedsteps());
-						}
-					}
-					
-				} else {
-					// Drop it
-					nextSlotFree = true;
-					nextSlotMovable = true;
-				}
-			} else {
-				nextSlotFree = items[nextSlot].itemStack == null;
-				nextSlotMovable = !items[nextSlot].isBlocked();
-				nextSlotProgress = items[nextSlot].movementProgress;
-			}
-			
-			// check next slot.
-			if(!wrapper.isBlocked() && (nextSlotFree || nextSlotMovable)) {
-				if(wrapper.movementProgress == getSpeedsteps() && nextSlotFree) {
-					if(slotWrapped && (nextBlock == null || !nextBlock.isSlotAvailable(nextSlot))) {
-						// No next block, drop it.
-						dropItem(slot, true);
-					} else {
-						boolean completeTransfer;
-						if(slotWrapped) {
-							completeTransfer = transferSlot(slot, nextBlock, nextSlot);
-						} else {
-							completeTransfer = transferSlot(slot, nextSlot);
-						}
-						if(!completeTransfer) {
-							// We still have some items pending here..
-							nextSlotFree = false;
-							nextSlotMovable = false;
-						}
-					}
-				}
-			}
-			if(nextSlotFree || (nextSlotMovable && wrappedIsSameDirection && wrapper.movementProgress < nextSlotProgress)) {
-				wrapper.movementProgress++;
-				if(wrapper.movementProgress > getSpeedsteps()) {
-					wrapper.movementProgress = 0;//(byte) getSpeedsteps();
-				}
-			}
+		if(ConveyorUtil.defaultTransition(worldObj, this, slotOrder)) {
+			needsUpdate = true;
+		}
+		if(needsUpdate) {
+			updateState();
+		}
+	}
+
+	@Override
+	public ForgeDirection getNextSlot(int slot) {
+		if(speedLevel >= 2) {
+			return ConveyorUtil.getHighspeedTransition(slot, direction);
+		} else {
+			return direction;
 		}
 	}
 	
@@ -414,34 +241,11 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	
 	@Override
 	public int insertItemAt(ItemStack item, int slot) {
-		return insertItemAt(item, slot, false);
-	}
-	
-	private int insertItemAt(ItemStack item, int slot, boolean simulate) {
-		ItemWrapper slotObject = items[slot];
-		if(slotObject.itemStack == null) {
-			if(!simulate) {
-				slotObject.itemStack = item.copy();
-				slotObject.unblock();
-				slotObject.resetMovement();
-				updateState();
-			}
-			return item.stackSize;
-		} else if(slotObject.itemStack.isItemEqual(item)) {
-			int availableSpace = slotObject.itemStack.getMaxStackSize() - slotObject.itemStack.stackSize;
-			if(availableSpace > 0) {
-				availableSpace = Math.min(availableSpace, item.stackSize);
-				if(!simulate) {
-					slotObject.itemStack.stackSize += availableSpace;
-					updateState();
-				}
-				return availableSpace;
-			} else {
-				return 0;
-			}
-		} else {
-			return 0;
+		int count = ConveyorUtil.insertItemAt(this, item, slot, false);
+		if(count > 0) {
+			updateState();
 		}
+		return count;
 	}
 	
 	@Override
@@ -456,15 +260,9 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	}
 	
 	@Override
-	public ItemStack getItemAt(int slot) {
-		ItemWrapper slotObject = items[slot];
-		return slotObject.itemStack;
+	public ItemWrapper getSlot(int slot) {
+		return items[slot];
 	};
-	
-	@Override
-	public IItemFilter getSlotFilter(int slot) {
-		return null;
-	}
 	
 	@Override
 	public int posX() {
@@ -633,7 +431,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	@Override
 	public ItemStack getStackInSlot(int slot) {
 		if(appliance == null) {
-			return getItemAt(slot);
+			return getSlot(slot).itemStack;
 		} else {
 			return appliance.getStackInSlot(slot);
 		}
@@ -752,7 +550,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	@Override
 	public boolean canInsertItem(int slot, ItemStack itemStack, int side) {
 		if(appliance == null) {
-			return insertItemAt(itemStack, slot, true) > 0;
+			return ConveyorUtil.insertItemAt(this, itemStack, slot, true) > 0;
 		} else {
 			return appliance.canInsertItem(slot, itemStack, side);
 		}
@@ -836,26 +634,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 		if(side != ForgeDirection.UP.ordinal()) {
 			return false;
 		}
-		int clickedSlot = ConveyorUtil.getSlotForRelativeCoordinates(hitX, hitZ);
-		int playerSlot = player.inventory.currentItem;
-		ItemStack playerStack = player.inventory.getCurrentItem();
-		if(playerStack == null) {
-			// Take from Conveyor
-			ItemStack taken = getItemAt(clickedSlot);
-			if(taken != null) {
-				player.inventory.setInventorySlotContents(playerSlot, taken);
-				setInventorySlotContents(clickedSlot, null);
-			}
-		} else {
-			// Put on conveyor
-			int inserted = insertItemAt(playerStack, clickedSlot);
-			if(inserted == playerStack.stackSize) {
-				player.inventory.setInventorySlotContents(playerSlot, null);
-			} else {
-				playerStack.stackSize -= inserted;
-				player.inventory.setInventorySlotContents(playerSlot, playerStack);
-			}
-		}
+		ConveyorUtil.defaultPlayerInteraction(player, this, hitX, hitZ);
 		return true;
 	}
 }
