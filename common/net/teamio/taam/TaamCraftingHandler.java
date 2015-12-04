@@ -17,7 +17,7 @@ public class TaamCraftingHandler {
 	    	if(craftMatrix.getStackInSlot(i) != null)
 	    	{
 	    		ItemStack j = craftMatrix.getStackInSlot(i);
-	    		if(j.getItem() != null && isDamageCrafting(j.getItem()))
+	    		if(j.getItem() != null && isDamageCrafting(j))
 	    		{
 	    			if(j.getItemDamage() + 1 < j.getItem().getMaxDamage()) {
 		    			ItemStack k = new ItemStack(j.getItem(), 2, (j.getItemDamage() + 1));
@@ -28,7 +28,7 @@ public class TaamCraftingHandler {
 		}
 	}
 	
-	public static boolean isDamageCrafting(Item item) {
-		return item == TaamMain.itemWrench;
+	public static boolean isDamageCrafting(ItemStack item) {
+		return item.getItem() == TaamMain.itemWrench;
 	}
 }
