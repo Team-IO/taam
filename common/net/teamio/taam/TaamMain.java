@@ -1,5 +1,19 @@
 package net.teamio.taam;
 
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.Mod.EventHandler;
+import cpw.mods.fml.common.Mod.Instance;
+import cpw.mods.fml.common.ModMetadata;
+import cpw.mods.fml.common.SidedProxy;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -36,20 +50,6 @@ import net.teamio.taam.content.conveyors.TileEntityConveyorTrashCan;
 import net.teamio.taam.conveyors.ApplianceRegistry;
 import net.teamio.taam.conveyors.appliances.ApplianceSprayer;
 import net.teamio.taam.gui.GuiHandler;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.EventHandler;
-import cpw.mods.fml.common.Mod.Instance;
-import cpw.mods.fml.common.ModMetadata;
-import cpw.mods.fml.common.SidedProxy;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 
 @Mod(modid = Taam.MOD_ID, name = Taam.MOD_NAME, version = Taam.MOD_VERSION, guiFactory = Taam.GUI_FACTORY_CLASS)
@@ -64,6 +64,7 @@ public class TaamMain {
 	
 	public static ItemDebugTool itemDebugTool;
 	public static ItemWrench itemWrench;
+	public static ItemWithMetadata itemTool;
 	public static ItemWithMetadata itemMaterial;
 	public static ItemWithMetadata itemPart;
 	public static ItemIngot itemIngot;
@@ -151,6 +152,10 @@ public class TaamMain {
 		itemWrench.setUnlocalizedName(Taam.ITEM_WRENCH);
 		itemWrench.setCreativeTab(creativeTab);
 		
+		itemTool = new ItemWithMetadata("tool", Taam.ITEM_TOOL_META.values());
+		itemTool.setUnlocalizedName(Taam.ITEM_TOOL);
+		itemTool.setCreativeTab(creativeTab);
+		
 		itemMaterial = new ItemWithMetadata("material", Taam.ITEM_MATERIAL_META.values());
 		itemMaterial.setUnlocalizedName(Taam.ITEM_MATERIAL);
 		itemMaterial.setCreativeTab(creativeTab);
@@ -174,13 +179,14 @@ public class TaamMain {
 		GameRegistry.registerItem(itemMaterial, Taam.ITEM_MATERIAL, Taam.MOD_ID);
 		GameRegistry.registerItem(itemPart, Taam.ITEM_PART, Taam.MOD_ID);
 		GameRegistry.registerItem(itemIngot, Taam.ITEM_INGOT, Taam.MOD_ID);
-		GameRegistry.registerItem(itemDust, Taam.ITEM_DUST,Taam.MOD_ID); 
+		GameRegistry.registerItem(itemDust, Taam.ITEM_DUST,Taam.MOD_ID);
+		GameRegistry.registerItem(itemTool, Taam.ITEM_TOOL,Taam.MOD_ID);
 
 		GameRegistry.registerItem(itemDebugTool, Taam.ITEM_DEBUG_TOOL, Taam.MOD_ID);
 		GameRegistry.registerItem(itemWrench, Taam.ITEM_WRENCH, Taam.MOD_ID);
 
 		GameRegistry.registerItem(itemConveyorAppliance, Taam.ITEM_CONVEYOR_APPLIANCE, Taam.MOD_ID);
-		
+				
 		GameRegistry.registerBlock(blockSensor, ItemBlock.class, Taam.BLOCK_SENSOR);
 		
 		GameRegistry.registerBlock(blockMachines, null, Taam.BLOCK_MACHINES);

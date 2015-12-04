@@ -154,6 +154,7 @@ public final class Taam {
 	public static final String ITEM_MULTINET_MULTITRONIX = "taam.multitronix";
 	public static final String ITEM_MATERIAL = "taam.material";
 	public static final String ITEM_PART = "taam.part";
+	public static final String ITEM_TOOL = "taam.tool";
 	public static final String ITEM_INGOT = "taam.ingot";
 	public static final String ITEM_DUST = "taam.dust";
 	public static final String ITEM_CONVEYOR_APPLIANCE = "taam.conveyor_appliance";
@@ -174,6 +175,19 @@ public final class Taam {
 	};
 	public static enum ITEM_LOGISTICS_CART_META {
 		basic
+		;
+		public static String[] valuesAsString() {
+			Enum<?>[] valuesAsEnum = values();
+			String[] valuesAsString = new String[valuesAsEnum.length];
+			for(int i = 0; i < valuesAsEnum.length; i++) {
+				valuesAsString[i] = valuesAsEnum[i].name();
+			}
+			return valuesAsString;
+		}
+	};
+	
+	public static enum ITEM_TOOL_META {
+		saw
 		;
 		public static String[] valuesAsString() {
 			Enum<?>[] valuesAsEnum = values();
