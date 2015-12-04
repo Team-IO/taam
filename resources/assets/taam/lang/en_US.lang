@@ -35,6 +35,7 @@ item.taam.part.magnetic_coil.name=Magnetic Coil
 item.taam.part.iron_frame.name=Iron Frame
 item.taam.part.metal_bearing.name=Metal Bearing
 item.taam.part.copper_wire.name=Copper Wire
+item.taam.part.sieve.name=Sieve
 # Materials
 item.taam.material.plastic_sheet.name=Plastic Sheet
 item.taam.material.plastic_bar.name=Plastic Bar

@@ -219,7 +219,8 @@ public final class Taam {
 		magnetic_coil,
 		iron_frame,
 		metal_bearing,
-		copper_wire
+		copper_wire,
+		sieve
 		;
 		public static String[] valuesAsString() {
 			Enum<?>[] valuesAsEnum = values();

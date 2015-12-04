@@ -308,6 +308,16 @@ public class TaamRecipes {
 				'b', new ItemStack(TaamMain.itemPart,1,Taam.ITEM_PART_META.circuit_basic.ordinal()),
 				'S', new ItemStack(TaamMain.itemPart,1,Taam.ITEM_PART_META.support_frame.ordinal())
 				));
+//		Shieve
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.blockProductionLine, 1, Taam.BLOCK_PRODUCTIONLINE_META.sieve.ordinal()),
+				"AsA","ACA", "MSM",
+				'A', "ingotAluminum",
+				'S', new ItemStack(TaamMain.itemPart,1,Taam.ITEM_PART_META.sieve.ordinal()),
+				'C', new ItemStack(TaamMain.blockMachines,1,Taam.BLOCK_MACHINES_META.chute.ordinal()),
+				'M', new ItemStack(TaamMain.itemPart,1,Taam.ITEM_PART_META.motor.ordinal()),
+				'S', new ItemStack(TaamMain.itemPart,1,Taam.ITEM_PART_META.support_frame.ordinal()),
+				's', new ItemStack(TaamMain.itemPart,1,Taam.ITEM_PART_META.sieve.ordinal())
+				));
 
 		/*
 		 * Conveyor Stuff (Production Line Attachables)
@@ -334,11 +344,12 @@ public class TaamRecipes {
 		
 //		sprayer
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemConveyorAppliance, 1, 0),
-				"NFN", "N N", "TCT",
+				"NFN", "N N", "TCP",
 				'N', new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.nozzle.ordinal()),
 				'C', "partBasicCircuit",
-				'T', new ItemStack(TaamMain.itemPart, 1 ,Taam.ITEM_PART_META.pump.ordinal()),
-				'F', new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.iron_frame.ordinal())));
+				'P', new ItemStack(TaamMain.itemPart, 1 ,Taam.ITEM_PART_META.pump.ordinal()),
+				'F', new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.iron_frame.ordinal()),
+				'T', new ItemStack(TaamMain.itemPart, 1 ,Taam.ITEM_PART_META.tank.ordinal())));
 		
 		/*
 		 * Other Machines
@@ -454,6 +465,12 @@ public class TaamRecipes {
 				'I', Items.iron_ingot,
 				'A', "ingotAluminum"
 				));
+//		Sieve
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.motor.ordinal()),
+				"IBI", "BBB", "IBI",
+				'B', Blocks.iron_bars,
+				'I', Items.iron_ingot
+				));		
 		
 		/*
 		 * Materials
