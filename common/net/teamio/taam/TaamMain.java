@@ -32,6 +32,7 @@ import net.teamio.taam.content.common.FluidDye;
 import net.teamio.taam.content.common.ItemDebugTool;
 import net.teamio.taam.content.common.ItemDust;
 import net.teamio.taam.content.common.ItemIngot;
+import net.teamio.taam.content.common.ItemTool;
 import net.teamio.taam.content.common.ItemWrench;
 import net.teamio.taam.content.common.TileEntityChute;
 import net.teamio.taam.content.common.TileEntityCreativeCache;
@@ -64,7 +65,7 @@ public class TaamMain {
 	
 	public static ItemDebugTool itemDebugTool;
 	public static ItemWrench itemWrench;
-	public static ItemWithMetadata itemTool;
+	public static ItemTool itemSaw;
 	public static ItemWithMetadata itemMaterial;
 	public static ItemWithMetadata itemPart;
 	public static ItemIngot itemIngot;
@@ -152,9 +153,9 @@ public class TaamMain {
 		itemWrench.setUnlocalizedName(Taam.ITEM_WRENCH);
 		itemWrench.setCreativeTab(creativeTab);
 		
-		itemTool = new ItemWithMetadata("tool", Taam.ITEM_TOOL_META.values());
-		itemTool.setUnlocalizedName(Taam.ITEM_TOOL);
-		itemTool.setCreativeTab(creativeTab);
+		itemSaw = new ItemTool(Taam.ITEM_TOOL_META.saw);
+		itemSaw.setUnlocalizedName(Taam.ITEM_TOOL);
+		itemSaw.setCreativeTab(creativeTab);
 		
 		itemMaterial = new ItemWithMetadata("material", Taam.ITEM_MATERIAL_META.values());
 		itemMaterial.setUnlocalizedName(Taam.ITEM_MATERIAL);
@@ -180,7 +181,7 @@ public class TaamMain {
 		GameRegistry.registerItem(itemPart, Taam.ITEM_PART, Taam.MOD_ID);
 		GameRegistry.registerItem(itemIngot, Taam.ITEM_INGOT, Taam.MOD_ID);
 		GameRegistry.registerItem(itemDust, Taam.ITEM_DUST,Taam.MOD_ID);
-		GameRegistry.registerItem(itemTool, Taam.ITEM_TOOL,Taam.MOD_ID);
+		GameRegistry.registerItem(itemSaw, Taam.ITEM_TOOL,Taam.MOD_ID);
 
 		GameRegistry.registerItem(itemDebugTool, Taam.ITEM_DEBUG_TOOL, Taam.MOD_ID);
 		GameRegistry.registerItem(itemWrench, Taam.ITEM_WRENCH, Taam.MOD_ID);
