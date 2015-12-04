@@ -47,6 +47,8 @@ item.taam.material.iron_nugget.name=Iron Nugget
 item.taam.material.wooden_board.name=Wooden Board
 item.taam.material.aluminum_plate.name=Aluminum Plate
 item.taam.material.resin.name=Resin
+# Tools
+item.taam.tool.saw.name=Saw
 # Conveyor Appliances
 item.taam.conveyor_appliance.sprayer.name=Sprayer
 
