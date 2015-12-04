@@ -4,6 +4,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 import net.teamio.taam.Taam.BLOCK_ORE_META;
@@ -377,14 +378,22 @@ public class TaamRecipes {
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemWrench, 1, 0),
 				"*I*", "II*", "**I",
 				'I', "ingotIron"));
+//		saw
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemSaw, 1, 0),
+				"IIS",
+				'I', "ingotIron",
+				'S', "stickWood"));
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemSaw, 1, 0),
+				"SII",
+				'I', "ingotIron",
+				'S', "stickWood"));
 		
 		/*
 		 * Parts
 		 */
-		
 //		photo cell
 		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(TaamMain.itemPart, 9, Taam.ITEM_PART_META.photocell.ordinal()),
-				Blocks.daylight_detector));
+				Blocks.daylight_detector, new ItemStack(TaamMain.itemSaw, 1, OreDictionary.WILDCARD_VALUE)));
 //		magnetic coil
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.magnetic_coil.ordinal()),
 				"CCC", "CIC", "CCC",
@@ -466,7 +475,7 @@ public class TaamRecipes {
 				'A', "ingotAluminum"
 				));
 //		Sieve
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.motor.ordinal()),
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.sieve.ordinal()),
 				"IBI", "BBB", "IBI",
 				'B', Blocks.iron_bars,
 				'I', Items.iron_ingot

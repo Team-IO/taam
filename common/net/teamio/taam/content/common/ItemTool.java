@@ -10,6 +10,7 @@ public class ItemTool extends Item {
 		super();
 		setMaxStackSize(1);
 		setMaxDamage(256);
-		setTextureName(Taam.MOD_ID + ":tool" + type.name());
+		setFull3D();
+		setTextureName(Taam.MOD_ID + ":tool." + type.name());
 	}
 }

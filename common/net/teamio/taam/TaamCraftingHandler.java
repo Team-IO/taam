@@ -9,6 +9,7 @@ public class TaamCraftingHandler {
 	
 	@SubscribeEvent
 	public void onCrafting(ItemCraftedEvent craftedEvent) {
+		Log.info("Test");
 		//ItemStack item = craftedEvent.crafting;
 		IInventory craftMatrix = craftedEvent.craftMatrix;
 		for(int i=0; i < craftMatrix.getSizeInventory(); i++)
@@ -28,6 +29,6 @@ public class TaamCraftingHandler {
 	}
 	
 	public static boolean isDamageCrafting(ItemStack item) {
-		return item.getItem() == TaamMain.itemWrench;
+		return item.getItem() == TaamMain.itemSaw;
 	}
 }
