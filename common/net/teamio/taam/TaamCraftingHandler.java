@@ -9,7 +9,6 @@ public class TaamCraftingHandler {
 	
 	@SubscribeEvent
 	public void onCrafting(ItemCraftedEvent craftedEvent) {
-		Log.info("Test");
 		//ItemStack item = craftedEvent.crafting;
 		IInventory craftMatrix = craftedEvent.craftMatrix;
 		for(int i=0; i < craftMatrix.getSizeInventory(); i++)
