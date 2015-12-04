@@ -31,12 +31,15 @@ public class OreGenerator implements IWorldGenerator {
 	public OreGenerator() {
 		gens = new ArrayList<GenerationInfo>();
 		// Copper Ore
-		gens.add(new GenerationInfo(new WorldGenMinable(TaamMain.blockOre, 0, 14, Blocks.stone), 0, 64, 10));
+		gens.add(new GenerationInfo(new WorldGenMinable(TaamMain.blockOre, 0, 14, Blocks.stone), 0, 64, 7));
 		// Tin Ore
-		gens.add(new GenerationInfo(new WorldGenMinable(TaamMain.blockOre, 1, 13, Blocks.stone), 0, 64, 10));
+		gens.add(new GenerationInfo(new WorldGenMinable(TaamMain.blockOre, 1, 13, Blocks.stone), 0, 64, 7));
 		// Native Aluminum
 		gens.add(new GenerationInfo(new WorldGenMinable(TaamMain.blockOre, 2, 2, Blocks.stone), 0, 64, 3));
 		// Bauxite
+		gens.add(new GenerationInfo(new WorldGenMinable(TaamMain.blockOre, 3, 35, Blocks.stone), 0, 128, 10));
+		gens.add(new GenerationInfo(new WorldGenMinable(TaamMain.blockOre, 3, 35, Blocks.dirt), 0, 128, 5));
+		// Kaolinite
 		gens.add(new GenerationInfo(new WorldGenMinable(TaamMain.blockOre, 3, 35, Blocks.stone), 0, 128, 10));
 		gens.add(new GenerationInfo(new WorldGenMinable(TaamMain.blockOre, 3, 35, Blocks.dirt), 0, 128, 5));
 	}
