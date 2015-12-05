@@ -39,14 +39,15 @@ public abstract class BaseBlock extends Block {
 
 	@Override
 	public void onNeighborBlockChange(World world, int x, int y, int z, Block neighborBlock) {
-		TileEntity te = world.getTileEntity(x, y, z);
-		// Update stuff like conveyors if something changes
-		if(te != null) {
-			te.updateContainingBlockInfo();
-			world.markBlockForUpdate(x, y, z);
-		}
 		if(!canBlockStay(world, x, y, z)) {
 			TaamUtil.breakBlockInWorld(world, x, y, z, this);
+			return;
+		}
+		TileEntity te = world.getTileEntity(x, y, z);
+		if(te != null) {
+			world.markBlockForUpdate(x, y, z);
+			// Update stuff like conveyors if something changes
+			((BaseTileEntity)te).updateRenderingInfo();
 		}
 	}
 

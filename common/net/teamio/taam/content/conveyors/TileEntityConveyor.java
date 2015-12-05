@@ -75,9 +75,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	}
 	
 	@Override
-	public void updateContainingBlockInfo() {
-		super.updateContainingBlockInfo();
-
+	public void updateRenderingInfo() {
 		if(worldObj != null) {
 			// Check in front
 			TileEntity te = worldObj.getTileEntity(xCoord + direction.offsetX, yCoord + direction.offsetY, zCoord + direction.offsetZ);
@@ -204,6 +202,30 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 			itemsTag.appendTag(items[i].writeToNBT());
 		}
 		tag.setTag("items", itemsTag);
+		
+		int flags = 0;
+		if(isEnd) {
+			flags += 1;
+		}
+		if(isBegin) {
+			flags += 2;
+		}
+		if(renderEnd) {
+			flags += 4;
+		}
+		if(renderBegin) {
+			flags += 8;
+		}
+		if(renderRight) {
+			flags += 16;
+		}
+		if(renderLeft) {
+			flags += 32;
+		}
+		if(renderAbove) {
+			flags += 64;
+		}
+		tag.setInteger("flags", flags);
 	}
 
 	@Override
@@ -227,6 +249,28 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 			if(applianceData != null) {
 				appliance.readFromNBT(applianceData);
 			}
+		}
+		int flags = tag.getInteger("flags");
+		if((flags & 1) != 0) {
+			isEnd = true;
+		}
+		if((flags & 2) != 0) {
+			isBegin = true;
+		}
+		if((flags & 4) != 0) {
+			renderEnd = true;
+		}
+		if((flags & 8) != 0) {
+			renderBegin = true;
+		}
+		if((flags & 16) != 0) {
+			renderRight = true;
+		}
+		if((flags & 32) != 0) {
+			renderLeft = true;
+		}
+		if((flags & 64) != 0) {
+			renderAbove = true;
 		}
 	}
 	

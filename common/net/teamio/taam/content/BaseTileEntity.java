@@ -51,6 +51,9 @@ public abstract class BaseTileEntity extends TileEntity {
 		markDirty();
 		this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 	}
+	
+	public void updateRenderingInfo() {
+	}
 
 	/*
 	 * Networking
