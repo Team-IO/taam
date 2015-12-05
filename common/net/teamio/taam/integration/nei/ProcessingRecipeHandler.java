@@ -1,8 +1,13 @@
 package net.teamio.taam.integration.nei;
 
+import java.awt.Rectangle;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.oredict.OreDictionary;
+import net.teamio.taam.Log;
 import net.teamio.taam.Taam;
 import net.teamio.taam.TaamClientProxy;
 import net.teamio.taam.TaamMain;
@@ -15,6 +20,7 @@ import net.teamio.taam.rendering.TaamRenderer;
 import org.lwjgl.opengl.GL11;
 
 import codechicken.lib.gui.GuiDraw;
+import codechicken.nei.PositionedStack;
 import codechicken.nei.recipe.TemplateRecipeHandler;
 
 public abstract class ProcessingRecipeHandler extends TemplateRecipeHandler {
@@ -24,11 +30,25 @@ public abstract class ProcessingRecipeHandler extends TemplateRecipeHandler {
 		public Crusher() {
 			super(ProcessingRegistry.CRUSHER);
 		}
+
+		@Override
+		public void loadTransferRects() {
+			transferRects.add(new TemplateRecipeHandler.RecipeTransferRect(
+					new Rectangle(37, 22, 28, 23), "TaamCrusher",
+					new Object[0]));
+		}
 	}
 	
 	public static class Grinder extends ProcessingRecipeHandler {
 		public Grinder() {
 			super(ProcessingRegistry.GRINDER);
+		}
+
+		@Override
+		public void loadTransferRects() {
+			transferRects.add(new TemplateRecipeHandler.RecipeTransferRect(
+					new Rectangle(37, 22, 28, 23), "TaamGrinder",
+					new Object[0]));
 		}
 	}
 	
@@ -115,7 +135,7 @@ public abstract class ProcessingRecipeHandler extends TemplateRecipeHandler {
 	public void loadUsageRecipes(ItemStack ingredient) {
 		IProcessingRecipe matching = ProcessingRegistry.getRecipe(machine, ingredient);
 		if(matching != null) {
-			arecipes.add(new CachedChancedRecipe(this, matching));
+			arecipes.add(new CachedChancedRecipe(matching));
 		}
 	}
 
@@ -124,7 +144,64 @@ public abstract class ProcessingRecipeHandler extends TemplateRecipeHandler {
 		Collection<IProcessingRecipe> matching = ProcessingRegistry.getRecipes(machine, result);
 		
 		for(final IProcessingRecipe recipe : matching) {
-			arecipes.add(new CachedChancedRecipe(this, recipe));
+			arecipes.add(new CachedChancedRecipe(recipe));
 		}
+	}
+	
+	@Override
+	public void loadCraftingRecipes(String outputId, Object... results) {
+		Log.info("Loading output id " + outputId);
+		if (outputId.equals("Taam" + getRecipeName())) {
+			Collection<IProcessingRecipe> matching = ProcessingRegistry
+					.getRecipes(machine);
+
+			for (final IProcessingRecipe recipe : matching) {
+				arecipes.add(new CachedChancedRecipe(recipe));
+			}
+		} else {
+			super.loadCraftingRecipes(outputId, results);
+		}
+	}
+  
+  public final class CachedChancedRecipe extends CachedRecipe {
+		public final IProcessingRecipe recipe;
+
+		private List<PositionedStack> input;
+		
+		public CachedChancedRecipe(IProcessingRecipe recipe) {
+			this.recipe = recipe;
+			input = new ArrayList<PositionedStack>();
+			ItemStack inputStack = recipe.getInput();
+			if(inputStack == null) {
+				input.add(new PositionedStack(OreDictionary.getOres(recipe.getInputOreDict()), 5, 3));
+			} else {
+				input.add(new PositionedStack(inputStack, 5, 3));
+			}
+		}
+
+		@Override
+		public List<PositionedStack> getIngredients() {
+			return this.getCycledIngredients(cycleticks / 20, input);
+		}
+
+		@Override
+		public PositionedStack getResult() {
+			return new PositionedStack(recipe.getOutput()[0].output, 85, 5);
+		}
+
+		public static final int MAX_ROWS = 3;
+		
+		@Override
+		public List<PositionedStack> getOtherStacks() {
+			ChancedOutput[] output = recipe.getOutput();
+			List<PositionedStack> otherStacks = new ArrayList<PositionedStack>(output.length - 1);
+			for(int i = 1; i < output.length; i++) {
+				int r = i % MAX_ROWS;
+				int c = i / MAX_ROWS;
+				otherStacks.add(new PositionedStack(output[i].output, 85 + c*18, 5 + r*18));
+			}
+			return otherStacks;
+		}
+		
 	}
 }

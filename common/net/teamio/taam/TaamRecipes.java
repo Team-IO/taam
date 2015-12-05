@@ -99,15 +99,11 @@ public class TaamRecipes {
 					));
 		ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
 				new ChanceBasedRecipe(new ItemStack(Items.gold_ingot, 1),
-					new ChancedOutput(new ItemStack(TaamMain.itemDust, 1, Taam.BLOCK_ORE_META.gold.ordinal()), 1.0f),
-					new ChancedOutput(new ItemStack(Blocks.cobblestone), 0.4f),
-					new ChancedOutput(new ItemStack(Blocks.mossy_cobblestone), 0.0001f)
+					new ChancedOutput(new ItemStack(TaamMain.itemDust, 1, Taam.BLOCK_ORE_META.gold.ordinal()), 1.0f)
 					));
 		ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
 				new ChanceBasedRecipe(new ItemStack(Items.iron_ingot, 1),
-					new ChancedOutput(new ItemStack(TaamMain.itemDust, 1, Taam.BLOCK_ORE_META.iron.ordinal()), 1.0f),
-					new ChancedOutput(new ItemStack(Blocks.cobblestone), 0.4f),
-					new ChancedOutput(new ItemStack(Blocks.mossy_cobblestone), 0.0001f)
+					new ChancedOutput(new ItemStack(TaamMain.itemDust, 1, Taam.BLOCK_ORE_META.iron.ordinal()), 1.0f)
 					));
 		
 		// Stone/Cobble/Gravel/etc
@@ -160,7 +156,7 @@ public class TaamRecipes {
 		);
 		ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
 				new ChanceBasedRecipe(new ItemStack(Blocks.lapis_block),
-						new ChancedOutput(new ItemStack(Items.dye, 4, 9), 1.0f)
+						new ChancedOutput(new ItemStack(Items.dye, 9, 4), 1.0f)
 				)
 		);
 		
@@ -195,12 +191,12 @@ public class TaamRecipes {
 			ProcessingRegistry.registerRecipe(ProcessingRegistry.GRINDER, new ChanceBasedRecipe(new ItemStack(Blocks.wool, 1, col), 
 					new ChancedOutput(new ItemStack(Items.string, 3), 1f), 
 					new ChancedOutput(new ItemStack(Items.string), 0.1f),
-					new ChancedOutput(new ItemStack(Items.dye, 1, col), 0.001f )
+					new ChancedOutput(new ItemStack(Items.dye, 1, 15-col), 0.001f )
 				));
 			ProcessingRegistry.registerRecipe(ProcessingRegistry.GRINDER, new ChanceBasedRecipe(new ItemStack(Blocks.carpet, 1, col), 
 					new ChancedOutput(new ItemStack(Items.string, 6), 1f), 
 					new ChancedOutput(new ItemStack(Items.string, 2), 0.1f),
-					new ChancedOutput(new ItemStack(Items.dye, 1, col), 0.001f )
+					new ChancedOutput(new ItemStack(Items.dye, 1, 15-col), 0.001f )
 				));
 		}
 		

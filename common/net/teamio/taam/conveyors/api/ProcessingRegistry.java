@@ -3,14 +3,10 @@ package net.teamio.taam.conveyors.api;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import codechicken.lib.inventory.InventoryUtils;
-import codechicken.nei.PositionedStack;
-import codechicken.nei.recipe.TemplateRecipeHandler;
-import codechicken.nei.recipe.TemplateRecipeHandler.CachedRecipe;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
@@ -119,14 +115,16 @@ public final class ProcessingRegistry {
 		}
 	}
 
+	public static Collection<IProcessingRecipe> getRecipes(int machine) {
+		return getRecipes(machine, null);
+	}
+
 	public static Collection<IProcessingRecipe> getRecipes(int machine, ItemStack result) {
 		Map<Item, IProcessingRecipe[]> recipes = ProcessingRegistry.recipes[machine];
 		Map<String, IProcessingRecipe[]> recipesOreDict = ProcessingRegistry.recipesOreDict[machine];
 		
 		ArrayList<IProcessingRecipe> matching = new ArrayList<IProcessingRecipe>();
-		if(machine == GRINDER) {
-			System.out.println(recipes);
-		}
+
 		filter(matching, recipes.values(), result);
 		filter(matching, recipesOreDict.values(), result);
 		
@@ -135,12 +133,16 @@ public final class ProcessingRegistry {
 	
 	public static void filter(Collection<IProcessingRecipe> outputMatching, Collection<IProcessingRecipe[]> candidates, ItemStack filterFor) {
 		for(IProcessingRecipe[] list : candidates) {
-			for(IProcessingRecipe recipe : list) {
-				ChancedOutput[] output = recipe.getOutput();
-				for(ChancedOutput co : output) {
-					if(OreDictionary.itemMatches(filterFor, co.output, false)) {
-						outputMatching.add(recipe);
-						break;
+			if(filterFor == null) {
+				Collections.addAll(outputMatching, list);
+			} else {
+				for(IProcessingRecipe recipe : list) {
+					ChancedOutput[] output = recipe.getOutput();
+					for(ChancedOutput co : output) {
+						if(OreDictionary.itemMatches(filterFor, co.output, false)) {
+							outputMatching.add(recipe);
+							break;
+						}
 					}
 				}
 			}
