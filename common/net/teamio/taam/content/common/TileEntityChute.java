@@ -28,7 +28,7 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 	private ForgeDirection direction = ForgeDirection.NORTH;
 	
 	@Override
-	public void updateContainingBlockInfo() {
+	public void updateRenderingInfo() {
 		isConveyorVersion = worldObj.getBlock(xCoord, yCoord, zCoord) == TaamMain.blockProductionLine;
 		if(!isConveyorVersion) {
 			direction = ForgeDirection.NORTH;
