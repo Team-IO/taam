@@ -15,13 +15,22 @@ buildscript {
     }
 }
 
+repositories {
+	maven {
+		name 'CB Maven FS'
+		url "http://chickenbones.net/maven/"
+	}
+}
+
 apply plugin: 'forge'
 
-version = "0.4"
+version = "1.0"
 group = "net.teamio.taam"
 archivesBaseName = "taam-1.7.10"
 project.ext {
 	cclversion = "1.1.1.104"
+	neiversion = "1.0.3.74"
+	cccversion = "1.0.4.29"
 }
 
 minecraft {
@@ -49,7 +58,9 @@ sourceSets {
 dependencies {
     //compile 'com.mod-buildcraft:buildcraft:6.0.8:dev'
 
-	compile 'codechicken:CodeChickenLib:1.7.10-' + project.cclversion + ':dev'
+	compile "codechicken:CodeChickenLib:${project.minecraft.version}-${project.cclversion}:dev"
+    compile "codechicken:NotEnoughItems:${project.minecraft.version}-${project.neiversion}:dev"
+    compile "codechicken:CodeChickenCore:${project.minecraft.version}-${project.cccversion}:dev"
     // compile fileTree(dir: 'lib', include: '*.jar')
 }
 
