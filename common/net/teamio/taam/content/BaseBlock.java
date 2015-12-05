@@ -45,9 +45,9 @@ public abstract class BaseBlock extends Block {
 		}
 		TileEntity te = world.getTileEntity(x, y, z);
 		if(te != null) {
-			world.markBlockForUpdate(x, y, z);
 			// Update stuff like conveyors if something changes
 			((BaseTileEntity)te).updateRenderingInfo();
+			world.markBlockForUpdate(x, y, z);
 		}
 	}
 

@@ -251,27 +251,13 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 			}
 		}
 		int flags = tag.getInteger("flags");
-		if((flags & 1) != 0) {
-			isEnd = true;
-		}
-		if((flags & 2) != 0) {
-			isBegin = true;
-		}
-		if((flags & 4) != 0) {
-			renderEnd = true;
-		}
-		if((flags & 8) != 0) {
-			renderBegin = true;
-		}
-		if((flags & 16) != 0) {
-			renderRight = true;
-		}
-		if((flags & 32) != 0) {
-			renderLeft = true;
-		}
-		if((flags & 64) != 0) {
-			renderAbove = true;
-		}
+		isEnd = (flags & 1) != 0;
+		isBegin = (flags & 2) != 0;
+		renderEnd = (flags & 4) != 0;
+		renderBegin = (flags & 8) != 0;
+		renderRight = (flags & 16) != 0;
+		renderLeft = (flags & 32) != 0;
+		renderAbove = (flags & 64) != 0;
 	}
 	
 	/*
@@ -364,6 +350,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 		if(direction == ForgeDirection.UP || direction == ForgeDirection.DOWN || direction == ForgeDirection.UNKNOWN) {
 			this.direction = ForgeDirection.NORTH;
 		}
+		updateRenderingInfo();
 		updateState();
 		worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, blockType);
 		if(blockType != null) {

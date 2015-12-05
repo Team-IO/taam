@@ -44,7 +44,6 @@ public abstract class BaseTileEntity extends TileEntity {
 	 * server.
 	 */
 	public final void updateState() {
-		updateContainingBlockInfo();
 		if (worldObj.isRemote) {
 			return;
 		}
@@ -64,7 +63,6 @@ public abstract class BaseTileEntity extends TileEntity {
 		NBTTagCompound nbt = pkt.func_148857_g();
 
 		readPropertiesFromNBTInternal(nbt);
-		updateContainingBlockInfo();
 	}
 
 	@Override
