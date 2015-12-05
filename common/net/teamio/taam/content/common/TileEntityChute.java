@@ -53,6 +53,7 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 		if(direction == ForgeDirection.UP || direction == ForgeDirection.DOWN || direction == ForgeDirection.UNKNOWN) {
 			direction = ForgeDirection.NORTH;
 		}
+		updateRenderingInfo();
 	}
 	
 	private TileEntity getTarget() {
