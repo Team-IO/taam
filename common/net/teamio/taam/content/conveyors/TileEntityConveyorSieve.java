@@ -436,6 +436,12 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 		return true;
 	}
 	
+	@Override
+	public boolean onBlockHit(World world, int x, int y, int z,
+			EntityPlayer player, boolean hasWrench) {
+		return false;
+	}
+	
 
 	/*
 	 * IRedstoneControlled implementation

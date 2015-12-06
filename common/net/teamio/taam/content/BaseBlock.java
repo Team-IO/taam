@@ -126,6 +126,24 @@ public abstract class BaseBlock extends Block {
 		}
 		return true;
 	}
+	
+	@Override
+	public void onBlockClicked(World world, int x, int y, int z, EntityPlayer player) {
+		if(!world.isRemote) {
+			TileEntity te = world.getTileEntity(x, y, z);
+			
+			if(te instanceof IWorldInteractable) {
+				// All world interaction (perform action, open gui, etc.) is handled within the entity
+				IWorldInteractable interactable = ((IWorldInteractable) te);
+				boolean playerHasWrench = WrenchUtil.playerHasWrench(player);
+				/*boolean intercepted = */
+				interactable.onBlockHit(world, x, y, z, player, playerHasWrench);
+//				if(intercepted) {
+//					return true;
+//				}
+			}
+		}
+	}
 
 	@Override
 	public boolean renderAsNormalBlock() {

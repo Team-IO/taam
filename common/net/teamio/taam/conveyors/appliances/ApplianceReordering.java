@@ -121,5 +121,11 @@ public class ApplianceReordering extends ApplianceInventory implements IWorldInt
 		// TODO Auto-generated method stub
 		return false;
 	}
+	
+	@Override
+	public boolean onBlockHit(World world, int x, int y, int z,
+			EntityPlayer player, boolean hasWrench) {
+		return false;
+	}
 
 }

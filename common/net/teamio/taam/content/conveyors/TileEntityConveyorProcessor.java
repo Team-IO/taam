@@ -117,20 +117,24 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 		@SuppressWarnings("unchecked")
 		List<EntityLivingBase> entitites = worldObj.getEntitiesWithinAABB(EntityLivingBase.class, AxisAlignedBB.getBoundingBox(xCoord, yCoord, zCoord, xCoord + 1, yCoord + 1, zCoord + 1));
 		for(EntityLivingBase living : entitites) {
-			DamageSource ds = TaamMain.ds_processed;
-			switch(mode) {
-			case Shredder:
-				ds = TaamMain.ds_shredded;
-				break;
-			case Grinder:
-				ds = TaamMain.ds_ground;
-				break;
-			case Crusher:
-				ds = TaamMain.ds_crushed;
-				break;
-			}
-			living.attackEntityFrom(ds, 5);
+			hurtEntity(living);
 		}
+	}
+	
+	private void hurtEntity(EntityLivingBase living) {
+		DamageSource ds = TaamMain.ds_processed;
+		switch(mode) {
+		case Shredder:
+			ds = TaamMain.ds_shredded;
+			break;
+		case Grinder:
+			ds = TaamMain.ds_ground;
+			break;
+		case Crusher:
+			ds = TaamMain.ds_crushed;
+			break;
+		}
+		living.attackEntityFrom(ds, 5);
 	}
 	
 	private boolean processOther() {
@@ -532,6 +536,10 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 		if(side != ForgeDirection.UP.ordinal()) {
 			return false;
 		}
+		if(!isShutdown) {
+			hurtEntity(player);
+			return true;
+		}
 		int clickedSlot = 0;
 		int playerSlot = player.inventory.currentItem;
 		ItemStack playerStack = player.inventory.getCurrentItem();
@@ -553,6 +561,24 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 					player.inventory.setInventorySlotContents(playerSlot, playerStack);
 				}
 			}
+		}
+		return true;
+	}
+	
+	@Override
+	public boolean onBlockHit(World world, int x, int y, int z,
+			EntityPlayer player, boolean hasWrench) {
+//		if(side != ForgeDirection.UP.ordinal()) {
+//			return false;
+//		}
+		if(hasWrench) {
+			ItemStack taken = getStackInSlot(0);
+			if(taken != null) {
+				TaamUtil.tryDropToInventory(player, taken, .5, .5, .5);
+				setInventorySlotContents(0, null);
+			}
+		} else if(!isShutdown) {
+			hurtEntity(player);
 		}
 		return true;
 	}

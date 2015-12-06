@@ -29,8 +29,8 @@ public class ItemProductionLine extends ItemMultiTexture {
 			defaultPlacement = true;
 		} else {
 			TileEntity ent = world.getTileEntity(x + dir.offsetX, y, z + dir.offsetZ);
-			if(ent instanceof TileEntityConveyor) {
-				ForgeDirection otherDir = ((TileEntityConveyor) ent).getFacingDirection();
+			if(ent instanceof IRotatable) {
+				ForgeDirection otherDir = ((IRotatable) ent).getFacingDirection();
 				if(otherDir == dir || otherDir == dir.getOpposite()) {
 					placeDir = otherDir;
 				} else {
