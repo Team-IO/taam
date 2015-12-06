@@ -31,7 +31,7 @@ public class BlockMachines extends BaseBlock {
 	public TileEntity createTileEntity(World world, int metadata) {
 		switch(metadata) {
 		case 0:
-			return new TileEntityChute();
+			return new TileEntityChute(false);
 		case 1:
 			return new TileEntityCreativeCache();
 		}

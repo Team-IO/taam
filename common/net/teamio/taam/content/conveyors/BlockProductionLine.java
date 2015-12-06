@@ -84,7 +84,7 @@ public class BlockProductionLine extends BaseBlock {
 			return new TileEntityConveyorProcessor(TileEntityConveyorProcessor.Crusher);
 		} else if(metadata == 9) {
 			// Chute
-			return new TileEntityChute();
+			return new TileEntityChute(true);
 		}
 		Log.error("Was not able to create a TileEntity for " + getClass().getName());
 		return null;

@@ -4,7 +4,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import net.teamio.taam.content.common.TileEntityCreativeCache;
 import net.teamio.taam.content.conveyors.TileEntityConveyorHopper;
 import cpw.mods.fml.common.network.IGuiHandler;
 

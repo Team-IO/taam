@@ -37,7 +37,7 @@ public final class ProcessingRegistry {
 		Map<Item, IProcessingRecipe[]> recipes = ProcessingRegistry.recipes[machine];
 		
 		IProcessingRecipe[] matches = recipes.get(input.getItem());
-		Log.debug("Fetching recipe for machine " + machine + ": " + input + "->" + matches);
+		Log.debug("Fetching recipe for machine " + machine + ": " + input + "->" + matches.length + " matches");
 
 		if(matches != null) {
 			for(IProcessingRecipe recipe : matches) {
@@ -53,7 +53,7 @@ public final class ProcessingRegistry {
 		 */
 		
 		int[] oreIDs = OreDictionary.getOreIDs(input);
-		Log.debug("Fetching ore dict recipes for machine " + machine + ": " + input + "->" + oreIDs);
+		Log.debug("Fetching ore dict recipes for machine " + machine + ": " + input + "->" + oreIDs.length + " matches");
 		
 		Map<String, IProcessingRecipe[]> recipesOreDict = ProcessingRegistry.recipesOreDict[machine];
 		

@@ -12,7 +12,6 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
-import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.conveyors.ConveyorUtil;
@@ -27,12 +26,12 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 	public boolean isConveyorVersion = false;
 	private ForgeDirection direction = ForgeDirection.NORTH;
 	
-	@Override
-	public void updateRenderingInfo() {
-		isConveyorVersion = worldObj.getBlock(xCoord, yCoord, zCoord) == TaamMain.blockProductionLine;
-		if(!isConveyorVersion) {
-			direction = ForgeDirection.NORTH;
-		}
+	public TileEntityChute(boolean isConveyorVersion) {
+		this.isConveyorVersion = isConveyorVersion;
+	}
+	
+	public TileEntityChute() {
+		this(false);
 	}
 	
 	@Override
@@ -42,6 +41,7 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 	
 	@Override
 	protected void writePropertiesToNBT(NBTTagCompound tag) {
+		tag.setBoolean("isConveyorVersion", isConveyorVersion);
 		if(isConveyorVersion) {
 			tag.setInteger("direction", direction.ordinal());
 		}
@@ -49,11 +49,13 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 
 	@Override
 	protected void readPropertiesFromNBT(NBTTagCompound tag) {
-		direction = ForgeDirection.getOrientation(tag.getInteger("direction"));
-		if(direction == ForgeDirection.UP || direction == ForgeDirection.DOWN || direction == ForgeDirection.UNKNOWN) {
-			direction = ForgeDirection.NORTH;
+		isConveyorVersion = tag.getBoolean("isConveyorVersion");
+		if(isConveyorVersion) {
+			direction = ForgeDirection.getOrientation(tag.getInteger("direction"));
+			if(direction == ForgeDirection.UP || direction == ForgeDirection.DOWN || direction == ForgeDirection.UNKNOWN) {
+				direction = ForgeDirection.NORTH;
+			}
 		}
-		updateRenderingInfo();
 	}
 	
 	private TileEntity getTarget() {
