@@ -37,9 +37,9 @@ public final class ProcessingRegistry {
 		Map<Item, IProcessingRecipe[]> recipes = ProcessingRegistry.recipes[machine];
 		
 		IProcessingRecipe[] matches = recipes.get(input.getItem());
-		Log.debug("Fetching recipe for machine " + machine + ": " + input + "->" + matches.length + " matches");
 
 		if(matches != null) {
+			Log.debug("Fetching recipe for machine " + machine + ": " + input + "->" + matches.length + " matches");
 			for(IProcessingRecipe recipe : matches) {
 				if(recipe != null && recipe.inputMatches(input)) {
 					Log.debug("Matching recipe " + recipe);
