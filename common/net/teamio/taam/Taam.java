@@ -38,7 +38,7 @@ public final class Taam {
 		tin(true, true, true),
 		aluminum(true, true, true),
 		bauxite(true, false, true),  //No Ingot
-		kaolinite(true, false, false), //Currently, Ore Only!
+		kaolinite(true, false, true), //No Ingot
 		
 		//Vanilla requires only the "custom" stuff
 		gold(false, false, true),

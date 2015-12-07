@@ -25,21 +25,24 @@ public class TaamRecipes {
 			if(!values[meta].dust) {
 				continue;
 			}
-			if(values[meta].ore) {
-				ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
-						new ChanceBasedRecipe(new ItemStack(TaamMain.blockOre, 1, meta),
-							new ChancedOutput(new ItemStack(TaamMain.itemDust, 2, meta), 1.0f),
-							new ChancedOutput(new ItemStack(Blocks.cobblestone), 0.4f),
-							new ChancedOutput(new ItemStack(Blocks.mossy_cobblestone), 0.0001f)
-							));
-			}
-			if(values[meta].ingot) {
+						if(values[meta].ingot) {
 				ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
 						new ChanceBasedRecipe(new ItemStack(TaamMain.itemIngot, 1, meta),
 							new ChancedOutput(new ItemStack(TaamMain.itemDust, 1, meta), 1.0f)
 							));
 			}
 		}
+		
+		String[] oreDic = {"oreCopper", "oreTin","oreAluminum","oreBauxite","oreKaolinte","oreGold","oreIron","oreCoal"};
+		for (int ore = 0 ; ore < oreDic.length; ore++){
+			ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
+					new ChanceBasedRecipe(oreDic[ore],
+						new ChancedOutput(new ItemStack(TaamMain.itemDust, 2, ore), 1.0f),
+						new ChancedOutput(new ItemStack(Blocks.cobblestone), 0.4f),
+						new ChancedOutput(new ItemStack(Blocks.mossy_cobblestone), 0.0001f)
+					));
+		}
+		
 		// Vanilla Ores
 		ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
 				new ChanceBasedRecipe(new ItemStack(Blocks.diamond_ore, 1),
