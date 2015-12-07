@@ -265,6 +265,9 @@ public final class Taam {
 	public static final String CFG_COMMENT_SENSOR_PLACEMENT_MODE = "Sensor [Motion, Minect] placement mode when side by side. 1 = move together, 2 = merge into one";
 	public static final String CFG_COMMENT_GEN_COPPER_ORE = "Should Taam generate Copper Ore in the World";
 	public static final String CFG_COMMENT_GEN_TIN_ORE  = "Should Taam generate Tin Ore in the World";
+	public static final String CFG_COMMENT_GEN_BAUXITE_ORE  = "Should Taam generate B Ore in the World";
+	public static final String CFG_COMMENT_GEN_ALUMINUM_ORE  = "Should Taam generate Aluminum Ore in the World";
+	public static final String CFG_COMMENT_GEN_KAOLINITE_ORE  = "Should Taam generate Kaolinte Ore in the World";
 	public static final String CFG_COMMENT_DEBUG_OUTPUT = "Should the Debug mode form Taam be activated";
 	
 	public static final String APPLIANCE_SPRAYER = "taam.sprayer";
