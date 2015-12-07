@@ -12,6 +12,9 @@ public class Config {
 	
 	public static boolean genCopper = true;
 	public static boolean genTin = true;
+	public static boolean genAluminum = true;
+	public static boolean genBauxite = true;
+	public static boolean genKaolinite = true;
 	public static boolean debug = false;
 	
 	public static int sensor_delay = 30;
@@ -58,6 +61,9 @@ public class Config {
 		
 		genCopper = config.getBoolean("generateCopper", "worldgen", true, Taam.CFG_COMMENT_GEN_COPPER_ORE);
 		genTin = config.getBoolean("generateTin", "worldgen", true , Taam.CFG_COMMENT_GEN_TIN_ORE);
+		genAluminum = config.getBoolean("generateAluminum", "worldgen", true , Taam.CFG_COMMENT_GEN_ALUMINUM_ORE);
+		genBauxite = config.getBoolean("generateBauxite", "worldgen", true , Taam.CFG_COMMENT_GEN_BAUXITE_ORE);
+		genKaolinite = config.getBoolean("generateKaolinite", "worldgen", true , Taam.CFG_COMMENT_GEN_KAOLINITE_ORE);
 		
 		debug = config.getBoolean("debug_output", Configuration.CATEGORY_GENERAL, false, Taam.CFG_COMMENT_DEBUG_OUTPUT);
 		

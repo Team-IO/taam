@@ -31,19 +31,26 @@ public class OreGenerator implements IWorldGenerator {
 	public OreGenerator() {
 		gens = new ArrayList<GenerationInfo>();
 		// Copper Ore
-		gens.add(new GenerationInfo(new WorldGenMinable(TaamMain.blockOre, 0, 14, Blocks.stone), 0, 64, 7));
+		if(Config.genCopper)
+			gens.add(new GenerationInfo(new WorldGenMinable(TaamMain.blockOre, Taam.BLOCK_ORE_META.copper.ordinal(), 14, Blocks.stone), 0, 64, 7));
 		// Tin Ore
-		gens.add(new GenerationInfo(new WorldGenMinable(TaamMain.blockOre, 1, 13, Blocks.stone), 0, 64, 7));
+		if(Config.genTin)
+			gens.add(new GenerationInfo(new WorldGenMinable(TaamMain.blockOre, Taam.BLOCK_ORE_META.tin.ordinal(), 13, Blocks.stone), 0, 64, 7));
 		// Native Aluminum
-		gens.add(new GenerationInfo(new WorldGenMinable(TaamMain.blockOre, 2, 2, Blocks.stone), 0, 64, 3));
+		if(Config.genAluminum)
+			gens.add(new GenerationInfo(new WorldGenMinable(TaamMain.blockOre, Taam.BLOCK_ORE_META.aluminum.ordinal(), 2, Blocks.stone), 0, 64, 3));
 		// Bauxite
-		gens.add(new GenerationInfo(new WorldGenMinable(TaamMain.blockOre, 3, 35, Blocks.stone), 0, 128, 10));
-		gens.add(new GenerationInfo(new WorldGenMinable(TaamMain.blockOre, 3, 35, Blocks.dirt), 0, 128, 5));
+		if(Config.genBauxite){
+		gens.add(new GenerationInfo(new WorldGenMinable(TaamMain.blockOre, Taam.BLOCK_ORE_META.bauxite.ordinal(), 35, Blocks.stone), 0, 128, 10));
+		gens.add(new GenerationInfo(new WorldGenMinable(TaamMain.blockOre, Taam.BLOCK_ORE_META.bauxite.ordinal(), 35, Blocks.dirt), 0, 128, 5));
+		}
 		// Kaolinite
-		gens.add(new GenerationInfo(new WorldGenMinable(TaamMain.blockOre, 3, 35, Blocks.stone), 0, 128, 10));
-		gens.add(new GenerationInfo(new WorldGenMinable(TaamMain.blockOre, 3, 35, Blocks.dirt), 0, 128, 5));
+		if(Config.genKaolinite){
+		gens.add(new GenerationInfo(new WorldGenMinable(TaamMain.blockOre, Taam.BLOCK_ORE_META.kaolinite.ordinal(), 35, Blocks.stone), 0, 128, 10));
+		gens.add(new GenerationInfo(new WorldGenMinable(TaamMain.blockOre, Taam.BLOCK_ORE_META.kaolinite.ordinal(), 35, Blocks.dirt), 0, 128, 5));
+		}
 	}
-	
+		
 	@Override
 	public void generate(Random random, int chunkX, int chunkZ, World world, IChunkProvider chunkGenerator, IChunkProvider chunkProvider) {
 		switch (world.provider.dimensionId) {
