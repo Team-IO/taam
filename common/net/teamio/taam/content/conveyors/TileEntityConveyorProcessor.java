@@ -50,6 +50,11 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 	private int timeout;
 	
 	/**
+	 * Cached recipe, that will not change during processing of one stack
+	 */
+	private IProcessingRecipe recipe;
+	
+	/**
 	 * Just for rendering purposes we keep this here.
 	 */
 	public boolean isShutdown;
@@ -75,7 +80,12 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 			return;
 		}
 
-		ConveyorUtil.tryInsertItemsFromWorld(this, worldObj, null, false);
+		if(!isCoolingDown()) {
+			ItemStack stack = inventory.getStackInSlot(0);
+			if(stack == null || stack.stackSize < stack.getMaxStackSize()) {
+				ConveyorUtil.tryInsertItemsFromWorld(this, worldObj, null, false);
+			}
+		}
 		
 		boolean redstoneHigh = worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
 		
@@ -138,12 +148,13 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 	}
 	
 	private boolean processOther() {
-		ItemStack[] outputQueue = holdback;
-		boolean decrease = false;
 		IInventory outputInventory = InventoryUtils.getInventory(worldObj, xCoord, yCoord - 1, zCoord);
 		if(outputInventory == null && !TaamUtil.canDropIntoWorld(worldObj, xCoord, yCoord - 1, zCoord)) {
 			return false;
 		}
+
+		ItemStack[] outputQueue = holdback;
+		boolean decrease = false;
 		
 		// If output finished, continue processing.
 		// else, the holdback queue will be processed below.
@@ -158,10 +169,13 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 			ItemStack input = getStackInSlot(0);
 			
 			if(input == null) {
+				recipe = null;
 				return false;
 			}
 			
-			IProcessingRecipe recipe = getRecipe(input);
+			if(recipe == null) {
+				recipe = getRecipe(input);
+			}
 			
 			if(recipe != null) {
 				decrease = true;
@@ -300,8 +314,14 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 		}
 	}
 
+	private void checkRecipe() {
+		if(inventory.getStackInSlot(0) == null) {
+			recipe = null;
+		}
+	}
+	
 	/*
-	 * ISidedInventory implementation
+	 * IInventory implementation
 	 */
 	
 	@Override
@@ -317,6 +337,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 	@Override
 	public ItemStack decrStackSize(int slot, int amount) {
 		ItemStack retVal = inventory.decrStackSize(slot, amount);
+		checkRecipe();
 		updateState();
 		return retVal;
 	}
@@ -329,6 +350,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 	@Override
 	public void setInventorySlotContents(int slot, ItemStack stack) {
 		inventory.setInventorySlotContents(slot, stack);
+		recipe = null;
 		updateState();
 	}
 
@@ -373,7 +395,9 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 
 	@Override
 	public boolean isItemValidForSlot(int slot, ItemStack itemStack) {
-		return mode == Shredder || getRecipe(itemStack) != null;
+		return true;
+		// Removed this check for performance reasons... Clog will happen at processor, not at conveyor.
+//		return mode == Shredder || getRecipe(itemStack) != null;
 	}
 
 	/*

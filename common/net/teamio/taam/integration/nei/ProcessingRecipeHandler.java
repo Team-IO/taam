@@ -141,6 +141,7 @@ public abstract class ProcessingRecipeHandler extends TemplateRecipeHandler {
 
 	@Override
 	public void loadCraftingRecipes(ItemStack result) {
+		Log.debug("Loading crafting recipes for ItemStack" + result);
 		Collection<IProcessingRecipe> matching = ProcessingRegistry.getRecipes(machine, result);
 		
 		for(final IProcessingRecipe recipe : matching) {
@@ -150,7 +151,7 @@ public abstract class ProcessingRecipeHandler extends TemplateRecipeHandler {
 	
 	@Override
 	public void loadCraftingRecipes(String outputId, Object... results) {
-		Log.info("Loading output id " + outputId);
+		Log.debug("Loading crafting recipes for output id" + outputId);
 		if (outputId.equals("Taam" + getRecipeName())) {
 			Collection<IProcessingRecipe> matching = ProcessingRegistry
 					.getRecipes(machine);

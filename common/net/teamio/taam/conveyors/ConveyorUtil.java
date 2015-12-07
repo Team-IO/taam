@@ -272,11 +272,9 @@ public class ConveyorUtil {
 		switch (dir) {
 		default:
 		case NORTH:
-			return slotOrders[0];
-		case SOUTH:
-			return slotOrders[1];
 		case WEST:
 			return slotOrders[0];
+		case SOUTH:
 		case EAST:
 			return slotOrders[1];
 		}
