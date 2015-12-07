@@ -101,22 +101,23 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 			needsUpdate = true;
 		}
 
-		// process from movement direction backward to keep slot order inside one conveyor,
-		// as we depend on the status of the next slot
-		int[] slotOrder = ConveyorUtil.getSlotOrderForDirection(direction);
-
-		/*
-		 * Process sieving
-		 */
-		if(processSieve(slotOrder)) {
-			needsUpdate = true;
-		}
-		
-		/*
-		 * Move items already on the conveyor
-		 */
-		
 		if(!isShutdown) {
+			
+			// process from movement direction backward to keep slot order inside one conveyor,
+			// as we depend on the status of the next slot
+			int[] slotOrder = ConveyorUtil.getSlotOrderForDirection(direction);
+	
+			/*
+			 * Process sieving
+			 */
+			if(processSieve(slotOrder)) {
+				needsUpdate = true;
+			}
+			
+			/*
+			 * Move items already on the conveyor
+			 */
+		
 			if(ConveyorUtil.defaultTransition(worldObj, this, slotOrder)) {
 				needsUpdate = true;
 			}
@@ -129,6 +130,7 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 	
 	public boolean processSieve(int[] slotOrder) {
 
+		// If we are blocked below, act as a conveyor.
 		IInventory outputInventory = InventoryUtils.getInventory(worldObj, xCoord, yCoord - 1, zCoord);
 		if(outputInventory == null && !TaamUtil.canDropIntoWorld(worldObj, xCoord, yCoord - 1, zCoord)) {
 			return false;
