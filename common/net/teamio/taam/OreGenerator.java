@@ -42,12 +42,12 @@ public class OreGenerator implements IWorldGenerator {
 		// Bauxite
 		if(Config.genBauxite){
 		gens.add(new GenerationInfo(new WorldGenMinable(TaamMain.blockOre, Taam.BLOCK_ORE_META.bauxite.ordinal(), 35, Blocks.stone), 0, 128, 10));
-		gens.add(new GenerationInfo(new WorldGenMinable(TaamMain.blockOre, Taam.BLOCK_ORE_META.bauxite.ordinal(), 35, Blocks.dirt), 0, 128, 5));
+		//gens.add(new GenerationInfo(new WorldGenMinable(TaamMain.blockOre, Taam.BLOCK_ORE_META.bauxite.ordinal(), 35, Blocks.dirt), 0, 128, 5));
 		}
 		// Kaolinite
 		if(Config.genKaolinite){
-		gens.add(new GenerationInfo(new WorldGenMinable(TaamMain.blockOre, Taam.BLOCK_ORE_META.kaolinite.ordinal(), 35, Blocks.stone), 0, 128, 10));
-		gens.add(new GenerationInfo(new WorldGenMinable(TaamMain.blockOre, Taam.BLOCK_ORE_META.kaolinite.ordinal(), 35, Blocks.dirt), 0, 128, 5));
+		gens.add(new GenerationInfo(new WorldGenMinable(TaamMain.blockOre, Taam.BLOCK_ORE_META.kaolinite.ordinal(), 35, Blocks.stone), 0, 100, 5));
+		gens.add(new GenerationInfo(new WorldGenMinable(TaamMain.blockOre, Taam.BLOCK_ORE_META.kaolinite.ordinal(), 35, Blocks.dirt), 0, 128, 2));
 		}
 	}
 		
