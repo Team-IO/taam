@@ -16,9 +16,8 @@
 
 /.pmd
 /.classpath
+/.project
 /.gradle
 /.metadata
 /.settings
-/CameraStudio_log.txt.lck
-/CameraStudio_log.txt
-/CameraStudio_log.txt.1
+/CameraStudio_log.*
