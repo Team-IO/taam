@@ -10,6 +10,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.teamio.taam.Taam;
 import net.teamio.taam.content.IRotatable;
+import net.teamio.taam.util.TaamUtil;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -97,7 +98,7 @@ public class BlockProductionLineAttachable extends BlockProductionLine {
 	public boolean canBlockStay(World world, int x, int y, int z) {
 		TileEntity te = world.getTileEntity(x, y, z);
 		if(te instanceof IRotatable) {
-			return ATileEntityAttachable.canAttach(world, x, y, z, ((IRotatable) te).getFacingDirection());
+			return TaamUtil.canAttach(world, x, y, z, ((IRotatable) te).getFacingDirection());
 		} else {
 			return true;
 		}

@@ -6,9 +6,12 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.teamio.taam.content.IRedstoneControlled;
+import net.teamio.taam.conveyors.api.IConveyorAwareTE;
 import codechicken.lib.inventory.InventoryUtils;
 import codechicken.lib.vec.Vector3;
 
@@ -93,6 +96,24 @@ public final class TaamUtil {
 			newShutdown = rand.nextBoolean();
 		}
 		return newShutdown;
+	}
+
+	/**
+	 * Decides whether an attachable block can be placed somewhere.
+	 * Checks for a solid side or a TileEntity implementing {@link IConveyorAwareTE}.
+	 * @param world
+	 * @param x The attachable block.
+	 * @param y The attachable block.
+	 * @param z The attachable block.
+	 * @param dir The direction in which to check. Checks the block at the offset coordinates.
+	 * @return
+	 */
+	public static boolean canAttach(IBlockAccess world, int x, int y, int z, ForgeDirection dir) {
+		if(world.isSideSolid(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ, dir.getOpposite(), false)) {
+			return true;
+		}
+		TileEntity ent = world.getTileEntity(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ);
+		return ent instanceof IConveyorAwareTE;
 	}
 	
 	

@@ -8,6 +8,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.teamio.taam.content.IRotatable;
+import net.teamio.taam.util.TaamUtil;
 
 public class ItemAttachable extends ItemMultiTexture {
 
@@ -21,7 +22,7 @@ public class ItemAttachable extends ItemMultiTexture {
 			World world, int x, int y, int z, int side, float hitX, float hitY,
 			float hitZ, int metadata) {
 		ForgeDirection dir = ForgeDirection.getOrientation(side).getOpposite();
-		if(ATileEntityAttachable.canAttach(world, x, y, z, dir)) {
+		if(TaamUtil.canAttach(world, x, y, z, dir)) {
 			int meta;
 			switch(dir) {
 			default:

@@ -1,11 +1,10 @@
 package net.teamio.taam.content.conveyors;
 
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.conveyors.api.IConveyorAwareTE;
+import net.teamio.taam.util.TaamUtil;
 
 public abstract class ATileEntityAttachable extends BaseTileEntity implements IConveyorAwareTE, IRotatable {
 
@@ -28,11 +27,6 @@ public abstract class ATileEntityAttachable extends BaseTileEntity implements IC
 		case WEST:
 			return slot == 0 || slot == 1 || slot == 2;
 		}
-	}
-
-	public static boolean canAttach(IBlockAccess world, int x, int y, int z, ForgeDirection dir) {
-		TileEntity ent = world.getTileEntity(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ);
-		return ent instanceof IConveyorAwareTE;
 	}
 	
 	/*
@@ -64,7 +58,7 @@ public abstract class ATileEntityAttachable extends BaseTileEntity implements IC
 		ForgeDirection dir = direction;
 		for(int i = 0; i < 3; i++) {
 			dir = dir.getRotation(ForgeDirection.UP);
-			if(canAttach(worldObj, xCoord, yCoord, zCoord, dir)) {
+			if(TaamUtil.canAttach(worldObj, xCoord, yCoord, zCoord, dir)) {
 				return dir;
 			}
 		}
