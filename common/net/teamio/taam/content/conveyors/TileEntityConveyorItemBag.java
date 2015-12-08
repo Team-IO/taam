@@ -12,7 +12,12 @@ import net.teamio.taam.conveyors.api.IConveyorAwareTE;
 import codechicken.lib.inventory.InventorySimple;
 import codechicken.lib.inventory.InventoryUtils;
 
-
+/**
+ * Conveyor Item Bag.
+ * Non-Ticking TE
+ * @author founderio
+ *
+ */
 public class TileEntityConveyorItemBag extends ATileEntityAttachable implements IConveyorAwareTE, IInventory, IRotatable {
 
 	private InventorySimple inventory;
@@ -23,9 +28,13 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable implements 
 	}
 	
 	@Override
-	public void updateEntity() {
+	public boolean canUpdate() {
+		return false;
+	}
+	
+	@Override
+	public void updateRenderingInfo() {
 		if(worldObj.isRemote) {
-			
 			/*
 			 * Fill display calculation is only needed on the client..
 			 */
@@ -41,8 +50,6 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable implements 
 				}
 			}
 		}
-		
-		
 	}
 	
 	@Override
@@ -56,6 +63,7 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable implements 
 		inventory.items = new ItemStack[inventory.getSizeInventory()];
 		InventoryUtils.readItemStacksFromTag(inventory.items, tag.getTagList("items", NBT.TAG_COMPOUND));
 		direction = ForgeDirection.getOrientation(tag.getInteger("direction"));
+		updateRenderingInfo();
 	}
 
 	/*
@@ -76,6 +84,7 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable implements 
 	public ItemStack decrStackSize(int slot, int amount) {
 		ItemStack stack = inventory.decrStackSize(slot, amount);
 		updateState();
+		updateRenderingInfo();
 		return stack;
 	}
 
@@ -88,6 +97,7 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable implements 
 	public void setInventorySlotContents(int slot, ItemStack stack) {
 		inventory.setInventorySlotContents(slot, stack);
 		updateState();
+		updateRenderingInfo();
 	}
 
 	@Override
@@ -144,6 +154,7 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable implements 
 		// insertItem returns item count unable to insert.
 		int inserted = item.stackSize - InventoryUtils.insertItem(inventory, item, false);
 		updateState();
+		updateRenderingInfo();
 		return inserted;
 	}
 	

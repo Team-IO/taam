@@ -10,7 +10,12 @@ import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.conveyors.ItemWrapper;
 import net.teamio.taam.conveyors.api.IConveyorAwareTE;
 
-
+/**
+ * Conveyor Trash Can.
+ * Non-Ticking TE
+ * @author founderio
+ *
+ */
 public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements IConveyorAwareTE, IInventory, IRotatable {
 
 	public float fillLevel;
@@ -18,10 +23,8 @@ public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements
 	}
 	
 	@Override
-	public void updateEntity() {
-//		if(worldObj.isRemote) {
-//			return;
-//		}
+	public boolean canUpdate() {
+		return false;
 	}
 	
 	@Override
