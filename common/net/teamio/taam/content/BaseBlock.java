@@ -1,13 +1,18 @@
 package net.teamio.taam.content;
 
+import codechicken.lib.inventory.InventoryUtils;
+import codechicken.lib.vec.Vector3;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.conveyors.TileEntityConveyor;
@@ -18,67 +23,68 @@ import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.conveyors.api.IConveyorApplianceHost;
 import net.teamio.taam.util.TaamUtil;
 import net.teamio.taam.util.WrenchUtil;
-import codechicken.lib.inventory.InventoryUtils;
-import codechicken.lib.vec.Vector3;
 
 public abstract class BaseBlock extends Block {
 
 	public BaseBlock(Material material) {
 		super(material);
+		this.fullBlock = false;
 	}
-
+	
 	@Override
-	public void onBlockPlacedBy(World world, int x, int y, int z,
-			EntityLivingBase entity, ItemStack itemStack) {
+	public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer,
+			ItemStack stack) {
 		// Update Owner
-		if (entity instanceof EntityPlayer) {
-			BaseTileEntity te = (BaseTileEntity) world.getTileEntity(x, y, z);
-			te.setOwner((EntityPlayer) entity);
+		if (placer instanceof EntityPlayer) {
+			BaseTileEntity te = (BaseTileEntity) worldIn.getTileEntity(pos);
+			te.setOwner((EntityPlayer) placer);
 		}
 	}
 
+	
 	@Override
-	public void onNeighborBlockChange(World world, int x, int y, int z, Block neighborBlock) {
-		if(!canBlockStay(world, x, y, z)) {
-			TaamUtil.breakBlockInWorld(world, x, y, z, this);
+	public void onNeighborBlockChange(World worldIn, BlockPos pos, IBlockState state, Block neighborBlock) {
+		if(!canBlockStay(worldIn, pos)) {
+			TaamUtil.breakBlockInWorld(worldIn, pos, this);
 			return;
 		}
-		TileEntity te = world.getTileEntity(x, y, z);
+		TileEntity te = worldIn.getTileEntity(pos);
 		if(te != null) {
 			// Update stuff like conveyors if something changes
 			((BaseTileEntity)te).updateRenderingInfo();
-			world.markBlockForUpdate(x, y, z);
+			worldIn.markBlockForUpdate(pos);
 		}
 	}
-
+	
 	@Override
-	public int damageDropped(int meta) {
+	public int damageDropped(IBlockState state) {
 		return meta;
 	}
 	
 	@Override
-	public void breakBlock(World world, int x, int y, int z, Block block, int meta) {
-		if (world.isRemote) {
+	public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
+		if (worldIn.isRemote) {
 			return;
 		}
 		
-		TileEntity te = world.getTileEntity(x, y, z);
+		TileEntity te = worldIn.getTileEntity(pos);
 
 		if(te instanceof TileEntityConveyor) {
 			((TileEntityConveyor) te).dropItems();
 		}
+
+		Vector3 location = new Vector3(pos);
 		
 		/*
 		 * Drop Items
 		 */
 		if(te instanceof IInventory) {
 			IInventory inventory = (IInventory)te;
-			Vector3 location = new Vector3(x, y, z);
 			for (int index = 0; index < inventory.getSizeInventory(); index++) {
 				ItemStack itemstack = inventory.getStackInSlot(index);
 
 				if (itemstack != null && itemstack.getItem() != null) {
-					InventoryUtils.dropItem(itemstack, world, location);
+					InventoryUtils.dropItem(itemstack, worldIn, location);
 				}
 			}
 		}
@@ -88,38 +94,38 @@ public abstract class BaseBlock extends Block {
 		 */
 		if(te instanceof IConveyorApplianceHost) {
 			IConveyorApplianceHost applianceHost = (IConveyorApplianceHost)te;
-			ConveyorUtil.dropAppliance(applianceHost, null, world, x, y, z);
+			ConveyorUtil.dropAppliance(applianceHost, null, worldIn, location);
 		}
 
-		super.breakBlock(world, x, y, z, block, meta);
+		super.breakBlock(worldIn, pos, state);
 	}
 	
+	
 	@Override
-	public boolean onBlockActivated(World world, int x, int y,
-			int z, EntityPlayer player, int side, float hitX, float hitY,
-			float hitZ) {
+	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn,
+			EnumFacing side, float hitX, float hitY, float hitZ) {
 				
-		if(WrenchUtil.wrenchBlock(world, x, y, z, player, side, hitX, hitY, hitZ)) {
+		if(WrenchUtil.wrenchBlock(worldIn, pos, playerIn, side, hitX, hitY, hitZ)) {
 			return true;
 		}
 		
-		if(player.isSneaking()) {
+		if(playerIn.isSneaking()) {
 			return false;
 		}
 	
-		if(!world.isRemote) {
-			TileEntity te = world.getTileEntity(x, y, z);
+		if(!worldIn.isRemote) {
+			TileEntity te = worldIn.getTileEntity(pos);
 			
 			if(te instanceof IWorldInteractable) {
 				// All world interaction (perform action, open gui, etc.) is handled within the entity
 				IWorldInteractable interactable = ((IWorldInteractable) te);
-				boolean playerHasWrench = WrenchUtil.playerHasWrench(player);
-				boolean intercepted = interactable.onBlockActivated(world, x, y, z, player, playerHasWrench, side, hitX, hitY, hitZ);
+				boolean playerHasWrench = WrenchUtil.playerHasWrench(playerIn);
+				boolean intercepted = interactable.onBlockActivated(worldIn, playerIn, playerHasWrench, side, hitX, hitY, hitZ);
 				if(intercepted) {
 					return true;
 				}
 			} else if(te instanceof TileEntityConveyorHopper || te instanceof TileEntityConveyorItemBag) {
-				player.openGui(TaamMain.instance, 0, world, x, y, z);
+				playerIn.openGui(TaamMain.instance, 0, worldIn, pos.getX(), pos.getY(), pos.getZ());
 			} else if(te instanceof TileEntityConveyorTrashCan) {
 				((TileEntityConveyorTrashCan)te).clearOut();
 			}
@@ -128,16 +134,16 @@ public abstract class BaseBlock extends Block {
 	}
 	
 	@Override
-	public void onBlockClicked(World world, int x, int y, int z, EntityPlayer player) {
-		if(!world.isRemote) {
-			TileEntity te = world.getTileEntity(x, y, z);
+	public void onBlockClicked(World worldIn, BlockPos pos, EntityPlayer playerIn) {
+		if(!worldIn.isRemote) {
+			TileEntity te = worldIn.getTileEntity(pos);
 			
 			if(te instanceof IWorldInteractable) {
 				// All world interaction (perform action, open gui, etc.) is handled within the entity
 				IWorldInteractable interactable = ((IWorldInteractable) te);
-				boolean playerHasWrench = WrenchUtil.playerHasWrench(player);
+				boolean playerHasWrench = WrenchUtil.playerHasWrench(playerIn);
 				/*boolean intercepted = */
-				interactable.onBlockHit(world, x, y, z, player, playerHasWrench);
+				interactable.onBlockHit(worldIn, playerIn, playerHasWrench);
 //				if(intercepted) {
 //					return true;
 //				}
@@ -146,12 +152,7 @@ public abstract class BaseBlock extends Block {
 	}
 
 	@Override
-	public boolean renderAsNormalBlock() {
-		return false;
-	}
-
-	@Override
-	public boolean hasTileEntity(int metadata) {
+	public boolean hasTileEntity(IBlockState state) {
 		return true;
 	}
 
@@ -166,32 +167,9 @@ public abstract class BaseBlock extends Block {
 	}
 
 	@Override
-	public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int x,
-			int y, int z) {
-				setBlockBoundsBasedOnState(world, x, y, z);
-				return super.getCollisionBoundingBoxFromPool(world, x, y, z);
-			}
-
-	/**
-	 * Updates a block and all surrounding blocks (meaning, pushes a block
-	 * update for this block and for all directly adjacent blocks)
-	 * 
-	 * Useful when working with redstone.
-	 * 
-	 * @param world
-	 * @param x
-	 * @param y
-	 * @param z
-	 */
-	public static void updateBlocksAround(World world, int x, int y, int z) {
-		Block block = world.getBlock(x, y, z);
-		world.notifyBlocksOfNeighborChange(x, y, z, block);
-		world.notifyBlocksOfNeighborChange(x + 1, y, z, block);
-		world.notifyBlocksOfNeighborChange(x - 1, y, z, block);
-		world.notifyBlocksOfNeighborChange(x, y, z + 1, block);
-		world.notifyBlocksOfNeighborChange(x, y, z - 1, block);
-		world.notifyBlocksOfNeighborChange(x, y - 1, z, block);
-		world.notifyBlocksOfNeighborChange(x, y + 1, z, block);
+	public AxisAlignedBB getCollisionBoundingBox(World worldIn, BlockPos pos, IBlockState state) {
+		setBlockBoundsBasedOnState(worldIn, pos);
+		return super.getCollisionBoundingBox(worldIn, pos, state);
 	}
 
 }

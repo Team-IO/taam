@@ -1,12 +1,12 @@
 package net.teamio.taam.content;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 public interface IRotatable {
-	ForgeDirection getFacingDirection();
-	ForgeDirection getMountDirection();
-	ForgeDirection getNextFacingDirection();
-	ForgeDirection getNextMountDirection();
-	void setFacingDirection(ForgeDirection direction);
-	void setMountDirection(ForgeDirection direction);
+	EnumFacing getFacingDirection();
+	EnumFacing getMountDirection();
+	EnumFacing getNextFacingDirection();
+	EnumFacing getNextMountDirection();
+	void setFacingDirection(EnumFacing direction);
+	void setMountDirection(EnumFacing direction);
 }

@@ -3,14 +3,15 @@ package net.teamio.taam.network;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.relauncher.Side;
 import net.teamio.taam.content.IRedstoneControlled;
 import net.teamio.taam.content.conveyors.TileEntityConveyorHopper;
 import net.teamio.taam.util.WorldCoord;
-import cpw.mods.fml.common.network.simpleimpl.IMessage;
-import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
-import cpw.mods.fml.common.network.simpleimpl.MessageContext;
-import cpw.mods.fml.relauncher.Side;
 
 public final class TPMachineConfiguration implements IMessage {
 
@@ -20,7 +21,7 @@ public final class TPMachineConfiguration implements IMessage {
 		public IMessage onMessage(TPMachineConfiguration message, MessageContext ctx) {
 			WorldServer world = MinecraftServer.getServer().worldServerForDimension(message.tileEntity.world);
 			if(ctx.side == Side.SERVER) {
-				TileEntity te = world.getTileEntity(message.tileEntity.x, message.tileEntity.y, message.tileEntity.z);
+				TileEntity te = world.getTileEntity(new BlockPos(message.tileEntity.x, message.tileEntity.y, message.tileEntity.z));
 				switch(message.mode) {
 				case ChangeBoolean:
 					

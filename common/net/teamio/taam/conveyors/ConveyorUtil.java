@@ -2,6 +2,9 @@ package net.teamio.taam.conveyors;
 
 import java.util.List;
 
+import codechicken.lib.inventory.InventoryRange;
+import codechicken.lib.inventory.InventoryUtils;
+import codechicken.lib.vec.Vector3;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -9,14 +12,12 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 import net.teamio.taam.conveyors.api.IConveyorApplianceHost;
 import net.teamio.taam.conveyors.api.IConveyorAwareTE;
 import net.teamio.taam.util.TaamUtil;
-import codechicken.lib.inventory.InventoryRange;
-import codechicken.lib.inventory.InventoryUtils;
-import codechicken.lib.vec.Vector3;
 
 public class ConveyorUtil {
 	
@@ -290,7 +291,7 @@ public class ConveyorUtil {
 	 * @param z
 	 * @return true if an appliance was there and did drop.
 	 */
-	public static boolean dropAppliance(IConveyorApplianceHost applianceHost, EntityPlayer player, World world, int x, int y, int z) {
+	public static boolean dropAppliance(IConveyorApplianceHost applianceHost, EntityPlayer player, World world, BlockPos pos) {
 		String type = applianceHost.getApplianceType();
 		if(type == null) {
 			return false;
@@ -299,7 +300,7 @@ public class ConveyorUtil {
 		if(factory == null) {
 			return false;
 		}
-		Vector3 location = new Vector3(x, y, z);
+		Vector3 location = new Vector3(pos);
 		/*
 		 * Drop appliance
 		 */
@@ -311,7 +312,7 @@ public class ConveyorUtil {
 		//TODO: Make ItemStack retain certain data? (Tanks... Energy...)
 		if(stack != null) {
 			if(player != null) {
-				TaamUtil.tryDropToInventory(player, stack, x, y, z);
+				TaamUtil.tryDropToInventory(player, stack, pos);
 			} else {
 				InventoryUtils.dropItem(stack, world, location);
 			}
@@ -325,7 +326,7 @@ public class ConveyorUtil {
 				continue;
 			}
 			if(player != null) {
-				TaamUtil.tryDropToInventory(player, stack, x, y, z);
+				TaamUtil.tryDropToInventory(player, stack, pos);
 			} else {
 				InventoryUtils.dropItem(stack, world, location);
 			}
@@ -343,7 +344,7 @@ public class ConveyorUtil {
 		
 		if(!world.isRemote) {
 			float speedsteps = tileEntity.getSpeedsteps();
-			ForgeDirection direction = tileEntity.getMovementDirection();
+			EnumFacing direction = tileEntity.getMovementDirection();
 			
 			double posX = tileEntity.posX() + getItemPositionX(slot, slotObject.movementProgress / speedsteps, direction);
 			double posY = tileEntity.posY() + 0.5f;
@@ -353,9 +354,9 @@ public class ConveyorUtil {
 				EntityItem item = new EntityItem(world, posX, posY, posZ, slotObject.itemStack);
 				if(withVelocity) {
 					float speed = (Byte.MAX_VALUE - speedsteps) * 0.0019f;
-					item.motionX = direction.offsetX * speed;
-					item.motionY = direction.offsetY * speed;
-					item.motionZ = direction.offsetZ * speed;
+					item.motionX = direction.getFrontOffsetX() * speed;
+					item.motionY = direction.getFrontOffsetY() * speed;
+					item.motionZ = direction.getFrontOffsetZ() * speed;
 				} else {
 					item.motionX = 0; 
 			        item.motionY = 0; 
@@ -458,7 +459,7 @@ public class ConveyorUtil {
 				}
 			}
 			
-			ForgeDirection direction = tileEntity.getMovementDirection();
+			EnumFacing direction = tileEntity.getMovementDirection();
 			byte speedsteps = tileEntity.getSpeedsteps();
 			
 			boolean slotWrapped = false;
@@ -469,7 +470,7 @@ public class ConveyorUtil {
 			
 			IConveyorAwareTE nextBlock = null;
 			
-			ForgeDirection nextSlotDir = tileEntity.getNextSlot(slot);
+			EnumFacing nextSlotDir = tileEntity.getNextSlot(slot);
 			int nextSlot = getNextSlotUnwrapped(slot, nextSlotDir);
 			
 			if(nextSlot < 0) {

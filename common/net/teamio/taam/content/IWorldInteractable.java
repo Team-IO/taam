@@ -1,6 +1,7 @@
 package net.teamio.taam.content;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
 public interface IWorldInteractable {
@@ -20,10 +21,9 @@ public interface IWorldInteractable {
 	 * @return true when the click was intercepted, no further processing is to
 	 *         be done.
 	 */
-	boolean onBlockActivated(World world, int x, int y, int z,
-			EntityPlayer player, boolean hasWrench, int side,
-			float hitX, float hitY, float hitZ);
-	
+	boolean onBlockActivated(World world, EntityPlayer player, boolean hasWrench, EnumFacing side, float hitX, float hitY,
+			float hitZ);
+
 	/**
 	 * Called when the containing block is hit (Left Clicked).
 	 * 
@@ -36,6 +36,5 @@ public interface IWorldInteractable {
 	 * @return true when the click was intercepted, no further processing is to
 	 *         be done. (Currently unused)
 	 */
-	boolean onBlockHit(World world, int x, int y, int z,
-			EntityPlayer player, boolean hasWrench);
+	boolean onBlockHit(World world, EntityPlayer player, boolean hasWrench);
 }

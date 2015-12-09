@@ -3,9 +3,10 @@ package net.teamio.taam.gui;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.teamio.taam.content.conveyors.TileEntityConveyorHopper;
-import cpw.mods.fml.common.network.IGuiHandler;
 
 public class GuiHandler implements IGuiHandler {
 
@@ -15,7 +16,7 @@ public class GuiHandler implements IGuiHandler {
 		switch(ID) {
 		default:
 		case 0://TileEntity
-			TileEntity tileEntity = world.getTileEntity(x, y, z);
+			TileEntity tileEntity = world.getTileEntity(new BlockPos(x, y, z));
 			if (tileEntity instanceof TileEntityConveyorHopper) {
 				return new ContainerConveyorSmallInventory(player.inventory, (TileEntityConveyorHopper) tileEntity);
 			}
@@ -36,7 +37,7 @@ public class GuiHandler implements IGuiHandler {
 		switch(ID) {
 		default:
 		case 0://TileEntity
-			TileEntity tileEntity = world.getTileEntity(x, y, z);
+			TileEntity tileEntity = world.getTileEntity(new BlockPos(x, y, z));
 			if (tileEntity instanceof TileEntityConveyorHopper) {
 				return new GuiConveyorHopper(player.inventory, (TileEntityConveyorHopper) tileEntity);
 			}

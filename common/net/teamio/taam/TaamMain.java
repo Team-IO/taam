@@ -7,6 +7,20 @@ import net.minecraft.item.ItemMultiTexture;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.Mod.EventHandler;
+import net.minecraftforge.fml.common.Mod.Instance;
+import net.minecraftforge.fml.common.ModMetadata;
+import net.minecraftforge.fml.common.SidedProxy;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 import net.teamio.taam.content.ItemWithMetadata;
 import net.teamio.taam.content.common.BlockMachines;
@@ -36,20 +50,6 @@ import net.teamio.taam.content.conveyors.TileEntityConveyorTrashCan;
 import net.teamio.taam.conveyors.ApplianceRegistry;
 import net.teamio.taam.conveyors.appliances.ApplianceSprayer;
 import net.teamio.taam.gui.GuiHandler;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.EventHandler;
-import cpw.mods.fml.common.Mod.Instance;
-import cpw.mods.fml.common.ModMetadata;
-import cpw.mods.fml.common.SidedProxy;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 
 @Mod(modid = Taam.MOD_ID, name = Taam.MOD_NAME, version = Taam.MOD_VERSION, guiFactory = Taam.GUI_FACTORY_CLASS)
@@ -121,27 +121,27 @@ public class TaamMain {
 		};
 
 		blockSensor = new BlockSensor();
-		blockSensor.setBlockName(Taam.BLOCK_SENSOR);
+		blockSensor.setUnlocalizedName(Taam.BLOCK_SENSOR);
 		blockSensor.setCreativeTab(creativeTab);
 
 		blockMachines = new BlockMachines();
-		blockMachines.setBlockName(Taam.BLOCK_MACHINES);
+		blockMachines.setUnlocalizedName(Taam.BLOCK_MACHINES);
 		blockMachines.setCreativeTab(creativeTab);
 		
 		blockProductionLine = new BlockProductionLine();
-		blockProductionLine.setBlockName(Taam.BLOCK_PRODUCTIONLINE);
+		blockProductionLine.setUnlocalizedName(Taam.BLOCK_PRODUCTIONLINE);
 		blockProductionLine.setCreativeTab(creativeTab);
 		
 		blockProductionLineAttachable = new BlockProductionLineAttachable();
-		blockProductionLineAttachable.setBlockName(Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE);
+		blockProductionLineAttachable.setUnlocalizedName(Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE);
 		blockProductionLineAttachable.setCreativeTab(creativeTab);
 		
 		blockSlidingDoor = new BlockSlidingDoor();
-		blockSlidingDoor.setBlockName(Taam.BLOCK_SLIDINGDOOR);
+		blockSlidingDoor.setUnlocalizedName(Taam.BLOCK_SLIDINGDOOR);
 		blockSlidingDoor.setCreativeTab(creativeTab);
 		
 		blockOre = new BlockOre();
-		blockOre.setBlockName(Taam.BLOCK_ORE);
+		blockOre.setUnlocalizedName(Taam.BLOCK_ORE);
 		blockOre.setCreativeTab(creativeTab);
 		
 		itemDebugTool = new ItemDebugTool();

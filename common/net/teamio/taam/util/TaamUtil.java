@@ -7,6 +7,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -49,23 +50,23 @@ public final class TaamUtil {
 		return world.isAirBlock(x, y, z) || world.getBlock(x, y, z).getMaterial().isLiquid();
 	}
 
-	public static void breakBlockInWorld(World world, int x, int y, int z) {
+	public static void breakBlockInWorld(World world, BlockPos pos) {
 		Block block = world.getBlock(x, y, z);
 		breakBlockInWorld(world, x, y, z, block);
 	}
 
-	public static void breakBlockInWorld(World world, int x, int y, int z, Block block) {
+	public static void breakBlockInWorld(World world, BlockPos pos, Block block) {
 		block.breakBlock(world, x, y, z, block, world.getBlockMetadata(x, y, z));
 		block.dropBlockAsItem(world, x, y, z, world.getBlockMetadata(x, y, z), 0);
 		world.setBlockToAir(x, y, z);
 	}
 	
-	public static void breakBlockToInventory(EntityPlayer player, World world, int x, int y, int z) {
-		Block block = world.getBlock(x, y, z);
+	public static void breakBlockToInventory(EntityPlayer player, World world, BlockPos pos) {
+		Block block = world.getBlockState(pos).getBlock();
 		breakBlockToInventory(player, world, x, y, z, block);
 	}
 
-	public static void breakBlockToInventory(EntityPlayer player, World world, int x, int y, int z, Block block) {
+	public static void breakBlockToInventory(EntityPlayer player, World world, BlockPos pos, Block block) {
 		block.breakBlock(world, x, y, z, block, world.getBlockMetadata(x, y, z));
 		ItemStack toDrop = getItemStackFromWorld(world, x, y, z, block);
 		if(toDrop != null) {
@@ -74,7 +75,7 @@ public final class TaamUtil {
 		world.setBlockToAir(x, y, z);
 	}
 	
-	public static ItemStack getItemStackFromWorld(World world, int x, int y, int z, Block block) {
+	public static ItemStack getItemStackFromWorld(World world, BlockPos pos, Block block) {
 		int metadata = world.getBlockMetadata(x, y, z);
         Item item = Item.getItemFromBlock(block);
         if (item == null) {

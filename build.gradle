@@ -15,6 +15,8 @@ buildscript {
     }
 }
 
+apply plugin: 'forge'
+
 repositories {
 	maven {
 		name 'CB Maven FS'
@@ -22,20 +24,18 @@ repositories {
 	}
 }
 
-apply plugin: 'forge'
-
 version = "1.0"
 group = "net.teamio.taam"
-archivesBaseName = "taam-1.7.10"
+archivesBaseName = "taam-1.8"
 project.ext {
-	cclversion = "1.1.1.104"
-	neiversion = "1.0.3.74"
-	cccversion = "1.0.4.29"
+	cclversion = "1.1.2.133"
+	neiversion = "1.0.5.82"
+	cccversion = "1.0.5.34"
 }
 
 minecraft {
-    version = "1.7.10-10.13.4.1558-1.7.10"
-    runDir = ""
+    version = "1.8-11.14.1.1353"
+    runDir = "."
     replace "@VERSION@", project.version
 }
 

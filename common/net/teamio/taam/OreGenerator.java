@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import net.minecraft.block.state.pattern.BlockHelper;
 import net.minecraft.init.Blocks;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.feature.WorldGenMinable;
-import cpw.mods.fml.common.IWorldGenerator;
+import net.minecraftforge.fml.common.IWorldGenerator;
 
 public class OreGenerator implements IWorldGenerator {
 
@@ -32,28 +34,28 @@ public class OreGenerator implements IWorldGenerator {
 		gens = new ArrayList<GenerationInfo>();
 		// Copper Ore
 		if(Config.genCopper)
-			gens.add(new GenerationInfo(new WorldGenMinable(TaamMain.blockOre, Taam.BLOCK_ORE_META.copper.ordinal(), 14, Blocks.stone), 0, 64, 7));
+			gens.add(new GenerationInfo(new WorldGenMinable(TaamMain.blockOre, Taam.BLOCK_ORE_META.copper.ordinal(), 14, BlockHelper.forBlock(Blocks.stone)), 0, 64, 7));
 		// Tin Ore
 		if(Config.genTin)
-			gens.add(new GenerationInfo(new WorldGenMinable(TaamMain.blockOre, Taam.BLOCK_ORE_META.tin.ordinal(), 13, Blocks.stone), 0, 64, 7));
+			gens.add(new GenerationInfo(new WorldGenMinable(TaamMain.blockOre, Taam.BLOCK_ORE_META.tin.ordinal(), 13, BlockHelper.forBlock(Blocks.stone)), 0, 64, 7));
 		// Native Aluminum
 		if(Config.genAluminum)
-			gens.add(new GenerationInfo(new WorldGenMinable(TaamMain.blockOre, Taam.BLOCK_ORE_META.aluminum.ordinal(), 2, Blocks.stone), 0, 64, 3));
+			gens.add(new GenerationInfo(new WorldGenMinable(TaamMain.blockOre, Taam.BLOCK_ORE_META.aluminum.ordinal(), 2, BlockHelper.forBlock(Blocks.stone)), 0, 64, 3));
 		// Bauxite
 		if(Config.genBauxite){
-		gens.add(new GenerationInfo(new WorldGenMinable(TaamMain.blockOre, Taam.BLOCK_ORE_META.bauxite.ordinal(), 35, Blocks.stone), 0, 128, 10));
-		//gens.add(new GenerationInfo(new WorldGenMinable(TaamMain.blockOre, Taam.BLOCK_ORE_META.bauxite.ordinal(), 35, Blocks.dirt), 0, 128, 5));
+		gens.add(new GenerationInfo(new WorldGenMinable(TaamMain.blockOre, Taam.BLOCK_ORE_META.bauxite.ordinal(), 35, BlockHelper.forBlock(Blocks.stone)), 0, 128, 10));
+		//gens.add(new GenerationInfo(new WorldGenMinable(TaamMain.blockOre, Taam.BLOCK_ORE_META.bauxite.ordinal(), 35, BlockHelper.forBlock(Blocks.dirt)), 0, 128, 5));
 		}
 		// Kaolinite
 		if(Config.genKaolinite){
-		gens.add(new GenerationInfo(new WorldGenMinable(TaamMain.blockOre, Taam.BLOCK_ORE_META.kaolinite.ordinal(), 35, Blocks.stone), 0, 100, 5));
-		gens.add(new GenerationInfo(new WorldGenMinable(TaamMain.blockOre, Taam.BLOCK_ORE_META.kaolinite.ordinal(), 35, Blocks.dirt), 0, 128, 2));
+		gens.add(new GenerationInfo(new WorldGenMinable(TaamMain.blockOre, Taam.BLOCK_ORE_META.kaolinite.ordinal(), 35, BlockHelper.forBlock(Blocks.stone)), 0, 100, 5));
+		gens.add(new GenerationInfo(new WorldGenMinable(TaamMain.blockOre, Taam.BLOCK_ORE_META.kaolinite.ordinal(), 35, BlockHelper.forBlock(Blocks.dirt)), 0, 128, 2));
 		}
 	}
 		
 	@Override
 	public void generate(Random random, int chunkX, int chunkZ, World world, IChunkProvider chunkGenerator, IChunkProvider chunkProvider) {
-		switch (world.provider.dimensionId) {
+		switch (world.provider.getDimensionId()) {
 		case -1:
 			generateNether(world, random, chunkX * 16, chunkZ * 16);
 			break;
@@ -79,7 +81,7 @@ public class OreGenerator implements IWorldGenerator {
 				int firstBlockXCoord = i + random.nextInt(16);
 				int firstBlockYCoord = gen.generateAbove + random.nextInt(gen.generateBelow - gen.generateAbove);
 				int firstBlockZCoord = j + random.nextInt(16);
-				gen.gen.generate(world, random, firstBlockXCoord, firstBlockYCoord, firstBlockZCoord);
+				gen.gen.generate(world, random, new BlockPos(firstBlockXCoord, firstBlockYCoord, firstBlockZCoord));
 			}
 		}
 	}

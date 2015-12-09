@@ -48,7 +48,7 @@ public abstract class BaseTileEntity extends TileEntity {
 			return;
 		}
 		markDirty();
-		this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+		this.worldObj.markBlockForUpdate(pos);
 	}
 	
 	public void updateRenderingInfo() {
@@ -60,7 +60,7 @@ public abstract class BaseTileEntity extends TileEntity {
 
 	@Override
 	public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt) {
-		NBTTagCompound nbt = pkt.func_148857_g();
+		NBTTagCompound nbt = pkt.getNbtCompound();
 
 		readPropertiesFromNBTInternal(nbt);
 	}
@@ -70,7 +70,7 @@ public abstract class BaseTileEntity extends TileEntity {
 		NBTTagCompound nbt = new NBTTagCompound();
 		writePropertiesToNBTInternal(nbt);
 
-		return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, 0, nbt);
+		return new S35PacketUpdateTileEntity(pos, 0, nbt);
 	}
 
 	/*

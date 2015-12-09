@@ -3,6 +3,8 @@ package net.teamio.taam.util;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.teamio.taam.Log;
 import net.teamio.taam.TaamMain;
@@ -28,9 +30,8 @@ public class WrenchUtil {
 		return held.getItem() == TaamMain.itemWrench;
 	}
 	
-	public static boolean wrenchBlock(World world, int x,
-			int y, int z, EntityPlayer player,
-			int side, float hitX, float hitY,
+	public static boolean wrenchBlock(World world, BlockPos pos, EntityPlayer player,
+			EnumFacing side, float hitX, float hitY,
 			float hitZ) {
 		Log.debug("Checking for wrench activity.");
 		
@@ -45,7 +46,7 @@ public class WrenchUtil {
 		boolean playerIsSneaking = player.isSneaking();
 		Log.debug("Player is sneaking: " + playerIsSneaking);
 		
-		TileEntity te = world.getTileEntity(x, y, z);
+		TileEntity te = world.getTileEntity(pos);
 		
 		if(playerHasWrench) {
 			
@@ -53,7 +54,7 @@ public class WrenchUtil {
 				if(te instanceof IConveyorApplianceHost) {
 					IConveyorApplianceHost conveyor = (IConveyorApplianceHost) te;
 					Log.debug("Disassembling IConveyorApplianceHost");
-					if(ConveyorUtil.dropAppliance(conveyor, player, world, x, y, z)) {
+					if(ConveyorUtil.dropAppliance(conveyor, player, world, pos)) {
 						Log.debug("Dropping appliance done, removing appliance.");
 						conveyor.removeAppliance();
 						Log.debug("Dropping appliance done, removing appliance done.");
@@ -62,7 +63,7 @@ public class WrenchUtil {
 					Log.debug("No appliance dropped, moving on.");
 				}
 				if(WrenchUtil.isWrenchableEntity(te)) {
-					TaamUtil.breakBlockToInventory(player, world, x, y, z);
+					TaamUtil.breakBlockToInventory(player, world, pos);
 					return true;
 				}
 			} else if(te instanceof IRotatable) {
