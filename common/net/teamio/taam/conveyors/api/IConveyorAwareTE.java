@@ -1,7 +1,7 @@
 package net.teamio.taam.conveyors.api;
 
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.teamio.taam.conveyors.ItemWrapper;
 
 public interface IConveyorAwareTE {
@@ -22,9 +22,9 @@ public interface IConveyorAwareTE {
 	 * @return The actual amount of items added
 	 */
 	int insertItemAt(ItemStack item, int slot);
-	ForgeDirection getMovementDirection();
+	EnumFacing getMovementDirection();
 	ItemWrapper getSlot(int slot);
-	ForgeDirection getNextSlot(int slot);
+	EnumFacing getNextSlot(int slot);
 	/**
 	 * Used to skip default item rendering on select machines,
 	 * e.g. the processors.

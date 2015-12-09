@@ -1,15 +1,14 @@
 package net.teamio.taam.gui;
 
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.client.config.GuiButtonExt;
+import net.minecraftforge.fml.client.config.GuiCheckBox;
 import net.teamio.taam.content.conveyors.TileEntityConveyorHopper;
 import net.teamio.taam.gui.util.CustomGui;
-
-import org.lwjgl.opengl.GL11;
-
-import cpw.mods.fml.client.config.GuiButtonExt;
-import cpw.mods.fml.client.config.GuiCheckBox;
 
 public class GuiConveyorHopper extends CustomGui {
 	ResourceLocation bg = new ResourceLocation("textures/gui/container/hopper.png");
