@@ -34,7 +34,11 @@ project.ext {
 }
 
 minecraft {
+<<<<<<< HEAD
     version = "1.8-11.14.1.1353"
+=======
+    version = "1.7.10-10.13.4.1558-1.7.10"
+>>>>>>> refs/remotes/origin/master
     runDir = "."
     replace "@VERSION@", project.version
 }
