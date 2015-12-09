@@ -9,6 +9,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.conveyors.TileEntityConveyor;
 import net.teamio.taam.content.conveyors.TileEntityConveyorHopper;
@@ -92,6 +93,11 @@ public abstract class BaseBlock extends Block {
 		}
 
 		super.breakBlock(world, x, y, z, block, meta);
+	}
+	
+	@Override
+	public boolean rotateBlock(World worldObj, int x, int y, int z, ForgeDirection axis) {
+		return WrenchUtil.rotateBlock(worldObj.getTileEntity(x, y, z));
 	}
 	
 	@Override
