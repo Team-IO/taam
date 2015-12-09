@@ -171,5 +171,27 @@ public abstract class BaseBlock extends Block {
 		setBlockBoundsBasedOnState(worldIn, pos);
 		return super.getCollisionBoundingBox(worldIn, pos, state);
 	}
+	
+	/**
+	 * Updates a block and all surrounding blocks (meaning, pushes a block
+	 * update for this block and for all directly adjacent blocks)
+	 * 
+	 * Useful when working with redstone.
+	 * 
+	 * @param world
+	 * @param x
+	 * @param y
+	 * @param z
+	 */
+	public static void updateBlocksAround(World world, BlockPos pos) {
+		Block blockType = world.getBlockState(pos).getBlock();
+		world.notifyNeighborsOfStateChange(pos, blockType);
+		world.notifyNeighborsOfStateChange(pos.offsetWest(), blockType);
+		world.notifyNeighborsOfStateChange(pos.offsetEast(), blockType);
+		world.notifyNeighborsOfStateChange(pos.offsetDown(), blockType);
+		world.notifyNeighborsOfStateChange(pos.offsetUp(), blockType);
+		world.notifyNeighborsOfStateChange(pos.offsetNorth(), blockType);
+        world.notifyNeighborsOfStateChange(pos.offsetSouth(), blockType);
+	}
 
 }
