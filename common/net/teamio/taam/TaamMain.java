@@ -1,5 +1,6 @@
 package net.teamio.taam;
 
+import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -92,6 +93,18 @@ public class TaamMain {
         DepLoader.load();
 	}
 	
+	private void registerBlock(Block block, Class<? extends ItemBlock> itemClass, String name) {
+		block.setBlockName(name);
+		block.setCreativeTab(creativeTab);
+		GameRegistry.registerBlock(block, itemClass, name);
+	}
+	
+	private void registerItem(Item item, String name) {
+		item.setUnlocalizedName(name);
+		item.setCreativeTab(creativeTab);
+		GameRegistry.registerItem(item, name, Taam.MOD_ID);
+	}
+	
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
 		ModMetadata meta = event.getModMetadata();
@@ -120,85 +133,32 @@ public class TaamMain {
 			}
 		};
 
-		blockSensor = new BlockSensor();
-		blockSensor.setBlockName(Taam.BLOCK_SENSOR);
-		blockSensor.setCreativeTab(creativeTab);
+		registerBlock(blockSensor = new BlockSensor(), ItemBlock.class, Taam.BLOCK_SENSOR);
 
-		blockMachines = new BlockMachines();
-		blockMachines.setBlockName(Taam.BLOCK_MACHINES);
-		blockMachines.setCreativeTab(creativeTab);
-		
-		blockProductionLine = new BlockProductionLine();
-		blockProductionLine.setBlockName(Taam.BLOCK_PRODUCTIONLINE);
-		blockProductionLine.setCreativeTab(creativeTab);
-		
-		blockProductionLineAttachable = new BlockProductionLineAttachable();
-		blockProductionLineAttachable.setBlockName(Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE);
-		blockProductionLineAttachable.setCreativeTab(creativeTab);
-		
-		blockSlidingDoor = new BlockSlidingDoor();
-		blockSlidingDoor.setBlockName(Taam.BLOCK_SLIDINGDOOR);
-		blockSlidingDoor.setCreativeTab(creativeTab);
-		
-		blockOre = new BlockOre();
-		blockOre.setBlockName(Taam.BLOCK_ORE);
-		blockOre.setCreativeTab(creativeTab);
-		
-		itemDebugTool = new ItemDebugTool();
-		itemDebugTool.setUnlocalizedName(Taam.ITEM_DEBUG_TOOL);
-		itemDebugTool.setCreativeTab(creativeTab);
-		
-		itemWrench = new ItemWrench();
-		itemWrench.setUnlocalizedName(Taam.ITEM_WRENCH);
-		itemWrench.setCreativeTab(creativeTab);
-		
-		itemSaw = new ItemTool(Taam.ITEM_TOOL_META.saw);
-		itemSaw.setUnlocalizedName(Taam.ITEM_TOOL + "." + Taam.ITEM_TOOL_META.saw.name());
-		itemSaw.setCreativeTab(creativeTab);
-		
-		itemMaterial = new ItemWithMetadata("material", Taam.ITEM_MATERIAL_META.values());
-		itemMaterial.setUnlocalizedName(Taam.ITEM_MATERIAL);
-		itemMaterial.setCreativeTab(creativeTab);
-		
-		itemPart = new ItemWithMetadata("part", Taam.ITEM_PART_META.values());
-		itemPart.setUnlocalizedName(Taam.ITEM_PART);
-		itemPart.setCreativeTab(creativeTab);
-		
-		itemIngot = new ItemIngot("ingot", Taam.BLOCK_ORE_META.values());
-		itemIngot.setUnlocalizedName(Taam.ITEM_INGOT);
-		itemIngot.setCreativeTab(creativeTab);
-		
-		itemDust = new ItemDust("dust",Taam.BLOCK_ORE_META.values());
-		itemDust.setUnlocalizedName(Taam.ITEM_DUST);
-		itemDust.setCreativeTab(creativeTab);
-		
-		itemConveyorAppliance = new ItemConveyorAppliance();
-		itemConveyorAppliance.setUnlocalizedName(Taam.ITEM_CONVEYOR_APPLIANCE);
-		itemConveyorAppliance.setCreativeTab(creativeTab);
-		
-		GameRegistry.registerItem(itemMaterial, Taam.ITEM_MATERIAL, Taam.MOD_ID);
-		GameRegistry.registerItem(itemPart, Taam.ITEM_PART, Taam.MOD_ID);
-		GameRegistry.registerItem(itemIngot, Taam.ITEM_INGOT, Taam.MOD_ID);
-		GameRegistry.registerItem(itemDust, Taam.ITEM_DUST,Taam.MOD_ID);
-		GameRegistry.registerItem(itemSaw, Taam.ITEM_TOOL,Taam.MOD_ID);
+		registerBlock(blockMachines = new BlockMachines(), null, Taam.BLOCK_MACHINES);
+		registerItem(new ItemMultiTexture(blockMachines, blockMachines, Taam.BLOCK_MACHINES_META.valuesAsString()), Taam.BLOCK_MACHINES);
 
-		GameRegistry.registerItem(itemDebugTool, Taam.ITEM_DEBUG_TOOL, Taam.MOD_ID);
-		GameRegistry.registerItem(itemWrench, Taam.ITEM_WRENCH, Taam.MOD_ID);
+		registerBlock(blockProductionLine = new BlockProductionLine(), null, Taam.BLOCK_PRODUCTIONLINE);
+		registerItem(new ItemProductionLine(blockProductionLine, blockProductionLine, Taam.BLOCK_PRODUCTIONLINE_META.valuesAsString()), Taam.BLOCK_PRODUCTIONLINE);
 
-		GameRegistry.registerItem(itemConveyorAppliance, Taam.ITEM_CONVEYOR_APPLIANCE, Taam.MOD_ID);
-				
-		GameRegistry.registerBlock(blockSensor, ItemBlock.class, Taam.BLOCK_SENSOR);
+		registerBlock(blockProductionLineAttachable = new BlockProductionLineAttachable(), null, Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE);
+		registerItem(new ItemAttachable(blockProductionLineAttachable, blockProductionLineAttachable, Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META.valuesAsString()), Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE);
+
+		//registerBlock(blockSlidingDoor = new BlockSlidingDoor(), ItemBlock.class, Taam.BLOCK_SLIDINGDOOR);
+
+		registerBlock(blockOre = new BlockOre(), null, Taam.BLOCK_ORE);
+		registerItem(new ItemMultiTexture(blockOre, blockOre, Taam.BLOCK_ORE_META.valuesAsString()), Taam.BLOCK_ORE);
 		
-		GameRegistry.registerBlock(blockMachines, null, Taam.BLOCK_MACHINES);
-		GameRegistry.registerBlock(blockProductionLine, null, Taam.BLOCK_PRODUCTIONLINE);
-		GameRegistry.registerBlock(blockProductionLineAttachable, null, Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE);
-		GameRegistry.registerBlock(blockOre, null, Taam.BLOCK_ORE);
-
-		GameRegistry.registerItem(new ItemMultiTexture(blockMachines, blockMachines, Taam.BLOCK_MACHINES_META.valuesAsString()), Taam.BLOCK_MACHINES, Taam.MOD_ID);
-		GameRegistry.registerItem(new ItemProductionLine(blockProductionLine, blockProductionLine, Taam.BLOCK_PRODUCTIONLINE_META.valuesAsString()), Taam.BLOCK_PRODUCTIONLINE, Taam.MOD_ID);
-		GameRegistry.registerItem(new ItemAttachable(blockProductionLineAttachable, blockProductionLineAttachable, Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META.valuesAsString()), Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE, Taam.MOD_ID);
-//		GameRegistry.registerBlock(blockSlidingDoor, ItemBlock.class, Taam.BLOCK_SLIDINGDOOR);
-		GameRegistry.registerItem(new ItemMultiTexture(blockOre, blockOre, Taam.BLOCK_ORE_META.valuesAsString()), Taam.BLOCK_ORE, Taam.MOD_ID);
+		registerItem(itemDebugTool = new ItemDebugTool(), Taam.ITEM_DEBUG_TOOL);
+		registerItem(itemWrench = new ItemWrench(), Taam.ITEM_WRENCH);
+		registerItem(itemSaw = new ItemTool(Taam.ITEM_TOOL_META.saw), Taam.ITEM_TOOL + "." + Taam.ITEM_TOOL_META.saw.name());
+		
+		registerItem(itemMaterial = new ItemWithMetadata("material", Taam.ITEM_MATERIAL_META.values()), Taam.ITEM_MATERIAL);
+		registerItem(itemPart = new ItemWithMetadata("part", Taam.ITEM_PART_META.values()), Taam.ITEM_PART);
+		registerItem(itemIngot = new ItemIngot("ingot", Taam.BLOCK_ORE_META.values()), Taam.ITEM_INGOT);
+		registerItem(itemDust = new ItemDust("dust",Taam.BLOCK_ORE_META.values()), Taam.ITEM_DUST);
+		
+		registerItem(itemConveyorAppliance = new ItemConveyorAppliance(), Taam.ITEM_CONVEYOR_APPLIANCE);
 		
 		GameRegistry.registerTileEntity(TileEntitySensor.class, Taam.TILEENTITY_SENSOR);
 		GameRegistry.registerTileEntity(TileEntityChute.class, Taam.TILEENTITY_CHUTE);
