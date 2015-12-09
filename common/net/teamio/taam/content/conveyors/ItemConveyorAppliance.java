@@ -18,10 +18,10 @@ import codechicken.lib.inventory.InventoryUtils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class ItemConveyorAppliance extends ItemWithMetadata {
+public class ItemConveyorAppliance extends ItemWithMetadata<Taam.ITEM_CONVEYOR_APPLIANCE_META> {
 
 	public ItemConveyorAppliance() {
-		super("conveyor_appliance", Taam.ITEM_CONVEYOR_APPLIANCE_META.values());
+		super("conveyor_appliance", Taam.ITEM_CONVEYOR_APPLIANCE_META.values(), null);
 	}
 
 	@Override
