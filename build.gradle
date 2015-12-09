@@ -1,3 +1,4 @@
+
 buildscript {
     repositories {
         mavenCentral()
@@ -11,20 +12,23 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.0-SNAPSHOT'
     }
 }
 
-apply plugin: 'forge'
+apply plugin: "net.minecraftforge.gradle.forge"
 
-repositories {
-	maven {
-		name 'CB Maven FS'
-		url "http://chickenbones.net/maven/"
-	}
+
+/*
+plugins {
+    id "net.minecraftforge.gradle.forge" version "2.0.2"
+
 }
+*/
+version = "1.0b1"
 
-version = "1.0"
+apply plugin: 'net.minecraftforge.gradle.forge'
+
 group = "net.teamio.taam"
 archivesBaseName = "taam-1.8"
 project.ext {
@@ -34,13 +38,10 @@ project.ext {
 }
 
 minecraft {
-<<<<<<< HEAD
-    version = "1.8-11.14.1.1353"
-=======
-    version = "1.7.10-10.13.4.1558-1.7.10"
->>>>>>> refs/remotes/origin/master
+    version = "1.8-11.14.4.1563"
     runDir = "."
     replace "@VERSION@", project.version
+    mappings = "stable_17"
 }
 
 sourceSets {
@@ -58,10 +59,16 @@ sourceSets {
         }
     }
 }
+repositories {
+
+    maven {
+        name 'CB Maven FS'
+        url "http://chickenbones.net/maven/"
+    }
+}
 
 dependencies {
     //compile 'com.mod-buildcraft:buildcraft:6.0.8:dev'
-
 	compile "codechicken:CodeChickenLib:${project.minecraft.version}-${project.cclversion}:dev"
     compile "codechicken:NotEnoughItems:${project.minecraft.version}-${project.neiversion}:dev"
     compile "codechicken:CodeChickenCore:${project.minecraft.version}-${project.cccversion}:dev"

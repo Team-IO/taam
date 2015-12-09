@@ -21,3 +21,5 @@
 /.metadata
 /.settings
 /CameraStudio_log.*
+/taam_Client.launch
+/taam_Server.launch
