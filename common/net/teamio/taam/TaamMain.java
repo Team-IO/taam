@@ -1,7 +1,10 @@
 package net.teamio.taam;
 
+import java.util.List;
+
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemMultiTexture;
@@ -24,14 +27,13 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 import net.teamio.taam.content.ItemWithMetadata;
+import net.teamio.taam.content.ItemWithMetadata.ItemDelegate;
 import net.teamio.taam.content.common.BlockMachines;
 import net.teamio.taam.content.common.BlockOre;
 import net.teamio.taam.content.common.BlockSensor;
 import net.teamio.taam.content.common.BlockSlidingDoor;
 import net.teamio.taam.content.common.FluidDye;
 import net.teamio.taam.content.common.ItemDebugTool;
-import net.teamio.taam.content.common.ItemDust;
-import net.teamio.taam.content.common.ItemIngot;
 import net.teamio.taam.content.common.ItemTool;
 import net.teamio.taam.content.common.ItemWrench;
 import net.teamio.taam.content.common.TileEntityChute;
@@ -66,10 +68,10 @@ public class TaamMain {
 	public static ItemDebugTool itemDebugTool;
 	public static ItemWrench itemWrench;
 	public static ItemTool itemSaw;
-	public static ItemWithMetadata itemMaterial;
-	public static ItemWithMetadata itemPart;
-	public static ItemIngot itemIngot;
-	public static ItemDust itemDust;
+	public static ItemWithMetadata<Taam.ITEM_MATERIAL_META> itemMaterial;
+	public static ItemWithMetadata<Taam.ITEM_PART_META> itemPart;
+	public static ItemWithMetadata<Taam.BLOCK_ORE_META> itemIngot;
+	public static ItemWithMetadata<Taam.BLOCK_ORE_META> itemDust;
 	public static ItemConveyorAppliance itemConveyorAppliance;
 	
 	public static CreativeTabs creativeTab;
@@ -153,10 +155,29 @@ public class TaamMain {
 		registerItem(itemWrench = new ItemWrench(), Taam.ITEM_WRENCH);
 		registerItem(itemSaw = new ItemTool(Taam.ITEM_TOOL_META.saw), Taam.ITEM_TOOL + "." + Taam.ITEM_TOOL_META.saw.name());
 		
-		registerItem(itemMaterial = new ItemWithMetadata("material", Taam.ITEM_MATERIAL_META.values()), Taam.ITEM_MATERIAL);
-		registerItem(itemPart = new ItemWithMetadata("part", Taam.ITEM_PART_META.values()), Taam.ITEM_PART);
-		registerItem(itemIngot = new ItemIngot("ingot", Taam.BLOCK_ORE_META.values()), Taam.ITEM_INGOT);
-		registerItem(itemDust = new ItemDust("dust",Taam.BLOCK_ORE_META.values()), Taam.ITEM_DUST);
+		registerItem(itemMaterial = new ItemWithMetadata<Taam.ITEM_MATERIAL_META>("material", Taam.ITEM_MATERIAL_META.values(), null), Taam.ITEM_MATERIAL);
+		registerItem(itemPart = new ItemWithMetadata<Taam.ITEM_PART_META>("part", Taam.ITEM_PART_META.values(), null), Taam.ITEM_PART);
+		registerItem(itemIngot = new ItemWithMetadata<Taam.BLOCK_ORE_META>("ingot", Taam.BLOCK_ORE_META.values(), new ItemDelegate<Taam.BLOCK_ORE_META>() {
+			@Override
+			public boolean isValidMetadata(Taam.BLOCK_ORE_META meta) {
+				return meta.ingot;
+			}
+			
+			@Override
+			public void addInformation(ItemStack stack, EntityPlayer player, List<String> lines, boolean detailedInfoSetting) {
+			}
+		}), Taam.ITEM_INGOT);
+		
+		registerItem(itemDust = new ItemWithMetadata<Taam.BLOCK_ORE_META>("dust", Taam.BLOCK_ORE_META.values(), new ItemDelegate<Taam.BLOCK_ORE_META>() {
+			@Override
+			public boolean isValidMetadata(Taam.BLOCK_ORE_META meta) {
+				return meta.dust;
+			}
+			
+			@Override
+			public void addInformation(ItemStack stack, EntityPlayer player, List<String> lines, boolean detailedInfoSetting) {
+			}
+		}), Taam.ITEM_DUST);
 		
 		registerItem(itemConveyorAppliance = new ItemConveyorAppliance(), Taam.ITEM_CONVEYOR_APPLIANCE);
 		
