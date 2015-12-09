@@ -26,14 +26,14 @@ public class ModGuiConfig extends GuiConfig {
 		
 	}
 	
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private static List<IConfigElement> getElements() {
 		List<IConfigElement> elements = new ArrayList<IConfigElement>();
-		ConfigElement<Object> cfgEl = new ConfigElement<Object>(Config.config.getCategory(Configuration.CATEGORY_GENERAL));
-		ConfigElement<Object> cfgElMultitronix = new ConfigElement<Object>(Config.config.getCategory("multitronix"));
-		ConfigElement<Object> cfgElProductionline = new ConfigElement<Object>(Config.config.getCategory("production_line"));
-		ConfigElement<Object> cfgElProductionline_appliances = new ConfigElement<Object>(Config.config.getCategory("production_line_appliances"));
-		ConfigElement<Object> cfgElWorldgen = new ConfigElement<Object>(Config.config.getCategory("worldgen"));
+		ConfigElement cfgEl = new ConfigElement(Config.config.getCategory(Configuration.CATEGORY_GENERAL));
+		ConfigElement cfgElMultitronix = new ConfigElement(Config.config.getCategory("multitronix"));
+		ConfigElement cfgElProductionline = new ConfigElement(Config.config.getCategory("production_line"));
+		ConfigElement cfgElProductionline_appliances = new ConfigElement(Config.config.getCategory("production_line_appliances"));
+		ConfigElement cfgElWorldgen = new ConfigElement(Config.config.getCategory("worldgen"));
 		elements.addAll(cfgEl.getChildElements());
 		elements.addAll(cfgElMultitronix.getChildElements());
 		elements.addAll(cfgElProductionline.getChildElements());
