@@ -1,3 +1,4 @@
+/*
 buildscript {
     repositories {
         mavenCentral()
@@ -11,7 +12,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.0-SNAPSHOT'
     }
 }
 
@@ -23,8 +24,16 @@ repositories {
 		url "http://chickenbones.net/maven/"
 	}
 }
+*/
 
-version = "1.0"
+plugins {
+    id "net.minecraftforge.gradle.forge" version "2.0.2"
+}
+
+version = "1.0b1"
+
+apply plugin: 'net.minecraftforge.gradle.forge'
+
 group = "net.teamio.taam"
 archivesBaseName = "taam-1.8"
 project.ext {
@@ -34,13 +43,10 @@ project.ext {
 }
 
 minecraft {
-<<<<<<< HEAD
-    version = "1.8-11.14.1.1353"
-=======
-    version = "1.7.10-10.13.4.1558-1.7.10"
->>>>>>> refs/remotes/origin/master
+    version = "1.8-11.14.4.1563"
     runDir = "."
     replace "@VERSION@", project.version
+    mappings = "stable_17"
 }
 
 sourceSets {
