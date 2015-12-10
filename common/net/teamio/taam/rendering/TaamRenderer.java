@@ -2,6 +2,8 @@ package net.teamio.taam.rendering;
 
 import java.util.Random;
 
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.RenderItem;
@@ -14,9 +16,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.IItemRenderer;
-import net.minecraftforge.client.model.obj.WavefrontObject;
-import net.minecraftforge.client.model.techne.TechneModel;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.teamio.taam.Config;
 import net.teamio.taam.Taam;
 import net.teamio.taam.TaamMain;
@@ -38,11 +39,6 @@ import net.teamio.taam.content.conveyors.TileEntityConveyorTrashCan;
 import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.conveyors.ItemWrapper;
 import net.teamio.taam.conveyors.api.IConveyorAwareTE;
-
-import org.lwjgl.opengl.GL11;
-
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.TickEvent;
 
 public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRenderer {
 

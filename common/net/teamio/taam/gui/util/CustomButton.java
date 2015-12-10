@@ -1,13 +1,12 @@
 package net.teamio.taam.gui.util;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiButton;
-
 import org.lwjgl.opengl.GL11;
 
 import com.google.common.base.Function;
 
-import cpw.mods.fml.client.config.GuiUtils;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiButton;
+import net.minecraftforge.fml.client.config.GuiUtils;
 
 public class CustomButton extends GuiButton {
 	
@@ -44,8 +43,8 @@ public class CustomButton extends GuiButton {
     {
         if (this.visible)
         {
-            this.field_146123_n = mouseX >= this.xPosition && mouseY >= this.yPosition && mouseX < this.xPosition + this.width && mouseY < this.yPosition + this.height;
-            int k = this.getHoverState(this.field_146123_n);
+            this.hovered = mouseX >= this.xPosition && mouseY >= this.yPosition && mouseX < this.xPosition + this.width && mouseY < this.yPosition + this.height;
+            int k = this.getHoverState(this.hovered);
             
             if(k == 2 && mouseDown) {
             	k = 3;
@@ -74,19 +73,19 @@ public class CustomButton extends GuiButton {
             {
                 color = 0xA0A0A0;
             }
-            else if (this.field_146123_n)
+            else if (this.hovered)
             {
                 color = 0xFFFFA0;
             }
             
             String buttonText = this.displayString;
-            int strWidth = mc.fontRenderer.getStringWidth(buttonText);
-            int ellipsisWidth = mc.fontRenderer.getStringWidth("...");
+            int strWidth = mc.fontRendererObj.getStringWidth(buttonText);
+            int ellipsisWidth = mc.fontRendererObj.getStringWidth("...");
             
             if (strWidth > width - 6 && strWidth > ellipsisWidth)
-                buttonText = mc.fontRenderer.trimStringToWidth(buttonText, width - 6 - ellipsisWidth).trim() + "...";
+                buttonText = mc.fontRendererObj.trimStringToWidth(buttonText, width - 6 - ellipsisWidth).trim() + "...";
             
-            this.drawCenteredString(mc.fontRenderer, buttonText, this.xPosition + this.width / 2, this.yPosition + (this.height - 8) / 2, color);
+            this.drawCenteredString(mc.fontRendererObj, buttonText, this.xPosition + this.width / 2, this.yPosition + (this.height - 8) / 2, color);
         }
     }
 

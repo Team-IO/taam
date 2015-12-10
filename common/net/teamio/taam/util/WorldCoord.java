@@ -1,16 +1,17 @@
 package net.teamio.taam.util;
 
+import codechicken.lib.vec.BlockCoord;
+import codechicken.lib.vec.Vector3;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-import net.minecraftforge.common.util.ForgeDirection;
-import codechicken.lib.vec.BlockCoord;
-import codechicken.lib.vec.Vector3;
 
 public class WorldCoord {
 	public int world;
@@ -30,7 +31,11 @@ public class WorldCoord {
 	}
 	
 	public WorldCoord(World world, int x, int y, int z) {
-		this(world.provider.dimensionId, x, y, z);
+		this(world.provider.getDimensionId(), x, y, z);
+	}
+	
+	public WorldCoord(World world, BlockPos pos) {
+		this(world.provider.getDimensionId(), pos.getX(), pos.getY(), pos.getZ());
 	}
 	
 	public WorldCoord(int world, Vector3 v) {
@@ -44,7 +49,7 @@ public class WorldCoord {
 	}
 
 	public WorldCoord(TileEntity tile) {
-		this(tile.getWorldObj(), tile.xCoord, tile.yCoord, tile.zCoord);
+		this(tile.getWorld(), tile.getPos());
 	}
 	
 	public WorldCoord(int[] data) {
@@ -76,18 +81,18 @@ public class WorldCoord {
 	
 	public WorldClient getWorldClient() {
 		WorldClient worldClient = Minecraft.getMinecraft().theWorld;
-		if(worldClient.provider.dimensionId == world) {
+		if(worldClient.provider.getDimensionId() == world) {
 			return worldClient;
 		} else {
 			return null;
 		}
 	}
 	
-	public WorldCoord getDirectionalOffset(ForgeDirection direction) {
-		return new WorldCoord(world, x + direction.offsetX, y + direction.offsetY, z + direction.offsetZ);
+	public WorldCoord getDirectionalOffset(EnumFacing direction) {
+		return new WorldCoord(world, x + direction.getFrontOffsetX(), y + direction.getFrontOffsetY(), z + direction.getFrontOffsetZ());
 	}
 	
-	public boolean isDirectionalOffset(ForgeDirection direction, WorldCoord other) {
+	public boolean isDirectionalOffset(EnumFacing direction, WorldCoord other) {
 		return getDirectionalOffset(direction).equals(this);
 	}
 

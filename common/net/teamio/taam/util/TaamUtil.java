@@ -2,19 +2,20 @@ package net.teamio.taam.util;
 
 import java.util.Random;
 
+import codechicken.lib.inventory.InventoryUtils;
+import codechicken.lib.vec.Vector3;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 import net.teamio.taam.content.IRedstoneControlled;
 import net.teamio.taam.conveyors.api.IConveyorAwareTE;
-import codechicken.lib.inventory.InventoryUtils;
-import codechicken.lib.vec.Vector3;
 
 /**
  * Generic Utility Methods, used across multiple "themes".
@@ -45,43 +46,48 @@ public final class TaamUtil {
 			}
 		}
 	}
+	
+	public static void tryDropToInventory(EntityPlayer player, ItemStack stack, BlockPos pos) {
+		tryDropToInventory(player, stack, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
+	}
 
-	public static boolean canDropIntoWorld(IBlockAccess world, int x, int y, int z) {
-		return world.isAirBlock(x, y, z) || world.getBlock(x, y, z).getMaterial().isLiquid();
+	public static boolean canDropIntoWorld(IBlockAccess world, BlockPos pos) {
+		return world.isAirBlock(pos) || world.getBlockState(pos).getBlock().getMaterial().isLiquid();
 	}
 
 	public static void breakBlockInWorld(World world, BlockPos pos) {
-		Block block = world.getBlock(x, y, z);
-		breakBlockInWorld(world, x, y, z, block);
+		IBlockState blockState = world.getBlockState(pos);
+		breakBlockInWorld(world, pos, blockState);
 	}
 
-	public static void breakBlockInWorld(World world, BlockPos pos, Block block) {
-		block.breakBlock(world, x, y, z, block, world.getBlockMetadata(x, y, z));
-		block.dropBlockAsItem(world, x, y, z, world.getBlockMetadata(x, y, z), 0);
-		world.setBlockToAir(x, y, z);
+	public static void breakBlockInWorld(World world, BlockPos pos, IBlockState blockState) {
+		Block block = blockState.getBlock();
+		block.breakBlock(world, pos, blockState);
+		block.dropBlockAsItem(world, pos, blockState, 0);
+		world.setBlockToAir(pos);
 	}
 	
 	public static void breakBlockToInventory(EntityPlayer player, World world, BlockPos pos) {
-		Block block = world.getBlockState(pos).getBlock();
-		breakBlockToInventory(player, world, x, y, z, block);
+		IBlockState blockState = world.getBlockState(pos);
+		breakBlockToInventory(player, world, pos, blockState);
 	}
 
-	public static void breakBlockToInventory(EntityPlayer player, World world, BlockPos pos, Block block) {
-		block.breakBlock(world, x, y, z, block, world.getBlockMetadata(x, y, z));
-		ItemStack toDrop = getItemStackFromWorld(world, x, y, z, block);
+	public static void breakBlockToInventory(EntityPlayer player, World world, BlockPos pos, IBlockState blockState) {
+		blockState.getBlock().breakBlock(world, pos, blockState);
+		ItemStack toDrop = getItemStackFromWorld(world, pos, blockState);
 		if(toDrop != null) {
-			tryDropToInventory(player, toDrop, x, y, z);
+			tryDropToInventory(player, toDrop, pos);
 		}
-		world.setBlockToAir(x, y, z);
+		world.setBlockToAir(pos);
 	}
 	
-	public static ItemStack getItemStackFromWorld(World world, BlockPos pos, Block block) {
-		int metadata = world.getBlockMetadata(x, y, z);
+	public static ItemStack getItemStackFromWorld(World world, BlockPos pos, IBlockState blockState) {
+		Block block = blockState.getBlock();
         Item item = Item.getItemFromBlock(block);
         if (item == null) {
         	return null;
         } else {
-        	int damage = block.damageDropped(metadata);
+        	int damage = block.damageDropped(blockState);
         	return new ItemStack(block, 1, damage);
         }
 	}
@@ -109,11 +115,11 @@ public final class TaamUtil {
 	 * @param dir The direction in which to check. Checks the block at the offset coordinates.
 	 * @return
 	 */
-	public static boolean canAttach(IBlockAccess world, int x, int y, int z, ForgeDirection dir) {
-		if(world.isSideSolid(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ, dir.getOpposite(), false)) {
+	public static boolean canAttach(IBlockAccess world, BlockPos pos, EnumFacing dir) {
+		if(world.isSideSolid(pos.offset(dir), dir.getOpposite(), false)) {
 			return true;
 		}
-		TileEntity ent = world.getTileEntity(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ);
+		TileEntity ent = world.getTileEntity(pos.offset(dir));
 		return ent instanceof IConveyorAwareTE;
 	}
 	
