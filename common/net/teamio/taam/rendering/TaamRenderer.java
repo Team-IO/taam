@@ -76,10 +76,10 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 		textureSensor = new ResourceLocation(Taam.MOD_ID + ":textures/models/sensor.png");
 		textureSensorBlink = new ResourceLocation(Taam.MOD_ID + ":textures/models/sensor_blink.png");
 
-		modelConveyor = new WavefrontObject(new ResourceLocation(Taam.MOD_ID + ":models/conveyor.obj"));
+		modelConveyor = new CachingWavefrontObject(new ResourceLocation(Taam.MOD_ID + ":models/conveyor.obj"));
 		textureConveyor = new ResourceLocation(Taam.MOD_ID + ":textures/models/conveyor.png");
 
-		modelMachines = new WavefrontObject(new ResourceLocation(Taam.MOD_ID + ":models/machines.obj"));
+		modelMachines = new CachingWavefrontObject(new ResourceLocation(Taam.MOD_ID + ":models/machines.obj"));
 
 	}
 	
