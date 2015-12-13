@@ -2,17 +2,18 @@ package net.teamio.taam.content.common;
 
 import java.util.List;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.teamio.taam.Taam;
 import net.teamio.taam.Taam.BLOCK_MACHINES_META;
 import net.teamio.taam.content.BaseBlock;
@@ -28,7 +29,7 @@ public class BlockMachines extends BaseBlock {
 	}
 	
 	@Override
-	public TileEntity createTileEntity(World world, int metadata) {
+	public TileEntity createTileEntity(World world, IBlockState state) {
 		switch(metadata) {
 		case 0:
 			return new TileEntityChute(false);
@@ -39,7 +40,7 @@ public class BlockMachines extends BaseBlock {
 	}
 	
 	@Override
-	public int damageDropped(int meta) {
+	public int damageDropped(IBlockState state) {
 		if (meta < 0 || meta >= Taam.BLOCK_MACHINES_META.values().length) {
 			meta = 0;
 		}
@@ -66,10 +67,9 @@ public class BlockMachines extends BaseBlock {
 			list.add(new ItemStack(item, 1, i));
 		}
 	}
-	
 	@Override
-	public void setBlockBoundsBasedOnState(IBlockAccess world, int x, int y, int z) {
-		int metadata = world.getBlockMetadata(x, y, z);
+	public void setBlockBoundsBasedOnState(IBlockAccess world, BlockPos pos) {
+		int metadata = world.getBlockMetadata(pos);
 		switch(metadata) {
 		case 0:
 			// Have chute as full model for now..
@@ -92,21 +92,19 @@ public class BlockMachines extends BaseBlock {
 	}
 	
 	@Override
-	public void breakBlock(World world, int x, int y, int z, Block block,
-			int meta) {
+	public void breakBlock(World world, BlockPos pos, IBlockState state) {
 		if(meta == 1) {
 			// Do not drop anything for the creative cache (fake items...)
 			return;
 		}
-		super.breakBlock(world, x, y, z, block, meta);
+		super.breakBlock(world, pos, state);
 	}
 	
 	@Override
-	public boolean isSideSolid(IBlockAccess world, int x, int y, int z,
-			ForgeDirection side) {
-		int meta = world.getBlockMetadata(x, y, z);
+	public boolean isSideSolid(IBlockAccess world, BlockPos pos, EnumFacing side) {
+		int meta = world.getBlockMetadata(pos);
 		if(meta == 0) {
-			return side == ForgeDirection.DOWN || side == ForgeDirection.UP;
+			return side == EnumFacing.DOWN || side == EnumFacing.UP;
 		} else {
 			return true;
 		}

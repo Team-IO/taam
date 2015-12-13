@@ -4,6 +4,7 @@ import codechicken.lib.inventory.InventoryUtils;
 import codechicken.lib.vec.Vector3;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -44,8 +45,8 @@ public abstract class BaseBlock extends Block {
 	
 	@Override
 	public void onNeighborBlockChange(World worldIn, BlockPos pos, IBlockState state, Block neighborBlock) {
-		if(!canBlockStay(worldIn, pos)) {
-			TaamUtil.breakBlockInWorld(worldIn, pos, this);
+		if(!canPlaceBlockAt(worldIn, pos)) {
+			TaamUtil.breakBlockInWorld(worldIn, pos, state);
 			return;
 		}
 		TileEntity te = worldIn.getTileEntity(pos);
@@ -73,8 +74,6 @@ public abstract class BaseBlock extends Block {
 			((TileEntityConveyor) te).dropItems();
 		}
 
-		Vector3 location = new Vector3(pos);
-		
 		/*
 		 * Drop Items
 		 */
@@ -84,7 +83,7 @@ public abstract class BaseBlock extends Block {
 				ItemStack itemstack = inventory.getStackInSlot(index);
 
 				if (itemstack != null && itemstack.getItem() != null) {
-					InventoryUtils.dropItem(itemstack, worldIn, location);
+					InventoryUtils.dropItem(itemstack, worldIn, new Vector3(pos));
 				}
 			}
 		}
@@ -94,7 +93,7 @@ public abstract class BaseBlock extends Block {
 		 */
 		if(te instanceof IConveyorApplianceHost) {
 			IConveyorApplianceHost applianceHost = (IConveyorApplianceHost)te;
-			ConveyorUtil.dropAppliance(applianceHost, null, worldIn, location);
+			ConveyorUtil.dropAppliance(applianceHost, null, worldIn, pos);
 		}
 
 		super.breakBlock(worldIn, pos, state);
@@ -186,12 +185,12 @@ public abstract class BaseBlock extends Block {
 	public static void updateBlocksAround(World world, BlockPos pos) {
 		Block blockType = world.getBlockState(pos).getBlock();
 		world.notifyNeighborsOfStateChange(pos, blockType);
-		world.notifyNeighborsOfStateChange(pos.offsetWest(), blockType);
-		world.notifyNeighborsOfStateChange(pos.offsetEast(), blockType);
-		world.notifyNeighborsOfStateChange(pos.offsetDown(), blockType);
-		world.notifyNeighborsOfStateChange(pos.offsetUp(), blockType);
-		world.notifyNeighborsOfStateChange(pos.offsetNorth(), blockType);
-        world.notifyNeighborsOfStateChange(pos.offsetSouth(), blockType);
+		world.notifyNeighborsOfStateChange(pos.west(), blockType);
+		world.notifyNeighborsOfStateChange(pos.east(), blockType);
+		world.notifyNeighborsOfStateChange(pos.down(), blockType);
+		world.notifyNeighborsOfStateChange(pos.up(), blockType);
+		world.notifyNeighborsOfStateChange(pos.north(), blockType);
+        world.notifyNeighborsOfStateChange(pos.south(), blockType);
 	}
 
 }

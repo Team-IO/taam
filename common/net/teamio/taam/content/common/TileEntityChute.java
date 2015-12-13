@@ -1,5 +1,9 @@
 package net.teamio.taam.content.common;
 
+import org.apache.commons.lang3.ArrayUtils;
+
+import codechicken.lib.inventory.InventoryRange;
+import codechicken.lib.inventory.InventoryUtils;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -7,7 +11,7 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
@@ -18,13 +22,11 @@ import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.conveyors.ItemWrapper;
 import net.teamio.taam.conveyors.api.IConveyorAwareTE;
 import net.teamio.taam.util.TaamUtil;
-import codechicken.lib.inventory.InventoryRange;
-import codechicken.lib.inventory.InventoryUtils;
 
 public class TileEntityChute extends BaseTileEntity implements IInventory, ISidedInventory, IFluidHandler, IConveyorAwareTE, IRotatable {
 
 	public boolean isConveyorVersion = false;
-	private ForgeDirection direction = ForgeDirection.NORTH;
+	private EnumFacing direction = EnumFacing.NORTH;
 	
 	public TileEntityChute(boolean isConveyorVersion) {
 		this.isConveyorVersion = isConveyorVersion;
@@ -33,11 +35,16 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 	public TileEntityChute() {
 		this(false);
 	}
+	@Override
+	public void validate() {
+		// TODO Auto-generated method stub
+		super.validate();
+	}
 	
 	@Override
-	public void updateEntity() {
+	public void update() {
 		// Skip item insertion if there is a solid block / other chute above us 
-		if(isConveyorVersion || !worldObj.isSideSolid(xCoord, yCoord, zCoord, ForgeDirection.DOWN, false)) {
+		if(isConveyorVersion || !worldObj.isSideSolid(xCoord, yCoord, zCoord, EnumFacing.DOWN, false)) {
 			ConveyorUtil.tryInsertItemsFromWorld(this, worldObj, null, false);
 		}
 	}
@@ -54,15 +61,15 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 	protected void readPropertiesFromNBT(NBTTagCompound tag) {
 		isConveyorVersion = tag.getBoolean("isConveyorVersion");
 		if(isConveyorVersion) {
-			direction = ForgeDirection.getOrientation(tag.getInteger("direction"));
-			if(direction == ForgeDirection.UP || direction == ForgeDirection.DOWN || direction == ForgeDirection.UNKNOWN) {
-				direction = ForgeDirection.NORTH;
+			direction = EnumFacing.getFront(tag.getInteger("direction"));
+			if(!ArrayUtils.contains(EnumFacing.HORIZONTALS, direction)) {
+				direction = EnumFacing.NORTH;
 			}
 		}
 	}
 	
 	private TileEntity getTarget() {
-		return worldObj.getTileEntity(xCoord, yCoord - 1, zCoord);
+		return worldObj.getTileEntity(pos.down());
 	}
 	
 	private InventoryRange getTargetRange() {
@@ -70,12 +77,12 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 		if(inventory == null) {
 			return null;
 		} else {
-			return new InventoryRange(inventory, ForgeDirection.UP.ordinal());
+			return new InventoryRange(inventory, EnumFacing.UP.ordinal());
 		}
 	}
 	
 	private IInventory getTargetInventory() {
-		return InventoryUtils.getInventory(worldObj, xCoord, yCoord - 1, zCoord);
+		return InventoryUtils.getInventory(worldObj, pos.down());
 	}
 	
 	private IFluidHandler getTargetFluidHandler() {
@@ -88,7 +95,7 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 	}
 	
 	private boolean canDrop() {
-		return TaamUtil.canDropIntoWorld(worldObj, xCoord, yCoord - 1, zCoord);
+		return TaamUtil.canDropIntoWorld(worldObj, pos.down());
 	}
 
 	/*
@@ -135,7 +142,7 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 		InventoryRange target = getTargetRange();
 		if(target == null) {
 			if(!worldObj.isRemote && canDrop()) {
-				EntityItem item = new EntityItem(worldObj, xCoord + 0.5, yCoord - 0.3, zCoord + 0.5, stack);
+				EntityItem item = new EntityItem(worldObj, pos.getX() + 0.5, pos.getY() - 0.3, pos.getZ() + 0.5, stack);
 		        item.motionX = 0;
 		        item.motionY = 0;
 		        item.motionZ = 0;
@@ -185,20 +192,20 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 			return target.isUseableByPlayer(player);
 		}
 	}
-
+	
 	@Override
-	public void openInventory() {
+	public void openInventory(EntityPlayer player) {
 		IInventory target = getTargetInventory();
 		if(target != null) {
-			target.openInventory();
+			target.openInventory(player);
 		}
 	}
 
 	@Override
-	public void closeInventory() {
+	public void closeInventory(EntityPlayer player) {
 		IInventory target = getTargetInventory();
 		if(target != null) {
-			target.closeInventory();
+			target.closeInventory(player);
 		}
 	}
 
@@ -217,8 +224,8 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 	 */
 	
 	@Override
-	public int[] getAccessibleSlotsFromSide(int side) {
-		if(side != ForgeDirection.UP.ordinal()) {
+	public int[] getSlotsForFace(EnumFacing side) {
+		if(side != EnumFacing.UP) {
 			return new int[0];
 		}
 		InventoryRange target = getTargetRange();
@@ -240,8 +247,8 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 
 	@Override
 	public boolean canInsertItem(int slot, ItemStack stack,
-			int side) {
-		if(side != ForgeDirection.UP.ordinal()) {
+			EnumFacing direction) {
+		if(direction != EnumFacing.UP) {
 			return false;
 		}
 		InventoryRange target = getTargetRange();
@@ -254,19 +261,7 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 
 	@Override
 	public boolean canExtractItem(int slot, ItemStack stack,
-			int side) {
-		/*if(side != ForgeDirection.UP.ordinal()) {
-			return false;
-		}
-		ISidedInventory target = getTargetSidedInventory();
-		if(target == null) {
-			IInventory invTarget = getTargetInventory();
-			if(invTarget != null) {
-				return invTarget.isItemValidForSlot(slot, stack);
-			}
-		} else {
-			return target.canExtractItem(slot, stack, side);
-		}*/
+			EnumFacing direction) {
 		return false;
 	}
 
@@ -275,8 +270,8 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 	 */
 	
 	@Override
-	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
-		if(from != ForgeDirection.UP) {
+	public int fill(EnumFacing from, FluidStack resource, boolean doFill) {
+		if(from != EnumFacing.UP) {
 			return 0;
 		}
 		IFluidHandler target = getTargetFluidHandler();
@@ -288,18 +283,18 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 	}
 
 	@Override
-	public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
+	public FluidStack drain(EnumFacing from, FluidStack resource, boolean doDrain) {
 		return null;
 	}
 
 	@Override
-	public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
+	public FluidStack drain(EnumFacing from, int maxDrain, boolean doDrain) {
 		return null;
 	}
 
 	@Override
-	public boolean canFill(ForgeDirection from, Fluid fluid) {
-		if(from != ForgeDirection.UP) {
+	public boolean canFill(EnumFacing from, Fluid fluid) {
+		if(from != EnumFacing.UP) {
 			return false;
 		}
 		IFluidHandler target = getTargetFluidHandler();
@@ -311,13 +306,13 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 	}
 
 	@Override
-	public boolean canDrain(ForgeDirection from, Fluid fluid) {
+	public boolean canDrain(EnumFacing from, Fluid fluid) {
 		return false;
 	}
 
 	@Override
-	public FluidTankInfo[] getTankInfo(ForgeDirection from) {
-		if(from != ForgeDirection.UP) {
+	public FluidTankInfo[] getTankInfo(EnumFacing from) {
+		if(from != EnumFacing.UP) {
 			return new FluidTankInfo[0];
 		}
 		IFluidHandler target = getTargetFluidHandler();
@@ -361,17 +356,17 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 
 	@Override
 	public int posX() {
-		return xCoord;
+		return pos.getX();
 	}
 
 	@Override
 	public int posY() {
-		return yCoord;
+		return pos.getY();
 	}
 
 	@Override
 	public int posZ() {
-		return zCoord;
+		return pos.getZ();
 	}
 
 	@Override
@@ -379,7 +374,7 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 		InventoryRange target = getTargetRange();
 		if(target == null) {
 			if(!worldObj.isRemote && canDrop()) {
-				EntityItem item = new EntityItem(worldObj, xCoord + 0.5, yCoord - 0.3, zCoord + 0.5, stack);
+				EntityItem item = new EntityItem(worldObj, pos.getX() + 0.5, pos.getY() - 0.3, pos.getZ() + 0.5, stack);
 		        item.motionX = 0;
 		        item.motionY = 0;
 		        item.motionZ = 0;
@@ -393,8 +388,8 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 	}
 
 	@Override
-	public ForgeDirection getMovementDirection() {
-		return ForgeDirection.DOWN;
+	public EnumFacing getMovementDirection() {
+		return EnumFacing.DOWN;
 	}
 
 	@Override
@@ -424,41 +419,41 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 	 */
 	
 	@Override
-	public ForgeDirection getFacingDirection() {
+	public EnumFacing getFacingDirection() {
 		return direction;
 	}
 
 	@Override
-	public ForgeDirection getMountDirection() {
-		return ForgeDirection.DOWN;
+	public EnumFacing getMountDirection() {
+		return EnumFacing.DOWN;
 	}
 
 	@Override
-	public ForgeDirection getNextFacingDirection() {
-		return direction.getRotation(ForgeDirection.UP);
+	public EnumFacing getNextFacingDirection() {
+		return direction.rotateY();
 	}
 
 	@Override
-	public ForgeDirection getNextMountDirection() {
-		return ForgeDirection.DOWN;
+	public EnumFacing getNextMountDirection() {
+		return EnumFacing.DOWN;
 	}
 
 	@Override
-	public void setFacingDirection(ForgeDirection direction) {
+	public void setFacingDirection(EnumFacing direction) {
 		if(isConveyorVersion) {
 			this.direction = direction;
-			if(direction == ForgeDirection.UP || direction == ForgeDirection.DOWN || direction == ForgeDirection.UNKNOWN) {
-				this.direction = ForgeDirection.NORTH;
+			if(!ArrayUtils.contains(EnumFacing.HORIZONTALS, direction)) {
+				this.direction = EnumFacing.NORTH;
 			}
 			updateState();
 		}
 	}
 
 	@Override
-	public void setMountDirection(ForgeDirection direction) {
+	public void setMountDirection(EnumFacing direction) {
 	}
 
-	public ForgeDirection getNextSlot(int slot) {
+	public EnumFacing getNextSlot(int slot) {
 		return null;
 	}
 

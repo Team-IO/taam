@@ -2,15 +2,18 @@ package net.teamio.taam.content.common;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.teamio.taam.Taam;
 import net.teamio.taam.content.BaseBlock;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockSensor extends BaseBlock {
 	
@@ -41,22 +44,20 @@ public class BlockSensor extends BaseBlock {
 	}
 	
 	@Override
-    public AxisAlignedBB getCollisionBoundingBoxFromPool(World p_149668_1_, int p_149668_2_, int p_149668_3_, int p_149668_4_)
-    {
-        return null;
-    }
-
+	public AxisAlignedBB getCollisionBoundingBox(World worldIn, BlockPos pos, IBlockState state) {
+		return null;
+	}
+	
 	@Override
-	public TileEntity createTileEntity(World world, int metadata) {
+	public TileEntity createTileEntity(World world, IBlockState state) {
 		return new TileEntitySensor();
 		
 	}
 	@Override
-	public void setBlockBoundsBasedOnState(IBlockAccess world,
-			int x, int y, int z) {
-		int meta = world.getBlockMetadata(x, y, z);
+	public void setBlockBoundsBasedOnState(IBlockAccess worldIn, BlockPos pos) {
+		int meta = world.getBlockMetadata(pos);
 		int rotation = meta & 7;
-		ForgeDirection dir = ForgeDirection.getOrientation(rotation);
+		EnumFacing dir = EnumFacing.getFront(rotation);
 		
 		switch (dir) {
 		case DOWN:
@@ -107,7 +108,7 @@ public class BlockSensor extends BaseBlock {
 			minZ = width;
 			maxZ = 1f - width;
 			break;
-		case UNKNOWN:
+		default:
 			minX = 0;
 			maxX = 1;
 			minY = 0;
@@ -123,14 +124,12 @@ public class BlockSensor extends BaseBlock {
 	}
 
 	@Override
-	public int isProvidingWeakPower(IBlockAccess world, int x, int y, int z,
-			int side) {
-		int meta = world.getBlockMetadata(x, y, z);
+	public int isProvidingWeakPower(IBlockAccess world, BlockPos pos, IBlockState state, EnumFacing side) {
+		int meta = state;
 		int rotation = meta & 7;
-		ForgeDirection dir = ForgeDirection.getOrientation(rotation);
-		ForgeDirection sideDir = ForgeDirection.getOrientation(side);
-		if(dir == sideDir) {
-			TileEntitySensor te = ((TileEntitySensor) world.getTileEntity(x, y, z));
+		EnumFacing dir = EnumFacing.getFront(rotation);
+		if(dir == side) {
+			TileEntitySensor te = ((TileEntitySensor) world.getTileEntity(pos));
 			return te.isPowering();
 		} else {
 			return 0;
@@ -138,14 +137,12 @@ public class BlockSensor extends BaseBlock {
 	}
 	
 	@Override
-	public int isProvidingStrongPower(IBlockAccess world, int x, int y, int z,
-			int side) {
-		int meta = world.getBlockMetadata(x, y, z);
+	public int isProvidingStrongPower(IBlockAccess worldIn, BlockPos pos, IBlockState state, EnumFacing side) {
+		int meta = state;
 		int rotation = meta & 7;
-		ForgeDirection dir = ForgeDirection.getOrientation(rotation);
-		ForgeDirection sideDir = ForgeDirection.getOrientation(side);
-		if(dir == sideDir) {
-			TileEntitySensor te = ((TileEntitySensor) world.getTileEntity(x, y, z));
+		EnumFacing dir = EnumFacing.getFront(rotation);
+		if(dir == side) {
+			TileEntitySensor te = ((TileEntitySensor) worldIn.getTileEntity(pos));
 			return te.isPowering();
 		} else {
 			return 0;
@@ -158,45 +155,45 @@ public class BlockSensor extends BaseBlock {
 		return false;
 	}
 
+	
 	@Override
-	public boolean isBlockSolid(IBlockAccess world, int x, int y, int z, int side) {
+	public boolean isBlockSolid(IBlockAccess worldIn, BlockPos pos, EnumFacing side) {
 		return false;
 	}
 
 	@Override
-	public void onPostBlockPlaced(World world, int x, int y, int z, int meta) {
-		world.notifyBlocksOfNeighborChange(x, y, z, this);
+	public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state) {
+		worldIn.notifyNeighborsOfStateChange(pos, this);
 	}
-
+	
 	@Override
-	public int onBlockPlaced(World par1World, int x, int y, int z,
-			int side, float hitx, float hity, float hitz, int meta) {
+	public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ,
+			int meta, EntityLivingBase placer) {
 		int metaPart = meta & 8;
-        int resultingRotation = side;
-        return metaPart | resultingRotation;
+        int resultingRotation = facing.getIndex();
+        // metaPart | resultingRotation;
+        //TODO actually use IBlockState...
+		return super.onBlockPlaced(worldIn, pos, facing, hitX, hitY, hitZ, metaPart | resultingRotation, placer);
 	}
 	
 	@Override
-	public void breakBlock(World world, int x, int y, int z, Block block, int meta) {
-		BaseBlock.updateBlocksAround(world, x, y, z);
-		super.breakBlock(world, x, y, z, block, meta);
+	public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
+		BaseBlock.updateBlocksAround(worldIn, pos);
+		super.breakBlock(worldIn, pos, state);
 	}
 	
 	@Override
-	public boolean canBlockStay(World world, int x, int y, int z) {
-		int meta = world.getBlockMetadata(x, y, z);
+	public boolean canPlaceBlockAt(World worldIn, BlockPos pos) {
+		int meta = worldIn.getBlockMetadata(pos);
 		int rotation = meta & 7;
-		ForgeDirection dir = ForgeDirection.getOrientation(rotation).getOpposite();
-		
-		return world.isSideSolid(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ, ForgeDirection.getOrientation(rotation));
+		EnumFacing side = EnumFacing.getFront(rotation).getOpposite();
+
+		return worldIn.isSideSolid(pos.offset(side), side.getOpposite());
 	}
 	
 	@Override
-	public boolean canPlaceBlockOnSide(World world, int x, int y,
-			int z, int side) {
-		ForgeDirection dir = ForgeDirection.getOrientation(side).getOpposite();
-		return world.isSideSolid(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ, dir);
+	public boolean canPlaceBlockOnSide(World worldIn, BlockPos pos, EnumFacing side) {
+		return worldIn.isSideSolid(pos.offset(side), side.getOpposite());
 	}
-	
 	
 }
