@@ -21,3 +21,6 @@
 /.metadata
 /.settings
 /CameraStudio_log.*
+#Nano backup file
+/*.save
+/*.launch
