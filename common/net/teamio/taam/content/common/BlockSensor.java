@@ -131,10 +131,8 @@ public class BlockSensor extends BaseBlock {
 		ForgeDirection dir = ForgeDirection.getOrientation(meta);
 		ForgeDirection sideDir = ForgeDirection.getOrientation(side);
 		if(dir == sideDir) {
-			System.out.println(getRedstoneLevel(world, x, y, z));
 			return getRedstoneLevel(world, x, y, z);
 		} else {
-			System.out.println(0);
 			return 0;
 		}
 	}
