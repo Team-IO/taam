@@ -190,14 +190,19 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 			default:
 				break;
 			case 0:
-				conveyorPrepareRendering(null, x, y, z, false);
+				GL11.glPushMatrix();
+				/*
+				 * Translate to coordinates
+				 */
+				GL11.glTranslated(x, y, z);
+				
+				Minecraft.getMinecraft().renderEngine.bindTexture(textureConveyor);
 				renderConveyorAppliance(Taam.APPLIANCE_SPRAYER);
-				conveyorEndRendering();
+				
+				GL11.glPopMatrix();	
 				break;
 			case 1:
-				conveyorPrepareRendering(null, x, y, z, false);
 				//TODO: Render.
-				conveyorEndRendering();
 				break;
 			}
 		} else if(item.getItem() == Item.getItemFromBlock(TaamMain.blockMachines)) {
