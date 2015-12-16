@@ -221,7 +221,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 			int meta = tileEntity.getBlockMetadata();
 			switch (tileEntity.getBlockMetadata() & 8) {
 			case 0:
-				renderSensor(x, y, z, (meta & 7), te.isPowering() > 0);
+				renderSensor(x, y, z, (meta & 7), te.getRedstoneLevel() > 0);
 				break;
 			case 8:
 				// TODO: renderMinect();

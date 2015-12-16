@@ -429,18 +429,8 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 	}
 
 	@Override
-	public ForgeDirection getMountDirection() {
-		return ForgeDirection.DOWN;
-	}
-
-	@Override
 	public ForgeDirection getNextFacingDirection() {
 		return direction.getRotation(ForgeDirection.UP);
-	}
-
-	@Override
-	public ForgeDirection getNextMountDirection() {
-		return ForgeDirection.DOWN;
 	}
 
 	@Override
@@ -452,10 +442,6 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 			}
 			updateState();
 		}
-	}
-
-	@Override
-	public void setMountDirection(ForgeDirection direction) {
 	}
 
 	public ForgeDirection getNextSlot(int slot) {

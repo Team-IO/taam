@@ -485,28 +485,14 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 	}
 
 	@Override
-	public ForgeDirection getMountDirection() {
-		return ForgeDirection.DOWN;
-	}
-
-	@Override
 	public ForgeDirection getNextFacingDirection() {
 		return direction.getRotation(ForgeDirection.UP);
-	}
-
-	@Override
-	public ForgeDirection getNextMountDirection() {
-		return ForgeDirection.DOWN;
 	}
 
 	@Override
 	public void setFacingDirection(ForgeDirection direction) {
 		this.direction = direction;
 		updateState();
-	}
-
-	@Override
-	public void setMountDirection(ForgeDirection direction) {
 	}
 
 	public ForgeDirection getNextSlot(int slot) {

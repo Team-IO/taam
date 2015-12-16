@@ -9,8 +9,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.teamio.taam.Taam;
 import net.teamio.taam.content.BaseBlock;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockSensor extends BaseBlock {
 	
@@ -48,15 +46,15 @@ public class BlockSensor extends BaseBlock {
 
 	@Override
 	public TileEntity createTileEntity(World world, int metadata) {
-		return new TileEntitySensor();
+		return new TileEntitySensor(ForgeDirection.getOrientation(metadata));
 		
 	}
 	@Override
 	public void setBlockBoundsBasedOnState(IBlockAccess world,
 			int x, int y, int z) {
+		// Type is determined by the tile entity, we just need the rotation here
 		int meta = world.getBlockMetadata(x, y, z);
-		int rotation = meta & 7;
-		ForgeDirection dir = ForgeDirection.getOrientation(rotation);
+		ForgeDirection dir = ForgeDirection.getOrientation(meta);
 		
 		switch (dir) {
 		case DOWN:
@@ -123,41 +121,29 @@ public class BlockSensor extends BaseBlock {
 	}
 
 	@Override
-	public int isProvidingWeakPower(IBlockAccess world, int x, int y, int z,
-			int side) {
+	public int isProvidingWeakPower(IBlockAccess world, int x, int y, int z, int side) {
+		return getRedstoneLevel(world, x, y, z);
+	}
+	
+	@Override
+	public int isProvidingStrongPower(IBlockAccess world, int x, int y, int z, int side) {
 		int meta = world.getBlockMetadata(x, y, z);
-		int rotation = meta & 7;
-		ForgeDirection dir = ForgeDirection.getOrientation(rotation);
+		ForgeDirection dir = ForgeDirection.getOrientation(meta);
 		ForgeDirection sideDir = ForgeDirection.getOrientation(side);
 		if(dir == sideDir) {
-			TileEntitySensor te = ((TileEntitySensor) world.getTileEntity(x, y, z));
-			return te.isPowering();
+			System.out.println(getRedstoneLevel(world, x, y, z));
+			return getRedstoneLevel(world, x, y, z);
 		} else {
+			System.out.println(0);
 			return 0;
 		}
 	}
 	
-	@Override
-	public int isProvidingStrongPower(IBlockAccess world, int x, int y, int z,
-			int side) {
-		int meta = world.getBlockMetadata(x, y, z);
-		int rotation = meta & 7;
-		ForgeDirection dir = ForgeDirection.getOrientation(rotation);
-		ForgeDirection sideDir = ForgeDirection.getOrientation(side);
-		if(dir == sideDir) {
-			TileEntitySensor te = ((TileEntitySensor) world.getTileEntity(x, y, z));
-			return te.isPowering();
-		} else {
-			return 0;
-		}
+	public int getRedstoneLevel(IBlockAccess world, int x, int y, int z) {
+		TileEntitySensor te = ((TileEntitySensor) world.getTileEntity(x, y, z));
+		return te == null ? 0 : te.getRedstoneLevel();
 	}
 	
-	@Override
-	@SideOnly(Side.CLIENT)
-	public boolean isBlockNormalCube() {
-		return false;
-	}
-
 	@Override
 	public boolean isBlockSolid(IBlockAccess world, int x, int y, int z, int side) {
 		return false;
@@ -169,11 +155,9 @@ public class BlockSensor extends BaseBlock {
 	}
 
 	@Override
-	public int onBlockPlaced(World par1World, int x, int y, int z,
+	public int onBlockPlaced(World world, int x, int y, int z,
 			int side, float hitx, float hity, float hitz, int meta) {
-		int metaPart = meta & 8;
-        int resultingRotation = side;
-        return metaPart | resultingRotation;
+        return side;
 	}
 	
 	@Override
@@ -185,15 +169,12 @@ public class BlockSensor extends BaseBlock {
 	@Override
 	public boolean canBlockStay(World world, int x, int y, int z) {
 		int meta = world.getBlockMetadata(x, y, z);
-		int rotation = meta & 7;
-		ForgeDirection dir = ForgeDirection.getOrientation(rotation).getOpposite();
-		
-		return world.isSideSolid(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ, ForgeDirection.getOrientation(rotation));
+		ForgeDirection dir = ForgeDirection.getOrientation(meta).getOpposite();
+		return world.isSideSolid(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ, dir);
 	}
 	
 	@Override
-	public boolean canPlaceBlockOnSide(World world, int x, int y,
-			int z, int side) {
+	public boolean canPlaceBlockOnSide(World world, int x, int y, int z, int side) {
 		ForgeDirection dir = ForgeDirection.getOrientation(side).getOpposite();
 		return world.isSideSolid(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ, dir);
 	}

@@ -21,6 +21,8 @@ import net.teamio.taam.util.TaamUtil;
 import net.teamio.taam.util.WrenchUtil;
 import codechicken.lib.inventory.InventoryUtils;
 import codechicken.lib.vec.Vector3;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public abstract class BaseBlock extends Block {
 
@@ -42,6 +44,9 @@ public abstract class BaseBlock extends Block {
 	public void onNeighborBlockChange(World world, int x, int y, int z, Block neighborBlock) {
 		if(!canBlockStay(world, x, y, z)) {
 			TaamUtil.breakBlockInWorld(world, x, y, z, this);
+			if(this != TaamMain.blockSensor) {
+				breakBlock(world, x, y, z, this, 0);
+			}
 			return;
 		}
 		TileEntity te = world.getTileEntity(x, y, z);
@@ -177,6 +182,12 @@ public abstract class BaseBlock extends Block {
 				setBlockBoundsBasedOnState(world, x, y, z);
 				return super.getCollisionBoundingBoxFromPool(world, x, y, z);
 			}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public boolean isBlockNormalCube() {
+		return false;
+	}
 
 	/**
 	 * Updates a block and all surrounding blocks (meaning, pushes a block

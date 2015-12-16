@@ -68,6 +68,7 @@ public class WrenchUtil {
 				}
 			} else {
 				world.getBlock(x, y, z).rotateBlock(world, x, y, z, ForgeDirection.getOrientation(side));
+				return true;
 			}
 		}
 		return false;
