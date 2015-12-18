@@ -24,7 +24,7 @@ repositories {
 
 apply plugin: 'forge'
 
-version = "1.0"
+version = "1.0.1"
 group = "net.teamio.taam"
 archivesBaseName = "taam-1.7.10"
 project.ext {
