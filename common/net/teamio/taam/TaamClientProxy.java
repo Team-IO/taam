@@ -1,5 +1,8 @@
 package net.teamio.taam;
 
+import cpw.mods.fml.client.registry.ClientRegistry;
+import cpw.mods.fml.client.registry.RenderingRegistry;
+import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.item.Item;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.teamio.taam.content.common.TileEntityChute;
@@ -11,13 +14,15 @@ import net.teamio.taam.content.conveyors.TileEntityConveyorItemBag;
 import net.teamio.taam.content.conveyors.TileEntityConveyorProcessor;
 import net.teamio.taam.content.conveyors.TileEntityConveyorSieve;
 import net.teamio.taam.content.conveyors.TileEntityConveyorTrashCan;
+import net.teamio.taam.rendering.TaamBlockRenderer;
 import net.teamio.taam.rendering.TaamRenderer;
-import cpw.mods.fml.client.registry.ClientRegistry;
-import cpw.mods.fml.common.FMLCommonHandler;
 
 public class TaamClientProxy extends TaamCommonProxy {
 
-	public TaamRenderer taamRenderer;
+	public static int blockRendererId;
+	
+	public static TaamRenderer taamRenderer;
+	public static TaamBlockRenderer taamBlockRenderer;
 
 	@Override
 	public void registerRenderStuff() {
@@ -40,6 +45,11 @@ public class TaamClientProxy extends TaamCommonProxy {
 		MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(TaamMain.blockProductionLine), taamRenderer);
 		MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(TaamMain.blockProductionLineAttachable), taamRenderer);
 		MinecraftForgeClient.registerItemRenderer(TaamMain.itemConveyorAppliance, taamRenderer);
+		
+		// Block Rendering
+		taamBlockRenderer = new TaamBlockRenderer();
+		blockRendererId = RenderingRegistry.getNextAvailableRenderId();
+		RenderingRegistry.registerBlockHandler(blockRendererId, taamBlockRenderer);
 		
 		// Receive event for Client Ticks
 		FMLCommonHandler.instance().bus().register(taamRenderer);

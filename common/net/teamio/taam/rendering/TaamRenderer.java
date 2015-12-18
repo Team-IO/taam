@@ -59,6 +59,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 	private EntityItem ei;
 	private float rot = 0;
 	private float rot_sensor = 0;
+	private double rotSin = 0;
 	
 	public TaamRenderer() {
 		ri = new RenderItem() {
@@ -70,6 +71,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 		ei = new EntityItem(null, 0, 0, 0, new ItemStack(Items.apple));
 		ei.rotationPitch = 0;
 		ei.rotationYaw = 0;
+		ei.age = 0;
 		ri.setRenderManager(RenderManager.instance);
 		
 		modelSensor = new TechneModel(new ResourceLocation(Taam.MOD_ID + ":models/sensor.tcn"));
@@ -91,6 +93,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 	    	if(rot_sensor > 360) {
 	    		rot_sensor -= 360;
 	    	}
+			rotSin = Math.sin(Math.toRadians(rot*32));
 	    }
 	}
 
@@ -396,8 +399,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 					if(((TileEntityConveyorSieve) tileEntity).isShutdown) {
 						//posY = 0;
 					} else {
-						double val = Math.sin(Math.toRadians(rot*32));
-						posY += (float)(val*0.04);
+						posY += (float)(rotSin*0.04);
 					}
 				}
 				for(int slot = 0; slot < 9; slot++) {

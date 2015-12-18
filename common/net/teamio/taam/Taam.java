@@ -25,7 +25,9 @@ public final class Taam {
 	public static final String BLOCK_SENSOR_MOTION = "taam.sensor.motion";
 	public static final String BLOCK_SENSOR_MINECT = "taam.sensor.minect";
 	public static final String BLOCK_ORE = "taam.ore";
+	public static final String BLOCK_CONCRETE = "taam.concrete";
 	public static final String BLOCK_MAGNET_RAIL = "taam.magnet_rail";
+	public static final String BLOCK_SUPPORT_BEAM = "taam.support_beam";
 
 	/**
 	 * Implementation removed
@@ -69,6 +71,27 @@ public final class Taam {
 				return copper;
 			}
 			return valuesAsEnum[meta];
+		}
+	};
+	
+	public static enum BLOCK_CONCRETE_META {
+		rough,
+		rough_chiseled,
+		fine,
+		fine_chiseled,
+		coated,
+		coated_chiseled,
+		warn1,
+		warn2
+		;
+		
+		public static String[] valuesAsString() {
+			Enum<?>[] valuesAsEnum = values();
+			String[] valuesAsString = new String[valuesAsEnum.length];
+			for(int i = 0; i < valuesAsEnum.length; i++) {
+				valuesAsString[i] = valuesAsEnum[i].name();
+			}
+			return valuesAsString;
 		}
 	};
 	

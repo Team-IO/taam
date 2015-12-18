@@ -28,10 +28,12 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 import net.teamio.taam.content.ItemWithMetadata;
 import net.teamio.taam.content.ItemWithMetadata.ItemDelegate;
+import net.teamio.taam.content.common.BlockBuilding;
 import net.teamio.taam.content.common.BlockMachines;
 import net.teamio.taam.content.common.BlockOre;
 import net.teamio.taam.content.common.BlockSensor;
 import net.teamio.taam.content.common.BlockSlidingDoor;
+import net.teamio.taam.content.common.BlockSupportBeam;
 import net.teamio.taam.content.common.FluidDye;
 import net.teamio.taam.content.common.ItemDebugTool;
 import net.teamio.taam.content.common.ItemTool;
@@ -82,6 +84,8 @@ public class TaamMain {
 	public static BlockProductionLineAttachable blockProductionLineAttachable;
 	public static BlockSlidingDoor blockSlidingDoor;
 	public static BlockOre blockOre;
+	public static BlockBuilding<Taam.BLOCK_CONCRETE_META> blockConcrete;
+	public static BlockSupportBeam blockSupportBeam;
 	
 	public static FluidDye[] fluidsDye;
 	
@@ -90,6 +94,7 @@ public class TaamMain {
 	public static DamageSource ds_ground = new DamageSource("taam.ground").setDamageBypassesArmor();
 	public static DamageSource ds_crushed = new DamageSource("taam.crushed").setDamageBypassesArmor();
 	public static DamageSource ds_reconfigured = new DamageSource("taam.reconfigured").setDamageIsAbsolute();
+
 	
 	public TaamMain() {
         DepLoader.load();
@@ -150,6 +155,11 @@ public class TaamMain {
 
 		registerBlock(blockOre = new BlockOre(), null, Taam.BLOCK_ORE);
 		registerItem(new ItemMultiTexture(blockOre, blockOre, Taam.BLOCK_ORE_META.valuesAsString()), Taam.BLOCK_ORE);
+
+		registerBlock(blockConcrete = new BlockBuilding<Taam.BLOCK_CONCRETE_META>("concrete", Taam.BLOCK_CONCRETE_META.values()), null, Taam.BLOCK_CONCRETE);
+		registerItem(new ItemMultiTexture(blockConcrete, blockConcrete, Taam.BLOCK_CONCRETE_META.valuesAsString()), Taam.BLOCK_CONCRETE);
+		
+		registerBlock(blockSupportBeam = new BlockSupportBeam(), ItemBlock.class, Taam.BLOCK_SUPPORT_BEAM);
 		
 		registerItem(itemDebugTool = new ItemDebugTool(), Taam.ITEM_DEBUG_TOOL);
 		registerItem(itemWrench = new ItemWrench(), Taam.ITEM_WRENCH);
