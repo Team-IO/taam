@@ -22,19 +22,28 @@ repositories {
 	}
 }
 
-apply plugin: 'forge'
+ext.configFile = file "build.properties"
 
-version = "1.0.1"
-group = "net.teamio.taam"
-archivesBaseName = "taam-1.7.10"
-project.ext {
-	cclversion = "1.1.1.104"
-	neiversion = "1.0.3.74"
-	cccversion = "1.0.4.29"
+configFile.withReader {
+    def prop = new Properties()
+    prop.load(it)
+    project.ext.config = new ConfigSlurper().parse prop
 }
 
+apply plugin: 'forge'
+
+
+
+version = config.mod_version
+group = config.mod_group
+archivesBaseName = config.mod_name
+
+if(System.env.BUILD_NUMBER)
+	version = "${config.mod_version}.b${System.env.BUILD_NUMBER}"
+
+
 minecraft {
-    version = "1.7.10-10.13.4.1558-1.7.10"
+    version = "${config.mc_version}-${config.forge_version}-${config.mc_version}"
     runDir = "."
     replace "@VERSION@", project.version
 }
@@ -58,9 +67,9 @@ sourceSets {
 dependencies {
     //compile 'com.mod-buildcraft:buildcraft:6.0.8:dev'
 
-	compile "codechicken:CodeChickenLib:${project.minecraft.version}-${project.cclversion}:dev"
-    compile "codechicken:NotEnoughItems:${project.minecraft.version}-${project.neiversion}:dev"
-    compile "codechicken:CodeChickenCore:${project.minecraft.version}-${project.cccversion}:dev"
+	compile "codechicken:CodeChickenLib:${project.minecraft.version}-${config.ccl_version}:dev"
+    compile "codechicken:NotEnoughItems:${project.minecraft.version}-${config.nei_version}:dev"
+    compile "codechicken:CodeChickenCore:${project.minecraft.version}-${config.ccc_version}:dev"
     // compile fileTree(dir: 'lib', include: '*.jar')
 }
 
@@ -87,12 +96,12 @@ processResources
 {
     // this will ensure that this task is redone when the versions change.
     inputs.property "version", project.version
-    inputs.property "mcversion", project.minecraft.version
-	inputs.property "cclversion", project.cclversion
+    inputs.property "config.mc_version", project.minecraft.version
+	inputs.property "config.ccl_version", config.ccl_version
 	
     // Replace properties in info files
     from(sourceSets.main.resources.srcDirs) {
         include '*.info'
-        expand 'version':project.version,'mcversion':project.minecraft.version,'cclversion':project.cclversion
+        expand 'version':config.version,'mcversion':project.minecraft.version,'cclversion':config.ccl_version
     }
 }
