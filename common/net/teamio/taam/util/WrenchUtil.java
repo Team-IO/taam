@@ -6,7 +6,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 import net.teamio.taam.Log;
 import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.IRotatable;
@@ -68,7 +67,7 @@ public class WrenchUtil {
 					return true;
 				}
 			} else {
-				world.getBlock(x, y, z).rotateBlock(world, x, y, z, ForgeDirection.getOrientation(side));
+				world.getBlockState(pos).getBlock().rotateBlock(world, pos, side);
 				return true;
 			}
 		}

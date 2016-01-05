@@ -2,8 +2,6 @@ package net.teamio.taam.content.common;
 
 import java.util.List;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
@@ -14,7 +12,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.teamio.taam.Config;
 import net.teamio.taam.Taam;
 import net.teamio.taam.content.conveyors.TileEntityConveyor;
@@ -33,7 +32,6 @@ public class ItemDebugTool extends Item {
 		super();
 		this.setMaxStackSize(1);
 		this.setMaxDamage(0);
-		this.setTextureName(Taam.MOD_ID + ":coffee");
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })

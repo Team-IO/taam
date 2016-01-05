@@ -12,10 +12,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.teamio.taam.Taam;
 import net.teamio.taam.util.WrenchUtil;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class ItemWrench extends Item {
 
@@ -23,7 +23,6 @@ public class ItemWrench extends Item {
 		super();
 		setMaxStackSize(1);
 		setMaxDamage(0);
-		setTextureName(Taam.MOD_ID + ":wrench");
 		setFull3D();
 	}
 

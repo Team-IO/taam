@@ -6,9 +6,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
-import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
@@ -35,7 +35,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	/*
 	 * Conveyor State
 	 */
-	private ForgeDirection direction = ForgeDirection.NORTH;
+	private EnumFacing direction = EnumFacing.NORTH;
 	private int speedLevel = 0;
 	
 	public boolean isEnd = false;
@@ -354,7 +354,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	}
 
 	@Override
-	public ForgeDirection getFacingDirection() {
+	public EnumFacing getFacingDirection() {
 		return direction;
 	}
 

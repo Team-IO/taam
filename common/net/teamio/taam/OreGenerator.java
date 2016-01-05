@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.block.state.pattern.BlockHelper;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
@@ -11,6 +12,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.feature.WorldGenMinable;
 import net.minecraftforge.fml.common.IWorldGenerator;
+import net.teamio.taam.content.common.BlockOre;
 
 public class OreGenerator implements IWorldGenerator {
 
@@ -32,29 +34,28 @@ public class OreGenerator implements IWorldGenerator {
 	
 	public OreGenerator() {
 		gens = new ArrayList<GenerationInfo>();
-		// Copper Ore
-		//if(Config.genCopper)
-		//	gens.add(new GenerationInfo(new WorldGenMinable(TaamMain.blockOre, Taam.BLOCK_ORE_META.copper.ordinal(), 14, BlockHelper.forBlock(Blocks.stone)), 0, 64, 7));
-		if(Config.genOre[0])
-			gens.add(new GenerationInfo(new WorldGenMinable(TaamMain.blockOre, Taam.BLOCK_ORE_META.copper.ordinal(), Config.oreSize[0], Blocks.stone), Config.oreAbove[0], Config.oreBelow[0], Config.oreDepositCount[0]));
-		// Tin Ore
-		if(Config.genOre[1])
-			gens.add(new GenerationInfo(new WorldGenMinable(TaamMain.blockOre, Taam.BLOCK_ORE_META.tin.ordinal(), Config.oreSize[1], Blocks.stone), Config.oreAbove[1], Config.oreBelow[1], Config.oreDepositCount[1]));
-		// Native Aluminum
-		if(Config.genOre[2])
-			gens.add(new GenerationInfo(new WorldGenMinable(TaamMain.blockOre, Taam.BLOCK_ORE_META.aluminum.ordinal(), Config.oreSize[2], Blocks.stone), Config.oreAbove[2], Config.oreBelow[2], Config.oreDepositCount[2]));
-		// Bauxite
-		if(Config.genOre[3]){
-		gens.add(new GenerationInfo(new WorldGenMinable(TaamMain.blockOre, Taam.BLOCK_ORE_META.bauxite.ordinal(), Config.oreSize[3], Blocks.stone), Config.oreAbove[3], Config.oreBelow[3], Config.oreDepositCount[3]));
-//		gens.add(new GenerationInfo(new WorldGenMinable(TaamMain.blockOre, Taam.BLOCK_ORE_META.bauxite.ordinal(), 35, Blocks.dirt), 0, 128, 5));
+		BlockHelper stone = BlockHelper.forBlock(Blocks.stone);
+		if(Config.genOre[0]) {
+			gens.add(new GenerationInfo(new WorldGenMinable(getOre(Taam.BLOCK_ORE_META.copper), Config.oreSize[0], stone), Config.oreAbove[0], Config.oreBelow[0], Config.oreDepositCount[0]));
 		}
-		// Kaolinite
-		if(Config.genOre[4]){
-		gens.add(new GenerationInfo(new WorldGenMinable(TaamMain.blockOre, Taam.BLOCK_ORE_META.kaolinite.ordinal(), Config.oreSize[4], Blocks.stone), Config.oreAbove[4], Config.oreBelow[4], Config.oreDepositCount[4]));
-//		gens.add(new GenerationInfo(new WorldGenMinable(TaamMain.blockOre, Taam.BLOCK_ORE_META.kaolinite.ordinal(), 35, Blocks.dirt), 0, 128, 2));
+		if(Config.genOre[1]) {
+			gens.add(new GenerationInfo(new WorldGenMinable(getOre(Taam.BLOCK_ORE_META.tin), Config.oreSize[1], stone), Config.oreAbove[1], Config.oreBelow[1], Config.oreDepositCount[1]));
+		}
+		if(Config.genOre[2]) {
+			gens.add(new GenerationInfo(new WorldGenMinable(getOre(Taam.BLOCK_ORE_META.aluminum), Config.oreSize[2], stone), Config.oreAbove[2], Config.oreBelow[2], Config.oreDepositCount[2]));
+		}
+		if(Config.genOre[3]) {
+			gens.add(new GenerationInfo(new WorldGenMinable(getOre(Taam.BLOCK_ORE_META.bauxite), Config.oreSize[3], stone), Config.oreAbove[3], Config.oreBelow[3], Config.oreDepositCount[3]));
+		}
+		if(Config.genOre[4]) {
+			gens.add(new GenerationInfo(new WorldGenMinable(getOre(Taam.BLOCK_ORE_META.kaolinite), Config.oreSize[4], stone), Config.oreAbove[4], Config.oreBelow[4], Config.oreDepositCount[4]));
 		}
 	}
-		
+	
+	private IBlockState getOre(Taam.BLOCK_ORE_META ore) {
+		return TaamMain.blockOre.getDefaultState().withProperty(BlockOre.VARIANT, Taam.BLOCK_ORE_META.copper);
+	}
+	
 	@Override
 	public void generate(Random random, int chunkX, int chunkZ, World world, IChunkProvider chunkGenerator, IChunkProvider chunkProvider) {
 		switch (world.provider.getDimensionId()) {

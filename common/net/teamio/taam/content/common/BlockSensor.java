@@ -40,7 +40,6 @@ public class BlockSensor extends BaseBlock {
 		this.setHardness(3.5f);
 		this.setStepSound(Block.soundTypeMetal);
 		this.setHarvestLevel("pickaxe", 1);
-		this.setBlockTextureName(Taam.MOD_ID + ":tech_block");
 	}
 	
 	@Override
@@ -55,7 +54,7 @@ public class BlockSensor extends BaseBlock {
 	}
 	@Override
 	public void setBlockBoundsBasedOnState(IBlockAccess worldIn, BlockPos pos) {
-		int meta = world.getBlockMetadata(pos);
+		int meta = worldIn.getBlockMetadata(pos);
 		// Type is determined by the tile entity, we just need the rotation here
 		EnumFacing dir = EnumFacing.getFront(meta);
 		
@@ -124,24 +123,23 @@ public class BlockSensor extends BaseBlock {
 	}
 
 	@Override
-	public int isProvidingWeakPower(IBlockAccess world, int x, int y, int z, int side) {
+	public int isProvidingWeakPower(IBlockAccess world, BlockPos pos, IBlockState state, EnumFacing side) {
 		return getRedstoneLevel(world, x, y, z);
 	}
 	
 	@Override
-	public int isProvidingStrongPower(IBlockAccess world, int x, int y, int z, int side) {
-		int meta = world.getBlockMetadata(x, y, z);
+	public int isProvidingStrongPower(IBlockAccess world, BlockPos pos, IBlockState state, EnumFacing side) {
 		ForgeDirection dir = ForgeDirection.getOrientation(meta);
 		ForgeDirection sideDir = ForgeDirection.getOrientation(side);
 		if(dir == sideDir) {
-			return getRedstoneLevel(world, x, y, z);
+			return getRedstoneLevel(world, pos);
 		} else {
 			return 0;
 		}
 	}
 	
-	public int getRedstoneLevel(IBlockAccess world, int x, int y, int z) {
-		TileEntitySensor te = ((TileEntitySensor) world.getTileEntity(x, y, z));
+	public int getRedstoneLevel(IBlockAccess world, BlockPos pos) {
+		TileEntitySensor te = ((TileEntitySensor) world.getTileEntity(pos));
 		return te == null ? 0 : te.getRedstoneLevel();
 	}
 

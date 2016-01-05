@@ -1,12 +1,13 @@
 package net.teamio.taam;
 
-import cpw.mods.fml.client.registry.ClientRegistry;
-import cpw.mods.fml.client.registry.RenderingRegistry;
-import cpw.mods.fml.common.FMLCommonHandler;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.model.ModelBakery;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.teamio.taam.content.common.TileEntityChute;
 import net.teamio.taam.content.common.TileEntityCreativeCache;
 import net.teamio.taam.content.common.TileEntitySensor;
@@ -49,12 +50,15 @@ public class TaamClientProxy extends TaamCommonProxy {
 		MinecraftForgeClient.registerItemRenderer(TaamMain.itemConveyorAppliance, taamRenderer);
 		
 		// Block Rendering
-		taamBlockRenderer = new TaamBlockRenderer();
-		blockRendererId = RenderingRegistry.getNextAvailableRenderId();
-		RenderingRegistry.registerBlockHandler(blockRendererId, taamBlockRenderer);
+//		taamBlockRenderer = new TaamBlockRenderer();
+//		blockRendererId = RenderingRegistry.getNextAvailableRenderId();
+//		RenderingRegistry.registerBlockHandler(blockRendererId, taamBlockRenderer);
 		
 		// Receive event for Client Ticks
 		FMLCommonHandler.instance().bus().register(taamRenderer);
-
+		ModelBakery.addVariantName(GameRegistry.findItem(Taam.MOD_ID, Taam.BLOCK_ORE), Taam.MOD_ID + ":ore_copper");
+		Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(GameRegistry.findItem(Taam.MOD_ID, Taam.BLOCK_ORE), 0, new ModelResourceLocation(Taam.MOD_ID + ":ore_copper", "inventory"));
+		Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(GameRegistry.findItem(Taam.MOD_ID, Taam.BLOCK_CONCRETE), 0, new ModelResourceLocation(Taam.MOD_ID + ":concrete", "inventory"));
+		
 	}
 }

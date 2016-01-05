@@ -22,7 +22,6 @@ public class BlockMachines extends BaseBlock {
 
 	public BlockMachines() {
 		super(Material.wood);
-		this.setBlockTextureName(Taam.MOD_ID + ":tech_block");
 		this.setStepSound(soundTypeWood);
 		this.setHardness(6);
 		this.setHarvestLevel("pickaxe", 2);
@@ -37,14 +36,6 @@ public class BlockMachines extends BaseBlock {
 			return new TileEntityCreativeCache();
 		}
 		return null;
-	}
-	
-	@Override
-	public int damageDropped(IBlockState state) {
-		if (meta < 0 || meta >= Taam.BLOCK_MACHINES_META.values().length) {
-			meta = 0;
-		}
-		return meta;
 	}
 	
 	public String getUnlocalizedName(ItemStack itemStack) {

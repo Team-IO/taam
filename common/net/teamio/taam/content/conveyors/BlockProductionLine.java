@@ -2,25 +2,27 @@ package net.teamio.taam.content.conveyors;
 
 import java.util.List;
 
+import codechicken.lib.inventory.InventoryUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.teamio.taam.Config;
 import net.teamio.taam.Log;
 import net.teamio.taam.Taam;
 import net.teamio.taam.content.BaseBlock;
 import net.teamio.taam.content.common.TileEntityChute;
-import codechicken.lib.inventory.InventoryUtils;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockProductionLine extends BaseBlock {
 	
@@ -29,7 +31,6 @@ public class BlockProductionLine extends BaseBlock {
 		this.setHardness(3.5f);
 		this.setStepSound(Block.soundTypeMetal);
 		this.setHarvestLevel("pickaxe", 1);
-		this.setBlockTextureName(Taam.MOD_ID + ":tech_block");
 	}
 
 	public String getUnlocalizedName(ItemStack itemStack) {
@@ -54,7 +55,7 @@ public class BlockProductionLine extends BaseBlock {
 	}
 	
 	@Override
-	public TileEntity createTileEntity(World world, int metadata) {
+	public TileEntity createTileEntity(World world, IBlockState metadata) {
 		if(metadata == 0) {
 			// Plain Conveyor, Tier 1
 			return new TileEntityConveyor(0);
@@ -91,8 +92,8 @@ public class BlockProductionLine extends BaseBlock {
 	}
 	@Override
 	public void setBlockBoundsBasedOnState(IBlockAccess world,
-			int x, int y, int z) {
-		int meta = world.getBlockMetadata(x, y, z);
+			BlockPos pos) {
+		int meta = world.getBlockMetadata(pos);
 		this.minX = 0;
 		this.maxX = 1;
 		this.minZ = 0;
@@ -104,7 +105,7 @@ public class BlockProductionLine extends BaseBlock {
 			// Conveyor Machinery
 			this.maxY = 0.5f;
 		}		
-		super.setBlockBoundsBasedOnState(world, x, y, z);
+		super.setBlockBoundsBasedOnState(world, pos);
 	}
 //	@Override
 //	public boolean canProvidePower() {
@@ -142,15 +143,8 @@ public class BlockProductionLine extends BaseBlock {
 //	}
 	
 	@Override
-	public boolean isBlockSolid(IBlockAccess world, int x,
-			int y, int z, int side) {
+	public boolean isBlockSolid(IBlockAccess world, BlockPos pos, EnumFacing side) {
 		return false;
-	}
-	
-	@Override
-	public void onPostBlockPlaced(World par1World, int par2, int par3,
-			int par4, int par5) {
-//		updateBlocksAround(par1World, par2, par3, par4);
 	}
 	
 	@Override
@@ -159,8 +153,8 @@ public class BlockProductionLine extends BaseBlock {
 	}
 	
 	@Override
-	public int getComparatorInputOverride(World world, int x, int y, int z, int meta) {
-		IInventory inventory = InventoryUtils.getInventory(world, x, y, z);
+	public int getComparatorInputOverride(World world, BlockPos pos) {
+		IInventory inventory = InventoryUtils.getInventory(world, pos);
 		if(inventory == null) {
 			return 0;
 		} else {
@@ -169,27 +163,27 @@ public class BlockProductionLine extends BaseBlock {
 	}
 	
 	@Override
-	public boolean canBlockStay(World world, int x, int y, int z) {
-		TileEntity ent = world.getTileEntity(x, y, z);
+	public boolean canPlaceBlockAt(World world, BlockPos pos) {
+		TileEntity ent = world.getTileEntity(pos);
 		
-		ForgeDirection myDir = null;
+		EnumFacing myDir = null;
 		if(ent instanceof TileEntityConveyor) {
 			myDir = ((TileEntityConveyor) ent).getFacingDirection();
 		}
-		return canBlockStay(world, x, y, z, myDir);
+		return canBlockStay(world, pos, myDir);
 	}
 	
-	public static boolean canBlockStay(World world, int x, int y, int z, ForgeDirection myDir) {
-		return checkSupport(world, x, y, z, ForgeDirection.DOWN, myDir, Config.pl_conveyor_supportrange, false) ||
-				checkSupport(world, x, y, z, ForgeDirection.UP, myDir, Config.pl_conveyor_supportrange, false) ||
-				checkSupport(world, x, y, z, ForgeDirection.NORTH, myDir, Config.pl_conveyor_supportrange, false) ||
-				checkSupport(world, x, y, z, ForgeDirection.SOUTH, myDir, Config.pl_conveyor_supportrange, false) ||
-				checkSupport(world, x, y, z, ForgeDirection.WEST, myDir, Config.pl_conveyor_supportrange, false) ||
-				checkSupport(world, x, y, z, ForgeDirection.EAST, myDir, Config.pl_conveyor_supportrange, false);
+	public static boolean canBlockStay(World world, int x, int y, int z, EnumFacing myDir) {
+		return  checkSupport(world, x, y, z, EnumFacing.DOWN, myDir, Config.pl_conveyor_supportrange, false) ||
+				checkSupport(world, x, y, z, EnumFacing.UP, myDir, Config.pl_conveyor_supportrange, false) ||
+				checkSupport(world, x, y, z, EnumFacing.NORTH, myDir, Config.pl_conveyor_supportrange, false) ||
+				checkSupport(world, x, y, z, EnumFacing.SOUTH, myDir, Config.pl_conveyor_supportrange, false) ||
+				checkSupport(world, x, y, z, EnumFacing.WEST, myDir, Config.pl_conveyor_supportrange, false) ||
+				checkSupport(world, x, y, z, EnumFacing.EAST, myDir, Config.pl_conveyor_supportrange, false);
 	}
 	
-	public static boolean checkSupport(World world, int x, int y, int z, ForgeDirection side, ForgeDirection myDir, int supportCount, boolean conveyorOnly) {
-		ForgeDirection otherDir = null;
+	public static boolean checkSupport(World world, int x, int y, int z, EnumFacing side, EnumFacing myDir, int supportCount, boolean conveyorOnly) {
+		EnumFacing otherDir = null;
 		
 		if(checkDirectSupport(world, x, y, z)) {
 			return true;
@@ -239,7 +233,7 @@ public class BlockProductionLine extends BaseBlock {
 	}
 	
 	public static boolean checkDirectSupport(World world, int x, int y, int z) {
-		for(ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+		for(EnumFacing side : EnumFacing.VALID_DIRECTIONS) {
 			if(world.isSideSolid(x + side.offsetX, y + side.offsetY, z + side.offsetZ, side.getOpposite())) {
 				return true;
 			}

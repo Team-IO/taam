@@ -27,9 +27,9 @@ public class TaamBlockRenderer implements ISimpleBlockRenderingHandler {
 	@Override
 	public void renderInventoryBlock(Block block, int metadata, int modelId, RenderBlocks renderer) {
 		if(block == TaamMain.blockSupportBeam) {
-			Tessellator.instance.startDrawingQuads();
+			Tessellator.getInstance().startDrawingQuads();
 			renderSupportBeam(block, 0, -1f/8, 0);
-			Tessellator.instance.draw();
+			Tessellator.getInstance().draw();
 		}
 	}
 
@@ -38,7 +38,7 @@ public class TaamBlockRenderer implements ISimpleBlockRenderingHandler {
 			RenderBlocks renderer) {
 		if(block == TaamMain.blockSupportBeam) {
 
-			Tessellator.instance.setBrightness(block.getMixedBrightnessForBlock(world, x, y, z));
+			Tessellator.getInstance().setBrightness(block.getMixedBrightnessForBlock(world, x, y, z));
 			renderSupportBeam(block, x, y, z);
 			return true;
 		}
@@ -51,8 +51,8 @@ public class TaamBlockRenderer implements ISimpleBlockRenderingHandler {
 		float widthFactorV = icon.getMaxV() - icon.getMinV();
 		float widthFactorZ = icon.getMaxU() - icon.getMinU();
 		
-		Tessellator.instance.addTranslation(x, y, z);
-		Tessellator.instance.setColorRGBA(255, 255, 255, 255);
+		Tessellator.getInstance().addTranslation(x, y, z);
+		Tessellator.getInstance().setColorRGBA(255, 255, 255, 255);
 		GroupObject go = modelBlocks.groupObjects.get(0);
 		
 		for(int f = 0; f < go.faces.size(); f++) {
@@ -60,12 +60,12 @@ public class TaamBlockRenderer implements ISimpleBlockRenderingHandler {
 			for(int i = 0; i < face.vertices.length; i++) {
 				Vertex vert = face.vertices[i];
 				TextureCoordinate tex = face.textureCoordinates[i];
-				Tessellator.instance.addVertexWithUV(vert.x, vert.y, vert.z, icon.getMinU() + tex.u * widthFactorZ, icon.getMinV() + tex.v * widthFactorV);
+				Tessellator.getInstance().addVertexWithUV(vert.x, vert.y, vert.z, icon.getMinU() + tex.u * widthFactorZ, icon.getMinV() + tex.v * widthFactorV);
 			}
 		}
 		
 		
-		Tessellator.instance.addTranslation(-x, -y, -z);
+		Tessellator.getInstance().addTranslation(-x, -y, -z);
 	}
 
 	@Override

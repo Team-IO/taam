@@ -3,9 +3,14 @@ package net.teamio.taam.conveyors.appliances;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.IChatComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTankInfo;
 import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.IWorldInteractable;
 import net.teamio.taam.conveyors.ApplianceInventory;
@@ -63,29 +68,27 @@ public class ApplianceReordering extends ApplianceInventory implements IWorldInt
 	}
 
 	@Override
-	public int[] getAccessibleSlotsFromSide(int p_94128_1_) {
+	public int[] getSlotsForFace(EnumFacing side) {
 		return null;
 	}
-
+	
 	@Override
-	public boolean canInsertItem(int p_102007_1_, ItemStack p_102007_2_,
-			int p_102007_3_) {
+	public boolean canInsertItem(int index, ItemStack itemStackIn, EnumFacing direction) {
 		return false;
 	}
 
 	@Override
-	public boolean canExtractItem(int p_102008_1_, ItemStack p_102008_2_,
-			int p_102008_3_) {
+	public boolean canExtractItem(int index, ItemStack itemStackIn, EnumFacing direction) {
 		return false;
 	}
-
+	
 	@Override
-	public String getInventoryName() {
-		return "";
+	public IChatComponent getDisplayName() {
+		return new ChatComponentText("");
 	}
 
 	@Override
-	public boolean hasCustomInventoryName() {
+	public boolean hasCustomName() {
 		return false;
 	}
 
@@ -100,12 +103,12 @@ public class ApplianceReordering extends ApplianceInventory implements IWorldInt
 	}
 
 	@Override
-	public boolean canFill(ForgeDirection from, Fluid fluid) {
+	public boolean canFill(EnumFacing from, Fluid fluid) {
 		return false;
 	}
 
 	@Override
-	public boolean canDrain(ForgeDirection from, Fluid fluid) {
+	public boolean canDrain(EnumFacing from, Fluid fluid) {
 		return false;
 	}
 
@@ -113,18 +116,17 @@ public class ApplianceReordering extends ApplianceInventory implements IWorldInt
 	protected int getTankForSide(ForgeDirection from) {
 		return 0;
 	}
-
+	
 	@Override
-	public boolean onBlockActivated(World world, int x, int y, int z,
-			EntityPlayer player, boolean hasWrench, int side, float hitX,
+	public boolean onBlockActivated(World world, EntityPlayer player, boolean hasWrench, EnumFacing side, float hitX,
 			float hitY, float hitZ) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 	
 	@Override
-	public boolean onBlockHit(World world, int x, int y, int z,
-			EntityPlayer player, boolean hasWrench) {
+	public boolean onBlockHit(World world, EntityPlayer player, boolean hasWrench) {
+		// TODO Auto-generated method stub
 		return false;
 	}
 

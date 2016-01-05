@@ -7,13 +7,13 @@ import org.lwjgl.opengl.GL11;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.RenderItem;
-import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.IItemRenderer;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -42,14 +42,14 @@ import net.teamio.taam.conveyors.api.IConveyorAwareTE;
 
 public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRenderer {
 
-	public final TechneModel modelSensor;
+//	public final TechneModel modelSensor;
 	public final ResourceLocation textureSensor;
 	public final ResourceLocation textureSensorBlink;
 	
-	public final WavefrontObject modelConveyor;
+//	public final WavefrontObject modelConveyor;
 	public final ResourceLocation textureConveyor;
 	
-	public final WavefrontObject modelMachines;
+//	public final WavefrontObject modelMachines;
 	
 	private RenderItem ri;
 	private EntityItem ei;
@@ -58,26 +58,27 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 	private double rotSin = 0;
 	
 	public TaamRenderer() {
-		ri = new RenderItem() {
-			@Override
-			public boolean shouldBob() {
-				return false;
-			}
-		};
+//		ri = new RenderItem() {
+//			@Override
+//			public boolean shouldBob() {
+//				return false;
+//			}
+//		};
+		ri = Minecraft.getMinecraft().getRenderItem();
 		ei = new EntityItem(null, 0, 0, 0, new ItemStack(Items.apple));
 		ei.rotationPitch = 0;
 		ei.rotationYaw = 0;
-		ei.age = 0;
-		ri.setRenderManager(RenderManager.instance);
+		//ei.age = 0;
+//		ri.setRenderManager(RenderManager.instance);
 		
-		modelSensor = new TechneModel(new ResourceLocation(Taam.MOD_ID + ":models/sensor.tcn"));
+//		modelSensor = new TechneModel(new ResourceLocation(Taam.MOD_ID + ":models/sensor.tcn"));
 		textureSensor = new ResourceLocation(Taam.MOD_ID + ":textures/models/sensor.png");
 		textureSensorBlink = new ResourceLocation(Taam.MOD_ID + ":textures/models/sensor_blink.png");
 
-		modelConveyor = new CachingWavefrontObject(new ResourceLocation(Taam.MOD_ID + ":models/conveyor.obj"));
+//		modelConveyor = new CachingWavefrontObject(new ResourceLocation(Taam.MOD_ID + ":models/conveyor.obj"));
 		textureConveyor = new ResourceLocation(Taam.MOD_ID + ":textures/models/conveyor.png");
 
-		modelMachines = new CachingWavefrontObject(new ResourceLocation(Taam.MOD_ID + ":models/machines.obj"));
+//		modelMachines = new CachingWavefrontObject(new ResourceLocation(Taam.MOD_ID + ":models/machines.obj"));
 
 	}
 	
@@ -219,7 +220,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 	}
 
 	@Override
-	public void renderTileEntityAt(TileEntity tileEntity, double x, double y, double z, float partialTickTime) {
+	public void renderTileEntityAt(TileEntity tileEntity, double x, double y, double z, float partialTicks, int destroyStage) {
 		if (tileEntity instanceof TileEntitySensor) {
 			TileEntitySensor te = ((TileEntitySensor) tileEntity);
 			int meta = tileEntity.getBlockMetadata();
@@ -286,7 +287,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 	}
 	
 	private void conveyorPrepareRendering(IConveyorAwareTE tileEntity, double x, double y, double z, boolean isWood) {
-		ForgeDirection direction = conveyorGetDirection(tileEntity);
+		EnumFacing direction = conveyorGetDirection(tileEntity);
 		
 		GL11.glPushMatrix();
 		/*
@@ -299,11 +300,11 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 		 */
 		GL11.glTranslatef(0.5f, 0, 0.5f);
 		
-		if(direction == ForgeDirection.WEST) {
+		if(direction == EnumFacing.WEST) {
 			GL11.glRotatef(270, 0, 1, 0);
-		} else if(direction == ForgeDirection.NORTH) {
+		} else if(direction == EnumFacing.NORTH) {
 			GL11.glRotatef(180, 0, 1, 0);
-		} else if(direction == ForgeDirection.EAST) {
+		} else if(direction == EnumFacing.EAST) {
 			GL11.glRotatef(90, 0, 1, 0);
 		}
 
@@ -328,28 +329,28 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 		GL11.glPopMatrix();
 	}
 	
-	private ForgeDirection conveyorGetDirection(IConveyorAwareTE tileEntity) {
-		ForgeDirection direction;
+	private EnumFacing conveyorGetDirection(IConveyorAwareTE tileEntity) {
+		EnumFacing direction;
 		if(tileEntity instanceof IRotatable) {
 			direction = ((IRotatable) tileEntity).getFacingDirection();
 		} else {
-			direction = ForgeDirection.SOUTH;
+			direction = EnumFacing.SOUTH;
 		}
 		return direction;
 	}
 	
 	public void renderConveyorItems(IConveyorAwareTE tileEntity, double x, double y, double z) {
-		ForgeDirection direction = conveyorGetDirection(tileEntity);
+		EnumFacing direction = conveyorGetDirection(tileEntity);
 		
 		/*
 		 * Rotate if needed
 		 */
 		float rotationDegrees = 0;
-		if(direction == ForgeDirection.WEST) {
+		if(direction == EnumFacing.WEST) {
 			rotationDegrees = 270;
-		} else if(direction == ForgeDirection.NORTH) {
+		} else if(direction == EnumFacing.NORTH) {
 			rotationDegrees = 180;
-		} else if(direction == ForgeDirection.EAST) {
+		} else if(direction == EnumFacing.EAST) {
 			rotationDegrees = 90;
 		}
 		
@@ -415,7 +416,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 					}
 					float speedsteps = tileEntity.getSpeedsteps();
 					
-					ForgeDirection renderDirection = tileEntity.getNextSlot(slot);
+					EnumFacing renderDirection = tileEntity.getNextSlot(slot);
 					
 					float posX = (float)ConveyorUtil.getItemPositionX(slot, movementProgress / speedsteps, renderDirection);
 					
@@ -795,7 +796,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 		} else {
 			Minecraft.getMinecraft().renderEngine.bindTexture(textureSensor);
 		}
-		ForgeDirection dir = ForgeDirection.getOrientation(rotation).getOpposite();
+		EnumFacing dir = EnumFacing.getOrientation(rotation).getOpposite();
 		switch(dir) {
 		case DOWN:
 			break;
@@ -822,11 +823,11 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 			GL11.glRotatef(90f, 1.0f, 0, 0);
 			GL11.glRotatef(90f, 0, 0, 1.0f);
 			break;
-		case UNKNOWN:
+		default:
 			break;
 		}
-		// UNKNOWN means we are rendering for the inventory
-		if(dir == ForgeDirection.UNKNOWN) {
+		// null means we are rendering for the inventory
+		if(dir == null) {
 			GL11.glScalef(0.125f, 0.125f, 0.125f);
 			GL11.glRotatef(90f, 0, 1.0f, 0);
 		} else {
@@ -839,7 +840,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 		modelSensor.renderPart("p2");
 		modelSensor.renderPart("socket");
 		
-		if(dir != ForgeDirection.DOWN && dir != ForgeDirection.UP) {
+		if(dir != EnumFacing.DOWN && dir != EnumFacing.UP) {
 			GL11.glRotatef(20f, 1.0f, 0, 0);
 			GL11.glTranslatef(0f, 0f, 0.8f);
 		}

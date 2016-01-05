@@ -4,7 +4,6 @@ import codechicken.lib.inventory.InventoryUtils;
 import codechicken.lib.vec.Vector3;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -15,6 +14,8 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.conveyors.TileEntityConveyor;
 import net.teamio.taam.content.conveyors.TileEntityConveyorHopper;
@@ -48,7 +49,7 @@ public abstract class BaseBlock extends Block {
 		if(!canPlaceBlockAt(worldIn, pos)) {
 			TaamUtil.breakBlockInWorld(worldIn, pos, state);
 			if(this != TaamMain.blockSensor) {
-				breakBlock(world, pos, this, 0);
+				breakBlock(worldIn, pos, state);
 			}
 			return;
 		}
@@ -62,7 +63,7 @@ public abstract class BaseBlock extends Block {
 	
 	@Override
 	public int damageDropped(IBlockState state) {
-		return meta;
+		return getMetaFromState(state);
 	}
 	
 	@Override
@@ -103,8 +104,8 @@ public abstract class BaseBlock extends Block {
 	}
 	
 	@Override
-	public boolean rotateBlock(World worldObj, int x, int y, int z, ForgeDirection axis) {
-		return WrenchUtil.rotateBlock(worldObj.getTileEntity(x, y, z));
+	public boolean rotateBlock(World worldObj, BlockPos pos, EnumFacing axis) {
+		return WrenchUtil.rotateBlock(worldObj.getTileEntity(pos));
 	}
 	
 	@Override

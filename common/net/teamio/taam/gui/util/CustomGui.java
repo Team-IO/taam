@@ -21,7 +21,7 @@ public abstract class CustomGui extends GuiContainer {
 		renderer.addVertexWithUV(x + width,	y + height,	zIndex, 1, 1);
 		renderer.addVertexWithUV(x + width,	y,			zIndex, 1, 0);
 		renderer.addVertexWithUV(x,			y,			zIndex, 0, 0);
-		renderer.draw();
+		renderer.finishDrawing();
 	}
 
 	protected void drawTexturedModalRect(int x, int y, int width, int height) {
@@ -38,7 +38,7 @@ public abstract class CustomGui extends GuiContainer {
 		renderer.addVertexWithUV(x + width,	y + height,	zLevel, (u + width) * f,	(v + height) * f1);
 		renderer.addVertexWithUV(x + width,	y,			zLevel, (u + width) * f,	v * f1);
 		renderer.addVertexWithUV(x,			y,			zLevel, u * f,				v * f1);
-		renderer.draw();
+		renderer.finishDrawing();
 	}
 
 	protected void drawTexturedModalRect(int x, int y, int u, int v, int width, int height, int textureWidth, int textureHeight) {
@@ -47,9 +47,9 @@ public abstract class CustomGui extends GuiContainer {
 	
 	public static String getTranslatedInventoryName(IInventory inventory) {
 		if(inventory.hasCustomName()) {
-			return inventory.getName();
+			return inventory.getDisplayName().getFormattedText();
 		} else {
-			return I18n.format(inventory.getName(), new Object[0]);
+			return I18n.format(inventory.getDisplayName().getFormattedText(), new Object[0]);
 		}
 	}
 }

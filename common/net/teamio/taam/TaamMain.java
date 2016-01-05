@@ -97,7 +97,7 @@ public class TaamMain {
 
 	
 	public TaamMain() {
-        DepLoader.load();
+       // DepLoader.load();
 	}
 	
 	private void registerBlock(Block block, Class<? extends ItemBlock> itemClass, String name) {
@@ -225,7 +225,7 @@ public class TaamMain {
 
 		oreRegistration();
 		TaamRecipes.addRecipes();
-		TaamRecipes.addSmeltingRecipes();
+		//TaamRecipes.addSmeltingRecipes();
 		TaamRecipes.addOreRecipes();
 				
 	}

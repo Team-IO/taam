@@ -1,5 +1,7 @@
 package net.teamio.taam;
 
+import net.minecraft.util.IStringSerializable;
+
 public final class Taam {
 	private Taam() {
 		//Util Class
@@ -35,7 +37,7 @@ public final class Taam {
 	@Deprecated
 	public static final String BLOCK_CHUTE = "taam.chute";
 	
-	public static enum BLOCK_ORE_META {
+	public static enum BLOCK_ORE_META implements IStringSerializable {
 		copper(true, true, true),
 		tin(true, true, true),
 		aluminum(true, true, true),
@@ -71,6 +73,11 @@ public final class Taam {
 				return copper;
 			}
 			return valuesAsEnum[meta];
+		}
+
+		@Override
+		public String getName() {
+			return name();
 		}
 	};
 	
