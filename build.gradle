@@ -41,12 +41,6 @@ archivesBaseName = "-${config.mod_name}-${config.mc_version}"
 if(System.env.BUILD_NUMBER)
 	version = "${config.mod_version}.b${System.env.BUILD_NUMBER}"
 
-project.ext {
-	cclversion = "1.1.2.133"
-	neiversion = "1.0.5.82"
-	cccversion = "1.0.5.34"
-}
-
 minecraft {
     version = "${config.mc_version}-${config.forge_version}"
     runDir = "."
