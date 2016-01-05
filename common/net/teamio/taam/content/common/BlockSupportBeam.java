@@ -2,10 +2,10 @@ package net.teamio.taam.content.common;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.teamio.taam.Taam;
 import net.teamio.taam.TaamClientProxy;
 
 public class BlockSupportBeam extends Block {
@@ -37,7 +37,7 @@ public class BlockSupportBeam extends Block {
 	}
 	
 	@Override
-	public boolean isSideSolid(IBlockAccess world, int x, int y, int z, ForgeDirection side) {
+	public boolean isSideSolid(IBlockAccess world, int x, int y, int z, EnumFacing side) {
 		return true;
 	}
 

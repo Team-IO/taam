@@ -7,10 +7,7 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTankInfo;
 import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.IWorldInteractable;
 import net.teamio.taam.conveyors.ApplianceInventory;
@@ -113,7 +110,7 @@ public class ApplianceReordering extends ApplianceInventory implements IWorldInt
 	}
 
 	@Override
-	protected int getTankForSide(ForgeDirection from) {
+	protected int getTankForSide(EnumFacing from) {
 		return 0;
 	}
 	

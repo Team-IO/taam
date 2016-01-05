@@ -90,7 +90,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 			}
 			
 			// Check behind
-			ForgeDirection inverse = direction.getOpposite();
+			EnumFacing inverse = direction.getOpposite();
 			te = worldObj.getTileEntity(xCoord + inverse.offsetX, yCoord + inverse.offsetY, zCoord + inverse.offsetZ);
 			if(te instanceof TileEntityConveyor) {
 				TileEntityConveyor next = (TileEntityConveyor)te;
@@ -103,31 +103,31 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 			}
 			
 			// Check right
-			inverse = direction.getRotation(ForgeDirection.UP);
+			inverse = direction.getRotation(EnumFacing.UP);
 			te = worldObj.getTileEntity(xCoord + inverse.offsetX, yCoord + inverse.offsetY, zCoord + inverse.offsetZ);
 			
 			if(te instanceof TileEntityConveyor) {
 				TileEntityConveyor next = (TileEntityConveyor)te;
-				ForgeDirection nextFacing = next.getFacingDirection();
+				EnumFacing nextFacing = next.getFacingDirection();
 				renderRight = nextFacing != direction && nextFacing != direction.getOpposite();
 			} else {
 				renderRight = te instanceof IConveyorAwareTE;
 			}
 			
 			// Check left
-			inverse = direction.getRotation(ForgeDirection.DOWN);
+			inverse = direction.getRotation(EnumFacing.DOWN);
 			te = worldObj.getTileEntity(xCoord + inverse.offsetX, yCoord + inverse.offsetY, zCoord + inverse.offsetZ);
 			
 			if(te instanceof TileEntityConveyor) {
 				TileEntityConveyor next = (TileEntityConveyor)te;
-				ForgeDirection nextFacing = next.getFacingDirection();
+				EnumFacing nextFacing = next.getFacingDirection();
 				renderLeft = nextFacing != direction && nextFacing != direction.getOpposite();
 			} else {
 				renderLeft = te instanceof IConveyorAwareTE;
 			}
 			
 			// Check above
-			renderAbove = worldObj.isSideSolid(xCoord, yCoord + 1, zCoord, ForgeDirection.DOWN) ||
+			renderAbove = worldObj.isSideSolid(xCoord, yCoord + 1, zCoord, EnumFacing.DOWN) ||
 					worldObj.getTileEntity(xCoord, yCoord + 1, zCoord) instanceof IConveyorAwareTE;
 		}
 	}
@@ -177,7 +177,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	}
 
 	@Override
-	public ForgeDirection getNextSlot(int slot) {
+	public EnumFacing getNextSlot(int slot) {
 		if(speedLevel >= 2) {
 			return ConveyorUtil.getHighspeedTransition(slot, direction);
 		} else {
@@ -230,9 +230,9 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 
 	@Override
 	protected void readPropertiesFromNBT(NBTTagCompound tag) {
-		direction = ForgeDirection.getOrientation(tag.getInteger("direction"));
-		if(direction == ForgeDirection.UP || direction == ForgeDirection.DOWN || direction == ForgeDirection.UNKNOWN) {
-			direction = ForgeDirection.NORTH;
+		direction = EnumFacing.getOrientation(tag.getInteger("direction"));
+		if(direction == EnumFacing.UP || direction == EnumFacing.DOWN || direction == EnumFacing.UNKNOWN) {
+			direction = EnumFacing.NORTH;
 		}
 		speedLevel = tag.getInteger("speedLevel");
 		NBTTagList itemsTag = tag.getTagList("items", NBT.TAG_COMPOUND);
@@ -310,7 +310,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	}
 
 	@Override
-	public ForgeDirection getMovementDirection() {
+	public EnumFacing getMovementDirection() {
 		return direction;
 	}
 
@@ -335,15 +335,15 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	 */
 	
 	@Override
-	public ForgeDirection getNextFacingDirection() {
-		return direction.getRotation(ForgeDirection.UP);
+	public EnumFacing getNextFacingDirection() {
+		return direction.getRotation(EnumFacing.UP);
 	}
 
 	@Override
-	public void setFacingDirection(ForgeDirection direction) {
+	public void setFacingDirection(EnumFacing direction) {
 		this.direction = direction;
-		if(direction == ForgeDirection.UP || direction == ForgeDirection.DOWN || direction == ForgeDirection.UNKNOWN) {
-			this.direction = ForgeDirection.NORTH;
+		if(direction == EnumFacing.UP || direction == EnumFacing.DOWN || direction == EnumFacing.UNKNOWN) {
+			this.direction = EnumFacing.NORTH;
 		}
 		updateRenderingInfo();
 		updateState();
@@ -551,7 +551,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	@Override
 	public int[] getAccessibleSlotsFromSide(int side) {
 		if(appliance == null) {
-			final ForgeDirection dir = ForgeDirection.getOrientation(side);
+			final EnumFacing dir = EnumFacing.getOrientation(side);
 			final int slot = ConveyorUtil.getSlot(dir);
 			if(slot == -1) {
 				return new int[0];
@@ -586,7 +586,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	 */
 	
 	@Override
-	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
+	public int fill(EnumFacing from, FluidStack resource, boolean doFill) {
 		if(appliance == null) {
 			return 0;
 		} else {
@@ -595,7 +595,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	}
 
 	@Override
-	public FluidStack drain(ForgeDirection from, FluidStack resource,
+	public FluidStack drain(EnumFacing from, FluidStack resource,
 			boolean doDrain) {
 		if(appliance == null) {
 			return null;
@@ -605,7 +605,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	}
 
 	@Override
-	public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
+	public FluidStack drain(EnumFacing from, int maxDrain, boolean doDrain) {
 		if(appliance == null) {
 			return null;
 		} else {
@@ -614,7 +614,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	}
 
 	@Override
-	public boolean canFill(ForgeDirection from, Fluid fluid) {
+	public boolean canFill(EnumFacing from, Fluid fluid) {
 		if(appliance == null) {
 			return false;
 		} else {
@@ -623,7 +623,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	}
 
 	@Override
-	public boolean canDrain(ForgeDirection from, Fluid fluid) {
+	public boolean canDrain(EnumFacing from, Fluid fluid) {
 		if(appliance == null) {
 			return false;
 		} else {
@@ -632,7 +632,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	}
 
 	@Override
-	public FluidTankInfo[] getTankInfo(ForgeDirection from) {
+	public FluidTankInfo[] getTankInfo(EnumFacing from) {
 		if(appliance == null) {
 			return new FluidTankInfo[0];
 		} else {
@@ -647,7 +647,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z,
 			EntityPlayer player, boolean playerHasWrench, int side, float hitX, float hitY, float hitZ) {
-		if(side != ForgeDirection.UP.ordinal()) {
+		if(side != EnumFacing.UP.ordinal()) {
 			return false;
 		}
 		ConveyorUtil.defaultPlayerInteraction(player, this, hitX, hitZ);

@@ -1,13 +1,16 @@
 package net.teamio.taam.content.conveyors;
 
+import codechicken.lib.inventory.InventoryRange;
+import codechicken.lib.inventory.InventorySimple;
+import codechicken.lib.inventory.InventoryUtils;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.IHopper;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.util.Constants.NBT;
-import net.minecraftforge.common.util.ForgeDirection;
 import net.teamio.taam.Config;
 import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.BaseTileEntity;
@@ -19,9 +22,6 @@ import net.teamio.taam.conveyors.api.IConveyorAwareTE;
 import net.teamio.taam.network.TPMachineConfiguration;
 import net.teamio.taam.util.TaamUtil;
 import net.teamio.taam.util.WorldCoord;
-import codechicken.lib.inventory.InventoryRange;
-import codechicken.lib.inventory.InventorySimple;
-import codechicken.lib.inventory.InventoryUtils;
 
 
 public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyorAwareTE, IInventory, IHopper, IRedstoneControlled, IRotatable {
@@ -35,7 +35,7 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 	private boolean linearMode;
 	private byte redstoneMode;
 	
-	private ForgeDirection direction = ForgeDirection.NORTH;
+	private EnumFacing direction = EnumFacing.NORTH;
 	
 	private boolean pulseWasSent = false;
 	
@@ -139,7 +139,7 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 			if(inventory == null) {
 				return;
 			}
-			InventoryRange range = new InventoryRange(inventory, ForgeDirection.UP.ordinal());
+			InventoryRange range = new InventoryRange(inventory, EnumFacing.UP.ordinal());
 			
 			for(int i = 0; i < this.inventory.getSizeInventory(); i++) {
 				if(InventoryUtils.stackSize(this.inventory, i) > 0) {
@@ -231,9 +231,9 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 		redstoneMode = tag.getByte("redstoneMode");
 
 		pulseWasSent = tag.getBoolean("pulseWasSent");
-		direction = ForgeDirection.getOrientation(tag.getInteger("direction"));
-		if(direction == ForgeDirection.UP || direction == ForgeDirection.DOWN || direction == ForgeDirection.UNKNOWN) {
-			direction = ForgeDirection.NORTH;
+		direction = EnumFacing.getOrientation(tag.getInteger("direction"));
+		if(direction == EnumFacing.UP || direction == EnumFacing.DOWN || direction == EnumFacing.UNKNOWN) {
+			direction = EnumFacing.NORTH;
 		}
 	}
 
@@ -334,8 +334,8 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 	}
 
 	@Override
-	public ForgeDirection getMovementDirection() {
-		return ForgeDirection.DOWN;
+	public EnumFacing getMovementDirection() {
+		return EnumFacing.DOWN;
 	}
 	
 	@Override
@@ -480,23 +480,23 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 	 */
 	
 	@Override
-	public ForgeDirection getFacingDirection() {
+	public EnumFacing getFacingDirection() {
 		return direction;
 	}
 
 	@Override
-	public ForgeDirection getNextFacingDirection() {
-		return direction.getRotation(ForgeDirection.UP);
+	public EnumFacing getNextFacingDirection() {
+		return direction.getRotation(EnumFacing.UP);
 	}
 
 	@Override
-	public void setFacingDirection(ForgeDirection direction) {
+	public void setFacingDirection(EnumFacing direction) {
 		this.direction = direction;
 		updateState();
 	}
 
-	public ForgeDirection getNextSlot(int slot) {
-		return ForgeDirection.UNKNOWN;
+	public EnumFacing getNextSlot(int slot) {
+		return EnumFacing.UNKNOWN;
 	}
 
 }

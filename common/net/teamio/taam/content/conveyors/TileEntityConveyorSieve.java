@@ -1,5 +1,7 @@
 package net.teamio.taam.content.conveyors;
 
+import codechicken.lib.inventory.InventoryRange;
+import codechicken.lib.inventory.InventoryUtils;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -8,9 +10,9 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
-import net.minecraftforge.common.util.ForgeDirection;
 import net.teamio.taam.Config;
 import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.BaseTileEntity;
@@ -23,8 +25,6 @@ import net.teamio.taam.conveyors.api.IConveyorAwareTE;
 import net.teamio.taam.network.TPMachineConfiguration;
 import net.teamio.taam.util.TaamUtil;
 import net.teamio.taam.util.WorldCoord;
-import codechicken.lib.inventory.InventoryRange;
-import codechicken.lib.inventory.InventoryUtils;
 
 public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInventory, IConveyorAwareTE, IRotatable, IWorldInteractable, IRedstoneControlled {
 
@@ -37,7 +37,7 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 	 * Conveyor State
 	 */
 	private byte redstoneMode = IRedstoneControlled.MODE_ACTIVE_ON_LOW;
-	private ForgeDirection direction = ForgeDirection.NORTH;
+	private EnumFacing direction = EnumFacing.NORTH;
 	
 	/**
 	 * Just for rendering purposes we keep this here.
@@ -172,7 +172,7 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 	        return true;
 		} else {
 			// Output to inventory
-			InventoryRange range = new InventoryRange(outputInventory, ForgeDirection.UP.ordinal());
+			InventoryRange range = new InventoryRange(outputInventory, EnumFacing.UP.ordinal());
 			
 			if(wrapper.itemStack == null) {
 				return true;
@@ -189,7 +189,7 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 	}
 	
 	@Override
-	public ForgeDirection getNextSlot(int slot) {
+	public EnumFacing getNextSlot(int slot) {
 		return direction;
 	}
 	
@@ -206,9 +206,9 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 
 	@Override
 	protected void readPropertiesFromNBT(NBTTagCompound tag) {
-		direction = ForgeDirection.getOrientation(tag.getInteger("direction"));
-		if(direction == ForgeDirection.UP || direction == ForgeDirection.DOWN || direction == ForgeDirection.UNKNOWN) {
-			direction = ForgeDirection.NORTH;
+		direction = EnumFacing.getOrientation(tag.getInteger("direction"));
+		if(direction == EnumFacing.UP || direction == EnumFacing.DOWN || direction == EnumFacing.UNKNOWN) {
+			direction = EnumFacing.NORTH;
 		}
 		NBTTagList itemsTag = tag.getTagList("items", NBT.TAG_COMPOUND);
 		if(itemsTag != null) {
@@ -270,7 +270,7 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 	}
 
 	@Override
-	public ForgeDirection getMovementDirection() {
+	public EnumFacing getMovementDirection() {
 		return direction;
 	}
 
@@ -295,15 +295,15 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 	 */
 	
 	@Override
-	public ForgeDirection getNextFacingDirection() {
-		return direction.getRotation(ForgeDirection.UP);
+	public EnumFacing getNextFacingDirection() {
+		return direction.getRotation(EnumFacing.UP);
 	}
 
 	@Override
-	public void setFacingDirection(ForgeDirection direction) {
+	public void setFacingDirection(EnumFacing direction) {
 		this.direction = direction;
-		if(direction == ForgeDirection.UP || direction == ForgeDirection.DOWN || direction == ForgeDirection.UNKNOWN) {
-			this.direction = ForgeDirection.NORTH;
+		if(direction == EnumFacing.UP || direction == EnumFacing.DOWN || direction == EnumFacing.UNKNOWN) {
+			this.direction = EnumFacing.NORTH;
 		}
 		updateState();
 		worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, blockType);
@@ -313,7 +313,7 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 	}
 
 	@Override
-	public ForgeDirection getFacingDirection() {
+	public EnumFacing getFacingDirection() {
 		return direction;
 	}
 
@@ -390,7 +390,7 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 	
 	@Override
 	public int[] getAccessibleSlotsFromSide(int side) {
-		final ForgeDirection dir = ForgeDirection.getOrientation(side);
+		final EnumFacing dir = EnumFacing.getOrientation(side);
 		final int slot = ConveyorUtil.getSlot(dir);
 		if(slot == -1) {
 			return new int[0];
@@ -416,7 +416,7 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z,
 			EntityPlayer player, boolean playerHasWrench, int side, float hitX, float hitY, float hitZ) {
-		if(side != ForgeDirection.UP.ordinal()) {
+		if(side != EnumFacing.UP.ordinal()) {
 			return false;
 		}
 		ConveyorUtil.defaultPlayerInteraction(player, this, hitX, hitZ);

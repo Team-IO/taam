@@ -1,6 +1,6 @@
 package net.teamio.taam.content.conveyors;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.conveyors.api.IConveyorAwareTE;
@@ -8,7 +8,7 @@ import net.teamio.taam.util.TaamUtil;
 
 public abstract class ATileEntityAttachable extends BaseTileEntity implements IConveyorAwareTE, IRotatable {
 
-	protected ForgeDirection direction = ForgeDirection.NORTH;
+	protected EnumFacing direction = EnumFacing.NORTH;
 
 	public ATileEntityAttachable() {
 		super();
@@ -34,15 +34,15 @@ public abstract class ATileEntityAttachable extends BaseTileEntity implements IC
 	 */
 	
 	@Override
-	public ForgeDirection getFacingDirection() {
+	public EnumFacing getFacingDirection() {
 		return direction;
 	}
 
 	@Override
-	public ForgeDirection getNextFacingDirection() {
-		ForgeDirection dir = direction;
+	public EnumFacing getNextFacingDirection() {
+		EnumFacing dir = direction;
 		for(int i = 0; i < 3; i++) {
-			dir = dir.getRotation(ForgeDirection.UP);
+			dir = dir.getRotation(EnumFacing.UP);
 			if(TaamUtil.canAttach(worldObj, xCoord, yCoord, zCoord, dir)) {
 				return dir;
 			}
@@ -51,7 +51,7 @@ public abstract class ATileEntityAttachable extends BaseTileEntity implements IC
 	}
 
 	@Override
-	public void setFacingDirection(ForgeDirection direction) {
+	public void setFacingDirection(EnumFacing direction) {
 		this.direction = direction;
 		//if(!worldObj.isRemote) {
 			int dir;
@@ -76,7 +76,7 @@ public abstract class ATileEntityAttachable extends BaseTileEntity implements IC
 		//}
 	}
 
-	public ForgeDirection getNextSlot(int slot) {
+	public EnumFacing getNextSlot(int slot) {
 		return null;
 	}
 

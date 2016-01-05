@@ -1,16 +1,16 @@
 package net.teamio.taam.content.conveyors;
 
+import codechicken.lib.inventory.InventorySimple;
+import codechicken.lib.inventory.InventoryUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.util.Constants.NBT;
-import net.minecraftforge.common.util.ForgeDirection;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.conveyors.ItemWrapper;
 import net.teamio.taam.conveyors.api.IConveyorAwareTE;
-import codechicken.lib.inventory.InventorySimple;
-import codechicken.lib.inventory.InventoryUtils;
 
 /**
  * Conveyor Item Bag.
@@ -62,7 +62,7 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable implements 
 	protected void readPropertiesFromNBT(NBTTagCompound tag) {
 		inventory.items = new ItemStack[inventory.getSizeInventory()];
 		InventoryUtils.readItemStacksFromTag(inventory.items, tag.getTagList("items", NBT.TAG_COMPOUND));
-		direction = ForgeDirection.getOrientation(tag.getInteger("direction"));
+		direction = EnumFacing.getOrientation(tag.getInteger("direction"));
 		updateRenderingInfo();
 	}
 
@@ -145,8 +145,8 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable implements 
 	}
 
 	@Override
-	public ForgeDirection getMovementDirection() {
-		return ForgeDirection.DOWN;
+	public EnumFacing getMovementDirection() {
+		return EnumFacing.DOWN;
 	}
 	
 	@Override
@@ -203,8 +203,8 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable implements 
 		return 0.3;
 	}
 
-	public ForgeDirection getNextSlot(int slot) {
-		return ForgeDirection.UNKNOWN;
+	public EnumFacing getNextSlot(int slot) {
+		return EnumFacing.UNKNOWN;
 	}
 
 

@@ -49,7 +49,7 @@ public class ConveyorUtil {
 				relativeZ >= 0 && relativeZ < 1
 				) {
 				IInventory inventory = (IInventory)tileEntity;
-				InventoryRange range = new InventoryRange(inventory, ForgeDirection.UP.ordinal());
+				InventoryRange range = new InventoryRange(inventory, EnumFacing.UP.ordinal());
 				added = previousStackSize - InventoryUtils.insertItem(range, entityItemStack, false);
 			}
 		}
@@ -111,7 +111,7 @@ public class ConveyorUtil {
 		return didAdd;
 	}
 	
-	public static int getNextSlot(int slot, ForgeDirection dir) {
+	public static int getNextSlot(int slot, EnumFacing dir) {
 		slot = getNextSlotUnwrapped(slot, dir);
 		if(slot < 0) {
 			slot += 9;
@@ -121,7 +121,7 @@ public class ConveyorUtil {
 		return slot;
 	}
 
-	public static int getNextSlotUnwrapped(int slot, ForgeDirection dir) {
+	public static int getNextSlotUnwrapped(int slot, EnumFacing dir) {
 		// X-Offset skips whole rows
 		if(dir.offsetX != 0) {
 			slot += dir.offsetX * 3;
@@ -142,9 +142,9 @@ public class ConveyorUtil {
 		return slot;
 	}
 	
-	public static ForgeDirection getHighspeedTransition(int slot,
-			ForgeDirection direction) {
-		ForgeDirection transition = direction;
+	public static EnumFacing getHighspeedTransition(int slot,
+			EnumFacing direction) {
+		EnumFacing transition = direction;
 		switch(direction) {
 		case NORTH:
 			transition = highSpeedTransition[0][slot];
@@ -165,11 +165,11 @@ public class ConveyorUtil {
 		return transition;
 	}
 	
-	public static int getSlot(ForgeDirection dir) {
-		if(dir == ForgeDirection.DOWN || dir == ForgeDirection.UNKNOWN) {
+	public static int getSlot(EnumFacing dir) {
+		if(dir == EnumFacing.DOWN || dir == EnumFacing.UNKNOWN) {
 			// Conveyors are only accessible from top/sides!
 			return -1;
-		} else if(dir == ForgeDirection.UP) {
+		} else if(dir == EnumFacing.UP) {
 			// Center
 			return 4;
 		} else {
@@ -185,7 +185,7 @@ public class ConveyorUtil {
 		return x * oneThird;
 	}
 	
-	public static double getItemPositionX(int slot, double progress, ForgeDirection dir) {
+	public static double getItemPositionX(int slot, double progress, EnumFacing dir) {
 		double x = getItemPositionX(slot);
 		x += dir.offsetX * progress * oneThird;
 		return x;
@@ -196,7 +196,7 @@ public class ConveyorUtil {
 		return z * oneThird;
 	}
 	
-	public static double getItemPositionZ(int slot, double progress, ForgeDirection dir) {
+	public static double getItemPositionZ(int slot, double progress, EnumFacing dir) {
 		double z = getItemPositionZ(slot);
 		z += dir.offsetZ * progress * oneThird;
 		return z;
@@ -212,7 +212,7 @@ public class ConveyorUtil {
 	}
 	
 	private static final int[][] slotOrders;
-	private static final ForgeDirection[][] highSpeedTransition;
+	private static final EnumFacing[][] highSpeedTransition;
 	static {
 		slotOrders = new int[2][];
 		slotOrders[0] = new int[] {
@@ -238,26 +238,26 @@ public class ConveyorUtil {
 		 *      2	5	8
 		 *        SOUTH
 		 */
-		highSpeedTransition = new ForgeDirection[4][];
-		highSpeedTransition[0] = new ForgeDirection[] {
-				ForgeDirection.EAST, ForgeDirection.EAST, ForgeDirection.EAST,
-				ForgeDirection.NORTH, ForgeDirection.NORTH, ForgeDirection.NORTH,
-				ForgeDirection.WEST, ForgeDirection.WEST, ForgeDirection.WEST
+		highSpeedTransition = new EnumFacing[4][];
+		highSpeedTransition[0] = new EnumFacing[] {
+				EnumFacing.EAST, EnumFacing.EAST, EnumFacing.EAST,
+				EnumFacing.NORTH, EnumFacing.NORTH, EnumFacing.NORTH,
+				EnumFacing.WEST, EnumFacing.WEST, EnumFacing.WEST
 		};
-		highSpeedTransition[1] = new ForgeDirection[] {
-				ForgeDirection.SOUTH, ForgeDirection.EAST, ForgeDirection.NORTH,
-				ForgeDirection.SOUTH, ForgeDirection.EAST, ForgeDirection.NORTH,
-				ForgeDirection.SOUTH, ForgeDirection.EAST, ForgeDirection.NORTH
+		highSpeedTransition[1] = new EnumFacing[] {
+				EnumFacing.SOUTH, EnumFacing.EAST, EnumFacing.NORTH,
+				EnumFacing.SOUTH, EnumFacing.EAST, EnumFacing.NORTH,
+				EnumFacing.SOUTH, EnumFacing.EAST, EnumFacing.NORTH
 		};
-		highSpeedTransition[2] = new ForgeDirection[] {
-				ForgeDirection.EAST, ForgeDirection.EAST, ForgeDirection.EAST,
-				ForgeDirection.SOUTH, ForgeDirection.SOUTH, ForgeDirection.SOUTH,
-				ForgeDirection.WEST, ForgeDirection.WEST, ForgeDirection.WEST
+		highSpeedTransition[2] = new EnumFacing[] {
+				EnumFacing.EAST, EnumFacing.EAST, EnumFacing.EAST,
+				EnumFacing.SOUTH, EnumFacing.SOUTH, EnumFacing.SOUTH,
+				EnumFacing.WEST, EnumFacing.WEST, EnumFacing.WEST
 		};
-		highSpeedTransition[3] = new ForgeDirection[] {
-				ForgeDirection.SOUTH, ForgeDirection.WEST, ForgeDirection.NORTH,
-				ForgeDirection.SOUTH, ForgeDirection.WEST, ForgeDirection.NORTH,
-				ForgeDirection.SOUTH, ForgeDirection.WEST, ForgeDirection.NORTH
+		highSpeedTransition[3] = new EnumFacing[] {
+				EnumFacing.SOUTH, EnumFacing.WEST, EnumFacing.NORTH,
+				EnumFacing.SOUTH, EnumFacing.WEST, EnumFacing.NORTH,
+				EnumFacing.SOUTH, EnumFacing.WEST, EnumFacing.NORTH
 		};
 	}
 	
@@ -269,7 +269,7 @@ public class ConveyorUtil {
 	 * @param dir
 	 * @return
 	 */
-	public static int[] getSlotOrderForDirection(ForgeDirection dir) {
+	public static int[] getSlotOrderForDirection(EnumFacing dir) {
 		switch (dir) {
 		default:
 		case NORTH:

@@ -49,7 +49,7 @@ public class BlockSensor extends BaseBlock {
 	
 	@Override
 	public TileEntity createTileEntity(World world, IBlockState state) {
-		return new TileEntitySensor(ForgeDirection.getOrientation(metadata));
+		return new TileEntitySensor(EnumFacing.getOrientation(metadata));
 		
 	}
 	@Override
@@ -129,8 +129,8 @@ public class BlockSensor extends BaseBlock {
 	
 	@Override
 	public int isProvidingStrongPower(IBlockAccess world, BlockPos pos, IBlockState state, EnumFacing side) {
-		ForgeDirection dir = ForgeDirection.getOrientation(meta);
-		ForgeDirection sideDir = ForgeDirection.getOrientation(side);
+		EnumFacing dir = EnumFacing.getOrientation(meta);
+		EnumFacing sideDir = EnumFacing.getOrientation(side);
 		if(dir == sideDir) {
 			return getRedstoneLevel(world, pos);
 		} else {

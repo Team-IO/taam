@@ -11,11 +11,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.teamio.taam.Config;
-import net.teamio.taam.Taam;
 import net.teamio.taam.content.conveyors.TileEntityConveyor;
 import net.teamio.taam.conveyors.IConveyorAppliance;
 import net.teamio.taam.conveyors.api.IConveyorApplianceHost;
@@ -75,14 +75,14 @@ public class ItemDebugTool extends Item {
 		
 
     	String text = String.format(remoteState + " RS: %b Side: %s Weak: %d Strong: %d",
-    			clickedOn.canProvidePower(), ForgeDirection.getOrientation(side).toString(), clickedOn.isProvidingWeakPower(world, x, y, z, side), clickedOn.isProvidingStrongPower(world, x, y, z, side));
+    			clickedOn.canProvidePower(), EnumFacing.getOrientation(side).toString(), clickedOn.isProvidingWeakPower(world, x, y, z, side), clickedOn.isProvidingStrongPower(world, x, y, z, side));
 
     	player.addChatMessage(new ChatComponentText(text));
     	
-    	int oppSide = ForgeDirection.getOrientation(side).getOpposite().ordinal();
+    	int oppSide = EnumFacing.getOrientation(side).getOpposite().ordinal();
     	
     	text = String.format(remoteState + " RS: %b Opposite Side: %s Weak: %d Strong: %d",
-    			clickedOn.canProvidePower(), ForgeDirection.getOrientation(oppSide).toString(), clickedOn.isProvidingWeakPower(world, x, y, z, oppSide), clickedOn.isProvidingStrongPower(world, x, y, z, oppSide));
+    			clickedOn.canProvidePower(), EnumFacing.getOrientation(oppSide).toString(), clickedOn.isProvidingWeakPower(world, x, y, z, oppSide), clickedOn.isProvidingStrongPower(world, x, y, z, oppSide));
     	
 
     	text = String.format(remoteState + " Indirectly Powered: %b with %d",
@@ -90,8 +90,8 @@ public class ItemDebugTool extends Item {
     	
     	player.addChatMessage(new ChatComponentText(text));
 		
-		//ForgeDirection dir = ForgeDirection.getOrientation(side);
-        //ForgeDirection dirOpp = dir.getOpposite();
+		//EnumFacing dir = EnumFacing.getOrientation(side);
+        //EnumFacing dirOpp = dir.getOpposite();
 
         //Vector3 localHit = new Vector3(hitx, hity, hitz);
         

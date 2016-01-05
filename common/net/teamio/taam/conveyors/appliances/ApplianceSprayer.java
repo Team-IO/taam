@@ -13,6 +13,7 @@ import net.minecraft.block.BlockStainedGlassPane;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.oredict.OreDictionary;
 import net.teamio.taam.Config;
@@ -187,19 +188,19 @@ public class ApplianceSprayer extends ApplianceInventory {
 	//TODO: Create global recipe registry for the production line
 	
 	@Override
-	public boolean canFill(ForgeDirection from, Fluid fluid) {
+	public boolean canFill(EnumFacing from, Fluid fluid) {
 		// TODO: Check if fluid is a matching type
 		return false;
 	}
 
 	@Override
-	public boolean canDrain(ForgeDirection from, Fluid fluid) {
+	public boolean canDrain(EnumFacing from, Fluid fluid) {
 		// TODO Auto-generated method stub
 		return true;
 	}
 
 	@Override
-	protected int getTankForSide(ForgeDirection from) {
+	protected int getTankForSide(EnumFacing from) {
 		return 0;
 	}
 

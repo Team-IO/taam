@@ -74,19 +74,4 @@ public class ItemConveyorAppliance extends ItemWithMetadata<Taam.ITEM_CONVEYOR_A
 		}
 		return false;
 	}
-	
-	@Override
-	protected String getIconString() {
-		return Taam.MOD_ID + ":tech_item";
-	}
-	
-	@Override
-	public void registerIcons(IIconRegister ir) {
-		this.itemIcon = ir.registerIcon(this.getIconString());
-	}
-	
-	@Override
-	public IIcon getIconFromDamage(int meta) {
-		return this.itemIcon;
-	}
 }

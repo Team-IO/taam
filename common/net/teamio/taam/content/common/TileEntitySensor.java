@@ -6,7 +6,7 @@ import net.minecraft.entity.monster.EntityIronGolem;
 import net.minecraft.entity.monster.EntitySnowman;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.teamio.taam.Config;
 import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.BaseBlock;
@@ -27,7 +27,7 @@ public class TileEntitySensor extends BaseTileEntity implements IRotatable {
 	
 	private int tickOn = 0;
 	
-	private ForgeDirection direction = ForgeDirection.UP;
+	private EnumFacing direction = EnumFacing.UP;
 	
 	public int getRedstoneLevel() {
 		if(powering) {
@@ -40,12 +40,12 @@ public class TileEntitySensor extends BaseTileEntity implements IRotatable {
 	public TileEntitySensor() {
 	}
 	
-	public TileEntitySensor(ForgeDirection rotation) {
+	public TileEntitySensor(EnumFacing rotation) {
 		this.direction = rotation;
 	}
 
 	@Override
-	public ForgeDirection getFacingDirection() {
+	public EnumFacing getFacingDirection() {
 		return direction;
 		
 	}
@@ -53,7 +53,7 @@ public class TileEntitySensor extends BaseTileEntity implements IRotatable {
 	private void setBlockMeta() {
 		// Set block metadata according to rotation
 		int meta = getBlockMetadata();
-		ForgeDirection dir = ForgeDirection.getOrientation(meta);
+		EnumFacing dir = EnumFacing.getOrientation(meta);
 		if(dir != direction) {
 			worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, direction.ordinal(), 3);
 			markDirty();
@@ -71,7 +71,7 @@ public class TileEntitySensor extends BaseTileEntity implements IRotatable {
 //		int type = meta & 8;
 		int rotation = meta & 7;
 		
-		ForgeDirection dir = ForgeDirection.getOrientation(rotation);
+		EnumFacing dir = EnumFacing.getOrientation(rotation);
 		
 		float xMin = xCoord + 0.5f;
 		float yMin = yCoord + 0.5f;
@@ -164,8 +164,8 @@ public class TileEntitySensor extends BaseTileEntity implements IRotatable {
 	}
 
 	@Override
-	public ForgeDirection getNextFacingDirection() {
-		for(ForgeDirection nextDir = direction.getRotation(ForgeDirection.UNKNOWN); nextDir != direction; nextDir = nextDir.getRotation(ForgeDirection.UNKNOWN)) {
+	public EnumFacing getNextFacingDirection() {
+		for(EnumFacing nextDir = direction.getRotation(EnumFacing.UNKNOWN); nextDir != direction; nextDir = nextDir.getRotation(EnumFacing.UNKNOWN)) {
 			if(TaamMain.blockSensor.canPlaceBlockOnSide(worldObj, xCoord, yCoord, zCoord, nextDir.ordinal())) {
 				return nextDir;
 			}
@@ -174,7 +174,7 @@ public class TileEntitySensor extends BaseTileEntity implements IRotatable {
 	}
 
 	@Override
-	public void setFacingDirection(ForgeDirection direction) {
+	public void setFacingDirection(EnumFacing direction) {
 		this.direction = direction;
 		setBlockMeta();
 	}

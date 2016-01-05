@@ -5,6 +5,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemMultiTexture;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.conveyors.api.IConveyorAwareTE;
@@ -20,16 +21,16 @@ public class ItemProductionLine extends ItemMultiTexture {
 	public boolean placeBlockAt(ItemStack stack, EntityPlayer player,
 			World world, int x, int y, int z, int side, float hitX, float hitY,
 			float hitZ, int metadata) {
-		ForgeDirection dir = ForgeDirection.getOrientation(side).getOpposite();
-		ForgeDirection placeDir = ForgeDirection.NORTH;
+		EnumFacing dir = EnumFacing.getOrientation(side).getOpposite();
+		EnumFacing placeDir = EnumFacing.NORTH;
 		boolean defaultPlacement = false;
 		
-		if(dir == ForgeDirection.UP || dir == ForgeDirection.DOWN) {
+		if(dir == EnumFacing.UP || dir == EnumFacing.DOWN) {
 			defaultPlacement = true;
 		} else {
 			TileEntity ent = world.getTileEntity(x + dir.offsetX, y, z + dir.offsetZ);
 			if(ent instanceof IRotatable) {
-				ForgeDirection otherDir = ((IRotatable) ent).getFacingDirection();
+				EnumFacing otherDir = ((IRotatable) ent).getFacingDirection();
 				if(otherDir == dir || otherDir == dir.getOpposite()) {
 					placeDir = otherDir;
 				} else {
@@ -48,15 +49,15 @@ public class ItemProductionLine extends ItemMultiTexture {
 			double zDist = player.posZ - z;
 			if(Math.abs(xDist) > Math.abs(zDist)) {
 				if(xDist < 0) {
-					placeDir = ForgeDirection.EAST;
+					placeDir = EnumFacing.EAST;
 				} else {
-					placeDir = ForgeDirection.WEST;
+					placeDir = EnumFacing.WEST;
 				}
 			} else {
 				if(zDist < 0) {
-					placeDir = ForgeDirection.SOUTH;
+					placeDir = EnumFacing.SOUTH;
 				} else {
-					placeDir = ForgeDirection.NORTH;
+					placeDir = EnumFacing.NORTH;
 				}
 			}
 		}

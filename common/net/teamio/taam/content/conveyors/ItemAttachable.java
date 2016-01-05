@@ -5,6 +5,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemMultiTexture;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.util.TaamUtil;
@@ -20,7 +21,7 @@ public class ItemAttachable extends ItemMultiTexture {
 	public boolean placeBlockAt(ItemStack stack, EntityPlayer player,
 			World world, int x, int y, int z, int side, float hitX, float hitY,
 			float hitZ, int metadata) {
-		ForgeDirection dir = ForgeDirection.getOrientation(side).getOpposite();
+		EnumFacing dir = EnumFacing.getOrientation(side).getOpposite();
 		if(TaamUtil.canAttach(world, x, y, z, dir)) {
 			int meta;
 			switch(dir) {

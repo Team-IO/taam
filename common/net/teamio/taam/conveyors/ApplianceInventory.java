@@ -1,16 +1,16 @@
 package net.teamio.taam.conveyors;
 
+import codechicken.lib.inventory.InventorySimple;
+import codechicken.lib.inventory.InventoryUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.util.Constants.NBT;
-import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidTank;
-import codechicken.lib.inventory.InventorySimple;
-import codechicken.lib.inventory.InventoryUtils;
 
 public abstract class ApplianceInventory implements IConveyorAppliance {
 	public InventorySimple inventory;
@@ -28,14 +28,14 @@ public abstract class ApplianceInventory implements IConveyorAppliance {
 		}
 	}
 	
-	protected abstract int getTankForSide(ForgeDirection from);
+	protected abstract int getTankForSide(EnumFacing from);
 	
 	/*
 	 * IFluidHandler
 	 */
 	
 	@Override
-	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
+	public int fill(EnumFacing from, FluidStack resource, boolean doFill) {
 		int tankID = getTankForSide(from);
 		IFluidTank tank = getActualTank(tankID);
 		if(tank == null) {
@@ -44,7 +44,7 @@ public abstract class ApplianceInventory implements IConveyorAppliance {
 		return tank.fill(resource, doFill);
 	}
 	@Override
-	public FluidStack drain(ForgeDirection from, FluidStack resource,
+	public FluidStack drain(EnumFacing from, FluidStack resource,
 			boolean doDrain) {
 		if(resource == null) {
 			return null;
@@ -60,7 +60,7 @@ public abstract class ApplianceInventory implements IConveyorAppliance {
 		return tank.drain(resource.amount, doDrain);
 	}
 	@Override
-	public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
+	public FluidStack drain(EnumFacing from, int maxDrain, boolean doDrain) {
 		int tankID = getTankForSide(from);
 		IFluidTank tank = getActualTank(tankID);
 		if(tank == null) {
@@ -70,7 +70,7 @@ public abstract class ApplianceInventory implements IConveyorAppliance {
 	}
 	
 	@Override
-	public FluidTankInfo[] getTankInfo(ForgeDirection from) {
+	public FluidTankInfo[] getTankInfo(EnumFacing from) {
 		int tankID = getTankForSide(from);
 		if(tankID == -1 || tankID >= fluidTanks.length) {
 			return new FluidTankInfo[0];

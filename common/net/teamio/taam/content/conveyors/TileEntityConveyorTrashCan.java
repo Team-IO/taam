@@ -4,7 +4,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.teamio.taam.Config;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.conveyors.ItemWrapper;
@@ -36,7 +36,7 @@ public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements
 	@Override
 	protected void readPropertiesFromNBT(NBTTagCompound tag) {
 		fillLevel = tag.getFloat("fillLevel");
-		direction = ForgeDirection.getOrientation(tag.getInteger("direction"));
+		direction = EnumFacing.getOrientation(tag.getInteger("direction"));
 	}
 
 	public void clearOut() {
@@ -123,8 +123,8 @@ public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements
 	}
 
 	@Override
-	public ForgeDirection getMovementDirection() {
-		return ForgeDirection.DOWN;
+	public EnumFacing getMovementDirection() {
+		return EnumFacing.DOWN;
 	}
 	
 	@Override
@@ -184,8 +184,8 @@ public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements
 		return 0.3;
 	}
 
-	public ForgeDirection getNextSlot(int slot) {
-		return ForgeDirection.UNKNOWN;
+	public EnumFacing getNextSlot(int slot) {
+		return EnumFacing.UNKNOWN;
 	}
 
 

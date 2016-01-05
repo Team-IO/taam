@@ -117,8 +117,8 @@ public class BlockProductionLine extends BaseBlock {
 //			int side) {
 //		int meta = world.getBlockMetadata(x, y, z);
 //		int rotation = meta & 7;
-//		ForgeDirection dir = ForgeDirection.getOrientation(rotation);
-//		ForgeDirection sideDir = ForgeDirection.getOrientation(side);
+//		EnumFacing dir = EnumFacing.getOrientation(rotation);
+//		EnumFacing sideDir = EnumFacing.getOrientation(side);
 //		if(dir == sideDir) {
 //			TileEntitySensor te = ((TileEntitySensor) world.getTileEntity(x, y, z));
 //			return te.isPowering();
@@ -132,8 +132,8 @@ public class BlockProductionLine extends BaseBlock {
 //			int side) {
 //		int meta = world.getBlockMetadata(x, y, z);
 //		int rotation = meta & 7;
-//		ForgeDirection dir = ForgeDirection.getOrientation(rotation);
-//		ForgeDirection sideDir = ForgeDirection.getOrientation(side);
+//		EnumFacing dir = EnumFacing.getOrientation(rotation);
+//		EnumFacing sideDir = EnumFacing.getOrientation(side);
 //		if(dir == sideDir) {
 //			TileEntitySensor te = ((TileEntitySensor) world.getTileEntity(x, y, z));
 //			return te.isPowering();
@@ -209,7 +209,7 @@ public class BlockProductionLine extends BaseBlock {
 						return true;
 					}
 				} else {
-					if(side == ForgeDirection.UP || side == ForgeDirection.DOWN) {
+					if(side == EnumFacing.UP || side == EnumFacing.DOWN) {
 						// Up and Down are connected by the supports
 						checkFurther = true;
 					} else {
