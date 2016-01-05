@@ -8,6 +8,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.teamio.taam.Config;
+import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.BaseBlock;
 import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IRotatable;
@@ -26,7 +27,9 @@ public class TileEntitySensor extends BaseTileEntity implements IRotatable {
 	
 	private int tickOn = 0;
 	
-	public int isPowering() {
+	private ForgeDirection direction = ForgeDirection.UP;
+	
+	public int getRedstoneLevel() {
 		if(powering) {
 			return 15;
 		} else {
@@ -34,21 +37,32 @@ public class TileEntitySensor extends BaseTileEntity implements IRotatable {
 		}
 	}
 	
-	//TODO: move rotation from metadata to tileentity property.
-	
 	public TileEntitySensor() {
+	}
+	
+	public TileEntitySensor(ForgeDirection rotation) {
+		this.direction = rotation;
 	}
 
 	@Override
 	public ForgeDirection getFacingDirection() {
+		return direction;
+		
+	}
+	
+	private void setBlockMeta() {
+		// Set block metadata according to rotation
 		int meta = getBlockMetadata();
-		int rotation = meta & 7;
-		return ForgeDirection.getOrientation(rotation);
+		ForgeDirection dir = ForgeDirection.getOrientation(meta);
+		if(dir != direction) {
+			worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, direction.ordinal(), 3);
+			markDirty();
+		}
 	}
 
 	@Override
-	public ForgeDirection getMountDirection() {
-		return getFacingDirection().getOpposite();
+	public void updateContainingBlockInfo() {
+		setBlockMeta();
 	}
 	
 	@Override
@@ -151,26 +165,17 @@ public class TileEntitySensor extends BaseTileEntity implements IRotatable {
 
 	@Override
 	public ForgeDirection getNextFacingDirection() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ForgeDirection getNextMountDirection() {
-		// TODO Auto-generated method stub
-		return null;
+		for(ForgeDirection nextDir = direction.getRotation(ForgeDirection.UNKNOWN); nextDir != direction; nextDir = nextDir.getRotation(ForgeDirection.UNKNOWN)) {
+			if(TaamMain.blockSensor.canPlaceBlockOnSide(worldObj, xCoord, yCoord, zCoord, nextDir.ordinal())) {
+				return nextDir;
+			}
+		}
+		return direction;
 	}
 
 	@Override
 	public void setFacingDirection(ForgeDirection direction) {
-		// TODO Auto-generated method stub
-		
+		this.direction = direction;
+		setBlockMeta();
 	}
-
-	@Override
-	public void setMountDirection(ForgeDirection direction) {
-		// TODO Auto-generated method stub
-		
-	}
-
 }

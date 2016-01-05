@@ -142,12 +142,6 @@ public class BlockProductionLine extends BaseBlock {
 //	}
 	
 	@Override
-	@SideOnly(Side.CLIENT)
-	public boolean isBlockNormalCube() {
-		return false;
-	}
-
-	@Override
 	public boolean isBlockSolid(IBlockAccess world, int x,
 			int y, int z, int side) {
 		return false;

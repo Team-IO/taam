@@ -2,6 +2,9 @@ package net.teamio.taam.content.common;
 
 import java.util.List;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.block.Block;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -11,13 +14,12 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.teamio.taam.Config;
 import net.teamio.taam.Taam;
 import net.teamio.taam.content.conveyors.TileEntityConveyor;
 import net.teamio.taam.conveyors.IConveyorAppliance;
 import net.teamio.taam.conveyors.api.IConveyorApplianceHost;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 /**
  * Debug Tool, currently used for debugging conveyors.
@@ -52,7 +54,7 @@ public class ItemDebugTool extends Item {
 			par3List.add(EnumChatFormatting.DARK_PURPLE + I18n.format("lore.taam.shift", new Object[0]));
 		}
 	}
-		
+	
 	@Override
 	public boolean onItemUse(ItemStack itemStack,
 			EntityPlayer player, World world,
@@ -69,7 +71,27 @@ public class ItemDebugTool extends Item {
 			//}
 			return true;
 		}
-					
+		char remoteState = world.isRemote ? 'C' : 'S';
+
+		Block clickedOn = world.getBlock(x, y, z);
+		
+
+    	String text = String.format(remoteState + " RS: %b Side: %s Weak: %d Strong: %d",
+    			clickedOn.canProvidePower(), ForgeDirection.getOrientation(side).toString(), clickedOn.isProvidingWeakPower(world, x, y, z, side), clickedOn.isProvidingStrongPower(world, x, y, z, side));
+
+    	player.addChatMessage(new ChatComponentText(text));
+    	
+    	int oppSide = ForgeDirection.getOrientation(side).getOpposite().ordinal();
+    	
+    	text = String.format(remoteState + " RS: %b Opposite Side: %s Weak: %d Strong: %d",
+    			clickedOn.canProvidePower(), ForgeDirection.getOrientation(oppSide).toString(), clickedOn.isProvidingWeakPower(world, x, y, z, oppSide), clickedOn.isProvidingStrongPower(world, x, y, z, oppSide));
+    	
+
+    	text = String.format(remoteState + " Indirectly Powered: %b with %d",
+    	    	world.isBlockIndirectlyGettingPowered(x, y, z), world.getBlockPowerInput(x, y, z));
+    	
+    	player.addChatMessage(new ChatComponentText(text));
+		
 		//ForgeDirection dir = ForgeDirection.getOrientation(side);
         //ForgeDirection dirOpp = dir.getOpposite();
 
@@ -80,14 +102,13 @@ public class ItemDebugTool extends Item {
         
         TileEntity te = world.getTileEntity(x, y, z);
 
-    	char remoteState = world.isRemote ? 'C' : 'S';
     	
         if(te instanceof TileEntityConveyor) {
         	didSomething = true;
         	TileEntityConveyor tec = (TileEntityConveyor) te;
         	tec.updateContainingBlockInfo();
         	
-        	String text = String.format(remoteState + " Conveyor facing %s. isEnd: %b isBegin: %b",
+        	text = String.format(remoteState + " Conveyor facing %s. isEnd: %b isBegin: %b",
         			tec.getFacingDirection().toString(), tec.isEnd, tec.isBegin);
 
         	player.addChatMessage(new ChatComponentText(text));
@@ -99,8 +120,6 @@ public class ItemDebugTool extends Item {
         	IConveyorAppliance appliance = host.getAppliance();
         	String applianceType = host.getApplianceType();
 
-        	String text;
-        	
         	if(appliance == null) {
         		text = String.format(remoteState + " Appliance Type: %s Appliance is null. ", applianceType);
         	} else {

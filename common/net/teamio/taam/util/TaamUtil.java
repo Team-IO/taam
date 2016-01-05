@@ -62,7 +62,6 @@ public final class TaamUtil {
 
 	public static void breakBlockInWorld(World world, BlockPos pos, IBlockState blockState) {
 		Block block = blockState.getBlock();
-		block.breakBlock(world, pos, blockState);
 		block.dropBlockAsItem(world, pos, blockState, 0);
 		world.setBlockToAir(pos);
 	}
@@ -73,7 +72,6 @@ public final class TaamUtil {
 	}
 
 	public static void breakBlockToInventory(EntityPlayer player, World world, BlockPos pos, IBlockState blockState) {
-		blockState.getBlock().breakBlock(world, pos, blockState);
 		ItemStack toDrop = getItemStackFromWorld(world, pos, blockState);
 		if(toDrop != null) {
 			tryDropToInventory(player, toDrop, pos);

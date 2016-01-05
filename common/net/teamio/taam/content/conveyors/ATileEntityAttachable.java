@@ -39,21 +39,6 @@ public abstract class ATileEntityAttachable extends BaseTileEntity implements IC
 	}
 
 	@Override
-	public ForgeDirection getMountDirection() {
-		return ForgeDirection.DOWN;
-	}
-
-	@Override
-	public ForgeDirection getNextMountDirection() {
-		return ForgeDirection.DOWN;
-	}
-
-	@Override
-	public void setMountDirection(ForgeDirection direction) {
-		// Nope, will not change that.
-	}
-	
-	@Override
 	public ForgeDirection getNextFacingDirection() {
 		ForgeDirection dir = direction;
 		for(int i = 0; i < 3; i++) {

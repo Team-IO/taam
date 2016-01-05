@@ -50,14 +50,14 @@ public class BlockSensor extends BaseBlock {
 	
 	@Override
 	public TileEntity createTileEntity(World world, IBlockState state) {
-		return new TileEntitySensor();
+		return new TileEntitySensor(ForgeDirection.getOrientation(metadata));
 		
 	}
 	@Override
 	public void setBlockBoundsBasedOnState(IBlockAccess worldIn, BlockPos pos) {
 		int meta = world.getBlockMetadata(pos);
-		int rotation = meta & 7;
-		EnumFacing dir = EnumFacing.getFront(rotation);
+		// Type is determined by the tile entity, we just need the rotation here
+		EnumFacing dir = EnumFacing.getFront(meta);
 		
 		switch (dir) {
 		case DOWN:
@@ -124,35 +124,25 @@ public class BlockSensor extends BaseBlock {
 	}
 
 	@Override
-	public int isProvidingWeakPower(IBlockAccess world, BlockPos pos, IBlockState state, EnumFacing side) {
-		int meta = state;
-		int rotation = meta & 7;
-		EnumFacing dir = EnumFacing.getFront(rotation);
-		if(dir == side) {
-			TileEntitySensor te = ((TileEntitySensor) world.getTileEntity(pos));
-			return te.isPowering();
+	public int isProvidingWeakPower(IBlockAccess world, int x, int y, int z, int side) {
+		return getRedstoneLevel(world, x, y, z);
+	}
+	
+	@Override
+	public int isProvidingStrongPower(IBlockAccess world, int x, int y, int z, int side) {
+		int meta = world.getBlockMetadata(x, y, z);
+		ForgeDirection dir = ForgeDirection.getOrientation(meta);
+		ForgeDirection sideDir = ForgeDirection.getOrientation(side);
+		if(dir == sideDir) {
+			return getRedstoneLevel(world, x, y, z);
 		} else {
 			return 0;
 		}
 	}
 	
-	@Override
-	public int isProvidingStrongPower(IBlockAccess worldIn, BlockPos pos, IBlockState state, EnumFacing side) {
-		int meta = state;
-		int rotation = meta & 7;
-		EnumFacing dir = EnumFacing.getFront(rotation);
-		if(dir == side) {
-			TileEntitySensor te = ((TileEntitySensor) worldIn.getTileEntity(pos));
-			return te.isPowering();
-		} else {
-			return 0;
-		}
-	}
-	
-	@Override
-	@SideOnly(Side.CLIENT)
-	public boolean isBlockNormalCube() {
-		return false;
+	public int getRedstoneLevel(IBlockAccess world, int x, int y, int z) {
+		TileEntitySensor te = ((TileEntitySensor) world.getTileEntity(x, y, z));
+		return te == null ? 0 : te.getRedstoneLevel();
 	}
 
 	
@@ -169,11 +159,8 @@ public class BlockSensor extends BaseBlock {
 	@Override
 	public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ,
 			int meta, EntityLivingBase placer) {
-		int metaPart = meta & 8;
-        int resultingRotation = facing.getIndex();
-        // metaPart | resultingRotation;
-        //TODO actually use IBlockState...
-		return super.onBlockPlaced(worldIn, pos, facing, hitX, hitY, hitZ, metaPart | resultingRotation, placer);
+		//TODO: Use IBlockState
+		return facing;
 	}
 	
 	@Override
@@ -185,8 +172,7 @@ public class BlockSensor extends BaseBlock {
 	@Override
 	public boolean canPlaceBlockAt(World worldIn, BlockPos pos) {
 		int meta = worldIn.getBlockMetadata(pos);
-		int rotation = meta & 7;
-		EnumFacing side = EnumFacing.getFront(rotation).getOpposite();
+		EnumFacing side = EnumFacing.getFront(meta).getOpposite();
 
 		return worldIn.isSideSolid(pos.offset(side), side.getOpposite());
 	}

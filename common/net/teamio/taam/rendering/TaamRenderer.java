@@ -55,6 +55,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 	private EntityItem ei;
 	private float rot = 0;
 	private float rot_sensor = 0;
+	private double rotSin = 0;
 	
 	public TaamRenderer() {
 		ri = new RenderItem() {
@@ -66,16 +67,17 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 		ei = new EntityItem(null, 0, 0, 0, new ItemStack(Items.apple));
 		ei.rotationPitch = 0;
 		ei.rotationYaw = 0;
+		ei.age = 0;
 		ri.setRenderManager(RenderManager.instance);
 		
 		modelSensor = new TechneModel(new ResourceLocation(Taam.MOD_ID + ":models/sensor.tcn"));
 		textureSensor = new ResourceLocation(Taam.MOD_ID + ":textures/models/sensor.png");
 		textureSensorBlink = new ResourceLocation(Taam.MOD_ID + ":textures/models/sensor_blink.png");
 
-		modelConveyor = new WavefrontObject(new ResourceLocation(Taam.MOD_ID + ":models/conveyor.obj"));
+		modelConveyor = new CachingWavefrontObject(new ResourceLocation(Taam.MOD_ID + ":models/conveyor.obj"));
 		textureConveyor = new ResourceLocation(Taam.MOD_ID + ":textures/models/conveyor.png");
 
-		modelMachines = new WavefrontObject(new ResourceLocation(Taam.MOD_ID + ":models/machines.obj"));
+		modelMachines = new CachingWavefrontObject(new ResourceLocation(Taam.MOD_ID + ":models/machines.obj"));
 
 	}
 	
@@ -87,6 +89,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 	    	if(rot_sensor > 360) {
 	    		rot_sensor -= 360;
 	    	}
+			rotSin = Math.sin(Math.toRadians(rot*32));
 	    }
 	}
 
@@ -186,14 +189,19 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 			default:
 				break;
 			case 0:
-				conveyorPrepareRendering(null, x, y, z, false);
+				GL11.glPushMatrix();
+				/*
+				 * Translate to coordinates
+				 */
+				GL11.glTranslated(x, y, z);
+				
+				Minecraft.getMinecraft().renderEngine.bindTexture(textureConveyor);
 				renderConveyorAppliance(Taam.APPLIANCE_SPRAYER);
-				conveyorEndRendering();
+				
+				GL11.glPopMatrix();	
 				break;
 			case 1:
-				conveyorPrepareRendering(null, x, y, z, false);
 				//TODO: Render.
-				conveyorEndRendering();
 				break;
 			}
 		} else if(item.getItem() == Item.getItemFromBlock(TaamMain.blockMachines)) {
@@ -217,7 +225,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 			int meta = tileEntity.getBlockMetadata();
 			switch (tileEntity.getBlockMetadata() & 8) {
 			case 0:
-				renderSensor(x, y, z, (meta & 7), te.isPowering() > 0);
+				renderSensor(x, y, z, (meta & 7), te.getRedstoneLevel() > 0);
 				break;
 			case 8:
 				// TODO: renderMinect();
@@ -387,8 +395,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 					if(((TileEntityConveyorSieve) tileEntity).isShutdown) {
 						//posY = 0;
 					} else {
-						double val = Math.sin(Math.toRadians(rot*32));
-						posY += (float)(val*0.04);
+						posY += (float)(rotSin*0.04);
 					}
 				}
 				for(int slot = 0; slot < 9; slot++) {

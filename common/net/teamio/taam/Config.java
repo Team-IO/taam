@@ -10,11 +10,49 @@ public class Config {
 
 	public static Configuration config;
 	
-	public static boolean genCopper = true;
-	public static boolean genTin = true;
-	public static boolean genAluminum = true;
-	public static boolean genBauxite = true;
-	public static boolean genKaolinite = true;
+//	public static boolean genCopper = true;
+//	public static boolean genTin = true;
+//	public static boolean genAluminum = true;
+//	public static boolean genBauxite = true;
+//	public static boolean genKaolinite = true;
+	
+	public static final boolean[] genOre = new boolean[]{
+			true,
+			true,
+			true,
+			true,
+			true,
+	};
+
+	public static final int[] oreSize = new int[]{
+			14,
+			13,
+			2,
+			35,
+			35
+	};
+	public static final int[] oreAbove = new int[]{
+			0,
+			0,
+			0,
+			0,
+			0
+	};
+	public static final int[] oreBelow = new int[]{
+			64,
+			64,
+			64,
+			128,
+			100
+	};
+	public static final int[] oreDepositCount = new int[]{
+			7,
+			7,
+			3,
+			10,
+			5
+	};
+	
 	public static boolean debug = false;
 	
 	public static int sensor_delay = 30;
@@ -59,12 +97,36 @@ public class Config {
 	private static void loadConfig()
 	{
 		
-		genCopper = config.getBoolean("generateCopper", "worldgen", true, Taam.CFG_COMMENT_GEN_COPPER_ORE);
-		genTin = config.getBoolean("generateTin", "worldgen", true , Taam.CFG_COMMENT_GEN_TIN_ORE);
-		genAluminum = config.getBoolean("generateAluminum", "worldgen", true , Taam.CFG_COMMENT_GEN_ALUMINUM_ORE);
-		genBauxite = config.getBoolean("generateBauxite", "worldgen", true , Taam.CFG_COMMENT_GEN_BAUXITE_ORE);
-		genKaolinite = config.getBoolean("generateKaolinite", "worldgen", true , Taam.CFG_COMMENT_GEN_KAOLINITE_ORE);
+		genOre[0] = config.getBoolean("generateCopper", "worldgen", true, Taam.CFG_COMMENT_GEN_COPPER_ORE);
+		genOre[1] = config.getBoolean("generateTin", "worldgen", true , Taam.CFG_COMMENT_GEN_TIN_ORE);
+		genOre[2]= config.getBoolean("generateAluminum", "worldgen", true , Taam.CFG_COMMENT_GEN_ALUMINUM_ORE);
+		genOre[3] = config.getBoolean("generateBauxite", "worldgen", true , Taam.CFG_COMMENT_GEN_BAUXITE_ORE);
+		genOre[4] = config.getBoolean("generateKaolinite", "worldgen", true , Taam.CFG_COMMENT_GEN_KAOLINITE_ORE);
+				
+		oreSize[0] = config.getInt("oreSize_Copper", "worldgen", 14 , 0, Integer.MAX_VALUE , "");
+		oreSize[1] = config.getInt("oreSize_Tin", "worldgen", 13 , 0, Integer.MAX_VALUE , "");
+		oreSize[2] = config.getInt("oreSize_Aluminum", "worldgen", 2 , 0, Integer.MAX_VALUE , "");
+		oreSize[3] = config.getInt("oreSize_Bauxite", "worldgen", 35 , 0, Integer.MAX_VALUE , "");
+		oreSize[4] = config.getInt("oreSize_Kaolinite", "worldgen", 35 , 0, Integer.MAX_VALUE , "");
 		
+		oreAbove[0] = config.getInt("oreAbove_Copper", "worldgen", 0 , 0, 255 , "");
+		oreAbove[1] = config.getInt("oreAbove_Tin", "worldgen", 0 , 0, 255 , "");
+		oreAbove[2] = config.getInt("oreAbove_Aluminum", "worldgen", 0 , 0, 255 , "");
+		oreAbove[3] = config.getInt("oreAbove_Bauxite", "worldgen", 0 , 0, 255 , "");
+		oreAbove[4] = config.getInt("oreAbove_Kaolinite", "worldgen", 0 , 0, 255 , "");
+
+		oreBelow[0] = config.getInt("oreBelow_Copper", "worldgen", 64 , 0, 255 , "");
+		oreBelow[1] = config.getInt("oreBelow_Tin", "worldgen", 64 , 0, 255 , "");
+		oreBelow[2] = config.getInt("oreBelow_Aluminum", "worldgen", 64 , 0, 255 , "");
+		oreBelow[3] = config.getInt("oreBelow_Bauxite", "worldgen", 128 , 0, 255 , "");
+		oreBelow[4] = config.getInt("oreBelow_Kaolinite", "worldgen", 100 , 0, 255 , "");
+		
+		oreDepositCount[0] = config.getInt("oreDepositCount_Copper", "worldgen", 64 , 0, Integer.MAX_VALUE , "");
+		oreDepositCount[1] = config.getInt("oreDepositCount_Tin", "worldgen", 64 , 0, Integer.MAX_VALUE , "");
+		oreDepositCount[2] = config.getInt("oreDepositCount_Aluminum", "worldgen", 64 , 0, Integer.MAX_VALUE , "");
+		oreDepositCount[3] = config.getInt("oreDepositCount_Bauxite", "worldgen", 128 , 0, Integer.MAX_VALUE , "");
+		oreDepositCount[4] = config.getInt("oreDepositCount_Kaolinite", "worldgen", 100 , 0, Integer.MAX_VALUE , "");
+
 		debug = config.getBoolean("debug_output", Configuration.CATEGORY_GENERAL, false, Taam.CFG_COMMENT_DEBUG_OUTPUT);
 		
 		sensor_delay = config.getInt("sensor_delay", "multitronix", 30, 10, 100, Taam.CFG_COMMENT_SENSOR_DELAY);

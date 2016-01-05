@@ -345,10 +345,11 @@ public class ConveyorUtil {
 		if(!world.isRemote) {
 			float speedsteps = tileEntity.getSpeedsteps();
 			EnumFacing direction = tileEntity.getMovementDirection();
+			float progress = slotObject.movementProgress / speedsteps;
 			
-			double posX = tileEntity.posX() + getItemPositionX(slot, slotObject.movementProgress / speedsteps, direction);
+			double posX = tileEntity.posX() + getItemPositionX(slot, progress, direction);
 			double posY = tileEntity.posY() + 0.5f;
-			double posZ = tileEntity.posZ() + getItemPositionZ(slot, slotObject.movementProgress / speedsteps, direction);
+			double posZ = tileEntity.posZ() + getItemPositionZ(slot, progress, direction);
 			
 			if(slotObject.itemStack != null) {
 				EntityItem item = new EntityItem(world, posX, posY, posZ, slotObject.itemStack);
@@ -358,9 +359,9 @@ public class ConveyorUtil {
 					item.motionY = direction.getFrontOffsetY() * speed;
 					item.motionZ = direction.getFrontOffsetZ() * speed;
 				} else {
-					item.motionX = 0; 
-			        item.motionY = 0; 
-			        item.motionZ = 0; 
+					item.motionX = 0;
+			        item.motionY = 0;
+			        item.motionZ = 0;
 				}
 				world.spawnEntityInWorld(item);
 			}

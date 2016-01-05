@@ -300,11 +300,6 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 	}
 
 	@Override
-	public ForgeDirection getNextMountDirection() {
-		return ForgeDirection.DOWN;
-	}
-
-	@Override
 	public void setFacingDirection(ForgeDirection direction) {
 		this.direction = direction;
 		if(direction == ForgeDirection.UP || direction == ForgeDirection.DOWN || direction == ForgeDirection.UNKNOWN) {
@@ -318,20 +313,10 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 	}
 
 	@Override
-	public void setMountDirection(ForgeDirection direction) {
-		return;
-	}
-
-	@Override
 	public ForgeDirection getFacingDirection() {
 		return direction;
 	}
 
-	@Override
-	public ForgeDirection getMountDirection() {
-		return ForgeDirection.DOWN;
-	}
-	
 	/*
 	 * IInventory implementation
 	 */

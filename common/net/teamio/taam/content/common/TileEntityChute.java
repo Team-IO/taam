@@ -424,18 +424,8 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 	}
 
 	@Override
-	public EnumFacing getMountDirection() {
-		return EnumFacing.DOWN;
-	}
-
-	@Override
 	public EnumFacing getNextFacingDirection() {
 		return direction.rotateY();
-	}
-
-	@Override
-	public EnumFacing getNextMountDirection() {
-		return EnumFacing.DOWN;
 	}
 
 	@Override
@@ -447,10 +437,6 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 			}
 			updateState();
 		}
-	}
-
-	@Override
-	public void setMountDirection(EnumFacing direction) {
 	}
 
 	public EnumFacing getNextSlot(int slot) {

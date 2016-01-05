@@ -6,6 +6,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.teamio.taam.Log;
 import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.IRotatable;
@@ -66,11 +67,19 @@ public class WrenchUtil {
 					TaamUtil.breakBlockToInventory(player, world, pos);
 					return true;
 				}
-			} else if(te instanceof IRotatable) {
-				IRotatable rotatable = (IRotatable) te;
-				rotatable.setFacingDirection(rotatable.getNextFacingDirection());
+			} else {
+				world.getBlock(x, y, z).rotateBlock(world, x, y, z, ForgeDirection.getOrientation(side));
 				return true;
 			}
+		}
+		return false;
+	}
+	
+	public static boolean rotateBlock(TileEntity te) {
+		if(te instanceof IRotatable) {
+			IRotatable rotatable = (IRotatable) te;
+			rotatable.setFacingDirection(rotatable.getNextFacingDirection());
+			return true;
 		}
 		return false;
 	}

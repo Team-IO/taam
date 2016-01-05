@@ -34,7 +34,7 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable implements 
 	
 	@Override
 	public void updateRenderingInfo() {
-		if(worldObj.isRemote) {
+		if(worldObj != null && worldObj.isRemote) {
 			/*
 			 * Fill display calculation is only needed on the client..
 			 */

@@ -47,6 +47,9 @@ public abstract class BaseBlock extends Block {
 	public void onNeighborBlockChange(World worldIn, BlockPos pos, IBlockState state, Block neighborBlock) {
 		if(!canPlaceBlockAt(worldIn, pos)) {
 			TaamUtil.breakBlockInWorld(worldIn, pos, state);
+			if(this != TaamMain.blockSensor) {
+				breakBlock(world, pos, this, 0);
+			}
 			return;
 		}
 		TileEntity te = worldIn.getTileEntity(pos);
@@ -99,6 +102,10 @@ public abstract class BaseBlock extends Block {
 		super.breakBlock(worldIn, pos, state);
 	}
 	
+	@Override
+	public boolean rotateBlock(World worldObj, int x, int y, int z, ForgeDirection axis) {
+		return WrenchUtil.rotateBlock(worldObj.getTileEntity(x, y, z));
+	}
 	
 	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn,
@@ -169,6 +176,12 @@ public abstract class BaseBlock extends Block {
 	public AxisAlignedBB getCollisionBoundingBox(World worldIn, BlockPos pos, IBlockState state) {
 		setBlockBoundsBasedOnState(worldIn, pos);
 		return super.getCollisionBoundingBox(worldIn, pos, state);
+	}
+	
+	@Override
+	@SideOnly(Side.CLIENT)
+	public boolean isBlockNormalCube() {
+		return false;
 	}
 	
 	/**

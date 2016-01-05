@@ -13,6 +13,7 @@ import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
 import net.teamio.taam.Taam;
+import net.teamio.taam.util.WrenchUtil;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -70,13 +71,15 @@ public class ItemWrench extends Item {
 		return true;
 	};
 	
-//	@Override
-//	public boolean onItemUse(ItemStack itemStack,
-//			EntityPlayer player, World world,
-//			int x, int y, int z,
-//			int side,
-//			float hitx, float hity, float hitz) {
-//	Not used, all handling is done by the >blocks< and / or central Utils.
-//	}
-
+	@Override
+	public boolean onItemUse(ItemStack itemStack,
+			EntityPlayer player, World world,
+			int x, int y, int z, int side,
+			float hitx, float hity, float hitz) {
+		// This call is for vanilla blocks (mainly stairs). Chests & Furnace etc cannot be called by this.
+		// TODO: how to bypass the clicked tileentity?
+		// The productionline blocks do not use this call here, they are handled in the corresponding block class itself.
+		// This is done, so that wrenches from other mods can be supported eventually.
+		return WrenchUtil.wrenchBlock(world, x, y, z, player, side, hitx, hity, hitz);
+	}
 }
