@@ -1,6 +1,7 @@
 package net.teamio.taam;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.ItemModelMesher;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.item.Item;
@@ -56,8 +57,38 @@ public class TaamClientProxy extends TaamCommonProxy {
 		
 		// Receive event for Client Ticks
 		FMLCommonHandler.instance().bus().register(taamRenderer);
-		ModelBakery.addVariantName(GameRegistry.findItem(Taam.MOD_ID, Taam.BLOCK_ORE), Taam.MOD_ID + ":ore_copper");
-		Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(GameRegistry.findItem(Taam.MOD_ID, Taam.BLOCK_ORE), 0, new ModelResourceLocation(Taam.MOD_ID + ":ore_copper", "inventory"));
+		
+		ItemModelMesher modelMesher = Minecraft.getMinecraft().getRenderItem().getItemModelMesher();
+		
+		Item itemOre = GameRegistry.findItem(Taam.MOD_ID, Taam.BLOCK_ORE);
+		Item itemIngot = GameRegistry.findItem(Taam.MOD_ID, Taam.ITEM_INGOT);
+		Item itemDust = GameRegistry.findItem(Taam.MOD_ID, Taam.ITEM_DUST);
+		ModelBakery.addVariantName(itemOre, Taam.MOD_ID + ":ore.impossible");
+		ModelBakery.addVariantName(itemIngot, Taam.MOD_ID + ":ingot.impossible");
+		ModelBakery.addVariantName(itemDust, Taam.MOD_ID + ":dust.impossible");
+		for(Taam.BLOCK_ORE_META meta : Taam.BLOCK_ORE_META.values()) {
+			int metaInt = meta.ordinal();
+			String metaName = meta.name();
+			if(meta.ore) {
+				ModelBakery.addVariantName(itemOre, Taam.MOD_ID + ":ore." + metaName);
+				modelMesher.register(itemOre, metaInt, new ModelResourceLocation(Taam.MOD_ID + ":ore." + metaName, "inventory"));
+			} else {
+				modelMesher.register(itemOre, metaInt, new ModelResourceLocation(Taam.MOD_ID + ":ore.impossible", "inventory"));
+			}
+			if(meta.ingot) {
+				ModelBakery.addVariantName(itemIngot, Taam.MOD_ID + ":ingot." + metaName);
+				modelMesher.register(itemIngot, metaInt, new ModelResourceLocation(Taam.MOD_ID + ":ingot." + metaName, "inventory"));
+			} else {
+				modelMesher.register(itemIngot, metaInt, new ModelResourceLocation(Taam.MOD_ID + ":ingot.impossible", "inventory"));
+			}
+			if(meta.dust) {
+				ModelBakery.addVariantName(itemDust, Taam.MOD_ID + ":dust." + metaName);
+				modelMesher.register(itemDust, meta.ordinal(), new ModelResourceLocation(Taam.MOD_ID + ":dust." + metaName, "inventory"));
+			} else {
+				modelMesher.register(itemDust, meta.ordinal(), new ModelResourceLocation(Taam.MOD_ID + ":dust.impossible", "inventory"));
+			}
+		}
+//		ModelBakery.addVariantName(GameRegistry.findItem(Taam.MOD_ID, Taam.BLOCK_ORE), Taam.MOD_ID + ":ore.copper");
 		Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(GameRegistry.findItem(Taam.MOD_ID, Taam.BLOCK_CONCRETE), 0, new ModelResourceLocation(Taam.MOD_ID + ":concrete", "inventory"));
 		
 	}
