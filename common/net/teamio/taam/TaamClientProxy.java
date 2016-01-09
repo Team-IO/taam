@@ -63,9 +63,11 @@ public class TaamClientProxy extends TaamCommonProxy {
 		Item itemOre = GameRegistry.findItem(Taam.MOD_ID, Taam.BLOCK_ORE);
 		Item itemIngot = GameRegistry.findItem(Taam.MOD_ID, Taam.ITEM_INGOT);
 		Item itemDust = GameRegistry.findItem(Taam.MOD_ID, Taam.ITEM_DUST);
+		
 		ModelBakery.addVariantName(itemOre, Taam.MOD_ID + ":ore.impossible");
 		ModelBakery.addVariantName(itemIngot, Taam.MOD_ID + ":ingot.impossible");
 		ModelBakery.addVariantName(itemDust, Taam.MOD_ID + ":dust.impossible");
+		
 		for(Taam.BLOCK_ORE_META meta : Taam.BLOCK_ORE_META.values()) {
 			int metaInt = meta.ordinal();
 			String metaName = meta.name();
@@ -88,8 +90,23 @@ public class TaamClientProxy extends TaamCommonProxy {
 				modelMesher.register(itemDust, meta.ordinal(), new ModelResourceLocation(Taam.MOD_ID + ":dust.impossible", "inventory"));
 			}
 		}
-//		ModelBakery.addVariantName(GameRegistry.findItem(Taam.MOD_ID, Taam.BLOCK_ORE), Taam.MOD_ID + ":ore.copper");
-		Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(GameRegistry.findItem(Taam.MOD_ID, Taam.BLOCK_CONCRETE), 0, new ModelResourceLocation(Taam.MOD_ID + ":concrete", "inventory"));
+
+		Item itemConcrete = GameRegistry.findItem(Taam.MOD_ID, Taam.BLOCK_CONCRETE);
 		
+		for(Taam.BLOCK_CONCRETE_META meta : Taam.BLOCK_CONCRETE_META.values()) {
+			int metaInt = meta.ordinal();
+			String metaName = meta.name();
+			ModelBakery.addVariantName(itemConcrete, Taam.MOD_ID + ":concrete." + metaName);
+			modelMesher.register(itemConcrete, metaInt, new ModelResourceLocation(Taam.MOD_ID + ":concrete." + metaName, "inventory"));
+		}
+
+		registerItemDefault(modelMesher, TaamMain.itemWrench, 0, Taam.MOD_ID + ":wrench");
+		registerItemDefault(modelMesher, TaamMain.itemSaw, 0, Taam.MOD_ID + ":tool.saw");
+		registerItemDefault(modelMesher, TaamMain.itemDebugTool, 0, Taam.MOD_ID + ":coffee");
+	}
+	
+	private void registerItemDefault(ItemModelMesher modelMesher, Item item, int meta, String name) {
+		ModelBakery.addVariantName(item, name);
+		modelMesher.register(item, meta, new ModelResourceLocation(name, "inventory"));
 	}
 }
