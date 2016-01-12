@@ -9,12 +9,13 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.teamio.taam.Taam;
 import net.teamio.taam.util.WrenchUtil;
 
 public class ItemWrench extends Item {
@@ -65,20 +66,18 @@ public class ItemWrench extends Item {
 //	}
 
 	@Override
-	public boolean doesSneakBypassUse(World world, int x, int y, int z, EntityPlayer player) {
+	public boolean doesSneakBypassUse(World world, BlockPos pos, EntityPlayer player) {
 		// Required for disassembling, as we need shift click on the target block
 		return true;
-	};
+	}
 	
 	@Override
-	public boolean onItemUse(ItemStack itemStack,
-			EntityPlayer player, World world,
-			int x, int y, int z, int side,
-			float hitx, float hity, float hitz) {
+	public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side,
+			float hitX, float hitY, float hitZ) {
 		// This call is for vanilla blocks (mainly stairs). Chests & Furnace etc cannot be called by this.
 		// TODO: how to bypass the clicked tileentity?
 		// The productionline blocks do not use this call here, they are handled in the corresponding block class itself.
 		// This is done, so that wrenches from other mods can be supported eventually.
-		return WrenchUtil.wrenchBlock(world, x, y, z, player, side, hitx, hity, hitz);
+		return WrenchUtil.wrenchBlock(world, pos, player, side, hitX, hitY, hitZ);
 	}
 }

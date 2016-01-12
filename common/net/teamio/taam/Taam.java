@@ -116,7 +116,7 @@ public final class Taam {
 //		return meta == 3 || meta == 4;
 //	}
 	
-	public static enum BLOCK_MACHINES_META {
+	public static enum BLOCK_MACHINES_META implements IStringSerializable {
 		chute,
 		creativecache,
 		;
@@ -128,9 +128,14 @@ public final class Taam {
 			}
 			return valuesAsString;
 		}
+
+		@Override
+		public String getName() {
+			return name();
+		}
 	};
 	
-	public static enum BLOCK_PRODUCTIONLINE_META {
+	public static enum BLOCK_PRODUCTIONLINE_META implements IStringSerializable {
 		conveyor1,
 		conveyor2,
 		conveyor3,
@@ -150,9 +155,14 @@ public final class Taam {
 			}
 			return valuesAsString;
 		}
+
+		@Override
+		public String getName() {
+			return name();
+		}
 	};
 	
-	public static enum BLOCK_PRODUCTIONLINE_ATTACHABLE_META {
+	public static enum BLOCK_PRODUCTIONLINE_ATTACHABLE_META implements IStringSerializable {
 		itembag,
 		trashcan,
 		;
@@ -163,6 +173,11 @@ public final class Taam {
 				valuesAsString[i] = valuesAsEnum[i].name();
 			}
 			return valuesAsString;
+		}
+
+		@Override
+		public String getName() {
+			return name();
 		}
 	};
 	
@@ -195,7 +210,7 @@ public final class Taam {
 	public static final String ITEM_CONVEYOR_APPLIANCE = "taam.conveyor_appliance";
 	public static final String ITEM_LOGISTICS_CART = "taam.logistics_cart";
 	
-	public static enum ITEM_CONVEYOR_APPLIANCE_META {
+	public static enum ITEM_CONVEYOR_APPLIANCE_META implements IStringSerializable {
 		sprayer,
 		inserter
 		;
@@ -206,6 +221,11 @@ public final class Taam {
 				valuesAsString[i] = valuesAsEnum[i].name();
 			}
 			return valuesAsString;
+		}
+
+		@Override
+		public String getName() {
+			return name();
 		}
 	};
 	public static enum ITEM_LOGISTICS_CART_META {

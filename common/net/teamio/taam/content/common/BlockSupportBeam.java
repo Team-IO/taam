@@ -2,6 +2,7 @@ package net.teamio.taam.content.common;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fml.relauncher.Side;
@@ -27,17 +28,12 @@ public class BlockSupportBeam extends Block {
 	}
 	
 	@Override
-	public boolean renderAsNormalBlock() {
-		return false;
-	}
-	
-	@Override
 	public boolean isOpaqueCube() {
 		return false;
 	}
 	
 	@Override
-	public boolean isSideSolid(IBlockAccess world, int x, int y, int z, EnumFacing side) {
+	public boolean isSideSolid(IBlockAccess world, BlockPos pos, EnumFacing side) {
 		return true;
 	}
 

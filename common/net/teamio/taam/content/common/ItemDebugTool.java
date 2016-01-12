@@ -3,12 +3,14 @@ package net.teamio.taam.content.common;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.EnumFacing;
@@ -54,12 +56,8 @@ public class ItemDebugTool extends Item {
 	}
 	
 	@Override
-	public boolean onItemUse(ItemStack itemStack,
-			EntityPlayer player, World world,
-			int x, int y, int z,
-			int side,
-			float hitx, float hity, float hitz) {
-
+	public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side,
+			float hitX, float hitY, float hitZ) {
 		if(!Config.debug)
 		{
 			//TODO: Clarify!
@@ -71,22 +69,22 @@ public class ItemDebugTool extends Item {
 		}
 		char remoteState = world.isRemote ? 'C' : 'S';
 
-		Block clickedOn = world.getBlock(x, y, z);
-		
+		IBlockState state = world.getBlockState(pos);
+		Block clickedOn = state.getBlock();
 
     	String text = String.format(remoteState + " RS: %b Side: %s Weak: %d Strong: %d",
-    			clickedOn.canProvidePower(), EnumFacing.getOrientation(side).toString(), clickedOn.isProvidingWeakPower(world, x, y, z, side), clickedOn.isProvidingStrongPower(world, x, y, z, side));
+    			clickedOn.canProvidePower(), side.toString(), clickedOn.isProvidingWeakPower(world, pos, state, side), clickedOn.isProvidingStrongPower(world, pos, state, side));
 
     	player.addChatMessage(new ChatComponentText(text));
     	
-    	int oppSide = EnumFacing.getOrientation(side).getOpposite().ordinal();
+    	EnumFacing oppSide = side.getOpposite();
     	
     	text = String.format(remoteState + " RS: %b Opposite Side: %s Weak: %d Strong: %d",
-    			clickedOn.canProvidePower(), EnumFacing.getOrientation(oppSide).toString(), clickedOn.isProvidingWeakPower(world, x, y, z, oppSide), clickedOn.isProvidingStrongPower(world, x, y, z, oppSide));
+    			clickedOn.canProvidePower(), oppSide.toString(), clickedOn.isProvidingWeakPower(world, pos, state, oppSide), clickedOn.isProvidingStrongPower(world, pos, state, oppSide));
     	
 
-    	text = String.format(remoteState + " Indirectly Powered: %b with %d",
-    	    	world.isBlockIndirectlyGettingPowered(x, y, z), world.getBlockPowerInput(x, y, z));
+    	text = String.format(remoteState + " Indirectly Powered: %d",
+    	    	world.isBlockIndirectlyGettingPowered(pos));
     	
     	player.addChatMessage(new ChatComponentText(text));
 		
@@ -98,7 +96,7 @@ public class ItemDebugTool extends Item {
 		
         boolean didSomething = false;
         
-        TileEntity te = world.getTileEntity(x, y, z);
+        TileEntity te = world.getTileEntity(pos);
 
     	
         if(te instanceof TileEntityConveyor) {

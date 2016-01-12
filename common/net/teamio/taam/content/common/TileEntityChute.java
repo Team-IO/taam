@@ -11,7 +11,9 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.IChatComponent;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
@@ -44,7 +46,7 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 	@Override
 	public void update() {
 		// Skip item insertion if there is a solid block / other chute above us 
-		if(isConveyorVersion || !worldObj.isSideSolid(xCoord, yCoord, zCoord, EnumFacing.DOWN, false)) {
+		if(isConveyorVersion || !worldObj.isSideSolid(pos.up(), EnumFacing.DOWN, false)) {
 			ConveyorUtil.tryInsertItemsFromWorld(this, worldObj, null, false);
 		}
 	}
@@ -154,23 +156,51 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 	}
 
 	@Override
-	public String getInventoryName() {
+	public IChatComponent getDisplayName() {
 		IInventory target = getTargetInventory();
 		if(target == null) {
-			return "tile.taam.chute.name";
+			return new ChatComponentTranslation("tile.taam.chute.name");
 		} else {
-			return target.getInventoryName();
+			return target.getDisplayName();
 		}
 	}
 
 	@Override
-	public boolean hasCustomInventoryName() {
+	public boolean hasCustomName() {
 		IInventory target = getTargetInventory();
 		if(target == null) {
-			return true;
+			return false;
 		} else {
-			return target.hasCustomInventoryName();
+			return target.hasCustomName();
 		}
+	}
+
+	@Override
+	public String getCommandSenderName() {
+		return "tile.taam.chute.name";
+	}
+
+	@Override
+	public int getField(int id) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void setField(int id, int value) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public int getFieldCount() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void clear() {
+		// Nope
 	}
 
 	@Override
@@ -355,21 +385,6 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 	}
 
 	@Override
-	public int posX() {
-		return pos.getX();
-	}
-
-	@Override
-	public int posY() {
-		return pos.getY();
-	}
-
-	@Override
-	public int posZ() {
-		return pos.getZ();
-	}
-
-	@Override
 	public int insertItemAt(ItemStack stack, int slot) {
 		InventoryRange target = getTargetRange();
 		if(target == null) {
@@ -390,6 +405,10 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 	@Override
 	public EnumFacing getMovementDirection() {
 		return EnumFacing.DOWN;
+	}
+
+	public EnumFacing getNextSlot(int slot) {
+		return null;
 	}
 
 	@Override
@@ -437,10 +456,6 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 			}
 			updateState();
 		}
-	}
-
-	public EnumFacing getNextSlot(int slot) {
-		return null;
 	}
 
 }
