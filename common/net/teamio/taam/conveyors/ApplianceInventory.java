@@ -2,6 +2,7 @@ package net.teamio.taam.conveyors;
 
 import codechicken.lib.inventory.InventorySimple;
 import codechicken.lib.inventory.InventoryUtils;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -114,7 +115,7 @@ public abstract class ApplianceInventory implements IConveyorAppliance {
 		 */
 		NBTTagList tanks = tag.getTagList("tanks", NBT.TAG_COMPOUND);
 		if(tanks != null) {
-			int max = Math.min(tanks.func_150303_d(), fluidTanks.length);
+			int max = Math.min(tanks.tagCount(), fluidTanks.length);
 			for(int i = 0; i < max; i++) {
 				fluidTanks[i].readFromNBT(tanks.getCompoundTagAt(i));
 			}
@@ -159,13 +160,11 @@ public abstract class ApplianceInventory implements IConveyorAppliance {
 	}
 
 	@Override
-	public void openInventory() {
-		inventory.openInventory();
+	public void openInventory(EntityPlayer player) {
 	}
 
 	@Override
-	public void closeInventory() {
-		inventory.closeInventory();
+	public void closeInventory(EntityPlayer player) {
 	}
 
 	@Override
@@ -173,5 +172,23 @@ public abstract class ApplianceInventory implements IConveyorAppliance {
 		inventory.markDirty();
 	}
 	
+	@Override
+	public int getField(int id) {
+		return 0;
+	}
+	
+	@Override
+	public void setField(int id, int value) {
+	}
+	
+	@Override
+	public int getFieldCount() {
+		return 0;
+	}
+	
+	@Override
+	public void clear() {
+		inventory.clear();
+	}
 	
 }

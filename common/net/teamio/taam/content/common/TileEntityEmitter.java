@@ -1,33 +1,31 @@
 package net.teamio.taam.content.common;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.server.gui.IUpdatePlayerListBox;
 import net.teamio.taam.content.BaseTileEntity;
 
-public class TileEntityEmitter extends BaseTileEntity {
+public class TileEntityEmitter extends BaseTileEntity implements IUpdatePlayerListBox {
 
 	private String sound = "default";
 	private int count = 0;
 	private int timeout = 600;
-	
+
 	@Override
-	public void updateEntity() {
+	public void update() {
 		count++;
-		if(count >= timeout) {
+		if (count >= timeout) {
 			count = 0;
-			
-			worldObj.playSound(xCoord + 0.5f, yCoord + 0.5f, zCoord + 0.5f, sound, 1f, 1f, true);
+
+			worldObj.playSound(pos.getX() + 0.5f, pos.getY() + 0.5f, pos.getZ() + 0.5f, sound, 1f, 1f, true);
 		}
 	}
-	
-	@Override
-	protected void writePropertiesToNBT(NBTTagCompound par1nbtTagCompound) {
-		// TODO Auto-generated method stub
 
+	@Override
+	protected void writePropertiesToNBT(NBTTagCompound tag) {
 	}
 
 	@Override
-	protected void readPropertiesFromNBT(NBTTagCompound par1nbtTagCompound) {
-		// TODO Auto-generated method stub
+	protected void readPropertiesFromNBT(NBTTagCompound tag) {
 
 	}
 

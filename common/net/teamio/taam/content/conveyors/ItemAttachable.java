@@ -1,10 +1,12 @@
 package net.teamio.taam.content.conveyors;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemMultiTexture;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.teamio.taam.content.IRotatable;
@@ -18,11 +20,10 @@ public class ItemAttachable extends ItemMultiTexture {
 	}
 
 	@Override
-	public boolean placeBlockAt(ItemStack stack, EntityPlayer player,
-			World world, int x, int y, int z, int side, float hitX, float hitY,
-			float hitZ, int metadata) {
-		EnumFacing dir = EnumFacing.getOrientation(side).getOpposite();
-		if(TaamUtil.canAttach(world, x, y, z, dir)) {
+	public boolean placeBlockAt(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side,
+			float hitX, float hitY, float hitZ, IBlockState newState) {
+		EnumFacing dir = side.getOpposite();
+		if(TaamUtil.canAttach(world, pos, dir)) {
 			int meta;
 			switch(dir) {
 			default:
@@ -39,9 +40,9 @@ public class ItemAttachable extends ItemMultiTexture {
 				meta = 3;
 				break;
 			}
-			boolean success = super.placeBlockAt(stack, player, world, x, y, z, side, hitX, hitY, hitZ, (metadata & 3) + (meta << 2));
+			boolean success = super.placeBlockAt(stack, player, world, pos, side, hitX, hitY, hitZ, (metadata & 3) + (meta << 2));
 			if(success) {
-				TileEntity te = world.getTileEntity(x, y, z);
+				TileEntity te = world.getTileEntity(pos);
 				if(te instanceof IRotatable) {
 					((IRotatable) te).setFacingDirection(dir);
 				}

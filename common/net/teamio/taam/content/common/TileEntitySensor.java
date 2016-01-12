@@ -5,6 +5,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntityIronGolem;
 import net.minecraft.entity.monster.EntitySnowman;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.server.gui.IUpdatePlayerListBox;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.EnumFacing;
 import net.teamio.taam.Config;
@@ -13,7 +14,7 @@ import net.teamio.taam.content.BaseBlock;
 import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IRotatable;
 
-public class TileEntitySensor extends BaseTileEntity implements IRotatable {
+public class TileEntitySensor extends BaseTileEntity implements IRotatable, IUpdatePlayerListBox {
 	
 	private float offLength = 1.5f;
 	private float offLeft = 1.5f;
@@ -66,7 +67,7 @@ public class TileEntitySensor extends BaseTileEntity implements IRotatable {
 	}
 	
 	@Override
-	public void updateEntity() {
+	public void update() {
 		int meta = getBlockMetadata();
 //		int type = meta & 8;
 		int rotation = meta & 7;

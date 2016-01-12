@@ -3,13 +3,14 @@ package net.teamio.taam.content.conveyors;
 import java.util.List;
 
 import codechicken.lib.inventory.InventoryUtils;
-import codechicken.lib.render.TextureUtils.IIconRegister;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -21,12 +22,6 @@ public class ItemConveyorAppliance extends ItemWithMetadata<Taam.ITEM_CONVEYOR_A
 
 	public ItemConveyorAppliance() {
 		super("conveyor_appliance", Taam.ITEM_CONVEYOR_APPLIANCE_META.values(), null);
-	}
-
-	@Override
-	public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world,
-			int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
-		return false;
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -49,15 +44,15 @@ public class ItemConveyorAppliance extends ItemWithMetadata<Taam.ITEM_CONVEYOR_A
 	}
 	
 	@Override
-	public boolean onItemUse(ItemStack stack, EntityPlayer player, World world,
-			int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
+	public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side,
+			float hitX, float hitY, float hitZ) {
 		int i = stack.getItemDamage();
 		Enum<?>[] values = Taam.ITEM_CONVEYOR_APPLIANCE_META.values();
 
 		if (i < 0 || i >= values.length) {
 			i = 0;
 		}
-		TileEntity te = world.getTileEntity(x, y, z);
+		TileEntity te = world.getTileEntity(pos);
 		if(te instanceof IConveyorApplianceHost) {
 			IConveyorApplianceHost host = (IConveyorApplianceHost) te;
 			System.out.println("Item Setting up Appliance " + "taam." + values[i].name());

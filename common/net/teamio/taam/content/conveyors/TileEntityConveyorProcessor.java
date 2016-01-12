@@ -299,7 +299,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 		if(holdbackList == null) {
 			holdback = null;
 		} else {
-			holdback = new ItemStack[holdbackList.func_150303_d()];
+			holdback = new ItemStack[holdbackList.tagCount()];
 			InventoryUtils.readItemStacksFromTag(holdback, holdbackList);
 		}
 
@@ -308,8 +308,8 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 		progress = tag.getByte("progress");
 		timeout = tag.getInteger("timeout");
 		isShutdown = tag.getBoolean("isShutdown");
-		direction = EnumFacing.getOrientation(tag.getInteger("direction"));
-		if(direction == EnumFacing.UP || direction == EnumFacing.DOWN || direction == EnumFacing.UNKNOWN) {
+		direction = EnumFacing.getFront(tag.getInteger("direction"));
+		if(direction == EnumFacing.UP || direction == EnumFacing.DOWN) {
 			direction = EnumFacing.NORTH;
 		}
 	}

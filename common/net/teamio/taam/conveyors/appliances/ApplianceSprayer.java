@@ -13,7 +13,9 @@ import net.minecraft.block.BlockStainedGlassPane;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.IChatComponent;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.oredict.OreDictionary;
 import net.teamio.taam.Config;
@@ -205,28 +207,33 @@ public class ApplianceSprayer extends ApplianceInventory {
 	}
 
 	@Override
-	public int[] getAccessibleSlotsFromSide(int side) {
+	public int[] getSlotsForFace(EnumFacing side) {
 		return new int[] { 0 };
 	}
-
+	
 	@Override
-	public boolean canInsertItem(int slot, ItemStack itemStack, int side) {
+	public boolean canInsertItem(int index, ItemStack itemStackIn, EnumFacing direction) {
+		return true;
+	}
+	
+	@Override
+	public boolean canExtractItem(int index, ItemStack stack, EnumFacing direction) {
 		return true;
 	}
 
 	@Override
-	public boolean canExtractItem(int slot, ItemStack itemStack, int side) {
-		return true;
+	public IChatComponent getDisplayName() {
+		return new ChatComponentTranslation("item.taam.item.conveyor_appliance.sprayer.name");
 	}
 
 	@Override
-	public String getInventoryName() {
-		return "item.taam.item.conveyor_appliance.sprayer.name";
-	}
-
-	@Override
-	public boolean hasCustomInventoryName() {
+	public boolean hasCustomName() {
 		return false;
+	}
+	
+	@Override
+	public String getCommandSenderName() {
+		return "item.taam.item.conveyor_appliance.sprayer.name";
 	}
 
 }

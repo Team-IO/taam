@@ -231,8 +231,8 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 		redstoneMode = tag.getByte("redstoneMode");
 
 		pulseWasSent = tag.getBoolean("pulseWasSent");
-		direction = EnumFacing.getOrientation(tag.getInteger("direction"));
-		if(direction == EnumFacing.UP || direction == EnumFacing.DOWN || direction == EnumFacing.UNKNOWN) {
+		direction = EnumFacing.getFront(tag.getInteger("direction"));
+		if(direction == EnumFacing.UP || direction == EnumFacing.DOWN) {
 			direction = EnumFacing.NORTH;
 		}
 	}

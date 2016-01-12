@@ -83,6 +83,11 @@ public class ApplianceReordering extends ApplianceInventory implements IWorldInt
 	public IChatComponent getDisplayName() {
 		return new ChatComponentText("");
 	}
+	
+	@Override
+	public String getCommandSenderName() {
+		return "";
+	}
 
 	@Override
 	public boolean hasCustomName() {

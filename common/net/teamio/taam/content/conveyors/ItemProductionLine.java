@@ -1,12 +1,15 @@
 package net.teamio.taam.content.conveyors;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemMultiTexture;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
+import net.teamio.taam.Taam;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.conveyors.api.IConveyorAwareTE;
 
@@ -18,17 +21,16 @@ public class ItemProductionLine extends ItemMultiTexture {
 	}
 
 	@Override
-	public boolean placeBlockAt(ItemStack stack, EntityPlayer player,
-			World world, int x, int y, int z, int side, float hitX, float hitY,
-			float hitZ, int metadata) {
-		EnumFacing dir = EnumFacing.getOrientation(side).getOpposite();
+	public boolean placeBlockAt(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side,
+			float hitX, float hitY, float hitZ, IBlockState newState) {
+		EnumFacing dir = side.getOpposite();
 		EnumFacing placeDir = EnumFacing.NORTH;
 		boolean defaultPlacement = false;
 		
 		if(dir == EnumFacing.UP || dir == EnumFacing.DOWN) {
 			defaultPlacement = true;
 		} else {
-			TileEntity ent = world.getTileEntity(x + dir.offsetX, y, z + dir.offsetZ);
+			TileEntity ent = world.getTileEntity(pos.offset(dir));
 			if(ent instanceof IRotatable) {
 				EnumFacing otherDir = ((IRotatable) ent).getFacingDirection();
 				if(otherDir == dir || otherDir == dir.getOpposite()) {
@@ -45,8 +47,8 @@ public class ItemProductionLine extends ItemMultiTexture {
 		
 		if(defaultPlacement) {
 			// We hit top/bottom of a block
-			double xDist = player.posX - x;
-			double zDist = player.posZ - z;
+			double xDist = player.posX - pos.getX();
+			double zDist = player.posZ - pos.getZ();
 			if(Math.abs(xDist) > Math.abs(zDist)) {
 				if(xDist < 0) {
 					placeDir = EnumFacing.EAST;
@@ -62,20 +64,22 @@ public class ItemProductionLine extends ItemMultiTexture {
 			}
 		}
 		
+		Taam.BLOCK_PRODUCTIONLINE_META variant = (Taam.BLOCK_PRODUCTIONLINE_META)newState.getValue(BlockProductionLine.VARIANT);
+		
 		boolean canStay;
-		if(metadata <= 2) {
+		if(variant == Taam.BLOCK_PRODUCTIONLINE_META.conveyor1 || variant == Taam.BLOCK_PRODUCTIONLINE_META.conveyor2 || variant == Taam.BLOCK_PRODUCTIONLINE_META.conveyor3) {
 			// Conveyor
-			canStay = BlockProductionLine.canBlockStay(world, x, y, z, placeDir);
+			canStay = BlockProductionLine.canBlockStay(world, pos, placeDir);
 		} else {
-			canStay = BlockProductionLine.canBlockStay(world, x, y, z, null);
+			canStay = BlockProductionLine.canBlockStay(world, pos, null);
 		}
 		
 		
 		
 		if(canStay) {
-			boolean success = super.placeBlockAt(stack, player, world, x, y, z, side, hitX, hitY, hitZ, metadata);
+			boolean success = super.placeBlockAt(stack, player, world, pos, side, hitX, hitY, hitZ, newState);
 			if(success) {
-				TileEntity te = world.getTileEntity(x, y, z);
+				TileEntity te = world.getTileEntity(pos);
 				if(te instanceof IRotatable) {
 					((IRotatable) te).setFacingDirection(placeDir);
 				}
