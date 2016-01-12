@@ -29,10 +29,11 @@ public class BlockMachines extends BaseBlock {
 	
 	@Override
 	public TileEntity createTileEntity(World world, int metadata) {
-		switch(metadata) {
-		case 0:
+		Taam.BLOCK_MACHINES_META variant = Taam.BLOCK_MACHINES_META.values()[metadata % 2];
+		switch(variant) {
+		case chute:
 			return new TileEntityChute(false);
-		case 1:
+		case creativecache:
 			return new TileEntityCreativeCache();
 		}
 		return null;
