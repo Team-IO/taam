@@ -84,7 +84,7 @@ public class TaamMain {
 	public static BlockProductionLineAttachable blockProductionLineAttachable;
 	public static BlockSlidingDoor blockSlidingDoor;
 	public static BlockOre blockOre;
-	public static BlockBuilding<Taam.BLOCK_CONCRETE_META> blockConcrete;
+	public static BlockBuilding blockConcrete;
 	public static BlockSupportBeam blockSupportBeam;
 	
 	public static FluidDye[] fluidsDye;
@@ -156,7 +156,7 @@ public class TaamMain {
 		registerBlock(blockOre = new BlockOre(), null, Taam.BLOCK_ORE);
 		registerItem(new ItemMultiTexture(blockOre, blockOre, Taam.BLOCK_ORE_META.valuesAsString()), Taam.BLOCK_ORE);
 
-		registerBlock(blockConcrete = new BlockBuilding<Taam.BLOCK_CONCRETE_META>("concrete", Taam.BLOCK_CONCRETE_META.values()), null, Taam.BLOCK_CONCRETE);
+		registerBlock(blockConcrete = new BlockBuilding(), null, Taam.BLOCK_CONCRETE);
 		registerItem(new ItemMultiTexture(blockConcrete, blockConcrete, Taam.BLOCK_CONCRETE_META.valuesAsString()), Taam.BLOCK_CONCRETE);
 		
 		registerBlock(blockSupportBeam = new BlockSupportBeam(), ItemBlock.class, Taam.BLOCK_SUPPORT_BEAM);

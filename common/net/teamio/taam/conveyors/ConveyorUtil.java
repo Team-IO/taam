@@ -30,9 +30,10 @@ public class ConveyorUtil {
 		int previousStackSize = entityItemStack.stackSize;
 		int added = 0;
 		
-		double relativeX = ei.posX - tileEntity.xCoord;
-		double relativeY = ei.posY - tileEntity.yCoord;
-		double relativeZ = ei.posZ - tileEntity.zCoord;
+		BlockPos pos = tileEntity.getPos();
+		double relativeX = ei.posX - pos.getX();
+		double relativeY = ei.posY - pos.getY();
+		double relativeZ = ei.posZ - pos.getZ();
 		
 		if(tileEntity instanceof IConveyorAwareTE) {
 			IConveyorAwareTE conveyorTE = (IConveyorAwareTE) tileEntity;
@@ -123,20 +124,22 @@ public class ConveyorUtil {
 
 	public static int getNextSlotUnwrapped(int slot, EnumFacing dir) {
 		// X-Offset skips whole rows
-		if(dir.offsetX != 0) {
-			slot += dir.offsetX * 3;
+		int frontOffsetX = dir.getFrontOffsetX();
+		if(frontOffsetX != 0) {
+			slot += frontOffsetX * 3;
 		}
 		// Z-Offset translates only regular,
 		// but certain ones skip to the next row
-		if(dir.offsetZ != 0) {
+		int frontOffsetZ = dir.getFrontOffsetZ();
+		if(frontOffsetZ != 0) {
 			int col = slot % 3;
-			col += dir.offsetZ;
+			col += frontOffsetZ;
 			if(col < 0) {
 				slot -= 7;
 			} else if(col > 2) {
 				slot += 7;
 			} else {
-				slot += dir.offsetZ;
+				slot += frontOffsetZ;
 			}
 		}
 		return slot;
@@ -166,7 +169,7 @@ public class ConveyorUtil {
 	}
 	
 	public static int getSlot(EnumFacing dir) {
-		if(dir == EnumFacing.DOWN || dir == EnumFacing.UNKNOWN) {
+		if(dir == null || dir == EnumFacing.DOWN) {
 			// Conveyors are only accessible from top/sides!
 			return -1;
 		} else if(dir == EnumFacing.UP) {
@@ -187,7 +190,7 @@ public class ConveyorUtil {
 	
 	public static double getItemPositionX(int slot, double progress, EnumFacing dir) {
 		double x = getItemPositionX(slot);
-		x += dir.offsetX * progress * oneThird;
+		x += dir.getFrontOffsetX() * progress * oneThird;
 		return x;
 	}
 
@@ -198,7 +201,7 @@ public class ConveyorUtil {
 	
 	public static double getItemPositionZ(int slot, double progress, EnumFacing dir) {
 		double z = getItemPositionZ(slot);
-		z += dir.offsetZ * progress * oneThird;
+		z += dir.getFrontOffsetZ() * progress * oneThird;
 		return z;
 	}
 	
@@ -347,9 +350,10 @@ public class ConveyorUtil {
 			EnumFacing direction = tileEntity.getMovementDirection();
 			float progress = slotObject.movementProgress / speedsteps;
 			
-			double posX = tileEntity.posX() + getItemPositionX(slot, progress, direction);
-			double posY = tileEntity.posY() + 0.5f;
-			double posZ = tileEntity.posZ() + getItemPositionZ(slot, progress, direction);
+			BlockPos pos = tileEntity.getPos();
+			double posX = pos.getX() + getItemPositionX(slot, progress, direction);
+			double posY = pos.getY() + 0.5f;
+			double posZ = pos.getZ() + getItemPositionZ(slot, progress, direction);
 			
 			if(slotObject.itemStack != null) {
 				EntityItem item = new EntityItem(world, posX, posY, posZ, slotObject.itemStack);
@@ -485,11 +489,9 @@ public class ConveyorUtil {
 			// Slot wrapped to next block
 			if(slotWrapped) {
 				// Next block, potentially a conveyor-aware block.
-				int nextBlockX = tileEntity.posX() + direction.offsetX;
-				int nextBlockY = tileEntity.posY() + direction.offsetY;
-				int nextBlockZ = tileEntity.posZ() + direction.offsetZ;
+				BlockPos nextBlockPos = tileEntity.getPos().offset(direction);
 				
-				TileEntity te = world.getTileEntity(nextBlockX, nextBlockY, nextBlockZ);
+				TileEntity te = world.getTileEntity(nextBlockPos);
 				
 				if(te instanceof IConveyorAwareTE) {
 					nextBlock = (IConveyorAwareTE) te;

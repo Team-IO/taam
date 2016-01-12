@@ -81,7 +81,7 @@ public final class Taam {
 		}
 	};
 	
-	public static enum BLOCK_CONCRETE_META {
+	public static enum BLOCK_CONCRETE_META implements IStringSerializable {
 		rough,
 		rough_chiseled,
 		fine,
@@ -99,6 +99,11 @@ public final class Taam {
 				valuesAsString[i] = valuesAsEnum[i].name();
 			}
 			return valuesAsString;
+		}
+
+		@Override
+		public String getName() {
+			return name();
 		}
 	};
 	

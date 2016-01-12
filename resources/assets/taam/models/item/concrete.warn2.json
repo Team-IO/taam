@@ -1,5 +1,5 @@
 {
-    "parent": "taam:block/concrete",
+    "parent": "taam:block/concrete.warn2",
     "display": {
         "thirdperson": {
             "rotation": [ 10, -45, 170 ],

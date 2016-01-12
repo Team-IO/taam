@@ -1,5 +1,6 @@
 package net.teamio.taam.rendering;
 
+import java.io.IOException;
 import java.util.Random;
 
 import org.lwjgl.opengl.GL11;
@@ -8,6 +9,7 @@ import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -16,6 +18,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.IItemRenderer;
+import net.minecraftforge.client.model.obj.OBJLoader;
+import net.minecraftforge.client.model.obj.OBJModel;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.teamio.taam.Config;
@@ -46,7 +50,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 	public final ResourceLocation textureSensor;
 	public final ResourceLocation textureSensorBlink;
 	
-//	public final WavefrontObject modelConveyor;
+	public final OBJModel modelConveyor;
 	public final ResourceLocation textureConveyor;
 	
 //	public final WavefrontObject modelMachines;
@@ -75,7 +79,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 		textureSensor = new ResourceLocation(Taam.MOD_ID + ":textures/models/sensor.png");
 		textureSensorBlink = new ResourceLocation(Taam.MOD_ID + ":textures/models/sensor_blink.png");
 
-//		modelConveyor = new CachingWavefrontObject(new ResourceLocation(Taam.MOD_ID + ":models/conveyor.obj"));
+		modelConveyor = null;//(OBJModel) OBJLoader.instance.loadModel(new ModelResourceLocation(Taam.MOD_ID + ":models/conveyor"));
 		textureConveyor = new ResourceLocation(Taam.MOD_ID + ":textures/models/conveyor.png");
 
 //		modelMachines = new CachingWavefrontObject(new ResourceLocation(Taam.MOD_ID + ":models/machines.obj"));

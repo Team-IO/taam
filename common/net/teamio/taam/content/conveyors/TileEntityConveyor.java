@@ -1,13 +1,20 @@
 package net.teamio.taam.content.conveyors;
 
+import java.util.ArrayList;
+import java.util.Map;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumFacing.Axis;
+import net.minecraft.util.IChatComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.client.model.obj.OBJModel.OBJState;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -46,6 +53,8 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	public boolean renderLeft = false;
 	public boolean renderAbove = false;
 	
+	public final OBJState modelState = new OBJState(new ArrayList<String>(), true);//TODO: Default to list of all visible parts
+	
 	/*
 	 * Appliance state
 	 */
@@ -78,7 +87,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	public void updateRenderingInfo() {
 		if(worldObj != null) {
 			// Check in front
-			TileEntity te = worldObj.getTileEntity(xCoord + direction.offsetX, yCoord + direction.offsetY, zCoord + direction.offsetZ);
+			TileEntity te = worldObj.getTileEntity(pos.offset(direction));
 			if(te instanceof TileEntityConveyor) {
 				TileEntityConveyor next = (TileEntityConveyor)te;
 				renderEnd = next.speedLevel != speedLevel;
@@ -91,7 +100,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 			
 			// Check behind
 			EnumFacing inverse = direction.getOpposite();
-			te = worldObj.getTileEntity(xCoord + inverse.offsetX, yCoord + inverse.offsetY, zCoord + inverse.offsetZ);
+			te = worldObj.getTileEntity(pos.offset(inverse));
 			if(te instanceof TileEntityConveyor) {
 				TileEntityConveyor next = (TileEntityConveyor)te;
 				renderBegin = next.speedLevel != speedLevel;
@@ -103,8 +112,8 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 			}
 			
 			// Check right
-			inverse = direction.getRotation(EnumFacing.UP);
-			te = worldObj.getTileEntity(xCoord + inverse.offsetX, yCoord + inverse.offsetY, zCoord + inverse.offsetZ);
+			inverse = direction.rotateAround(Axis.Y);
+			te = worldObj.getTileEntity(pos.offset(inverse));
 			
 			if(te instanceof TileEntityConveyor) {
 				TileEntityConveyor next = (TileEntityConveyor)te;
@@ -115,8 +124,8 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 			}
 			
 			// Check left
-			inverse = direction.getRotation(EnumFacing.DOWN);
-			te = worldObj.getTileEntity(xCoord + inverse.offsetX, yCoord + inverse.offsetY, zCoord + inverse.offsetZ);
+			inverse = direction.getOpposite().rotateAround(Axis.Y);
+			te = worldObj.getTileEntity(pos.offset(inverse));
 			
 			if(te instanceof TileEntityConveyor) {
 				TileEntityConveyor next = (TileEntityConveyor)te;
@@ -127,9 +136,23 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 			}
 			
 			// Check above
-			renderAbove = worldObj.isSideSolid(xCoord, yCoord + 1, zCoord, EnumFacing.DOWN) ||
-					worldObj.getTileEntity(xCoord, yCoord + 1, zCoord) instanceof IConveyorAwareTE;
+			renderAbove = worldObj.isSideSolid(pos.offset(EnumFacing.UP), EnumFacing.DOWN) ||
+					worldObj.getTileEntity(pos.offset(EnumFacing.DOWN)) instanceof IConveyorAwareTE;
 		}
+		
+		Map<String, Boolean> visibility = modelState.getVisibilityMap();
+		visibility.put("conveyorEnd", !isEnd);
+		visibility.put("conveyorEndCurved", isEnd);
+		
+		visibility.put("conveyorBegin", !isBegin);
+		visibility.put("conveyorBeginCurved", isBegin);
+		
+		visibility.put("conveyorEndCap", isEnd);
+		visibility.put("conveyorBeginCap", isEnd);
+		
+		visibility.put("conveyorLeftCap", renderLeft);
+		visibility.put("conveyorRightCap", renderRight);
+		visibility.put("conveyorSupportAbove", renderAbove);
 	}
 
 	/**
@@ -150,7 +173,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	}
 	
 	@Override
-	public void updateEntity() {
+	public void update() {
 
 		/*
 		 * Find items laying on the conveyor.
@@ -230,14 +253,14 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 
 	@Override
 	protected void readPropertiesFromNBT(NBTTagCompound tag) {
-		direction = EnumFacing.getOrientation(tag.getInteger("direction"));
-		if(direction == EnumFacing.UP || direction == EnumFacing.DOWN || direction == EnumFacing.UNKNOWN) {
+		direction = EnumFacing.getFront(tag.getInteger("direction"));
+		if(direction == EnumFacing.UP || direction == EnumFacing.DOWN) {
 			direction = EnumFacing.NORTH;
 		}
 		speedLevel = tag.getInteger("speedLevel");
 		NBTTagList itemsTag = tag.getTagList("items", NBT.TAG_COMPOUND);
 		if(itemsTag != null) {
-			int count = Math.min(itemsTag.func_150303_d(), items.length);
+			int count = Math.min(itemsTag.tagCount(), items.length);
 			for(int i = 0; i < count; i++) {
 				items[i] = ItemWrapper.readFromNBT(itemsTag.getCompoundTagAt(i));
 			}
@@ -293,21 +316,6 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	public ItemWrapper getSlot(int slot) {
 		return items[slot];
 	};
-	
-	@Override
-	public int posX() {
-		return xCoord;
-	}
-	
-	@Override
-	public int posY() {
-		return yCoord;
-	}
-	
-	@Override
-	public int posZ() {
-		return zCoord;
-	}
 
 	@Override
 	public EnumFacing getMovementDirection() {
@@ -336,20 +344,21 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	
 	@Override
 	public EnumFacing getNextFacingDirection() {
-		return direction.getRotation(EnumFacing.UP);
+		return direction.rotateAround(Axis.Y);
 	}
 
 	@Override
 	public void setFacingDirection(EnumFacing direction) {
 		this.direction = direction;
-		if(direction == EnumFacing.UP || direction == EnumFacing.DOWN || direction == EnumFacing.UNKNOWN) {
+		if(direction == EnumFacing.UP || direction == EnumFacing.DOWN) {
 			this.direction = EnumFacing.NORTH;
 		}
 		updateRenderingInfo();
 		updateState();
-		worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, blockType);
+		worldObj.notifyNeighborsOfStateChange(pos, blockType);
 		if(blockType != null) {
-			blockType.onNeighborBlockChange(worldObj, xCoord, yCoord, zCoord, blockType);
+			//TODO: Update this block -> drop if it can't stay anymore
+			//blockType.onNeighborBlockChange(worldObj, pos, blockType);
 		}
 	}
 
@@ -486,20 +495,25 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	}
 
 	@Override
-	public String getInventoryName() {
+	public IChatComponent getDisplayName() {
 		if(appliance == null) {
-			return "tile.taam.productionline.conveyor.name";
+			return new ChatComponentTranslation("tile.taam.productionline.conveyor.name");
 		} else {
-			return appliance.getInventoryName();
+			return appliance.getDisplayName();
 		}
 	}
 
 	@Override
-	public boolean hasCustomInventoryName() {
+	public String getCommandSenderName() {
+		return "tile.taam.productionline.conveyor.name";
+	}
+
+	@Override
+	public boolean hasCustomName() {
 		if(appliance == null) {
 			return false;
 		} else {
-			return appliance.hasCustomInventoryName();
+			return appliance.hasCustomName();
 		}
 	}
 
@@ -522,16 +536,16 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	}
 
 	@Override
-	public void openInventory() {
+	public void openInventory(EntityPlayer player) {
 		if(appliance != null) {
-			appliance.openInventory();
+			appliance.openInventory(player);
 		}
 	}
 
 	@Override
-	public void closeInventory() {
+	public void closeInventory(EntityPlayer player) {
 		if(appliance != null) {
-			appliance.closeInventory();
+			appliance.closeInventory(player);
 		}
 	}
 
@@ -543,28 +557,54 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 			return appliance.isItemValidForSlot(slot, itemStack);
 		}
 	}
+
+
+	@Override
+	public int getField(int id) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void setField(int id, int value) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public int getFieldCount() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void clear() {
+		if(appliance == null) {
+		} else {
+			appliance.clear();
+		}
+	}
 	
 	/*
 	 * ISidedInventory implementation
 	 */
 	
 	@Override
-	public int[] getAccessibleSlotsFromSide(int side) {
+	public int[] getSlotsForFace(EnumFacing side) {
 		if(appliance == null) {
-			final EnumFacing dir = EnumFacing.getOrientation(side);
-			final int slot = ConveyorUtil.getSlot(dir);
+			final int slot = ConveyorUtil.getSlot(side);
 			if(slot == -1) {
 				return new int[0];
 			} else {
 				return new int[] { slot };
 			}
 		} else {
-			return appliance.getAccessibleSlotsFromSide(side);
+			return appliance.getSlotsForFace(side);
 		}
 	}
-
+	
 	@Override
-	public boolean canInsertItem(int slot, ItemStack itemStack, int side) {
+	public boolean canInsertItem(int slot, ItemStack itemStack, EnumFacing side) {
 		if(appliance == null) {
 			return ConveyorUtil.insertItemAt(this, itemStack, slot, true) > 0;
 		} else {
@@ -573,7 +613,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	}
 
 	@Override
-	public boolean canExtractItem(int slot, ItemStack itemStack, int side) {
+	public boolean canExtractItem(int slot, ItemStack itemStack, EnumFacing side) {
 		if(appliance == null) {
 			return false;
 		} else {
@@ -643,11 +683,10 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	/*
 	 * IWorldInteractable implementation
 	 */
-	
 	@Override
-	public boolean onBlockActivated(World world, int x, int y, int z,
-			EntityPlayer player, boolean playerHasWrench, int side, float hitX, float hitY, float hitZ) {
-		if(side != EnumFacing.UP.ordinal()) {
+	public boolean onBlockActivated(World world, EntityPlayer player, boolean hasWrench, EnumFacing side, float hitX,
+			float hitY, float hitZ) {
+		if(side != EnumFacing.UP) {
 			return false;
 		}
 		ConveyorUtil.defaultPlayerInteraction(player, this, hitX, hitZ);
@@ -655,8 +694,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	}
 	
 	@Override
-	public boolean onBlockHit(World world, int x, int y, int z,
-			EntityPlayer player, boolean hasWrench) {
+	public boolean onBlockHit(World world, EntityPlayer player, boolean hasWrench) {
 		return false;
 	}
 }
