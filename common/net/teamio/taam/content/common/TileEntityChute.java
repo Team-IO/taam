@@ -45,7 +45,7 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 	
 	@Override
 	public void update() {
-		// Skip item insertion if there is a solid block / other chute above us 
+		// Skip item insertion if there is a solid block / other chute above us
 		if(isConveyorVersion || !worldObj.isSideSolid(pos.up(), EnumFacing.DOWN, false)) {
 			ConveyorUtil.tryInsertItemsFromWorld(this, worldObj, null, false);
 		}
