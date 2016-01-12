@@ -55,35 +55,37 @@ public class BlockProductionLine extends BaseBlock {
 	}
 	
 	@Override
-	public TileEntity createTileEntity(World world, IBlockState metadata) {
-		if(metadata == 0) {
+	public TileEntity createTileEntity(World world, int metadata) {
+		Taam.BLOCK_PRODUCTIONLINE_META variant = Taam.BLOCK_PRODUCTIONLINE_META.values()[metadata % Taam.BLOCK_PRODUCTIONLINE_META.values().length];
+		switch(variant) {
+		case conveyor1:
 			// Plain Conveyor, Tier 1
 			return new TileEntityConveyor(0);
-		} else if(metadata == 1) {
+		case conveyor2:
 			// Plain Conveyor, Tier 2
 			return new TileEntityConveyor(1);
-		} else if(metadata == 2) {
+		case conveyor3:
 			// Plain Conveyor, Tier 2
 			return new TileEntityConveyor(2);
-		} else if(metadata == 3) {
+		case hopper:
 			// Hopper, Regular
 			return new TileEntityConveyorHopper(false);
-		} else if(metadata == 4) {
+		case hopper_hs:
 			// Hopper, High-Speed
 			return new TileEntityConveyorHopper(true);
-		} else if(metadata == 5) {
+		case sieve:
 			// Sieve
 			return new TileEntityConveyorSieve();
-		} else if(metadata == 6) {
+		case shredder:
 			// Shredder
 			return new TileEntityConveyorProcessor(TileEntityConveyorProcessor.Shredder);
-		} else if(metadata == 7) {
+		case grinder:
 			// Grinder
 			return new TileEntityConveyorProcessor(TileEntityConveyorProcessor.Grinder);
-		} else if(metadata == 8) {
+		case crusher:
 			// Crusher
 			return new TileEntityConveyorProcessor(TileEntityConveyorProcessor.Crusher);
-		} else if(metadata == 9) {
+		case chute:
 			// Chute
 			return new TileEntityChute(true);
 		}

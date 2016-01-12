@@ -53,7 +53,7 @@ public class OreGenerator implements IWorldGenerator {
 	}
 	
 	private IBlockState getOre(Taam.BLOCK_ORE_META ore) {
-		return TaamMain.blockOre.getDefaultState().withProperty(BlockOre.VARIANT, ore);
+		return TaamMain.blockOre.getDefaultState().withProperty(BlockOre.VARIANT, Taam.BLOCK_ORE_META.copper);
 	}
 	
 	@Override

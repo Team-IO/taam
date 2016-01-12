@@ -43,10 +43,12 @@ public class BlockProductionLineAttachable extends BlockProductionLine {
 	@Override
 	public TileEntity createTileEntity(World world, int metadata) {
 		int type = metadata & 3;
-		if(type == 0) {
+		Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META variant = Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META.values()[type];
+		switch(variant) {
+		case itembag:
 			// Item Bag
 			return new TileEntityConveyorItemBag();
-		} else if(type == 1) {
+		case trashcan:
 			// Trash Can
 			return new TileEntityConveyorTrashCan();
 		}
