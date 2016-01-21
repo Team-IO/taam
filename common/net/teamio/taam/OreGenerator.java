@@ -11,7 +11,9 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.feature.WorldGenMinable;
+import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.IWorldGenerator;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.teamio.taam.content.common.BlockOre;
 
 public class OreGenerator implements IWorldGenerator {
@@ -33,6 +35,21 @@ public class OreGenerator implements IWorldGenerator {
 	List<GenerationInfo> gens;
 	
 	public OreGenerator() {
+		reloadGenerationInfo();
+	}
+	
+
+	@SubscribeEvent
+	public void onConfigChangedEvent(ConfigChangedEvent.OnConfigChangedEvent event)
+	{
+		// Reload when the config changes to apply it BEFORE restart.
+		if (event.modID.equalsIgnoreCase(Taam.MOD_ID))
+		{
+			reloadGenerationInfo();
+		}
+	}
+	
+	public void reloadGenerationInfo() {
 		gens = new ArrayList<GenerationInfo>();
 		BlockHelper stone = BlockHelper.forBlock(Blocks.stone);
 		if(Config.genOre[0]) {

@@ -202,7 +202,10 @@ public class TaamMain {
 		GameRegistry.registerTileEntity(TileEntityConveyorSieve.class, Taam.TILEENTITY_CONVEYOR_SIEVE);
 //		GameRegistry.registerTileEntity(TileEntitySlidingDoor.class, Taam.TILEENTITY_SLIDINGDOOR);
 		
-		GameRegistry.registerWorldGenerator(new OreGenerator(), 2);
+		OreGenerator worldgen = new OreGenerator();
+		FMLCommonHandler.instance().bus().register(worldgen);
+		
+		GameRegistry.registerWorldGenerator(worldgen, 2);
 		
 		ApplianceRegistry.registerFactory(Taam.APPLIANCE_SPRAYER, new ApplianceSprayer.Factory());
 		
