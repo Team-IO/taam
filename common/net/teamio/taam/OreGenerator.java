@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import cpw.mods.fml.client.event.ConfigChangedEvent;
 import cpw.mods.fml.common.IWorldGenerator;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
@@ -30,6 +32,21 @@ public class OreGenerator implements IWorldGenerator {
 	List<GenerationInfo> gens;
 	
 	public OreGenerator() {
+		reloadGenerationInfo();
+	}
+	
+
+	@SubscribeEvent
+	public void onConfigChangedEvent(ConfigChangedEvent.OnConfigChangedEvent event)
+	{
+		// Reload when the config changes to apply it BEFORE restart.
+		if (event.modID.equalsIgnoreCase(Taam.MOD_ID))
+		{
+			reloadGenerationInfo();
+		}
+	}
+	
+	public void reloadGenerationInfo() {
 		gens = new ArrayList<GenerationInfo>();
 		Block stone = Blocks.stone;
 		if(Config.genOre[0]) {
