@@ -7,6 +7,8 @@ import org.lwjgl.opengl.GL11;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.resources.model.ModelResourceLocation;
@@ -271,8 +273,8 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 		 */
 		GL11.glTranslated(x, y, z);
 		
-		Minecraft.getMinecraft().renderEngine.bindTexture(textureConveyor);
-		modelMachines.renderPart("Chute_chutemdl");
+		//Minecraft.getMinecraft().renderEngine.bindTexture(textureConveyor);
+		//modelMachines.renderPart("Chute_chutemdl");
 		
 		GL11.glPopMatrix();
 	}
@@ -284,8 +286,8 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 		 */
 		GL11.glTranslated(x, y, z);
 		
-		Minecraft.getMinecraft().renderEngine.bindTexture(textureConveyor);
-		modelMachines.renderPart("Creative_Cache_ccmdl");
+		//Minecraft.getMinecraft().renderEngine.bindTexture(textureConveyor);
+		//modelMachines.renderPart("Creative_Cache_ccmdl");
 		
 		GL11.glPopMatrix();
 	}
@@ -317,15 +319,15 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 		/*
 		 * Bind Texture
 		 */
-		Minecraft.getMinecraft().renderEngine.bindTexture(textureConveyor);
+		//Minecraft.getMinecraft().renderEngine.bindTexture(textureConveyor);
 
 		/*
 		 * Render Support Frame
 		 */
 		if(isWood) {
-			modelConveyor.renderPart("Support_Wood_smdl_wood");
+			//modelConveyor.renderPart("Support_Wood_smdl_wood");
 		} else {
-			modelConveyor.renderPart("Support_Alu_smdl_alu");
+			//modelConveyor.renderPart("Support_Alu_smdl_alu");
 		}
 	}
 	
@@ -368,7 +370,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 				ItemStack processingStack = processor.getStackInSlot(0);
 				if(processingStack != null) {
 					GL11.glPushMatrix();
-					Random rand = processor.getWorldObj().rand;
+					Random rand = processor.getWorld().rand;
 					GL11.glTranslatef(0.5f, -0.1f, 0.5f);
 					
 					/*
@@ -386,9 +388,9 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 					
 					ei.setEntityItemStack(processingStack);
 
-					RenderItem.renderInFrame = true;
-					ri.doRender(ei, 0, .5f, 0, 0, 0);
-					RenderItem.renderInFrame = false;
+					//RenderItem.renderInFrame = true;
+					ri.renderItemModel(processingStack);//.doRender(ei, 0, .5f, 0, 0, 0);
+					//RenderItem.renderInFrame = false;
 					
 					GL11.glPopMatrix();
 				}
@@ -428,17 +430,22 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 					float posZ = (float)ConveyorUtil.getItemPositionZ(slot, movementProgress / speedsteps, renderDirection);
 					
 					GL11.glPushMatrix();
-					GL11.glTranslatef(posX, posY, posZ);
+					GL11.glTranslatef(posX, posY + 0.5f, posZ);
+					GL11.glScalef(0.6f, 0.6f, 0.6f);
 					
 					//Don't rotate on the conveyors, as that makes transitions jumpy
 					//GL11.glRotatef(rotationDegrees, 0, 1, 0);
-					
-					ei.setEntityItemStack(itemStack);
+
+	                GlStateManager.pushAttrib();
+	                RenderHelper.enableStandardItemLighting();
+					//ei.setEntityItemStack(itemStack);
 	
 					// Used to be true, but blocks are too big that way..
-					RenderItem.renderInFrame = false;
-					ri.doRender(ei, 0, .5f, 0, 0, 0);
 					//RenderItem.renderInFrame = false;
+					ri.renderItemModel(itemStack);//.doRender(ei, 0, .5f, 0, 0, 0);
+					//RenderItem.renderInFrame = false;
+	                RenderHelper.disableStandardItemLighting();
+	                GlStateManager.popAttrib();
 					
 					GL11.glPopMatrix();
 				}
@@ -482,47 +489,47 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 		
 		if(!renderLeft && !renderRight) {
 			if(isWood) {
-				modelConveyor.renderPart("Conveyor_Direction_Marker_Wood_cdmdl_wood");
+				//modelConveyor.renderPart("Conveyor_Direction_Marker_Wood_cdmdl_wood");
 			} else {
-				modelConveyor.renderPart("Conveyor_Direction_Marker_Alu_cdmdl_alu");
+				//modelConveyor.renderPart("Conveyor_Direction_Marker_Alu_cdmdl_alu");
 			}
 		}
 		
 		if(renderAbove) {
 			if(isWood) {
-				modelConveyor.renderPart("Support_Above_Wood_samdl_wood");
+				//modelConveyor.renderPart("Support_Above_Wood_samdl_wood");
 			} else {
-				modelConveyor.renderPart("Support_Above_Alu_samdl_alu");
+				//modelConveyor.renderPart("Support_Above_Alu_samdl_alu");
 			}
 		}
 		
 		if(end) {
-			modelConveyor.renderPart("Conveyor_End_cemdl");
+			//modelConveyor.renderPart("Conveyor_End_cemdl");
 			if(isWood) {
-				modelConveyor.renderPart("Conveyor_End_Framing_Wood_cemdl_wood");
-				modelConveyor.renderPart("Conveyor_End_Walz_Wood_cwalzmdl_wood");
-				modelConveyor.renderPart("Support_Caps_Wood_scmdl_wood");
-				if(renderEnd)
-					modelConveyor.renderPart("Conveyor_End_Cap_Wood_cecmdl_wood");
+				//modelConveyor.renderPart("Conveyor_End_Framing_Wood_cemdl_wood");
+				//modelConveyor.renderPart("Conveyor_End_Walz_Wood_cwalzmdl_wood");
+				//modelConveyor.renderPart("Support_Caps_Wood_scmdl_wood");
+				//if(renderEnd)
+					//modelConveyor.renderPart("Conveyor_End_Cap_Wood_cecmdl_wood");
 			} else {
-				modelConveyor.renderPart("Conveyor_End_Framing_Alu_cemdl_alu");
-				modelConveyor.renderPart("Conveyor_End_Walz_Alu_cwalzmdl_alu");
-				modelConveyor.renderPart("Support_Caps_Alu_scmdl_alu");
-				if(renderEnd)
-					modelConveyor.renderPart("Conveyor_End_Cap_Alu_cecmdl_alu");
+				//modelConveyor.renderPart("Conveyor_End_Framing_Alu_cemdl_alu");
+				//modelConveyor.renderPart("Conveyor_End_Walz_Alu_cwalzmdl_alu");
+				//modelConveyor.renderPart("Support_Caps_Alu_scmdl_alu");
+				//if(renderEnd)
+					//modelConveyor.renderPart("Conveyor_End_Cap_Alu_cecmdl_alu");
 			}
 		} else {
-			modelConveyor.renderPart("Conveyor_Straight_csmdl");
+			//modelConveyor.renderPart("Conveyor_Straight_csmdl");
 			if(isWood) {
-				modelConveyor.renderPart("Conveyor_Straight_Framing_Wood_csmdl_wood");
-				modelConveyor.renderPart("Conveyor_Straight_Walz_Wood_cwalzmdl_wood");
+				//modelConveyor.renderPart("Conveyor_Straight_Framing_Wood_csmdl_wood");
+				//modelConveyor.renderPart("Conveyor_Straight_Walz_Wood_cwalzmdl_wood");
 			} else {
-				modelConveyor.renderPart("Conveyor_Straight_Framing_Alu_csmdl_alu");
-				modelConveyor.renderPart("Conveyor_Straight_Walz_Alu_cwalzmdl_alu");
+				//modelConveyor.renderPart("Conveyor_Straight_Framing_Alu_csmdl_alu");
+				//modelConveyor.renderPart("Conveyor_Straight_Walz_Alu_cwalzmdl_alu");
 			}
 		}
 		if(isHighSpeed) {
-			modelConveyor.renderPart("Conveyor_High_Throughput_Framing_Alu_chtpmdl_alu");
+			//modelConveyor.renderPart("Conveyor_High_Throughput_Framing_Alu_chtpmdl_alu");
 		}
 		
 		GL11.glTranslated(0.5, 0, 0.5);
@@ -530,29 +537,29 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 		GL11.glTranslated(-0.5, 0, -0.5);
 		
 		if(begin) {
-			modelConveyor.renderPart("Conveyor_End_cemdl");
+			//modelConveyor.renderPart("Conveyor_End_cemdl");
 			if(isWood) {
-				modelConveyor.renderPart("Conveyor_End_Framing_Wood_cemdl_wood");
-				modelConveyor.renderPart("Conveyor_End_Walz_Wood_cwalzmdl_wood");
-				modelConveyor.renderPart("Support_Caps_Wood_scmdl_wood");
-				if(renderBegin)
-					modelConveyor.renderPart("Conveyor_End_Cap_Wood_cecmdl_wood");
+				//modelConveyor.renderPart("Conveyor_End_Framing_Wood_cemdl_wood");
+				//modelConveyor.renderPart("Conveyor_End_Walz_Wood_cwalzmdl_wood");
+				//modelConveyor.renderPart("Support_Caps_Wood_scmdl_wood");
+				//if(renderBegin)
+					//modelConveyor.renderPart("Conveyor_End_Cap_Wood_cecmdl_wood");
 			} else {
-				modelConveyor.renderPart("Conveyor_End_Framing_Alu_cemdl_alu");
-				modelConveyor.renderPart("Conveyor_End_Walz_Alu_cwalzmdl_alu");
-				modelConveyor.renderPart("Support_Caps_Alu_scmdl_alu");
-				if(renderBegin)
-					modelConveyor.renderPart("Conveyor_End_Cap_Alu_cecmdl_alu");
+				//modelConveyor.renderPart("Conveyor_End_Framing_Alu_cemdl_alu");
+				//modelConveyor.renderPart("Conveyor_End_Walz_Alu_cwalzmdl_alu");
+				//modelConveyor.renderPart("Support_Caps_Alu_scmdl_alu");
+				//if(renderBegin)
+					//modelConveyor.renderPart("Conveyor_End_Cap_Alu_cecmdl_alu");
 			}
 		} else {
-			modelConveyor.renderPart("Conveyor_Straight_csmdl");
-			if(isWood) {
-				modelConveyor.renderPart("Conveyor_Straight_Framing_Wood_csmdl_wood");
-				modelConveyor.renderPart("Conveyor_Straight_Walz_Wood_cwalzmdl_wood");
-			} else {
-				modelConveyor.renderPart("Conveyor_Straight_Framing_Alu_csmdl_alu");
-				modelConveyor.renderPart("Conveyor_Straight_Walz_Alu_cwalzmdl_alu");
-			}
+			//modelConveyor.renderPart("Conveyor_Straight_csmdl");
+			//if(isWood) {
+				//modelConveyor.renderPart("Conveyor_Straight_Framing_Wood_csmdl_wood");
+				//modelConveyor.renderPart("Conveyor_Straight_Walz_Wood_cwalzmdl_wood");
+			//} else {
+				//modelConveyor.renderPart("Conveyor_Straight_Framing_Alu_csmdl_alu");
+				//modelConveyor.renderPart("Conveyor_Straight_Walz_Alu_cwalzmdl_alu");
+			//}
 		}
 		
 		if(renderRight) {
@@ -561,9 +568,9 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 			GL11.glTranslated(-0.5, 0, -0.5);
 
 			if(isWood) {
-				modelConveyor.renderPart("Conveyor_End_Cap_Wood_cecmdl_wood");
+				//modelConveyor.renderPart("Conveyor_End_Cap_Wood_cecmdl_wood");
 			} else {
-				modelConveyor.renderPart("Conveyor_End_Cap_Alu_cecmdl_alu");
+				//modelConveyor.renderPart("Conveyor_End_Cap_Alu_cecmdl_alu");
 			}
 
 			GL11.glTranslated(0.5, 0, 0.5);
@@ -576,9 +583,9 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 			GL11.glTranslated(-0.5, 0, -0.5);
 
 			if(isWood) {
-				modelConveyor.renderPart("Conveyor_End_Cap_Wood_cecmdl_wood");
+				//modelConveyor.renderPart("Conveyor_End_Cap_Wood_cecmdl_wood");
 			} else {
-				modelConveyor.renderPart("Conveyor_End_Cap_Alu_cecmdl_alu");
+				//modelConveyor.renderPart("Conveyor_End_Cap_Alu_cecmdl_alu");
 			}
 
 			GL11.glTranslated(0.5, 0, 0.5);
