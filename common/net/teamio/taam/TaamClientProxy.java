@@ -18,7 +18,6 @@ import net.teamio.taam.content.conveyors.TileEntityConveyorItemBag;
 import net.teamio.taam.content.conveyors.TileEntityConveyorProcessor;
 import net.teamio.taam.content.conveyors.TileEntityConveyorSieve;
 import net.teamio.taam.content.conveyors.TileEntityConveyorTrashCan;
-import net.teamio.taam.rendering.TaamBlockRenderer;
 import net.teamio.taam.rendering.TaamRenderer;
 
 public class TaamClientProxy extends TaamCommonProxy {
@@ -26,7 +25,6 @@ public class TaamClientProxy extends TaamCommonProxy {
 	public static int blockRendererId;
 	
 	public static TaamRenderer taamRenderer;
-	public static TaamBlockRenderer taamBlockRenderer;
 
 	@Override
 	public void registerRenderStuff() {
@@ -91,18 +89,36 @@ public class TaamClientProxy extends TaamCommonProxy {
 			}
 		}
 
-		Item itemConcrete = GameRegistry.findItem(Taam.MOD_ID, Taam.BLOCK_CONCRETE);
+		Item itemToRegister = GameRegistry.findItem(Taam.MOD_ID, Taam.BLOCK_CONCRETE);
 		
 		for(Taam.BLOCK_CONCRETE_META meta : Taam.BLOCK_CONCRETE_META.values()) {
 			int metaInt = meta.ordinal();
 			String metaName = meta.name();
-			ModelBakery.addVariantName(itemConcrete, Taam.MOD_ID + ":concrete." + metaName);
-			modelMesher.register(itemConcrete, metaInt, new ModelResourceLocation(Taam.MOD_ID + ":concrete." + metaName, "inventory"));
+			ModelBakery.addVariantName(itemToRegister, Taam.MOD_ID + ":concrete." + metaName);
+			modelMesher.register(itemToRegister, metaInt, new ModelResourceLocation(Taam.MOD_ID + ":concrete." + metaName, "inventory"));
 		}
 
 		registerItemDefault(modelMesher, TaamMain.itemWrench, 0, Taam.MOD_ID + ":wrench");
 		registerItemDefault(modelMesher, TaamMain.itemSaw, 0, Taam.MOD_ID + ":tool.saw");
 		registerItemDefault(modelMesher, TaamMain.itemDebugTool, 0, Taam.MOD_ID + ":coffee");
+		
+		itemToRegister = TaamMain.itemMaterial;
+		
+		for(Taam.ITEM_MATERIAL_META meta : Taam.ITEM_MATERIAL_META.values()) {
+			int metaInt = meta.ordinal();
+			String metaName = meta.name();
+			ModelBakery.addVariantName(itemToRegister, Taam.MOD_ID + ":material." + metaName);
+			modelMesher.register(itemToRegister, metaInt, new ModelResourceLocation(Taam.MOD_ID + ":material." + metaName, "inventory"));
+		}
+		
+		itemToRegister = TaamMain.itemPart;
+		
+		for(Taam.ITEM_PART_META meta : Taam.ITEM_PART_META.values()) {
+			int metaInt = meta.ordinal();
+			String metaName = meta.name();
+			ModelBakery.addVariantName(itemToRegister, Taam.MOD_ID + ":part." + metaName);
+			modelMesher.register(itemToRegister, metaInt, new ModelResourceLocation(Taam.MOD_ID + ":part." + metaName, "inventory"));
+		}
 	}
 	
 	private void registerItemDefault(ItemModelMesher modelMesher, Item item, int meta, String name) {
