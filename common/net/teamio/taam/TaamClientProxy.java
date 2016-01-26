@@ -6,6 +6,7 @@ import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraftforge.client.MinecraftForgeClient;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -104,6 +105,12 @@ public class TaamClientProxy extends TaamCommonProxy {
 		registerItemDefault(modelMesher, TaamMain.itemWrench, 0, Taam.MOD_ID + ":wrench");
 		registerItemDefault(modelMesher, TaamMain.itemSaw, 0, Taam.MOD_ID + ":tool.saw");
 		registerItemDefault(modelMesher, TaamMain.itemDebugTool, 0, Taam.MOD_ID + ":coffee");
+		
+
+		itemToRegister = GameRegistry.findItem(Taam.MOD_ID, Taam.BLOCK_SUPPORT_BEAM);
+//		ModelLoader.setCustomModelResourceLocation(itemToRegister, 0, new ModelResourceLocation(Taam.MOD_ID + ":support_beam", "inventory"));
+		
+//		registerItemDefault(modelMesher, itemToRegister, 0, Taam.MOD_ID + ":support_beam");
 		
 		itemToRegister = TaamMain.itemMaterial;
 		

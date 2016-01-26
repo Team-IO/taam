@@ -32,12 +32,6 @@ public class BlockSupportBeam extends Block {
 		this.setHardness(2);
 	}
 	
-//	@Override
-//	@SideOnly(Side.CLIENT)
-//	public int getRenderType() {
-//		return TaamClientProxy.blockRendererId;
-//	}
-	
 	@Override
 	public boolean isOpaqueCube() {
 		return false;
@@ -48,12 +42,12 @@ public class BlockSupportBeam extends Block {
 		return true;
 	}
 	
-	@Override
-    public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos)
-    {
-        //OBJTesseractTileEntity tileEntity = (OBJTesseractTileEntity) world.getTileEntity(pos);
-        OBJModel.OBJState retState = new OBJModel.OBJState(Lists.newArrayList(OBJModel.Group.ALL), true);
-        return ((IExtendedBlockState) this.state.getBaseState()).withProperty(OBJModel.OBJProperty.instance, retState);
-    }
+//	@Override
+//    public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos)
+//    {
+//        //OBJTesseractTileEntity tileEntity = (OBJTesseractTileEntity) world.getTileEntity(pos);
+//        OBJModel.OBJState retState = new OBJModel.OBJState(Lists.newArrayList(OBJModel.Group.ALL), true);
+//        return ((IExtendedBlockState) this.state.getBaseState()).withProperty(OBJModel.OBJProperty.instance, retState);
+//    }
 
 }
