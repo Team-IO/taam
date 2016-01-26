@@ -5,12 +5,18 @@ import java.util.Random;
 
 import org.lwjgl.opengl.GL11;
 
+import com.google.common.base.Function;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BlockModelRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Items;
@@ -20,6 +26,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.IItemRenderer;
+import net.minecraftforge.client.model.IFlexibleBakedModel;
 import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.client.model.obj.OBJModel;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -81,7 +88,15 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 		textureSensor = new ResourceLocation(Taam.MOD_ID + ":textures/models/sensor.png");
 		textureSensorBlink = new ResourceLocation(Taam.MOD_ID + ":textures/models/sensor_blink.png");
 
-		modelConveyor = null;//(OBJModel) OBJLoader.instance.loadModel(new ModelResourceLocation(Taam.MOD_ID + ":models/conveyor"));
+		OBJModel model;
+		try {
+			model = (OBJModel) OBJLoader.instance.loadModel(new ResourceLocation(Taam.MOD_ID + ":models/blocks.obj"));
+		} catch (IOException e) {
+			model = null;
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		modelConveyor = model;
 		textureConveyor = new ResourceLocation(Taam.MOD_ID + ":textures/models/conveyor.png");
 
 //		modelMachines = new CachingWavefrontObject(new ResourceLocation(Taam.MOD_ID + ":models/machines.obj"));
@@ -239,6 +254,17 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 				break;
 			}
 		} else if (tileEntity instanceof TileEntityConveyor) {
+
+//			Function<ResourceLocation, TextureAtlasSprite> textureGetter = new Function<ResourceLocation, TextureAtlasSprite>()
+//	        {
+//	            public TextureAtlasSprite apply(ResourceLocation location)
+//	            {
+//	                return Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString());
+//	            }
+//	        };
+//			IFlexibleBakedModel model = modelConveyor.bake(modelConveyor.getDefaultState(), DefaultVertexFormats.BLOCK, textureGetter);
+//			Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModelAmbientOcclusion(tileEntity.getWorld(), model, tileEntity.getWorld().getBlockState(tileEntity.getPos()).getBlock(), tileEntity.getPos(), Tessellator.getInstance().getWorldRenderer(), false);
+			
 			TileEntityConveyor tec = (TileEntityConveyor) tileEntity;
 			renderConveyor(tec, x, y, z, tec.getSpeedLevel());
 		} else if (tileEntity instanceof TileEntityConveyorHopper) {
@@ -321,6 +347,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 		 */
 		//Minecraft.getMinecraft().renderEngine.bindTexture(textureConveyor);
 
+        
 		/*
 		 * Render Support Frame
 		 */

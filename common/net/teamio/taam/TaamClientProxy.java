@@ -6,6 +6,7 @@ import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraftforge.client.MinecraftForgeClient;
+import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -28,6 +29,8 @@ public class TaamClientProxy extends TaamCommonProxy {
 
 	@Override
 	public void registerRenderStuff() {
+		OBJLoader.instance.addDomain("taam");
+		
 		taamRenderer = new TaamRenderer();
 		
 		// Tile Entity Rendering
