@@ -8,8 +8,11 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.server.gui.IUpdatePlayerListBox;
 import net.minecraft.tileentity.IHopper;
+import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.IChatComponent;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.teamio.taam.Config;
 import net.teamio.taam.TaamMain;
@@ -24,7 +27,7 @@ import net.teamio.taam.util.TaamUtil;
 import net.teamio.taam.util.WorldCoord;
 
 
-public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyorAwareTE, IInventory, IHopper, IRedstoneControlled, IRotatable {
+public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyorAwareTE, IInventory, IHopper, IRedstoneControlled, IRotatable, IUpdatePlayerListBox {
 
 	private InventorySimple inventory;
 	
@@ -49,7 +52,7 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 	}
 	
 	@Override
-	public void updateEntity() {
+	public void update() {
 		if(worldObj.isRemote) {
 			return;
 		}
@@ -65,7 +68,7 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 		boolean isShutdown = false;
 		
 		
-		boolean redstoneHigh = worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
+		boolean redstoneHigh = worldObj.isBlockIndirectlyGettingPowered(pos) > 0;
 		boolean isPulsing = false;
 		
 		// Redstone. Other criteria?
@@ -102,7 +105,7 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 		int amountToDecrease = 0;
 		
 		if(eject) {
-			if(!TaamUtil.canDropIntoWorld(worldObj, xCoord, yCoord - 1, zCoord)) {
+			if(!TaamUtil.canDropIntoWorld(worldObj, pos.down())) {
 				return;
 			}
 			for(int i = 0; i < this.inventory.getSizeInventory(); i++) {
@@ -122,7 +125,7 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 					 * -----------
 					 */
 					
-					EntityItem item = new EntityItem(worldObj, xCoord + 0.5, yCoord - 0.3, zCoord + 0.5, ejectStack);
+					EntityItem item = new EntityItem(worldObj, pos.getX() + 0.5, pos.getY() - 0.3, pos.getZ() + 0.5, ejectStack);
 			        item.motionX = 0;
 			        item.motionY = 0;
 			        item.motionZ = 0;
@@ -135,7 +138,7 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 			}
 		} else {
 
-			IInventory inventory = InventoryUtils.getInventory(worldObj, xCoord, yCoord - 1, zCoord);
+			IInventory inventory = InventoryUtils.getInventory(worldObj, pos.down());
 			if(inventory == null) {
 				return;
 			}
@@ -267,16 +270,21 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 	}
 
 	@Override
-	public String getInventoryName() {
+	public String getCommandSenderName() {
 		if(highSpeed) {
 			return "tile.taam.productionline.hopper_hs.name";
 		} else {
 			return "tile.taam.productionline.hopper.name";
 		}
 	}
-
+	
 	@Override
-	public boolean hasCustomInventoryName() {
+	public IChatComponent getDisplayName() {
+		return new ChatComponentTranslation(getCommandSenderName());
+	}
+	
+	@Override
+	public boolean hasCustomName() {
 		return false;
 	}
 
@@ -291,12 +299,12 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 	}
 
 	@Override
-	public void openInventory() {
+	public void openInventory(EntityPlayer player) {
 		// Nothing to do.
 	}
 
 	@Override
-	public void closeInventory() {
+	public void closeInventory(EntityPlayer player) {
 		// Nothing to do.
 	}
 
@@ -305,23 +313,22 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 		return inventory.isItemValidForSlot(slot, stack);
 	}
 
-	/*
-	 * IHopper implementation
-	 */
-	
 	@Override
-	public double getXPos() {
-		return this.xCoord;
+	public int getField(int id) {
+		return 0;
 	}
 
 	@Override
-	public double getYPos() {
-		return this.yCoord;
+	public void setField(int id, int value) {
 	}
 
 	@Override
-	public double getZPos() {
-		return this.zCoord;
+	public int getFieldCount() {
+		return 0;
+	}
+
+	@Override
+	public void clear() {
 	}
 	
 	/*
@@ -363,21 +370,6 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 	@Override
 	public byte getSpeedsteps() {
 		return 1;
-	}
-
-	@Override
-	public int posX() {
-		return xCoord;
-	}
-
-	@Override
-	public int posY() {
-		return yCoord;
-	}
-
-	@Override
-	public int posZ() {
-		return zCoord;
 	}
 
 	@Override
@@ -449,7 +441,26 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 			this.markDirty();
 		}
 	}
+	
+	/*
+	 * IHopper implementation
+	 */
 
+	@Override
+	public double getXPos() {
+		return pos.getX();
+	}
+
+	@Override
+	public double getYPos() {
+		return pos.getY();
+	}
+
+	@Override
+	public double getZPos() {
+		return pos.getZ();
+	}
+	
 	/*
 	 * IRedstoneControlled implementation
 	 */
@@ -486,7 +497,7 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 
 	@Override
 	public EnumFacing getNextFacingDirection() {
-		return direction.getRotation(EnumFacing.UP);
+		return direction.rotateY();
 	}
 
 	@Override
@@ -496,7 +507,7 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 	}
 
 	public EnumFacing getNextSlot(int slot) {
-		return EnumFacing.UNKNOWN;
+		return EnumFacing.DOWN;
 	}
 
 }

@@ -6,7 +6,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.IChatComponent;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.conveyors.ItemWrapper;
@@ -25,11 +27,6 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable implements 
 	public float fillPercent;
 	public TileEntityConveyorItemBag() {
 		inventory = new InventorySimple(5);
-	}
-	
-	@Override
-	public boolean canUpdate() {
-		return false;
 	}
 	
 	@Override
@@ -62,7 +59,7 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable implements 
 	protected void readPropertiesFromNBT(NBTTagCompound tag) {
 		inventory.items = new ItemStack[inventory.getSizeInventory()];
 		InventoryUtils.readItemStacksFromTag(inventory.items, tag.getTagList("items", NBT.TAG_COMPOUND));
-		direction = EnumFacing.getOrientation(tag.getInteger("direction"));
+		direction = EnumFacing.getFront(tag.getInteger("direction"));
 		updateRenderingInfo();
 	}
 
@@ -101,12 +98,17 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable implements 
 	}
 
 	@Override
-	public String getInventoryName() {
+	public String getCommandSenderName() {
 		return "tile.taam.productionline_attachable.itembag.name";
 	}
-
+	
 	@Override
-	public boolean hasCustomInventoryName() {
+	public IChatComponent getDisplayName() {
+		return new ChatComponentTranslation(getCommandSenderName());
+	}
+	
+	@Override
+	public boolean hasCustomName() {
 		return false;
 	}
 
@@ -121,18 +123,36 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable implements 
 	}
 
 	@Override
-	public void openInventory() {
+	public void openInventory(EntityPlayer player) {
 		// Nothing to do.
 	}
 
 	@Override
-	public void closeInventory() {
+	public void closeInventory(EntityPlayer player) {
 		// Nothing to do.
 	}
 
 	@Override
 	public boolean isItemValidForSlot(int slot, ItemStack stack) {
 		return inventory.isItemValidForSlot(slot, stack);
+	}
+
+	@Override
+	public int getField(int id) {
+		return 0;
+	}
+
+	@Override
+	public void setField(int id, int value) {
+	}
+
+	@Override
+	public int getFieldCount() {
+		return 0;
+	}
+
+	@Override
+	public void clear() {
 	}
 
 	/*
@@ -174,21 +194,6 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable implements 
 	}
 
 	@Override
-	public int posX() {
-		return xCoord;
-	}
-
-	@Override
-	public int posY() {
-		return yCoord;
-	}
-
-	@Override
-	public int posZ() {
-		return zCoord;
-	}
-
-	@Override
 	public ItemWrapper getSlot(int slot) {
 		return ItemWrapper.EMPTY;
 	}
@@ -204,7 +209,7 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable implements 
 	}
 
 	public EnumFacing getNextSlot(int slot) {
-		return EnumFacing.UNKNOWN;
+		return EnumFacing.DOWN;
 	}
 
 

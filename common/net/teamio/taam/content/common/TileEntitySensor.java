@@ -1,5 +1,6 @@
 package net.teamio.taam.content.common;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntityIronGolem;
@@ -53,10 +54,10 @@ public class TileEntitySensor extends BaseTileEntity implements IRotatable, IUpd
 	
 	private void setBlockMeta() {
 		// Set block metadata according to rotation
-		int meta = getBlockMetadata();
-		EnumFacing dir = EnumFacing.getOrientation(meta);
+        IBlockState blockState = this.worldObj.getBlockState(pos);
+		EnumFacing dir = (EnumFacing)blockState.getValue(BlockSensor.DIRECTION);
 		if(dir != direction) {
-			worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, direction.ordinal(), 3);
+			worldObj.setBlockState(pos, blockState.withProperty(BlockSensor.DIRECTION, direction));
 			markDirty();
 		}
 	}
@@ -68,20 +69,15 @@ public class TileEntitySensor extends BaseTileEntity implements IRotatable, IUpd
 	
 	@Override
 	public void update() {
-		int meta = getBlockMetadata();
-//		int type = meta & 8;
-		int rotation = meta & 7;
 		
-		EnumFacing dir = EnumFacing.getOrientation(rotation);
-		
-		float xMin = xCoord + 0.5f;
-		float yMin = yCoord + 0.5f;
-		float zMin = zCoord + 0.5f;
-		float xMax = xCoord + 0.5f;
-		float yMax = yCoord + 0.5f;
-		float zMax = zCoord + 0.5f;
+		float xMin = pos.getX() + 0.5f;
+		float yMin = pos.getY() + 0.5f;
+		float zMin = pos.getZ() + 0.5f;
+		float xMax = pos.getX() + 0.5f;
+		float yMax = pos.getY() + 0.5f;
+		float zMax = pos.getZ() + 0.5f;
 
-		switch(dir) {
+		switch(direction) {
 		case DOWN:
 			yMax -= blind;
 			yMin -= down;
@@ -123,11 +119,9 @@ public class TileEntitySensor extends BaseTileEntity implements IRotatable, IUpd
 			zMax += offRight;
 			zMin -= offLeft;
 			break;
-		case UNKNOWN:
-			break;
 		}
 		
-		AxisAlignedBB bb = AxisAlignedBB.getBoundingBox(xMin, yMin, zMin, xMax, yMax, zMax);
+		AxisAlignedBB bb = AxisAlignedBB.fromBounds(xMin, yMin, zMin, xMax, yMax, zMax);
 
 		boolean found = false;
 		
@@ -138,7 +132,7 @@ public class TileEntitySensor extends BaseTileEntity implements IRotatable, IUpd
 			for(Object obj : worldObj.loadedEntityList) {
 				Entity ent = (Entity)obj;
 				
-				if(ent instanceof EntityLivingBase && ent.boundingBox.intersectsWith(bb) && ent instanceof EntityIronGolem == false  && ent instanceof EntitySnowman == false) {
+				if(ent instanceof EntityLivingBase && ent.getCollisionBoundingBox().intersectsWith(bb) && ent instanceof EntityIronGolem == false  && ent instanceof EntitySnowman == false) {
 					found = true;
 					break;
 				}
@@ -150,7 +144,7 @@ public class TileEntitySensor extends BaseTileEntity implements IRotatable, IUpd
 		
 		if(found != powering) {
 			powering = found;
-			BaseBlock.updateBlocksAround(worldObj, xCoord, yCoord, zCoord);
+			BaseBlock.updateBlocksAround(worldObj, pos);
 		}
 	}
 	
@@ -166,8 +160,8 @@ public class TileEntitySensor extends BaseTileEntity implements IRotatable, IUpd
 
 	@Override
 	public EnumFacing getNextFacingDirection() {
-		for(EnumFacing nextDir = direction.getRotation(EnumFacing.UNKNOWN); nextDir != direction; nextDir = nextDir.getRotation(EnumFacing.UNKNOWN)) {
-			if(TaamMain.blockSensor.canPlaceBlockOnSide(worldObj, xCoord, yCoord, zCoord, nextDir.ordinal())) {
+		for(EnumFacing nextDir = EnumFacing.getFront(direction.ordinal() + 1); nextDir != direction; nextDir = EnumFacing.getFront(nextDir.ordinal() + 1)) {
+			if(TaamMain.blockSensor.canPlaceBlockOnSide(worldObj, pos, nextDir)) {
 				return nextDir;
 			}
 		}

@@ -71,7 +71,7 @@ public class ItemProductionLine extends ItemMultiTexture {
 			// Conveyor
 			canStay = BlockProductionLine.canBlockStay(world, pos, placeDir);
 		} else {
-			canStay = BlockProductionLine.canBlockStay(world, pos, null);
+			canStay = BlockProductionLine.canBlockStay(world, pos, (EnumFacing)null);
 		}
 		
 		

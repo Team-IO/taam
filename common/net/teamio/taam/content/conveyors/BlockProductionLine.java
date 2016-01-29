@@ -190,6 +190,11 @@ public class BlockProductionLine extends BaseBlock {
 	}
 	
 	@Override
+	public boolean canBlockStay(World worldIn, BlockPos pos, IBlockState state) {
+		return canPlaceBlockAt(worldIn, pos);
+	}
+	
+	@Override
 	public boolean canPlaceBlockAt(World world, BlockPos pos) {
 		TileEntity ent = world.getTileEntity(pos);
 		

@@ -1,5 +1,6 @@
 package net.teamio.taam.content.conveyors;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.EnumFacing;
 import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IRotatable;
@@ -42,8 +43,8 @@ public abstract class ATileEntityAttachable extends BaseTileEntity implements IC
 	public EnumFacing getNextFacingDirection() {
 		EnumFacing dir = direction;
 		for(int i = 0; i < 3; i++) {
-			dir = dir.getRotation(EnumFacing.UP);
-			if(TaamUtil.canAttach(worldObj, xCoord, yCoord, zCoord, dir)) {
+			dir = dir.rotateY();
+			if(TaamUtil.canAttach(worldObj, pos, dir)) {
 				return dir;
 			}
 		}
@@ -70,8 +71,8 @@ public abstract class ATileEntityAttachable extends BaseTileEntity implements IC
 				dir = 3;
 				break;
 			}
-			int worldMeta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
-			worldObj.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, (worldMeta & 3) + (dir << 2), 3);
+			IBlockState state = worldObj.getBlockState(pos);
+			worldObj.setBlockState(pos, state.withProperty(BlockProductionLineAttachable.FACING, dir));
 			updateState();
 		//}
 	}

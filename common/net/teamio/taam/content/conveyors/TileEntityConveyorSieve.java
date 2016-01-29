@@ -10,7 +10,11 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.server.gui.IUpdatePlayerListBox;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.IChatComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.teamio.taam.Config;
@@ -26,7 +30,7 @@ import net.teamio.taam.network.TPMachineConfiguration;
 import net.teamio.taam.util.TaamUtil;
 import net.teamio.taam.util.WorldCoord;
 
-public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInventory, IConveyorAwareTE, IRotatable, IWorldInteractable, IRedstoneControlled {
+public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInventory, IConveyorAwareTE, IRotatable, IWorldInteractable, IRedstoneControlled, IUpdatePlayerListBox {
 
 	/*
 	 * Content
@@ -79,7 +83,7 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 	}
 	
 	@Override
-	public void updateEntity() {
+	public void update() {
 
 		/*
 		 * Find items laying on the conveyor.
@@ -91,7 +95,7 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 			needsUpdate = true;
 		}
 		
-		boolean redstoneHigh = worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
+		boolean redstoneHigh = worldObj.isBlockIndirectlyGettingPowered(pos) > 0;
 		
 		boolean newShutdown = TaamUtil.isShutdown(worldObj.rand, redstoneMode, redstoneHigh);
 		
@@ -129,10 +133,12 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 	}
 	
 	public boolean processSieve(int[] slotOrder) {
-
+		
+		BlockPos down = pos.down();
+		
 		// If we are blocked below, act as a conveyor.
-		IInventory outputInventory = InventoryUtils.getInventory(worldObj, xCoord, yCoord - 1, zCoord);
-		if(outputInventory == null && !TaamUtil.canDropIntoWorld(worldObj, xCoord, yCoord - 1, zCoord)) {
+		IInventory outputInventory = InventoryUtils.getInventory(worldObj, down);
+		if(outputInventory == null && !TaamUtil.canDropIntoWorld(worldObj, down)) {
 			return false;
 		}
 		
@@ -162,7 +168,7 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 		if(outputInventory == null) {
 			// Output to world
 			if(!worldObj.isRemote && wrapper.itemStack != null) {
-				EntityItem item = new EntityItem(worldObj, xCoord + 0.5, yCoord - 0.3, zCoord + 0.5, wrapper.itemStack);
+				EntityItem item = new EntityItem(worldObj, pos.getX() + 0.5, pos.getY() - 0.3, pos.getZ() + 0.5, wrapper.itemStack);
 		        item.motionX = 0;
 		        item.motionY = 0;
 		        item.motionZ = 0;
@@ -206,13 +212,13 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 
 	@Override
 	protected void readPropertiesFromNBT(NBTTagCompound tag) {
-		direction = EnumFacing.getOrientation(tag.getInteger("direction"));
-		if(direction == EnumFacing.UP || direction == EnumFacing.DOWN || direction == EnumFacing.UNKNOWN) {
+		direction = EnumFacing.getFront(tag.getInteger("direction"));
+		if(direction == EnumFacing.UP || direction == EnumFacing.DOWN) {
 			direction = EnumFacing.NORTH;
 		}
 		NBTTagList itemsTag = tag.getTagList("items", NBT.TAG_COMPOUND);
 		if(itemsTag != null) {
-			int count = Math.min(itemsTag.func_150303_d(), items.length);
+			int count = Math.min(itemsTag.tagCount(), items.length);
 			for(int i = 0; i < count; i++) {
 				items[i] = ItemWrapper.readFromNBT(itemsTag.getCompoundTagAt(i));
 			}
@@ -253,21 +259,6 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 	public ItemWrapper getSlot(int slot) {
 		return items[slot];
 	};
-	
-	@Override
-	public int posX() {
-		return xCoord;
-	}
-	
-	@Override
-	public int posY() {
-		return yCoord;
-	}
-	
-	@Override
-	public int posZ() {
-		return zCoord;
-	}
 
 	@Override
 	public EnumFacing getMovementDirection() {
@@ -296,19 +287,19 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 	
 	@Override
 	public EnumFacing getNextFacingDirection() {
-		return direction.getRotation(EnumFacing.UP);
+		return direction.rotateY();
 	}
 
 	@Override
 	public void setFacingDirection(EnumFacing direction) {
 		this.direction = direction;
-		if(direction == EnumFacing.UP || direction == EnumFacing.DOWN || direction == EnumFacing.UNKNOWN) {
+		if(direction == EnumFacing.UP || direction == EnumFacing.DOWN) {
 			this.direction = EnumFacing.NORTH;
 		}
 		updateState();
-		worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, blockType);
+		worldObj.notifyBlockOfStateChange(pos, blockType);
 		if(blockType != null) {
-			blockType.onNeighborBlockChange(worldObj, xCoord, yCoord, zCoord, blockType);
+			blockType.onNeighborBlockChange(worldObj, pos, worldObj.getBlockState(pos), blockType);
 		}
 	}
 
@@ -352,12 +343,17 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 	}
 
 	@Override
-	public String getInventoryName() {
+	public String getCommandSenderName() {
 		return "tile.taam.productionline.sieve.name";
 	}
-
+	
 	@Override
-	public boolean hasCustomInventoryName() {
+	public IChatComponent getDisplayName() {
+		return new ChatComponentTranslation(getCommandSenderName());
+	}
+	
+	@Override
+	public boolean hasCustomName() {
 		return false;
 	}
 
@@ -372,40 +368,56 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 	}
 
 	@Override
-	public void openInventory() {
+	public void openInventory(EntityPlayer player) {
 	}
 
 	@Override
-	public void closeInventory() {
+	public void closeInventory(EntityPlayer player) {
 	}
 
 	@Override
 	public boolean isItemValidForSlot(int slot, ItemStack itemStack) {
 		return true;
 	}
+
+	@Override
+	public int getField(int id) {
+		return 0;
+	}
+
+	@Override
+	public void setField(int id, int value) {
+	}
+
+	@Override
+	public int getFieldCount() {
+		return 0;
+	}
+
+	@Override
+	public void clear() {
+	}
 	
 	/*
 	 * ISidedInventory implementation
 	 */
 	
-	@Override
-	public int[] getAccessibleSlotsFromSide(int side) {
-		final EnumFacing dir = EnumFacing.getOrientation(side);
-		final int slot = ConveyorUtil.getSlot(dir);
+	public int[] getSlotsForFace(EnumFacing side) {
+		final int slot = ConveyorUtil.getSlot(side);
 		if(slot == -1) {
 			return new int[0];
 		} else {
 			return new int[] { slot };
 		}
+	};
+	
+	@Override
+	public boolean canInsertItem(int index, ItemStack itemStackIn, EnumFacing direction) {
+		return ConveyorUtil.insertItemAt(this, itemStackIn, index, true) > 0;
 	}
 
 	@Override
-	public boolean canInsertItem(int slot, ItemStack itemStack, int side) {
-		return ConveyorUtil.insertItemAt(this, itemStack, slot, true) > 0;
-	}
-
-	@Override
-	public boolean canExtractItem(int slot, ItemStack itemStack, int side) {
+	public boolean canExtractItem(int index, ItemStack stack, EnumFacing direction) {
 		return false;
 	}
 
@@ -414,9 +426,9 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 	 */
 	
 	@Override
-	public boolean onBlockActivated(World world, int x, int y, int z,
-			EntityPlayer player, boolean playerHasWrench, int side, float hitX, float hitY, float hitZ) {
-		if(side != EnumFacing.UP.ordinal()) {
+	public boolean onBlockActivated(World world, EntityPlayer player, boolean hasWrench, EnumFacing side, float hitX,
+			float hitY, float hitZ) {
+		if(side != EnumFacing.UP) {
 			return false;
 		}
 		ConveyorUtil.defaultPlayerInteraction(player, this, hitX, hitZ);
@@ -424,11 +436,9 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 	}
 	
 	@Override
-	public boolean onBlockHit(World world, int x, int y, int z,
-			EntityPlayer player, boolean hasWrench) {
+	public boolean onBlockHit(World world, EntityPlayer player, boolean hasWrench) {
 		return false;
 	}
-	
 
 	/*
 	 * IRedstoneControlled implementation

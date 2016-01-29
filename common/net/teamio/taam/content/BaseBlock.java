@@ -43,10 +43,11 @@ public abstract class BaseBlock extends Block {
 		}
 	}
 
+	public abstract boolean canBlockStay(World worldIn, BlockPos pos, IBlockState state);
 	
 	@Override
 	public void onNeighborBlockChange(World worldIn, BlockPos pos, IBlockState state, Block neighborBlock) {
-		if(!canPlaceBlockAt(worldIn, pos)) {
+		if(!canBlockStay(worldIn, pos, state)) {
 			TaamUtil.breakBlockInWorld(worldIn, pos, state);
 			if(this != TaamMain.blockSensor) {
 				breakBlock(worldIn, pos, state);
@@ -161,11 +162,6 @@ public abstract class BaseBlock extends Block {
 	@Override
 	public boolean hasTileEntity(IBlockState state) {
 		return true;
-	}
-
-	@Override
-	public int getRenderType() {
-		return -1;
 	}
 
 	@Override

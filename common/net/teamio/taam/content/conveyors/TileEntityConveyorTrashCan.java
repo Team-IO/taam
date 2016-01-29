@@ -4,7 +4,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.IChatComponent;
 import net.teamio.taam.Config;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.conveyors.ItemWrapper;
@@ -23,11 +25,6 @@ public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements
 	}
 	
 	@Override
-	public boolean canUpdate() {
-		return false;
-	}
-	
-	@Override
 	protected void writePropertiesToNBT(NBTTagCompound tag) {
 		tag.setFloat("fillLevel", fillLevel);
 		tag.setInteger("direction", direction.ordinal());
@@ -36,7 +33,7 @@ public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements
 	@Override
 	protected void readPropertiesFromNBT(NBTTagCompound tag) {
 		fillLevel = tag.getFloat("fillLevel");
-		direction = EnumFacing.getOrientation(tag.getInteger("direction"));
+		direction = EnumFacing.getFront(tag.getInteger("direction"));
 	}
 
 	public void clearOut() {
@@ -78,12 +75,17 @@ public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements
 	}
 
 	@Override
-	public String getInventoryName() {
+	public String getCommandSenderName() {
 		return "tile.taam.productionline_attachable.trashcan.name";
 	}
-
+	
 	@Override
-	public boolean hasCustomInventoryName() {
+	public IChatComponent getDisplayName() {
+		return new ChatComponentTranslation(getCommandSenderName());
+	}
+	
+	@Override
+	public boolean hasCustomName() {
 		return false;
 	}
 
@@ -98,12 +100,12 @@ public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements
 	}
 
 	@Override
-	public void openInventory() {
+	public void openInventory(EntityPlayer player) {
 		// Nothing to do.
 	}
 
 	@Override
-	public void closeInventory() {
+	public void closeInventory(EntityPlayer player) {
 		// Nothing to do.
 	}
 
@@ -111,6 +113,25 @@ public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements
 	public boolean isItemValidForSlot(int slot, ItemStack stack) {
 		float add = stack.stackSize / (float)stack.getMaxStackSize();
 		return fillLevel + add < Config.pl_trashcan_maxfill;
+	}
+
+	@Override
+	public int getField(int id) {
+		return 0;
+	}
+
+	@Override
+	public void setField(int id, int value) {
+	}
+
+	@Override
+	public int getFieldCount() {
+		return 0;
+	}
+
+	@Override
+	public void clear() {
+		clearOut();
 	}
 
 	/*
@@ -155,21 +176,6 @@ public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements
 	}
 
 	@Override
-	public int posX() {
-		return xCoord;
-	}
-
-	@Override
-	public int posY() {
-		return yCoord;
-	}
-
-	@Override
-	public int posZ() {
-		return zCoord;
-	}
-
-	@Override
 	public ItemWrapper getSlot(int slot) {
 		return ItemWrapper.EMPTY;
 	}
@@ -185,7 +191,7 @@ public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements
 	}
 
 	public EnumFacing getNextSlot(int slot) {
-		return EnumFacing.UNKNOWN;
+		return EnumFacing.DOWN;
 	}
 
 

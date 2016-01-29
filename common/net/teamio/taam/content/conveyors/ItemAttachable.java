@@ -24,23 +24,10 @@ public class ItemAttachable extends ItemMultiTexture {
 			float hitX, float hitY, float hitZ, IBlockState newState) {
 		EnumFacing dir = side.getOpposite();
 		if(TaamUtil.canAttach(world, pos, dir)) {
-			int meta;
-			switch(dir) {
-			default:
-			case NORTH:
-				meta = 0;
-				break;
-			case SOUTH:
-				meta = 1;
-				break;
-			case EAST:
-				meta = 2;
-				break;
-			case WEST:
-				meta = 3;
-				break;
+			if(dir == EnumFacing.UP || dir == EnumFacing.DOWN) {
+				dir = EnumFacing.NORTH;
 			}
-			boolean success = super.placeBlockAt(stack, player, world, pos, side, hitX, hitY, hitZ, (metadata & 3) + (meta << 2));
+			boolean success = super.placeBlockAt(stack, player, world, pos, side, hitX, hitY, hitZ, newState.withProperty(BlockProductionLineAttachable.FACING, dir));
 			if(success) {
 				TileEntity te = world.getTileEntity(pos);
 				if(te instanceof IRotatable) {

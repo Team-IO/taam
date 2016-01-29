@@ -2,10 +2,15 @@ package net.teamio.taam.content.conveyors;
 
 import java.util.List;
 
+import net.minecraft.block.properties.PropertyEnum;
+import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -15,11 +20,75 @@ import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.util.TaamUtil;
 
 public class BlockProductionLineAttachable extends BlockProductionLine {
+
+	public static final PropertyEnum VARIANT = PropertyEnum.create("variant", Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META.class);
+	public static final PropertyEnum FACING = PropertyEnum.create("facing", EnumFacing.class, EnumFacing.HORIZONTALS);
 	
 	public BlockProductionLineAttachable() {
 		super();
 	}
+	
+	@Override
+	protected BlockState createBlockState() {
+		return new BlockState(this, VARIANT, FACING);
+	}
+	
+	@Override
+	public int getMetaFromState(IBlockState state) {
+		Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META variant = (Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META)state.getValue(VARIANT);
+		int meta = variant.ordinal();
+		
+		int rot;
+		EnumFacing facing = (EnumFacing)state.getValue(FACING);
+		switch(facing) {
+		default:
+		case NORTH:
+			rot = 0;
+			break;
+		case SOUTH:
+			rot = 1;
+			break;
+		case EAST:
+			rot = 2;
+			break;
+		case WEST:
+			rot = 3;
+			break;
+		}
+		meta |= rot << 2;
+		return meta;
+	}
+	
+	@Override
+	public IBlockState getStateFromMeta(int meta) {
 
+		int type = meta & 3;
+		int rot = (meta & 12) >> 2;
+		EnumFacing facing;
+		// In 1.7 this did not use the "regular" order, so we don't use it here as well.
+		switch(rot) {
+		default:
+		case 0:
+			facing = EnumFacing.NORTH;
+			break;
+		case 1:
+			facing = EnumFacing.SOUTH;
+			break;
+		case 2:
+			facing = EnumFacing.EAST;
+			break;
+		case 3:
+			facing = EnumFacing.WEST;
+			break;
+		}
+		
+		Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META[] values = Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META.values();
+		if(type < 0 || type > values.length) {
+			return getDefaultState().withProperty(FACING, facing);
+		}
+		return getDefaultState().withProperty(VARIANT, values[meta]).withProperty(FACING, facing);
+	}
+	
 	public String getUnlocalizedName(ItemStack itemStack) {
 		int i = itemStack.getItemDamage();
 		Enum<?>[] values = Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META.values();
@@ -41,9 +110,8 @@ public class BlockProductionLineAttachable extends BlockProductionLine {
 	}
 
 	@Override
-	public TileEntity createTileEntity(World world, int metadata) {
-		int type = metadata & 3;
-		Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META variant = Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META.values()[type];
+	public TileEntity createTileEntity(World world, IBlockState state) {
+		Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META variant = (Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META)state.getValue(VARIANT);
 		switch(variant) {
 		case itembag:
 			// Item Bag
@@ -56,33 +124,32 @@ public class BlockProductionLineAttachable extends BlockProductionLine {
 	}
 	@Override
 	public void setBlockBoundsBasedOnState(IBlockAccess world,
-			int x, int y, int z) {
-		int meta = world.getBlockMetadata(x, y, z);
-		int rot = (meta & 12) >> 2;
-		//int type = meta & 3;
+			BlockPos pos) {
+		IBlockState state = world.getBlockState(pos);
+		EnumFacing facing = (EnumFacing)state.getValue(FACING);
 		this.minY = 0f;
 		this.maxY = 0.5f;
-		switch(rot) {
+		switch(facing) {
 		default:
-		case 0: //NORTH
+		case NORTH:
 			this.minX = 0;
 			this.maxX = 1;
 			this.minZ = 0;
 			this.maxZ = 0.35f;
 			break;
-		case 1: //SOUTH
+		case SOUTH:
 			this.minX = 0;
 			this.maxX = 1;
 			this.minZ = 0.65f;
 			this.maxZ = 1;
 			break;
-		case 2: //EAST
+		case EAST:
 			this.minX = 0.65f;
 			this.maxX = 1;
 			this.minZ = 0;
 			this.maxZ = 1;
 			break;
-		case 3: //WEST
+		case WEST:
 			this.minX = 0;
 			this.maxX = 0.35f;
 			this.minZ = 0;
@@ -92,15 +159,15 @@ public class BlockProductionLineAttachable extends BlockProductionLine {
 	}
 	
 	@Override
-	public int damageDropped(int meta) {
-		return meta & 3;
+	public int damageDropped(IBlockState state) {
+		return ((Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META)state.getValue(VARIANT)).ordinal();
 	}
 	
 	@Override
-	public boolean canBlockStay(World world, int x, int y, int z) {
-		TileEntity te = world.getTileEntity(x, y, z);
+	public boolean canPlaceBlockAt(World world, BlockPos pos) {
+		TileEntity te = world.getTileEntity(pos);
 		if(te instanceof IRotatable) {
-			return TaamUtil.canAttach(world, x, y, z, ((IRotatable) te).getFacingDirection());
+			return TaamUtil.canAttach(world, pos, ((IRotatable) te).getFacingDirection());
 		} else {
 			return true;
 		}

@@ -2,6 +2,9 @@ package net.teamio.taam.content.common;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.properties.PropertyEnum;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.tileentity.TileEntity;
@@ -10,12 +13,12 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import net.teamio.taam.Taam;
 import net.teamio.taam.content.BaseBlock;
 
 public class BlockSensor extends BaseBlock {
+	
+	public static IProperty DIRECTION = PropertyEnum.create("direction", EnumFacing.class, EnumFacing.VALUES); 
 	
 	/**
 	 * Hitbox "offset" depth (attaching side -> sensor front)
@@ -43,20 +46,36 @@ public class BlockSensor extends BaseBlock {
 	}
 	
 	@Override
+	protected BlockState createBlockState() {
+		return new BlockState(this, DIRECTION);
+	}
+	
+	@Override
+	public int getMetaFromState(IBlockState state) {
+		EnumFacing meta = (EnumFacing)state.getValue(DIRECTION);
+		return meta.ordinal();
+	}
+	
+	@Override
+	public IBlockState getStateFromMeta(int meta) {
+		return getDefaultState().withProperty(DIRECTION, EnumFacing.getFront(meta));
+	}
+	
+	@Override
 	public AxisAlignedBB getCollisionBoundingBox(World worldIn, BlockPos pos, IBlockState state) {
 		return null;
 	}
 	
 	@Override
 	public TileEntity createTileEntity(World world, IBlockState state) {
-		return new TileEntitySensor(EnumFacing.getOrientation(metadata));
+		return new TileEntitySensor((EnumFacing)state.getValue(DIRECTION));
 		
 	}
 	@Override
 	public void setBlockBoundsBasedOnState(IBlockAccess worldIn, BlockPos pos) {
-		int meta = worldIn.getBlockMetadata(pos);
+		IBlockState blockState = worldIn.getBlockState(pos);
 		// Type is determined by the tile entity, we just need the rotation here
-		EnumFacing dir = EnumFacing.getFront(meta);
+		EnumFacing dir = (EnumFacing)blockState.getValue(DIRECTION);
 		
 		switch (dir) {
 		case DOWN:
@@ -124,14 +143,14 @@ public class BlockSensor extends BaseBlock {
 
 	@Override
 	public int isProvidingWeakPower(IBlockAccess world, BlockPos pos, IBlockState state, EnumFacing side) {
-		return getRedstoneLevel(world, x, y, z);
+		return getRedstoneLevel(world, pos);
 	}
 	
 	@Override
 	public int isProvidingStrongPower(IBlockAccess world, BlockPos pos, IBlockState state, EnumFacing side) {
-		EnumFacing dir = EnumFacing.getOrientation(meta);
-		EnumFacing sideDir = EnumFacing.getOrientation(side);
-		if(dir == sideDir) {
+		IBlockState blockState = world.getBlockState(pos);
+		EnumFacing dir = (EnumFacing)blockState.getValue(DIRECTION);
+		if(dir == side) {
 			return getRedstoneLevel(world, pos);
 		} else {
 			return 0;
@@ -157,8 +176,7 @@ public class BlockSensor extends BaseBlock {
 	@Override
 	public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ,
 			int meta, EntityLivingBase placer) {
-		//TODO: Use IBlockState
-		return facing;
+		return getDefaultState().withProperty(DIRECTION, facing);
 	}
 	
 	@Override
@@ -169,10 +187,16 @@ public class BlockSensor extends BaseBlock {
 	
 	@Override
 	public boolean canPlaceBlockAt(World worldIn, BlockPos pos) {
-		int meta = worldIn.getBlockMetadata(pos);
-		EnumFacing side = EnumFacing.getFront(meta).getOpposite();
+		IBlockState blockState = worldIn.getBlockState(pos);
+		return canBlockStay(worldIn, pos, blockState);
+	}
 
-		return worldIn.isSideSolid(pos.offset(side), side.getOpposite());
+	@Override
+	public boolean canBlockStay(World worldIn, BlockPos pos, IBlockState state) {
+		EnumFacing dir = (EnumFacing)state.getValue(DIRECTION);
+		EnumFacing side = dir.getOpposite();
+
+		return worldIn.isSideSolid(pos.offset(side), dir);
 	}
 	
 	@Override

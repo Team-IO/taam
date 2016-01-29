@@ -5,44 +5,28 @@ import java.util.Random;
 
 import org.lwjgl.opengl.GL11;
 
-import com.google.common.base.Function;
-
-import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BlockModelRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderItem;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Items;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.IItemRenderer;
-import net.minecraftforge.client.model.IFlexibleBakedModel;
 import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.client.model.obj.OBJModel;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.teamio.taam.Config;
 import net.teamio.taam.Taam;
-import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.IRotatable;
-import net.teamio.taam.content.common.BlockMachines;
-import net.teamio.taam.content.common.BlockSensor;
 import net.teamio.taam.content.common.TileEntityChute;
 import net.teamio.taam.content.common.TileEntityCreativeCache;
 import net.teamio.taam.content.common.TileEntitySensor;
 import net.teamio.taam.content.conveyors.ATileEntityAttachable;
-import net.teamio.taam.content.conveyors.BlockProductionLine;
-import net.teamio.taam.content.conveyors.BlockProductionLineAttachable;
 import net.teamio.taam.content.conveyors.TileEntityConveyor;
 import net.teamio.taam.content.conveyors.TileEntityConveyorHopper;
 import net.teamio.taam.content.conveyors.TileEntityConveyorItemBag;
@@ -53,7 +37,7 @@ import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.conveyors.ItemWrapper;
 import net.teamio.taam.conveyors.api.IConveyorAwareTE;
 
-public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRenderer {
+public class TaamRenderer extends TileEntitySpecialRenderer {
 
 //	public final TechneModel modelSensor;
 	public final ResourceLocation textureSensor;
@@ -114,132 +98,6 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 			rotSin = Math.sin(Math.toRadians(rot*32));
 	    }
 	}
-
-	@Override
-	public boolean handleRenderType(ItemStack item, ItemRenderType type) {
-		if(item.getItem() == TaamMain.itemConveyorAppliance) {
-			return true;
-		}
-		Block block = Block.getBlockFromItem(item.getItem());
-		if(block instanceof BlockSensor) {
-			return true;
-		} else if(block instanceof BlockProductionLine) {
-			return true;
-		} else if(block instanceof BlockProductionLineAttachable) {
-			return true;
-		} else if(block instanceof BlockMachines) {
-			return true;
-		}
-		return false;
-	}
-
-	@Override
-	public boolean shouldUseRenderHelper(ItemRenderType type, ItemStack item,
-			ItemRendererHelper helper) {
-		return true;
-	}
-
-	@Override
-	public void renderItem(ItemRenderType type, ItemStack item, Object... data) {
-		float x = 0;
-		float y = 0;
-		float z = 0;
-		
-		switch (type) {
-		case ENTITY:
-		case FIRST_PERSON_MAP:
-		default:
-			x = -0.5f;
-			y = -0.5f;
-			z = -0.5f;
-			break;
-		case INVENTORY:
-			x = 0.125f;
-			z = 0.125f;
-			break;
-		case EQUIPPED:
-		case EQUIPPED_FIRST_PERSON:
-			break;
-		}
-		
-		if(item.getItem() == Item.getItemFromBlock(TaamMain.blockSensor)) {
-			//TODO: Document meta components!
-			int meta = item.getItemDamage() | 7;
-			renderSensor(x, y, z, (meta & 7), false);
-		} else if(item.getItem() == Item.getItemFromBlock(TaamMain.blockProductionLine)) {
-			int meta = item.getItemDamage();
-			switch(meta) {
-			default:
-			case 0:
-			case 1:
-			case 2:
-				renderConveyor(null, x, y, z, meta);
-				break;
-			case 3:
-				renderConveyorHopper(null, x, y, z, false);
-				break;
-			case 4:
-				renderConveyorHopper(null, x, y, z, true);
-				break;
-			case 5:
-				renderConveyorSieve(null, x, y, z);
-				break;
-			case 6:
-				renderConveyorProcessor(null, x, y, z, TileEntityConveyorProcessor.Shredder);
-				break;
-			case 7:
-				renderConveyorProcessor(null, x, y, z, TileEntityConveyorProcessor.Grinder);
-				break;
-			case 8:
-				renderConveyorProcessor(null, x, y, z, TileEntityConveyorProcessor.Crusher);
-				break;
-			case 9:
-				renderConveyorChute(null, x, y, z);
-				break;
-			}
-		} else if(item.getItem() == Item.getItemFromBlock(TaamMain.blockProductionLineAttachable)) {
-			int meta = item.getItemDamage() & 3;
-			switch(meta) {
-			default:
-			case 0:
-			case 1:
-				renderItemBag(null, x, y, z, meta);
-			}
-		} else if(item.getItem() == TaamMain.itemConveyorAppliance) {
-			int meta = item.getItemDamage();
-			switch(meta) {
-			default:
-				break;
-			case 0:
-				GL11.glPushMatrix();
-				/*
-				 * Translate to coordinates
-				 */
-				GL11.glTranslated(x, y, z);
-				
-				Minecraft.getMinecraft().renderEngine.bindTexture(textureConveyor);
-				renderConveyorAppliance(Taam.APPLIANCE_SPRAYER);
-				
-				GL11.glPopMatrix();	
-				break;
-			case 1:
-				//TODO: Render.
-				break;
-			}
-		} else if(item.getItem() == Item.getItemFromBlock(TaamMain.blockMachines)) {
-			int meta = item.getItemDamage();
-			switch(meta) {
-			case 0:
-				renderChute(x, y, z);
-				break;
-			case 1:
-				renderCreativeItemCache(x, y, z);
-				break;
-			}
-		}
-		
-	}
-
 	@Override
 	public void renderTileEntityAt(TileEntity tileEntity, double x, double y, double z, float partialTicks, int destroyStage) {
 		if (tileEntity instanceof TileEntitySensor) {
@@ -632,7 +490,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 	
 	public void renderConveyorAppliance(String type) {
 		if(Taam.APPLIANCE_SPRAYER.equals(type)) {
-			modelConveyor.renderPart("Appliance_Sprayer_asmdl");
+			//modelConveyor.renderPart("Appliance_Sprayer_asmdl");
 		}
 	}
 	
@@ -644,18 +502,18 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 		conveyorPrepareRendering(tileEntity, x, y, z, false);
 		
 		if(highSpeed) {
-			modelConveyor.renderPart("Conveyor_Hopper_High_Speed_chmdl_hs");
+			//modelConveyor.renderPart("Conveyor_Hopper_High_Speed_chmdl_hs");
 		} else {
-			modelConveyor.renderPart("Conveyor_Hopper_chmdl");
+			//modelConveyor.renderPart("Conveyor_Hopper_chmdl");
 		}
-		modelConveyor.renderPart("Support_Caps_Alu_scmdl_alu");
+		//modelConveyor.renderPart("Support_Caps_Alu_scmdl_alu");
 
 		
 		GL11.glTranslated(0.5, 0, 0.5);
 		GL11.glRotatef(180, 0, 1, 0);
 		GL11.glTranslated(-0.5, 0, -0.5);
 
-		modelConveyor.renderPart("Support_Caps_Alu_scmdl_alu");
+		//modelConveyor.renderPart("Support_Caps_Alu_scmdl_alu");
 		
 		conveyorEndRendering();
 	}
@@ -667,21 +525,21 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 			spinning = !tileEntity.isShutdown;
 		}
 		conveyorPrepareRendering(tileEntity, x, y, z, false);
-		modelConveyor.renderPart("Conveyor_Sieve_Chute_cscmdl");
-		modelConveyor.renderPart("Support_Caps_Alu_scmdl_alu");
+		//modelConveyor.renderPart("Conveyor_Sieve_Chute_cscmdl");
+		//modelConveyor.renderPart("Support_Caps_Alu_scmdl_alu");
 		
 		GL11.glTranslated(0.5, 0, 0.5);
 		GL11.glRotatef(180, 0, 1, 0);
 		GL11.glTranslated(-0.5, 0, -0.5);
 		
-		modelConveyor.renderPart("Support_Caps_Alu_scmdl_alu");
+		//modelConveyor.renderPart("Support_Caps_Alu_scmdl_alu");
 
 		if(spinning) {
 			double val = Math.sin(Math.toRadians(rot*32));
 			GL11.glTranslated(0, 0.01 + val*0.04, 0);
 		}
 		
-		modelConveyor.renderPart("Conveyor_Sieve_csvmdl");
+		//modelConveyor.renderPart("Conveyor_Sieve_csvmdl");
 		
 		conveyorEndRendering();
 	}
@@ -698,8 +556,8 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 		
 		conveyorPrepareRendering(tileEntity, x, y, z, false);
 		
-		modelConveyor.renderPart("Conveyor_Processing_Chute_chutemdl");
-		modelConveyor.renderPart("Support_Caps_Alu_scmdl_alu");
+		//modelConveyor.renderPart("Conveyor_Processing_Chute_chutemdl");
+		//modelConveyor.renderPart("Support_Caps_Alu_scmdl_alu");
 
 		renderConveyorProcessorWalz(mode, spinning);
 		
@@ -711,17 +569,17 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 
 		switch(mode) {
 		case TileEntityConveyorProcessor.Crusher:
-			modelConveyor.renderPart("Processor_Marker_Crusher_pmmdl_cru");
+			//modelConveyor.renderPart("Processor_Marker_Crusher_pmmdl_cru");
 			break;
 		case TileEntityConveyorProcessor.Grinder:
-			modelConveyor.renderPart("Processor_Marker_Grinder_pmmdl_gri");
+			//modelConveyor.renderPart("Processor_Marker_Grinder_pmmdl_gri");
 			break;
 		case TileEntityConveyorProcessor.Shredder:
-			modelConveyor.renderPart("Processor_Marker_Shredder_pmmdl_shr");
+			//modelConveyor.renderPart("Processor_Marker_Shredder_pmmdl_shr");
 			break;
 		}
 		
-		modelConveyor.renderPart("Support_Caps_Alu_scmdl_alu");
+		//modelConveyor.renderPart("Support_Caps_Alu_scmdl_alu");
 		
 		conveyorEndRendering();
 	}
@@ -733,17 +591,17 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 			GL11.glRotatef(-rot*16, 1, 0, 0);
 			GL11.glTranslated(-0.5, -0.25683, -0.61245);
 		}
-		modelConveyor.renderPart("Processor_Walzes");
+		//modelConveyor.renderPart("Processor_Walzes");
 		
 		switch(mode) {
 		case TileEntityConveyorProcessor.Crusher:
-			modelConveyor.renderPart("BumpsCrusher");
+			//modelConveyor.renderPart("BumpsCrusher");
 			break;
 		case TileEntityConveyorProcessor.Grinder:
-			modelConveyor.renderPart("BumpsGrinder");
+			//modelConveyor.renderPart("BumpsGrinder");
 			break;
 		case TileEntityConveyorProcessor.Shredder:
-			modelConveyor.renderPart("BumpsShredder");
+			//modelConveyor.renderPart("BumpsShredder");
 			break;
 		}
 		GL11.glPopMatrix();
@@ -752,14 +610,14 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 	private void renderConveyorChute(TileEntityChute tileEntity, double x, double y, double z) {
 		conveyorPrepareRendering(tileEntity, x, y, z, false);
 		
-		modelConveyor.renderPart("Conveyor_Chute_cchmdl");
-		modelConveyor.renderPart("Support_Caps_Alu_scmdl_alu");
+		//modelConveyor.renderPart("Conveyor_Chute_cchmdl");
+		//modelConveyor.renderPart("Support_Caps_Alu_scmdl_alu");
 		
 		GL11.glTranslated(0.5, 0, 0.5);
 		GL11.glRotatef(180, 0, 1, 0);
 		GL11.glTranslated(-0.5, 0, -0.5);
 
-		modelConveyor.renderPart("Support_Caps_Alu_scmdl_alu");
+		//modelConveyor.renderPart("Support_Caps_Alu_scmdl_alu");
 		
 		conveyorEndRendering();
 	}
@@ -808,15 +666,15 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 		switch(type) {
 		default:
 		case 0: // Bag
-			modelConveyor.renderPart("Bag_bmdl");
+			//modelConveyor.renderPart("Bag_bmdl");
 			break;
 		case 1: // TrashCan
-			modelConveyor.renderPart("BagTrash_btmdl");
+			//modelConveyor.renderPart("BagTrash_btmdl");
 			break;
 		}
 		if(fillPercent > 0) {
 			GL11.glTranslatef(0, fillPercent * 0.3f, 0);
-			modelConveyor.renderPart("Bag_Filling_bfmdl");
+			//modelConveyor.renderPart("Bag_Filling_bfmdl");
 		}
 		
 		GL11.glPopMatrix();
@@ -834,7 +692,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 		} else {
 			Minecraft.getMinecraft().renderEngine.bindTexture(textureSensor);
 		}
-		EnumFacing dir = EnumFacing.getOrientation(rotation).getOpposite();
+		EnumFacing dir = EnumFacing.getFront(rotation).getOpposite();
 		switch(dir) {
 		case DOWN:
 			break;
@@ -874,15 +732,15 @@ public class TaamRenderer extends TileEntitySpecialRenderer implements IItemRend
 		}
 		GL11.glRotatef(180f, 1.0f, 0, 0);
 		
-		modelSensor.renderPart("p1");
-		modelSensor.renderPart("p2");
-		modelSensor.renderPart("socket");
+		//modelSensor.renderPart("p1");
+		//modelSensor.renderPart("p2");
+		//modelSensor.renderPart("socket");
 		
 		if(dir != EnumFacing.DOWN && dir != EnumFacing.UP) {
 			GL11.glRotatef(20f, 1.0f, 0, 0);
 			GL11.glTranslatef(0f, 0f, 0.8f);
 		}
-		modelSensor.renderPart("device");
+		//modelSensor.renderPart("device");
 
 		GL11.glPopMatrix();
 	}

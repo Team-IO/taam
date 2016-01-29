@@ -16,6 +16,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.teamio.taam.Log;
 import net.teamio.taam.Taam;
 import net.teamio.taam.Taam.BLOCK_MACHINES_META;
 import net.teamio.taam.content.BaseBlock;
@@ -86,6 +87,10 @@ public class BlockMachines extends BaseBlock {
 	@Override
 	public void setBlockBoundsBasedOnState(IBlockAccess world, BlockPos pos) {
 		IBlockState state = world.getBlockState(pos);
+		if(state.getBlock() != this) {
+			Log.warn("Received 'setBlockBoundsBasedOnState' with invalid block in blockstate. This might not be relevant - but does not influence anything at the moment.");
+			return;
+		}
 		Taam.BLOCK_MACHINES_META variant = (Taam.BLOCK_MACHINES_META)state.getValue(VARIANT);
 		switch(variant) {
 		case chute:
@@ -127,6 +132,11 @@ public class BlockMachines extends BaseBlock {
 		} else {
 			return true;
 		}
+	}
+
+	@Override
+	public boolean canBlockStay(World worldIn, BlockPos pos, IBlockState state) {
+		return true;
 	}
 
 }
