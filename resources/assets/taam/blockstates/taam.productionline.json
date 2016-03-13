@@ -2,7 +2,10 @@
     "forge_marker": 1,
     "defaults": {
         "textures": {},
-        "model": "taam:conveyor.obj"
+        "model": "taam:conveyor.obj",
+        "custom": {
+            "flip-v": true
+        }
      },
     "variants": {
         "normal": [{}],

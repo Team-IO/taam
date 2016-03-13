@@ -2,7 +2,7 @@
     "forge_marker": 1,
     "defaults": {
         "textures": {},
-        "model": "taam:support_beam.obj",
+        "model": "taam:creative_cache.obj",
         "custom": {
             "flip-v": true
         }
@@ -11,6 +11,12 @@
         "normal": [{}],
         "inventory": [{
             "transform": "forge:default-block"
+        }],
+        "variant=creativecache": [{
+       	    "model": "taam:creative_cache.obj"
+        }],
+        "variant=chute": [{
+           "model": "taam:chute.obj"
         }]
     }
 }
