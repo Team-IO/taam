@@ -1,0 +1,23 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "textures": {},
+        "model": "taam:conveyor.obj"
+     },
+    "variants": {
+        "normal": [{}],
+        "inventory": [{
+            "transform": "forge:default-block"
+        }],
+        "variant=conveyor1": [{}],
+        "variant=conveyor2": [{}],
+        "variant=conveyor3": [{}],
+        "variant=hopper": [{}],
+        "variant=hopper_hs": [{}],
+        "variant=sieve": [{}],
+        "variant=shredder": [{}],
+        "variant=grinder": [{}],
+        "variant=crusher": [{}],
+        "variant=chute": [{}]
+    }
+}
