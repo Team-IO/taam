@@ -5,7 +5,8 @@
         "model": "taam:conveyor.obj",
         "custom": {
             "flip-v": true
-        }
+        },
+        "transform": "forge:default-block"
      },
     "variants": {
         "normal": [{}],

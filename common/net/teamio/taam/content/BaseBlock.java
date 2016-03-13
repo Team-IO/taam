@@ -1,7 +1,12 @@
 package net.teamio.taam.content;
 
+import java.util.List;
+
+import com.google.common.collect.Lists;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -11,7 +16,13 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.client.model.TRSRTransformation;
+import net.minecraftforge.client.model.obj.OBJModel;
+import net.minecraftforge.common.property.ExtendedBlockState;
+import net.minecraftforge.common.property.IExtendedBlockState;
+import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.teamio.taam.TaamMain;
@@ -26,6 +37,8 @@ import net.teamio.taam.util.WrenchUtil;
 import net.teamio.taam.util.inv.InventoryUtils;
 
 public abstract class BaseBlock extends Block {
+
+	private ExtendedBlockState state = new ExtendedBlockState(this, new IProperty[] {}, new IUnlistedProperty[]{OBJModel.OBJProperty.instance});
 
 	public BaseBlock(Material material) {
 		super(material);
@@ -180,6 +193,45 @@ public abstract class BaseBlock extends Block {
 		return false;
 	}
 	
+	@Override
+	public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
+			
+			// This would make it so the state shows up in F3. Not actually applied on the rendering, though.
+			// Rendering Transform is applied below, in getExtendedState
+			
+	//		TileEntity te = worldIn.getTileEntity(pos);
+	//		if(te instanceof IRotatable) {
+	//			return state.withProperty(FACING, ((IRotatable) te).getFacingDirection());
+	//		}
+			return state;
+		}
+
+	@Override
+	public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
+		List<String> visibleParts;
+	
+		TileEntity te = world.getTileEntity(pos);
+		
+		// Decide which parts to render, delegated to the tileEntity (if required)
+		
+		if(te instanceof IRenderable) {
+			visibleParts = ((IRenderable) te).getVisibleParts();
+		} else {
+			visibleParts = Lists.newArrayList(OBJModel.Group.ALL);
+		}
+		
+		EnumFacing facing = EnumFacing.NORTH;
+	
+		if (te instanceof IRotatable) {
+			facing = ((IRotatable) te).getFacingDirection();
+		}
+	
+		// Apply rotation to the model
+		OBJModel.OBJState retState = new OBJModel.OBJState(visibleParts, true, new TRSRTransformation(facing.rotateY().rotateY()));
+	
+		return ((IExtendedBlockState) this.state.getBaseState()).withProperty(OBJModel.OBJProperty.instance, retState);
+	}
+
 	/**
 	 * Updates a block and all surrounding blocks (meaning, pushes a block
 	 * update for this block and for all directly adjacent blocks)

@@ -1,8 +1,11 @@
 package net.teamio.taam.content.conveyors;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
@@ -23,6 +26,7 @@ import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 import net.teamio.taam.Config;
 import net.teamio.taam.content.BaseTileEntity;
+import net.teamio.taam.content.IRenderable;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.content.IWorldInteractable;
 import net.teamio.taam.conveyors.ApplianceRegistry;
@@ -33,7 +37,7 @@ import net.teamio.taam.conveyors.ItemWrapper;
 import net.teamio.taam.conveyors.api.IConveyorApplianceHost;
 import net.teamio.taam.conveyors.api.IConveyorAwareTE;
 
-public class TileEntityConveyor extends BaseTileEntity implements ISidedInventory, IFluidHandler, IConveyorAwareTE, IRotatable, IConveyorApplianceHost, IWorldInteractable, ITickable {
+public class TileEntityConveyor extends BaseTileEntity implements ISidedInventory, IFluidHandler, IConveyorAwareTE, IRotatable, IConveyorApplianceHost, IWorldInteractable, ITickable, IRenderable {
 
 	/*
 	 * Content
@@ -53,8 +57,6 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	public boolean renderRight = false;
 	public boolean renderLeft = false;
 	public boolean renderAbove = false;
-	
-	public final OBJState modelState = new OBJState(new ArrayList<String>(), true);//TODO: Default to list of all visible parts
 	
 	/*
 	 * Appliance state
@@ -87,6 +89,8 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	@Override
 	public void updateRenderingInfo() {
 		if(worldObj != null) {
+			worldObj.markBlockRangeForRenderUpdate(pos, pos);
+			
 			// Check in front
 			TileEntity te = worldObj.getTileEntity(pos.offset(direction));
 			if(te instanceof TileEntityConveyor) {
@@ -138,22 +142,44 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 			
 			// Check above
 			renderAbove = worldObj.isSideSolid(pos.offset(EnumFacing.UP), EnumFacing.DOWN) ||
-					worldObj.getTileEntity(pos.offset(EnumFacing.DOWN)) instanceof IConveyorAwareTE;
+					worldObj.getTileEntity(pos.offset(EnumFacing.UP)) instanceof IConveyorAwareTE;
+		}
+	}
+	
+	@Override
+	public List<String> getVisibleParts() {
+		List<String> visible = new LinkedList<String>();
+		boolean isWood = speedLevel == 0;
+		
+		if(isEnd) {
+			visible.add("ConveyorRoundEnd_crmdl");
+			visible.add(isWood ? "ConveyorRoundEnd_Walz_Wood_cwalzmdl_wood" : "ConveyorRoundEnd_Walz_Alu_cwalzmdl_alu");
+			visible.add(isWood ? "ConveyorRoundEnd_Framing_Wood_crfmdl_wood" : "ConveyorRoundEnd_Framing_Alu_crfmdl_alu");
+		} else {
+			visible.add("ConveyorStraightEnd_csmdl");
+			visible.add(isWood ? "ConveyorStraightEnd_Walz_Wood_cwalzmdl_wood" : "ConveyorStraightEnd_Walz_Alu_cwalzmdl_alu");
+			visible.add(isWood ? "ConveyorStraightEnd_Framing_Wood_csfmdl_wood" : "ConveyorStraightEnd_Framing_Alu_csfmdl_alu");
+		}
+		if(isBegin) {
+			visible.add("ConveyorRoundBegin_crmdl");
+			visible.add(isWood ? "ConveyorRoundBegin_Walz_Wood_cwalzmdl_wood" : "ConveyorRoundBegin_Walz_Alu_cwalzmdl_alu");
+			visible.add(isWood ? "ConveyorRoundBegin_Framing_Wood_crfmdl_wood" : "ConveyorRoundBegin_Framing_Alu_crfmdl_alu");
+		} else {
+			visible.add("ConveyorStraightBegin_csmdl");
+			visible.add(isWood ? "ConveyorStraightBegin_Walz_Wood_cwalzmdl_wood" : "ConveyorStraightBegin_Walz_Alu_cwalzmdl_alu");
+			visible.add(isWood ? "ConveyorStraightBegin_Framing_Wood_csfmdl_wood" : "ConveyorStraightBegin_Framing_Alu_csfmdl_alu");
+		}
+		visible.add(isWood ? "Support_Wood_smdl_wood" : "Support_Alu_smdl_alu");
+		visible.add(isWood ? "ConveyorDirectionMarker_Wood_cdmdl_wood" : "ConveyorDirectionMarker_Alu_cdmdl_alu");
+		if(renderAbove) {
+			visible.add(isWood ? "ConveyorSupportAbove_Wood_samdl_wood" : "ConveyorSupportAbove_Alu_samdl_alu");
 		}
 		
-		Map<String, Boolean> visibility = modelState.getVisibilityMap();
-		visibility.put("conveyorEnd", !isEnd);
-		visibility.put("conveyorEndCurved", isEnd);
+		//TODO: Caps for left, right, begin, end
+		//TODO: Adjust blender model to have all "end" vertices
+		//TODO: Fix Walz Models (sides don't render completely)
 		
-		visibility.put("conveyorBegin", !isBegin);
-		visibility.put("conveyorBeginCurved", isBegin);
-		
-		visibility.put("conveyorEndCap", isEnd);
-		visibility.put("conveyorBeginCap", isEnd);
-		
-		visibility.put("conveyorLeftCap", renderLeft);
-		visibility.put("conveyorRightCap", renderRight);
-		visibility.put("conveyorSupportAbove", renderAbove);
+		return visible;
 	}
 
 	/**

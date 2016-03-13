@@ -2,11 +2,8 @@ package net.teamio.taam.content.conveyors;
 
 import java.util.List;
 
-import com.google.common.collect.Lists;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
@@ -20,10 +17,6 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.client.model.obj.OBJModel;
-import net.minecraftforge.common.property.ExtendedBlockState;
-import net.minecraftforge.common.property.IExtendedBlockState;
-import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.teamio.taam.Config;
@@ -36,8 +29,6 @@ import net.teamio.taam.util.inv.InventoryUtils;
 public class BlockProductionLine extends BaseBlock {
 
 	public static final PropertyEnum VARIANT = PropertyEnum.create("variant", Taam.BLOCK_PRODUCTIONLINE_META.class);
-	
-	private ExtendedBlockState state = new ExtendedBlockState(this, new IProperty[0], new IUnlistedProperty[]{OBJModel.OBJProperty.instance});
 	
 	private static String[] modelparts_conveyor1 = {
 			"Support_Wood_smdl_wood",
@@ -115,55 +106,6 @@ public class BlockProductionLine extends BaseBlock {
 		return getDefaultState().withProperty(VARIANT, values[meta]);
 	}
 	
-	@Override
-	public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
-      List<String> displayParts;
-      
-      @SuppressWarnings("unchecked")
-      Taam.BLOCK_PRODUCTIONLINE_META variant = (Taam.BLOCK_PRODUCTIONLINE_META)state.getValue(VARIANT);
-      
-      switch(variant) {
-      case conveyor1:
-    	  displayParts = Lists.newArrayList(modelparts_conveyor1);
-    	  break;
-      case conveyor2:
-    	  displayParts = Lists.newArrayList(modelparts_conveyor2);
-    	  break;
-      case conveyor3:
-    	  displayParts = Lists.newArrayList(modelparts_conveyor3);
-    	  break;
-      case hopper:
-    	  displayParts = Lists.newArrayList(modelparts_hopper);
-    	  break;
-      case hopper_hs:
-    	  displayParts = Lists.newArrayList(modelparts_hopper_hs);
-    	  break;
-      case sieve:
-    	  displayParts = Lists.newArrayList(modelparts_sieve);
-    	  break;
-      case shredder:
-    	  displayParts = Lists.newArrayList(modelparts_shredder);
-    	  break;
-      case grinder:
-    	  displayParts = Lists.newArrayList(modelparts_grinder);
-    	  break;
-      case crusher:
-    	  displayParts = Lists.newArrayList(modelparts_crusher);
-    	  break;
-      case chute:
-    	  displayParts = Lists.newArrayList(modelparts_chute);
-    	  break;
-	  default:
-		  displayParts = Lists.newArrayList(OBJModel.Group.ALL);
-		  break;
-      }
-		
-		//OBJTesseractTileEntity tileEntity = (OBJTesseractTileEntity) world.getTileEntity(pos);
-      OBJModel.OBJState retState = new OBJModel.OBJState(displayParts, true);
-      
-      return ((IExtendedBlockState) this.state.getBaseState()).withProperty(OBJModel.OBJProperty.instance, retState);
-	}
-
 	public String getUnlocalizedName(ItemStack itemStack) {
 		int i = itemStack.getItemDamage();
 		Enum<?>[] values = Taam.BLOCK_PRODUCTIONLINE_META.values();

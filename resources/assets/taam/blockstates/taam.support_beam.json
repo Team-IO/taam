@@ -4,7 +4,8 @@
         "textures": {},
         "model": "taam:support_beam.obj",
         "custom": {
-            "flip-v": true
+            "flip-v": true,
+            "gui3d": true
         }
      },
     "variants": {
