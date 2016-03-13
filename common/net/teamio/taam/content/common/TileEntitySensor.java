@@ -6,16 +6,16 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntityIronGolem;
 import net.minecraft.entity.monster.EntitySnowman;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.server.gui.IUpdatePlayerListBox;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ITickable;
 import net.teamio.taam.Config;
 import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.BaseBlock;
 import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IRotatable;
 
-public class TileEntitySensor extends BaseTileEntity implements IRotatable, IUpdatePlayerListBox {
+public class TileEntitySensor extends BaseTileEntity implements IRotatable, ITickable {
 	
 	private float offLength = 1.5f;
 	private float offLeft = 1.5f;

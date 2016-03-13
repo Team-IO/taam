@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -273,9 +274,9 @@ public class TaamRenderer extends TileEntitySpecialRenderer {
 					
 					ei.setEntityItemStack(processingStack);
 
-					//RenderItem.renderInFrame = true;
-					ri.renderItemModel(processingStack);//.doRender(ei, 0, .5f, 0, 0, 0);
-					//RenderItem.renderInFrame = false;
+					
+					IBakedModel model = ri.getItemModelMesher().getItemModel(processingStack);
+					ri.renderItem(processingStack, model);
 					
 					GL11.glPopMatrix();
 				}
@@ -325,11 +326,10 @@ public class TaamRenderer extends TileEntitySpecialRenderer {
 	                RenderHelper.enableStandardItemLighting();
 					//ei.setEntityItemStack(itemStack);
 	
-					// Used to be true, but blocks are too big that way..
-					//RenderItem.renderInFrame = false;
-					ri.renderItemModel(itemStack);//.doRender(ei, 0, .5f, 0, 0, 0);
-					//RenderItem.renderInFrame = false;
-	                RenderHelper.disableStandardItemLighting();
+					IBakedModel model = ri.getItemModelMesher().getItemModel(itemStack);
+					ri.renderItem(itemStack, model);
+	                
+					RenderHelper.disableStandardItemLighting();
 	                GlStateManager.popAttrib();
 					
 					GL11.glPopMatrix();

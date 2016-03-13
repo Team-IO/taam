@@ -8,12 +8,12 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.server.gui.IUpdatePlayerListBox;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.IChatComponent;
+import net.minecraft.util.ITickable;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.obj.OBJModel.OBJState;
 import net.minecraftforge.common.util.Constants.NBT;
@@ -33,7 +33,7 @@ import net.teamio.taam.conveyors.ItemWrapper;
 import net.teamio.taam.conveyors.api.IConveyorApplianceHost;
 import net.teamio.taam.conveyors.api.IConveyorAwareTE;
 
-public class TileEntityConveyor extends BaseTileEntity implements ISidedInventory, IFluidHandler, IConveyorAwareTE, IRotatable, IConveyorApplianceHost, IWorldInteractable, IUpdatePlayerListBox {
+public class TileEntityConveyor extends BaseTileEntity implements ISidedInventory, IFluidHandler, IConveyorAwareTE, IRotatable, IConveyorApplianceHost, IWorldInteractable, ITickable {
 
 	/*
 	 * Content

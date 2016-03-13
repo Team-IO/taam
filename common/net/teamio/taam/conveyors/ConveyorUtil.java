@@ -2,9 +2,6 @@ package net.teamio.taam.conveyors;
 
 import java.util.List;
 
-import codechicken.lib.inventory.InventoryRange;
-import codechicken.lib.inventory.InventoryUtils;
-import codechicken.lib.vec.Vector3;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -17,7 +14,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.teamio.taam.conveyors.api.IConveyorApplianceHost;
 import net.teamio.taam.conveyors.api.IConveyorAwareTE;
-import net.teamio.taam.util.TaamUtil;
+import net.teamio.taam.util.inv.InventoryRange;
+import net.teamio.taam.util.inv.InventoryUtils;
 
 public class ConveyorUtil {
 	
@@ -303,7 +301,6 @@ public class ConveyorUtil {
 		if(factory == null) {
 			return false;
 		}
-		Vector3 location = new Vector3(pos);
 		/*
 		 * Drop appliance
 		 */
@@ -315,9 +312,9 @@ public class ConveyorUtil {
 		//TODO: Make ItemStack retain certain data? (Tanks... Energy...)
 		if(stack != null) {
 			if(player != null) {
-				TaamUtil.tryDropToInventory(player, stack, pos);
+				net.teamio.taam.util.inv.InventoryUtils.tryDropToInventory(player, stack, pos);
 			} else {
-				InventoryUtils.dropItem(stack, world, location);
+				InventoryUtils.dropItem(stack, world, pos);
 			}
 		}
 		/*
@@ -329,9 +326,9 @@ public class ConveyorUtil {
 				continue;
 			}
 			if(player != null) {
-				TaamUtil.tryDropToInventory(player, stack, pos);
+				net.teamio.taam.util.inv.InventoryUtils.tryDropToInventory(player, stack, pos);
 			} else {
-				InventoryUtils.dropItem(stack, world, location);
+				InventoryUtils.dropItem(stack, world, pos);
 			}
 		}
 		return true;

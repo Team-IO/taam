@@ -2,7 +2,6 @@ package net.teamio.taam.content.conveyors;
 
 import java.util.List;
 
-import codechicken.lib.inventory.InventoryUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
@@ -25,6 +24,7 @@ import net.teamio.taam.Log;
 import net.teamio.taam.Taam;
 import net.teamio.taam.content.BaseBlock;
 import net.teamio.taam.content.common.TileEntityChute;
+import net.teamio.taam.util.inv.InventoryUtils;
 
 public class BlockProductionLine extends BaseBlock {
 
@@ -134,40 +134,6 @@ public class BlockProductionLine extends BaseBlock {
 		//}		
 		super.setBlockBoundsBasedOnState(world, pos);
 	}
-//	@Override
-//	public boolean canProvidePower() {
-//		return true;
-//	}
-
-//	@Override
-//	public int isProvidingWeakPower(IBlockAccess world, int x, int y, int z,
-//			int side) {
-//		int meta = world.getBlockMetadata(x, y, z);
-//		int rotation = meta & 7;
-//		EnumFacing dir = EnumFacing.getOrientation(rotation);
-//		EnumFacing sideDir = EnumFacing.getOrientation(side);
-//		if(dir == sideDir) {
-//			TileEntitySensor te = ((TileEntitySensor) world.getTileEntity(x, y, z));
-//			return te.isPowering();
-//		} else {
-//			return 0;
-//		}
-//	}
-//	
-//	@Override
-//	public int isProvidingStrongPower(IBlockAccess world, int x, int y, int z,
-//			int side) {
-//		int meta = world.getBlockMetadata(x, y, z);
-//		int rotation = meta & 7;
-//		EnumFacing dir = EnumFacing.getOrientation(rotation);
-//		EnumFacing sideDir = EnumFacing.getOrientation(side);
-//		if(dir == sideDir) {
-//			TileEntitySensor te = ((TileEntitySensor) world.getTileEntity(x, y, z));
-//			return te.isPowering();
-//		} else {
-//			return 0;
-//		}
-//	}
 	
 	@Override
 	public boolean isBlockSolid(IBlockAccess world, BlockPos pos, EnumFacing side) {

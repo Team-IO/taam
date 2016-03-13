@@ -1,10 +1,10 @@
 package net.teamio.taam.content.common;
 
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.server.gui.IUpdatePlayerListBox;
+import net.minecraft.util.ITickable;
 import net.teamio.taam.content.BaseTileEntity;
 
-public class TileEntityEmitter extends BaseTileEntity implements IUpdatePlayerListBox {
+public class TileEntityEmitter extends BaseTileEntity implements ITickable {
 
 	private String sound = "default";
 	private int count = 0;

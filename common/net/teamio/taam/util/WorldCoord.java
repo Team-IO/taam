@@ -1,7 +1,5 @@
 package net.teamio.taam.util;
 
-import codechicken.lib.vec.BlockCoord;
-import codechicken.lib.vec.Vector3;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.nbt.NBTTagCompound;
@@ -36,16 +34,6 @@ public class WorldCoord {
 	
 	public WorldCoord(World world, BlockPos pos) {
 		this(world.provider.getDimensionId(), pos.getX(), pos.getY(), pos.getZ());
-	}
-	
-	public WorldCoord(int world, Vector3 v) {
-		this(world, MathHelper.floor_double(v.x), MathHelper.floor_double(v.y),
-				MathHelper.floor_double(v.z));
-	}
-	
-	public WorldCoord(World world, Vector3 v) {
-		this(world, MathHelper.floor_double(v.x), MathHelper.floor_double(v.y),
-				MathHelper.floor_double(v.z));
 	}
 
 	public WorldCoord(TileEntity tile) {
@@ -139,8 +127,8 @@ public class WorldCoord {
 		return subtract(coords.x, coords.y, coords.z);
 	}
 	
-	public WorldCoord subtract(BlockCoord coords) {
-		return subtract(coords.x, coords.y, coords.z);
+	public WorldCoord subtract(BlockPos coords) {
+		return subtract(coords.getX(), coords.getY(), coords.getZ());
 	}
 	
 	public WorldCoord subtract(int x, int y, int z) {

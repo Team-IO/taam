@@ -1,7 +1,5 @@
 package net.teamio.taam.content.conveyors;
 
-import codechicken.lib.inventory.InventoryRange;
-import codechicken.lib.inventory.InventoryUtils;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -10,11 +8,11 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.server.gui.IUpdatePlayerListBox;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IChatComponent;
+import net.minecraft.util.ITickable;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.teamio.taam.Config;
@@ -29,8 +27,10 @@ import net.teamio.taam.conveyors.api.IConveyorAwareTE;
 import net.teamio.taam.network.TPMachineConfiguration;
 import net.teamio.taam.util.TaamUtil;
 import net.teamio.taam.util.WorldCoord;
+import net.teamio.taam.util.inv.InventoryRange;
+import net.teamio.taam.util.inv.InventoryUtils;
 
-public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInventory, IConveyorAwareTE, IRotatable, IWorldInteractable, IRedstoneControlled, IUpdatePlayerListBox {
+public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInventory, IConveyorAwareTE, IRotatable, IWorldInteractable, IRedstoneControlled, ITickable {
 
 	/*
 	 * Content

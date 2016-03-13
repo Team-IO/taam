@@ -1,7 +1,5 @@
 package net.teamio.taam.conveyors;
 
-import codechicken.lib.inventory.InventorySimple;
-import codechicken.lib.inventory.InventoryUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -12,6 +10,8 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidTank;
+import net.teamio.taam.util.inv.InventorySimple;
+import net.teamio.taam.util.inv.InventoryUtils;
 
 public abstract class ApplianceInventory implements IConveyorAppliance {
 	public InventorySimple inventory;

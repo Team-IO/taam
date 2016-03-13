@@ -69,9 +69,6 @@ repositories {
 
 dependencies {
     //compile 'com.mod-buildcraft:buildcraft:6.0.8:dev'
-	compile "codechicken:CodeChickenLib:${project.minecraft.version}-${config.ccl_version}:dev"
-    compile "codechicken:NotEnoughItems:${project.minecraft.version}-${config.nei_version}:dev"
-    compile "codechicken:CodeChickenCore:${project.minecraft.version}-${config.ccc_version}:dev"
     // compile fileTree(dir: 'lib', include: '*.jar')
 }
 

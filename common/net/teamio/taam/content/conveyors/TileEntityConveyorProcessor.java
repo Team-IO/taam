@@ -2,9 +2,6 @@ package net.teamio.taam.content.conveyors;
 
 import java.util.List;
 
-import codechicken.lib.inventory.InventoryRange;
-import codechicken.lib.inventory.InventorySimple;
-import codechicken.lib.inventory.InventoryUtils;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -13,7 +10,6 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.server.gui.IUpdatePlayerListBox;
 import net.minecraft.tileentity.IHopper;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
@@ -21,6 +17,7 @@ import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IChatComponent;
+import net.minecraft.util.ITickable;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.teamio.taam.Config;
@@ -37,8 +34,11 @@ import net.teamio.taam.conveyors.api.ProcessingRegistry;
 import net.teamio.taam.network.TPMachineConfiguration;
 import net.teamio.taam.util.TaamUtil;
 import net.teamio.taam.util.WorldCoord;
+import net.teamio.taam.util.inv.InventoryRange;
+import net.teamio.taam.util.inv.InventorySimple;
+import net.teamio.taam.util.inv.InventoryUtils;
 
-public class TileEntityConveyorProcessor extends BaseTileEntity implements ISidedInventory, IConveyorAwareTE, IHopper, IRedstoneControlled, IWorldInteractable, IRotatable, IUpdatePlayerListBox {
+public class TileEntityConveyorProcessor extends BaseTileEntity implements ISidedInventory, IConveyorAwareTE, IHopper, IRedstoneControlled, IWorldInteractable, IRotatable, ITickable {
 
 	public static final byte Shredder = 0;
 	public static final byte Grinder = 1;
@@ -618,7 +618,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 		if(hasWrench) {
 			ItemStack taken = getStackInSlot(0);
 			if(taken != null) {
-				TaamUtil.tryDropToInventory(player, taken, .5, .5, .5);
+				net.teamio.taam.util.inv.InventoryUtils.tryDropToInventory(player, taken, .5, .5, .5);
 				setInventorySlotContents(0, null);
 			}
 		} else if(!isShutdown) {

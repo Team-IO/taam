@@ -1,9 +1,9 @@
 package net.teamio.taam.conveyors;
 
-import codechicken.lib.inventory.InventoryUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.teamio.taam.conveyors.api.IItemFilter;
+import net.teamio.taam.util.inv.InventoryUtils;
 
 /**
  * Wrapper for item stacks on the conveyor system. Keeps track of movement,

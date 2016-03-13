@@ -1,7 +1,5 @@
 package net.teamio.taam.content.conveyors;
 
-import codechicken.lib.inventory.InventorySimple;
-import codechicken.lib.inventory.InventoryUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -13,6 +11,8 @@ import net.minecraftforge.common.util.Constants.NBT;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.conveyors.ItemWrapper;
 import net.teamio.taam.conveyors.api.IConveyorAwareTE;
+import net.teamio.taam.util.inv.InventorySimple;
+import net.teamio.taam.util.inv.InventoryUtils;
 
 /**
  * Conveyor Item Bag.

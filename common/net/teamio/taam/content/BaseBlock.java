@@ -1,7 +1,5 @@
 package net.teamio.taam.content;
 
-import codechicken.lib.inventory.InventoryUtils;
-import codechicken.lib.vec.Vector3;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -25,6 +23,7 @@ import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.conveyors.api.IConveyorApplianceHost;
 import net.teamio.taam.util.TaamUtil;
 import net.teamio.taam.util.WrenchUtil;
+import net.teamio.taam.util.inv.InventoryUtils;
 
 public abstract class BaseBlock extends Block {
 
@@ -88,7 +87,7 @@ public abstract class BaseBlock extends Block {
 				ItemStack itemstack = inventory.getStackInSlot(index);
 
 				if (itemstack != null && itemstack.getItem() != null) {
-					InventoryUtils.dropItem(itemstack, worldIn, new Vector3(pos));
+					InventoryUtils.dropItem(itemstack, worldIn, pos);
 				}
 			}
 		}
