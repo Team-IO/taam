@@ -40,9 +40,52 @@ public class BlockProductionLine extends BaseBlock {
 	private ExtendedBlockState state = new ExtendedBlockState(this, new IProperty[0], new IUnlistedProperty[]{OBJModel.OBJProperty.instance});
 	
 	private static String[] modelparts_conveyor1 = {
-		"Conveyor_End_Framing_Alu_cemdl_alu",
-		"Support_Caps_Wood_scmdl_wood",
-		"Support_Wood_smdl_wood"
+			"Support_Wood_smdl_wood",
+			"Support_Caps_Wood_scmdl_wood",
+			"Conveyor_Straight_Framing_Wood_csmdl_wood",
+			"Conveyor_Straight_scmdl",
+	};
+	private static String[] modelparts_conveyor2 = {
+			"Support_Alu_smdl_alu",
+			"Support_Caps_Alu_scmdl_alu",
+			"Conveyor_Straight_Framing_Alu_csmdl_alu",
+			"Conveyor_Straight_scmdl",
+	};
+	private static String[] modelparts_conveyor3 = {
+			"Support_Alu_smdl_alu",
+			"Support_Caps_Alu_scmdl_alu",
+			"Conveyor_Straight_Framing_Alu_csmdl_alu",
+			"Conveyor_Straight_scmdl",
+			"Conveyor_High_Throughput_Framing_Alu_chtpmdl_alu"
+	};
+	private static String[] modelparts_hopper = {
+			"Support_Alu_smdl_alu",
+			"Support_Caps_Alu_scmdl_alu",
+	};
+	private static String[] modelparts_hopper_hs = {
+			"Support_Alu_smdl_alu",
+			"Support_Caps_Alu_scmdl_alu",
+	};
+	private static String[] modelparts_sieve = {
+			"Support_Alu_smdl_alu",
+			"Support_Caps_Alu_scmdl_alu",
+	};
+	private static String[] modelparts_shredder = {
+			"Support_Alu_smdl_alu",
+			"Support_Caps_Alu_scmdl_alu",
+	};
+	private static String[] modelparts_grinder = {
+			"Support_Alu_smdl_alu",
+			"Support_Caps_Alu_scmdl_alu",
+	};
+	private static String[] modelparts_crusher = {
+			"Support_Alu_smdl_alu",
+			"Support_Caps_Alu_scmdl_alu",
+	};
+	private static String[] modelparts_chute = {
+			"Support_Alu_smdl_alu",
+			"Support_Caps_Alu_scmdl_alu",
+			"Conveyor_Chute_cchmdl",
 	};
 	
 	public BlockProductionLine() {
@@ -82,6 +125,33 @@ public class BlockProductionLine extends BaseBlock {
       switch(variant) {
       case conveyor1:
     	  displayParts = Lists.newArrayList(modelparts_conveyor1);
+    	  break;
+      case conveyor2:
+    	  displayParts = Lists.newArrayList(modelparts_conveyor2);
+    	  break;
+      case conveyor3:
+    	  displayParts = Lists.newArrayList(modelparts_conveyor3);
+    	  break;
+      case hopper:
+    	  displayParts = Lists.newArrayList(modelparts_hopper);
+    	  break;
+      case hopper_hs:
+    	  displayParts = Lists.newArrayList(modelparts_hopper_hs);
+    	  break;
+      case sieve:
+    	  displayParts = Lists.newArrayList(modelparts_sieve);
+    	  break;
+      case shredder:
+    	  displayParts = Lists.newArrayList(modelparts_shredder);
+    	  break;
+      case grinder:
+    	  displayParts = Lists.newArrayList(modelparts_grinder);
+    	  break;
+      case crusher:
+    	  displayParts = Lists.newArrayList(modelparts_crusher);
+    	  break;
+      case chute:
+    	  displayParts = Lists.newArrayList(modelparts_chute);
     	  break;
 	  default:
 		  displayParts = Lists.newArrayList(OBJModel.Group.ALL);
