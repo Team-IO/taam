@@ -120,7 +120,7 @@ public class BlockProductionLine extends BaseBlock {
       List<String> displayParts;
       
       @SuppressWarnings("unchecked")
-      Taam.BLOCK_PRODUCTIONLINE_META variant = state.getValue(VARIANT);
+      Taam.BLOCK_PRODUCTIONLINE_META variant = (Taam.BLOCK_PRODUCTIONLINE_META)state.getValue(VARIANT);
       
       switch(variant) {
       case conveyor1:
