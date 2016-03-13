@@ -96,11 +96,10 @@ processResources
     // this will ensure that this task is redone when the versions change.
     inputs.property "version", project.version
     inputs.property "config.mc_version", project.minecraft.version
-	inputs.property "config.ccl_version", config.ccl_version
 	
     // Replace properties in info files
     from(sourceSets.main.resources.srcDirs) {
         include '*.info'
-        expand 'version':config.version,'mcversion':project.minecraft.version,'cclversion':config.ccl_version
+        expand 'version':config.version,'mcversion':project.minecraft.version
     }
 }
