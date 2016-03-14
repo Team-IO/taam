@@ -17,6 +17,7 @@
 /build
 /asm
 /usernamecache.json
+/usercache.json
 
 /.pmd
 /.classpath
@@ -28,3 +29,6 @@
 #Nano backup file
 /*.save
 /*.launch
+
+#Blender Backup Files
+*.blend1
