@@ -54,27 +54,9 @@ public abstract class ATileEntityAttachable extends BaseTileEntity implements IC
 	@Override
 	public void setFacingDirection(EnumFacing direction) {
 		this.direction = direction;
-		//if(!worldObj.isRemote) {
-			int dir;
-			switch(direction) {
-			default:
-			case NORTH:
-				dir = 0;
-				break;
-			case SOUTH:
-				dir = 1;
-				break;
-			case EAST:
-				dir = 2;
-				break;
-			case WEST:
-				dir = 3;
-				break;
-			}
-			IBlockState state = worldObj.getBlockState(pos);
-			worldObj.setBlockState(pos, state.withProperty(BlockProductionLineAttachable.FACING, dir));
-			updateState();
-		//}
+		IBlockState state = worldObj.getBlockState(pos);
+		worldObj.setBlockState(pos, state.withProperty(BlockProductionLineAttachable.FACING, direction));
+		updateState();
 	}
 
 	public EnumFacing getNextSlot(int slot) {

@@ -12,7 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 import net.teamio.taam.Log;
 
-@SuppressWarnings("unchecked")
+@SuppressWarnings("unchecked") // Required, as we can't create arrays of generic maps
 public final class ProcessingRegistry {
 	private ProcessingRegistry() {
 		// Util Class

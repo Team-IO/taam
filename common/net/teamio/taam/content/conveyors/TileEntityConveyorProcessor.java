@@ -152,7 +152,6 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 		int x = pos.getX();
 		int y = pos.getY();
 		int z = pos.getZ();
-		@SuppressWarnings("unchecked")
 		List<EntityLivingBase> entitites = worldObj.getEntitiesWithinAABB(EntityLivingBase.class, AxisAlignedBB.fromBounds(x, y, z, y + 1, y + 1, z + 1));
 		for(EntityLivingBase living : entitites) {
 			hurtEntity(living);

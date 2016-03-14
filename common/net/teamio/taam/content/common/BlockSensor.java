@@ -2,7 +2,6 @@ package net.teamio.taam.content.common;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
@@ -18,7 +17,7 @@ import net.teamio.taam.content.BaseBlock;
 
 public class BlockSensor extends BaseBlock {
 	
-	public static IProperty DIRECTION = PropertyEnum.create("direction", EnumFacing.class, EnumFacing.VALUES); 
+	public static PropertyEnum<EnumFacing> DIRECTION = PropertyEnum.create("direction", EnumFacing.class, EnumFacing.VALUES); 
 	
 	/**
 	 * Hitbox "offset" depth (attaching side -> sensor front)

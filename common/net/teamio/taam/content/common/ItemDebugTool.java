@@ -36,22 +36,20 @@ public class ItemDebugTool extends Item {
 		this.setMaxDamage(0);
 	}
 	
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void addInformation(ItemStack par1ItemStack,
-			EntityPlayer par2EntityPlayer, List par3List, boolean par4) {
+	public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean detailInfo) {
 
-		par3List.add(EnumChatFormatting.DARK_GREEN + I18n.format("lore.taam.debugtool", new Object[0]));
+		list.add(EnumChatFormatting.DARK_GREEN + I18n.format("lore.taam.debugtool", new Object[0]));
 		if (GuiScreen.isShiftKeyDown()) {
 			String usage = I18n.format("lore.taam.debugtool.usage", new Object[0]);
 			//Split at literal \n in the translated text. a lot of escaping here.
 			String[] split = usage.split("\\\\n");
 			for(int i = 0;i < split.length; i++) {
-				par3List.add(split[i]);
+				list.add(split[i]);
 			}
 		} else {
-			par3List.add(EnumChatFormatting.DARK_PURPLE + I18n.format("lore.taam.shift", new Object[0]));
+			list.add(EnumChatFormatting.DARK_PURPLE + I18n.format("lore.taam.shift", new Object[0]));
 		}
 	}
 	

@@ -16,7 +16,7 @@ import net.teamio.taam.Taam;
 
 public class BlockOre extends Block {
 
-	public static final PropertyEnum VARIANT = PropertyEnum.create("variant", Taam.BLOCK_ORE_META.class);
+	public static final PropertyEnum<Taam.BLOCK_ORE_META> VARIANT = PropertyEnum.create("variant", Taam.BLOCK_ORE_META.class);
 	
 	public BlockOre() {
 		super(Material.rock);
@@ -57,24 +57,9 @@ public class BlockOre extends Block {
 		return super.getUnlocalizedName() + "." + values[i].name();
 	}
 	
-//	@Override
-//	@SideOnly(Side.CLIENT)
-//	public void registerBlockIcons(IIconRegister ir) {
-//		BLOCK_ORE_META[] values = Taam.BLOCK_ORE_META.values();
-//		iconList = new IIcon[values.length];
-//		for (int i = 0; i < values.length; i++) {
-//			if(values[i].ore) {
-//				iconList[i] = ir.registerIcon(Taam.MOD_ID + ":ore." + values[i].name());
-//			} else {
-//				iconList[i] = ir.registerIcon(Taam.MOD_ID + ":ore.impossible");
-//			}
-//		}
-//	}
-	
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void getSubBlocks(Item item, CreativeTabs creativeTab, List list) {
+	public void getSubBlocks(Item item, CreativeTabs creativeTab, List<ItemStack> list) {
 		Taam.BLOCK_ORE_META[] values = Taam.BLOCK_ORE_META.values();
 		for (int i = 0; i < values.length; i++) {
 			if(values[i].ore) {

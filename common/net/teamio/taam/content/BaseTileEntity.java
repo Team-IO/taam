@@ -7,7 +7,6 @@ import org.apache.logging.log4j.Level;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.teamio.taam.Log;
@@ -67,7 +66,7 @@ public abstract class BaseTileEntity extends TileEntity {
 	}
 
 	@Override
-	public Packet getDescriptionPacket() {
+	public S35PacketUpdateTileEntity getDescriptionPacket() {
 		NBTTagCompound nbt = new NBTTagCompound();
 		writePropertiesToNBTInternal(nbt);
 

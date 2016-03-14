@@ -30,9 +30,8 @@ public class ItemWithMetadata<P extends Enum<P>> extends Item {
 		this.setHasSubtypes(true);
 	}
 	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public void addInformation(ItemStack stack, EntityPlayer player, List lines, boolean detailedInfoSetting) {
+	public void addInformation(ItemStack stack, EntityPlayer player, List<String> lines, boolean detailedInfoSetting) {
 		if(delegate != null) {
 			delegate.addInformation(stack, player, lines, detailedInfoSetting);
 		}
@@ -49,10 +48,9 @@ public class ItemWithMetadata<P extends Enum<P>> extends Item {
 		return this.getUnlocalizedName() + "." + metaValues[i].name();
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void getSubItems(Item item, CreativeTabs creativeTab, List list) {
+	public void getSubItems(Item item, CreativeTabs creativeTab, List<ItemStack> list) {
 		for (int i = 0; i < metaValues.length; i++) {
 			if(!isValidMetadata(i)) {
 				continue;

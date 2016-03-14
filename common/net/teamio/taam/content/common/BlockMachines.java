@@ -23,7 +23,7 @@ import net.teamio.taam.content.BaseBlock;
 
 public class BlockMachines extends BaseBlock {
 
-	public static final PropertyEnum VARIANT = PropertyEnum.create("variant", Taam.BLOCK_MACHINES_META.class);
+	public static final PropertyEnum<Taam.BLOCK_MACHINES_META> VARIANT = PropertyEnum.create("variant", Taam.BLOCK_MACHINES_META.class);
 	
 	public BlockMachines() {
 		super(Material.wood);
@@ -75,15 +75,15 @@ public class BlockMachines extends BaseBlock {
 		return super.getUnlocalizedName() + "." + values[i].name();
 	}
 	
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void getSubBlocks(Item item, CreativeTabs creativeTab, List list) {
+	public void getSubBlocks(Item item, CreativeTabs creativeTab, List<ItemStack> list) {
 		BLOCK_MACHINES_META[] values = Taam.BLOCK_MACHINES_META.values();
 		for (int i = 0; i < values.length; i++) {
 			list.add(new ItemStack(item, 1, i));
 		}
 	}
+	
 	@Override
 	public void setBlockBoundsBasedOnState(IBlockAccess world, BlockPos pos) {
 		IBlockState state = world.getBlockState(pos);

@@ -28,56 +28,7 @@ import net.teamio.taam.util.inv.InventoryUtils;
 
 public class BlockProductionLine extends BaseBlock {
 
-	public static final PropertyEnum VARIANT = PropertyEnum.create("variant", Taam.BLOCK_PRODUCTIONLINE_META.class);
-	
-	private static String[] modelparts_conveyor1 = {
-			"Support_Wood_smdl_wood",
-			"Support_Caps_Wood_scmdl_wood",
-			"Conveyor_Straight_Framing_Wood_csmdl_wood",
-			"Conveyor_Straight_scmdl",
-	};
-	private static String[] modelparts_conveyor2 = {
-			"Support_Alu_smdl_alu",
-			"Support_Caps_Alu_scmdl_alu",
-			"Conveyor_Straight_Framing_Alu_csmdl_alu",
-			"Conveyor_Straight_scmdl",
-	};
-	private static String[] modelparts_conveyor3 = {
-			"Support_Alu_smdl_alu",
-			"Support_Caps_Alu_scmdl_alu",
-			"Conveyor_Straight_Framing_Alu_csmdl_alu",
-			"Conveyor_Straight_scmdl",
-			"Conveyor_High_Throughput_Framing_Alu_chtpmdl_alu"
-	};
-	private static String[] modelparts_hopper = {
-			"Support_Alu_smdl_alu",
-			"Support_Caps_Alu_scmdl_alu",
-	};
-	private static String[] modelparts_hopper_hs = {
-			"Support_Alu_smdl_alu",
-			"Support_Caps_Alu_scmdl_alu",
-	};
-	private static String[] modelparts_sieve = {
-			"Support_Alu_smdl_alu",
-			"Support_Caps_Alu_scmdl_alu",
-	};
-	private static String[] modelparts_shredder = {
-			"Support_Alu_smdl_alu",
-			"Support_Caps_Alu_scmdl_alu",
-	};
-	private static String[] modelparts_grinder = {
-			"Support_Alu_smdl_alu",
-			"Support_Caps_Alu_scmdl_alu",
-	};
-	private static String[] modelparts_crusher = {
-			"Support_Alu_smdl_alu",
-			"Support_Caps_Alu_scmdl_alu",
-	};
-	private static String[] modelparts_chute = {
-			"Support_Alu_smdl_alu",
-			"Support_Caps_Alu_scmdl_alu",
-			"Conveyor_Chute_cchmdl",
-	};
+	public static final PropertyEnum<Taam.BLOCK_PRODUCTIONLINE_META> VARIANT = PropertyEnum.create("variant", Taam.BLOCK_PRODUCTIONLINE_META.class);
 	
 	public BlockProductionLine() {
 		super(Material.iron);
@@ -117,10 +68,9 @@ public class BlockProductionLine extends BaseBlock {
 		return super.getUnlocalizedName() + "." + values[i].name();
 	}
 	
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void getSubBlocks(Item item, CreativeTabs creativeTab, List list) {
+	public void getSubBlocks(Item item, CreativeTabs creativeTab, List<ItemStack> list) {
 		Enum<?>[] values = Taam.BLOCK_PRODUCTIONLINE_META.values();
 		for (int i = 0; i < values.length; i++) {
 			list.add(new ItemStack(item, 1, i));

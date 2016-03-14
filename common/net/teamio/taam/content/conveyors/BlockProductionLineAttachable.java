@@ -21,8 +21,8 @@ import net.teamio.taam.util.TaamUtil;
 
 public class BlockProductionLineAttachable extends BlockProductionLine {
 
-	public static final PropertyEnum VARIANT = PropertyEnum.create("variant", Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META.class);
-	public static final PropertyEnum FACING = PropertyEnum.create("facing", EnumFacing.class, EnumFacing.HORIZONTALS);
+	public static final PropertyEnum<Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META> VARIANT = PropertyEnum.create("variant", Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META.class);
+	public static final PropertyEnum<EnumFacing> FACING = PropertyEnum.create("facing", EnumFacing.class, EnumFacing.HORIZONTALS);
 	
 	public BlockProductionLineAttachable() {
 		super();
@@ -99,10 +99,9 @@ public class BlockProductionLineAttachable extends BlockProductionLine {
 		return super.getUnlocalizedName() + "." + values[i].name();
 	}
 	
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void getSubBlocks(Item item, CreativeTabs creativeTab, List list) {
+	public void getSubBlocks(Item item, CreativeTabs creativeTab, List<ItemStack> list) {
 		Enum<?>[] values = Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META.values();
 		for (int i = 0; i < values.length; i++) {
 			list.add(new ItemStack(item, 1, i));

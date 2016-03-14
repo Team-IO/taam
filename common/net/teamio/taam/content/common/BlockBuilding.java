@@ -16,7 +16,7 @@ import net.teamio.taam.Taam;
 
 public class BlockBuilding extends Block {
 
-	public static final PropertyEnum VARIANT = PropertyEnum.create("variant", Taam.BLOCK_CONCRETE_META.class);
+	public static final PropertyEnum<Taam.BLOCK_CONCRETE_META> VARIANT = PropertyEnum.create("variant", Taam.BLOCK_CONCRETE_META.class);
 	
 	public BlockBuilding() {
 		super(Material.rock);
@@ -57,10 +57,9 @@ public class BlockBuilding extends Block {
 		return super.getUnlocalizedName() + "." + values[i].name();
 	}
 	
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void getSubBlocks(Item item, CreativeTabs creativeTab, List list) {
+	public void getSubBlocks(Item item, CreativeTabs creativeTab, List<ItemStack> list) {
 		Taam.BLOCK_CONCRETE_META[] values = Taam.BLOCK_CONCRETE_META.values();
 		for (int i = 0; i < values.length; i++) {
 			list.add(new ItemStack(item, 1, i));
