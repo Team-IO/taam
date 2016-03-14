@@ -63,7 +63,9 @@ public class ItemWithMetadata<P extends Enum<P>> extends Item {
 	
 	public boolean isValidMetadata(int meta) {
 		if(meta >= 0 && meta < metaValues.length) {
-			if(delegate != null) {
+			if(delegate == null) {
+				return true;
+			} else {
 				return delegate.isValidMetadata(metaValues[meta]);
 			}
 		}
