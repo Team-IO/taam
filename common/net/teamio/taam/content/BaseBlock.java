@@ -208,7 +208,7 @@ public abstract class BaseBlock extends Block {
 
 	@Override
 	public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
-		List<String> visibleParts;
+		List<String> visibleParts = null;
 	
 		TileEntity te = world.getTileEntity(pos);
 		
@@ -216,7 +216,8 @@ public abstract class BaseBlock extends Block {
 		
 		if(te instanceof IRenderable) {
 			visibleParts = ((IRenderable) te).getVisibleParts();
-		} else {
+		}
+		if(visibleParts == null) {
 			visibleParts = Lists.newArrayList(OBJModel.Group.ALL);
 		}
 		
@@ -228,7 +229,7 @@ public abstract class BaseBlock extends Block {
 	
 		// Apply rotation to the model
 		OBJModel.OBJState retState = new OBJModel.OBJState(visibleParts, true, new TRSRTransformation(facing.rotateY().rotateY()));
-	
+		
 		return ((IExtendedBlockState) this.state.getBaseState()).withProperty(OBJModel.OBJProperty.instance, retState);
 	}
 

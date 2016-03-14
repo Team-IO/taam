@@ -53,7 +53,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer {
 	private EntityItem ei;
 	private float rot = 0;
 	private float rot_sensor = 0;
-	private double rotSin = 0;
+	public static double rotSin = 0;
 	
 	public TaamRenderer() {
 //		ri = new RenderItem() {

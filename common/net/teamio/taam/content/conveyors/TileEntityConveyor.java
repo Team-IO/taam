@@ -89,7 +89,6 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	@Override
 	public void updateRenderingInfo() {
 		if(worldObj != null) {
-			worldObj.markBlockRangeForRenderUpdate(pos, pos);
 			
 			// Check in front
 			TileEntity te = worldObj.getTileEntity(pos.offset(direction));
@@ -143,6 +142,8 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 			// Check above
 			renderAbove = worldObj.isSideSolid(pos.offset(EnumFacing.UP), EnumFacing.DOWN) ||
 					worldObj.getTileEntity(pos.offset(EnumFacing.UP)) instanceof IConveyorAwareTE;
+
+			worldObj.markBlockRangeForRenderUpdate(pos, pos);
 		}
 	}
 	
@@ -150,6 +151,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	public List<String> getVisibleParts() {
 		List<String> visible = new LinkedList<String>();
 		boolean isWood = speedLevel == 0;
+		boolean isHighSpeed = speedLevel > 1;
 		
 		if(isEnd) {
 			visible.add("ConveyorRoundEnd_crmdl");
@@ -174,8 +176,22 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 		if(renderAbove) {
 			visible.add(isWood ? "ConveyorSupportAbove_Wood_samdl_wood" : "ConveyorSupportAbove_Alu_samdl_alu");
 		}
+		if(renderBegin) {
+			visible.add(isWood ? "ConveyorRoundBeginCap_Wood_cecmdl_wood" : "ConveyorRoundBeginCap_Alu_cecmdl_alu");
+		}
+		if(renderEnd) {
+			visible.add(isWood ? "ConveyorRoundEndCap_Wood_cecmdl_wood" : "ConveyorRoundEndCap_Alu_cecmdl_alu");
+		}
+		if(renderLeft) {
+			visible.add(isWood ? "ConveyorLeftCap_Wood_cecmdl_wood" : "ConveyorLeftCap_Alu_cecmdl_alu");
+		}
+		if(renderRight) {
+			visible.add(isWood ? "ConveyorRightCap_Wood_cecmdl_wood" : "ConveyorRight Cap_Alu_cecmdl_alu");
+		}
+		if(isHighSpeed) {
+			visible.add("ConveyorHighThroughput_Framing_Alu_chtpmdl_alu");
+		}
 		
-		//TODO: Caps for left, right, begin, end
 		//TODO: Adjust blender model to have all "end" vertices
 		//TODO: Fix Walz Models (sides don't render completely)
 		

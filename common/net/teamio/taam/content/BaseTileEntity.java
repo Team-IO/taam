@@ -52,6 +52,7 @@ public abstract class BaseTileEntity extends TileEntity {
 	}
 	
 	public void updateRenderingInfo() {
+		worldObj.markBlockRangeForRenderUpdate(pos, pos);
 	}
 
 	/*

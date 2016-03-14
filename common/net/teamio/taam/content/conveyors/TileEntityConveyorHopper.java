@@ -1,5 +1,10 @@
 package net.teamio.taam.content.conveyors;
 
+import java.util.Collections;
+import java.util.List;
+
+import com.google.common.collect.Lists;
+
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -15,6 +20,7 @@ import net.teamio.taam.Config;
 import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IRedstoneControlled;
+import net.teamio.taam.content.IRenderable;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.conveyors.ItemWrapper;
@@ -27,7 +33,7 @@ import net.teamio.taam.util.inv.InventorySimple;
 import net.teamio.taam.util.inv.InventoryUtils;
 
 
-public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyorAwareTE, IInventory, IHopper, IRedstoneControlled, IRotatable, ITickable {
+public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyorAwareTE, IInventory, IHopper, IRedstoneControlled, IRotatable, ITickable, IRenderable {
 
 	private InventorySimple inventory;
 	
@@ -42,6 +48,9 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 	
 	private boolean pulseWasSent = false;
 	
+	private static List<String> parts_regular = Collections.unmodifiableList(Lists.newArrayList("Support_Alu_smdl_alu", "ConveyorHopper_chmdl"));
+	private static List<String> parts_hs = Collections.unmodifiableList(Lists.newArrayList("Support_Alu_smdl_alu", "ConveyorHopperHighSpeed_chmdl_hs"));
+	
 	public TileEntityConveyorHopper() {
 		this(false);
 	}
@@ -49,6 +58,15 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 	public TileEntityConveyorHopper(boolean highSpeed) {
 		this.highSpeed = highSpeed;
 		inventory = new InventorySimple(5);
+	}
+	
+	@Override
+	public List<String> getVisibleParts() {
+		if(highSpeed) {
+			return parts_hs;
+		} else {
+			return parts_regular;
+		}
 	}
 	
 	@Override

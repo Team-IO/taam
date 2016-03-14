@@ -1,5 +1,10 @@
 package net.teamio.taam.content.conveyors;
 
+import java.util.Collections;
+import java.util.List;
+
+import com.google.common.collect.Lists;
+
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -19,6 +24,7 @@ import net.teamio.taam.Config;
 import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IRedstoneControlled;
+import net.teamio.taam.content.IRenderable;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.content.IWorldInteractable;
 import net.teamio.taam.conveyors.ConveyorUtil;
@@ -30,8 +36,9 @@ import net.teamio.taam.util.WorldCoord;
 import net.teamio.taam.util.inv.InventoryRange;
 import net.teamio.taam.util.inv.InventoryUtils;
 
-public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInventory, IConveyorAwareTE, IRotatable, IWorldInteractable, IRedstoneControlled, ITickable {
+public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInventory, IConveyorAwareTE, IRotatable, IWorldInteractable, IRedstoneControlled, ITickable, IRenderable {
 
+	private static List<String> parts = Collections.unmodifiableList(Lists.newArrayList("Support_Alu_smdl_alu", "SieveChute_cscmdl", "Sieve_csvmdl"));
 	/*
 	 * Content
 	 */
@@ -63,6 +70,11 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 	@Override
 	public void updateContainingBlockInfo() {
 		super.updateContainingBlockInfo();
+	}
+	
+	@Override
+	public List<String> getVisibleParts() {
+		return parts;
 	}
 
 	/**
