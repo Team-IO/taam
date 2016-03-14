@@ -145,8 +145,8 @@ public abstract class ApplianceInventory implements IConveyorAppliance {
 	}
 
 	@Override
-	public ItemStack getStackInSlotOnClosing(int p_70304_1_) {
-		return inventory.getStackInSlotOnClosing(p_70304_1_);
+	public ItemStack removeStackFromSlot(int p_70304_1_) {
+		return inventory.removeStackFromSlot(p_70304_1_);
 	}
 
 	@Override

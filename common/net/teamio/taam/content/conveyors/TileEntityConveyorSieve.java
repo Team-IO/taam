@@ -328,7 +328,7 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 	}
 
 	@Override
-	public ItemStack getStackInSlotOnClosing(int slot) {
+	public ItemStack removeStackFromSlot(int slot) {
 		return null;
 	}
 
@@ -343,13 +343,13 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 	}
 
 	@Override
-	public String getCommandSenderName() {
+	public String getName() {
 		return "tile.taam.productionline.sieve.name";
 	}
 	
 	@Override
 	public IChatComponent getDisplayName() {
-		return new ChatComponentTranslation(getCommandSenderName());
+		return new ChatComponentTranslation(getName());
 	}
 	
 	@Override

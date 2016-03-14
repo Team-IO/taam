@@ -91,7 +91,7 @@ public class TileEntityCreativeCache extends BaseTileEntity implements IInventor
 	}
 
 	@Override
-	public ItemStack getStackInSlotOnClosing(int slot) {
+	public ItemStack removeStackFromSlot(int slot) {
 		if(template == null) {
 			return null;
 		}
@@ -126,7 +126,7 @@ public class TileEntityCreativeCache extends BaseTileEntity implements IInventor
 	}
 
 	@Override
-	public String getCommandSenderName() {
+	public String getName() {
 		return "tile.taam.machines.creativecache.name";
 	}
 

@@ -78,6 +78,12 @@ public class ApplianceReordering extends ApplianceInventory implements IWorldInt
 	public boolean canExtractItem(int index, ItemStack itemStackIn, EnumFacing direction) {
 		return false;
 	}
+
+	@Override
+	public ItemStack removeStackFromSlot(int index) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 	@Override
 	public IChatComponent getDisplayName() {
@@ -85,7 +91,7 @@ public class ApplianceReordering extends ApplianceInventory implements IWorldInt
 	}
 	
 	@Override
-	public String getCommandSenderName() {
+	public String getName() {
 		return "";
 	}
 

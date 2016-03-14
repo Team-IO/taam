@@ -260,8 +260,8 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 	}
 
 	@Override
-	public ItemStack getStackInSlotOnClosing(int slot) {
-		return inventory.getStackInSlotOnClosing(slot);
+	public ItemStack removeStackFromSlot(int slot) {
+		return inventory.removeStackFromSlot(slot);
 	}
 
 	@Override
@@ -270,7 +270,7 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 	}
 
 	@Override
-	public String getCommandSenderName() {
+	public String getName() {
 		if(highSpeed) {
 			return "tile.taam.productionline.hopper_hs.name";
 		} else {
@@ -280,7 +280,7 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 	
 	@Override
 	public IChatComponent getDisplayName() {
-		return new ChatComponentTranslation(getCommandSenderName());
+		return new ChatComponentTranslation(getName());
 	}
 	
 	@Override

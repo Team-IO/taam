@@ -68,7 +68,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 	}
 	
 	public TileEntityConveyorProcessor(byte mode) {
-		inventory = new InventorySimple(1, getCommandSenderName());
+		inventory = new InventorySimple(1, getName());
 		this.mode = mode;
 	}
 	
@@ -352,8 +352,8 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 	}
 
 	@Override
-	public ItemStack getStackInSlotOnClosing(int slot) {
-		return inventory.getStackInSlotOnClosing(slot);
+	public ItemStack removeStackFromSlot(int slot) {
+		return inventory.removeStackFromSlot(slot);
 	}
 
 	@Override
@@ -364,7 +364,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 	}
 
 	@Override
-	public String getCommandSenderName() {
+	public String getName() {
 		switch(mode) {
 		case Shredder:
 			return "tile.taam.productionline.shredder.name";
@@ -379,7 +379,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 	
 	@Override
 	public IChatComponent getDisplayName() {
-		return new ChatComponentTranslation(getCommandSenderName());
+		return new ChatComponentTranslation(getName());
 	}
 	
 	@Override

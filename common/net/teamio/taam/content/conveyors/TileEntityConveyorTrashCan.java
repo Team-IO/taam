@@ -61,7 +61,7 @@ public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements
 	}
 
 	@Override
-	public ItemStack getStackInSlotOnClosing(int slot) {
+	public ItemStack removeStackFromSlot(int slot) {
 		return null;
 	}
 
@@ -75,13 +75,13 @@ public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements
 	}
 
 	@Override
-	public String getCommandSenderName() {
+	public String getName() {
 		return "tile.taam.productionline_attachable.trashcan.name";
 	}
 	
 	@Override
 	public IChatComponent getDisplayName() {
-		return new ChatComponentTranslation(getCommandSenderName());
+		return new ChatComponentTranslation(getName());
 	}
 	
 	@Override

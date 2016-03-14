@@ -136,7 +136,7 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 	}
 
 	@Override
-	public ItemStack getStackInSlotOnClosing(int slot) {
+	public ItemStack removeStackFromSlot(int slot) {
 		return null;
 	}
 
@@ -177,7 +177,7 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 	}
 
 	@Override
-	public String getCommandSenderName() {
+	public String getName() {
 		return "tile.taam.chute.name";
 	}
 

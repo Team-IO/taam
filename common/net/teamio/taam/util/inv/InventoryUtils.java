@@ -333,7 +333,7 @@ public final class InventoryUtils {
 	/**
 	 * Static default implementation for IInventory method
 	 */
-	public static ItemStack getStackInSlotOnClosing(IInventory inv, int slot) {
+	public static ItemStack removeStackFromSlot(IInventory inv, int slot) {
 		ItemStack stack = inv.getStackInSlot(slot);
 		inv.setInventorySlotContents(slot, null);
 		return stack;

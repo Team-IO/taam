@@ -142,12 +142,12 @@ public class BlockSensor extends BaseBlock {
 	}
 
 	@Override
-	public int isProvidingWeakPower(IBlockAccess world, BlockPos pos, IBlockState state, EnumFacing side) {
+	public int getWeakPower(IBlockAccess world, BlockPos pos, IBlockState state, EnumFacing side) {
 		return getRedstoneLevel(world, pos);
 	}
 	
 	@Override
-	public int isProvidingStrongPower(IBlockAccess world, BlockPos pos, IBlockState state, EnumFacing side) {
+	public int getStrongPower(IBlockAccess world, BlockPos pos, IBlockState state, EnumFacing side) {
 		IBlockState blockState = world.getBlockState(pos);
 		EnumFacing dir = (EnumFacing)blockState.getValue(DIRECTION);
 		if(dir == side) {

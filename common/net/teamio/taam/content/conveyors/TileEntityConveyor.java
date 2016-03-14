@@ -499,11 +499,11 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	}
 
 	@Override
-	public ItemStack getStackInSlotOnClosing(int slot) {
+	public ItemStack removeStackFromSlot(int slot) {
 		if(appliance == null) {
 			return null;
 		} else {
-			return appliance.getStackInSlotOnClosing(slot);
+			return appliance.removeStackFromSlot(slot);
 		}
 	}
 
@@ -531,7 +531,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	}
 
 	@Override
-	public String getCommandSenderName() {
+	public String getName() {
 		return "tile.taam.productionline.conveyor.name";
 	}
 

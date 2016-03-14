@@ -232,7 +232,7 @@ public class ApplianceSprayer extends ApplianceInventory {
 	}
 	
 	@Override
-	public String getCommandSenderName() {
+	public String getName() {
 		return "item.taam.item.conveyor_appliance.sprayer.name";
 	}
 

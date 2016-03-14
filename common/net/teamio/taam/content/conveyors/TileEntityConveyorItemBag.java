@@ -86,8 +86,8 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable implements 
 	}
 
 	@Override
-	public ItemStack getStackInSlotOnClosing(int slot) {
-		return inventory.getStackInSlotOnClosing(slot);
+	public ItemStack removeStackFromSlot(int slot) {
+		return inventory.removeStackFromSlot(slot);
 	}
 
 	@Override
@@ -98,13 +98,13 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable implements 
 	}
 
 	@Override
-	public String getCommandSenderName() {
+	public String getName() {
 		return "tile.taam.productionline_attachable.itembag.name";
 	}
 	
 	@Override
 	public IChatComponent getDisplayName() {
-		return new ChatComponentTranslation(getCommandSenderName());
+		return new ChatComponentTranslation(getName());
 	}
 	
 	@Override
