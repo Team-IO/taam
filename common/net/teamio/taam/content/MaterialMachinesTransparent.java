@@ -17,12 +17,11 @@ public class MaterialMachinesTransparent extends MaterialTransparent {
         return false;
     }
 
-    @Override
-    public boolean getCanBlockGrass()
-    {
-        return false;
-    }
-
+	@Override
+	public boolean blocksLight() {
+		return false;
+	}
+	
     @Override
     public boolean blocksMovement()
     {
