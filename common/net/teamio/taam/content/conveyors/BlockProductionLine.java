@@ -2,8 +2,10 @@ package net.teamio.taam.content.conveyors;
 
 import java.util.List;
 
+import codechicken.lib.inventory.InventoryUtils;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
@@ -17,15 +19,13 @@ import net.teamio.taam.Config;
 import net.teamio.taam.Log;
 import net.teamio.taam.Taam;
 import net.teamio.taam.content.BaseBlock;
+import net.teamio.taam.content.MaterialMachinesTransparent;
 import net.teamio.taam.content.common.TileEntityChute;
-import codechicken.lib.inventory.InventoryUtils;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockProductionLine extends BaseBlock {
 	
 	public BlockProductionLine() {
-		super(Material.iron);
+		super(MaterialMachinesTransparent.INSTANCE);
 		this.setHardness(3.5f);
 		this.setStepSound(Block.soundTypeMetal);
 		this.setHarvestLevel("pickaxe", 1);

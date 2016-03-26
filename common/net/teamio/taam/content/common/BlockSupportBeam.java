@@ -3,18 +3,18 @@ package net.teamio.taam.content.common;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.teamio.taam.Taam;
 import net.teamio.taam.TaamClientProxy;
+import net.teamio.taam.content.MaterialMachinesTransparent;
 
 public class BlockSupportBeam extends Block {
 
 	protected String baseName;
 	
 	public BlockSupportBeam() {
-		super(Material.rock);
+		super(MaterialMachinesTransparent.INSTANCE);
 		this.setStepSound(Block.soundTypeMetal);
 		this.setHarvestLevel("pickaxe", 1);
 		this.setResistance(3.7f);
