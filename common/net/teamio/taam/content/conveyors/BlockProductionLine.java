@@ -3,7 +3,6 @@ package net.teamio.taam.content.conveyors;
 import java.util.List;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
@@ -23,6 +22,7 @@ import net.teamio.taam.Config;
 import net.teamio.taam.Log;
 import net.teamio.taam.Taam;
 import net.teamio.taam.content.BaseBlock;
+import net.teamio.taam.content.MaterialMachinesTransparent;
 import net.teamio.taam.content.common.TileEntityChute;
 import net.teamio.taam.util.inv.InventoryUtils;
 
@@ -31,7 +31,7 @@ public class BlockProductionLine extends BaseBlock {
 	public static final PropertyEnum<Taam.BLOCK_PRODUCTIONLINE_META> VARIANT = PropertyEnum.create("variant", Taam.BLOCK_PRODUCTIONLINE_META.class);
 	
 	public BlockProductionLine() {
-		super(Material.iron);
+		super(MaterialMachinesTransparent.INSTANCE);
 		this.setHardness(3.5f);
 		this.setStepSound(Block.soundTypeMetal);
 		this.setHarvestLevel("pickaxe", 1);

@@ -1,17 +1,17 @@
 package net.teamio.taam.content.common;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
+import net.teamio.taam.content.MaterialMachinesTransparent;
 
 public class BlockSupportBeam extends Block {
 
 	protected String baseName;
 
 	public BlockSupportBeam() {
-		super(Material.rock);
+		super(MaterialMachinesTransparent.INSTANCE);
 		this.setStepSound(Block.soundTypeMetal);
 		this.setHarvestLevel("pickaxe", 1);
 		this.setResistance(3.7f);
