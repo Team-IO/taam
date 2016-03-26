@@ -1,7 +1,6 @@
 package net.teamio.taam.content.common;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
@@ -14,6 +13,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.teamio.taam.Taam;
 import net.teamio.taam.content.BaseBlock;
+import net.teamio.taam.content.MaterialMachinesTransparent;
 
 public class BlockSensor extends BaseBlock {
 	
@@ -38,7 +38,7 @@ public class BlockSensor extends BaseBlock {
 	};
 	
 	public BlockSensor() {
-		super(Material.iron);
+		super(MaterialMachinesTransparent.INSTANCE);
 		this.setHardness(3.5f);
 		this.setStepSound(Block.soundTypeMetal);
 		this.setHarvestLevel("pickaxe", 1);
