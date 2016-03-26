@@ -39,9 +39,9 @@ public class Config {
 			0
 	};
 	public static final int[] oreBelow = new int[]{
-			64,
-			64,
-			64,
+			59,
+			59,
+			59,
 			128,
 			100
 	};
