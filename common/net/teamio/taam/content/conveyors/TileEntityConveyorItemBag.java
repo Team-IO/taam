@@ -1,5 +1,10 @@
 package net.teamio.taam.content.conveyors;
 
+import java.util.Collections;
+import java.util.List;
+
+import com.google.common.collect.Lists;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -8,6 +13,7 @@ import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.common.util.Constants.NBT;
+import net.teamio.taam.content.IRenderable;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.conveyors.ItemWrapper;
 import net.teamio.taam.conveyors.api.IConveyorAwareTE;
@@ -20,11 +26,15 @@ import net.teamio.taam.util.inv.InventoryUtils;
  * @author founderio
  *
  */
-public class TileEntityConveyorItemBag extends ATileEntityAttachable implements IConveyorAwareTE, IInventory, IRotatable {
+public class TileEntityConveyorItemBag extends ATileEntityAttachable implements IConveyorAwareTE, IInventory, IRotatable, IRenderable {
 
 	private InventorySimple inventory;
 	
 	public float fillPercent;
+	
+	private static final List<String> parts = Collections.unmodifiableList(Lists.newArrayList("BagStorage_bmdl"));
+	private static final List<String> parts_filled = Collections.unmodifiableList(Lists.newArrayList("BagStorage_bmdl", "BagFilling_bfmdl"));
+	
 	public TileEntityConveyorItemBag() {
 		inventory = new InventorySimple(5);
 	}
@@ -46,6 +56,15 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable implements 
 					this.fillPercent += singleFillFactor * stackFactor;
 				}
 			}
+		}
+	}
+	
+	@Override
+	public List<String> getVisibleParts() {
+		if(fillPercent > 0) {
+			return parts_filled;
+		} else {
+			return parts;
 		}
 	}
 	

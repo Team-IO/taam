@@ -1,5 +1,10 @@
 package net.teamio.taam.content.conveyors;
 
+import java.util.Collections;
+import java.util.List;
+
+import com.google.common.collect.Lists;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -8,6 +13,7 @@ import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IChatComponent;
 import net.teamio.taam.Config;
+import net.teamio.taam.content.IRenderable;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.conveyors.ItemWrapper;
 import net.teamio.taam.conveyors.api.IConveyorAwareTE;
@@ -18,9 +24,12 @@ import net.teamio.taam.conveyors.api.IConveyorAwareTE;
  * @author founderio
  *
  */
-public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements IConveyorAwareTE, IInventory, IRotatable {
+public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements IConveyorAwareTE, IInventory, IRotatable, IRenderable {
 
 	public float fillLevel;
+	private static final List<String> parts = Collections.unmodifiableList(Lists.newArrayList("BagTrash_btmdl"));
+	private static final List<String> parts_filled = Collections.unmodifiableList(Lists.newArrayList("BagTrash_btmdl", "BagFilling_bfmdl"));
+	
 	public TileEntityConveyorTrashCan() {
 	}
 	
@@ -40,6 +49,17 @@ public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements
 		fillLevel = 0;
 		updateState();
 	}
+
+
+	@Override
+	public List<String> getVisibleParts() {
+		if(fillLevel > 0) {
+			return parts_filled;
+		} else {
+			return parts;
+		}
+	}
+	
 	
 	/*
 	 * IInventory implementation

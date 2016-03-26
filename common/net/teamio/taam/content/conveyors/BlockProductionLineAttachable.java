@@ -86,7 +86,8 @@ public class BlockProductionLineAttachable extends BlockProductionLine {
 		if(type < 0 || type > values.length) {
 			return getDefaultState().withProperty(FACING, facing);
 		}
-		return getDefaultState().withProperty(VARIANT, values[meta]).withProperty(FACING, facing);
+		//Mouse.setGrabbed(false);
+		return getDefaultState().withProperty(VARIANT, values[type]).withProperty(FACING, facing);
 	}
 	
 	public String getUnlocalizedName(ItemStack itemStack) {
@@ -125,9 +126,16 @@ public class BlockProductionLineAttachable extends BlockProductionLine {
 	public void setBlockBoundsBasedOnState(IBlockAccess world,
 			BlockPos pos) {
 		IBlockState state = world.getBlockState(pos);
-		EnumFacing facing = (EnumFacing)state.getValue(FACING);
 		this.minY = 0f;
 		this.maxY = 0.5f;
+		if(state.getBlock() != this) {
+			this.minX = 0;
+			this.maxX = 0;
+			this.minZ = 0;
+			this.maxZ = 0;
+			return;
+		}
+		EnumFacing facing = (EnumFacing)state.getValue(FACING);
 		switch(facing) {
 		default:
 		case NORTH:
