@@ -16,6 +16,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.TRSRTransformation;
@@ -228,9 +229,17 @@ public abstract class BaseBlock extends Block {
 		}
 	
 		// Apply rotation to the model
-		OBJModel.OBJState retState = new OBJModel.OBJState(visibleParts, true, new TRSRTransformation(facing.rotateY().rotateY()));
+		OBJModel.OBJState retState = new OBJModel.OBJState(visibleParts, true, new TRSRTransformation(rotateRenderDirection(facing)));
 		
 		return ((IExtendedBlockState) this.state.getBaseState()).withProperty(OBJModel.OBJProperty.instance, retState);
+	}
+	
+	private EnumFacing rotateRenderDirection(EnumFacing facing) {
+		if(facing.getAxis() == Axis.Y) {
+			return facing.getOpposite();
+		} else {
+			return facing.rotateY().rotateY();
+		}
 	}
 
 	/**

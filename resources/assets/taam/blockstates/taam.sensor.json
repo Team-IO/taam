@@ -5,12 +5,19 @@
         "model": "taam:sensor.obj",
         "custom": {
             "flip-v": true
-        }
+        },
+        "transform": "forge:default-block"
      },
     "variants": {
         "normal": [{}],
         "inventory": [{
             "transform": "forge:default-block"
-        }]
+        }],
+        "direction=north": [{}],
+        "direction=south": [{}],
+        "direction=east": [{}],
+        "direction=west": [{}],
+        "direction=up": [{}],
+        "direction=down": [{}]
     }
 }

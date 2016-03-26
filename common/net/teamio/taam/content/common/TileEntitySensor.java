@@ -132,7 +132,7 @@ public class TileEntitySensor extends BaseTileEntity implements IRotatable, ITic
 			for(Object obj : worldObj.loadedEntityList) {
 				Entity ent = (Entity)obj;
 				
-				if(ent instanceof EntityLivingBase && ent.getCollisionBoundingBox().intersectsWith(bb) && ent instanceof EntityIronGolem == false  && ent instanceof EntitySnowman == false) {
+				if(isDetectedEntityType(ent) && isEntityWithinBoundingBox(bb, ent)) {
 					found = true;
 					break;
 				}
@@ -145,6 +145,21 @@ public class TileEntitySensor extends BaseTileEntity implements IRotatable, ITic
 		if(found != powering) {
 			powering = found;
 			BaseBlock.updateBlocksAround(worldObj, pos);
+		}
+	}
+	
+	private boolean isDetectedEntityType(Entity ent) {
+		return ent instanceof EntityLivingBase
+				&& !(ent instanceof EntityIronGolem)
+				&& !(ent instanceof EntitySnowman);
+	}
+	
+	private boolean isEntityWithinBoundingBox(AxisAlignedBB bb, Entity ent) {
+		AxisAlignedBB entityBounds = ent.getCollisionBoundingBox();
+		if(entityBounds == null) {
+			return bb.isVecInside(ent.getPositionVector());
+		} else {
+			return entityBounds.intersectsWith(bb);
 		}
 	}
 	

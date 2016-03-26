@@ -200,7 +200,8 @@ public class BlockSensor extends BaseBlock {
 	
 	@Override
 	public boolean canPlaceBlockOnSide(World worldIn, BlockPos pos, EnumFacing side) {
-		return worldIn.isSideSolid(pos.offset(side), side.getOpposite());
+		//return worldIn.isSideSolid(pos.offset(side), side);
+		return true;
 	}
 	
 }
