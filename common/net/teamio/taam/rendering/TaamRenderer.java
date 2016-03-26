@@ -8,6 +8,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.entity.item.EntityItem;
@@ -100,55 +101,65 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 	}
 	
 	public void renderConveyorItems(IConveyorAwareTE tileEntity, double x, double y, double z) {
-		EnumFacing direction = conveyorGetDirection(tileEntity);
-		
-		/*
-		 * Rotate if needed
-		 */
-		float rotationDegrees = 0;
-		if(direction == EnumFacing.WEST) {
-			rotationDegrees = 270;
-		} else if(direction == EnumFacing.NORTH) {
-			rotationDegrees = 180;
-		} else if(direction == EnumFacing.EAST) {
-			rotationDegrees = 90;
-		}
+
 		
 		GL11.glPushMatrix();
 		GL11.glTranslated(x, y, z);
 		
 		if(tileEntity != null) {
 
+	        Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
 			if(tileEntity instanceof TileEntityConveyorProcessor) {
+				
+				/*
+				 * Get Rotation
+				 */
+				
+				EnumFacing direction = conveyorGetDirection(tileEntity);
+				
+				float rotationDegrees = 0;
+				if(direction == EnumFacing.WEST) {
+					rotationDegrees = 270;
+				} else if(direction == EnumFacing.NORTH) {
+					rotationDegrees = 180;
+				} else if(direction == EnumFacing.EAST) {
+					rotationDegrees = 90;
+				}
+				
 				TileEntityConveyorProcessor processor = (TileEntityConveyorProcessor) tileEntity;
 				ItemStack processingStack = processor.getStackInSlot(0);
 				if(processingStack != null) {
 					GL11.glPushMatrix();
 					Random rand = processor.getWorld().rand;
-					GL11.glTranslatef(0.5f, -0.1f, 0.5f);
+					GL11.glTranslatef(0.5f, 0.4f, 0.5f);
 					
 					/*
-					 * Rotate if needed
+					 * Rotate the items
 					 */
 					
 					GL11.glRotatef(rotationDegrees, 0, 1, 0);
 
+					/*
+					 * Shaking inside the processor
+					 */
 					if(!processor.isShutdown) {
 						GL11.glTranslatef(
 								0.015f * (1-rand.nextFloat()),
 								0.025f * (1-rand.nextFloat()),
 								0.015f * (1-rand.nextFloat()));
 					}
-					
-					ei.setEntityItemStack(processingStack);
+					GL11.glScalef(0.4f, 0.4f, 0.4f);
 
-					
+
 					IBakedModel model = ri.getItemModelMesher().getItemModel(processingStack);
 					ri.renderItem(processingStack, model);
 					
 					GL11.glPopMatrix();
 				}
 			}
+			/*
+			 * Regular rendering, meaning conveyors & similar
+			 */
 			if(tileEntity.shouldRenderItemsDefault()) {
 				float posY = 0.1f;
 				if(tileEntity instanceof TileEntityConveyorSieve) {
@@ -162,11 +173,9 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 				for(int slot = 0; slot < 9; slot++) {
 					ItemWrapper wrapper = tileEntity.getSlot(slot);
 					
-					if(wrapper == null || wrapper.isEmpty()) {
-						continue;
-					}
-					ItemStack itemStack = wrapper.itemStack;
-					if(itemStack == null) {
+					ItemStack itemStack;
+					if(wrapper == null || wrapper.isEmpty()
+							|| (itemStack = wrapper.itemStack) == null) {
 						continue;
 					}
 					
@@ -179,26 +188,14 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 					EnumFacing renderDirection = tileEntity.getNextSlot(slot);
 					
 					float posX = (float)ConveyorUtil.getItemPositionX(slot, movementProgress / speedsteps, renderDirection);
-					
-					
 					float posZ = (float)ConveyorUtil.getItemPositionZ(slot, movementProgress / speedsteps, renderDirection);
 					
 					GL11.glPushMatrix();
-					GL11.glTranslatef(posX, posY + 0.5f, posZ);
-					GL11.glScalef(0.6f, 0.6f, 0.6f);
-					
-					//Don't rotate on the conveyors, as that makes transitions jumpy
-					//GL11.glRotatef(rotationDegrees, 0, 1, 0);
-
-	                GlStateManager.pushAttrib();
-	                RenderHelper.enableStandardItemLighting();
-					//ei.setEntityItemStack(itemStack);
+					GL11.glTranslatef(posX, posY + 0.51f, posZ);
+					GL11.glScalef(0.4f, 0.4f, 0.4f);
 	
 					IBakedModel model = ri.getItemModelMesher().getItemModel(itemStack);
 					ri.renderItem(itemStack, model);
-	                
-					RenderHelper.disableStandardItemLighting();
-	                GlStateManager.popAttrib();
 					
 					GL11.glPopMatrix();
 				}
