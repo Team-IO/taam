@@ -5,23 +5,21 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.oredict.OreDictionary;
-import net.teamio.taam.Log;
-import net.teamio.taam.Taam;
-import net.teamio.taam.TaamClientProxy;
-import net.teamio.taam.TaamMain;
-import net.teamio.taam.content.conveyors.TileEntityConveyorProcessor;
-import net.teamio.taam.conveyors.api.ChancedOutput;
-import net.teamio.taam.conveyors.api.IProcessingRecipe;
-import net.teamio.taam.conveyors.api.ProcessingRegistry;
-import net.teamio.taam.rendering.TaamRenderer;
-
 import org.lwjgl.opengl.GL11;
 
 import codechicken.lib.gui.GuiDraw;
 import codechicken.nei.PositionedStack;
 import codechicken.nei.recipe.TemplateRecipeHandler;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.oredict.OreDictionary;
+import net.teamio.taam.Log;
+import net.teamio.taam.Taam;
+import net.teamio.taam.TaamClientProxy;
+import net.teamio.taam.content.conveyors.TileEntityConveyorProcessor;
+import net.teamio.taam.conveyors.api.ChancedOutput;
+import net.teamio.taam.conveyors.api.IProcessingRecipe;
+import net.teamio.taam.conveyors.api.ProcessingRegistry;
+import net.teamio.taam.rendering.TaamRenderer;
 
 public abstract class ProcessingRecipeHandler extends TemplateRecipeHandler {
 
