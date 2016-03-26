@@ -155,7 +155,7 @@ public class TileEntitySensor extends BaseTileEntity implements IRotatable, ITic
 	}
 	
 	private boolean isEntityWithinBoundingBox(AxisAlignedBB bb, Entity ent) {
-		AxisAlignedBB entityBounds = ent.getCollisionBoundingBox();
+		AxisAlignedBB entityBounds = ent.getEntityBoundingBox();
 		if(entityBounds == null) {
 			return bb.isVecInside(ent.getPositionVector());
 		} else {
