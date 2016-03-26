@@ -94,7 +94,7 @@ public abstract class ProcessingRecipeHandler extends TemplateRecipeHandler {
          * Draw Processor Machine
          */
         
-		TaamRenderer renderer = ((TaamClientProxy)TaamMain.proxy).taamRenderer;
+		TaamRenderer renderer = TaamClientProxy.taamRenderer;
 		GL11.glPushMatrix();
 
 		GL11.glTranslated(69.25, 40, 30);
