@@ -62,6 +62,17 @@ tile.taam.machines.creativecache.name=Creative Item Cache
 # Block localization
 tile.taam.sensor.name=Motion Sensor
 tile.taam.slidingdoor.name=Sliding Door
+tile.taam.support_beam.name=Support Beam
+# Concrete
+tile.taam.concrete.name=Concrete
+tile.taam.concrete.rough.name=Rough Concrete
+tile.taam.concrete.rough_chiseled.name=Rough Concrete (Chiseled)
+tile.taam.concrete.fine.name=Fine Concrete
+tile.taam.concrete.fine_chiseled.nam=Fine Concrete (Chiseled)
+tile.taam.concrete.coated.name=Coated Concrete
+tile.taam.concrete.coated_chiseled.name=Coated Concrete (Chiseled)
+tile.taam.concrete.warn1.name=Concrete (Black Warning Paint)
+tile.taam.concrete.warn2.name=Concrete (Red Warning Paint)
 # Ores
 tile.taam.ore.copper.name=Copper Ore
 tile.taam.ore.tin.name=Tin Ore
