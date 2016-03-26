@@ -52,8 +52,6 @@ import net.teamio.taam.content.conveyors.TileEntityConveyorItemBag;
 import net.teamio.taam.content.conveyors.TileEntityConveyorProcessor;
 import net.teamio.taam.content.conveyors.TileEntityConveyorSieve;
 import net.teamio.taam.content.conveyors.TileEntityConveyorTrashCan;
-import net.teamio.taam.conveyors.ApplianceRegistry;
-import net.teamio.taam.conveyors.appliances.ApplianceSprayer;
 import net.teamio.taam.gui.GuiHandler;
 
 
@@ -94,11 +92,6 @@ public class TaamMain {
 	public static DamageSource ds_ground = new DamageSource("taam.ground").setDamageBypassesArmor();
 	public static DamageSource ds_crushed = new DamageSource("taam.crushed").setDamageBypassesArmor();
 	public static DamageSource ds_reconfigured = new DamageSource("taam.reconfigured").setDamageIsAbsolute();
-
-	
-	public TaamMain() {
-       // DepLoader.load();
-	}
 	
 	private void registerBlock(Block block, Class<? extends ItemBlock> itemClass, String name) {
 		block.setUnlocalizedName(name);
@@ -206,8 +199,6 @@ public class TaamMain {
 		MinecraftForge.EVENT_BUS.register(worldgen);
 		
 		GameRegistry.registerWorldGenerator(worldgen, 2);
-		
-		ApplianceRegistry.registerFactory(Taam.APPLIANCE_SPRAYER, new ApplianceSprayer.Factory());
 		
 		Enum<?>[] fluidsDyeValues = Taam.FLUID_DYE_META.values();
 		fluidsDye = new FluidDye[fluidsDyeValues.length];

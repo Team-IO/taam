@@ -40,7 +40,7 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable implements 
 	}
 	
 	@Override
-	public void updateRenderingInfo() {
+	public void blockUpdate() {
 		if(worldObj != null && worldObj.isRemote) {
 			/*
 			 * Fill display calculation is only needed on the client..
@@ -79,7 +79,7 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable implements 
 		inventory.items = new ItemStack[inventory.getSizeInventory()];
 		InventoryUtils.readItemStacksFromTag(inventory.items, tag.getTagList("items", NBT.TAG_COMPOUND));
 		direction = EnumFacing.getFront(tag.getInteger("direction"));
-		updateRenderingInfo();
+		blockUpdate();
 	}
 
 	/*
@@ -100,7 +100,7 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable implements 
 	public ItemStack decrStackSize(int slot, int amount) {
 		ItemStack stack = inventory.decrStackSize(slot, amount);
 		updateState();
-		updateRenderingInfo();
+		blockUpdate();
 		return stack;
 	}
 
@@ -113,7 +113,7 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable implements 
 	public void setInventorySlotContents(int slot, ItemStack stack) {
 		inventory.setInventorySlotContents(slot, stack);
 		updateState();
-		updateRenderingInfo();
+		blockUpdate();
 	}
 
 	@Override
@@ -193,7 +193,7 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable implements 
 		// insertItem returns item count unable to insert.
 		int inserted = item.stackSize - InventoryUtils.insertItem(inventory, item, false);
 		updateState();
-		updateRenderingInfo();
+		blockUpdate();
 		return inserted;
 	}
 	

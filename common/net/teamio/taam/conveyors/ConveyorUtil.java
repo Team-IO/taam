@@ -1,5 +1,6 @@
 package net.teamio.taam.conveyors;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.entity.Entity;
@@ -11,7 +12,9 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.teamio.taam.conveyors.api.IConveyorAppliance;
 import net.teamio.taam.conveyors.api.IConveyorApplianceHost;
 import net.teamio.taam.conveyors.api.IConveyorAwareTE;
 import net.teamio.taam.util.inv.InventoryRange;
@@ -282,58 +285,6 @@ public class ConveyorUtil {
 		}
 	}
 	
-	
-	/**
-	 * Drops the installed appliance and its content, if available.
-	 * @param applianceHost
-	 * @param world
-	 * @param x
-	 * @param y
-	 * @param z
-	 * @return true if an appliance was there and did drop.
-	 */
-	public static boolean dropAppliance(IConveyorApplianceHost applianceHost, EntityPlayer player, World world, BlockPos pos) {
-		String type = applianceHost.getApplianceType();
-		if(type == null) {
-			return false;
-		}
-		IConveyorApplianceFactory factory = ApplianceRegistry.getFactory(type);
-		if(factory == null) {
-			return false;
-		}
-		/*
-		 * Drop appliance
-		 */
-		IConveyorAppliance appliance = applianceHost.getAppliance();
-		if(appliance == null) {
-			return false;
-		}
-		ItemStack stack = appliance.getItemStack();
-		//TODO: Make ItemStack retain certain data? (Tanks... Energy...)
-		if(stack != null) {
-			if(player != null) {
-				net.teamio.taam.util.inv.InventoryUtils.tryDropToInventory(player, stack, pos);
-			} else {
-				InventoryUtils.dropItem(stack, world, pos);
-			}
-		}
-		/*
-		 * Drop appliance content
-		 */
-		for(int i = 0; i < appliance.getSizeInventory(); i++) {
-			stack = appliance.getStackInSlot(i);
-			if(stack == null) {
-				continue;
-			}
-			if(player != null) {
-				net.teamio.taam.util.inv.InventoryUtils.tryDropToInventory(player, stack, pos);
-			} else {
-				InventoryUtils.dropItem(stack, world, pos);
-			}
-		}
-		return true;
-	}
-
 	/**
 	 * Drops the item in the passed slot, exactly where it is rendered now.
 	 * @param slot The slot to be dropped.
@@ -438,11 +389,23 @@ public class ConveyorUtil {
 	}
 
 	public static boolean defaultTransition(World world, IConveyorAwareTE tileEntity, int[] slotOrder) {
+		/*
+		 * Fetch info on appliances
+		 */
+		List<IConveyorAppliance> appliances = null;
 		IConveyorApplianceHost applianceHost = null;
 		if(tileEntity instanceof IConveyorApplianceHost) {
 			applianceHost = (IConveyorApplianceHost)tileEntity;
+			appliances = applianceHost.getAppliances();
 		}
+		
+		/**
+		 * Tracks if the tileEntity state needs to be updates
+		 */
 		boolean needsUpdate = false;
+		/*
+		 * Process each slot individually, using the predefined slot order
+		 */
 		for(int index = 0; index < slotOrder.length; index++) {
 		
 			int slot = slotOrder[index];
@@ -453,13 +416,20 @@ public class ConveyorUtil {
 				continue;
 			}
 			
-			if(applianceHost != null) {
-				IConveyorAppliance appliance = applianceHost.getAppliance();
-				if(appliance != null) {
-					// System.out.println("Process");
-					appliance.processItem(applianceHost, slot, wrapper);
+			/*
+			 * Let the appliances process the current slot.
+			 */
+			if(appliances != null) {
+				for(IConveyorAppliance appliance : appliances) {
+					if(appliance.processItem(applianceHost, slot, wrapper)) {
+						needsUpdate = true;
+					}
 				}
 			}
+			
+			/*
+			 * Move the contents to the next slot
+			 */
 			
 			EnumFacing direction = tileEntity.getMovementDirection();
 			byte speedsteps = tileEntity.getSpeedsteps();
@@ -472,8 +442,16 @@ public class ConveyorUtil {
 			
 			IConveyorAwareTE nextBlock = null;
 			
+			/*
+			 * Get next slot
+			 */
+			
 			EnumFacing nextSlotDir = tileEntity.getNextSlot(slot);
 			int nextSlot = getNextSlotUnwrapped(slot, nextSlotDir);
+			
+			/*
+			 * Check if we need to wrap & stept to next block
+			 */
 			
 			if(nextSlot < 0) {
 				nextSlot += 9;
@@ -483,7 +461,7 @@ public class ConveyorUtil {
 				slotWrapped = true;
 			}
 			
-			// Slot wrapped to next block
+			// Check the condition of the next slot
 			if(slotWrapped) {
 				// Next block, potentially a conveyor-aware block.
 				BlockPos nextBlockPos = tileEntity.getPos().offset(direction);
@@ -518,7 +496,7 @@ public class ConveyorUtil {
 				nextSlotProgress = nextWrapper.movementProgress;
 			}
 			
-			// check next slot.
+			// Check transition to next slot
 			if(!wrapper.isBlocked() && (nextSlotFree || nextSlotMovable)) {
 				if(wrapper.movementProgress == speedsteps && nextSlotFree) {
 					if(slotWrapped && (nextBlock == null || !nextBlock.isSlotAvailable(nextSlot))) {
@@ -540,6 +518,9 @@ public class ConveyorUtil {
 					needsUpdate = true;
 				}
 			}
+			/*
+			 * If we can progress (next slot is empty or far enough away), step forward
+			 */
 			if(nextSlotFree || (nextSlotMovable && wrappedIsSameDirection && wrapper.movementProgress < nextSlotProgress)) {
 				wrapper.movementProgress++;
 				if(wrapper.movementProgress > speedsteps) {
@@ -571,5 +552,21 @@ public class ConveyorUtil {
 				player.inventory.setInventorySlotContents(playerSlot, playerStack);
 			}
 		}
+	}
+
+	public static List<IConveyorAppliance> getTouchingAppliances(IConveyorApplianceHost tileEntityConveyor, IBlockAccess world, BlockPos pos) {
+		List<IConveyorAppliance> appliances = new ArrayList<IConveyorAppliance>();
+		
+		for(EnumFacing direction : EnumFacing.VALUES) {
+			TileEntity te = world.getTileEntity(pos.offset(direction));
+			if(te instanceof IConveyorAppliance) {
+				IConveyorAppliance appliance = (IConveyorAppliance)te;
+				if(appliance.getFacingDirection() == direction.getOpposite()) {
+					appliances.add(appliance);
+				}
+			}
+		}
+		
+		return appliances;
 	}
 }

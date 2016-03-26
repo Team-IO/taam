@@ -29,6 +29,10 @@ public abstract class ATileEntityAttachable extends BaseTileEntity implements IC
 			return slot == 0 || slot == 1 || slot == 2;
 		}
 	}
+
+	public EnumFacing getNextSlot(int slot) {
+		return null;
+	}
 	
 	/*
 	 * IRotatable implementation
@@ -57,10 +61,6 @@ public abstract class ATileEntityAttachable extends BaseTileEntity implements IC
 		IBlockState state = worldObj.getBlockState(pos);
 		worldObj.setBlockState(pos, state.withProperty(BlockProductionLineAttachable.FACING, direction));
 		updateState();
-	}
-
-	public EnumFacing getNextSlot(int slot) {
-		return null;
 	}
 
 }

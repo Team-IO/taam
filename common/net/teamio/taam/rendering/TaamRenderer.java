@@ -9,16 +9,12 @@ import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.resources.model.IBakedModel;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
-import net.teamio.taam.Taam;
 import net.teamio.taam.content.IRotatable;
-import net.teamio.taam.content.conveyors.TileEntityConveyor;
 import net.teamio.taam.content.conveyors.TileEntityConveyorProcessor;
 import net.teamio.taam.content.conveyors.TileEntityConveyorSieve;
 import net.teamio.taam.conveyors.ConveyorUtil;
@@ -28,16 +24,12 @@ import net.teamio.taam.conveyors.api.IConveyorAwareTE;
 public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 
 	private RenderItem ri;
-	private EntityItem ei;
 	private float rot = 0;
 	private float rot_sensor = 0;
 	public static double rotSin = 0;
 	
 	public TaamRenderer() {
 		ri = Minecraft.getMinecraft().getRenderItem();
-		ei = new EntityItem(null, 0, 0, 0, new ItemStack(Items.apple));
-		ei.rotationPitch = 0;
-		ei.rotationYaw = 0;
 	}
 	
 	@SubscribeEvent
@@ -53,39 +45,9 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 	}
 	@Override
 	public void renderTileEntityAt(TileEntity tileEntity, double x, double y, double z, float partialTicks, int destroyStage) {
-		if (tileEntity instanceof TileEntityConveyor) {
-			TileEntityConveyor tec = (TileEntityConveyor) tileEntity;
-			renderConveyor(tec, x, y, z, tec.getSpeedLevel());
-		}
-		
 		if(tileEntity instanceof IConveyorAwareTE) {
 			renderConveyorItems((IConveyorAwareTE) tileEntity, x, y, z);
 		}
-	}
-
-	private void conveyorPrepareRendering(IConveyorAwareTE tileEntity, double x, double y, double z) {
-		EnumFacing direction = conveyorGetDirection(tileEntity);
-		
-		GL11.glPushMatrix();
-		/*
-		 * Translate to coordinates
-		 */
-		GL11.glTranslated(x, y, z);
-		
-		/*
-		 * Rotate if needed
-		 */
-		GL11.glTranslatef(0.5f, 0, 0.5f);
-		
-		if(direction == EnumFacing.WEST) {
-			GL11.glRotatef(270, 0, 1, 0);
-		} else if(direction == EnumFacing.NORTH) {
-			GL11.glRotatef(180, 0, 1, 0);
-		} else if(direction == EnumFacing.EAST) {
-			GL11.glRotatef(90, 0, 1, 0);
-		}
-
-		GL11.glTranslated(-0.5, 0, -0.5);
 	}
 	
 	private EnumFacing conveyorGetDirection(IConveyorAwareTE tileEntity) {
@@ -201,23 +163,5 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		}
 		
 		GL11.glPopMatrix();
-	}
-	
-	public void renderConveyor(TileEntityConveyor tileEntity, double x, double y, double z, int meta) {
-		conveyorPrepareRendering(tileEntity, x, y, z);
-		
-		if(tileEntity != null) {
-			if(tileEntity.hasAppliance()) {
-				renderConveyorAppliance(tileEntity.getApplianceType());
-			}
-		}
-		
-		GL11.glPopMatrix();
-	}
-	
-	public void renderConveyorAppliance(String type) {
-		if(Taam.APPLIANCE_SPRAYER.equals(type)) {
-			//modelConveyor.renderPart("Appliance_Sprayer_asmdl");
-		}
 	}
 }

@@ -473,7 +473,7 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 				this.direction = EnumFacing.NORTH;
 			}
 			updateState();
-			updateRenderingInfo();
+			blockUpdate();
 		}
 	}
 

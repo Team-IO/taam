@@ -19,7 +19,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.teamio.taam.Config;
 import net.teamio.taam.content.conveyors.TileEntityConveyor;
-import net.teamio.taam.conveyors.IConveyorAppliance;
 import net.teamio.taam.conveyors.api.IConveyorApplianceHost;
 
 /**
@@ -110,16 +109,7 @@ public class ItemDebugTool extends Item {
         }
         
         if(te instanceof IConveyorApplianceHost) {
-        	IConveyorApplianceHost host = (IConveyorApplianceHost)te;
-        	IConveyorAppliance appliance = host.getAppliance();
-        	String applianceType = host.getApplianceType();
-
-        	if(appliance == null) {
-        		text = String.format(remoteState + " Appliance Type: %s Appliance is null. ", applianceType);
-        	} else {
-        		text = String.format(remoteState + " Appliance Type: %s Appliance: %s", applianceType, String.valueOf(appliance));
-        	}
-        	player.addChatMessage(new ChatComponentText(text));
+        	//IConveyorApplianceHost host = (IConveyorApplianceHost)te;
         }
 		
         return !didSomething;

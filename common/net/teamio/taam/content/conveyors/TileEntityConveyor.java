@@ -16,24 +16,18 @@ import net.minecraft.util.IChatComponent;
 import net.minecraft.util.ITickable;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidHandler;
 import net.teamio.taam.Config;
 import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IRenderable;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.content.IWorldInteractable;
-import net.teamio.taam.conveyors.ApplianceRegistry;
 import net.teamio.taam.conveyors.ConveyorUtil;
-import net.teamio.taam.conveyors.IConveyorAppliance;
-import net.teamio.taam.conveyors.IConveyorApplianceFactory;
 import net.teamio.taam.conveyors.ItemWrapper;
+import net.teamio.taam.conveyors.api.IConveyorAppliance;
 import net.teamio.taam.conveyors.api.IConveyorApplianceHost;
 import net.teamio.taam.conveyors.api.IConveyorAwareTE;
 
-public class TileEntityConveyor extends BaseTileEntity implements ISidedInventory, IFluidHandler, IConveyorAwareTE, IRotatable, IConveyorApplianceHost, IWorldInteractable, ITickable, IRenderable {
+public class TileEntityConveyor extends BaseTileEntity implements ISidedInventory, IConveyorAwareTE, IRotatable, IConveyorApplianceHost, IWorldInteractable, ITickable, IRenderable {
 
 	/*
 	 * Content
@@ -54,11 +48,10 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	public boolean renderLeft = false;
 	public boolean renderAbove = false;
 	
-	/*
-	 * Appliance state
+	/**
+	 * Appliance cache. Updated when loading & on block update
 	 */
-	private String applianceType;
-	private IConveyorAppliance appliance;
+	private List<IConveyorAppliance> applianceCache;
 
 
 	public TileEntityConveyor() {
@@ -83,8 +76,10 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	}
 	
 	@Override
-	public void updateRenderingInfo() {
+	public void blockUpdate() {
 		if(worldObj != null) {
+			
+			updateApplianceCache();
 			
 			// Check in front
 			TileEntity te = worldObj.getTileEntity(pos.offset(direction));
@@ -188,9 +183,6 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 			visible.add("ConveyorHighThroughput_Framing_Alu_chtpmdl_alu");
 		}
 		
-		//TODO: Adjust blender model to have all "end" vertices
-		//TODO: Fix Walz Models (sides don't render completely)
-		
 		return visible;
 	}
 
@@ -214,6 +206,9 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	@Override
 	public void update() {
 
+		// Call this method to initialize the appliance cache if needed.
+		getAppliances();
+		
 		/*
 		 * Find items laying on the conveyor.
 		 */
@@ -251,14 +246,6 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	protected void writePropertiesToNBT(NBTTagCompound tag) {
 		tag.setInteger("direction", direction.ordinal());
 		tag.setInteger("speedLevel", speedLevel);
-		if(applianceType != null) {
-			tag.setString("applianceType", applianceType);
-		}
-		if(appliance != null) {
-			NBTTagCompound applianceData = new NBTTagCompound();
-			appliance.writeToNBT(applianceData);
-			tag.setTag("appliance", applianceData);
-		}
 		NBTTagList itemsTag = new NBTTagList();
 		for(int i = 0; i < items.length; i++) {
 			itemsTag.appendTag(items[i].writeToNBT());
@@ -302,14 +289,6 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 			int count = Math.min(itemsTag.tagCount(), items.length);
 			for(int i = 0; i < count; i++) {
 				items[i] = ItemWrapper.readFromNBT(itemsTag.getCompoundTagAt(i));
-			}
-		}
-		String newApplianceType = tag.getString("applianceType");
-		setAppliance(newApplianceType);
-		if(appliance != null) {
-			NBTTagCompound applianceData = tag.getCompoundTag("appliance");
-			if(applianceData != null) {
-				appliance.readFromNBT(applianceData);
 			}
 		}
 		int flags = tag.getInteger("flags");
@@ -392,7 +371,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 		if(direction == EnumFacing.UP || direction == EnumFacing.DOWN) {
 			this.direction = EnumFacing.NORTH;
 		}
-		updateRenderingInfo();
+		blockUpdate();
 		updateState();
 		worldObj.notifyNeighborsOfStateChange(pos, blockType);
 		if(blockType != null) {
@@ -417,129 +396,55 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	}
 	
 	@Override
-	public boolean initAppliance(String name) {
-		if(hasAppliance()) {
-			return false;
-		}
-		boolean result = setAppliance(name);
-		updateState();
-		updateContainingBlockInfo();
-		return result;
+	public List<IConveyorAppliance> getAppliances() {
+		return applianceCache;
 	}
 	
-	private boolean setAppliance(String type) {
-		if(type == null) {
-			appliance = null;
-			applianceType = null;
-			return true;
-		}
-		if(!canAcceptAppliance(type)) {
-			return false;
-		}
-		if(type.equals(applianceType)) {
-			return false;
-		}
-		IConveyorApplianceFactory factory = ApplianceRegistry.getFactory(type);
-		if(factory == null) {
-			appliance = null;
-			applianceType = null;
+	public void updateApplianceCache() {
+		if(speedLevel == 1) {
+			applianceCache = ConveyorUtil.getTouchingAppliances(this, worldObj, pos);
 		} else {
-			appliance = factory.setUpApplianceInventory(type, this);
-			applianceType = type;
+			applianceCache = null;
 		}
-		return true;
 	}
 	
-	@Override
-	public boolean hasAppliance() {
-		return appliance != null;
-	}
-
-	@Override
-	public boolean hasApplianceWithType(String type) {
-		return hasAppliance() && applianceType.equals(type);
-	}
-
-	@Override
-	public String getApplianceType() {
-		return applianceType;
-	}
-
-	@Override
-	public IConveyorAppliance getAppliance() {
-		return appliance;
-	}
-
-	@Override
-	public boolean removeAppliance() {
-		boolean hadAppliance = hasAppliance();
-		appliance = null;
-		applianceType = null;
-		updateState();
-		return hadAppliance;
-	}
-
 	/*
 	 * IInventory implementation
 	 */
 	
 	@Override
 	public int getSizeInventory() {
-		if(appliance == null) {
-			return 9;
-		} else {
-			return appliance.getSizeInventory();
-		}
+		return 9;
 	}
 
 	@Override
 	public ItemStack getStackInSlot(int slot) {
-		if(appliance == null) {
-			return getSlot(slot).itemStack;
-		} else {
-			return appliance.getStackInSlot(slot);
-		}
+		return getSlot(slot).itemStack;
 	}
 
 	@Override
 	public ItemStack decrStackSize(int slot, int amount) {
-		if(appliance == null) {
-			return null;
-		} else {
-			return appliance.decrStackSize(slot, amount);
-		}
+		return null;
 	}
 
 	@Override
 	public ItemStack removeStackFromSlot(int slot) {
-		if(appliance == null) {
-			return null;
-		} else {
-			return appliance.removeStackFromSlot(slot);
-		}
+		return null;
 	}
 
 	@Override
 	public void setInventorySlotContents(int slot, ItemStack itemStack) {
-		if(appliance == null) {
-			if(itemStack == null) {
-				items[slot].itemStack = null;
-				updateState();
-			} else {
-				insertItemAt(itemStack, slot);
-			}
+		if(itemStack == null) {
+			items[slot].itemStack = null;
+			updateState();
 		} else {
-			appliance.setInventorySlotContents(slot, itemStack);
+			insertItemAt(itemStack, slot);
 		}
 	}
 
 	@Override
 	public IChatComponent getDisplayName() {
-		if(appliance == null) {
-			return new ChatComponentTranslation("tile.taam.productionline.conveyor.name");
-		} else {
-			return appliance.getDisplayName();
-		}
+		return new ChatComponentTranslation("tile.taam.productionline.conveyor.name");
 	}
 
 	@Override
@@ -549,79 +454,55 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 
 	@Override
 	public boolean hasCustomName() {
-		if(appliance == null) {
-			return false;
-		} else {
-			return appliance.hasCustomName();
-		}
+		return false;
 	}
 
 	@Override
 	public int getInventoryStackLimit() {
-		if(appliance == null) {
-			return 64;
-		} else {
-			return appliance.getInventoryStackLimit();
-		}
+		return 64;
 	}
 
 	@Override
 	public boolean isUseableByPlayer(EntityPlayer player) {
-		if(appliance == null) {
-			return true;
-		} else {
-			return appliance.isUseableByPlayer(player);
-		}
+		return true;
 	}
 
 	@Override
 	public void openInventory(EntityPlayer player) {
-		if(appliance != null) {
-			appliance.openInventory(player);
-		}
+		// Nothing to do.
 	}
 
 	@Override
 	public void closeInventory(EntityPlayer player) {
-		if(appliance != null) {
-			appliance.closeInventory(player);
-		}
+		// Nothing to do.
 	}
 
 	@Override
 	public boolean isItemValidForSlot(int slot, ItemStack itemStack) {
-		if(appliance == null) {
-			return true;
-		} else {
-			return appliance.isItemValidForSlot(slot, itemStack);
-		}
+		return true;
 	}
 
 
 	@Override
 	public int getField(int id) {
-		// TODO Auto-generated method stub
+		// Whatever..
 		return 0;
 	}
 
 	@Override
 	public void setField(int id, int value) {
-		// TODO Auto-generated method stub
-		
+		// Whatever..
 	}
 
 	@Override
 	public int getFieldCount() {
-		// TODO Auto-generated method stub
+		// Whatever..
 		return 0;
 	}
 
 	@Override
 	public void clear() {
-		if(appliance == null) {
-		} else {
-			appliance.clear();
-		}
+		// Nothing to do.
 	}
 	
 	/*
@@ -630,93 +511,22 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	
 	@Override
 	public int[] getSlotsForFace(EnumFacing side) {
-		if(appliance == null) {
-			final int slot = ConveyorUtil.getSlot(side);
-			if(slot == -1) {
-				return new int[0];
-			} else {
-				return new int[] { slot };
-			}
+		final int slot = ConveyorUtil.getSlot(side);
+		if(slot == -1) {
+			return new int[0];
 		} else {
-			return appliance.getSlotsForFace(side);
+			return new int[] { slot };
 		}
 	}
 	
 	@Override
 	public boolean canInsertItem(int slot, ItemStack itemStack, EnumFacing side) {
-		if(appliance == null) {
-			return ConveyorUtil.insertItemAt(this, itemStack, slot, true) > 0;
-		} else {
-			return appliance.canInsertItem(slot, itemStack, side);
-		}
+		return ConveyorUtil.insertItemAt(this, itemStack, slot, true) > 0;
 	}
 
 	@Override
 	public boolean canExtractItem(int slot, ItemStack itemStack, EnumFacing side) {
-		if(appliance == null) {
-			return false;
-		} else {
-			return appliance.canExtractItem(slot, itemStack, side);
-		}
-	}
-
-	/*
-	 * IFluidHandler implementation
-	 */
-	
-	@Override
-	public int fill(EnumFacing from, FluidStack resource, boolean doFill) {
-		if(appliance == null) {
-			return 0;
-		} else {
-			return appliance.fill(from, resource, doFill);
-		}
-	}
-
-	@Override
-	public FluidStack drain(EnumFacing from, FluidStack resource,
-			boolean doDrain) {
-		if(appliance == null) {
-			return null;
-		} else {
-			return appliance.drain(from, resource, doDrain);
-		}
-	}
-
-	@Override
-	public FluidStack drain(EnumFacing from, int maxDrain, boolean doDrain) {
-		if(appliance == null) {
-			return null;
-		} else {
-			return appliance.drain(from, maxDrain, doDrain);
-		}
-	}
-
-	@Override
-	public boolean canFill(EnumFacing from, Fluid fluid) {
-		if(appliance == null) {
-			return false;
-		} else {
-			return appliance.canFill(from, fluid);
-		}
-	}
-
-	@Override
-	public boolean canDrain(EnumFacing from, Fluid fluid) {
-		if(appliance == null) {
-			return false;
-		} else {
-			return appliance.canDrain(from, fluid);
-		}
-	}
-
-	@Override
-	public FluidTankInfo[] getTankInfo(EnumFacing from) {
-		if(appliance == null) {
-			return new FluidTankInfo[0];
-		} else {
-			return appliance.getTankInfo(from);
-		}
+		return false;
 	}
 
 	/*

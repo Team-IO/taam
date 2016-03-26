@@ -10,46 +10,24 @@ import net.minecraft.block.BlockColored;
 import net.minecraft.block.BlockHardenedClay;
 import net.minecraft.block.BlockStainedGlass;
 import net.minecraft.block.BlockStainedGlassPane;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.IChatComponent;
 import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTankInfo;
+import net.minecraftforge.fluids.IFluidHandler;
 import net.minecraftforge.oredict.OreDictionary;
 import net.teamio.taam.Config;
-import net.teamio.taam.TaamMain;
-import net.teamio.taam.conveyors.ApplianceInventory;
-import net.teamio.taam.conveyors.IConveyorAppliance;
-import net.teamio.taam.conveyors.IConveyorApplianceFactory;
+import net.teamio.taam.content.conveyors.ATileEntityAppliance;
 import net.teamio.taam.conveyors.ItemWrapper;
 import net.teamio.taam.conveyors.api.IConveyorApplianceHost;
 
-public class ApplianceSprayer extends ApplianceInventory {
+public class ApplianceSprayer extends ATileEntityAppliance implements IFluidHandler {
 
 	public ApplianceSprayer() {
-		super(1, 1);
 	}
 	
-	public static class Factory implements IConveyorApplianceFactory {
-
-		@Override
-		public IConveyorAppliance setUpApplianceInventory(String type, IConveyorApplianceHost conveyor) {
-			IConveyorAppliance ainv = new ApplianceSprayer();
-			return ainv; 
-		}
-	}
-	
-	/*
-	 * "Static"
-	 */
-
-	@Override
-	public ItemStack getItemStack() {
-		return new ItemStack(TaamMain.itemConveyorAppliance, 1, 0);
-	}
-
 	static final String[] dyes = { "Black", "Red", "Green", "Brown", "Blue",
 			"Purple", "Cyan", "LightGray", "Gray", "Pink", "Lime", "Yellow",
 			"LightBlue", "Magenta", "Orange", "White" };
@@ -92,24 +70,20 @@ public class ApplianceSprayer extends ApplianceInventory {
 		}
 	}
 	
-	/*
-	 * "Dynamic"
-	 */
-	
 	@Override
-	public void processItem(IConveyorApplianceHost conveyor, int slot, ItemWrapper wrapper) {
+	public boolean processItem(IConveyorApplianceHost conveyor, int slot, ItemWrapper wrapper) {
 		//TODO: Review this, and change to fluid usage (will use fluid during progress, can leave half-processed items.)
 		if(wrapper.processing > 1) {//Config.pl_appl_sprayer_maxProgress) {
-			int paintType = getAvailablePaintType();
+			int paintType = 0;//getAvailablePaintType();
 			int itemPaintType = getItemPaintType(wrapper.itemStack);
 			if(paintType == itemPaintType) {
 				System.out.println("No need to paint");
 				//Reset progress, as we cannot spray it
 				wrapper.processing = 0;
-				return;
 			}
-			if(checkResource() >= Config.pl_appl_sprayer_resourceUsage) {
-				consumeResource();
+			int resourceLevel = 0;//checkResource();
+			if(resourceLevel >= Config.pl_appl_sprayer_resourceUsage) {
+				//consumeResource();
 				setItemPaintType(wrapper.itemStack, paintType);
 				wrapper.processing = -1;
 			} else {
@@ -117,42 +91,11 @@ public class ApplianceSprayer extends ApplianceInventory {
 				//Reset progress, as we cannot spray it
 				wrapper.processing = 0;
 			}
+			return true;
 		}
-	}
-	
-	private int getAvailablePaintType() {
-		ItemStack is = inventory.getStackInSlot(0);
-		if(is == null || is.getItem() == null || is.stackSize <= 0) {
-			return -1;
-		}
-		for(int i = 0; i < dyes.length; i++) {
-			List<ItemStack> dyeOres = OreDictionary.getOres("dye" + dyes[i]);
-			Iterator<ItemStack> itr = ((ArrayList<ItemStack>)dyeOres).iterator();
-            while (itr.hasNext())
-            {
-                if(OreDictionary.itemMatches(itr.next(), is, false)) {
-                	return 15-i;
-                }
-            }
-		}
-		return -1;
-	}
-	
-	private void consumeResource() {
-		inventory.getStackInSlot(0).stackSize -= Config.pl_appl_sprayer_resourceUsage;
-		if(inventory.getStackInSlot(0).stackSize <= 0) {
-			inventory.setInventorySlotContents(0, null);
-		}
-	}
-	
-	private int checkResource() {
-		if(getAvailablePaintType() > -1) {
-			return inventory.getStackInSlot(0).stackSize;
-		}
-		return 0;
+		return false;
 	}
 
-	@Override
 	public boolean canProcessItem(ItemWrapper wrapper) {
 		Item item = wrapper.itemStack.getItem();
 		if (item == null) {
@@ -169,12 +112,6 @@ public class ApplianceSprayer extends ApplianceInventory {
 		return false;
 	}
 
-	@Override
-	public boolean isUseableByPlayer(EntityPlayer p_70300_1_) {
-		return true;
-	}
-
-	@Override
 	public boolean isItemValidForSlot(int slot, ItemStack itemStack) {
 		List<ItemStack> dyeOres = OreDictionary.getOres("dye");
 		Iterator<ItemStack> itr = ((ArrayList<ItemStack>)dyeOres).iterator();
@@ -187,8 +124,6 @@ public class ApplianceSprayer extends ApplianceInventory {
         return false;
 	}
 
-	//TODO: Create global recipe registry for the production line
-	
 	@Override
 	public boolean canFill(EnumFacing from, Fluid fluid) {
 		// TODO: Check if fluid is a matching type
@@ -202,38 +137,27 @@ public class ApplianceSprayer extends ApplianceInventory {
 	}
 
 	@Override
-	protected int getTankForSide(EnumFacing from) {
+	public int fill(EnumFacing from, FluidStack resource, boolean doFill) {
+		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public int[] getSlotsForFace(EnumFacing side) {
-		return new int[] { 0 };
-	}
-	
-	@Override
-	public boolean canInsertItem(int index, ItemStack itemStackIn, EnumFacing direction) {
-		return true;
-	}
-	
-	@Override
-	public boolean canExtractItem(int index, ItemStack stack, EnumFacing direction) {
-		return true;
+	public FluidStack drain(EnumFacing from, FluidStack resource, boolean doDrain) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
-	public IChatComponent getDisplayName() {
-		return new ChatComponentTranslation("item.taam.item.conveyor_appliance.sprayer.name");
+	public FluidStack drain(EnumFacing from, int maxDrain, boolean doDrain) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
-	public boolean hasCustomName() {
-		return false;
-	}
-	
-	@Override
-	public String getName() {
-		return "item.taam.item.conveyor_appliance.sprayer.name";
+	public FluidTankInfo[] getTankInfo(EnumFacing from) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

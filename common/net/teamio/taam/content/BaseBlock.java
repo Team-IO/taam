@@ -31,8 +31,6 @@ import net.teamio.taam.content.conveyors.TileEntityConveyor;
 import net.teamio.taam.content.conveyors.TileEntityConveyorHopper;
 import net.teamio.taam.content.conveyors.TileEntityConveyorItemBag;
 import net.teamio.taam.content.conveyors.TileEntityConveyorTrashCan;
-import net.teamio.taam.conveyors.ConveyorUtil;
-import net.teamio.taam.conveyors.api.IConveyorApplianceHost;
 import net.teamio.taam.util.TaamUtil;
 import net.teamio.taam.util.WrenchUtil;
 import net.teamio.taam.util.inv.InventoryUtils;
@@ -70,7 +68,7 @@ public abstract class BaseBlock extends Block {
 		TileEntity te = worldIn.getTileEntity(pos);
 		if(te != null) {
 			// Update stuff like conveyors if something changes
-			((BaseTileEntity)te).updateRenderingInfo();
+			((BaseTileEntity)te).blockUpdate();
 			worldIn.markBlockForUpdate(pos);
 		}
 	}
@@ -106,14 +104,6 @@ public abstract class BaseBlock extends Block {
 			}
 		}
 		
-		/*
-		 * Drop Appliances
-		 */
-		if(te instanceof IConveyorApplianceHost) {
-			IConveyorApplianceHost applianceHost = (IConveyorApplianceHost)te;
-			ConveyorUtil.dropAppliance(applianceHost, null, worldIn, pos);
-		}
-
 		super.breakBlock(worldIn, pos, state);
 	}
 	

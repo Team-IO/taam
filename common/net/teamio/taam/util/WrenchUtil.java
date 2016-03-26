@@ -10,8 +10,7 @@ import net.teamio.taam.Log;
 import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.content.common.TileEntityCreativeCache;
-import net.teamio.taam.conveyors.ConveyorUtil;
-import net.teamio.taam.conveyors.api.IConveyorApplianceHost;
+import net.teamio.taam.content.common.TileEntitySensor;
 import net.teamio.taam.conveyors.api.IConveyorAwareTE;
 
 public class WrenchUtil {
@@ -51,17 +50,6 @@ public class WrenchUtil {
 		if(playerHasWrench) {
 			
 			if(playerIsSneaking) {
-				if(te instanceof IConveyorApplianceHost) {
-					IConveyorApplianceHost conveyor = (IConveyorApplianceHost) te;
-					Log.debug("Disassembling IConveyorApplianceHost");
-					if(ConveyorUtil.dropAppliance(conveyor, player, world, pos)) {
-						Log.debug("Dropping appliance done, removing appliance.");
-						conveyor.removeAppliance();
-						Log.debug("Dropping appliance done, removing appliance done.");
-						return true;
-					}
-					Log.debug("No appliance dropped, moving on.");
-				}
 				if(WrenchUtil.isWrenchableEntity(te)) {
 					TaamUtil.breakBlockToInventory(player, world, pos);
 					return true;
@@ -85,7 +73,8 @@ public class WrenchUtil {
 
 	private static boolean isWrenchableEntity(TileEntity te) {
 		return te instanceof IConveyorAwareTE ||
-				te instanceof TileEntityCreativeCache;
+				te instanceof TileEntityCreativeCache ||
+				te instanceof TileEntitySensor;
 	}
 
 }
