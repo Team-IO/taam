@@ -52,6 +52,11 @@ import net.teamio.taam.content.conveyors.TileEntityConveyorItemBag;
 import net.teamio.taam.content.conveyors.TileEntityConveyorProcessor;
 import net.teamio.taam.content.conveyors.TileEntityConveyorSieve;
 import net.teamio.taam.content.conveyors.TileEntityConveyorTrashCan;
+import net.teamio.taam.content.piping.BlockPipe;
+import net.teamio.taam.content.piping.BlockPipeMachines;
+import net.teamio.taam.content.piping.TileEntityCreativeWell;
+import net.teamio.taam.content.piping.TileEntityPipe;
+import net.teamio.taam.content.piping.TileEntityTank;
 import net.teamio.taam.gui.GuiHandler;
 
 
@@ -84,6 +89,9 @@ public class TaamMain {
 	public static BlockOre blockOre;
 	public static BlockBuilding blockConcrete;
 	public static BlockSupportBeam blockSupportBeam;
+	
+	public static BlockPipeMachines blockPipeMachines;
+	public static BlockPipe blockPipe;
 	
 	public static FluidDye[] fluidsDye;
 	
@@ -184,6 +192,12 @@ public class TaamMain {
 		
 		registerItem(itemConveyorAppliance = new ItemConveyorAppliance(), Taam.ITEM_CONVEYOR_APPLIANCE);
 		
+
+		registerBlock(blockPipeMachines = new BlockPipeMachines(), null, Taam.BLOCK_PIPEMACHINES);
+		registerItem(new ItemMultiTexture(blockPipeMachines, blockPipeMachines, Taam.BLOCK_PIPEMACHINES_META.valuesAsString()), Taam.BLOCK_PIPEMACHINES);
+
+		registerBlock(blockPipe = new BlockPipe(), ItemBlock.class, Taam.BLOCK_PIPE);
+		
 		GameRegistry.registerTileEntity(TileEntitySensor.class, Taam.TILEENTITY_SENSOR);
 		GameRegistry.registerTileEntity(TileEntityChute.class, Taam.TILEENTITY_CHUTE);
 		GameRegistry.registerTileEntity(TileEntityCreativeCache.class, Taam.TILEENTITY_CREATIVECACHE);
@@ -193,6 +207,9 @@ public class TaamMain {
 		GameRegistry.registerTileEntity(TileEntityConveyorItemBag.class, Taam.TILEENTITY_CONVEYOR_ITEMBAG);
 		GameRegistry.registerTileEntity(TileEntityConveyorTrashCan.class, Taam.TILEENTITY_CONVEYOR_TRASHCAN);
 		GameRegistry.registerTileEntity(TileEntityConveyorSieve.class, Taam.TILEENTITY_CONVEYOR_SIEVE);
+		GameRegistry.registerTileEntity(TileEntityPipe.class, Taam.TILEENTITY_PIPE);
+		GameRegistry.registerTileEntity(TileEntityTank.class, Taam.TILEENTITY_TANK);
+		GameRegistry.registerTileEntity(TileEntityCreativeWell.class, Taam.TILEENTITY_CREATIVEWELL);
 //		GameRegistry.registerTileEntity(TileEntitySlidingDoor.class, Taam.TILEENTITY_SLIDINGDOOR);
 		
 		OreGenerator worldgen = new OreGenerator();

@@ -31,6 +31,9 @@ public final class Taam {
 	public static final String BLOCK_MAGNET_RAIL = "taam.magnet_rail";
 	public static final String BLOCK_SUPPORT_BEAM = "taam.support_beam";
 
+	public static final String BLOCK_PIPE = "pipe";
+	public static final String BLOCK_PIPEMACHINES = "pipemachines";
+
 	/**
 	 * Implementation removed
 	 */
@@ -181,6 +184,27 @@ public final class Taam {
 		}
 	};
 	
+
+	
+	public static enum BLOCK_PIPEMACHINES_META implements IStringSerializable {
+		tank,
+		creativewell
+		;
+		public static String[] valuesAsString() {
+			Enum<?>[] valuesAsEnum = values();
+			String[] valuesAsString = new String[valuesAsEnum.length];
+			for(int i = 0; i < valuesAsEnum.length; i++) {
+				valuesAsString[i] = valuesAsEnum[i].name();
+			}
+			return valuesAsString;
+		}
+
+		@Override
+		public String getName() {
+			return name();
+		}
+	};
+	
 	public static enum BLOCK_LOGISTICS_META {
 		logistics_manager,
 		logistics_station
@@ -313,6 +337,9 @@ public final class Taam {
 	public static final String TILEENTITY_CONVEYOR_ITEMBAG = "taam.itembag";
 	public static final String TILEENTITY_CONVEYOR_TRASHCAN = "taam.trashcan";
 	public static final String TILEENTITY_CONVEYOR_SIEVE = "taam.sieve";
+	public static final String TILEENTITY_PIPE = "taam.pipe";
+	public static final String TILEENTITY_TANK = "taam.tank";
+	public static final String TILEENTITY_CREATIVEWELL = "taam.creativewell";
 
 	public static final String ENTITY_LOGISTICS_CART = "taam.logistics_manager";
 	

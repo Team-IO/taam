@@ -20,6 +20,7 @@ import net.teamio.taam.content.conveyors.TileEntityConveyorSieve;
 import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.conveyors.ItemWrapper;
 import net.teamio.taam.conveyors.api.IConveyorAwareTE;
+import net.teamio.taam.piping.IPipe;
 
 public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 
@@ -47,6 +48,22 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 	public void renderTileEntityAt(TileEntity tileEntity, double x, double y, double z, float partialTicks, int destroyStage) {
 		if(tileEntity instanceof IConveyorAwareTE) {
 			renderConveyorItems((IConveyorAwareTE) tileEntity, x, y, z);
+		}
+		if(tileEntity instanceof IPipe) {
+
+			IPipe pipe = (IPipe)tileEntity;
+			
+			GL11.glPushMatrix();
+			GL11.glTranslated(x+0.5f, y+1.4f, z-0.1f);
+			
+			GL11.glScalef(.02f, .02f, .02f);
+			GL11.glRotatef(180, 0, 0, 1);
+			
+			Minecraft.getMinecraft().fontRendererObj.drawString(pipe.getPressure() + "-" + pipe.getSuction(), 0, 0, 0xFFFFFF);
+			//GL11.glTranslated(0, y+0.5f, z-0.1f);
+			Minecraft.getMinecraft().fontRendererObj.drawString("E: " + (pipe.getPressure() - pipe.getSuction()), 0, 8, 0xFFFF00);
+
+			GL11.glPopMatrix();
 		}
 	}
 	

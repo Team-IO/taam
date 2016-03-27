@@ -1,5 +1,6 @@
 package net.teamio.taam.content.common;
 
+import java.util.Arrays;
 import java.util.List;
 
 import net.minecraft.block.Block;
@@ -15,11 +16,15 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTankInfo;
+import net.minecraftforge.fluids.IFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.teamio.taam.Config;
 import net.teamio.taam.content.conveyors.TileEntityConveyor;
 import net.teamio.taam.conveyors.api.IConveyorApplianceHost;
+import net.teamio.taam.piping.IPipe;
 
 /**
  * Debug Tool, currently used for debugging conveyors.
@@ -110,6 +115,42 @@ public class ItemDebugTool extends Item {
         
         if(te instanceof IConveyorApplianceHost) {
         	//IConveyorApplianceHost host = (IConveyorApplianceHost)te;
+        }
+        
+        if(te instanceof IPipe) {
+        	
+        	IPipe pipe = (IPipe)te;
+        	
+        	String content = "";
+        	FluidStack[] fs = pipe.getFluids();
+        	if(fs.length > 0) {
+        		content = fs[0].getLocalizedName() + " " + fs[0].amount;
+        	}
+        	
+        	text = String.format(remoteState + " %s Pipe pressure: %d suction: %d effective: %d Content: %s",
+        			pipe.getClass().getName(), pipe.getPressure(), pipe.getSuction(), pipe.getPressure() - pipe.getSuction(), content);
+
+        	player.addChatMessage(new ChatComponentText(text));
+        }
+        
+        if(te instanceof IFluidHandler) {
+        	
+        	IFluidHandler fh = (IFluidHandler)te;
+        	
+        	FluidTankInfo[] ti = fh.getTankInfo(EnumFacing.UP);
+        	String content = "";
+        	if(ti.length > 0) {
+        		if(ti[0].fluid == null) {
+        			content = "Nothing 0/" + ti[0].capacity;
+        		} else {
+        			content = ti[0].fluid.getLocalizedName() + " " + ti[0].fluid.amount + "/" + ti[0].capacity;
+        		}
+        	}
+        	
+        	text = String.format(remoteState + " Content: %s",
+        			content);
+
+        	player.addChatMessage(new ChatComponentText(text));
         }
 		
         return !didSomething;
