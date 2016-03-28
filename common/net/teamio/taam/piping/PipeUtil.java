@@ -90,7 +90,7 @@ public final class PipeUtil {
 			return;
 		}
 
-		int effectivePressure = pipe.getPressure() - pipe.getSuction();
+		int effectivePressure = pipe.getPressure() == 0 ? -pipe.getSuction() : pipe.getPressure();
 
 		/*
 		 * Transfer based on the share
@@ -98,7 +98,7 @@ public final class PipeUtil {
 
 		for (int i = 0; i < connected.length; i++) {
 			IPipe other = connected[i];
-			int otherPressure = other.getPressure() - other.getSuction();
+			int otherPressure = other.getPressure() == 0 ? -other.getSuction() : other.getPressure();
 			float factor = 0;
 			if (effectivePressure > otherPressure + 10) {
 				factor = 1;
