@@ -38,7 +38,7 @@ import net.teamio.taam.util.inv.InventoryUtils;
 
 public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInventory, IConveyorAwareTE, IRotatable, IWorldInteractable, IRedstoneControlled, ITickable, IRenderable {
 
-	private static List<String> parts = Collections.unmodifiableList(Lists.newArrayList("Support_Alu_smdl_alu", "SieveChute_cscmdl", "Sieve_csvmdl"));
+	public static List<String> parts = Collections.unmodifiableList(Lists.newArrayList("Support_Alu_smdl_alu", "SieveChute_cscmdl", "Sieve_csvmdl"));
 	/*
 	 * Content
 	 */

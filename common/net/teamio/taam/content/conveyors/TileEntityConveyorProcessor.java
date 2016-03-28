@@ -57,9 +57,9 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 	private byte progress;
 	private int timeout;
 	
-	private static List<String> parts_shredder = Collections.unmodifiableList(Lists.newArrayList("Support_Alu_smdl_alu", "ProcessorChute_chutemdl", "Processor_Walzes", "ProcessorMarker_Shredder_pmmdl_shr", "BumpsShredder"));
-	private static List<String> parts_grinder = Collections.unmodifiableList(Lists.newArrayList("Support_Alu_smdl_alu", "ProcessorChute_chutemdl", "Processor_Walzes", "ProcessorMarker_Grinder_pmmdl_gri", "BumpsGrinder"));
-	private static List<String> parts_crusher = Collections.unmodifiableList(Lists.newArrayList("Support_Alu_smdl_alu", "ProcessorChute_chutemdl", "Processor_Walzes", "ProcessorMarker_Crusher_pmmdl_cru", "BumpsCrusher"));
+	public static List<String> parts_shredder = Collections.unmodifiableList(Lists.newArrayList("Support_Alu_smdl_alu", "ProcessorChute_chutemdl", "Processor_Walzes", "ProcessorMarker_Shredder_pmmdl_shr", "BumpsShredder"));
+	public static List<String> parts_grinder = Collections.unmodifiableList(Lists.newArrayList("Support_Alu_smdl_alu", "ProcessorChute_chutemdl", "Processor_Walzes", "ProcessorMarker_Grinder_pmmdl_gri", "BumpsGrinder"));
+	public static List<String> parts_crusher = Collections.unmodifiableList(Lists.newArrayList("Support_Alu_smdl_alu", "ProcessorChute_chutemdl", "Processor_Walzes", "ProcessorMarker_Crusher_pmmdl_cru", "BumpsCrusher"));
 	
 	/**
 	 * Cached recipe, that will not change during processing of one stack

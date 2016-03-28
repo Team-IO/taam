@@ -37,6 +37,18 @@ public class ItemProductionLine extends ItemMultiTexture implements IRenderableI
 			return TileEntityConveyor.parts_2;
 		case conveyor3:
 			return TileEntityConveyor.parts_3;
+		case hopper:
+			return TileEntityConveyorHopper.parts_regular;
+		case hopper_hs:
+			return TileEntityConveyorHopper.parts_hs;
+		case sieve:
+			return TileEntityConveyorSieve.parts;
+		case crusher:
+			return TileEntityConveyorProcessor.parts_crusher;
+		case grinder:
+			return TileEntityConveyorProcessor.parts_grinder;
+		case shredder:
+			return TileEntityConveyorProcessor.parts_shredder;
 		default:
 			return TileEntityConveyor.parts_invalid;
 		}
