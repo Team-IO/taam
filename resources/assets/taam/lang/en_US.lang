@@ -97,16 +97,16 @@ tile.productionline_attachable.trashcan.name=Conveyor Trash Can
 tile.productionline_attachable.lamp.name=Conveyor Lamp
 
 # Lore localization
-lore.shift=Hold Shift
-lore.conveyor_appliance=Conveyor Appliance
-lore.conveyor_appliance.usage=Can be placed on conveyors\nor other compatible hosts.
-lore.productionline=Production Line Component
-lore.productionline.usage=Can work together with other\nproduction line components to form an integrated\nprocessing and transport system.
-lore.productionline.isappliancehost=Is a valid appliance host.
-lore.debugtool=Debug Tool
-lore.debugtool.usage=This item can't be obtained in Survival.\nIt prints debug information\ninto chat or console.
-lore.wrench=An engineers utility
-lore.wrench.usage=Use this wrench to rotate\nand manage productionline machines.
+lore.taam.shift=Hold Shift
+lore.taam.conveyor_appliance=Conveyor Appliance
+lore.taam.conveyor_appliance.usage=Can be placed on conveyors\nor other compatible hosts.
+lore.taam.productionline=Production Line Component
+lore.taam.productionline.usage=Can work together with other\nproduction line components to form an integrated\nprocessing and transport system.
+lore.taam.productionline.isappliancehost=Is a valid appliance host.
+lore.taam.debugtool=Debug Tool
+lore.taam.debugtool.usage=This item can't be obtained in Survival.\nIt prints debug information\ninto chat or console.
+lore.taam.wrench=An engineers utility
+lore.taam.wrench.usage=Use this wrench to rotate\nand manage productionline machines.
 
 # Death causes
 death.attack.taam.processed=%1$s was processed (painfully)
