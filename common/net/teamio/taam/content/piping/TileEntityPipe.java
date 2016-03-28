@@ -21,7 +21,7 @@ public class TileEntityPipe extends BaseTileEntity implements IPipe, IPipeTE, IT
 
 	private final PipeInfo info;
 	
-	private final List<String> visibleParts = new ArrayList<String>(7);
+	private static final List<String> visibleParts = new ArrayList<String>(7);
 	
 	private int adjacentPipes;
 	
