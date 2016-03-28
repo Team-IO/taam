@@ -290,9 +290,9 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 	@Override
 	public String getName() {
 		if(highSpeed) {
-			return "tile.taam.productionline.hopper_hs.name";
+			return "tile.productionline.hopper_hs.name";
 		} else {
-			return "tile.taam.productionline.hopper.name";
+			return "tile.productionline.hopper.name";
 		}
 	}
 	

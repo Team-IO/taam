@@ -118,7 +118,7 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable implements 
 
 	@Override
 	public String getName() {
-		return "tile.taam.productionline_attachable.itembag.name";
+		return "tile.productionline_attachable.itembag.name";
 	}
 	
 	@Override

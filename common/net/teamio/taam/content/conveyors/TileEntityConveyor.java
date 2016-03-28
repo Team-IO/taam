@@ -444,12 +444,12 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 
 	@Override
 	public IChatComponent getDisplayName() {
-		return new ChatComponentTranslation("tile.taam.productionline.conveyor.name");
+		return new ChatComponentTranslation(getName());
 	}
 
 	@Override
 	public String getName() {
-		return "tile.taam.productionline.conveyor.name";
+		return "tile.productionline.conveyor.name";
 	}
 
 	@Override

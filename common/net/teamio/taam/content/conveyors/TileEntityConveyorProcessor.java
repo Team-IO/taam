@@ -387,13 +387,13 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 	public String getName() {
 		switch(mode) {
 		case Shredder:
-			return "tile.taam.productionline.shredder.name";
+			return "tile.productionline.shredder.name";
 		case Grinder:
-			return "tile.taam.productionline.grinder.name";
+			return "tile.productionline.grinder.name";
 		case Crusher:
-			return "tile.taam.productionline.crusher.name";
+			return "tile.productionline.crusher.name";
 		default:
-			return "tile.taam.productionline.invalid.name";
+			return "tile.productionline.invalid.name";
 		}
 	}
 	

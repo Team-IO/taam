@@ -356,7 +356,7 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 
 	@Override
 	public String getName() {
-		return "tile.taam.productionline.sieve.name";
+		return "tile.productionline.sieve.name";
 	}
 	
 	@Override

@@ -96,7 +96,7 @@ public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements
 
 	@Override
 	public String getName() {
-		return "tile.taam.productionline_attachable.trashcan.name";
+		return "tile.productionline_attachable.trashcan.name";
 	}
 	
 	@Override
