@@ -48,6 +48,7 @@ import net.teamio.taam.content.conveyors.TileEntityConveyorProcessor;
 import net.teamio.taam.content.conveyors.TileEntityConveyorSieve;
 import net.teamio.taam.content.conveyors.TileEntityConveyorTrashCan;
 import net.teamio.taam.content.piping.TileEntityPipe;
+import net.teamio.taam.content.piping.TileEntityTank;
 import net.teamio.taam.rendering.TaamRenderer;
 
 @SuppressWarnings("deprecation")
@@ -75,6 +76,7 @@ public class TaamClientProxy extends TaamCommonProxy {
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityConveyorTrashCan.class, taamRenderer);
 
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityPipe.class, taamRenderer);
+		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityTank.class, taamRenderer);
 
 		// Receive event for Client Ticks
 		MinecraftForge.EVENT_BUS.register(taamRenderer);

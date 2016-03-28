@@ -4,19 +4,29 @@ import java.util.Random;
 
 import org.lwjgl.opengl.GL11;
 
+import com.google.common.base.Function;
+
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.content.conveyors.TileEntityConveyorProcessor;
 import net.teamio.taam.content.conveyors.TileEntityConveyorSieve;
+import net.teamio.taam.content.piping.TileEntityTank;
 import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.conveyors.ItemWrapper;
 import net.teamio.taam.conveyors.api.IConveyorAwareTE;
@@ -49,6 +59,16 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		if(tileEntity instanceof IConveyorAwareTE) {
 			renderConveyorItems((IConveyorAwareTE) tileEntity, x, y, z);
 		}
+		
+		if(tileEntity instanceof TileEntityTank) {
+			GL11.glPushMatrix();
+			GL11.glTranslated(x, y, z);
+			
+			renderTank((TileEntityTank)tileEntity, x, y, z);
+			
+			GL11.glPopMatrix();
+		}
+		
 		if(tileEntity instanceof IPipe) {
 
 			IPipe pipe = (IPipe)tileEntity;
@@ -64,7 +84,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 
 			Minecraft.getMinecraft().fontRendererObj.drawString(pipe.getPressure() + "-" + pipe.getSuction(), 0, 0, 0xFFFFFF);
 			//GL11.glTranslated(0, y+0.5f, z-0.1f);
-			Minecraft.getMinecraft().fontRendererObj.drawString("E: " + (pipe.getPressure() - pipe.getSuction()), 0, 8, 0xFFFF00);
+			Minecraft.getMinecraft().fontRendererObj.drawString("E: " + (pipe.getPressure() == 0 ? -pipe.getSuction() : pipe.getPressure()), 0, 8, 0xFFFF00);
 
 			GL11.glPopMatrix();
 
@@ -82,12 +102,83 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 			
 			Minecraft.getMinecraft().fontRendererObj.drawString(pipe.getPressure() + "-" + pipe.getSuction(), 0, 0, 0xFFFFFF);
 			//GL11.glTranslated(0, y+0.5f, z-0.1f);
-			Minecraft.getMinecraft().fontRendererObj.drawString("E: " + (pipe.getPressure() - pipe.getSuction()), 0, 8, 0xFFFF00);
+			Minecraft.getMinecraft().fontRendererObj.drawString("E: " + (pipe.getPressure() == 0 ? -pipe.getSuction() : pipe.getPressure()), 0, 8, 0xFFFF00);
 
 			GL11.glPopMatrix();
 			
 			GL11.glPopMatrix();
 		}
+	}
+	
+	public void renderTank(TileEntityTank tileEntity, double x, double y, double z) {
+		FluidStack stack = tileEntity.getFluid();
+		
+		if(stack == null || stack.amount == 0) {
+			return;
+		}
+		Fluid fluid = stack.getFluid();
+		ResourceLocation texture = fluid.getStill();
+		
+		Function<ResourceLocation, TextureAtlasSprite> textureGetter;
+		textureGetter = new Function<ResourceLocation, TextureAtlasSprite>() {
+			public TextureAtlasSprite apply(ResourceLocation location) {
+				return Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString());
+			}
+		};
+		
+		TextureAtlasSprite sprite = textureGetter.apply(fluid.getStill());
+	
+		WorldRenderer renderer = Tessellator.getInstance().getWorldRenderer();
+		
+		renderer.begin(7, DefaultVertexFormats.OLDMODEL_POSITION_TEX_NORMAL);
+		Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
+		
+		float border = 1.7f/16f;
+		float socket = 2f/16f;
+		
+		float fillFactor = stack.amount / 8000f;
+		float fillHeight = socket + fillFactor * (13.8f/16f);
+		
+		float minU = sprite.getMinU();
+		float minV = sprite.getMinV();
+		float maxU = sprite.getMaxU();
+		float maxV = sprite.getMaxV();
+		
+		float textureFactor = minV + (maxV-minV) * fillFactor * (14f/16);
+		
+		
+		// +Z
+		renderer.pos(border, socket, 1-border)			.tex(maxU, minV).normal(0, 0, 1).endVertex();
+		renderer.pos(1 - border, socket, 1-border)		.tex(minU, minV).normal(0, 0, 1).endVertex();
+		renderer.pos(1 - border, fillHeight, 1-border)	.tex(minU, textureFactor).normal(0, 0, 1).endVertex();
+		renderer.pos(border, fillHeight, 1-border)		.tex(maxU, textureFactor).normal(0, 0, 1).endVertex();
+
+		// -Z
+		renderer.pos(1 - border, socket, border)		.tex(maxU, minV).normal(0, 0, -1).endVertex();
+		renderer.pos(border, socket, border)			.tex(minU, minV).normal(0, 0, -1).endVertex();
+		renderer.pos(border, fillHeight, border)		.tex(minU, textureFactor).normal(0, 0, -1).endVertex();
+		renderer.pos(1 - border, fillHeight, border)	.tex(maxU, textureFactor).normal(0, 0, -1).endVertex();
+		
+		// +X
+		renderer.pos(1-border, socket, 1-border)		.tex(maxU, minV).normal(1, 0, 0).endVertex();
+		renderer.pos(1-border, socket, border)			.tex(minU, minV).normal(1, 0, 0).endVertex();
+		renderer.pos(1-border, fillHeight, border)		.tex(minU, textureFactor).normal(1, 0, 0).endVertex();
+		renderer.pos(1-border, fillHeight, 1-border)	.tex(maxU, textureFactor).normal(1, 0, 0).endVertex();
+		
+		// -X
+		renderer.pos(border, socket, border)			.tex(maxU, minV).normal(-1, 0, 0).endVertex();
+		renderer.pos(border, socket, 1-border)			.tex(minU, minV).normal(-1, 0, 0).endVertex();
+		renderer.pos(border, fillHeight, 1-border)		.tex(minU, textureFactor).normal(-1, 0, 0).endVertex();
+		renderer.pos(border, fillHeight, border)		.tex(maxU, textureFactor).normal(-1, 0, 0).endVertex();
+		
+		// +Y
+		renderer.pos(1-border, fillHeight, border)		.tex(maxU, minV).normal(0, 1, 0).endVertex();
+		renderer.pos(border, fillHeight, border)		.tex(minU, minV).normal(0, 1, 0).endVertex();
+		renderer.pos(border, fillHeight, 1-border)		.tex(minU, maxV).normal(0, 1, 0).endVertex();
+		renderer.pos(1-border, fillHeight, 1-border)	.tex(maxU, maxV).normal(0, 1, 0).endVertex();	
+		
+		Tessellator.getInstance().draw();
+		
 	}
 	
 	private EnumFacing conveyorGetDirection(IConveyorAwareTE tileEntity) {

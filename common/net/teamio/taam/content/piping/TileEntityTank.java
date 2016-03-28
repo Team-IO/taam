@@ -6,6 +6,7 @@ import com.google.common.collect.Lists;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.ITickable;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -21,14 +22,18 @@ import net.teamio.taam.piping.PipeUtil;
 
 public class TileEntityTank extends BaseTileEntity implements IFluidHandler, IPipeTE, ITickable, IRenderable {
 
-	private final PipeEndFluidHandler pipeEnd;
+	private final PipeEndFluidHandler pipeEndUP;
+	private final PipeEndFluidHandler pipeEndDOWN;
 	private final FluidTank tank;
 
 	public static final List<String> visibleParts = Lists.newArrayList("BaseplateConnector_pmdl_c", "Tank_tmdl");
 	
 	public TileEntityTank() {
-		pipeEnd = new PipeEndFluidHandler(this, EnumFacing.UP);
-		tank = new FluidTank(10000);
+		pipeEndUP = new PipeEndFluidHandler(this, EnumFacing.UP);
+		pipeEndDOWN = new PipeEndFluidHandler(this, EnumFacing.DOWN);
+		pipeEndUP.setSuction(10);
+		pipeEndDOWN.setSuction(10);
+		tank = new FluidTank(8000);
 	}
 	
 	@Override
@@ -38,8 +43,8 @@ public class TileEntityTank extends BaseTileEntity implements IFluidHandler, IPi
 	
 	@Override
 	public void update() {
-		pipeEnd.setSuction(10);
-		PipeUtil.processPipes(pipeEnd, worldObj, pos);
+		PipeUtil.processPipes(pipeEndUP, worldObj, pos);
+		PipeUtil.processPipes(pipeEndDOWN, worldObj, pos);
 	}
 
 	@Override
@@ -57,7 +62,9 @@ public class TileEntityTank extends BaseTileEntity implements IFluidHandler, IPi
 	@Override
 	public IPipe[] getPipesForSide(EnumFacing side) {
 		if (side == EnumFacing.UP) {
-			return new IPipe[] { pipeEnd };
+			return new IPipe[] { pipeEndUP };
+		} else if (side == EnumFacing.DOWN) {
+			return new IPipe[] { pipeEndDOWN };
 		} else {
 			return null;
 		}
@@ -65,21 +72,21 @@ public class TileEntityTank extends BaseTileEntity implements IFluidHandler, IPi
 
 	@Override
 	public int fill(EnumFacing from, FluidStack resource, boolean doFill) {
-		if(from != EnumFacing.UP) {
+		if(from.getAxis() != Axis.Y) {
 			return 0;
 		}
 		int filled = tank.fill(resource, doFill);
-		//System.out.println("Filled " + filled+ " (" + tank.getFluidAmount() + " in tank)");
 		markDirty();
 		return filled;
 	}
 
 	@Override
 	public FluidStack drain(EnumFacing from, FluidStack resource, boolean doDrain) {
-		if(from != EnumFacing.UP) {
+		if(from.getAxis() != Axis.Y) {
 			return null;
 		}
 		if(resource.isFluidEqual(tank.getFluid())) {
+			markDirty();
 			return tank.drain(resource.amount, doDrain);
 		} else {
 			return null;
@@ -88,15 +95,16 @@ public class TileEntityTank extends BaseTileEntity implements IFluidHandler, IPi
 
 	@Override
 	public FluidStack drain(EnumFacing from, int maxDrain, boolean doDrain) {
-		if(from != EnumFacing.UP) {
+		if(from.getAxis() != Axis.Y) {
 			return null;
 		}
+		markDirty();
 		return tank.drain(maxDrain, doDrain);
 	}
 
 	@Override
 	public boolean canFill(EnumFacing from, Fluid fluid) {
-		if(from != EnumFacing.UP) {
+		if(from.getAxis() != Axis.Y) {
 			return false;
 		}
 		FluidStack tankFluid = tank.getFluid();
@@ -105,7 +113,7 @@ public class TileEntityTank extends BaseTileEntity implements IFluidHandler, IPi
 
 	@Override
 	public boolean canDrain(EnumFacing from, Fluid fluid) {
-		if(from != EnumFacing.UP) {
+		if(from.getAxis() != Axis.Y) {
 			return false;
 		}
 		FluidStack tankFluid = tank.getFluid();
@@ -114,7 +122,15 @@ public class TileEntityTank extends BaseTileEntity implements IFluidHandler, IPi
 
 	@Override
 	public FluidTankInfo[] getTankInfo(EnumFacing from) {
-		return new FluidTankInfo[] { new FluidTankInfo(tank) };
+		if(from.getAxis() == Axis.Y) {
+			return new FluidTankInfo[] { new FluidTankInfo(tank) };
+		} else {
+			return new FluidTankInfo[0];
+		}
+	}
+
+	public FluidStack getFluid() {
+		return tank.getFluid();
 	}
 
 }
