@@ -31,7 +31,6 @@ public class TileEntityPipe extends BaseTileEntity implements IPipe, IPipeTE, IT
 	
 	@Override
 	public List<String> getVisibleParts() {
-		List<String> visibleParts = new ArrayList<String>(7);
 		visibleParts.clear();
 		visibleParts.add("Center_pcmdl");
 		if(isSideConnected(EnumFacing.EAST))

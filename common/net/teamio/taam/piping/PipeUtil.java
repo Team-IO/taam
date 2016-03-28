@@ -1,14 +1,10 @@
 package net.teamio.taam.piping;
 
-import java.util.Collections;
-
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
-import scala.actors.threadpool.Arrays;
 
 public final class PipeUtil {
 	private PipeUtil() {

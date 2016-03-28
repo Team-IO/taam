@@ -1,6 +1,5 @@
 package net.teamio.taam.content.common;
 
-import java.util.Arrays;
 import java.util.List;
 
 import net.minecraft.block.Block;
