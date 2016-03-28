@@ -52,24 +52,17 @@ public class TileEntityPipe extends BaseTileEntity implements IPipe, IPipeTE, IT
 	}
 	
 	private boolean isSideConnected(EnumFacing side) {
-		boolean connected = (adjacentPipes & (1 << side.ordinal())) != 0;
-		System.out.println(side + " " + adjacentPipes + " " + (1 << side.ordinal()) + " " + connected);
-		return connected;
+		return (adjacentPipes & (1 << side.ordinal())) != 0;
 	}
 	
 	public void renderUpdate() {
 		adjacentPipes = 0;
-		System.out.println("World is remote: " + worldObj.isRemote);
 		for(EnumFacing side : EnumFacing.VALUES) {
 			IPipe[] pipesOnSide = PipeUtil.getConnectedPipes(worldObj, pos, side);
-			boolean hasPipes = pipesOnSide != null && pipesOnSide.length != 0;
-			System.out.println("Detecting: Side " + side + ": " + hasPipes);
-			if(hasPipes) {
+			if(pipesOnSide != null && pipesOnSide.length != 0) {
 				adjacentPipes |= 1 << side.ordinal();
 			}
-			System.out.println("Map in Progress: " + adjacentPipes);
 		}
-		System.out.println("Detected Sides-Map: " + adjacentPipes);
 	};
 	
 	@Override
