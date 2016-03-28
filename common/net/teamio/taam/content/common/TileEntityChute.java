@@ -37,7 +37,7 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 	public boolean isConveyorVersion = false;
 	private EnumFacing direction = EnumFacing.NORTH;
 	
-	private static List<String> parts_conveyor_version = Collections.unmodifiableList(Lists.newArrayList("Support_Alu_smdl_alu", "Chute_cchmdl"));
+	public static List<String> parts_conveyor_version = Collections.unmodifiableList(Lists.newArrayList("Support_Alu_smdl_alu", "Chute_cchmdl"));
 	
 	public TileEntityChute(boolean isConveyorVersion) {
 		this.isConveyorVersion = isConveyorVersion;

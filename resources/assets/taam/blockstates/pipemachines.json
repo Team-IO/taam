@@ -2,7 +2,7 @@
     "forge_marker": 1,
     "defaults": {
         "textures": {},
-        "model": "taam:pipemachines.obj",
+        "model": "taam:tank.obj",
         "custom": {
             "flip-v": true
         }
@@ -12,6 +12,11 @@
         "inventory": [{
             "transform": "forge:default-block"
         }],
-        "variant=tank": [{}]
+        "variant=tank": [{
+        	"model": "taam:tank.obj"
+        }],
+        "variant=creativewell": [{
+        	"model": "taam:creativewell.obj"
+        }]
     }
 }

@@ -24,7 +24,7 @@ public class TileEntityTank extends BaseTileEntity implements IFluidHandler, IPi
 	private final PipeEndFluidHandler pipeEnd;
 	private final FluidTank tank;
 
-	private static final List<String> visibleParts = Lists.newArrayList("BaseplateConnector_pmdl_c", "Tank_tmdl");
+	public static final List<String> visibleParts = Lists.newArrayList("BaseplateConnector_pmdl_c", "Tank_tmdl");
 	
 	public TileEntityTank() {
 		pipeEnd = new PipeEndFluidHandler(this, EnumFacing.UP);

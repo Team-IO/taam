@@ -32,8 +32,8 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable implements 
 	
 	public float fillPercent;
 	
-	private static final List<String> parts = Collections.unmodifiableList(Lists.newArrayList("BagStorage_bmdl"));
-	private static final List<String> parts_filled = Collections.unmodifiableList(Lists.newArrayList("BagStorage_bmdl", "BagFilling_bfmdl"));
+	public static final List<String> parts = Collections.unmodifiableList(Lists.newArrayList("BagStorage_bmdl"));
+	public static final List<String> parts_filled = Collections.unmodifiableList(Lists.newArrayList("BagStorage_bmdl", "BagFilling_bfmdl"));
 	
 	public TileEntityConveyorItemBag() {
 		inventory = new InventorySimple(5);

@@ -27,8 +27,8 @@ import net.teamio.taam.conveyors.api.IConveyorAwareTE;
 public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements IConveyorAwareTE, IInventory, IRotatable, IRenderable {
 
 	public float fillLevel;
-	private static final List<String> parts = Collections.unmodifiableList(Lists.newArrayList("BagTrash_btmdl"));
-	private static final List<String> parts_filled = Collections.unmodifiableList(Lists.newArrayList("BagTrash_btmdl", "BagFilling_bfmdl"));
+	public static final List<String> parts = Collections.unmodifiableList(Lists.newArrayList("BagTrash_btmdl"));
+	public static final List<String> parts_filled = Collections.unmodifiableList(Lists.newArrayList("BagTrash_btmdl", "BagFilling_bfmdl"));
 	
 	public TileEntityConveyorTrashCan() {
 	}

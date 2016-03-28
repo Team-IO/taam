@@ -124,6 +124,7 @@ public class TaamMain {
 		
 		MinecraftForge.EVENT_BUS.register(new TaamCraftingHandler());
 		MinecraftForge.EVENT_BUS.register(new Config());
+		MinecraftForge.EVENT_BUS.register(proxy);
 		
 		Config.init(event.getSuggestedConfigurationFile());
 		creativeTab = new CreativeTabs(Taam.MOD_ID) {

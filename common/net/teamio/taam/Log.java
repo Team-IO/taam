@@ -13,6 +13,10 @@ public final class Log {
 	public static void error(String msg){
 		LOGGER.error(msg);
 	}
+
+	public static void error(String msg, Throwable e){
+		LOGGER.error(msg, e);
+	}
 	
 	public static void info(String msg){
 		LOGGER.info(msg);

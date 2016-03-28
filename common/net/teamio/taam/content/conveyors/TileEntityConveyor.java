@@ -1,7 +1,10 @@
 package net.teamio.taam.content.conveyors;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+
+import com.google.common.collect.Lists;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
@@ -140,6 +143,37 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 		renderAbove = worldObj.isSideSolid(pos.offset(EnumFacing.UP), EnumFacing.DOWN) ||
 				worldObj.getTileEntity(pos.offset(EnumFacing.UP)) instanceof IConveyorAwareTE;
 	}
+	
+	/*
+	 * Part lists for the inventory rendering
+	 */
+
+	public static List<String> parts_invalid = Collections.unmodifiableList(Lists.newArrayList(
+			"Support_Alu_smdl_alu",
+			"ConveyorRoundEnd_Framing_Alu_crfmdl_alu", "ConveyorRoundBegin_Framing_Alu_crfmdl_alu"
+			));
+	
+	public static List<String> parts_1 = Collections.unmodifiableList(Lists.newArrayList(
+			"ConveyorRoundEnd_crmdl", "ConveyorRoundBegin_crmdl",
+			"ConveyorRoundEnd_Walz_Wood_cwalzmdl_wood", "ConveyorRoundEnd_Framing_Wood_crfmdl_wood",
+			"ConveyorRoundBegin_Walz_Wood_cwalzmdl_wood", "ConveyorRoundBegin_Framing_Wood_crfmdl_wood",
+			"Support_Wood_smdl_wood", "ConveyorDirectionMarker_Wood_cdmdl_wood"
+			));
+
+	public static List<String> parts_2 = Collections.unmodifiableList(Lists.newArrayList(
+			"ConveyorRoundEnd_crmdl", "ConveyorRoundBegin_crmdl",
+			"ConveyorRoundEnd_Walz_Alu_cwalzmdl_alu", "ConveyorRoundEnd_Framing_Alu_crfmdl_alu",
+			"ConveyorRoundBegin_Walz_Alu_cwalzmdl_alu", "ConveyorRoundBegin_Framing_Alu_crfmdl_alu",
+			"Support_Alu_smdl_alu", "ConveyorDirectionMarker_Alu_cdmdl_alu"
+			));
+
+	public static List<String> parts_3 = Collections.unmodifiableList(Lists.newArrayList(
+			"ConveyorRoundEnd_crmdl", "ConveyorRoundBegin_crmdl",
+			"ConveyorRoundEnd_Walz_Alu_cwalzmdl_alu", "ConveyorRoundEnd_Framing_Alu_crfmdl_alu",
+			"ConveyorRoundBegin_Walz_Alu_cwalzmdl_alu", "ConveyorRoundBegin_Framing_Alu_crfmdl_alu",
+			"Support_Alu_smdl_alu", "ConveyorDirectionMarker_Alu_cdmdl_alu",
+			"ConveyorHighThroughput_Framing_Alu_chtpmdl_alu"
+			));
 	
 	@Override
 	public List<String> getVisibleParts() {

@@ -48,8 +48,8 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 	
 	private boolean pulseWasSent = false;
 	
-	private static List<String> parts_regular = Collections.unmodifiableList(Lists.newArrayList("Support_Alu_smdl_alu", "ConveyorHopper_chmdl"));
-	private static List<String> parts_hs = Collections.unmodifiableList(Lists.newArrayList("Support_Alu_smdl_alu", "ConveyorHopperHighSpeed_chmdl_hs"));
+	public static List<String> parts_regular = Collections.unmodifiableList(Lists.newArrayList("Support_Alu_smdl_alu", "ConveyorHopper_chmdl"));
+	public static List<String> parts_hs = Collections.unmodifiableList(Lists.newArrayList("Support_Alu_smdl_alu", "ConveyorHopperHighSpeed_chmdl_hs"));
 	
 	public TileEntityConveyorHopper() {
 		this(false);
