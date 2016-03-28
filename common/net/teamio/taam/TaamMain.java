@@ -132,7 +132,7 @@ public class TaamMain {
 			@Override
 			@SideOnly(Side.CLIENT)
 			public ItemStack getIconItemStack() {
-				return new ItemStack(blockSensor);
+				return new ItemStack(blockProductionLine, 1, 1);
 			}
 			
 			@Override
