@@ -54,15 +54,38 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 			IPipe pipe = (IPipe)tileEntity;
 			
 			GL11.glPushMatrix();
-			GL11.glTranslated(x+0.5f, y+1.4f, z-0.1f);
+			GL11.glTranslated(x, y, z);
+			
+			GL11.glPushMatrix();
+			GL11.glTranslated(0.4f, 0.4f, 0.25f);
 			
 			GL11.glScalef(.02f, .02f, .02f);
 			GL11.glRotatef(180, 0, 0, 1);
+
+			Minecraft.getMinecraft().fontRendererObj.drawString(pipe.getPressure() + "-" + pipe.getSuction(), 0, 0, 0xFFFFFF);
+			//GL11.glTranslated(0, y+0.5f, z-0.1f);
+			Minecraft.getMinecraft().fontRendererObj.drawString("E: " + (pipe.getPressure() - pipe.getSuction()), 0, 8, 0xFFFF00);
+
+			GL11.glPopMatrix();
+
+			GL11.glTranslated(.5f, .5f, .5f);
+			GL11.glRotatef(180, 0, 1, 0);
+			GL11.glTranslated(-.5f, -.5f, -.5f);
+			
+			GL11.glPushMatrix();
+			GL11.glTranslated(0.4f, 0.4f, 0.25f);
+			
+			GL11.glScalef(.02f, .02f, .02f);
+			GL11.glRotatef(180, 0, 0, 1);
+			
+//			GL11.glTranslated(0, 0, -25f);
 			
 			Minecraft.getMinecraft().fontRendererObj.drawString(pipe.getPressure() + "-" + pipe.getSuction(), 0, 0, 0xFFFFFF);
 			//GL11.glTranslated(0, y+0.5f, z-0.1f);
 			Minecraft.getMinecraft().fontRendererObj.drawString("E: " + (pipe.getPressure() - pipe.getSuction()), 0, 8, 0xFFFF00);
 
+			GL11.glPopMatrix();
+			
 			GL11.glPopMatrix();
 		}
 	}
