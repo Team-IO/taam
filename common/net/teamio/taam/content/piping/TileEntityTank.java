@@ -1,5 +1,9 @@
 package net.teamio.taam.content.piping;
 
+import java.util.List;
+
+import com.google.common.collect.Lists;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
@@ -9,19 +13,27 @@ import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 import net.teamio.taam.content.BaseTileEntity;
+import net.teamio.taam.content.IRenderable;
 import net.teamio.taam.piping.IPipe;
 import net.teamio.taam.piping.IPipeTE;
 import net.teamio.taam.piping.PipeEndFluidHandler;
 import net.teamio.taam.piping.PipeUtil;
 
-public class TileEntityTank extends BaseTileEntity implements IFluidHandler, IPipeTE, ITickable {
+public class TileEntityTank extends BaseTileEntity implements IFluidHandler, IPipeTE, ITickable, IRenderable {
 
 	private final PipeEndFluidHandler pipeEnd;
 	private final FluidTank tank;
 
+	private static final List<String> visibleParts = Lists.newArrayList("BaseplateConnector_pmdl_c", "Tank_tmdl");
+	
 	public TileEntityTank() {
 		pipeEnd = new PipeEndFluidHandler(this, EnumFacing.UP);
 		tank = new FluidTank(10000);
+	}
+	
+	@Override
+	public List<String> getVisibleParts() {
+		return visibleParts;
 	}
 	
 	@Override

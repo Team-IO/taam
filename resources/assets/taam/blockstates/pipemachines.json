@@ -11,6 +11,7 @@
         "normal": [{}],
         "inventory": [{
             "transform": "forge:default-block"
-        }]
+        }],
+        "variant=tank": [{}]
     }
 }
