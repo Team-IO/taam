@@ -1,112 +1,112 @@
 #Item localization
-item.taam.debugger.name=Coffee
-item.taam.wrench.name=Adjustable Wrench
+item.debugger.name=Coffee
+item.wrench.name=Adjustable Wrench
 # Ingots
-item.taam.ingot.tin.name=Tin Ingot
-item.taam.ingot.copper.name=Copper Ingot
-item.taam.ingot.aluminum.name=Aluminum Ingot
-item.taam.ingot.bauxite.name=The Impossible Bauxite Ingot
-item.taam.ingot.kaolinite.name=The Impossible Kaolinite Ingot
-item.taam.ingot.gold.name=Cheated Gold Ingot
-item.taam.ingot.iron.name=Cheated Iron Ingot
-item.taam.ingot.coal.name=Cheated Coal Ingot (what is that?)
+item.ingot.tin.name=Tin Ingot
+item.ingot.copper.name=Copper Ingot
+item.ingot.aluminum.name=Aluminum Ingot
+item.ingot.bauxite.name=The Impossible Bauxite Ingot
+item.ingot.kaolinite.name=The Impossible Kaolinite Ingot
+item.ingot.gold.name=Cheated Gold Ingot
+item.ingot.iron.name=Cheated Iron Ingot
+item.ingot.coal.name=Cheated Coal Ingot (what is that?)
 # Dusts
-item.taam.dust.tin.name=Tin Dust
-item.taam.dust.copper.name=Copper Dust
-item.taam.dust.aluminum.name=Aluminum Dust
-item.taam.dust.bauxite.name=Bauxite Dust
-item.taam.dust.kaolinite.name=Kaolinite Dust
-item.taam.dust.gold.name=Gold Dust
-item.taam.dust.iron.name=Iron Dust
-item.taam.dust.coal.name=Coal Dust
+item.dust.tin.name=Tin Dust
+item.dust.copper.name=Copper Dust
+item.dust.aluminum.name=Aluminum Dust
+item.dust.bauxite.name=Bauxite Dust
+item.dust.kaolinite.name=Kaolinite Dust
+item.dust.gold.name=Gold Dust
+item.dust.iron.name=Iron Dust
+item.dust.coal.name=Coal Dust
 # Parts (Crafting Items)
-item.taam.part.photocell.name=Photo Cell
-item.taam.part.motor.name=Motor
-item.taam.part.support_frame_wood.name=Wooden Support Frame
-item.taam.part.support_frame.name=Support Frame
-item.taam.part.circuit_basic.name=Basic Circuit
-item.taam.part.circuit_advanced.name=Advanced Circuit
-item.taam.part.logistics_chip.name=Logistics Chip
-item.taam.part.rubber_band.name=Rubber Band
-item.taam.part.tank.name=Tank
-item.taam.part.pump.name=Pump
-item.taam.part.nozzle.name=Nozzle
-item.taam.part.magnetic_coil.name=Magnetic Coil
-item.taam.part.iron_frame.name=Iron Frame
-item.taam.part.metal_bearing.name=Metal Bearing
-item.taam.part.copper_wire.name=Copper Wire
-item.taam.part.sieve.name=Sieve
+item.part.photocell.name=Photo Cell
+item.part.motor.name=Motor
+item.part.support_frame_wood.name=Wooden Support Frame
+item.part.support_frame.name=Support Frame
+item.part.circuit_basic.name=Basic Circuit
+item.part.circuit_advanced.name=Advanced Circuit
+item.part.logistics_chip.name=Logistics Chip
+item.part.rubber_band.name=Rubber Band
+item.part.tank.name=Tank
+item.part.pump.name=Pump
+item.part.nozzle.name=Nozzle
+item.part.magnetic_coil.name=Magnetic Coil
+item.part.iron_frame.name=Iron Frame
+item.part.metal_bearing.name=Metal Bearing
+item.part.copper_wire.name=Copper Wire
+item.part.sieve.name=Sieve
 # Materials
-item.taam.material.plastic_sheet.name=Plastic Sheet
-item.taam.material.plastic_bar.name=Plastic Bar
-item.taam.material.rubber_bar.name=Rubber Bar
-item.taam.material.rubber_sheet.name=Rubber Sheet
-item.taam.material.graphite.name=Graphite Bar
-item.taam.material.silicon_wafer.name=Silicon Wafer
-item.taam.material.iron_nugget.name=Iron Nugget
-item.taam.material.wooden_board.name=Wooden Board
-item.taam.material.aluminum_plate.name=Aluminum Plate
-item.taam.material.resin.name=Resin
+item.material.plastic_sheet.name=Plastic Sheet
+item.material.plastic_bar.name=Plastic Bar
+item.material.rubber_bar.name=Rubber Bar
+item.material.rubber_sheet.name=Rubber Sheet
+item.material.graphite.name=Graphite Bar
+item.material.silicon_wafer.name=Silicon Wafer
+item.material.iron_nugget.name=Iron Nugget
+item.material.wooden_board.name=Wooden Board
+item.material.aluminum_plate.name=Aluminum Plate
+item.material.resin.name=Resin
 # Tools
-item.taam.tool.saw.name=Saw
+item.tool.saw.name=Saw
 # Conveyor Appliances
-item.taam.conveyor_appliance.sprayer.name=Sprayer
+item.conveyor_appliance.sprayer.name=Sprayer
 
 #Creative Tab localization
 itemGroup.taam=Taam
 
 #Non-Productionline Machines
-tile.taam.machines.chute.name=Chute
-tile.taam.machines.creativecache.name=Creative Item Cache
+tile.machines.chute.name=Chute
+tile.machines.creativecache.name=Creative Item Cache
 
 # Block localization
-tile.taam.sensor.name=Motion Sensor
-tile.taam.slidingdoor.name=Sliding Door
-tile.taam.support_beam.name=Support Beam
+tile.sensor.name=Motion Sensor
+tile.slidingdoor.name=Sliding Door
+tile.support_beam.name=Support Beam
 # Concrete
-tile.taam.concrete.name=Concrete
-tile.taam.concrete.rough.name=Rough Concrete
-tile.taam.concrete.rough_chiseled.name=Rough Concrete (Chiseled)
-tile.taam.concrete.fine.name=Fine Concrete
-tile.taam.concrete.fine_chiseled.name=Fine Concrete (Chiseled)
-tile.taam.concrete.coated.name=Coated Concrete
-tile.taam.concrete.coated_chiseled.name=Coated Concrete (Chiseled)
-tile.taam.concrete.warn1.name=Concrete (Black Warning Paint)
-tile.taam.concrete.warn2.name=Concrete (Red Warning Paint)
+tile.concrete.name=Concrete
+tile.concrete.rough.name=Rough Concrete
+tile.concrete.rough_chiseled.name=Rough Concrete (Chiseled)
+tile.concrete.fine.name=Fine Concrete
+tile.concrete.fine_chiseled.name=Fine Concrete (Chiseled)
+tile.concrete.coated.name=Coated Concrete
+tile.concrete.coated_chiseled.name=Coated Concrete (Chiseled)
+tile.concrete.warn1.name=Concrete (Black Warning Paint)
+tile.concrete.warn2.name=Concrete (Red Warning Paint)
 # Ores
-tile.taam.ore.copper.name=Copper Ore
-tile.taam.ore.tin.name=Tin Ore
-tile.taam.ore.aluminum.name=Native Aluminum Ore
-tile.taam.ore.bauxite.name=Bauxite
-tile.taam.ore.kaolinite.name=Kaolinite
+tile.ore.copper.name=Copper Ore
+tile.ore.tin.name=Tin Ore
+tile.ore.aluminum.name=Native Aluminum Ore
+tile.ore.bauxite.name=Bauxite
+tile.ore.kaolinite.name=Kaolinite
 # Machines
-tile.taam.productionline.invalid.name=#!#!#!Invalid Data!#!#!#
-tile.taam.productionline.conveyor1.name=Wooden Conveyor
-tile.taam.productionline.conveyor2.name=Conveyor
-tile.taam.productionline.conveyor3.name=High Throughput Conveyor
-tile.taam.productionline.hopper.name=Conveyor Hopper
-tile.taam.productionline.hopper_hs.name=High Speed Conveyor Hopper
-tile.taam.productionline.sieve.name=Conveyor Sieve
-tile.taam.productionline.shredder.name=Conveyor Shredder
-tile.taam.productionline.grinder.name=Conveyor Grinder
-tile.taam.productionline.crusher.name=Conveyor Crusher
-tile.taam.productionline.chute.name=Conveyor Chute
+tile.productionline.invalid.name=#!#!#!Invalid Data!#!#!#
+tile.productionline.conveyor1.name=Wooden Conveyor
+tile.productionline.conveyor2.name=Conveyor
+tile.productionline.conveyor3.name=High Throughput Conveyor
+tile.productionline.hopper.name=Conveyor Hopper
+tile.productionline.hopper_hs.name=High Speed Conveyor Hopper
+tile.productionline.sieve.name=Conveyor Sieve
+tile.productionline.shredder.name=Conveyor Shredder
+tile.productionline.grinder.name=Conveyor Grinder
+tile.productionline.crusher.name=Conveyor Crusher
+tile.productionline.chute.name=Conveyor Chute
 
-tile.taam.productionline_attachable.itembag.name=Conveyor Item Bag
-tile.taam.productionline_attachable.trashcan.name=Conveyor Trash Can
-tile.taam.productionline_attachable.lamp.name=Conveyor Lamp
+tile.productionline_attachable.itembag.name=Conveyor Item Bag
+tile.productionline_attachable.trashcan.name=Conveyor Trash Can
+tile.productionline_attachable.lamp.name=Conveyor Lamp
 
 # Lore localization
-lore.taam.shift=Hold Shift
-lore.taam.conveyor_appliance=Conveyor Appliance
-lore.taam.conveyor_appliance.usage=Can be placed on conveyors\nor other compatible hosts.
-lore.taam.productionline=Production Line Component
-lore.taam.productionline.usage=Can work together with other\nproduction line components to form an integrated\nprocessing and transport system.
-lore.taam.productionline.isappliancehost=Is a valid appliance host.
-lore.taam.debugtool=Debug Tool
-lore.taam.debugtool.usage=This item can't be obtained in Survival.\nIt prints debug information\ninto chat or console.
-lore.taam.wrench=An engineers utility
-lore.taam.wrench.usage=Use this wrench to rotate\nand manage productionline machines.
+lore.shift=Hold Shift
+lore.conveyor_appliance=Conveyor Appliance
+lore.conveyor_appliance.usage=Can be placed on conveyors\nor other compatible hosts.
+lore.productionline=Production Line Component
+lore.productionline.usage=Can work together with other\nproduction line components to form an integrated\nprocessing and transport system.
+lore.productionline.isappliancehost=Is a valid appliance host.
+lore.debugtool=Debug Tool
+lore.debugtool.usage=This item can't be obtained in Survival.\nIt prints debug information\ninto chat or console.
+lore.wrench=An engineers utility
+lore.wrench.usage=Use this wrench to rotate\nand manage productionline machines.
 
 # Death causes
 death.attack.taam.processed=%1$s was processed (painfully)

@@ -18,27 +18,21 @@ public final class Taam {
 	
 	public static final String GUI_FACTORY_CLASS = "net.teamio.taam.gui.GuiFactory";
 
-	public static final String BLOCK_SENSOR = "taam.sensor";
-	public static final String BLOCK_MACHINES = "taam.machines";
-	public static final String BLOCK_PRODUCTIONLINE = "taam.productionline";
-	public static final String BLOCK_PRODUCTIONLINE_ATTACHABLE = "taam.productionline_attachable";
-	public static final String BLOCK_LOGISTICS = "taam.logistics";
-	public static final String BLOCK_SLIDINGDOOR = "taam.slidingdoor";
-	public static final String BLOCK_SENSOR_MOTION = "taam.sensor.motion";
-	public static final String BLOCK_SENSOR_MINECT = "taam.sensor.minect";
-	public static final String BLOCK_ORE = "taam.ore";
-	public static final String BLOCK_CONCRETE = "taam.concrete";
-	public static final String BLOCK_MAGNET_RAIL = "taam.magnet_rail";
-	public static final String BLOCK_SUPPORT_BEAM = "taam.support_beam";
+	public static final String BLOCK_SENSOR = "sensor";
+	public static final String BLOCK_MACHINES = "machines";
+	public static final String BLOCK_PRODUCTIONLINE = "productionline";
+	public static final String BLOCK_PRODUCTIONLINE_ATTACHABLE = "productionline_attachable";
+	public static final String BLOCK_LOGISTICS = "logistics";
+	public static final String BLOCK_SLIDINGDOOR = "slidingdoor";
+	public static final String BLOCK_SENSOR_MOTION = "sensor.motion";
+	public static final String BLOCK_SENSOR_MINECT = "sensor.minect";
+	public static final String BLOCK_ORE = "ore";
+	public static final String BLOCK_CONCRETE = "concrete";
+	public static final String BLOCK_MAGNET_RAIL = "magnet_rail";
+	public static final String BLOCK_SUPPORT_BEAM = "support_beam";
 
 	public static final String BLOCK_PIPE = "pipe";
 	public static final String BLOCK_PIPEMACHINES = "pipemachines";
-
-	/**
-	 * Implementation removed
-	 */
-	@Deprecated
-	public static final String BLOCK_CHUTE = "taam.chute";
 	
 	public static enum BLOCK_ORE_META implements IStringSerializable {
 		copper(true, true, true),
@@ -109,15 +103,6 @@ public final class Taam {
 			return name();
 		}
 	};
-	
-//	/**
-//	 * Skip non-ingot stuff when registering ingots & smelting recipes
-//	 * @param meta
-//	 * @return
-//	 */
-//	public static boolean isOreOnly(int meta) {
-//		return meta == 3 || meta == 4;
-//	}
 	
 	public static enum BLOCK_MACHINES_META implements IStringSerializable {
 		chute,
@@ -219,20 +204,20 @@ public final class Taam {
 		}
 	};
 	
-	public static final String MULTIPART_MULTINET_CABLE = "taam.multinet.cable";
-	public static final String MULTIPART_MULTINET_MULTITRONIX = "taam.multinet.multitronix";
+	public static final String MULTIPART_MULTINET_CABLE = "multinet.cable";
+	public static final String MULTIPART_MULTINET_MULTITRONIX = "multinet.multitronix";
 	
-	public static final String ITEM_MULTINET_CABLE = "taam.cable";
-	public static final String ITEM_DEBUG_TOOL = "taam.debugger";
-	public static final String ITEM_WRENCH = "taam.wrench";
-	public static final String ITEM_MULTINET_MULTITRONIX = "taam.multitronix";
-	public static final String ITEM_MATERIAL = "taam.material";
-	public static final String ITEM_PART = "taam.part";
-	public static final String ITEM_TOOL = "taam.tool";
-	public static final String ITEM_INGOT = "taam.ingot";
-	public static final String ITEM_DUST = "taam.dust";
-	public static final String ITEM_CONVEYOR_APPLIANCE = "taam.conveyor_appliance";
-	public static final String ITEM_LOGISTICS_CART = "taam.logistics_cart";
+	public static final String ITEM_MULTINET_CABLE = "cable";
+	public static final String ITEM_DEBUG_TOOL = "debugger";
+	public static final String ITEM_WRENCH = "wrench";
+	public static final String ITEM_MULTINET_MULTITRONIX = "multitronix";
+	public static final String ITEM_MATERIAL = "material";
+	public static final String ITEM_PART = "part";
+	public static final String ITEM_TOOL = "tool";
+	public static final String ITEM_INGOT = "ingot";
+	public static final String ITEM_DUST = "dust";
+	public static final String ITEM_CONVEYOR_APPLIANCE = "conveyor_appliance";
+	public static final String ITEM_LOGISTICS_CART = "logistics_cart";
 	
 	public static enum ITEM_CONVEYOR_APPLIANCE_META implements IStringSerializable {
 		sprayer,
