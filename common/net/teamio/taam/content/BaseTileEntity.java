@@ -53,6 +53,9 @@ public abstract class BaseTileEntity extends TileEntity {
 	public void blockUpdate() {
 		worldObj.markBlockRangeForRenderUpdate(pos, pos);
 	}
+	
+	public void renderUpdate() {
+	}
 
 	/*
 	 * Networking

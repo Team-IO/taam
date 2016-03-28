@@ -187,8 +187,12 @@ public abstract class BaseBlock extends Block {
 	@Override
 	public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
 			
-			// This would make it so the state shows up in F3. Not actually applied on the rendering, though.
-			// Rendering Transform is applied below, in getExtendedState
+		// Let the tile entity update anything that is required for rendering
+		BaseTileEntity te = (BaseTileEntity)worldIn.getTileEntity(pos);
+		te.renderUpdate();
+		
+		// This would make it so the state shows up in F3. Not actually applied on the rendering, though.
+		// Rendering Transform is applied below, in getExtendedState
 			
 	//		TileEntity te = worldIn.getTileEntity(pos);
 	//		if(te instanceof IRotatable) {

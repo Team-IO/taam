@@ -5,24 +5,77 @@ import java.util.Collections;
 import java.util.List;
 
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fluids.FluidStack;
 import net.teamio.taam.content.BaseTileEntity;
+import net.teamio.taam.content.IRenderable;
 import net.teamio.taam.piping.IPipe;
 import net.teamio.taam.piping.IPipeTE;
 import net.teamio.taam.piping.PipeInfo;
 import net.teamio.taam.piping.PipeUtil;
 
-public class TileEntityPipe extends BaseTileEntity implements IPipe, IPipeTE, ITickable {
+public class TileEntityPipe extends BaseTileEntity implements IPipe, IPipeTE, ITickable, IRenderable {
 
 	private final PipeInfo info;
 	
+	private final List<String> visibleParts = new ArrayList<String>(7);
+	
+	private int adjacentPipes;
+	
 	public TileEntityPipe() {
 		info = new PipeInfo(500);
+	}
+	
+	@Override
+	public List<String> getVisibleParts() {
+		List<String> visibleParts = new ArrayList<String>(7);
+		visibleParts.clear();
+		visibleParts.add("Center_pcmdl");
+		if(isSideConnected(EnumFacing.EAST))
+			visibleParts.add("FlangeMX_pfmdl");
+
+		if(isSideConnected(EnumFacing.WEST))
+			visibleParts.add("FlangePX_pfmdl");
+		
+		if(isSideConnected(EnumFacing.NORTH))
+			visibleParts.add("FlangeMY_pfmdl");
+		if(isSideConnected(EnumFacing.SOUTH))
+			visibleParts.add("FlangePY_pfmdl");
+
+		if(isSideConnected(EnumFacing.DOWN))
+			visibleParts.add("FlangeMZ_pfmdl");
+		if(isSideConnected(EnumFacing.UP))
+			visibleParts.add("FlangePZ_pfmdl");
+		return visibleParts;
+	}
+	
+	private boolean isSideConnected(EnumFacing side) {
+		boolean connected = (adjacentPipes & (1 << side.ordinal())) != 0;
+		System.out.println(side + " " + adjacentPipes + " " + (1 << side.ordinal()) + " " + connected);
+		return connected;
+	}
+	
+	public void renderUpdate() {
+		adjacentPipes = 0;
+		System.out.println("World is remote: " + worldObj.isRemote);
+		for(EnumFacing side : EnumFacing.VALUES) {
+			IPipe[] pipesOnSide = PipeUtil.getConnectedPipes(worldObj, pos, side);
+			boolean hasPipes = pipesOnSide != null && pipesOnSide.length != 0;
+			System.out.println("Detecting: Side " + side + ": " + hasPipes);
+			if(hasPipes) {
+				adjacentPipes |= 1 << side.ordinal();
+			}
+			System.out.println("Map in Progress: " + adjacentPipes);
+		}
+		System.out.println("Detected Sides-Map: " + adjacentPipes);
+	};
+	
+	@Override
+	public void blockUpdate() {
+		super.blockUpdate();
 	}
 	
 	@Override
@@ -91,10 +144,9 @@ public class TileEntityPipe extends BaseTileEntity implements IPipe, IPipeTE, IT
 	public IPipe[] getConnectedPipes(IBlockAccess world, BlockPos pos) {
 		List<IPipe> pipes = new ArrayList<IPipe>(6);
 		for(EnumFacing side : EnumFacing.values()) {
-			TileEntity ent = world.getTileEntity(pos.offset(side));
-			if(ent instanceof IPipeTE) {
-				IPipeTE pipeTE = (IPipeTE)ent;
-				Collections.addAll(pipes, pipeTE.getPipesForSide(side.getOpposite()));
+			IPipe[] pipesOnSide = PipeUtil.getConnectedPipes(world, pos, side);
+			if(pipesOnSide != null) {
+				Collections.addAll(pipes, pipesOnSide);
 			}
 		}
 		return pipes.toArray(new IPipe[pipes.size()]);
