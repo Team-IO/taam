@@ -1,9 +1,9 @@
 package net.teamio.taam.content;
 
 import net.minecraft.block.material.MapColor;
-import net.minecraft.block.material.MaterialTransparent;
+import net.minecraft.block.material.Material;
 
-public class MaterialMachinesTransparent extends MaterialTransparent {
+public class MaterialMachinesTransparent extends Material {
 	public static final MaterialMachinesTransparent INSTANCE = new MaterialMachinesTransparent(MapColor.ironColor);
 	
 	public MaterialMachinesTransparent(MapColor color) {
