@@ -93,15 +93,15 @@ public class TaamClientProxy extends TaamCommonProxy {
 			modelMesher.register(itemToRegister, metaInt, new ModelResourceLocation(Taam.MOD_ID + ":concrete." + metaName, "inventory"));
 		}
 
-		registerItemDefault(modelMesher, TaamMain.itemWrench, 0, Taam.MOD_ID + ":taam.wrench");
-		registerItemDefault(modelMesher, TaamMain.itemSaw, 0, Taam.MOD_ID + ":taam.tool.saw");
-		registerItemDefault(modelMesher, TaamMain.itemDebugTool, 0, Taam.MOD_ID + ":taam.debugger");
+		registerItemDefault(modelMesher, TaamMain.itemWrench, 0, Taam.MOD_ID + ":wrench");
+		registerItemDefault(modelMesher, TaamMain.itemSaw, 0, Taam.MOD_ID + ":tool.saw");
+		registerItemDefault(modelMesher, TaamMain.itemDebugTool, 0, Taam.MOD_ID + ":debugger");
 		
 
 		itemToRegister = GameRegistry.findItem(Taam.MOD_ID, Taam.BLOCK_SUPPORT_BEAM);
 		//ModelBakery.registerItemVariants(itemToRegister, new ResourceLocation(Taam.MOD_ID, Taam.BLOCK_SUPPORT_BEAM));
 		//modelMesher.register(itemToRegister, 0, new ModelResourceLocation(Taam.MOD_ID + ":support_beam", "inventory"));
-		ModelLoader.setCustomModelResourceLocation(itemToRegister, 0, new ModelResourceLocation(Taam.MOD_ID + ":taam.support_beam", "inventory"));
+		ModelLoader.setCustomModelResourceLocation(itemToRegister, 0, new ModelResourceLocation(Taam.MOD_ID + ":support_beam", "inventory"));
 		
 		itemToRegister = TaamMain.itemMaterial;
 		
