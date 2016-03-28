@@ -198,9 +198,9 @@ public abstract class BaseBlock extends Block {
 	//		if(te instanceof IRotatable) {
 	//			return state.withProperty(FACING, ((IRotatable) te).getFacingDirection());
 	//		}
-			return state;
-		}
-
+		return state;
+	}
+	
 	@Override
 	public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
 		List<String> visibleParts = null;

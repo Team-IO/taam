@@ -50,10 +50,17 @@ public abstract class BaseTileEntity extends TileEntity {
 		this.worldObj.markBlockForUpdate(pos);
 	}
 	
+	/**
+	 * Called inside {@link BaseBlock#onNeighborBlockChange(net.minecraft.world.World, net.minecraft.util.BlockPos, net.minecraft.block.state.IBlockState, net.minecraft.block.Block)}.
+	 * That is only called on server side!
+	 */
 	public void blockUpdate() {
-		worldObj.markBlockRangeForRenderUpdate(pos, pos);
 	}
 	
+	
+	/**
+	 * Called within {@link BaseBlock#getActualState(net.minecraft.block.state.IBlockState, net.minecraft.world.IBlockAccess, net.minecraft.util.BlockPos)} to update render state in the tile entity.
+	 */
 	public void renderUpdate() {
 	}
 

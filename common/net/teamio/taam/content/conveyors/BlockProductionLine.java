@@ -137,7 +137,6 @@ public class BlockProductionLine extends BaseBlock {
 			// Conveyor Machinery
 			this.maxY = 0.5f;
 		//}		
-		super.setBlockBoundsBasedOnState(world, pos);
 	}
 	
 	@Override
