@@ -56,11 +56,6 @@ public class PipeEndFluidHandler implements IPipe {
 	}
 
 	@Override
-	public void applyTickPressure(int pressure, int toMax) {
-		this.pressure = PipeUtil.calculateAppliedPressure(this.pressure, pressure, toMax);
-	}
-
-	@Override
 	public int getPressure() {
 		return pressure;
 	}

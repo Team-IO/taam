@@ -54,10 +54,6 @@ public class PipeInfo {
 		}
 	}
 	
-	public void applyTickPressure(int pressure, int limit) {
-		this.pressure = PipeUtil.calculateAppliedPressure(this.pressure, pressure, limit);
-	}
-	
 	public int addFluid(FluidStack stack) {
 		int current = fillLevel;
 		//TODO: Caching. Later.

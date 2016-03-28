@@ -88,11 +88,6 @@ public class TileEntityPipe extends BaseTileEntity implements IPipe, IPipeTE, IT
 	}
 	
 	@Override
-	public void applyTickPressure(int pressure, int limit) {
-		info.applyTickPressure(pressure, limit);
-	}
-
-	@Override
 	public int getPressure() {
 		return info.pressure;
 	}

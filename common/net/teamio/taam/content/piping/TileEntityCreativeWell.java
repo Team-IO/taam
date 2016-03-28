@@ -25,7 +25,7 @@ public class TileEntityCreativeWell extends BaseTileEntity implements IFluidHand
 	@Override
 	public void update() {
 		pipeEnd.addFluid(new FluidStack(FluidRegistry.WATER, 50));
-		pipeEnd.applyTickPressure(5, 20);
+		pipeEnd.setPressure(20);
 		
 		PipeUtil.processPipes(pipeEnd, worldObj, pos);
 	}

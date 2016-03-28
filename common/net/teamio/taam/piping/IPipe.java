@@ -13,19 +13,6 @@ import net.minecraftforge.fluids.FluidStack;
  */
 public interface IPipe {
 	/**
-	 * Apply pressure until a limit. If pressure is negative, the logic should
-	 * assume suction and handle the limit as negative, too.
-	 * 
-	 * @param pressure
-	 *            Pressure to apply (add/subtract) up to the limit.
-	 * @param limit
-	 *            Positive (pressure) or negative (suction) limit. Can be lower
-	 *            than what is currently in the pipe. This is only to cap off
-	 *            the pressure change that is applied with this method call.
-	 */
-	void applyTickPressure(int pressure, int limit);
-
-	/**
 	 * Get the pressure currently on the pipe.
 	 * Effective pressure is calculated using getPressure and getSuction.
 	 * 

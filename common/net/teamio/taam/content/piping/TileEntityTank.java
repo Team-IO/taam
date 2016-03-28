@@ -26,7 +26,6 @@ public class TileEntityTank extends BaseTileEntity implements IFluidHandler, IPi
 	
 	@Override
 	public void update() {
-		//pipeEnd.applyTickPressure(-5, -10);
 		pipeEnd.setSuction(10);
 		PipeUtil.processPipes(pipeEnd, worldObj, pos);
 	}
