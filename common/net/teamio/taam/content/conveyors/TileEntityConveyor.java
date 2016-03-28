@@ -80,62 +80,65 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 		if(worldObj != null) {
 			
 			updateApplianceCache();
-			
-			// Check in front
-			TileEntity te = worldObj.getTileEntity(pos.offset(direction));
-			if(te instanceof TileEntityConveyor) {
-				TileEntityConveyor next = (TileEntityConveyor)te;
-				renderEnd = next.speedLevel != speedLevel;
-				renderEnd = renderEnd || next.getFacingDirection() != direction;
-				isEnd = renderEnd;
-			} else {
-				isEnd = true;
-				renderEnd = te instanceof IConveyorAwareTE;
-			}
-			
-			// Check behind
-			EnumFacing inverse = direction.getOpposite();
-			te = worldObj.getTileEntity(pos.offset(inverse));
-			if(te instanceof TileEntityConveyor) {
-				TileEntityConveyor next = (TileEntityConveyor)te;
-				renderBegin = next.speedLevel != speedLevel;
-				renderBegin = renderBegin || next.getFacingDirection() != direction;
-				isBegin = renderBegin;
-			} else {
-				isBegin = true;
-				renderBegin = te instanceof IConveyorAwareTE;
-			}
-			
-			// Check right
-			inverse = direction.rotateAround(Axis.Y);
-			te = worldObj.getTileEntity(pos.offset(inverse));
-			
-			if(te instanceof TileEntityConveyor) {
-				TileEntityConveyor next = (TileEntityConveyor)te;
-				EnumFacing nextFacing = next.getFacingDirection();
-				renderRight = nextFacing != direction && nextFacing != direction.getOpposite();
-			} else {
-				renderRight = te instanceof IConveyorAwareTE;
-			}
-			
-			// Check left
-			inverse = direction.getOpposite().rotateAround(Axis.Y);
-			te = worldObj.getTileEntity(pos.offset(inverse));
-			
-			if(te instanceof TileEntityConveyor) {
-				TileEntityConveyor next = (TileEntityConveyor)te;
-				EnumFacing nextFacing = next.getFacingDirection();
-				renderLeft = nextFacing != direction && nextFacing != direction.getOpposite();
-			} else {
-				renderLeft = te instanceof IConveyorAwareTE;
-			}
-			
-			// Check above
-			renderAbove = worldObj.isSideSolid(pos.offset(EnumFacing.UP), EnumFacing.DOWN) ||
-					worldObj.getTileEntity(pos.offset(EnumFacing.UP)) instanceof IConveyorAwareTE;
 
 			worldObj.markBlockRangeForRenderUpdate(pos, pos);
 		}
+	}
+	
+	@Override
+	public void renderUpdate() {
+		// Check in front
+		TileEntity te = worldObj.getTileEntity(pos.offset(direction));
+		if(te instanceof TileEntityConveyor) {
+			TileEntityConveyor next = (TileEntityConveyor)te;
+			renderEnd = next.speedLevel != speedLevel;
+			renderEnd = renderEnd || next.getFacingDirection() != direction;
+			isEnd = renderEnd;
+		} else {
+			isEnd = true;
+			renderEnd = te instanceof IConveyorAwareTE;
+		}
+		
+		// Check behind
+		EnumFacing inverse = direction.getOpposite();
+		te = worldObj.getTileEntity(pos.offset(inverse));
+		if(te instanceof TileEntityConveyor) {
+			TileEntityConveyor next = (TileEntityConveyor)te;
+			renderBegin = next.speedLevel != speedLevel;
+			renderBegin = renderBegin || next.getFacingDirection() != direction;
+			isBegin = renderBegin;
+		} else {
+			isBegin = true;
+			renderBegin = te instanceof IConveyorAwareTE;
+		}
+		
+		// Check right
+		inverse = direction.rotateAround(Axis.Y);
+		te = worldObj.getTileEntity(pos.offset(inverse));
+		
+		if(te instanceof TileEntityConveyor) {
+			TileEntityConveyor next = (TileEntityConveyor)te;
+			EnumFacing nextFacing = next.getFacingDirection();
+			renderRight = nextFacing != direction && nextFacing != direction.getOpposite();
+		} else {
+			renderRight = te instanceof IConveyorAwareTE;
+		}
+		
+		// Check left
+		inverse = direction.getOpposite().rotateAround(Axis.Y);
+		te = worldObj.getTileEntity(pos.offset(inverse));
+		
+		if(te instanceof TileEntityConveyor) {
+			TileEntityConveyor next = (TileEntityConveyor)te;
+			EnumFacing nextFacing = next.getFacingDirection();
+			renderLeft = nextFacing != direction && nextFacing != direction.getOpposite();
+		} else {
+			renderLeft = te instanceof IConveyorAwareTE;
+		}
+		
+		// Check above
+		renderAbove = worldObj.isSideSolid(pos.offset(EnumFacing.UP), EnumFacing.DOWN) ||
+				worldObj.getTileEntity(pos.offset(EnumFacing.UP)) instanceof IConveyorAwareTE;
 	}
 	
 	@Override
