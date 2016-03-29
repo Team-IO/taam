@@ -214,7 +214,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 			visible.add(isWood ? "ConveyorLeftCap_Wood_cecmdl_wood" : "ConveyorLeftCap_Alu_cecmdl_alu");
 		}
 		if(renderRight) {
-			visible.add(isWood ? "ConveyorRightCap_Wood_cecmdl_wood" : "ConveyorRight Cap_Alu_cecmdl_alu");
+			visible.add(isWood ? "ConveyorRightCap_Wood_cecmdl_wood" : "ConveyorRightCap_Alu_cecmdl_alu");
 		}
 		if(isHighSpeed) {
 			visible.add("ConveyorHighThroughput_Framing_Alu_chtpmdl_alu");
