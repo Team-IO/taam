@@ -38,10 +38,10 @@ if(System.env.BUILD_NUMBER)
 	version = "${config.mod_version}.b${System.env.BUILD_NUMBER}"
 
 minecraft {
-    version = "${config.mc_version}-${config.forge_version}"
+    version = "${config.mc_version}-${config.forge_version}-${config.mc_version}"
     runDir = "."
     replace "@VERSION@", project.version
-    mappings = "stable_20"
+    mappings = "snapshot_20160329"
 }
 
 sourceSets {
