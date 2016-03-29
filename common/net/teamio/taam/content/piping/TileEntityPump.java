@@ -12,14 +12,14 @@ import net.teamio.taam.content.IRenderable;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.piping.IPipe;
 import net.teamio.taam.piping.IPipeTE;
-import net.teamio.taam.piping.PipeEndPump;
+import net.teamio.taam.piping.PipeEndSharedDistinct;
 import net.teamio.taam.piping.PipeInfo;
 import net.teamio.taam.piping.PipeUtil;
 
 public class TileEntityPump extends BaseTileEntity implements IPipeTE, ITickable, IRenderable, IRotatable {
 
-	private final PipeEndPump pipeEndOut;
-	private final PipeEndPump pipeEndIn;
+	private final PipeEndSharedDistinct pipeEndOut;
+	private final PipeEndSharedDistinct pipeEndIn;
 
 	private EnumFacing direction = EnumFacing.NORTH;
 	private final PipeInfo info;
@@ -28,8 +28,8 @@ public class TileEntityPump extends BaseTileEntity implements IPipeTE, ITickable
 	
 	public TileEntityPump() {
 		info = new PipeInfo(50);
-		pipeEndOut = new PipeEndPump(direction, info);
-		pipeEndIn = new PipeEndPump(direction.getOpposite(), info);
+		pipeEndOut = new PipeEndSharedDistinct(direction, info, true);
+		pipeEndIn = new PipeEndSharedDistinct(direction.getOpposite(), info, true);
 		pipeEndOut.setPressure(50);
 		pipeEndIn.setSuction(50);
 	}

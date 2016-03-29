@@ -73,6 +73,12 @@ public class TileEntityTank extends BaseTileEntity implements IFluidHandler, IPi
 		if(from.getAxis() != Axis.Y) {
 			return 0;
 		}
+		if(resource == null || resource.amount == 0) {
+			return 0;
+		}
+		if(tank.getFluidAmount() == 0) {
+			tank.setFluid(null);
+		}
 		int filled = tank.fill(resource, doFill);
 		markDirty();
 		return filled;
@@ -85,7 +91,11 @@ public class TileEntityTank extends BaseTileEntity implements IFluidHandler, IPi
 		}
 		if(resource.isFluidEqual(tank.getFluid())) {
 			markDirty();
-			return tank.drain(resource.amount, doDrain);
+			FluidStack returnStack = tank.drain(resource.amount, doDrain);
+			if(tank.getFluidAmount() == 0) {
+				tank.setFluid(null);
+			}
+			return returnStack;
 		} else {
 			return null;
 		}
@@ -97,13 +107,20 @@ public class TileEntityTank extends BaseTileEntity implements IFluidHandler, IPi
 			return null;
 		}
 		markDirty();
-		return tank.drain(maxDrain, doDrain);
+		FluidStack returnStack = tank.drain(maxDrain, doDrain);
+		if(tank.getFluidAmount() == 0) {
+			tank.setFluid(null);
+		}
+		return returnStack;
 	}
 
 	@Override
 	public boolean canFill(EnumFacing from, Fluid fluid) {
 		if(from.getAxis() != Axis.Y) {
 			return false;
+		}
+		if(tank.getFluidAmount() == 0) {
+			tank.setFluid(null);
 		}
 		FluidStack tankFluid = tank.getFluid();
 		return tankFluid == null || tankFluid.getFluid() == fluid;

@@ -94,6 +94,7 @@ public class TileEntityPipe extends BaseTileEntity implements IPipe, IPipeTE, IT
 
 	@Override
 	public int addFluid(FluidStack stack) {
+		markDirty();
 		return info.addFluid(stack);
 	}
 
