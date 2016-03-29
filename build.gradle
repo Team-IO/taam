@@ -84,9 +84,6 @@ jar {
 	exclude '**/*.blend'
 	exclude '**/*.blend?'
 	
-	// Exclude .mtl Material files, as we do not load them anyways.
-	exclude '**/*.mtl'
-	
 	// Exclude .svg files
 	exclude '**/*.svg'
 }

@@ -51,7 +51,7 @@ public class TileEntityPipe extends BaseTileEntity implements IPipe, IPipeTE, IT
 		return visibleParts;
 	}
 	
-	private boolean isSideConnected(EnumFacing side) {
+	public boolean isSideConnected(EnumFacing side) {
 		return (adjacentPipes & (1 << side.ordinal())) != 0;
 	}
 	
@@ -94,6 +94,7 @@ public class TileEntityPipe extends BaseTileEntity implements IPipe, IPipeTE, IT
 
 	@Override
 	public int addFluid(FluidStack stack) {
+		markDirty();
 		return info.addFluid(stack);
 	}
 

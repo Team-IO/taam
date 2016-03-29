@@ -125,11 +125,12 @@ public class ItemDebugTool extends Item {
         	
         	IPipe pipe = (IPipe)te;
         	
-        	String content = "";
+        	String content = "[";
         	FluidStack[] fs = pipe.getFluids();
-        	if(fs.length > 0) {
-        		content = fs[0].getLocalizedName() + " " + fs[0].amount;
+        	for(FluidStack fluidContent : fs) {
+        		content += fluidContent.getLocalizedName() + " " + fluidContent.amount + ", ";
         	}
+        	content += "]";
         	
         	text = String.format(remoteState + " %s Pipe pressure: %d suction: %d effective: %d Content: %s",
         			pipe.getClass().getName(), pipe.getPressure(), pipe.getSuction(), pipe.getPressure() - pipe.getSuction(), content);

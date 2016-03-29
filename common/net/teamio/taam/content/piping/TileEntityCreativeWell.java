@@ -1,15 +1,18 @@
 package net.teamio.taam.content.piping;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+import net.teamio.taam.Log;
 import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IWorldInteractable;
 import net.teamio.taam.piping.IPipe;
@@ -21,11 +24,16 @@ public class TileEntityCreativeWell extends BaseTileEntity implements IFluidHand
 
 	private final PipeEnd[] pipeEnds;
 
+	private FluidStack fluid;
+	
+	private static final int capacity = 50; 
+	
 	public TileEntityCreativeWell() {
+		fluid = new FluidStack(FluidRegistry.WATER, 50);
 		pipeEnds = new PipeEnd[6];
 		for (EnumFacing side : EnumFacing.VALUES) {
 			int index = side.ordinal();
-			pipeEnds[index] = new PipeEnd(50, side);
+			pipeEnds[index] = new PipeEnd(side, capacity, true);
 			pipeEnds[index].setPressure(20);
 		}
 	}
@@ -34,7 +42,9 @@ public class TileEntityCreativeWell extends BaseTileEntity implements IFluidHand
 	public void update() {
 		for (EnumFacing side : EnumFacing.VALUES) {
 			int index = side.ordinal();
-			pipeEnds[index].addFluid(new FluidStack(FluidRegistry.WATER, 50));
+			if(fluid != null) {
+				pipeEnds[index].addFluid(fluid);
+			}
 			PipeUtil.processPipes(pipeEnds[index], worldObj, pos);
 		}
 
@@ -42,14 +52,21 @@ public class TileEntityCreativeWell extends BaseTileEntity implements IFluidHand
 
 	@Override
 	protected void writePropertiesToNBT(NBTTagCompound tag) {
-		// TODO Auto-generated method stub
-		
+		if(fluid != null) {
+			NBTTagCompound fluidTag = new NBTTagCompound();
+			fluid.writeToNBT(fluidTag);
+			tag.setTag("fluid", fluidTag);
+		}
 	}
 
 	@Override
 	protected void readPropertiesFromNBT(NBTTagCompound tag) {
-		// TODO Auto-generated method stub
-		
+		NBTTagCompound fluidTag = tag.getCompoundTag("fluid");
+		if(fluidTag == null) {
+			fluid = null;
+		} else {
+			fluid = FluidStack.loadFluidStackFromNBT(fluidTag);
+		}
 	}
 	
 	/*
@@ -73,7 +90,7 @@ public class TileEntityCreativeWell extends BaseTileEntity implements IFluidHand
 
 	@Override
 	public FluidStack drain(EnumFacing from, FluidStack resource, boolean doDrain) {
-		if(resource != null && resource.getFluid() == FluidRegistry.WATER) {
+		if(fluid != null && resource != null && resource.isFluidEqual(fluid)) {
 			return resource;
 		} else {
 			return null;
@@ -82,7 +99,11 @@ public class TileEntityCreativeWell extends BaseTileEntity implements IFluidHand
 
 	@Override
 	public FluidStack drain(EnumFacing from, int maxDrain, boolean doDrain) {
-		return new FluidStack(FluidRegistry.WATER, maxDrain);
+		if(fluid == null) {
+			return null;
+		} else {
+			return new FluidStack(fluid, maxDrain);
+		}
 	}
 
 	@Override
@@ -92,12 +113,12 @@ public class TileEntityCreativeWell extends BaseTileEntity implements IFluidHand
 
 	@Override
 	public boolean canDrain(EnumFacing from, Fluid fluid) {
-		return fluid == FluidRegistry.WATER;
+		return this.fluid != null && this.fluid.getFluid() == fluid;
 	}
 
 	@Override
 	public FluidTankInfo[] getTankInfo(EnumFacing from) {
-		return new FluidTankInfo[0];
+		return new FluidTankInfo[] { new FluidTankInfo(fluid, capacity) };
 	}
 	
 	/*
@@ -107,8 +128,15 @@ public class TileEntityCreativeWell extends BaseTileEntity implements IFluidHand
 	@Override
 	public boolean onBlockActivated(World world, EntityPlayer player, boolean hasWrench, EnumFacing side, float hitX,
 			float hitY, float hitZ) {
-		// TODO Auto-generated method stub
-		return false;
+		ItemStack stack = player.inventory.getStackInSlot(player.inventory.currentItem);
+		if(stack == null) {
+			fluid = null;
+		} else {
+			fluid = FluidContainerRegistry.getFluidForFilledItem(stack);
+			Log.debug("Set creative well fluid to " + fluid);
+		}
+		updateState();
+		return true;
 	}
 	
 	@Override

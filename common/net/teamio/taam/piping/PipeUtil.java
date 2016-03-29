@@ -111,11 +111,9 @@ public final class PipeUtil {
 			int share = (int) Math.ceil(totalAmount * factor);
 			for (FluidStack fs : pipe.getFluids()) {
 				// TODO: Simulate Drain.
-				FluidStack transfer = fs;
-				if (fs.amount > share) {
-					transfer = fs.copy();
-					transfer.amount = share;
-				}
+				FluidStack transfer = fs.copy();
+				transfer.amount = Math.min(transfer.amount, share);
+
 				int transferred = connected[i].addFluid(transfer);
 				// TODO: Drain.
 				fs.amount -= transferred;
