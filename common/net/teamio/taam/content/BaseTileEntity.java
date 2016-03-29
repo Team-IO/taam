@@ -9,6 +9,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 import net.teamio.taam.Log;
 
 /**
@@ -52,9 +53,15 @@ public abstract class BaseTileEntity extends TileEntity {
 	
 	/**
 	 * Called inside {@link BaseBlock#onNeighborBlockChange(net.minecraft.world.World, net.minecraft.util.BlockPos, net.minecraft.block.state.IBlockState, net.minecraft.block.Block)}.
-	 * That is only called on server side!
+	 * (On server side)
+	 * Also called by implementations when rotating with a wrench.
+	 * (Both client and server)
+	 * Default implementation calls {@link World#markBlockRangeForRenderUpdate(net.minecraft.util.BlockPos, net.minecraft.util.BlockPos)}.
 	 */
 	public void blockUpdate() {
+		if(worldObj != null) {
+			worldObj.markBlockRangeForRenderUpdate(pos, pos);
+		}
 	}
 	
 	

@@ -49,14 +49,12 @@ public class TileEntityTank extends BaseTileEntity implements IFluidHandler, IPi
 
 	@Override
 	protected void writePropertiesToNBT(NBTTagCompound tag) {
-		// TODO Auto-generated method stub
-
+		tank.writeToNBT(tag);
 	}
 
 	@Override
 	protected void readPropertiesFromNBT(NBTTagCompound tag) {
-		// TODO Auto-generated method stub
-
+		tank.readFromNBT(tag);
 	}
 
 	@Override

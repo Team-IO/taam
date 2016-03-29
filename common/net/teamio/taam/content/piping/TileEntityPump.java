@@ -6,34 +6,32 @@ import com.google.common.collect.Lists;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.ITickable;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTank;
-import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidHandler;
 import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IRenderable;
+import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.piping.IPipe;
 import net.teamio.taam.piping.IPipeTE;
-import net.teamio.taam.piping.PipeEndFluidHandler;
+import net.teamio.taam.piping.PipeEndPump;
+import net.teamio.taam.piping.PipeInfo;
 import net.teamio.taam.piping.PipeUtil;
 
-public class TileEntityPump extends BaseTileEntity implements IFluidHandler, IPipeTE, ITickable, IRenderable {
+public class TileEntityPump extends BaseTileEntity implements IPipeTE, ITickable, IRenderable, IRotatable {
 
-	private final PipeEndFluidHandler pipeEndUP;
-	private final PipeEndFluidHandler pipeEndDOWN;
-	private final FluidTank tank;
+	private final PipeEndPump pipeEndOut;
+	private final PipeEndPump pipeEndIn;
 
+	private EnumFacing direction = EnumFacing.NORTH;
+	private final PipeInfo info;
+	
 	public static final List<String> visibleParts = Lists.newArrayList("Baseplate_pmdl", "Pump_pumdl");
 	
 	public TileEntityPump() {
-		pipeEndUP = new PipeEndFluidHandler(this, EnumFacing.UP);
-		pipeEndDOWN = new PipeEndFluidHandler(this, EnumFacing.DOWN);
-		pipeEndUP.setSuction(10);
-		pipeEndDOWN.setSuction(9);
-		tank = new FluidTank(8000);
+		info = new PipeInfo(50);
+		pipeEndOut = new PipeEndPump(direction, info);
+		pipeEndIn = new PipeEndPump(direction.getOpposite(), info);
+		pipeEndOut.setPressure(50);
+		pipeEndIn.setSuction(50);
 	}
 	
 	@Override
@@ -43,94 +41,63 @@ public class TileEntityPump extends BaseTileEntity implements IFluidHandler, IPi
 	
 	@Override
 	public void update() {
-		PipeUtil.processPipes(pipeEndUP, worldObj, pos);
-		PipeUtil.processPipes(pipeEndDOWN, worldObj, pos);
+		PipeUtil.processPipes(pipeEndOut, worldObj, pos);
+		PipeUtil.processPipes(pipeEndIn, worldObj, pos);
 	}
 
 	@Override
 	protected void writePropertiesToNBT(NBTTagCompound tag) {
-		// TODO Auto-generated method stub
-
+		tag.setInteger("direction", direction.ordinal());
+		info.writeToNBT(tag);
 	}
 
 	@Override
 	protected void readPropertiesFromNBT(NBTTagCompound tag) {
-		// TODO Auto-generated method stub
-
+		direction = EnumFacing.getFront(tag.getInteger("direction"));
+		if(direction == EnumFacing.UP || direction == EnumFacing.DOWN) {
+			direction = EnumFacing.NORTH;
+		}
+		info.readFromNBT(tag);
 	}
 
+	/*
+	 * IPipeTE implementation
+	 */
+	
 	@Override
 	public IPipe[] getPipesForSide(EnumFacing side) {
-		if (side == EnumFacing.UP) {
-			return new IPipe[] { pipeEndUP };
-		} else if (side == EnumFacing.DOWN) {
-			return new IPipe[] { pipeEndDOWN };
+		if (side == direction) {
+			return new IPipe[] { pipeEndOut };
+		} else if (side == direction.getOpposite()) {
+			return new IPipe[] { pipeEndIn };
 		} else {
 			return null;
 		}
 	}
 
+	/*
+	 * IRotatable implementation
+	 */
+	
 	@Override
-	public int fill(EnumFacing from, FluidStack resource, boolean doFill) {
-		if(from.getAxis() != Axis.Y) {
-			return 0;
-		}
-		int filled = tank.fill(resource, doFill);
-		markDirty();
-		return filled;
-	}
-
-	@Override
-	public FluidStack drain(EnumFacing from, FluidStack resource, boolean doDrain) {
-		if(from.getAxis() != Axis.Y) {
-			return null;
-		}
-		if(resource.isFluidEqual(tank.getFluid())) {
-			markDirty();
-			return tank.drain(resource.amount, doDrain);
-		} else {
-			return null;
-		}
+	public EnumFacing getFacingDirection() {
+		return direction;
 	}
 
 	@Override
-	public FluidStack drain(EnumFacing from, int maxDrain, boolean doDrain) {
-		if(from.getAxis() != Axis.Y) {
-			return null;
-		}
-		markDirty();
-		return tank.drain(maxDrain, doDrain);
+	public EnumFacing getNextFacingDirection() {
+		return direction.rotateY();
 	}
 
 	@Override
-	public boolean canFill(EnumFacing from, Fluid fluid) {
-		if(from.getAxis() != Axis.Y) {
-			return false;
-		}
-		FluidStack tankFluid = tank.getFluid();
-		return tankFluid == null || tankFluid.getFluid() == fluid;
+	public void setFacingDirection(EnumFacing direction) {
+		this.direction = direction;
+		
+		pipeEndOut.setSide(direction);
+		pipeEndIn.setSide(direction.getOpposite());
+		
+		blockUpdate();
+		updateState();
+		worldObj.notifyNeighborsOfStateChange(pos, blockType);
 	}
-
-	@Override
-	public boolean canDrain(EnumFacing from, Fluid fluid) {
-		if(from.getAxis() != Axis.Y) {
-			return false;
-		}
-		FluidStack tankFluid = tank.getFluid();
-		return tankFluid != null && tankFluid.getFluid() == fluid;
-	}
-
-	@Override
-	public FluidTankInfo[] getTankInfo(EnumFacing from) {
-		if(from.getAxis() == Axis.Y) {
-			return new FluidTankInfo[] { new FluidTankInfo(tank) };
-		} else {
-			return new FluidTankInfo[0];
-		}
-	}
-
-	public FluidStack getFluid() {
-		return tank.getFluid();
-	}
-
 }
