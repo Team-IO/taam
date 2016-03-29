@@ -65,9 +65,9 @@ public class PipeInfo {
 		}
 		int insert = Math.min(stack.amount, free);
 		
-		for(FluidStack content : content) {
-			if(content.isFluidEqual(stack)) {
-				content.amount += insert;
+		for(FluidStack contentStack : content) {
+			if(contentStack.isFluidEqual(stack)) {
+				contentStack.amount += insert;
 				return insert;
 			}
 		}

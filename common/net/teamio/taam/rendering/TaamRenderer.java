@@ -117,7 +117,6 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 			return;
 		}
 		Fluid fluid = stack.getFluid();
-		ResourceLocation texture = fluid.getStill();
 		
 		Function<ResourceLocation, TextureAtlasSprite> textureGetter;
 		textureGetter = new Function<ResourceLocation, TextureAtlasSprite>() {
