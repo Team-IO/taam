@@ -173,7 +173,8 @@ public final class Taam {
 	
 	public static enum BLOCK_PIPEMACHINES_META implements IStringSerializable {
 		tank,
-		creativewell
+		creativewell,
+		pump
 		;
 		public static String[] valuesAsString() {
 			Enum<?>[] valuesAsEnum = values();
@@ -325,6 +326,7 @@ public final class Taam {
 	public static final String TILEENTITY_PIPE = "taam.pipe";
 	public static final String TILEENTITY_TANK = "taam.tank";
 	public static final String TILEENTITY_CREATIVEWELL = "taam.creativewell";
+	public static final String TILEENTITY_PUMP = "taam.pump";
 
 	public static final String ENTITY_LOGISTICS_CART = "taam.logistics_manager";
 	

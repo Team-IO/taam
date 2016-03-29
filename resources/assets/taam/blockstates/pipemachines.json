@@ -17,6 +17,9 @@
         }],
         "variant=creativewell": [{
         	"model": "taam:creativewell.obj"
+        }],
+        "variant=pump": [{
+        	"model": "taam:pump.obj"
         }]
     }
 }

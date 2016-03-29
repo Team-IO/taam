@@ -99,6 +99,7 @@ tile.productionline_attachable.lamp.name=Conveyor Lamp
 tile.pipe.name=Pipe
 tile.pipemachines.tank.name=Tank
 tile.pipemachines.creativewell.name=Creative Fluid Well
+tile.pipemachines.pump.name=Pump
 
 # Lore localization
 lore.taam.shift=Hold Shift
