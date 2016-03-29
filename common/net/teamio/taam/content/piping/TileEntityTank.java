@@ -32,7 +32,7 @@ public class TileEntityTank extends BaseTileEntity implements IFluidHandler, IPi
 		pipeEndUP = new PipeEndFluidHandler(this, EnumFacing.UP);
 		pipeEndDOWN = new PipeEndFluidHandler(this, EnumFacing.DOWN);
 		pipeEndUP.setSuction(10);
-		pipeEndDOWN.setSuction(10);
+		pipeEndDOWN.setSuction(9);
 		tank = new FluidTank(8000);
 	}
 	
