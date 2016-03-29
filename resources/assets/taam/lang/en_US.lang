@@ -96,6 +96,10 @@ tile.productionline_attachable.itembag.name=Conveyor Item Bag
 tile.productionline_attachable.trashcan.name=Conveyor Trash Can
 tile.productionline_attachable.lamp.name=Conveyor Lamp
 
+tile.pipe.name=Pipe
+tile.pipemachines.tank.name=Tank
+tile.pipemachines.creativewell.name=Creative Fluid Well
+
 # Lore localization
 lore.taam.shift=Hold Shift
 lore.taam.conveyor_appliance=Conveyor Appliance
