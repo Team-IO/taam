@@ -1,14 +1,14 @@
 package net.teamio.taam.content.common;
 
-import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.properties.PropertyEnum;
-import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.teamio.taam.Taam;
@@ -40,13 +40,13 @@ public class BlockSensor extends BaseBlock {
 	public BlockSensor() {
 		super(MaterialMachinesTransparent.INSTANCE);
 		this.setHardness(3.5f);
-		this.setStepSound(Block.soundTypeMetal);
+		this.setSoundType(SoundType.METAL);
 		this.setHarvestLevel("pickaxe", 1);
 	}
 	
 	@Override
-	protected BlockState createBlockState() {
-		return new BlockState(this, DIRECTION);
+	protected BlockStateContainer createBlockState() {
+		return new BlockStateContainer(this, DIRECTION);
 	}
 	
 	@Override
@@ -61,7 +61,7 @@ public class BlockSensor extends BaseBlock {
 	}
 	
 	@Override
-	public AxisAlignedBB getCollisionBoundingBox(World worldIn, BlockPos pos, IBlockState state) {
+	public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, World worldIn, BlockPos pos) {
 		return null;
 	}
 	
@@ -71,11 +71,11 @@ public class BlockSensor extends BaseBlock {
 		
 	}
 	@Override
-	public void setBlockBoundsBasedOnState(IBlockAccess worldIn, BlockPos pos) {
-		IBlockState blockState = worldIn.getBlockState(pos);
+	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
 		// Type is determined by the tile entity, we just need the rotation here
-		EnumFacing dir = (EnumFacing)blockState.getValue(DIRECTION);
 		
+		EnumFacing dir = (EnumFacing)state.getValue(DIRECTION);
+		float minX, minY, minZ, maxX, maxY, maxZ;
 		switch (dir) {
 		case DOWN:
 			minX = width;
@@ -134,23 +134,23 @@ public class BlockSensor extends BaseBlock {
 			maxZ = 1;
 			break;
 		}
+		return new AxisAlignedBB(minX,minY,minZ, maxX, maxY,maxZ);
 	}
 	@Override
-	public boolean canProvidePower() {
+	public boolean canProvidePower(IBlockState state) {
 		return true;
 	}
 
 	@Override
-	public int getWeakPower(IBlockAccess world, BlockPos pos, IBlockState state, EnumFacing side) {
-		return getRedstoneLevel(world, pos);
+	public int getWeakPower(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
+		return getRedstoneLevel(blockAccess, pos);
 	}
 	
 	@Override
-	public int getStrongPower(IBlockAccess world, BlockPos pos, IBlockState state, EnumFacing side) {
-		IBlockState blockState = world.getBlockState(pos);
+	public int getStrongPower(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
 		EnumFacing dir = (EnumFacing)blockState.getValue(DIRECTION);
 		if(dir == side) {
-			return getRedstoneLevel(world, pos);
+			return getRedstoneLevel(blockAccess, pos);
 		} else {
 			return 0;
 		}

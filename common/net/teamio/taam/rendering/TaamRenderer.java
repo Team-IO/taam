@@ -7,14 +7,14 @@ import org.lwjgl.opengl.GL11;
 import com.google.common.base.Function;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
-import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -127,7 +127,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		
 		TextureAtlasSprite sprite = textureGetter.apply(fluid.getStill());
 	
-		WorldRenderer renderer = Tessellator.getInstance().getWorldRenderer();
+		VertexBuffer renderer = Tessellator.getInstance().getBuffer();
 		
 		renderer.begin(7, DefaultVertexFormats.OLDMODEL_POSITION_TEX_NORMAL);
 		Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.locationBlocksTexture);

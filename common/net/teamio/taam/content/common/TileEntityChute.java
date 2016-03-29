@@ -14,10 +14,10 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.IChatComponent;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
@@ -174,10 +174,10 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 	}
 
 	@Override
-	public IChatComponent getDisplayName() {
+	public ITextComponent getDisplayName() {
 		IInventory target = getTargetInventory();
 		if(target == null) {
-			return new ChatComponentTranslation("tile.taam.chute.name");
+			return new TextComponentTranslation("tile.taam.chute.name");
 		} else {
 			return target.getDisplayName();
 		}

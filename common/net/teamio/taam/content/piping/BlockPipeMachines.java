@@ -2,16 +2,16 @@ package net.teamio.taam.content.piping;
 
 import java.util.List;
 
-import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.properties.PropertyEnum;
-import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumWorldBlockLayer;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -27,13 +27,13 @@ public class BlockPipeMachines extends BaseBlock {
 	public BlockPipeMachines() {
 		super(MaterialMachinesTransparent.INSTANCE);
 		this.setHardness(3.5f);
-		this.setStepSound(Block.soundTypeMetal);
+		this.setSoundType(SoundType.METAL);
 		this.setHarvestLevel("pickaxe", 1);
 	}
 
 	@Override
-	protected BlockState createBlockState() {
-		return new BlockState(this, VARIANT);
+	protected BlockStateContainer createBlockState() {
+		return new BlockStateContainer(this, VARIANT);
 	}
 
 	@Override
@@ -52,8 +52,8 @@ public class BlockPipeMachines extends BaseBlock {
 	}
 
 	@SideOnly(Side.CLIENT)
-	public EnumWorldBlockLayer getBlockLayer() {
-		return EnumWorldBlockLayer.CUTOUT;
+	public BlockRenderLayer getBlockLayer() {
+		return BlockRenderLayer.CUTOUT;
 	}
 
 	public String getUnlocalizedName(ItemStack itemStack) {

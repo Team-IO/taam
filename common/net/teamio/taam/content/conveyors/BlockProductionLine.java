@@ -2,9 +2,9 @@ package net.teamio.taam.content.conveyors;
 
 import java.util.List;
 
-import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.properties.PropertyEnum;
-import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.inventory.Container;
@@ -12,9 +12,10 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumWorldBlockLayer;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -34,13 +35,13 @@ public class BlockProductionLine extends BaseBlock {
 	public BlockProductionLine() {
 		super(MaterialMachinesTransparent.INSTANCE);
 		this.setHardness(3.5f);
-		this.setStepSound(Block.soundTypeMetal);
+		this.setSoundType(SoundType.METAL);
 		this.setHarvestLevel("pickaxe", 1);
 	}
 	
 	@Override
-	protected BlockState createBlockState() {
-		return new BlockState(this, VARIANT);
+	protected BlockStateContainer createBlockState() {
+		return new BlockStateContainer(this, VARIANT);
 	}
 	
 	@Override
@@ -70,8 +71,8 @@ public class BlockProductionLine extends BaseBlock {
 	}
 
 	@SideOnly(Side.CLIENT)
-	public EnumWorldBlockLayer getBlockLayer() {
-		return EnumWorldBlockLayer.CUTOUT;
+	public BlockRenderLayer getBlockLayer() {
+		return BlockRenderLayer.CUTOUT;
 	}
 	
 	@Override
@@ -123,20 +124,23 @@ public class BlockProductionLine extends BaseBlock {
 	}
 	
 	@Override
-	public void setBlockBoundsBasedOnState(IBlockAccess world, BlockPos pos) {
+	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
 		//IBlockState state = world.getBlockState(pos);
 		//Taam.BLOCK_PRODUCTIONLINE_META variant = state.getValue(VARIANT);
-		this.minX = 0;
-		this.maxX = 1;
-		this.minZ = 0;
-		this.maxZ = 1;
+		float minY, maxY, minX,maxX, minZ, maxZ;
+		minX = 0;
+		maxX = 1;
+		minZ = 0;
+		maxZ = 1;
 		//if(false) {
 			// Standalone (not in use at the moment)
 		//	this.maxY = 1;
 		//} else {
 			// Conveyor Machinery
-			this.maxY = 0.5f;
+			maxY = 0.5f;
+			minY = 0f;
 		//}		
+			return new AxisAlignedBB(minX, minY, minZ, maxX, maxY, maxZ);
 	}
 	
 	@Override
@@ -145,13 +149,13 @@ public class BlockProductionLine extends BaseBlock {
 	}
 	
 	@Override
-	public boolean hasComparatorInputOverride() {
+	public boolean hasComparatorInputOverride(IBlockState state) {
 		return true;
 	}
 	
 	@Override
-	public int getComparatorInputOverride(World world, BlockPos pos) {
-		IInventory inventory = InventoryUtils.getInventory(world, pos);
+	public int getComparatorInputOverride(IBlockState blockState, World worldIn, BlockPos pos) {
+		IInventory inventory = InventoryUtils.getInventory(worldIn, pos);
 		if(inventory == null) {
 			return 0;
 		} else {

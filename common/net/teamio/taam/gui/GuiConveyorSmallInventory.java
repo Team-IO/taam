@@ -1,11 +1,11 @@
 package net.teamio.taam.gui;
 
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
 import net.teamio.taam.gui.util.CustomGui;
-
-import org.lwjgl.opengl.GL11;
 
 public class GuiConveyorSmallInventory extends CustomGui {
 	ResourceLocation bg = new ResourceLocation("textures/gui/container/hopper.png");

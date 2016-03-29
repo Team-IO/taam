@@ -3,14 +3,15 @@ package net.teamio.taam.content.conveyors;
 import java.util.List;
 
 import net.minecraft.block.properties.PropertyEnum;
-import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -29,8 +30,8 @@ public class BlockProductionLineAttachable extends BlockProductionLine {
 	}
 	
 	@Override
-	protected BlockState createBlockState() {
-		return new BlockState(this, VARIANT, FACING);
+	protected BlockStateContainer createBlockState() {
+		return new BlockStateContainer(this, VARIANT, FACING);
 	}
 	
 	@Override
@@ -123,48 +124,47 @@ public class BlockProductionLineAttachable extends BlockProductionLine {
 		return null;
 	}
 	@Override
-	public void setBlockBoundsBasedOnState(IBlockAccess world,
-			BlockPos pos) {
-		IBlockState state = world.getBlockState(pos);
-		this.minY = 0f;
-		this.maxY = 0.5f;
+	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
+		float minY, maxY, minX,maxX, minZ, maxZ;
+		minY = 0f;
+		maxY = 0.5f;
 		if(state.getBlock() != this) {
-			this.minX = 0;
-			this.maxX = 0;
-			this.minZ = 0;
-			this.maxZ = 0;
-			return;
+			minX = 0;
+			maxX = 0;
+			minZ = 0;
+			maxZ = 0;
 		}
 		EnumFacing facing = (EnumFacing)state.getValue(FACING);
 		switch(facing) {
 		default:
 		case NORTH:
-			this.minX = 0;
-			this.maxX = 1;
-			this.minZ = 0;
-			this.maxZ = 0.35f;
+			minX = 0;
+			maxX = 1;
+			minZ = 0;
+			maxZ = 0.35f;
 			break;
 		case SOUTH:
-			this.minX = 0;
-			this.maxX = 1;
-			this.minZ = 0.65f;
-			this.maxZ = 1;
+			minX = 0;
+			maxX = 1;
+			minZ = 0.65f;
+			maxZ = 1;
 			break;
 		case EAST:
-			this.minX = 0.65f;
-			this.maxX = 1;
-			this.minZ = 0;
-			this.maxZ = 1;
+			minX = 0.65f;
+			maxX = 1;
+			minZ = 0;
+			maxZ = 1;
 			break;
 		case WEST:
-			this.minX = 0;
-			this.maxX = 0.35f;
-			this.minZ = 0;
-			this.maxZ = 1;
+			minX = 0;
+			maxX = 0.35f;
+			minZ = 0;
+			maxZ = 1;
 			break;
 		}
+		return new AxisAlignedBB(minX,minY,minZ, maxX, maxY,maxZ);
 	}
-	
+		
 	@Override
 	public int damageDropped(IBlockState state) {
 		return ((Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META)state.getValue(VARIANT)).ordinal();

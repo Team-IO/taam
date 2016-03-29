@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
-
-import org.apache.commons.lang3.ArrayUtils;
 
 public class ChanceBasedRecipe implements IProcessingRecipe {
 

@@ -2,6 +2,8 @@ package net.teamio.taam.content.common;
 
 import java.util.List;
 
+import com.mojang.realmsclient.gui.ChatFormatting;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.gui.GuiScreen;
@@ -10,10 +12,14 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
@@ -43,7 +49,7 @@ public class ItemDebugTool extends Item {
 	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean detailInfo) {
 
-		list.add(EnumChatFormatting.DARK_GREEN + I18n.format("lore.taam.debugtool", new Object[0]));
+		list.add(ChatFormatting.DARK_GREEN + I18n.format("lore.taam.debugtool", new Object[0]));
 		if (GuiScreen.isShiftKeyDown()) {
 			String usage = I18n.format("lore.taam.debugtool.usage", new Object[0]);
 			//Split at literal \n in the translated text. a lot of escaping here.
@@ -52,42 +58,41 @@ public class ItemDebugTool extends Item {
 				list.add(split[i]);
 			}
 		} else {
-			list.add(EnumChatFormatting.DARK_PURPLE + I18n.format("lore.taam.shift", new Object[0]));
+			list.add(ChatFormatting.DARK_PURPLE + I18n.format("lore.taam.shift", new Object[0]));
 		}
 	}
 	
 	@Override
-	public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side,
-			float hitX, float hitY, float hitZ) {
+	public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 		if(!Config.debug)
 		{
 			//TODO: Clarify!
 			//if(!world.isRemote) {
-			world.playSoundEffect(player.posX, player.posY + 1, player.posZ,
-					"taam:sip_ah", 1, 1);
+			SoundEvent soundevent = (SoundEvent)SoundEvent.soundEventRegistry.getObject(new ResourceLocation("taam", "sip_ah"));
+			worldIn.playSound(playerIn, pos, soundevent, SoundCategory.BLOCKS, 1f, 1f);
 			//}
-			return true;
+			return EnumActionResult.SUCCESS;
 		}
-		char remoteState = world.isRemote ? 'C' : 'S';
+		char remoteState = worldIn.isRemote ? 'C' : 'S';
 
-		IBlockState state = world.getBlockState(pos);
+		IBlockState state = worldIn.getBlockState(pos);
 		Block clickedOn = state.getBlock();
 
     	String text = String.format(remoteState + " RS: %b Side: %s Weak: %d Strong: %d",
-    			clickedOn.canProvidePower(), side.toString(), clickedOn.getWeakPower(world, pos, state, side), clickedOn.getStrongPower(world, pos, state, side));
+    			clickedOn.canProvidePower(state), facing.toString(), clickedOn.getWeakPower(worldIn.getBlockState(pos), worldIn, pos, facing), clickedOn.getStrongPower(worldIn.getBlockState(pos), worldIn,  pos, facing));
 
-    	player.addChatMessage(new ChatComponentText(text));
+    	playerIn.addChatMessage(new TextComponentString(text));
     	
-    	EnumFacing oppSide = side.getOpposite();
+    	EnumFacing oppSide = facing.getOpposite();
     	
     	text = String.format(remoteState + " RS: %b Opposite Side: %s Weak: %d Strong: %d",
-    			clickedOn.canProvidePower(), oppSide.toString(), clickedOn.getWeakPower(world, pos, state, oppSide), clickedOn.getStrongPower(world, pos, state, oppSide));
+    			clickedOn.canProvidePower(state), facing.toString(), clickedOn.getWeakPower(worldIn.getBlockState(pos), worldIn, pos, oppSide), clickedOn.getStrongPower(worldIn.getBlockState(pos), worldIn,  pos, oppSide));
     	
 
     	text = String.format(remoteState + " Indirectly Powered: %d",
-    	    	world.isBlockIndirectlyGettingPowered(pos));
+    	    	worldIn.isBlockIndirectlyGettingPowered(pos));
     	
-    	player.addChatMessage(new ChatComponentText(text));
+    	playerIn.addChatMessage(new TextComponentString(text));
 		
 		//EnumFacing dir = EnumFacing.getOrientation(side);
         //EnumFacing dirOpp = dir.getOpposite();
@@ -97,7 +102,7 @@ public class ItemDebugTool extends Item {
 		
         boolean didSomething = false;
         
-        TileEntity te = world.getTileEntity(pos);
+        TileEntity te = worldIn.getTileEntity(pos);
 
     	
         if(te instanceof TileEntityConveyor) {
@@ -108,7 +113,7 @@ public class ItemDebugTool extends Item {
         	text = String.format(remoteState + " Conveyor facing %s. isEnd: %b isBegin: %b",
         			tec.getFacingDirection().toString(), tec.isEnd, tec.isBegin);
 
-        	player.addChatMessage(new ChatComponentText(text));
+        	playerIn.addChatMessage(new TextComponentString(text));
 
         }
         
@@ -129,7 +134,7 @@ public class ItemDebugTool extends Item {
         	text = String.format(remoteState + " %s Pipe pressure: %d suction: %d effective: %d Content: %s",
         			pipe.getClass().getName(), pipe.getPressure(), pipe.getSuction(), pipe.getPressure() - pipe.getSuction(), content);
 
-        	player.addChatMessage(new ChatComponentText(text));
+        	playerIn.addChatMessage(new TextComponentString(text));
         }
         
         if(te instanceof IFluidHandler) {
@@ -149,10 +154,13 @@ public class ItemDebugTool extends Item {
         	text = String.format(remoteState + " Content: %s",
         			content);
 
-        	player.addChatMessage(new ChatComponentText(text));
+        	playerIn.addChatMessage(new TextComponentString(text));
         }
-		
-        return !didSomething;
+		if(didSomething)
+        return EnumActionResult.SUCCESS;
+		else if(!didSomething)
+		return EnumActionResult.PASS;
+		return EnumActionResult.PASS;
 	}
 
 }

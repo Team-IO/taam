@@ -14,13 +14,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.IHopper;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.IChatComponent;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.teamio.taam.Config;
@@ -152,7 +152,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 		int x = pos.getX();
 		int y = pos.getY();
 		int z = pos.getZ();
-		List<EntityLivingBase> entitites = worldObj.getEntitiesWithinAABB(EntityLivingBase.class, AxisAlignedBB.fromBounds(x, y, z, x + 1, y + 1, z + 1));
+		List<EntityLivingBase> entitites = worldObj.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(x, y, z, x + 1, y + 1, z + 1));
 		for(EntityLivingBase living : entitites) {
 			hurtEntity(living);
 		}
@@ -398,8 +398,8 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 	}
 	
 	@Override
-	public IChatComponent getDisplayName() {
-		return new ChatComponentTranslation(getName());
+	public ITextComponent getDisplayName() {
+		return new TextComponentTranslation(getName());
 	}
 	
 	@Override

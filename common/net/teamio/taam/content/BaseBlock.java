@@ -13,14 +13,15 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumFacing.Axis;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.client.model.TRSRTransformation;
 import net.minecraftforge.client.model.obj.OBJModel;
+import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
@@ -37,7 +38,7 @@ import net.teamio.taam.util.inv.InventoryUtils;
 
 public abstract class BaseBlock extends Block {
 
-	private ExtendedBlockState state = new ExtendedBlockState(this, new IProperty[] {}, new IUnlistedProperty[]{OBJModel.OBJProperty.instance});
+	private ExtendedBlockState state = new ExtendedBlockState(this, new IProperty[] {}, new IUnlistedProperty[]{OBJModel.OBJProperty.INSTANCE});
 
 	public BaseBlock(Material material) {
 		super(material);
@@ -69,7 +70,8 @@ public abstract class BaseBlock extends Block {
 		if(te != null) {
 			// Update stuff like conveyors if something changes
 			((BaseTileEntity)te).blockUpdate();
-			worldIn.markBlockForUpdate(pos);
+			//TODO:
+			//worldIn.markBlockForUpdate(pos);
 		}
 	}
 	
@@ -113,10 +115,9 @@ public abstract class BaseBlock extends Block {
 	}
 	
 	@Override
-	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn,
-			EnumFacing side, float hitX, float hitY, float hitZ) {
+	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
 				
-		if(WrenchUtil.wrenchBlock(worldIn, pos, playerIn, side, hitX, hitY, hitZ)) {
+		if(WrenchUtil.wrenchBlock(worldIn, pos, playerIn, side, hitX, hitY, hitZ) == EnumActionResult.SUCCESS) {
 			return true;
 		}
 		
@@ -130,7 +131,7 @@ public abstract class BaseBlock extends Block {
 			if(te instanceof IWorldInteractable) {
 				// All world interaction (perform action, open gui, etc.) is handled within the entity
 				IWorldInteractable interactable = ((IWorldInteractable) te);
-				boolean playerHasWrench = WrenchUtil.playerHasWrench(playerIn);
+				boolean playerHasWrench = WrenchUtil.playerHasWrenchInMainhand(playerIn);
 				boolean intercepted = interactable.onBlockActivated(worldIn, playerIn, playerHasWrench, side, hitX, hitY, hitZ);
 				if(intercepted) {
 					return true;
@@ -152,7 +153,7 @@ public abstract class BaseBlock extends Block {
 			if(te instanceof IWorldInteractable) {
 				// All world interaction (perform action, open gui, etc.) is handled within the entity
 				IWorldInteractable interactable = ((IWorldInteractable) te);
-				boolean playerHasWrench = WrenchUtil.playerHasWrench(playerIn);
+				boolean playerHasWrench = WrenchUtil.playerHasWrenchInMainhand(playerIn);
 				/*boolean intercepted = */
 				interactable.onBlockHit(worldIn, playerIn, playerHasWrench);
 //				if(intercepted) {
@@ -168,19 +169,14 @@ public abstract class BaseBlock extends Block {
 	}
 
 	@Override
-	public boolean isOpaqueCube() {
+	public boolean isOpaqueCube(IBlockState state) {
 		return false;
 	}
 
-	@Override
-	public AxisAlignedBB getCollisionBoundingBox(World worldIn, BlockPos pos, IBlockState state) {
-		setBlockBoundsBasedOnState(worldIn, pos);
-		return super.getCollisionBoundingBox(worldIn, pos, state);
-	}
-	
+
 	@Override
 	@SideOnly(Side.CLIENT)
-	public boolean isBlockNormalCube() {
+	public boolean isBlockNormalCube(IBlockState state) {
 		return false;
 	}
 	
@@ -225,7 +221,7 @@ public abstract class BaseBlock extends Block {
 		// Apply rotation to the model
 		OBJModel.OBJState retState = new OBJModel.OBJState(visibleParts, true, new TRSRTransformation(rotateRenderDirection(facing)));
 		
-		return ((IExtendedBlockState) this.state.getBaseState()).withProperty(OBJModel.OBJProperty.instance, retState);
+		return ((IExtendedBlockState) this.state.getBaseState()).withProperty(OBJModel.OBJProperty.INSTANCE, retState);
 	}
 	
 	private EnumFacing rotateRenderDirection(EnumFacing facing) {

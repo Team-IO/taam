@@ -237,6 +237,8 @@ public class TaamMain {
 		proxy.registerRenderStuff();
 		NetworkRegistry.INSTANCE.registerGuiHandler(this, new GuiHandler());
 
+		
+		
 		oreRegistration();
 		TaamRecipes.addRecipes();
 		//TaamRecipes.addSmeltingRecipes();

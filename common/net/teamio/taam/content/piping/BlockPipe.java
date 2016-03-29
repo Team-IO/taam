@@ -3,7 +3,7 @@ package net.teamio.taam.content.piping;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.teamio.taam.content.BaseBlock;
 import net.teamio.taam.content.MaterialMachinesTransparent;

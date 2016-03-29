@@ -3,8 +3,9 @@ package net.teamio.taam.util;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.teamio.taam.Log;
 import net.teamio.taam.TaamMain;
@@ -20,26 +21,34 @@ public class WrenchUtil {
 	 * @param player
 	 * @return
 	 */
-	public static boolean playerHasWrench(EntityPlayer player) {
-		ItemStack held = player.getHeldItem();
+	public static boolean playerHasWrenchInMainhand(EntityPlayer player) {
+		ItemStack held = player.getHeldItemMainhand();
 		if(held == null) {
 			return false;
 		}
-		//TODO: Check other wrench types once supported
+			//TODO: Check other wrench types once supported
+		return held.getItem() == TaamMain.itemWrench;
+	}
+	public static boolean playerHasHasWrenchInOffhand(EntityPlayer player){
+		ItemStack held = player.getHeldItemOffhand();
+		if(held == null) {
+			return false;
+		}
+			//TODO: Check other wrench types once supported
 		return held.getItem() == TaamMain.itemWrench;
 	}
 	
-	public static boolean wrenchBlock(World world, BlockPos pos, EntityPlayer player,
+	public static EnumActionResult wrenchBlock(World world, BlockPos pos, EntityPlayer player,
 			EnumFacing side, float hitX, float hitY,
 			float hitZ) {
 		Log.debug("Checking for wrench activity.");
 		
-		boolean playerHasWrench = WrenchUtil.playerHasWrench(player);
+		boolean playerHasWrench = WrenchUtil.playerHasWrenchInMainhand(player);
 		Log.debug("Player has wrench: " + playerHasWrench);
 		
 		if(!playerHasWrench) {
 			Log.debug("Player has no wrench, skipping.");
-			return false;
+			return EnumActionResult.PASS;
 		}
 		
 		boolean playerIsSneaking = player.isSneaking();
@@ -52,14 +61,14 @@ public class WrenchUtil {
 			if(playerIsSneaking) {
 				if(WrenchUtil.isWrenchableEntity(te)) {
 					TaamUtil.breakBlockToInventory(player, world, pos);
-					return true;
+					return EnumActionResult.SUCCESS;
 				}
 			} else {
 				world.getBlockState(pos).getBlock().rotateBlock(world, pos, side);
-				return true;
+				return EnumActionResult.SUCCESS;
 			}
 		}
-		return false;
+		return EnumActionResult.FAIL;
 	}
 	
 	public static boolean rotateBlock(TileEntity te) {

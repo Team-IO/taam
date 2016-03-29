@@ -3,12 +3,12 @@ package net.teamio.taam.util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 
 public class WorldCoord {
 	public int world;
@@ -28,11 +28,11 @@ public class WorldCoord {
 	}
 	
 	public WorldCoord(World world, int x, int y, int z) {
-		this(world.provider.getDimensionId(), x, y, z);
+		this(world.provider.getDimension(), x, y, z);
 	}
 	
 	public WorldCoord(World world, BlockPos pos) {
-		this(world.provider.getDimensionId(), pos.getX(), pos.getY(), pos.getZ());
+		this(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ());
 	}
 
 	public WorldCoord(TileEntity tile) {
@@ -63,12 +63,12 @@ public class WorldCoord {
 	}
 	
 	public WorldServer getWorldServer() {
-		return MinecraftServer.getServer().worldServerForDimension(world);
+		return FMLCommonHandler.instance().getMinecraftServerInstance().worldServerForDimension(world);
 	}
 	
 	public WorldClient getWorldClient() {
 		WorldClient worldClient = Minecraft.getMinecraft().theWorld;
-		if(worldClient.provider.getDimensionId() == world) {
+		if(worldClient.provider.getDimension() == world) {
 			return worldClient;
 		} else {
 			return null;

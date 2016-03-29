@@ -7,7 +7,7 @@ import org.apache.logging.log4j.Level;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.teamio.taam.Log;
@@ -48,7 +48,8 @@ public abstract class BaseTileEntity extends TileEntity {
 			return;
 		}
 		markDirty();
-		this.worldObj.markBlockForUpdate(pos);
+		//TODO
+		//this.worldObj.markBlockForUpdate(pos);
 	}
 	
 	/**
@@ -76,18 +77,18 @@ public abstract class BaseTileEntity extends TileEntity {
 	 */
 
 	@Override
-	public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt) {
+	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
 		NBTTagCompound nbt = pkt.getNbtCompound();
 
 		readPropertiesFromNBTInternal(nbt);
 	}
 
 	@Override
-	public S35PacketUpdateTileEntity getDescriptionPacket() {
+	public SPacketUpdateTileEntity getDescriptionPacket() {
 		NBTTagCompound nbt = new NBTTagCompound();
 		writePropertiesToNBTInternal(nbt);
 
-		return new S35PacketUpdateTileEntity(pos, 0, nbt);
+		return new SPacketUpdateTileEntity(pos, 0, nbt);
 	}
 
 	/*

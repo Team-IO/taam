@@ -2,17 +2,19 @@ package net.teamio.taam.content.common;
 
 import java.util.List;
 
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
-import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumWorldBlockLayer;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -28,19 +30,19 @@ public class BlockMachines extends BaseBlock {
 	
 	public BlockMachines() {
 		super(Material.wood);
-		this.setStepSound(soundTypeWood);
+		this.setSoundType(SoundType.WOOD);
 		this.setHardness(6);
 		this.setHarvestLevel("pickaxe", 2);
 	}
 
 	@SideOnly(Side.CLIENT)
-	public EnumWorldBlockLayer getBlockLayer() {
-		return EnumWorldBlockLayer.CUTOUT;
+	public BlockRenderLayer getBlockLayer() {
+		return BlockRenderLayer.CUTOUT;
 	}
 	
 	@Override
-	protected BlockState createBlockState() {
-		return new BlockState(this, VARIANT);
+	protected BlockStateContainer createBlockState() {
+		return new BlockStateContainer(this, VARIANT);
 	}
 	
 	@Override
@@ -91,11 +93,10 @@ public class BlockMachines extends BaseBlock {
 	}
 	
 	@Override
-	public void setBlockBoundsBasedOnState(IBlockAccess world, BlockPos pos) {
-		IBlockState state = world.getBlockState(pos);
+	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
 		if(state.getBlock() != this) {
 			Log.warn("Received 'setBlockBoundsBasedOnState' with invalid block in blockstate. This might not be relevant - but does not influence anything at the moment.");
-			return;
+			return super.getBoundingBox(state, source, pos);
 		}
 		Taam.BLOCK_MACHINES_META variant = (Taam.BLOCK_MACHINES_META)state.getValue(VARIANT);
 		switch(variant) {
@@ -109,13 +110,9 @@ public class BlockMachines extends BaseBlock {
 			this.maxZ = 0.9;
 			break;*/
 		case creativecache:
-			this.minX = 0;
-			this.minY = 0;
-			this.minZ = 0;
-			this.maxX = 1;
-			this.maxY = 1;
-			this.maxZ = 1;
-			break;
+			return new AxisAlignedBB(0, 0, 0, 1, 1, 1);
+		default:
+			return super.getBoundingBox(state, source, pos);
 		}
 	}
 	
@@ -130,9 +127,8 @@ public class BlockMachines extends BaseBlock {
 	}
 	
 	@Override
-	public boolean isSideSolid(IBlockAccess world, BlockPos pos, EnumFacing side) {
-		IBlockState state = world.getBlockState(pos);
-		Taam.BLOCK_MACHINES_META variant = (Taam.BLOCK_MACHINES_META)state.getValue(VARIANT);
+	public boolean isSideSolid(IBlockState base_state, IBlockAccess world, BlockPos pos, EnumFacing side) {
+		Taam.BLOCK_MACHINES_META variant = (Taam.BLOCK_MACHINES_META)base_state.getValue(VARIANT);
 		if(variant == BLOCK_MACHINES_META.chute) {
 			return side == EnumFacing.DOWN || side == EnumFacing.UP;
 		} else {
