@@ -8,42 +8,44 @@ import net.minecraftforge.fluids.FluidStack;
  * Base interface for a pipe. Not necessarily a tile entity, as there can be
  * multiple pipes/pipe ends per block.
  * 
+ * Many of these methods are implemented in {@link PipeInfo} to ease
+ * implementation.
+ * 
  * @author Oliver Kahrmann
  *
  */
 public interface IPipe {
 	/**
-	 * Get the pressure currently on the pipe.
-	 * Effective pressure is calculated using getPressure and getSuction.
+	 * Get the pressure currently on the pipe. Effective pressure is calculated
+	 * using getPressure and getSuction.
 	 * 
 	 * @return Should be > 0 and capped internally.
 	 */
 	int getPressure();
 
 	/**
-	 * Sets the pipe pressure. This method is also used by the pipe
-	 * logic.
+	 * Sets the pipe pressure. This method is also used by the pipe logic.
 	 * 
-	 * @param pressure Should be > 0 and capped internally.
+	 * @param pressure
+	 *            Should be > 0 and capped internally.
 	 */
 	void setPressure(int pressure);
-	
+
 	/**
-	 * Get the suction currently on the pipe.
-	 * Effective pressure is calculated using getPressure and getSuction.
+	 * Get the suction currently on the pipe. Effective pressure is calculated
+	 * using getPressure and getSuction.
+	 * 
 	 * @return
 	 */
 	int getSuction();
-	
+
 	/**
-	 * Sets the pipe suction. This method is also used by the pipe
-	 * logic.
-	 * Should be > 0 and capped internally.
+	 * Sets the pipe suction. This method is also used by the pipe logic. Should
+	 * be > 0 and capped internally.
 	 * 
 	 * @param suction
 	 */
 	void setSuction(int suction);
-	
 
 	/**
 	 * Check if the pipe is active. On active pipes, the pressure will not be
@@ -65,7 +67,7 @@ public interface IPipe {
 	/**
 	 * Get all fluids currently in the pipe.
 	 * 
-	 * @return
+	 * @return An array of {@link FluidStack} that are currently in the pipe.
 	 */
 	FluidStack[] getFluids();
 
@@ -74,7 +76,7 @@ public interface IPipe {
 	 * specific limits imposed by the implementation, addFluid might fail to add
 	 * a fluid while there is still "space".
 	 * 
-	 * @return
+	 * @return The total capacity of the pipe.
 	 */
 	int getCapacity();
 
