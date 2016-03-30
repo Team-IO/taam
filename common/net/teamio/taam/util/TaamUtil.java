@@ -27,7 +27,9 @@ public final class TaamUtil {
 	}
 
 	public static boolean canDropIntoWorld(IBlockAccess world, BlockPos pos) {
-		return world.isAirBlock(pos) || world.getBlockState(pos).getBlock().getMaterial(world.getBlockState(pos)).isLiquid();
+		IBlockState state = world.getBlockState(pos);
+		Block block = state.getBlock();
+		return block.isAir(state, world, pos) || block.getMaterial(state).isLiquid();
 	}
 
 	public static void breakBlockInWorld(World world, BlockPos pos) {
