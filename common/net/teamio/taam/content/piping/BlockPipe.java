@@ -142,14 +142,14 @@ public class BlockPipe extends BaseBlock implements ITileEntityProvider {
 	}
 
 	@Override
-	public void addCollisionBoxesToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, Entity entityIn) {
+	public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, Entity entityIn) {
 		if (!isCollidable()) {
 			return;
 		} else {
-			for (AxisAlignedBB bb : getBoxes(world, pos, state)) {
+			for (AxisAlignedBB bb : getBoxes(worldIn, pos, state)) {
 				bb = bb.offset(pos.getX(), pos.getY(), pos.getZ());
-				if (mask.intersectsWith(bb)) {
-					list.add(bb);
+				if (entityBox.intersectsWith(bb)) {
+					collidingBoxes.add(bb);
 				}
 			}
 		}
