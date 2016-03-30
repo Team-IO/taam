@@ -1,18 +1,13 @@
-package net.teamio.taam.conveyors.api;
+package net.teamio.taam.recipes;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.oredict.OreDictionary;
 
-import org.apache.commons.lang3.ArrayUtils;
+public class ChanceBasedRecipe extends BaseProcessingRecipe implements IProcessingRecipe {
 
-public class ChanceBasedRecipe implements IProcessingRecipe {
-
-	private ItemStack input;
-	private String inputOreDict;
 	private ChancedOutput[] output;
 	
 
@@ -56,16 +51,6 @@ public class ChanceBasedRecipe implements IProcessingRecipe {
 	}
 
 	@Override
-	public ItemStack getInput() {
-		return input;
-	}
-	
-	@Override
-	public String getInputOreDict() {
-		return inputOreDict;
-	}
-
-	@Override
 	public ChancedOutput[] getOutput() {
 		return output;
 	}
@@ -81,21 +66,6 @@ public class ChanceBasedRecipe implements IProcessingRecipe {
 			}
 		}
 		return output.toArray(new ItemStack[output.size()]);
-	}
-
-	@Override
-	public boolean inputMatches(ItemStack itemStack) {
-		if(itemStack == null) {
-			return input != null || inputOreDict != null;
-		} else {
-			if(input == null) {
-				int[] oreIDs = OreDictionary.getOreIDs(itemStack);
-				int myID = OreDictionary.getOreID(inputOreDict);
-				return ArrayUtils.contains(oreIDs, myID);
-			} else {
-				return input.isItemEqual(itemStack) || OreDictionary.itemMatches(itemStack, input, true);
-			}
-		}
 	}
 	
 }

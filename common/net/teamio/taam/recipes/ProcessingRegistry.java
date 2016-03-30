@@ -1,4 +1,4 @@
-package net.teamio.taam.conveyors.api;
+package net.teamio.taam.recipes;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,7 +14,21 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.oredict.OreDictionary;
 import net.teamio.taam.Log;
 
-@SuppressWarnings("unchecked") // Required, as we can't create arrays of generic maps
+/**
+ * Registry for all processing machines. Provides indexed access to all recipes.
+ * 
+ * Supported recipes have to extend {@link IProcessingRecipe}, special handling
+ * for {@link IProcessingRecipeFluidBased} exists.
+ * 
+ * For every machine there is an integer constant e.g. {@link #GRINDER}, that
+ * can be used for querying. Currently, it is not easily possible to add
+ * additional machines.
+ * 
+ * @author Oliver Kahrmann
+ *
+ */
+// Required, as we can't create arrays of generic maps:
+@SuppressWarnings("unchecked")
 public final class ProcessingRegistry {
 	private ProcessingRegistry() {
 		// Util Class
@@ -41,6 +55,13 @@ public final class ProcessingRegistry {
 		}
 	}
 
+	/**
+	 * Returns the first {@link IProcessingRecipe} that has a matching input.
+	 * Searches for an exact {@link Item} match first, then the ore dictionary entries.
+	 * @param machine
+	 * @param input
+	 * @return
+	 */
 	public static IProcessingRecipe getRecipe(int machine, ItemStack input) {
 		Map<Item, IProcessingRecipe[]> recipes = ProcessingRegistry.recipes[machine];
 
@@ -80,7 +101,62 @@ public final class ProcessingRegistry {
 
 		return null;
 	}
+	
+	/**
+	 * Returns all {@link IProcessingRecipe} that have a matching input.
+	 * Exact {@link Item} matches will appear sorted before ore dictionary matches.
+	 * @param machine
+	 * @param input
+	 * @return
+	 */
+	public static IProcessingRecipe[] getRecipes(int machine, ItemStack input) {
+		ArrayList<IProcessingRecipe> actualMatches = new ArrayList<IProcessingRecipe>();
+		
+		Map<Item, IProcessingRecipe[]> recipes = ProcessingRegistry.recipes[machine];
 
+		IProcessingRecipe[] matches = recipes.get(input.getItem());
+
+		if (matches != null) {
+			Log.debug("Fetching recipes for machine {}, {}: {} matches.", machine, input, matches.length);
+			for (IProcessingRecipe recipe : matches) {
+				if (recipe != null && recipe.inputMatches(input)) {
+					Log.debug("Matching recipe {}", recipe);
+					actualMatches.add(recipe);
+				}
+			}
+		}
+
+		/*
+		 * Ore Dictionary Recipes
+		 */
+
+		int[] oreIDs = OreDictionary.getOreIDs(input);
+		Log.debug("Fetching ore dict recipes for machine {}, {}: {} matches.", machine, input, oreIDs.length);
+
+		Map<String, IProcessingRecipe[]> recipesOreDict = ProcessingRegistry.recipesOreDict[machine];
+
+		for (int oreID : oreIDs) {
+			String oreName = OreDictionary.getOreName(oreID);
+			matches = recipesOreDict.get(oreName);
+			if (matches != null) {
+				for (IProcessingRecipe recipe : matches) {
+					if (recipe != null && recipe.inputMatches(input)) {
+						Log.debug("Matching recipe; {}", recipe);
+						actualMatches.add(recipe);
+					}
+				}
+			}
+		}
+
+		return actualMatches.toArray(new IProcessingRecipe[actualMatches.size()]);
+	}
+
+	/**
+	 * Returns the first {@link IProcessingRecipeFluidBased} that has a matching input.
+	 * @param machine
+	 * @param input
+	 * @return
+	 */
 	public static IProcessingRecipeFluidBased getRecipe(int machine, FluidStack input) {
 		Map<Fluid, IProcessingRecipeFluidBased[]> recipes = ProcessingRegistry.recipesFluid[machine];
 
@@ -96,6 +172,35 @@ public final class ProcessingRegistry {
 		}
 
 		return null;
+	}
+
+	/**
+	 * Returns all {@link IProcessingRecipeFluidBased} that have a matching input.
+	 * @param machine
+	 * @param input
+	 * @return
+	 */
+	public static IProcessingRecipeFluidBased[] getRecipes(int machine, FluidStack input) {
+		Map<Fluid, IProcessingRecipeFluidBased[]> recipes = ProcessingRegistry.recipesFluid[machine];
+
+		
+		IProcessingRecipeFluidBased[] matches = recipes.get(input.getFluid());
+
+		IProcessingRecipeFluidBased[] actualMatches = new IProcessingRecipeFluidBased[matches.length];
+		int idx = 0;
+		
+		if (matches != null) {
+			Log.debug("Fetching fluid recipes for machine {}, {}: {} matches.", machine, input, matches.length);
+			for (IProcessingRecipeFluidBased recipe : matches) {
+				if (recipe != null && recipe.inputFluidMatches(input)) {
+					Log.debug("Matching recipe {}", recipe);
+					actualMatches[idx] = recipe;
+					idx++;
+				}
+			}
+		}
+		
+		return Arrays.copyOf(actualMatches, idx);
 	}
 
 	/**
@@ -195,8 +300,8 @@ public final class ProcessingRegistry {
 	 * @param machine
 	 * @return
 	 */
-	public static Collection<IProcessingRecipe> getRecipes(int machine) {
-		return getRecipes(machine, null);
+	public static Collection<IProcessingRecipe> getAllRecipes(int machine) {
+		return getRecipesMatchingOutput(machine, null);
 	}
 
 	/**
@@ -208,7 +313,7 @@ public final class ProcessingRegistry {
 	 *            The result to search. If null, returns all recipes.
 	 * @return
 	 */
-	public static Collection<IProcessingRecipe> getRecipes(int machine, ItemStack result) {
+	public static Collection<IProcessingRecipe> getRecipesMatchingOutput(int machine, ItemStack result) {
 		Map<Item, IProcessingRecipe[]> recipes = ProcessingRegistry.recipes[machine];
 		Map<String, IProcessingRecipe[]> recipesOreDict = ProcessingRegistry.recipesOreDict[machine];
 

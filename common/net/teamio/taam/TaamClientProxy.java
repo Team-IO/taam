@@ -188,6 +188,7 @@ public class TaamClientProxy extends TaamCommonProxy {
 		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_PIPEMACHINES, Taam.BLOCK_PIPEMACHINES_META.tank.ordinal(), "tank.obj");
 		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_PIPEMACHINES, Taam.BLOCK_PIPEMACHINES_META.creativewell.ordinal(), "creativewell.obj");
 		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_PIPEMACHINES, Taam.BLOCK_PIPEMACHINES_META.pump.ordinal(), "pump.obj");
+		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_PIPEMACHINES, Taam.BLOCK_PIPEMACHINES_META.mixer.ordinal(), "mixer.obj");
 		
 		registerItemOBJ(modelMesher, Taam.BLOCK_PRODUCTIONLINE, Taam.BLOCK_PRODUCTIONLINE_META.values().length, "conveyor.obj");
 		registerItemOBJ(modelMesher, Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE, Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META.values().length, "conveyor_attachables.obj");

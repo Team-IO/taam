@@ -8,9 +8,9 @@ import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 import net.teamio.taam.Taam.BLOCK_ORE_META;
-import net.teamio.taam.conveyors.api.ChanceBasedRecipe;
-import net.teamio.taam.conveyors.api.ChancedOutput;
-import net.teamio.taam.conveyors.api.ProcessingRegistry;
+import net.teamio.taam.recipes.ChanceBasedRecipe;
+import net.teamio.taam.recipes.ChancedOutput;
+import net.teamio.taam.recipes.ProcessingRegistry;
 
 public class TaamRecipes {
 
