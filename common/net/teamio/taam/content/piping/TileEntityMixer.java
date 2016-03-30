@@ -4,15 +4,19 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
+import net.minecraft.util.ITickable;
 import net.minecraftforge.fluids.FluidStack;
+import net.teamio.taam.Log;
 import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.conveyors.ItemWrapper;
 import net.teamio.taam.conveyors.api.IConveyorAwareTE;
 import net.teamio.taam.piping.PipeEnd;
 import net.teamio.taam.piping.PipeEndRestricted;
+import net.teamio.taam.recipes.IProcessingRecipeFluidBased;
+import net.teamio.taam.recipes.ProcessingRegistry;
 
-public class TileEntityMixer extends BaseTileEntity implements IRotatable, IConveyorAwareTE {
+public class TileEntityMixer extends BaseTileEntity implements IRotatable, IConveyorAwareTE, ITickable {
 
 	private EnumFacing direction = EnumFacing.NORTH;
 	
@@ -58,6 +62,18 @@ public class TileEntityMixer extends BaseTileEntity implements IRotatable, IConv
 	}
 
 	private FluidStack lastInputFluid;
+	private IProcessingRecipeFluidBased[] matchingRecipes;
+	
+	@Override
+	public void update() {
+		// Output backlog of already processed stuff
+		if(backlog != null) {
+			backlog.amount -= pipeEndOut.addFluid(backlog);
+			if(backlog.amount <= 0) {
+				backlog = null;
+			}
+		}
+	}
 	
 	/**
 	 * Checks if there is a recipe for the current input fluid and the provided
@@ -68,20 +84,26 @@ public class TileEntityMixer extends BaseTileEntity implements IRotatable, IConv
 	 *         false if there is no input fluid. Does not check for the amount
 	 *         of fluid, so {@link #process(ItemStack)} may still fail.
 	 */
-	private boolean checkRecipeAvailable(ItemStack stack) {
+	private IProcessingRecipeFluidBased getRecipe(ItemStack stack) {
 		FluidStack inside = pipeEndIn.getFluid();
 		if(inside == null) {
 			lastInputFluid = null;
-			//TODO: Clear recipes
-			return false;
+			matchingRecipes = null;
+			return null;
 		}
 		if(lastInputFluid == null) {
 			lastInputFluid = inside;
-			//TODO: Load Recipes
-			//TODO: Return recipelist contains a recipe for stack
+			matchingRecipes = ProcessingRegistry.getRecipes(ProcessingRegistry.MIXER, lastInputFluid);
+			for(IProcessingRecipeFluidBased recipe : matchingRecipes) {
+				if(recipe.inputMatches(stack)) {
+					return recipe;
+				}
+			}
 		}
-		return false;
+		return null;
 	}
+	
+	private FluidStack backlog;
 	
 	/**
 	 * Processes the item by consuming input fluid and generating output fluid if there is space in the output pipe end.
@@ -89,12 +111,56 @@ public class TileEntityMixer extends BaseTileEntity implements IRotatable, IConv
 	 * @return the amount of items consumed.
 	 */
 	private int process(ItemStack stack) {
-		//TODO: Move recipe check here, or utilize it differently.
+		// When there is backlog, we cannot process more
+		if(backlog != null) {
+			// Skip processing until next tick.
+			return 0;
+		}
 		
+		// Actual processing
 		
+		IProcessingRecipeFluidBased recipe = getRecipe(stack);
 		
-		//TODO: implement
-		return 0;
+		if(recipe == null) {
+			return 0;
+		}
+		
+		//TODO: Speed limit, cooldown, ...
+		
+		/*
+		 * Get input fluid
+		 */
+		
+		FluidStack inputFluid = recipe.getInputFluid();
+		int amount = pipeEndIn.getFluidAmount(inputFluid);
+		if(amount < inputFluid.amount) {
+			return 0;
+		}
+		amount = pipeEndIn.removeFluid(inputFluid);
+		if(amount != inputFluid.amount) {
+			// Not enough, back into the pipe.
+			int reinserted = pipeEndIn.addFluid(new FluidStack(inputFluid, amount));
+			if (reinserted != amount) {
+				// This should not happen!
+				Log.error(
+						"Unexpected discrepance between getFluidAmound and removeFluid could not be resolved. Fluid was potentially lost. Asked for {}, got {}, reinserted {}. This is an issue. Report it with the developers of Taam!",
+						inputFluid.amount, amount, reinserted);
+			}
+			return 0;
+		}
+		
+		/*
+		 * Get output fluid
+		 */
+		FluidStack outputFluid = recipe.getOutputFluid(stack, inputFluid, worldObj.rand);
+		
+		/*
+		 * Add to backlog
+		 */
+		
+		backlog = outputFluid.copy();
+		
+		return recipe.getInput().stackSize;
 	}
 	
 	/*
@@ -162,7 +228,7 @@ public class TileEntityMixer extends BaseTileEntity implements IRotatable, IConv
 
 	@Override
 	public int insertItemAt(ItemStack item, int slot) {
-		if(isSlotAvailable(slot) && checkRecipeAvailable(item)) {
+		if(isSlotAvailable(slot)) {
 			return process(item);
 		}
 		return 0;
