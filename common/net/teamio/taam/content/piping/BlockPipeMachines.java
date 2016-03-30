@@ -86,6 +86,8 @@ public class BlockPipeMachines extends BaseBlock {
 			return new TileEntityCreativeWell();
 		case pump:
 			return new TileEntityPump();
+		case mixer:
+			return new TileEntityMixer();
 		}
 		Log.error("Was not able to create a TileEntity for " + getClass().getName());
 		return null;

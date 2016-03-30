@@ -20,6 +20,9 @@
         }],
         "variant=pump": [{
         	"model": "taam:pump.obj"
+        }],
+        "variant=mixer": [{
+        	"model": "taam:mixer.obj"
         }]
     }
 }
