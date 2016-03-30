@@ -44,9 +44,8 @@ public class PipeInfo {
 		pressure = tag.getInteger("pressure");
 		suction = tag.getInteger("suction");
 		NBTTagList list = tag.getTagList("content", NBT.TAG_COMPOUND);
-		if (list == null || list.tagCount() == 0) {
-			content.clear();
-		} else {
+		content.clear();
+		if (list != null && list.tagCount() != 0) {
 			content.ensureCapacity(list.tagCount());
 			for (int i = 0; i < list.tagCount(); i++) {
 				NBTTagCompound fluidTag = list.getCompoundTagAt(i);
