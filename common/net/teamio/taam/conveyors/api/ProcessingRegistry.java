@@ -9,6 +9,8 @@ import java.util.Map;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.oredict.OreDictionary;
 import net.teamio.taam.Log;
 
@@ -20,59 +22,95 @@ public final class ProcessingRegistry {
 
 	private static Map<Item, IProcessingRecipe[]>[] recipes;
 	private static Map<String, IProcessingRecipe[]>[] recipesOreDict;
-	
+	private static Map<Fluid, IProcessingRecipeFluidBased[]>[] recipesFluid;
+
+	public static final int count = 4;
 	public static final int GRINDER = 0;
 	public static final int CRUSHER = 1;
-	
+	public static final int SPRAYER = 2;
+	public static final int MIXER = 3;
+
 	static {
-		recipes = new Map[2];
-		recipes[GRINDER] = new HashMap<Item, IProcessingRecipe[]>();
-		recipes[CRUSHER] = new HashMap<Item, IProcessingRecipe[]>();
-		recipesOreDict = new Map[2];
-		recipesOreDict[GRINDER] = new HashMap<String, IProcessingRecipe[]>();
-		recipesOreDict[CRUSHER] = new HashMap<String, IProcessingRecipe[]>();
+		recipes = new Map[count];
+		recipesOreDict = new Map[count];
+		recipesFluid = new Map[count];
+		for (int i = 0; i < count; i++) {
+			recipes[i] = new HashMap<Item, IProcessingRecipe[]>();
+			recipesOreDict[i] = new HashMap<String, IProcessingRecipe[]>();
+			recipesFluid[i] = new HashMap<Fluid, IProcessingRecipeFluidBased[]>();
+		}
 	}
-	
+
 	public static IProcessingRecipe getRecipe(int machine, ItemStack input) {
 		Map<Item, IProcessingRecipe[]> recipes = ProcessingRegistry.recipes[machine];
-		
+
 		IProcessingRecipe[] matches = recipes.get(input.getItem());
 
-		if(matches != null) {
-			Log.debug("Fetching recipe for machine " + machine + ": " + input + "->" + matches.length + " matches");
-			for(IProcessingRecipe recipe : matches) {
-				if(recipe != null && recipe.inputMatches(input)) {
-					Log.debug("Matching recipe " + recipe);
+		if (matches != null) {
+			Log.debug("Fetching recipes for machine {}, {}: {} matches.", machine, input, matches.length);
+			for (IProcessingRecipe recipe : matches) {
+				if (recipe != null && recipe.inputMatches(input)) {
+					Log.debug("Matching recipe {}", recipe);
 					return recipe;
 				}
 			}
 		}
-		
+
 		/*
 		 * Ore Dictionary Recipes
 		 */
-		
+
 		int[] oreIDs = OreDictionary.getOreIDs(input);
-		Log.debug("Fetching ore dict recipes for machine " + machine + ": " + input + "->" + oreIDs.length + " matches");
-		
+		Log.debug("Fetching ore dict recipes for machine {}, {}: {} matches.", machine, input, oreIDs.length);
+
 		Map<String, IProcessingRecipe[]> recipesOreDict = ProcessingRegistry.recipesOreDict[machine];
-		
-		for(int oreID : oreIDs) {
+
+		for (int oreID : oreIDs) {
 			String oreName = OreDictionary.getOreName(oreID);
 			matches = recipesOreDict.get(oreName);
-			if(matches != null) {
-				for(IProcessingRecipe recipe : matches) {
-					if(recipe != null && recipe.inputMatches(input)) {
-						Log.debug("Matching recipe " + recipe);
+			if (matches != null) {
+				for (IProcessingRecipe recipe : matches) {
+					if (recipe != null && recipe.inputMatches(input)) {
+						Log.debug("Matching recipe; {}", recipe);
 						return recipe;
 					}
 				}
 			}
 		}
-		
+
 		return null;
 	}
-	
+
+	public static IProcessingRecipeFluidBased getRecipe(int machine, FluidStack input) {
+		Map<Fluid, IProcessingRecipeFluidBased[]> recipes = ProcessingRegistry.recipesFluid[machine];
+
+		IProcessingRecipeFluidBased[] matches = recipes.get(input.getFluid());
+		if (matches != null) {
+			Log.debug("Fetching fluid recipes for machine {}, {}: {} matches.", machine, input, matches.length);
+			for (IProcessingRecipeFluidBased recipe : matches) {
+				if (recipe != null && recipe.inputFluidMatches(input)) {
+					Log.debug("Matching recipe {}", recipe);
+					return recipe;
+				}
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Registers a recipe for a specific machine. Regular
+	 * {@link IProcessingRecipe} are indexed for input item or ore dictionary
+	 * name. All recipes can then be searched using
+	 * {@link #getRecipe(int, ItemStack)}.
+	 * 
+	 * Special handling: {@link IProcessingRecipeFluidBased} will be indexed for
+	 * input fluid and can be searched using {@link #getRecipe(int, FluidStack)}
+	 * .
+	 * 
+	 * @param machine
+	 * @param recipe
+	 */
 	public static void registerRecipe(int machine, IProcessingRecipe recipe) {
 		Map<Item, IProcessingRecipe[]> recipes = ProcessingRegistry.recipes[machine];
 		Map<String, IProcessingRecipe[]> recipesOreDict = ProcessingRegistry.recipesOreDict[machine];
@@ -80,66 +118,126 @@ public final class ProcessingRegistry {
 		Item key = null;
 		{
 			ItemStack inputStack = recipe.getInput();
-			if(inputStack != null) {
+			if (inputStack != null) {
 				key = inputStack.getItem();
 			}
 		}
 		String keyOreDict = recipe.getInputOreDict();
 
-		Log.debug("Registering recipe for machine " + machine + ": " + (key == null ? keyOreDict : key) + "->" + recipe);
-		
+		Log.debug("Registering recipe for machine %d: %s->%s", machine, (key == null ? keyOreDict : key), recipe);
+
 		IProcessingRecipe[] matches;
-		
-		if(key == null) {
-			if(keyOreDict == null) {
-				throw new RuntimeException("Error registering recipe " + recipe + " for machine " + machine + ". Both keys (item and ore dict) were null.");
+
+		if (key == null) {
+			if (keyOreDict == null) {
+				throw new RuntimeException("Error registering recipe " + recipe + " for machine " + machine
+						+ ". Both keys (item and ore dict) were null.");
 			}
 			matches = recipesOreDict.get(keyOreDict);
 		} else {
 			matches = recipes.get(key);
 		}
-		
-		
-		if(matches == null) {
+
+		if (matches == null) {
 			Log.debug("First recipe for this item.");
 			matches = new IProcessingRecipe[1];
 		} else {
-			Log.debug((matches.length + 1) + ". recipe for this item.");
+			Log.debug("{}. recipe for this item.", matches.length + 1);
 			matches = Arrays.copyOf(matches, matches.length + 1);
 		}
 		matches[matches.length - 1] = recipe;
-		if(key == null) {
+		if (key == null) {
 			recipesOreDict.put(keyOreDict, matches);
 		} else {
 			recipes.put(key, matches);
 		}
+
+		if (recipe instanceof IProcessingRecipeFluidBased) {
+			registerRecipeFluidBased(machine, (IProcessingRecipeFluidBased) recipe);
+		}
 	}
 
+	/**
+	 * Registers an {@link IProcessingRecipeFluidBased} for search via a
+	 * {@link FluidStack} in {@link #getRecipe(int, FluidStack)}.
+	 * 
+	 * @param machine
+	 * @param recipe
+	 */
+	private static void registerRecipeFluidBased(int machine, IProcessingRecipeFluidBased recipe) {
+		Map<Fluid, IProcessingRecipeFluidBased[]> recipesFluid = ProcessingRegistry.recipesFluid[machine];
+		Fluid key = recipe.getInputFluid().getFluid();
+
+		Log.debug("Registering fluid recipe for machine {}: {}->{}", machine, key, recipe);
+
+		IProcessingRecipeFluidBased[] matches;
+
+		if (key == null) {
+			throw new RuntimeException(
+					"Error registering fluid recipe " + recipe + " for machine " + machine + ". Key (fluid) was null.");
+		}
+		matches = recipesFluid.get(key);
+
+		if (matches == null) {
+			Log.debug("First recipe for this fluid.");
+			matches = new IProcessingRecipeFluidBased[1];
+		} else {
+			Log.debug("{}. recipe for this fluid.", matches.length + 1);
+			matches = Arrays.copyOf(matches, matches.length + 1);
+		}
+		matches[matches.length - 1] = recipe;
+		recipesFluid.put(key, matches);
+	}
+
+	/**
+	 * Fetch all recipes for a machine.
+	 * 
+	 * @param machine
+	 * @return
+	 */
 	public static Collection<IProcessingRecipe> getRecipes(int machine) {
 		return getRecipes(machine, null);
 	}
 
+	/**
+	 * Fetch all recipes for a machine that have a specific result. Respects ore
+	 * dictionary.
+	 * 
+	 * @param machine
+	 * @param result
+	 *            The result to search. If null, returns all recipes.
+	 * @return
+	 */
 	public static Collection<IProcessingRecipe> getRecipes(int machine, ItemStack result) {
 		Map<Item, IProcessingRecipe[]> recipes = ProcessingRegistry.recipes[machine];
 		Map<String, IProcessingRecipe[]> recipesOreDict = ProcessingRegistry.recipesOreDict[machine];
-		
+
 		ArrayList<IProcessingRecipe> matching = new ArrayList<IProcessingRecipe>();
 
 		filter(matching, recipes.values(), result);
 		filter(matching, recipesOreDict.values(), result);
-		
+
 		return matching;
 	}
-	
+
+	/**
+	 * Add all candidates to outputMatching where filterFor is a possible
+	 * output. Respects ore dictionary.
+	 * 
+	 * @param outputMatching
+	 * @param candidates
+	 * @param filterFor
+	 *            The result to filter for. If null, all items will be added.
+	 */
 	public static void filter(Collection<IProcessingRecipe> outputMatching, Collection<IProcessingRecipe[]> candidates, ItemStack filterFor) {
-		for(IProcessingRecipe[] list : candidates) {
-			if(filterFor == null) {
+		for (IProcessingRecipe[] list : candidates) {
+			if (filterFor == null) {
 				Collections.addAll(outputMatching, list);
 			} else {
-				for(IProcessingRecipe recipe : list) {
+				for (IProcessingRecipe recipe : list) {
 					ChancedOutput[] output = recipe.getOutput();
-					for(ChancedOutput co : output) {
-						if(OreDictionary.itemMatches(filterFor, co.output, false)) {
+					for (ChancedOutput co : output) {
+						if (OreDictionary.itemMatches(filterFor, co.output, false)) {
 							outputMatching.add(recipe);
 							break;
 						}

@@ -8,7 +8,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.oredict.OreDictionary;
 
-public class SprayerRecipe implements IProcessingRecipe {
+public class SprayerRecipe implements IProcessingRecipeFluidBased {
 
 	private ItemStack input;
 	private String inputOreDict;
@@ -44,8 +44,14 @@ public class SprayerRecipe implements IProcessingRecipe {
 		}
 	}
 	
+	@Override
 	public boolean inputFluidMatches(FluidStack fluid) {
 		return inputFluid.isFluidEqual(fluid);
+	}
+	
+	@Override
+	public FluidStack getInputFluid() {
+		return inputFluid;
 	}
 
 	@Override
