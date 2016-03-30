@@ -9,13 +9,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.Vec3;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -59,19 +58,19 @@ public class BlockPipe extends BaseBlock implements ITileEntityProvider {
 	private AxisAlignedBB closestBB;
 
 	@Override
-	public MovingObjectPosition collisionRayTrace(World world, BlockPos pos, Vec3 start, Vec3 end) {
+	public RayTraceResult collisionRayTrace(IBlockState blockState, World worldIn, BlockPos pos, Vec3d start, Vec3d end) {
 		start = start.subtract(pos.getX(), pos.getY(), pos.getZ());
 		end = end.subtract(pos.getX(), pos.getY(), pos.getZ());
 
-		List<AxisAlignedBB> boxes = getBoxes(world, pos, world.getBlockState(pos));
+		List<AxisAlignedBB> boxes = getBoxes(worldIn, pos, worldIn.getBlockState(pos));
 
-		MovingObjectPosition closestHit = null;
+		RayTraceResult closestHit = null;
 		double dist = Double.MAX_VALUE;
 		closestBB = null;
 
 		for (AxisAlignedBB box : boxes) {
 
-			MovingObjectPosition newHit = box.calculateIntercept(start, end);
+			RayTraceResult newHit = box.calculateIntercept(start, end);
 			if (newHit != null) {
 				double newDist = newHit.hitVec.distanceTo(start);
 				if (newDist < dist) {
@@ -84,7 +83,7 @@ public class BlockPipe extends BaseBlock implements ITileEntityProvider {
 		if (closestHit == null) {
 			return null;
 		} else {
-			return new MovingObjectPosition(closestHit.hitVec, closestHit.sideHit, pos);
+			return new RayTraceResult(closestHit.hitVec, closestHit.sideHit, pos);
 		}
 	}
 
@@ -123,16 +122,16 @@ public class BlockPipe extends BaseBlock implements ITileEntityProvider {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public AxisAlignedBB getSelectedBoundingBox(World world, BlockPos pos) {
+	public AxisAlignedBB getSelectedBoundingBox(IBlockState state, World worldIn, BlockPos pos) {
 		// Get player position + look vector
 		EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
-		Vec3 eyes = player.getPositionEyes(0);
-		Vec3 look = player.getLook(0);
+		Vec3d eyes = player.getPositionEyes(0);
+		Vec3d look = player.getLook(0);
 		float reach = Minecraft.getMinecraft().playerController.getBlockReachDistance();
-		Vec3 dest = eyes.addVector(look.xCoord * reach, look.yCoord * reach, look.zCoord * reach);
+		Vec3d dest = eyes.addVector(look.xCoord * reach, look.yCoord * reach, look.zCoord * reach);
 
 		// in that method, we update the closestBB
-		collisionRayTrace(world, pos, eyes, dest);
+		collisionRayTrace(state, worldIn, pos, eyes, dest);
 
 		// Return the box that is hovered, or the default if nothing could be determined (edge cases)
 		if(closestBB == null) {
@@ -143,8 +142,7 @@ public class BlockPipe extends BaseBlock implements ITileEntityProvider {
 	}
 
 	@Override
-	public void addCollisionBoxesToList(World world, BlockPos pos, IBlockState state, AxisAlignedBB mask,
-			List<AxisAlignedBB> list, Entity par7Entity) {
+	public void addCollisionBoxesToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, Entity entityIn) {
 		if (!isCollidable()) {
 			return;
 		} else {

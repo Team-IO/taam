@@ -267,168 +267,169 @@ public class TaamClientProxy extends TaamCommonProxy {
 		modelMesher.register(item, meta, new ModelResourceLocation(name, "inventory"));
 	}
 	
-	@SubscribeEvent
-	public void onModelBakeEvent(ModelBakeEvent event) {
-		Log.debug("Beginning onModelBakeEvent");
-		
-		/*
-		 * We need to se the "flip-v" flag..
-		 * As the inventory-variant is "generated" above, MC will ignore what we have in the blockstates
-		 * json & render the textures flipped in the inventory...
-		 * 
-		 * Doing it via reflection, as we'd need to redefine the original OBJModel somewhere
-		 * (OBJModel.process() will do that) but I have no idea WHERE!
-		 */
-
-		Field customDataField = null;
-		Field customDataFlipVField = null;
-		try {
-			customDataField = OBJModel.class.getDeclaredField("customData");
-			customDataField.setAccessible(true);
-			Class<?> customDataType = customDataField.getType();
-			customDataFlipVField = customDataType.getDeclaredField("flipV");
-			customDataFlipVField.setAccessible(true);
-		} catch (Exception e) {
-			Log.error("Failed to make OBJModel.customData accessible or access other reflection stuff. Inventory items will have wrong textures.", e);
-		}
-
-		/*
-		 * Go through all registered locations from above & replace the baked model
-		 * with one that understands our items
-		 */
-
-		for (ModelResourceLocation resourceLocation : locationsToReplace) {
-			IBakedModel bakedModel = event.modelRegistry.getObject(resourceLocation);
-			if (bakedModel instanceof OBJBakedModel) {
-				Log.debug("Replacing " + resourceLocation);
-
-				OBJBakedModel bakedAsObj = (OBJBakedModel) bakedModel;
-				OBJModel obj = bakedAsObj.getModel();
-
-				/*
-				 * Set flip-v flag
-				 */
-
-				try {
-					Object customData = customDataField.get(obj);
-					customDataFlipVField.set(customData, true);
-				} catch (Exception e) {
-					Log.error("Failed to adjust custom data. Inventory items will have wrong textures.", e);
-				}
-
-				/*
-				 * Create custom baked model as replacement
-				 */
-
-				bakedModel = new ItemAwareOBJBakedModel(bakedAsObj);
-				event.modelRegistry.putObject(resourceLocation, bakedModel);
-			}
-		}
-
-		Log.debug("Completed onModelBakeEvent");
-	}
-	
-	/**
-	 * Baked model implementation that checks with the item type for a list of
-	 * parts to render using an OBJBakedModel as parent.
-	 * 
-	 * Customized: item rendering. The rest of the implementation just relays to
-	 * the parent model.
-	 * 
-	 * @author Oliver Kahrmann
-	 *
-	 */
-	public static class ItemAwareOBJBakedModel
-			implements IFlexibleBakedModel, ISmartBlockModel, ISmartItemModel, IPerspectiveAwareModel {
-
-		private OBJBakedModel original;
-
-		public ItemAwareOBJBakedModel(OBJBakedModel original) {
-			this.original = original;
-		}
-
-		/*
-		 * IFlexibleBakedModel
-		 */
-
-		@Override
-		public VertexFormat getFormat() {
-			return original.getFormat();
-		}
-
-		/*
-		 * ISmartItemModel
-		 */
-		
-		@Override
-		public IBakedModel handleItemState(ItemStack stack) {
-			if (stack != null && stack.getItem() instanceof IRenderableItem) {
-				// Ask what to render
-				List<String> visibleParts = ((IRenderableItem) stack.getItem()).getVisibleParts(stack);
-				// Create matching state
-				OBJModel.OBJState retState = new OBJModel.OBJState(visibleParts, true);
-				return original.getCachedModel(retState);
-			}
-			// Not one of ours, whatever, just render everything...
-			return original;
-		}
-
-		/*
-		 * IPerspectiveAwareModel
-		 */
-		
-		@Override
-		public Pair<? extends IFlexibleBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType) {
-			return original.handlePerspective(cameraTransformType);
-		}
-
-		/*
-		 * ISmartBlockModel
-		 */
-
-		@Override
-		public IBakedModel handleBlockState(IBlockState state) {
-			return original.handleBlockState(state);
-		}
-
-		/*
-		 * IBakedModel
-		 */
-
-		@Override
-		public List<BakedQuad> getFaceQuads(EnumFacing side) {
-			return original.getFaceQuads(side);
-		}
-
-		@Override
-		public List<BakedQuad> getGeneralQuads() {
-			return original.getGeneralQuads();
-		}
-
-		@Override
-		public boolean isAmbientOcclusion() {
-			return original.isAmbientOcclusion();
-		}
-
-		@Override
-		public boolean isGui3d() {
-			return original.isGui3d();
-		}
-
-		@Override
-		public boolean isBuiltInRenderer() {
-			return original.isBuiltInRenderer();
-		}
-
-		@Override
-		public TextureAtlasSprite getParticleTexture() {
-			return original.getParticleTexture();
-		}
-
-		@Override
-		public ItemCameraTransforms getItemCameraTransforms() {
-			return original.getItemCameraTransforms();
-		}
-
-	}
+///*	@SubscribeEvent
+//	public void onModelBakeEvent(ModelBakeEvent event) {
+//		Log.debug("Beginning onModelBakeEvent");
+//		
+//		/*
+//		 * We need to se the "flip-v" flag..
+//		 * As the inventory-variant is "generated" above, MC will ignore what we have in the blockstates
+//		 * json & render the textures flipped in the inventory...
+//		 * 
+//		 * Doing it via reflection, as we'd need to redefine the original OBJModel somewhere
+//		 * (OBJModel.process() will do that) but I have no idea WHERE!
+//		 */
+//
+//		Field customDataField = null;
+//		Field customDataFlipVField = null;
+//		try {
+//			customDataField = OBJModel.class.getDeclaredField("customData");
+//			customDataField.setAccessible(true);
+//			Class<?> customDataType = customDataField.getType();
+//			customDataFlipVField = customDataType.getDeclaredField("flipV");
+//			customDataFlipVField.setAccessible(true);
+//		} catch (Exception e) {
+//			Log.error("Failed to make OBJModel.customData accessible or access other reflection stuff. Inventory items will have wrong textures.", e);
+//		}
+//
+//		/*
+//		 * Go through all registered locations from above & replace the baked model
+//		 * with one that understands our items
+//		 */
+//
+//		for (ModelResourceLocation resourceLocation : locationsToReplace) {
+//			IBakedModel bakedModel = event.modelRegistry.getObject(resourceLocation);
+//			if (bakedModel instanceof OBJBakedModel) {
+//				Log.debug("Replacing " + resourceLocation);
+//
+//				OBJBakedModel bakedAsObj = (OBJBakedModel) bakedModel;
+//				OBJModel obj = bakedAsObj.getModel();
+//
+//				/*
+//				 * Set flip-v flag
+//				 */
+//
+//				try {
+//					Object customData = customDataField.get(obj);
+//					customDataFlipVField.set(customData, true);
+//				} catch (Exception e) {
+//					Log.error("Failed to adjust custom data. Inventory items will have wrong textures.", e);
+//				}
+//
+//				/*
+//				 * Create custom baked model as replacement
+//				 */
+//
+//				bakedModel = new ItemAwareOBJBakedModel(bakedAsObj);
+//				event.modelRegistry.putObject(resourceLocation, bakedModel);
+//			}
+//		}
+//
+//		Log.debug("Completed onModelBakeEvent");
+//	}
+//	
+//	/**
+//	 * Baked model implementation that checks with the item type for a list of
+//	 * parts to render using an OBJBakedModel as parent.
+//	 * 
+//	 * Customized: item rendering. The rest of the implementation just relays to
+//	 * the parent model.
+//	 * 
+//	 * @author Oliver Kahrmann
+//	 *
+//	 */
+//	public static class ItemAwareOBJBakedModel
+//			implements IFlexibleBakedModel, ISmartBlockModel, ISmartItemModel, IPerspectiveAwareModel {
+//
+//		private OBJBakedModel original;
+//
+//		public ItemAwareOBJBakedModel(OBJBakedModel original) {
+//			this.original = original;
+//		}
+//
+//		/*
+//		 * IFlexibleBakedModel
+//		 */
+//
+//		@Override
+//		public VertexFormat getFormat() {
+//			return original.getFormat();
+//		}
+//
+//		/*
+//		 * ISmartItemModel
+//		 */
+//		
+//		@Override
+//		public IBakedModel handleItemState(ItemStack stack) {
+//			if (stack != null && stack.getItem() instanceof IRenderableItem) {
+//				// Ask what to render
+//				List<String> visibleParts = ((IRenderableItem) stack.getItem()).getVisibleParts(stack);
+//				// Create matching state
+//				OBJModel.OBJState retState = new OBJModel.OBJState(visibleParts, true);
+//				return original.getCachedModel(retState);
+//			}
+//			// Not one of ours, whatever, just render everything...
+//			return original;
+//		}
+//
+//		/*
+//		 * IPerspectiveAwareModel
+//		 */
+//		
+//		@Override
+//		public Pair<? extends IFlexibleBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType) {
+//			return original.handlePerspective(cameraTransformType);
+//		}
+//
+//		/*
+//		 * ISmartBlockModel
+//		 */
+//
+//		@Override
+//		public IBakedModel handleBlockState(IBlockState state) {
+//			return original.handleBlockState(state);
+//		}
+//
+//		/*
+//		 * IBakedModel
+//		 */
+//
+//		@Override
+//		public List<BakedQuad> getFaceQuads(EnumFacing side) {
+//			return original.getFaceQuads(side);
+//		}
+//
+//		@Override
+//		public List<BakedQuad> getGeneralQuads() {
+//			return original.getGeneralQuads();
+//		}
+//
+//		@Override
+//		public boolean isAmbientOcclusion() {
+//			return original.isAmbientOcclusion();
+//		}
+//
+//		@Override
+//		public boolean isGui3d() {
+//			return original.isGui3d();
+//		}
+//
+//		@Override
+//		public boolean isBuiltInRenderer() {
+//			return original.isBuiltInRenderer();
+//		}
+//
+//		@Override
+//		public TextureAtlasSprite getParticleTexture() {
+//			return original.getParticleTexture();
+//		}
+//
+//		@Override
+//		public ItemCameraTransforms getItemCameraTransforms() {
+//			return original.getItemCameraTransforms();
+//		}
+//
+//	}
+//	*/
 }
