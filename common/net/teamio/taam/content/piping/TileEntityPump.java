@@ -73,9 +73,9 @@ public class TileEntityPump extends BaseTileEntity implements IPipeTE, ITickable
 	@Override
 	public IPipe[] getPipesForSide(EnumFacing side) {
 		if (side == direction) {
-			return new IPipe[] { pipeEndOut };
+			return pipeEndOut.asPipeArray();
 		} else if (side == direction.getOpposite()) {
-			return new IPipe[] { pipeEndIn };
+			return pipeEndIn.asPipeArray();
 		} else {
 			return null;
 		}
