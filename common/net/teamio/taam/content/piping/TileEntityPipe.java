@@ -100,7 +100,7 @@ public class TileEntityPipe extends BaseTileEntity implements IPipe, IPipeTE, IT
 
 	@Override
 	public FluidStack[] getFluids() {
-		return info.content;
+		return info.getContentAsArray();
 	}
 
 	@Override

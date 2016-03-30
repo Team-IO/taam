@@ -74,7 +74,7 @@ public class PipeEnd implements IPipe {
 
 	@Override
 	public FluidStack[] getFluids() {
-		return info.content;
+		return info.getContentAsArray();
 	}
 
 	@Override

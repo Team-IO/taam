@@ -1,5 +1,7 @@
 package net.teamio.taam.piping;
 
+import java.util.ArrayList;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants.NBT;
@@ -9,7 +11,7 @@ public class PipeInfo {
 	
 	public PipeInfo(int capacity) {
 		this.capacity = capacity;
-		content = new FluidStack[0];
+		content = new ArrayList<FluidStack>();
 	}
 	
 	public final int capacity;
@@ -17,7 +19,7 @@ public class PipeInfo {
 	public int pressure;
 	public int suction;
 	public int fillLevel;
-	public FluidStack[] content;
+	public ArrayList<FluidStack> content;
 
 	public void writeToNBT(NBTTagCompound tag) {
 		tag.setInteger("pressure", pressure);
@@ -36,14 +38,15 @@ public class PipeInfo {
 		suction = tag.getInteger("suction");
 		NBTTagList list = tag.getTagList("content", NBT.TAG_COMPOUND);
 		if(list == null || list.tagCount() == 0) {
-			content = new FluidStack[0];
+			content.clear();;
 		} else {
-			content = new FluidStack[list.tagCount()];
+			content.ensureCapacity(list.tagCount());
 			for(int i = 0; i < list.tagCount(); i++) {
 				NBTTagCompound fluidTag = list.getCompoundTagAt(i);
-				content[i] = FluidStack.loadFluidStackFromNBT(fluidTag);
+				content.add(FluidStack.loadFluidStackFromNBT(fluidTag));
 			}
 		}
+		content.trimToSize();
 		recalculateFillLevel();
 	}
 	
@@ -59,7 +62,7 @@ public class PipeInfo {
 		//TODO: Caching. Later.
 		recalculateFillLevel();
 		int free = capacity - current;
-		//System.out.println("Add: " + stack.amount + " Current: " + current + " free: " + free);
+
 		if(free < 1) {
 			return 0;
 		}
@@ -71,12 +74,33 @@ public class PipeInfo {
 				return insert;
 			}
 		}
-		
-		FluidStack[] newContent = new FluidStack[content.length + 1];
-		System.arraycopy(content, 0, newContent, 0, content.length);
-		newContent[content.length] = stack.copy();
-		content = newContent;
+		content.add(stack.copy());
 		
 		return insert;
 	}
+	
+	public FluidStack removeFluid(FluidStack stack) {
+		
+		for(int i = 0; i < content.size(); i++) {
+			FluidStack contentStack = content.get(i);
+			if(contentStack.isFluidEqual(stack)) {
+				int removeAmount = Math.min(contentStack.amount, stack.amount);
+				
+				// Remove the fluid
+				contentStack.amount -= removeAmount;
+				if(contentStack.amount <= 0) {
+					content.remove(i);
+				}
+				recalculateFillLevel();
+				// And return it
+				return new FluidStack(stack, removeAmount);
+			}
+		}
+		return null;
+	}
+	
+	public FluidStack[] getContentAsArray() {
+		return content.toArray(new FluidStack[content.size()]);
+	}
+	
 }
