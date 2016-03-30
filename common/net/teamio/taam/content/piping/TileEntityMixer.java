@@ -11,12 +11,15 @@ import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.conveyors.ItemWrapper;
 import net.teamio.taam.conveyors.api.IConveyorAwareTE;
+import net.teamio.taam.piping.IPipe;
+import net.teamio.taam.piping.IPipeTE;
 import net.teamio.taam.piping.PipeEnd;
 import net.teamio.taam.piping.PipeEndRestricted;
+import net.teamio.taam.piping.PipeUtil;
 import net.teamio.taam.recipes.IProcessingRecipeFluidBased;
 import net.teamio.taam.recipes.ProcessingRegistry;
 
-public class TileEntityMixer extends BaseTileEntity implements IRotatable, IConveyorAwareTE, ITickable {
+public class TileEntityMixer extends BaseTileEntity implements IRotatable, IConveyorAwareTE, ITickable, IPipeTE {
 
 	private EnumFacing direction = EnumFacing.NORTH;
 	
@@ -75,6 +78,8 @@ public class TileEntityMixer extends BaseTileEntity implements IRotatable, IConv
 				backlog = null;
 			}
 		}
+		PipeUtil.processPipes(pipeEndIn, worldObj, pos);
+		PipeUtil.processPipes(pipeEndOut, worldObj, pos);
 	}
 	
 	/**
@@ -161,6 +166,7 @@ public class TileEntityMixer extends BaseTileEntity implements IRotatable, IConv
 		 */
 		
 		backlog = outputFluid.copy();
+		Log.debug("Mixer Produced {}", backlog);
 		
 		return recipe.getInput().stackSize;
 	}
@@ -192,6 +198,21 @@ public class TileEntityMixer extends BaseTileEntity implements IRotatable, IConv
 		blockUpdate();
 		updateState();
 		worldObj.notifyNeighborsOfStateChange(pos, blockType);
+	}
+	
+	/*
+	 * IPipeTE implementation
+	 */
+	
+	@Override
+	public IPipe[] getPipesForSide(EnumFacing side) {
+		if (side == direction) {
+			return pipeEndOut.asPipeArray();
+		} else if (side == direction.getOpposite()) {
+			return pipeEndIn.asPipeArray();
+		} else {
+			return null;
+		}
 	}
 
 	/*

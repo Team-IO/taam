@@ -7,19 +7,25 @@ import net.minecraftforge.fluids.FluidStack;
 
 public class MixerRecipe extends BaseProcessingRecipeFluidBased implements IProcessingRecipeFluidBased {
 
+	private final FluidStack outputFluid;
+	
+	public MixerRecipe(ItemStack input, FluidStack inputFluid, FluidStack outputFluid) {
+		this.input = input;
+		this.inputFluid = inputFluid;
+		this.outputFluid = outputFluid;
+	}
+	
 	/*
 	 * IProcessingRecipe
 	 */
 
 	@Override
 	public ChancedOutput[] getOutput() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public ItemStack[] getOutput(ItemStack input, Random rand) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -29,14 +35,12 @@ public class MixerRecipe extends BaseProcessingRecipeFluidBased implements IProc
 
 	@Override
 	public FluidStack getOutputFluid() {
-		// TODO Auto-generated method stub
-		return null;
+		return outputFluid;
 	}
 
 	@Override
 	public FluidStack getOutputFluid(ItemStack input, FluidStack inputFluid, Random rand) {
-		// TODO Auto-generated method stub
-		return null;
+		return outputFluid;
 	}
 
 }
