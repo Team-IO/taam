@@ -61,6 +61,8 @@ public class TileEntityPump extends BaseTileEntity implements IPipeTE, ITickable
 		if(direction == EnumFacing.UP || direction == EnumFacing.DOWN) {
 			direction = EnumFacing.NORTH;
 		}
+		pipeEndOut.setSide(direction);
+		pipeEndIn.setSide(direction.getOpposite());
 		info.readFromNBT(tag);
 	}
 

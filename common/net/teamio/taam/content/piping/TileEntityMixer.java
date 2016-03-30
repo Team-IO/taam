@@ -49,6 +49,8 @@ public class TileEntityMixer extends BaseTileEntity implements IRotatable, IConv
 		if(direction == EnumFacing.UP || direction == EnumFacing.DOWN) {
 			direction = EnumFacing.NORTH;
 		}
+		pipeEndOut.setSide(direction);
+		pipeEndIn.setSide(direction.getOpposite());
 		
 		NBTTagCompound tagIn = tag.getCompoundTag("pipeEndIn");
 		if(tagIn != null) {
