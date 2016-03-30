@@ -87,6 +87,18 @@ public class TileEntityPipe extends BaseTileEntity implements IPipe, IPipeTE, IT
 		info.writeToNBT(tag);
 	}
 
+	/*
+	 * IPipeTE implementation
+	 */
+	@Override
+	public IPipe[] getPipesForSide(EnumFacing side) {
+		return new IPipe[] { this };
+	}
+
+	/*
+	 * IPipe implementation
+	 */
+
 	@Override
 	public int getPressure() {
 		return info.pressure;
@@ -141,8 +153,13 @@ public class TileEntityPipe extends BaseTileEntity implements IPipe, IPipeTE, IT
 	}
 
 	@Override
-	public IPipe[] getPipesForSide(EnumFacing side) {
-		return new IPipe[] { this };
+	public int removeFluid(FluidStack like) {
+		return info.removeFluid(like);
+	}
+
+	@Override
+	public int getFluidAmount(FluidStack like) {
+		return info.getFluidAmount(like);
 	}
 
 }

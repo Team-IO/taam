@@ -46,6 +46,24 @@ public class PipeEndFluidHandler implements IPipe {
 	}
 	
 	@Override
+	public int removeFluid(FluidStack like) {
+		FluidStack drained = owner.drain(side, like, true);
+		if(drained != null) {
+			return drained.amount;
+		}
+		return 0;
+	}
+	
+	@Override
+	public int getFluidAmount(FluidStack like) {
+		FluidStack drained = owner.drain(side, like, false);
+		if(drained != null) {
+			return drained.amount;
+		}
+		return 0;
+	}
+	
+	@Override
 	public FluidStack[] getFluids() {
 		FluidTankInfo[] tankInfo = owner.getTankInfo(side);
 		FluidStack[] content = new FluidStack[tankInfo.length];

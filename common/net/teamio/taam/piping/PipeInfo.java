@@ -65,6 +65,10 @@ public class PipeInfo {
 	}
 
 	public int addFluid(FluidStack stack) {
+		if(stack == null || stack.amount == 0) {
+			return 0;
+		}
+		
 		int current = fillLevel;
 		// TODO: Caching. Later.
 		recalculateFillLevel();
@@ -85,10 +89,10 @@ public class PipeInfo {
 
 		return insert;
 	}
-	public FluidStack removeFluid(FluidStack stack) {
-		
-		for(int i = 0; i < content.size(); i++) {
 
+	public int removeFluid(FluidStack stack) {
+
+		for (int i = 0; i < content.size(); i++) {
 			FluidStack contentStack = content.get(i);
 			if (contentStack.isFluidEqual(stack)) {
 				int removeAmount = Math.min(contentStack.amount, stack.amount);
@@ -99,15 +103,26 @@ public class PipeInfo {
 					content.remove(i);
 				}
 				recalculateFillLevel();
-				// And return it
-				return new FluidStack(stack, removeAmount);
+
+				// And return the amount
+				return removeAmount;
 			}
 		}
-		return null;
+		return 0;
+	}
+
+	public int getFluidAmount(FluidStack like) {
+
+		for (int i = 0; i < content.size(); i++) {
+			FluidStack contentStack = content.get(i);
+			if (contentStack.isFluidEqual(like)) {
+				return contentStack.amount;
+			}
+		}
+		return 0;
 	}
 
 	public FluidStack[] getFluids() {
 		return content.toArray(new FluidStack[content.size()]);
 	}
-	
 }

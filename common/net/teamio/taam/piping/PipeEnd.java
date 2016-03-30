@@ -71,6 +71,16 @@ public class PipeEnd implements IPipe {
 	public int addFluid(FluidStack stack) {
 		return info.addFluid(stack);
 	}
+	
+	@Override
+	public int removeFluid(FluidStack like) {
+		return info.removeFluid(like);
+	}
+	
+	@Override
+	public int getFluidAmount(FluidStack like) {
+		return info.getFluidAmount(like);
+	}
 
 	@Override
 	public FluidStack[] getFluids() {

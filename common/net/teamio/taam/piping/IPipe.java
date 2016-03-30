@@ -65,6 +65,25 @@ public interface IPipe {
 	int addFluid(FluidStack stack);
 
 	/**
+	 * Try to remove the given fluid from the pipe (drain). (Does not change
+	 * pressure)
+	 * 
+	 * @param like
+	 *            The kind and amount to remove.
+	 * @return the actual amount of fluid removed.
+	 */
+	int removeFluid(FluidStack like);
+
+	/**
+	 * returns the amount of a specific fluid in the pipe.
+	 * 
+	 * @param like
+	 *            The kind of fluid to check. Disregard like.amount.
+	 * @return The amount of that fluid in the pipe.
+	 */
+	int getFluidAmount(FluidStack like);
+
+	/**
 	 * Get all fluids currently in the pipe.
 	 * 
 	 * @return An array of {@link FluidStack} that are currently in the pipe.
