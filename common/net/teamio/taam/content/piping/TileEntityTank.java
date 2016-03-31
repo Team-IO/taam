@@ -29,8 +29,8 @@ public class TileEntityTank extends BaseTileEntity implements IFluidHandler, IPi
 	public static final List<String> visibleParts = Lists.newArrayList("BaseplateConnector_pmdl_c", "Tank_tmdl");
 	
 	public TileEntityTank() {
-		pipeEndUP = new PipeEndFluidHandler(this, EnumFacing.UP);
-		pipeEndDOWN = new PipeEndFluidHandler(this, EnumFacing.DOWN);
+		pipeEndUP = new PipeEndFluidHandler(this, EnumFacing.UP, true);
+		pipeEndDOWN = new PipeEndFluidHandler(this, EnumFacing.DOWN, true);
 		pipeEndUP.setSuction(10);
 		pipeEndDOWN.setSuction(9);
 		tank = new FluidTank(8000);
@@ -45,6 +45,10 @@ public class TileEntityTank extends BaseTileEntity implements IFluidHandler, IPi
 	public void update() {
 		PipeUtil.processPipes(pipeEndUP, worldObj, pos);
 		PipeUtil.processPipes(pipeEndDOWN, worldObj, pos);
+	}
+	
+	public FluidTank getTank() {
+		return tank;
 	}
 
 	@Override
@@ -142,10 +146,6 @@ public class TileEntityTank extends BaseTileEntity implements IFluidHandler, IPi
 		} else {
 			return new FluidTankInfo[0];
 		}
-	}
-
-	public FluidStack getFluid() {
-		return tank.getFluid();
 	}
 
 }

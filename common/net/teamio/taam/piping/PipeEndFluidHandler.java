@@ -16,19 +16,41 @@ import net.minecraftforge.fluids.IFluidHandler;
  *
  */
 public class PipeEndFluidHandler implements IPipe {
+	/**
+	 * One array per PipeEnd, used to optimize the
+	 * {@link IPipeTE#getPipesForSide(EnumFacing)} as usually there is only one
+	 * pipe end per side.
+	 */
+	private final IPipe[] pipeArray;
 	
 	private EnumFacing side;
 	private IFluidHandler owner;
 	private int pressure;
 	private int suction;
+	private boolean active;
 	
-	public PipeEndFluidHandler(IFluidHandler owner, EnumFacing side) {
+	public PipeEndFluidHandler(IFluidHandler owner, EnumFacing side, boolean active) {
 		this.owner = owner;
 		this.side = side;
+		this.active = active;
+		pipeArray = new IPipe[] { this };
+	}
+	
+	public IPipe[] asPipeArray() {
+		pipeArray[0] = this;
+		return pipeArray;
 	}
 	
 	public IFluidHandler getOwner() {
 		return owner;
+	}
+	
+	public EnumFacing getSide() {
+		return side;
+	}
+	
+	public void setSide(EnumFacing side) {
+		this.side = side;
 	}
 	
 	@Override
@@ -99,7 +121,7 @@ public class PipeEndFluidHandler implements IPipe {
 	
 	@Override
 	public boolean isActive() {
-		return true;
+		return active;
 	}
 
 	@Override

@@ -18,10 +18,12 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.teamio.taam.content.IRotatable;
@@ -31,6 +33,7 @@ import net.teamio.taam.content.piping.TileEntityTank;
 import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.conveyors.ItemWrapper;
 import net.teamio.taam.conveyors.api.IConveyorAwareTE;
+import net.teamio.taam.conveyors.appliances.ApplianceSprayer;
 import net.teamio.taam.piping.IPipe;
 
 public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
@@ -39,6 +42,22 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 	private float rot = 0;
 	private float rot_sensor = 0;
 	public static double rotSin = 0;
+	
+	public static final float shrinkValue = -0.001f;
+
+	public static final float b_tankBorder = 1.5f / 16f;
+	public static final float b_tankBorderSprayer = b_tankBorder + 4f / 16f;
+	public static final float b_basePlate = 2f / 16f;
+	
+	public static final AxisAlignedBB bounds_tank = new AxisAlignedBB(
+			b_tankBorder,	b_basePlate,	b_tankBorder,
+			1-b_tankBorder,	1,				1-b_tankBorder
+	).expand(shrinkValue, shrinkValue, shrinkValue);
+	
+	public static AxisAlignedBB bounds_sprayer = new AxisAlignedBB(
+			b_tankBorder,	b_basePlate,	b_tankBorder,
+			1-b_tankBorder,	1-4f/16f,				1-b_tankBorderSprayer
+	).expand(shrinkValue, shrinkValue, shrinkValue);
 
 	public TaamRenderer() {
 		ri = Minecraft.getMinecraft().getRenderItem();
@@ -46,6 +65,13 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 
 	@SubscribeEvent
 	public void onClientTick(TickEvent.ClientTickEvent event) {
+		
+		bounds_sprayer = new AxisAlignedBB(
+				b_tankBorder,	b_basePlate,	b_tankBorder,
+				1-b_tankBorder,	1-4f/16f,				1-b_tankBorderSprayer
+		).expand(shrinkValue, shrinkValue, shrinkValue);
+		
+		
 		if (event.phase == TickEvent.Phase.END) {
 			rot++;
 			rot_sensor++;
@@ -65,12 +91,34 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		if (tileEntity instanceof TileEntityTank) {
 			GL11.glPushMatrix();
 			GL11.glTranslated(x, y, z);
+			
+			FluidTank tank = ((TileEntityTank)tileEntity).getTank();
+			FluidStack stack = tank.getFluid();
 
-			renderTank((TileEntityTank) tileEntity, x, y, z);
+			renderTankContent(stack, tank.getCapacity(), bounds_tank);
 
 			GL11.glPopMatrix();
 		}
+		
+		if(tileEntity instanceof ApplianceSprayer) {
+			GL11.glPushMatrix();
+			GL11.glTranslated(x, y, z);
+			
+			float rotationDegrees = getRotationDegrees(tileEntity);
+			
+			GL11.glTranslated(.5f, .5f, .5f);
+			GL11.glRotatef(rotationDegrees, 0, 1, 0);
+			GL11.glTranslated(-.5f, -.5f, -.5f);
 
+
+			FluidTank tank = ((ApplianceSprayer)tileEntity).getTank();
+			FluidStack stack = tank.getFluid();
+
+			renderTankContent(stack, tank.getCapacity(), bounds_sprayer);
+
+			GL11.glPopMatrix();
+		}
+		
 		if (tileEntity instanceof IPipe) {
 
 			FontRenderer fontRendererObj = Minecraft.getMinecraft().fontRendererObj;
@@ -110,14 +158,16 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		}
 	}
 
-	public void renderTank(TileEntityTank tileEntity, double x, double y, double z) {
-		FluidStack stack = tileEntity.getFluid();
-
-		if (stack == null || stack.amount == 0) {
+	private void renderTankContent(FluidStack content, int capacity, AxisAlignedBB bounds) {
+		// Nullcheck
+		if (content == null || content.amount == 0) {
 			return;
 		}
-		Fluid fluid = stack.getFluid();
+		Fluid fluid = content.getFluid();
 
+		/*
+		 * Get texture
+		 */
 		Function<ResourceLocation, TextureAtlasSprite> textureGetter;
 		textureGetter = new Function<ResourceLocation, TextureAtlasSprite>() {
 			public TextureAtlasSprite apply(ResourceLocation location) {
@@ -126,63 +176,69 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		};
 		TextureAtlasSprite sprite = textureGetter.apply(fluid.getStill());
 
+		/*
+		 * Setup renderer
+		 */
+
 		WorldRenderer renderer = Tessellator.getInstance().getWorldRenderer();
 
 		renderer.begin(7, DefaultVertexFormats.POSITION_TEX_NORMAL);
 		bindTexture(TextureMap.locationBlocksTexture);
 
-		float border = 1.7f / 16f;
-		float socket = 2f / 16f;
+		/*
+		 * Begin rendering
+		 */
 
-		float fillFactor = stack.amount / 8000f;
-		float fillHeight = socket + fillFactor * (13.8f / 16f);
+		float fillFactor = content.amount / (float) capacity;
+
+		double height = bounds.maxY - bounds.minY;
+		double fillHeight = bounds.minY + fillFactor * height;
 
 		float minU = sprite.getMinU();
 		float minV = sprite.getMinV();
 		float maxU = sprite.getMaxU();
 		float maxV = sprite.getMaxV();
 
-		float textureFactor = minV + (maxV - minV) * fillFactor * (14f / 16);
+		double textureFactor = minV + (maxV - minV) * fillFactor * height;
 
 		// +Z
-		renderer.pos(border, socket, 1-border)			.tex(maxU, minV).normal(0, 0, 1).endVertex();
-		renderer.pos(1 - border, socket, 1-border)		.tex(minU, minV).normal(0, 0, 1).endVertex();
-		renderer.pos(1 - border, fillHeight, 1-border)	.tex(minU, textureFactor).normal(0, 0, 1).endVertex();
-		renderer.pos(border, fillHeight, 1-border)		.tex(maxU, textureFactor).normal(0, 0, 1).endVertex();
+		renderer.pos(bounds.minX, bounds.minY, bounds.maxZ)	.tex(maxU, minV).normal(0, 0, 1).endVertex();
+		renderer.pos(bounds.maxX, bounds.minY, bounds.maxZ)	.tex(minU, minV).normal(0, 0, 1).endVertex();
+		renderer.pos(bounds.maxX, fillHeight, bounds.maxZ)	.tex(minU, textureFactor).normal(0, 0, 1).endVertex();
+		renderer.pos(bounds.minX, fillHeight, bounds.maxZ)	.tex(maxU, textureFactor).normal(0, 0, 1).endVertex();
 
 		// -Z
-		renderer.pos(1 - border, socket, border)		.tex(maxU, minV).normal(0, 0, -1).endVertex();
-		renderer.pos(border, socket, border)			.tex(minU, minV).normal(0, 0, -1).endVertex();
-		renderer.pos(border, fillHeight, border)		.tex(minU, textureFactor).normal(0, 0, -1).endVertex();
-		renderer.pos(1 - border, fillHeight, border)	.tex(maxU, textureFactor).normal(0, 0, -1).endVertex();
+		renderer.pos(bounds.maxX, bounds.minY, bounds.minZ)	.tex(maxU, minV).normal(0, 0, -1).endVertex();
+		renderer.pos(bounds.minX, bounds.minY, bounds.minZ)	.tex(minU, minV).normal(0, 0, -1).endVertex();
+		renderer.pos(bounds.minX, fillHeight, bounds.minZ)	.tex(minU, textureFactor).normal(0, 0, -1).endVertex();
+		renderer.pos(bounds.maxX, fillHeight, bounds.minZ)	.tex(maxU, textureFactor).normal(0, 0, -1).endVertex();
 
 		// +X
-		renderer.pos(1-border, socket, 1-border)		.tex(maxU, minV).normal(1, 0, 0).endVertex();
-		renderer.pos(1-border, socket, border)			.tex(minU, minV).normal(1, 0, 0).endVertex();
-		renderer.pos(1-border, fillHeight, border)		.tex(minU, textureFactor).normal(1, 0, 0).endVertex();
-		renderer.pos(1-border, fillHeight, 1-border)	.tex(maxU, textureFactor).normal(1, 0, 0).endVertex();
+		renderer.pos(bounds.maxX, bounds.minY, bounds.maxZ)	.tex(maxU, minV).normal(1, 0, 0).endVertex();
+		renderer.pos(bounds.maxX, bounds.minY, bounds.minZ)	.tex(minU, minV).normal(1, 0, 0).endVertex();
+		renderer.pos(bounds.maxX, fillHeight, bounds.minZ)	.tex(minU, textureFactor).normal(1, 0, 0).endVertex();
+		renderer.pos(bounds.maxX, fillHeight, bounds.maxZ)	.tex(maxU, textureFactor).normal(1, 0, 0).endVertex();
 
 		// -X
-		renderer.pos(border, socket, border)			.tex(maxU, minV).normal(-1, 0, 0).endVertex();
-		renderer.pos(border, socket, 1-border)			.tex(minU, minV).normal(-1, 0, 0).endVertex();
-		renderer.pos(border, fillHeight, 1-border)		.tex(minU, textureFactor).normal(-1, 0, 0).endVertex();
-		renderer.pos(border, fillHeight, border)		.tex(maxU, textureFactor).normal(-1, 0, 0).endVertex();
+		renderer.pos(bounds.minX, bounds.minY, bounds.minZ)	.tex(maxU, minV).normal(-1, 0, 0).endVertex();
+		renderer.pos(bounds.minX, bounds.minY, bounds.maxZ)	.tex(minU, minV).normal(-1, 0, 0).endVertex();
+		renderer.pos(bounds.minX, fillHeight, bounds.maxZ)	.tex(minU, textureFactor).normal(-1, 0, 0).endVertex();
+		renderer.pos(bounds.minX, fillHeight, bounds.minZ)	.tex(maxU, textureFactor).normal(-1, 0, 0).endVertex();
 
 		// +Y
-		renderer.pos(1-border, fillHeight, border)		.tex(maxU, minV).normal(0, 1, 0).endVertex();
-		renderer.pos(border, fillHeight, border)		.tex(minU, minV).normal(0, 1, 0).endVertex();
-		renderer.pos(border, fillHeight, 1-border)		.tex(minU, maxV).normal(0, 1, 0).endVertex();
-		renderer.pos(1-border, fillHeight, 1-border)	.tex(maxU, maxV).normal(0, 1, 0).endVertex();	
+		renderer.pos(bounds.maxX, fillHeight, bounds.minZ)	.tex(maxU, minV).normal(0, 1, 0).endVertex();
+		renderer.pos(bounds.minX, fillHeight, bounds.minZ)	.tex(minU, minV).normal(0, 1, 0).endVertex();
+		renderer.pos(bounds.minX, fillHeight, bounds.maxZ)	.tex(minU, maxV).normal(0, 1, 0).endVertex();
+		renderer.pos(bounds.maxX, fillHeight, bounds.maxZ)	.tex(maxU, maxV).normal(0, 1, 0).endVertex();
 
 		GL11.glEnable(GL11.GL_BLEND);
 
 		Tessellator.getInstance().draw();
 
 		GL11.glDisable(GL11.GL_BLEND);
-
 	}
 
-	private EnumFacing conveyorGetDirection(IConveyorAwareTE tileEntity) {
+	private EnumFacing getDirection(Object tileEntity) {
 		EnumFacing direction;
 		if (tileEntity instanceof IRotatable) {
 			direction = ((IRotatable) tileEntity).getFacingDirection();
@@ -190,6 +246,19 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 			direction = EnumFacing.SOUTH;
 		}
 		return direction;
+	}
+	
+	private float getRotationDegrees(Object tileEntity) {
+		EnumFacing direction = getDirection(tileEntity);
+		float rotationDegrees = 0;
+		if (direction == EnumFacing.WEST) {
+			rotationDegrees = 270;
+		} else if (direction == EnumFacing.NORTH) {
+			rotationDegrees = 180;
+		} else if (direction == EnumFacing.EAST) {
+			rotationDegrees = 90;
+		}
+		return rotationDegrees;
 	}
 
 	public void renderConveyorItems(IConveyorAwareTE tileEntity, double x, double y, double z) {
@@ -206,16 +275,8 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 				 * Get Rotation
 				 */
 
-				EnumFacing direction = conveyorGetDirection(tileEntity);
-
-				float rotationDegrees = 0;
-				if (direction == EnumFacing.WEST) {
-					rotationDegrees = 270;
-				} else if (direction == EnumFacing.NORTH) {
-					rotationDegrees = 180;
-				} else if (direction == EnumFacing.EAST) {
-					rotationDegrees = 90;
-				}
+				float rotationDegrees = getRotationDegrees(tileEntity);
+				
 
 				TileEntityConveyorProcessor processor = (TileEntityConveyorProcessor) tileEntity;
 				ItemStack processingStack = processor.getStackInSlot(0);

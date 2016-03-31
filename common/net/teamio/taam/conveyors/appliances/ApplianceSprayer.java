@@ -12,9 +12,12 @@ import net.minecraft.block.BlockStainedGlass;
 import net.minecraft.block.BlockStainedGlassPane;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ITickable;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 import net.minecraftforge.oredict.OreDictionary;
@@ -22,15 +25,56 @@ import net.teamio.taam.Config;
 import net.teamio.taam.content.conveyors.ATileEntityAppliance;
 import net.teamio.taam.conveyors.ItemWrapper;
 import net.teamio.taam.conveyors.api.IConveyorApplianceHost;
+import net.teamio.taam.piping.IPipe;
+import net.teamio.taam.piping.IPipeTE;
+import net.teamio.taam.piping.PipeEndFluidHandler;
+import net.teamio.taam.piping.PipeUtil;
 
-public class ApplianceSprayer extends ATileEntityAppliance implements IFluidHandler {
+public class ApplianceSprayer extends ATileEntityAppliance implements IFluidHandler, IPipeTE, ITickable {
 
+	private static final int capacity = 2000;
+	
 	public ApplianceSprayer() {
+		tank = new FluidTank(capacity);
+		pipeEnd = new PipeEndFluidHandler(this, direction.getOpposite(), false);
 	}
+	
+	private FluidTank tank;
+	private PipeEndFluidHandler pipeEnd;
 	
 	static final String[] dyes = { "Black", "Red", "Green", "Brown", "Blue",
 			"Purple", "Cyan", "LightGray", "Gray", "Pink", "Lime", "Yellow",
 			"LightBlue", "Magenta", "Orange", "White" };
+	
+	public FluidTank getTank() {
+		return tank;
+	}
+	
+	@Override
+	public void update() {
+		PipeUtil.processPipes(pipeEnd, worldObj, pos);
+	}
+	
+	@Override
+	protected void readPropertiesFromNBT(NBTTagCompound tag) {
+		super.readPropertiesFromNBT(tag);
+		
+		pipeEnd.setSide(direction.getOpposite());
+		
+		NBTTagCompound tagTank = tag.getCompoundTag("tank");
+		if(tagTank != null) {
+			tank.readFromNBT(tagTank);
+		}
+		
+	}
+	
+	protected void writePropertiesToNBT(NBTTagCompound tag) {
+		super.writePropertiesToNBT(tag);
+		
+		NBTTagCompound tagTank = new NBTTagCompound();
+		tank.writeToNBT(tagTank);
+		tag.setTag("tank", tagTank);
+	};
 	
 	private int getItemPaintType(ItemStack is) {
 		//TODO: Migrate to tanks once ready
@@ -123,41 +167,98 @@ public class ApplianceSprayer extends ATileEntityAppliance implements IFluidHand
         }
         return false;
 	}
-
+	
 	@Override
-	public boolean canFill(EnumFacing from, Fluid fluid) {
-		// TODO: Check if fluid is a matching type
-		return false;
+	public void setFacingDirection(EnumFacing direction) {
+		super.setFacingDirection(direction);
+		
+		pipeEnd.setSide(direction.getOpposite());
+	}
+	
+	/*
+	 * IPipeTE
+	 */
+	
+	@Override
+	public IPipe[] getPipesForSide(EnumFacing side) {
+		if(side == direction.getOpposite()) {
+			return pipeEnd.asPipeArray();
+		} else {
+			return null;
+		}
 	}
 
-	@Override
-	public boolean canDrain(EnumFacing from, Fluid fluid) {
-		// TODO Auto-generated method stub
-		return true;
-	}
-
+	/*
+	 * IFluidHandler implementation
+	 */
+	
 	@Override
 	public int fill(EnumFacing from, FluidStack resource, boolean doFill) {
-		// TODO Auto-generated method stub
-		return 0;
+		if(from != direction.getOpposite()) {
+			return 0;
+		}
+		return tank.fill(resource, doFill);
 	}
 
 	@Override
 	public FluidStack drain(EnumFacing from, FluidStack resource, boolean doDrain) {
-		// TODO Auto-generated method stub
-		return null;
+		if(from != direction.getOpposite()) {
+			return null;
+		}
+		if(tank.getFluid() == null || resource == null) {
+			return null;
+		}
+		if(!tank.getFluid().isFluidEqual(resource)) {
+			return null;
+		}
+		FluidStack drained = tank.drain(resource.amount, doDrain);
+		if(tank.getFluidAmount() == 0) {
+			tank.setFluid(null);
+		}
+		return drained;
 	}
 
 	@Override
 	public FluidStack drain(EnumFacing from, int maxDrain, boolean doDrain) {
-		// TODO Auto-generated method stub
-		return null;
+		if(from != direction.getOpposite()) {
+			return null;
+		}
+		FluidStack drained = tank.drain(maxDrain, doDrain);
+		if(tank.getFluidAmount() == 0) {
+			tank.setFluid(null);
+		}
+		return drained;
+	}
+
+	@Override
+	public boolean canFill(EnumFacing from, Fluid fluid) {
+		if(from != direction.getOpposite()) {
+			return false;
+		}
+		if(fluid == null) {
+			return false;
+		}
+		if(tank.getFluid() == null) {
+			// TODO: Check recipes?
+			return true;
+		} else {
+			return tank.getFluid().getFluid() == fluid;
+		}
+	}
+
+	@Override
+	public boolean canDrain(EnumFacing from, Fluid fluid) {
+		if(from != direction.getOpposite()) {
+			return false;
+		}
+		return true;
 	}
 
 	@Override
 	public FluidTankInfo[] getTankInfo(EnumFacing from) {
-		// TODO Auto-generated method stub
-		return null;
+		return new FluidTankInfo[] { tank.getInfo() };
 	}
+
+	
 
 }

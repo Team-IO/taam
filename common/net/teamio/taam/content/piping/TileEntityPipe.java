@@ -112,11 +112,11 @@ public class TileEntityPipe extends BaseTileEntity implements IPipe, IPipeTE, IT
 					// Fluid handler here, we need a wrapper.
 					if(adjacentFluidHandlers == null) {
 						adjacentFluidHandlers = new PipeEndFluidHandler[6];
-						adjacentFluidHandlers[sideIdx] = new PipeEndFluidHandler(fh, side.getOpposite());
+						adjacentFluidHandlers[sideIdx] = new PipeEndFluidHandler(fh, side.getOpposite(), false);
 					} else {
 						// Not yet known or a different TileEntity, we need a new wrapper.
 						if(adjacentFluidHandlers[sideIdx] == null || adjacentFluidHandlers[sideIdx].getOwner() != te) {
-							adjacentFluidHandlers[sideIdx] = new PipeEndFluidHandler(fh, side.getOpposite());
+							adjacentFluidHandlers[sideIdx] = new PipeEndFluidHandler(fh, side.getOpposite(), false);
 						}
 					}
 					
