@@ -187,5 +187,6 @@ public class TileEntitySensor extends BaseTileEntity implements IRotatable, ITic
 	public void setFacingDirection(EnumFacing direction) {
 		this.direction = direction;
 		setBlockMeta();
+		blockUpdate();
 	}
 }

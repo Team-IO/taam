@@ -12,13 +12,7 @@
         "inventory": [{
             "transform": "forge:default-block"
         }],
-        "facing=east,variant=itembag": [{}],
-        "facing=west,variant=itembag": [{}],
-        "facing=south,variant=itembag": [{}],
-        "facing=north,variant=itembag": [{}],
-        "facing=east,variant=trashcan": [{}],
-        "facing=west,variant=trashcan": [{}],
-        "facing=south,variant=trashcan": [{}],
-        "facing=north,variant=trashcan": [{}]
+        "variant=itembag": [{}],
+        "variant=trashcan": [{}]
     }
 }

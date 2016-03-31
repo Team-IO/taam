@@ -665,6 +665,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 	public void setFacingDirection(EnumFacing direction) {
 		this.direction = direction;
 		updateState();
+		blockUpdate();
 	}
 	
 }

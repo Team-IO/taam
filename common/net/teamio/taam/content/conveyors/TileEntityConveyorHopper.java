@@ -522,6 +522,7 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 	public void setFacingDirection(EnumFacing direction) {
 		this.direction = direction;
 		updateState();
+		blockUpdate();
 	}
 
 	public EnumFacing getNextSlot(int slot) {

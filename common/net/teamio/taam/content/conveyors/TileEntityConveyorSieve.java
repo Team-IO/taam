@@ -308,6 +308,7 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 		if(direction == EnumFacing.UP || direction == EnumFacing.DOWN) {
 			this.direction = EnumFacing.NORTH;
 		}
+		blockUpdate();
 		updateState();
 		worldObj.notifyBlockOfStateChange(pos, blockType);
 		if(blockType != null) {

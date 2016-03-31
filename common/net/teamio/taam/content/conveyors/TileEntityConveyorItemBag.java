@@ -26,7 +26,7 @@ import net.teamio.taam.util.inv.InventoryUtils;
  * @author founderio
  *
  */
-public class TileEntityConveyorItemBag extends ATileEntityAttachable implements IConveyorAwareTE, IInventory, IRotatable, IRenderable {
+public class TileEntityConveyorItemBag extends ATileEntityAttachable implements IConveyorAwareTE, IInventory, IRenderable {
 
 	private InventorySimple inventory;
 	

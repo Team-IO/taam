@@ -48,6 +48,7 @@ public abstract class ATileEntityAppliance extends BaseTileEntity implements ICo
 	public void setFacingDirection(EnumFacing direction) {
 		this.direction = direction;
 		updateState();
+		blockUpdate();
 		BaseBlock.updateBlocksAround(worldObj, pos);
 	}
 
