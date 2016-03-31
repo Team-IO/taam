@@ -14,7 +14,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.teamio.taam.content.IRenderable;
-import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.conveyors.ItemWrapper;
 import net.teamio.taam.conveyors.api.IConveyorAwareTE;
 import net.teamio.taam.util.inv.InventorySimple;

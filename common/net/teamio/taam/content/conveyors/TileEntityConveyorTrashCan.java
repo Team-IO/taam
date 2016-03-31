@@ -15,7 +15,6 @@ import net.minecraft.util.IChatComponent;
 import net.minecraft.world.World;
 import net.teamio.taam.Config;
 import net.teamio.taam.content.IRenderable;
-import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.content.IWorldInteractable;
 import net.teamio.taam.conveyors.ItemWrapper;
 import net.teamio.taam.conveyors.api.IConveyorAwareTE;
