@@ -49,7 +49,10 @@ public class PipeInfo {
 			content.ensureCapacity(list.tagCount());
 			for (int i = 0; i < list.tagCount(); i++) {
 				NBTTagCompound fluidTag = list.getCompoundTagAt(i);
-				content.add(FluidStack.loadFluidStackFromNBT(fluidTag));
+				FluidStack stack = FluidStack.loadFluidStackFromNBT(fluidTag);
+				if(stack != null) {
+					content.add(stack);
+				}
 			}
 		}
 		content.trimToSize();
@@ -59,6 +62,9 @@ public class PipeInfo {
 	private void recalculateFillLevel() {
 		fillLevel = 0;
 		for (FluidStack stack : content) {
+			if(stack == null) {
+				continue;
+			}
 			fillLevel += stack.amount;
 		}
 	}
