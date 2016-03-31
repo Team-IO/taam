@@ -1,34 +1,44 @@
+# Idea
 /taam.iml
 /taam.ipr
 /taam.iws
 /.idea
-.DS_Store
 
+#Eclipse
 /bin
+/*.launch
+/.classpath
+/.metadata
+/.pmd
+/.project
+/.settings
+
+# Stuff
+.DS_Store
+/.gradle
+
+# Runtime files
+/asm
+/build
 /config
 /crash-reports
 /dumps
 /logs
 /mods
 /resourcepacks
-/screenshots
 /saves
+/screenshots
 /options.txt
-/build
-/asm
-/usernamecache.json
+/servers.dat
 /usercache.json
+/usernamecache.json
 
-/.pmd
-/.classpath
-/.project
-/.gradle
-/.metadata
-/.settings
-/CameraStudio_log.*
+# Other tools
+
 #Nano backup file
 /*.save
-/*.launch
 
 #Blender Backup Files
 *.blend1
+
+/CameraStudio_log.*
