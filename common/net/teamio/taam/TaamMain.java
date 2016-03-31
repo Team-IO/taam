@@ -68,6 +68,11 @@ import net.teamio.taam.gui.GuiHandler;
 
 @Mod(modid = Taam.MOD_ID, name = Taam.MOD_NAME, version = Taam.MOD_VERSION, guiFactory = Taam.GUI_FACTORY_CLASS)
 public class TaamMain {
+
+	static {
+		FluidRegistry.enableUniversalBucket();
+	}
+
 	@Instance(Taam.MOD_ID)
 	public static TaamMain instance;
 
@@ -231,8 +236,6 @@ public class TaamMain {
 		MinecraftForge.EVENT_BUS.register(worldgen);
 
 		GameRegistry.registerWorldGenerator(worldgen, 2);
-		
-		FluidRegistry.enableUniversalBucket();
 
 		boolean registerFluidBlocks = false;
 
