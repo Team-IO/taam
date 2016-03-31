@@ -98,9 +98,11 @@ public class TileEntityMixer extends BaseTileEntity implements IRotatable, IConv
 			matchingRecipes = null;
 			return null;
 		}
-		if(lastInputFluid == null) {
+		if(lastInputFluid == null || !lastInputFluid.isFluidEqual(inside)) {
 			lastInputFluid = inside;
 			matchingRecipes = ProcessingRegistry.getRecipes(ProcessingRegistry.MIXER, lastInputFluid);
+		}
+		if(matchingRecipes != null) {
 			for(IProcessingRecipeFluidBased recipe : matchingRecipes) {
 				if(recipe.inputMatches(stack)) {
 					return recipe;
@@ -166,7 +168,6 @@ public class TileEntityMixer extends BaseTileEntity implements IRotatable, IConv
 		 */
 		
 		backlog = outputFluid.copy();
-		Log.debug("Mixer Produced {}", backlog);
 		
 		return recipe.getInput().stackSize;
 	}
