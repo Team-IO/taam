@@ -8,6 +8,8 @@ import com.google.common.base.Function;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.entity.RenderItem;
@@ -266,6 +268,12 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		GL11.glPushMatrix();
 		GL11.glTranslated(x, y, z);
 
+		RenderHelper.enableStandardItemLighting();
+		GlStateManager.enableRescaleNormal();
+		GlStateManager.enableBlend();
+		GlStateManager.enableAlpha();
+		GlStateManager.color(1, 1, 1, 1);
+
 		if (tileEntity != null) {
 
 			bindTexture(TextureMap.locationBlocksTexture);
@@ -352,6 +360,8 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 				}
 			}
 		}
+
+		RenderHelper.disableStandardItemLighting();
 
 		GL11.glPopMatrix();
 	}
