@@ -1,4 +1,4 @@
-package net.teamio.taam.conveyors.api;
+package net.teamio.taam.recipes;
 
 import net.minecraft.item.ItemStack;
 

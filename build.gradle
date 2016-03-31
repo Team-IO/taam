@@ -41,7 +41,7 @@ minecraft {
     version = "${config.mc_version}-${config.forge_version}-${config.mc_version}"
     runDir = "."
     replace "@VERSION@", project.version
-    mappings = "snapshot_20160329"
+    mappings = "${config.forge_mappings}"
 }
 
 sourceSets {
@@ -75,15 +75,15 @@ dependencies {
 jar {
 	// Exclude Gimp files
 	exclude '**/*.xcf'
-	
+
 	// Exclude Audacity Files
 	exclude '**/*_data/*'
 	exclude '**/*.aup'
-	
+
 	// Exclude Blender Files
 	exclude '**/*.blend'
 	exclude '**/*.blend?'
-	
+
 	// Exclude .svg files
 	exclude '**/*.svg'
 }
@@ -93,7 +93,7 @@ processResources
     // this will ensure that this task is redone when the versions change.
     inputs.property "version", project.version
     inputs.property "config.mc_version", project.minecraft.version
-	
+
     // Replace properties in info files
     from(sourceSets.main.resources.srcDirs) {
         include '*.info'

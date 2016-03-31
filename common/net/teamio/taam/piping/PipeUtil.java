@@ -5,6 +5,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fluids.FluidStack;
+import net.teamio.taam.Log;
 
 public final class PipeUtil {
 	private PipeUtil() {
@@ -110,14 +111,28 @@ public final class PipeUtil {
 
 			int share = (int) Math.ceil(totalAmount * factor);
 			for (FluidStack fs : pipe.getFluids()) {
-				// TODO: Simulate Drain.
 				FluidStack transfer = fs.copy();
 				transfer.amount = Math.min(transfer.amount, share);
 
-				int transferred = connected[i].addFluid(transfer);
-				// TODO: Drain.
-				fs.amount -= transferred;
-				share -= transferred;
+				// "Simulate" drain
+				int simuDrain = pipe.getFluidAmount(transfer);
+				// Limit to what we can actually pull
+				if(simuDrain < transfer.amount) {
+					transfer.amount = simuDrain;
+				}
+				int actualFill = connected[i].addFluid(transfer);
+				// Limit to what was actually pushed into the next pipe
+				if(actualFill < simuDrain) {
+					transfer.amount = actualFill;
+				}
+				// Remove fluid from previous pipe
+				int actualDrain = pipe.removeFluid(transfer);
+				if(actualDrain != actualFill) {
+					// This should not happen.
+					Log.error("Transferring from pipe {} to pipe {} yielded inconsistent results (actual drain != actual fill). Simulated drain: {} Fill: {} Actual Drain: {}. Fluid was potentially lost or duplicated. This is an issue.",
+							pipe, connected[i], simuDrain, actualFill, actualDrain);
+				}
+				share -= actualFill;
 				if (share <= 0) {
 					break;
 				}

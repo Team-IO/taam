@@ -6,6 +6,7 @@ import com.google.common.collect.Lists;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.ITickable;
 import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IRenderable;
@@ -26,12 +27,15 @@ public class TileEntityPump extends BaseTileEntity implements IPipeTE, ITickable
 	
 	public static final List<String> visibleParts = Lists.newArrayList("Baseplate_pmdl", "Pump_pumdl");
 	
+	private static final int capacity = 50;
+	private static final int pressure = 50;
+	
 	public TileEntityPump() {
-		info = new PipeInfo(50);
+		info = new PipeInfo(capacity);
 		pipeEndOut = new PipeEndSharedDistinct(direction, info, true);
 		pipeEndIn = new PipeEndSharedDistinct(direction.getOpposite(), info, true);
-		pipeEndOut.setPressure(50);
-		pipeEndIn.setSuction(50);
+		pipeEndOut.setPressure(pressure);
+		pipeEndIn.setSuction(pressure);
 	}
 	
 	@Override
@@ -57,6 +61,8 @@ public class TileEntityPump extends BaseTileEntity implements IPipeTE, ITickable
 		if(direction == EnumFacing.UP || direction == EnumFacing.DOWN) {
 			direction = EnumFacing.NORTH;
 		}
+		pipeEndOut.setSide(direction);
+		pipeEndIn.setSide(direction.getOpposite());
 		info.readFromNBT(tag);
 	}
 
@@ -67,9 +73,9 @@ public class TileEntityPump extends BaseTileEntity implements IPipeTE, ITickable
 	@Override
 	public IPipe[] getPipesForSide(EnumFacing side) {
 		if (side == direction) {
-			return new IPipe[] { pipeEndOut };
+			return pipeEndOut.asPipeArray();
 		} else if (side == direction.getOpposite()) {
-			return new IPipe[] { pipeEndIn };
+			return pipeEndIn.asPipeArray();
 		} else {
 			return null;
 		}
@@ -91,6 +97,9 @@ public class TileEntityPump extends BaseTileEntity implements IPipeTE, ITickable
 
 	@Override
 	public void setFacingDirection(EnumFacing direction) {
+		if(direction.getAxis() == Axis.Y) {
+			return;
+		}
 		this.direction = direction;
 		
 		pipeEndOut.setSide(direction);

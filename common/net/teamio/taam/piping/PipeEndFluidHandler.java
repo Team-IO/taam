@@ -27,6 +27,10 @@ public class PipeEndFluidHandler implements IPipe {
 		this.side = side;
 	}
 	
+	public IFluidHandler getOwner() {
+		return owner;
+	}
+	
 	@Override
 	public int getCapacity() {
 		FluidTankInfo[] tankInfo = owner.getTankInfo(side);
@@ -43,6 +47,24 @@ public class PipeEndFluidHandler implements IPipe {
 			return 0;
 		}
 		return owner.fill(side, stack, true);
+	}
+	
+	@Override
+	public int removeFluid(FluidStack like) {
+		FluidStack drained = owner.drain(side, like, true);
+		if(drained != null) {
+			return drained.amount;
+		}
+		return 0;
+	}
+	
+	@Override
+	public int getFluidAmount(FluidStack like) {
+		FluidStack drained = owner.drain(side, like, false);
+		if(drained != null) {
+			return drained.amount;
+		}
+		return 0;
 	}
 	
 	@Override

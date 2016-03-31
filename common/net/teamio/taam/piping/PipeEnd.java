@@ -8,6 +8,13 @@ import net.minecraftforge.fluids.FluidStack;
 
 public class PipeEnd implements IPipe {
 
+	/**
+	 * One array per PipeEnd, used to optimize the
+	 * {@link IPipeTE#getPipesForSide(EnumFacing)} as usually there is only one
+	 * pipe end per side.
+	 */
+	private final IPipe[] pipeArray;
+	
 	protected EnumFacing side;
 	public final PipeInfo info;
 	private final boolean active;
@@ -16,6 +23,7 @@ public class PipeEnd implements IPipe {
 		this.side = side;
 		this.info = info;
 		this.active = active;
+		pipeArray = new IPipe[] { this };
 	}
 
 	public PipeEnd(EnumFacing side, int capacity, boolean active) {
@@ -36,6 +44,11 @@ public class PipeEnd implements IPipe {
 
 	public void readFromNBT(NBTTagCompound tag) {
 		info.readFromNBT(tag);
+	}
+	
+	public IPipe[] asPipeArray() {
+		pipeArray[0] = this;
+		return pipeArray;
 	}
 
 	/*
@@ -71,10 +84,20 @@ public class PipeEnd implements IPipe {
 	public int addFluid(FluidStack stack) {
 		return info.addFluid(stack);
 	}
+	
+	@Override
+	public int removeFluid(FluidStack like) {
+		return info.removeFluid(like);
+	}
+	
+	@Override
+	public int getFluidAmount(FluidStack like) {
+		return info.getFluidAmount(like);
+	}
 
 	@Override
 	public FluidStack[] getFluids() {
-		return info.content;
+		return info.getFluids();
 	}
 
 	@Override

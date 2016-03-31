@@ -2,6 +2,8 @@ package net.teamio.taam.util;
 
 import java.util.Random;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -12,6 +14,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.oredict.OreDictionary;
 import net.teamio.taam.content.IRedstoneControlled;
 import net.teamio.taam.conveyors.api.IConveyorAwareTE;
 import net.teamio.taam.util.inv.InventoryUtils;
@@ -42,7 +45,7 @@ public final class TaamUtil {
 		block.dropBlockAsItem(world, pos, blockState, 0);
 		world.setBlockToAir(pos);
 	}
-	
+
 	public static void breakBlockToInventory(EntityPlayer player, World world, BlockPos pos) {
 		IBlockState blockState = world.getBlockState(pos);
 		breakBlockToInventory(player, world, pos, blockState);
@@ -55,7 +58,7 @@ public final class TaamUtil {
 		}
 		world.setBlockToAir(pos);
 	}
-	
+
 	public static ItemStack getItemStackFromWorld(World world, BlockPos pos, IBlockState blockState) {
 		Block block = blockState.getBlock();
         Item item = Item.getItemFromBlock(block);
@@ -97,6 +100,30 @@ public final class TaamUtil {
 		TileEntity ent = world.getTileEntity(pos.offset(dir));
 		return ent instanceof IConveyorAwareTE;
 	}
-	
-	
+
+	/**
+	 * Checks if actualInput is the same item as inputDefinition (respecting
+	 * OreDictionary) or, if inputDefinition is null, if actualInput is
+	 * registered with the ore dictionary matching inoutOreDictName.
+	 *
+	 * @param inputDefinition
+	 * @param inputOreDictName
+	 * @param actualInput
+	 * @return
+	 */
+	public static boolean isInputMatching(ItemStack inputDefinition, String inputOreDictName, ItemStack actualInput) {
+		if(actualInput == null) {
+			return inputDefinition != null && inputOreDictName != null;
+		} else {
+			if(inputDefinition == null) {
+				int[] oreIDs = OreDictionary.getOreIDs(actualInput);
+				int myID = OreDictionary.getOreID(inputOreDictName);
+				return ArrayUtils.contains(oreIDs, myID);
+			} else {
+				return inputDefinition.isItemEqual(actualInput) || OreDictionary.itemMatches(actualInput, inputDefinition, true);
+			}
+		}
+	}
+
+
 }

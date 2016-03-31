@@ -3,14 +3,17 @@ package net.teamio.taam;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 import net.teamio.taam.Taam.BLOCK_ORE_META;
-import net.teamio.taam.conveyors.api.ChanceBasedRecipe;
-import net.teamio.taam.conveyors.api.ChancedOutput;
-import net.teamio.taam.conveyors.api.ProcessingRegistry;
+import net.teamio.taam.recipes.ChanceBasedRecipe;
+import net.teamio.taam.recipes.ChancedOutput;
+import net.teamio.taam.recipes.MixerRecipe;
+import net.teamio.taam.recipes.ProcessingRegistry;
 
 public class TaamRecipes {
 
@@ -203,6 +206,18 @@ public class TaamRecipes {
 				));
 		}
 		
+		/*
+		 * Mixer
+		 */
+		// Water + dye -> fluid dye
+		for(int dyeMeta = 0; dyeMeta < 16; dyeMeta++) {
+			ProcessingRegistry.registerRecipe(ProcessingRegistry.MIXER,
+					new MixerRecipe(
+							new ItemStack(Items.dye, 1, dyeMeta),
+							new FluidStack(FluidRegistry.WATER, 10),
+							new FluidStack(TaamMain.fluidsDye[dyeMeta], 10))
+					);
+		}
 		
 	}
 	public static void addSmeltingRecipes(){
