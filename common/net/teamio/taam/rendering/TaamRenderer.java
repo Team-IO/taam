@@ -175,8 +175,13 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		renderer.pos(border, fillHeight, border)		.tex(minU, minV).normal(0, 1, 0).endVertex();
 		renderer.pos(border, fillHeight, 1-border)		.tex(minU, maxV).normal(0, 1, 0).endVertex();
 		renderer.pos(1-border, fillHeight, 1-border)	.tex(maxU, maxV).normal(0, 1, 0).endVertex();	
+
+		GL11.glEnable(GL11.GL_BLEND);
+		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ALPHA);
 		
 		Tessellator.getInstance().draw();
+
+		GL11.glDisable(GL11.GL_BLEND);
 		
 	}
 	
