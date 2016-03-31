@@ -25,6 +25,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ModelBakeEvent;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.IFlexibleBakedModel;
 import net.minecraftforge.client.model.IPerspectiveAwareModel;
 import net.minecraftforge.client.model.ISmartBlockModel;
@@ -34,9 +35,12 @@ import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.client.model.obj.OBJModel;
 import net.minecraftforge.client.model.obj.OBJModel.OBJBakedModel;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.teamio.taam.content.IRenderableItem;
 import net.teamio.taam.content.common.TileEntityChute;
 import net.teamio.taam.content.common.TileEntityCreativeCache;
@@ -60,6 +64,7 @@ public class TaamClientProxy extends TaamCommonProxy {
 
 	@Override
 	public void registerRenderStuff() {
+		
 		OBJLoader.instance.addDomain("taam");
 
 		taamRenderer = new TaamRenderer();
@@ -269,6 +274,22 @@ public class TaamClientProxy extends TaamCommonProxy {
 	 */
 	private void registerItemDefault(ItemModelMesher modelMesher, Item item, int meta, String name) {
 		modelMesher.register(item, meta, new ModelResourceLocation(name, "inventory"));
+	}
+	
+	@SubscribeEvent
+	@SideOnly(Side.CLIENT)
+    public void textureStitchPre(TextureStitchEvent.Pre event) {
+		for(Fluid fluid : TaamMain.fluidsDye) {
+			textureStitchPre(fluid, event);
+		}
+    }
+	
+	private void textureStitchPre(Fluid fluid, TextureStitchEvent.Pre event) {
+        TextureAtlasSprite still = event.map.getTextureExtry(fluid.getStill().toString());
+        if (still == null) event.map.registerSprite(fluid.getStill());
+
+        TextureAtlasSprite flow = event.map.getTextureExtry(fluid.getFlowing().toString());
+        if (flow == null) event.map.registerSprite(fluid.getFlowing());
 	}
 	
 	@SubscribeEvent

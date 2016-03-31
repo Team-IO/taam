@@ -3,6 +3,7 @@ package net.teamio.taam;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -11,6 +12,8 @@ import net.minecraft.item.ItemMultiTexture;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fluids.BlockFluidClassic;
+import net.minecraftforge.fluids.BlockFluidFinite;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -96,6 +99,7 @@ public class TaamMain {
 	public static BlockPipe blockPipe;
 	
 	public static FluidDye[] fluidsDye;
+	public static BlockFluidClassic[] blocksFluidDye;
 	
 	public static DamageSource ds_processed = new DamageSource("taam.processed").setDamageBypassesArmor();
 	public static DamageSource ds_shredded = new DamageSource("taam.shredded").setDamageBypassesArmor();
@@ -222,11 +226,27 @@ public class TaamMain {
 		
 		GameRegistry.registerWorldGenerator(worldgen, 2);
 		
+		FluidRegistry.enableUniversalBucket();
+		
+		boolean registerFluidBlocks = false;
+		
 		Enum<?>[] fluidsDyeValues = Taam.FLUID_DYE_META.values();
 		fluidsDye = new FluidDye[fluidsDyeValues.length];
+		blocksFluidDye = new BlockFluidClassic[fluidsDyeValues.length];
 		for(int i = 0; i < fluidsDyeValues.length; i++) {
 			fluidsDye[i] = new FluidDye(Taam.FLUID_DYE + fluidsDyeValues[i].name());
 			FluidRegistry.registerFluid(fluidsDye[i]);
+			FluidRegistry.addBucketForFluid(fluidsDye[i]);
+			
+			if(registerFluidBlocks) {
+				BlockFluidClassic fluidBlock = new BlockFluidClassic(fluidsDye[i], Material.water);
+				String blockName = "fluid.dye." + fluidsDyeValues[i].name();
+				GameRegistry.registerBlock(fluidBlock, blockName);
+				fluidBlock.setUnlocalizedName(blockName);
+				fluidBlock.setCreativeTab(creativeTab);
+				blocksFluidDye[i] = fluidBlock;
+			}
+			
 		}
 		
 		network = NetworkRegistry.INSTANCE.newSimpleChannel(Taam.CHANNEL_NAME);

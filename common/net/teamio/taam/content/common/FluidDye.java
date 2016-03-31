@@ -6,9 +6,13 @@ import net.minecraftforge.fluids.Fluid;
 public class FluidDye extends Fluid {
 
 	public FluidDye(String fluidName) {
-		super(fluidName, new ResourceLocation("taam", "dye"), new ResourceLocation("taam", "dye"));//TODO: ResourceLocations
+		super(fluidName, getResLoc(fluidName), getResLoc(fluidName));
 		setViscosity(400);
 		setDensity(1300);
+	}
+	
+	private static ResourceLocation getResLoc(String fluidName) {
+		return new ResourceLocation("taam", "blocks/" + fluidName);
 	}
 
 }
