@@ -18,8 +18,8 @@ import net.teamio.taam.util.TaamUtil;
 
 public class ItemAttachable extends ItemMultiTexture implements IRenderableItem {
 
-	public ItemAttachable(Block blockA, Block blockB, String[] names) {
-		super(blockA, blockB, names);
+	public ItemAttachable(Block block, String[] names) {
+		super(block, block, names);
 	}
 
 	@Override

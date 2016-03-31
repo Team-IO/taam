@@ -57,6 +57,7 @@ import net.teamio.taam.content.conveyors.TileEntityConveyorSieve;
 import net.teamio.taam.content.conveyors.TileEntityConveyorTrashCan;
 import net.teamio.taam.content.piping.BlockPipe;
 import net.teamio.taam.content.piping.BlockPipeMachines;
+import net.teamio.taam.content.piping.ItemPipeMachines;
 import net.teamio.taam.content.piping.TileEntityCreativeWell;
 import net.teamio.taam.content.piping.TileEntityMixer;
 import net.teamio.taam.content.piping.TileEntityPipe;
@@ -160,13 +161,13 @@ public class TaamMain {
 		registerItem(new ItemMultiTexture(blockMachines, blockMachines, Taam.BLOCK_MACHINES_META.valuesAsString()), Taam.BLOCK_MACHINES);
 
 		registerBlock(blockProductionLine = new BlockProductionLine(), null, Taam.BLOCK_PRODUCTIONLINE);
-		registerItem(new ItemProductionLine(blockProductionLine, blockProductionLine, Taam.BLOCK_PRODUCTIONLINE_META.valuesAsString()), Taam.BLOCK_PRODUCTIONLINE);
+		registerItem(new ItemProductionLine(blockProductionLine, Taam.BLOCK_PRODUCTIONLINE_META.valuesAsString()), Taam.BLOCK_PRODUCTIONLINE);
 
 		registerBlock(blockProductionLineAttachable = new BlockProductionLineAttachable(), null, Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE);
-		registerItem(new ItemAttachable(blockProductionLineAttachable, blockProductionLineAttachable, Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META.valuesAsString()), Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE);
+		registerItem(new ItemAttachable(blockProductionLineAttachable, Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META.valuesAsString()), Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE);
 
 		registerBlock(blockProductionLineAppliance = new BlockProductionLineAppliance(), null, Taam.BLOCK_PRODUCTIONLINE_APPLIANCE);
-		registerItem(new ItemAppliance(blockProductionLineAppliance, blockProductionLineAppliance, Taam.BLOCK_PRODUCTIONLINE_APPLIANCE_META.valuesAsString()), Taam.BLOCK_PRODUCTIONLINE_APPLIANCE);
+		registerItem(new ItemAppliance(blockProductionLineAppliance, Taam.BLOCK_PRODUCTIONLINE_APPLIANCE_META.valuesAsString()), Taam.BLOCK_PRODUCTIONLINE_APPLIANCE);
 
 		registerBlock(blockOre = new BlockOre(), null, Taam.BLOCK_ORE);
 		registerItem(new ItemMultiTexture(blockOre, blockOre, Taam.BLOCK_ORE_META.valuesAsString()), Taam.BLOCK_ORE);
@@ -209,7 +210,7 @@ public class TaamMain {
 				}), Taam.ITEM_DUST);
 
 		registerBlock(blockPipeMachines = new BlockPipeMachines(), null, Taam.BLOCK_PIPEMACHINES);
-		registerItem(new ItemMultiTexture(blockPipeMachines, blockPipeMachines, Taam.BLOCK_PIPEMACHINES_META.valuesAsString()), Taam.BLOCK_PIPEMACHINES);
+		registerItem(new ItemPipeMachines(blockPipeMachines, Taam.BLOCK_PIPEMACHINES_META.valuesAsString()), Taam.BLOCK_PIPEMACHINES);
 
 		registerBlock(blockPipe = new BlockPipe(), ItemBlock.class, Taam.BLOCK_PIPE);
 

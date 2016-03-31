@@ -21,8 +21,8 @@ import net.teamio.taam.util.TaamUtil;
 
 public class ItemAppliance extends ItemMultiTexture {
 
-	public ItemAppliance(Block blockA, Block blockB, String[] names) {
-		super(blockA, blockB, names);
+	public ItemAppliance(Block block, String[] names) {
+		super(block, block, names);
 	}
 
 	@Override
