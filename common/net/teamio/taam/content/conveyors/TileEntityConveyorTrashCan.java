@@ -12,19 +12,21 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IChatComponent;
+import net.minecraft.world.World;
 import net.teamio.taam.Config;
 import net.teamio.taam.content.IRenderable;
 import net.teamio.taam.content.IRotatable;
+import net.teamio.taam.content.IWorldInteractable;
 import net.teamio.taam.conveyors.ItemWrapper;
 import net.teamio.taam.conveyors.api.IConveyorAwareTE;
 
 /**
  * Conveyor Trash Can.
  * Non-Ticking TE
- * @author founderio
+ * @author Oliver Kahrmann
  *
  */
-public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements IConveyorAwareTE, IInventory, IRotatable, IRenderable {
+public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements IConveyorAwareTE, IInventory, IRotatable, IRenderable, IWorldInteractable {
 
 	public float fillLevel;
 	public static final List<String> parts = Collections.unmodifiableList(Lists.newArrayList("BagTrash_btmdl"));
@@ -59,7 +61,22 @@ public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements
 			return parts;
 		}
 	}
+
+	/*
+	 * IWorldInteractable implementation
+	 */
 	
+	@Override
+	public boolean onBlockActivated(World world, EntityPlayer player, boolean hasWrench, EnumFacing side, float hitX,
+			float hitY, float hitZ) {
+		clearOut();
+		return true;
+	}
+
+	@Override
+	public boolean onBlockHit(World world, EntityPlayer player, boolean hasWrench) {
+		return false;
+	}
 	
 	/*
 	 * IInventory implementation
