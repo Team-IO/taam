@@ -186,6 +186,10 @@ public final class ProcessingRegistry {
 		
 		IProcessingRecipeFluidBased[] matches = recipes.get(input.getFluid());
 
+		if(matches == null) {
+			return null;
+		}
+		
 		IProcessingRecipeFluidBased[] actualMatches = new IProcessingRecipeFluidBased[matches.length];
 		int idx = 0;
 		

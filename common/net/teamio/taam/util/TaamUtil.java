@@ -126,7 +126,7 @@ public final class TaamUtil {
 				int myID = OreDictionary.getOreID(inputOreDictName);
 				return ArrayUtils.contains(oreIDs, myID);
 			} else {
-				return inputDefinition.isItemEqual(actualInput) || OreDictionary.itemMatches(actualInput, inputDefinition, true);
+				return inputDefinition.isItemEqual(actualInput) || OreDictionary.itemMatches(inputDefinition, actualInput, false);
 			}
 		}
 	}

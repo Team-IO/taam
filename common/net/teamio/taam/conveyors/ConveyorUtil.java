@@ -333,9 +333,6 @@ public class ConveyorUtil {
 			if(slotObject.itemStack.stackSize <= 0) {
 				slotObject.itemStack = null;
 	
-				// Reset processing state, so next item starts "fresh"
-				slotObject.processing = 0;
-				
 				// Stack moved completely
 				return true;
 			}
@@ -354,9 +351,6 @@ public class ConveyorUtil {
 			
 			slotObject.itemStack = null;
 	
-			// Reset processing state, so next item starts "fresh"
-			slotObject.processing = 0;
-			
 			// Stack moved completely
 			return true;
 		}
@@ -425,6 +419,10 @@ public class ConveyorUtil {
 						needsUpdate = true;
 					}
 				}
+			}
+			
+			if(wrapper.isBlocked()) {
+				continue;
 			}
 			
 			/*
@@ -497,7 +495,7 @@ public class ConveyorUtil {
 			}
 			
 			// Check transition to next slot
-			if(!wrapper.isBlocked() && (nextSlotFree || nextSlotMovable)) {
+			if(nextSlotFree || nextSlotMovable) {
 				if(wrapper.movementProgress == speedsteps && nextSlotFree) {
 					if(slotWrapped && (nextBlock == null || !nextBlock.isSlotAvailable(nextSlot))) {
 						// No next block, drop it.
