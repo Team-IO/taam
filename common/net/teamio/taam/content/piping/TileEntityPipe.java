@@ -27,7 +27,7 @@ public class TileEntityPipe extends BaseTileEntity implements IPipe, IPipeTE, IT
 	private final PipeInfo info;
 
 	/**
-	 * ThreadLocal storage for the list of visible parts
+	 * ThreadLocal storage for the list of visible parts (required due to some concurrency issues, See issue #194)
 	 * TODO: central location for one list? Not one per entity type.. Adjust getVisibleParts
 	 */
 	private static final ThreadLocal<List<String>> visibleParts = ThreadLocal.withInitial(new Supplier<List<String>>() {
