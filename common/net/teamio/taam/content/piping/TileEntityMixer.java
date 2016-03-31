@@ -26,6 +26,11 @@ public class TileEntityMixer extends BaseTileEntity implements IRotatable, IConv
 	private PipeEndRestricted pipeEndIn;
 	private PipeEnd pipeEndOut;
 	
+	private FluidStack backlog;
+
+	private FluidStack lastInputFluid;
+	private IProcessingRecipeFluidBased[] matchingRecipes;
+	
 	private static final int capacity = 50;
 	
 	public TileEntityMixer() {
@@ -65,9 +70,6 @@ public class TileEntityMixer extends BaseTileEntity implements IRotatable, IConv
 			pipeEndOut.readFromNBT(tagOut);
 		}
 	}
-
-	private FluidStack lastInputFluid;
-	private IProcessingRecipeFluidBased[] matchingRecipes;
 	
 	@Override
 	public void update() {
@@ -111,8 +113,6 @@ public class TileEntityMixer extends BaseTileEntity implements IRotatable, IConv
 		}
 		return null;
 	}
-	
-	private FluidStack backlog;
 	
 	/**
 	 * Processes the item by consuming input fluid and generating output fluid if there is space in the output pipe end.
