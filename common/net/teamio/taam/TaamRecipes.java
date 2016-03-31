@@ -209,12 +209,15 @@ public class TaamRecipes {
 		/*
 		 * Mixer
 		 */
-		ProcessingRegistry.registerRecipe(ProcessingRegistry.MIXER,
-				new MixerRecipe(
-						new ItemStack(Items.dye, 1, 0),
-						new FluidStack(FluidRegistry.WATER, 10),
-						new FluidStack(TaamMain.fluidsDye[0], 10))
-				);
+		// Water + dye -> fluid dye
+		for(int dyeMeta = 0; dyeMeta < 16; dyeMeta++) {
+			ProcessingRegistry.registerRecipe(ProcessingRegistry.MIXER,
+					new MixerRecipe(
+							new ItemStack(Items.dye, 1, dyeMeta),
+							new FluidStack(FluidRegistry.WATER, 10),
+							new FluidStack(TaamMain.fluidsDye[dyeMeta], 10))
+					);
+		}
 		
 	}
 	public static void addSmeltingRecipes(){

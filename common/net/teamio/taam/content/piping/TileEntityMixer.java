@@ -287,5 +287,4 @@ public class TileEntityMixer extends BaseTileEntity implements IRotatable, IConv
 	public double getInsertMinY() {
 		return .4f;
 	}
-
 }
