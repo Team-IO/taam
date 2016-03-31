@@ -439,6 +439,9 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	
 	@Override
 	public List<IConveyorAppliance> getAppliances() {
+		if(applianceCache == null) {
+			updateApplianceCache();
+		}
 		return applianceCache;
 	}
 	
