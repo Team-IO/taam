@@ -29,7 +29,6 @@ public class TileEntityCreativeWell extends BaseTileEntity implements IFluidHand
 	private static final int capacity = 50; 
 	
 	public TileEntityCreativeWell() {
-		fluid = new FluidStack(FluidRegistry.WATER, 50);
 		pipeEnds = new PipeEnd[6];
 		for (EnumFacing side : EnumFacing.VALUES) {
 			int index = side.ordinal();
