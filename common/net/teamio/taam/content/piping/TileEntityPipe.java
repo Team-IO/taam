@@ -3,6 +3,7 @@ package net.teamio.taam.content.piping;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Supplier;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -25,7 +26,16 @@ public class TileEntityPipe extends BaseTileEntity implements IPipe, IPipeTE, IT
 
 	private final PipeInfo info;
 
-	private static final List<String> visibleParts = new ArrayList<String>(7);
+	/**
+	 * ThreadLocal storage for the list of visible parts
+	 * TODO: central location for one list? Not one per entity type.. Adjust getVisibleParts
+	 */
+	private static final ThreadLocal<List<String>> visibleParts = ThreadLocal.withInitial(new Supplier<List<String>>() {
+		@Override
+		public List<String> get() {
+			return new ArrayList<String>(7);
+		}
+	});
 
 	/**
 	 * Bitmap containing the surrounding pipes Runtime-only, required for
@@ -44,8 +54,9 @@ public class TileEntityPipe extends BaseTileEntity implements IPipe, IPipeTE, IT
 
 	@Override
 	public List<String> getVisibleParts() {
-		// Visible parts list is re-used, as it is only used once for updating
-		// an OBJState anyways.
+		List<String> visibleParts = TileEntityPipe.visibleParts.get();
+		
+		// Visible parts list is re-used to reduce object creation
 		visibleParts.clear();
 		visibleParts.add("Center_pcmdl");
 		if (isSideConnected(EnumFacing.EAST))

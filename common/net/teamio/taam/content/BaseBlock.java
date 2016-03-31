@@ -201,6 +201,8 @@ public abstract class BaseBlock extends Block {
 		return state;
 	}
 	
+	private static List<String> ALL = Lists.newArrayList(OBJModel.Group.ALL);
+	
 	@Override
 	public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
 		List<String> visibleParts = null;
@@ -213,7 +215,7 @@ public abstract class BaseBlock extends Block {
 			visibleParts = ((IRenderable) te).getVisibleParts();
 		}
 		if(visibleParts == null) {
-			visibleParts = Lists.newArrayList(OBJModel.Group.ALL);
+			visibleParts = ALL;
 		}
 		
 		EnumFacing facing = EnumFacing.NORTH;
