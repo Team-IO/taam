@@ -26,7 +26,14 @@ public class TileEntityPipe extends BaseTileEntity implements IPipe, IPipeTE, IT
 
 	private static final List<String> visibleParts = new ArrayList<String>(7);
 
-	private int adjacentPipes;
+	/**
+	 * Bitmap containing the surrounding pipes Runtime-only, required for
+	 * rendering. This is updated in the {@link #renderUpdate()} method, called
+	 * from
+	 * {@link net.minecraft.block.Block#getActualState(net.minecraft.block.state.IBlockState, IBlockAccess, BlockPos)}
+	 * just before rendering.
+	 */
+	private byte adjacentPipes;
 	
 	private PipeEndFluidHandler[] adjacentFluidHandlers;
 
@@ -36,6 +43,8 @@ public class TileEntityPipe extends BaseTileEntity implements IPipe, IPipeTE, IT
 
 	@Override
 	public List<String> getVisibleParts() {
+		// Visible parts list is re-used, as it is only used once for updating
+		// an OBJState anyways.
 		visibleParts.clear();
 		visibleParts.add("Center_pcmdl");
 		if (isSideConnected(EnumFacing.EAST))
