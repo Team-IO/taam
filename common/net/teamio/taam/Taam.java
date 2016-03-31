@@ -22,6 +22,7 @@ public final class Taam {
 	public static final String BLOCK_MACHINES = "machines";
 	public static final String BLOCK_PRODUCTIONLINE = "productionline";
 	public static final String BLOCK_PRODUCTIONLINE_ATTACHABLE = "productionline_attachable";
+	public static final String BLOCK_PRODUCTIONLINE_APPLIANCE = "productionline_appliance";
 	public static final String BLOCK_LOGISTICS = "logistics";
 	public static final String BLOCK_SLIDINGDOOR = "slidingdoor";
 	public static final String BLOCK_SENSOR_MOTION = "sensor.motion";
@@ -169,6 +170,24 @@ public final class Taam {
 		}
 	};
 	
+	public static enum BLOCK_PRODUCTIONLINE_APPLIANCE_META implements IStringSerializable {
+		sprayer,
+		;
+		public static String[] valuesAsString() {
+			Enum<?>[] valuesAsEnum = values();
+			String[] valuesAsString = new String[valuesAsEnum.length];
+			for(int i = 0; i < valuesAsEnum.length; i++) {
+				valuesAsString[i] = valuesAsEnum[i].name();
+			}
+			return valuesAsString;
+		}
+
+		@Override
+		public String getName() {
+			return name();
+		}
+	};
+	
 
 	
 	public static enum BLOCK_PIPEMACHINES_META implements IStringSerializable {
@@ -218,27 +237,8 @@ public final class Taam {
 	public static final String ITEM_TOOL = "tool";
 	public static final String ITEM_INGOT = "ingot";
 	public static final String ITEM_DUST = "dust";
-	public static final String ITEM_CONVEYOR_APPLIANCE = "conveyor_appliance";
 	public static final String ITEM_LOGISTICS_CART = "logistics_cart";
 	
-	public static enum ITEM_CONVEYOR_APPLIANCE_META implements IStringSerializable {
-		sprayer,
-		inserter
-		;
-		public static String[] valuesAsString() {
-			Enum<?>[] valuesAsEnum = values();
-			String[] valuesAsString = new String[valuesAsEnum.length];
-			for(int i = 0; i < valuesAsEnum.length; i++) {
-				valuesAsString[i] = valuesAsEnum[i].name();
-			}
-			return valuesAsString;
-		}
-
-		@Override
-		public String getName() {
-			return name();
-		}
-	};
 	public static enum ITEM_LOGISTICS_CART_META {
 		basic
 		;
@@ -316,6 +316,7 @@ public final class Taam {
 	public static final String TILEENTITY_CHUTE = "taam.chute";
 	public static final String TILEENTITY_CREATIVECACHE = "taam.creativecache";
 	public static final String TILEENTITY_SLIDINGDOOR = "taam.slidingdoor";
+	
 	public static final String TILEENTITY_CONVEYOR = "taam.conveyor";
 	public static final String TILEENTITY_CONVEYOR_HOPPER = "taam.conveyor_hopper";
 	public static final String TILEENTITY_CONVEYOR_PROCESSOR = "taam.conveyor_processor";
@@ -324,11 +325,14 @@ public final class Taam {
 	public static final String TILEENTITY_CONVEYOR_ITEMBAG = "taam.itembag";
 	public static final String TILEENTITY_CONVEYOR_TRASHCAN = "taam.trashcan";
 	public static final String TILEENTITY_CONVEYOR_SIEVE = "taam.sieve";
+	
 	public static final String TILEENTITY_PIPE = "taam.pipe";
 	public static final String TILEENTITY_TANK = "taam.tank";
 	public static final String TILEENTITY_CREATIVEWELL = "taam.creativewell";
 	public static final String TILEENTITY_PUMP = "taam.pump";
 	public static final String TILEENTITY_MIXER = "taam.mixer";
+	
+	public static final String TILEENTITY_APPLIANCE_SPRAYER = "taam.appliance.sprayer";
 
 	public static final String ENTITY_LOGISTICS_CART = "taam.logistics_manager";
 	
@@ -341,8 +345,6 @@ public final class Taam {
 	public static final String CFG_COMMENT_GEN_KAOLINITE_ORE  = "Should Taam generate Kaolinte Ore in the World";
 	public static final String CFG_COMMENT_DEBUG_OUTPUT = "Should the Debug mode form Taam be activated";
 	
-	public static final String APPLIANCE_SPRAYER = "taam.sprayer";
-
 	public static enum FLUID_DYE_META {
 		black,
 		red,

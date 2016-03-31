@@ -13,7 +13,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.BlockFluidClassic;
-import net.minecraftforge.fluids.BlockFluidFinite;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -45,9 +44,10 @@ import net.teamio.taam.content.common.TileEntityChute;
 import net.teamio.taam.content.common.TileEntityCreativeCache;
 import net.teamio.taam.content.common.TileEntitySensor;
 import net.teamio.taam.content.conveyors.BlockProductionLine;
+import net.teamio.taam.content.conveyors.BlockProductionLineAppliance;
 import net.teamio.taam.content.conveyors.BlockProductionLineAttachable;
+import net.teamio.taam.content.conveyors.ItemAppliance;
 import net.teamio.taam.content.conveyors.ItemAttachable;
-import net.teamio.taam.content.conveyors.ItemConveyorAppliance;
 import net.teamio.taam.content.conveyors.ItemProductionLine;
 import net.teamio.taam.content.conveyors.TileEntityConveyor;
 import net.teamio.taam.content.conveyors.TileEntityConveyorHopper;
@@ -62,6 +62,7 @@ import net.teamio.taam.content.piping.TileEntityMixer;
 import net.teamio.taam.content.piping.TileEntityPipe;
 import net.teamio.taam.content.piping.TileEntityPump;
 import net.teamio.taam.content.piping.TileEntityTank;
+import net.teamio.taam.conveyors.appliances.ApplianceSprayer;
 import net.teamio.taam.gui.GuiHandler;
 
 
@@ -82,7 +83,6 @@ public class TaamMain {
 	public static ItemWithMetadata<Taam.ITEM_PART_META> itemPart;
 	public static ItemWithMetadata<Taam.BLOCK_ORE_META> itemIngot;
 	public static ItemWithMetadata<Taam.BLOCK_ORE_META> itemDust;
-	public static ItemConveyorAppliance itemConveyorAppliance;
 	
 	public static CreativeTabs creativeTab;
 
@@ -90,6 +90,7 @@ public class TaamMain {
 	public static BlockMachines blockMachines;
 	public static BlockProductionLine blockProductionLine;
 	public static BlockProductionLineAttachable blockProductionLineAttachable;
+	public static BlockProductionLineAppliance blockProductionLineAppliance;
 	public static BlockSlidingDoor blockSlidingDoor;
 	public static BlockOre blockOre;
 	public static BlockBuilding blockConcrete;
@@ -159,7 +160,8 @@ public class TaamMain {
 		registerBlock(blockProductionLineAttachable = new BlockProductionLineAttachable(), null, Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE);
 		registerItem(new ItemAttachable(blockProductionLineAttachable, blockProductionLineAttachable, Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META.valuesAsString()), Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE);
 
-		//registerBlock(blockSlidingDoor = new BlockSlidingDoor(), ItemBlock.class, Taam.BLOCK_SLIDINGDOOR);
+		registerBlock(blockProductionLineAppliance = new BlockProductionLineAppliance(), null, Taam.BLOCK_PRODUCTIONLINE_APPLIANCE);
+		registerItem(new ItemAppliance(blockProductionLineAppliance, blockProductionLineAppliance, Taam.BLOCK_PRODUCTIONLINE_APPLIANCE_META.valuesAsString()), Taam.BLOCK_PRODUCTIONLINE_APPLIANCE);
 
 		registerBlock(blockOre = new BlockOre(), null, Taam.BLOCK_ORE);
 		registerItem(new ItemMultiTexture(blockOre, blockOre, Taam.BLOCK_ORE_META.valuesAsString()), Taam.BLOCK_ORE);
@@ -196,9 +198,6 @@ public class TaamMain {
 			public void addInformation(ItemStack stack, EntityPlayer player, List<String> lines, boolean detailedInfoSetting) {
 			}
 		}), Taam.ITEM_DUST);
-		
-		registerItem(itemConveyorAppliance = new ItemConveyorAppliance(), Taam.ITEM_CONVEYOR_APPLIANCE);
-		
 
 		registerBlock(blockPipeMachines = new BlockPipeMachines(), null, Taam.BLOCK_PIPEMACHINES);
 		registerItem(new ItemMultiTexture(blockPipeMachines, blockPipeMachines, Taam.BLOCK_PIPEMACHINES_META.valuesAsString()), Taam.BLOCK_PIPEMACHINES);
@@ -208,18 +207,21 @@ public class TaamMain {
 		GameRegistry.registerTileEntity(TileEntitySensor.class, Taam.TILEENTITY_SENSOR);
 		GameRegistry.registerTileEntity(TileEntityChute.class, Taam.TILEENTITY_CHUTE);
 		GameRegistry.registerTileEntity(TileEntityCreativeCache.class, Taam.TILEENTITY_CREATIVECACHE);
+		
 		GameRegistry.registerTileEntity(TileEntityConveyor.class, Taam.TILEENTITY_CONVEYOR);
 		GameRegistry.registerTileEntity(TileEntityConveyorHopper.class, Taam.TILEENTITY_CONVEYOR_HOPPER);
 		GameRegistry.registerTileEntity(TileEntityConveyorProcessor.class, Taam.TILEENTITY_CONVEYOR_PROCESSOR);
 		GameRegistry.registerTileEntity(TileEntityConveyorItemBag.class, Taam.TILEENTITY_CONVEYOR_ITEMBAG);
 		GameRegistry.registerTileEntity(TileEntityConveyorTrashCan.class, Taam.TILEENTITY_CONVEYOR_TRASHCAN);
 		GameRegistry.registerTileEntity(TileEntityConveyorSieve.class, Taam.TILEENTITY_CONVEYOR_SIEVE);
+
+		GameRegistry.registerTileEntity(ApplianceSprayer.class, Taam.TILEENTITY_APPLIANCE_SPRAYER);
+		
 		GameRegistry.registerTileEntity(TileEntityPipe.class, Taam.TILEENTITY_PIPE);
 		GameRegistry.registerTileEntity(TileEntityTank.class, Taam.TILEENTITY_TANK);
 		GameRegistry.registerTileEntity(TileEntityCreativeWell.class, Taam.TILEENTITY_CREATIVEWELL);
 		GameRegistry.registerTileEntity(TileEntityPump.class, Taam.TILEENTITY_PUMP);
 		GameRegistry.registerTileEntity(TileEntityMixer.class, Taam.TILEENTITY_MIXER);
-//		GameRegistry.registerTileEntity(TileEntitySlidingDoor.class, Taam.TILEENTITY_SLIDINGDOOR);
 		
 		OreGenerator worldgen = new OreGenerator();
 		MinecraftForge.EVENT_BUS.register(worldgen);

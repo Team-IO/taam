@@ -16,6 +16,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.OreDictionary;
 import net.teamio.taam.content.IRedstoneControlled;
+import net.teamio.taam.conveyors.api.IConveyorApplianceHost;
 import net.teamio.taam.conveyors.api.IConveyorAwareTE;
 import net.teamio.taam.util.inv.InventoryUtils;
 
@@ -99,6 +100,11 @@ public final class TaamUtil {
 		}
 		TileEntity ent = world.getTileEntity(pos.offset(dir));
 		return ent instanceof IConveyorAwareTE;
+	}
+	
+	public static boolean canAttachAppliance(IBlockAccess world, BlockPos pos, EnumFacing dir) {
+		TileEntity ent = world.getTileEntity(pos.offset(dir));
+		return ent instanceof IConveyorApplianceHost;
 	}
 
 	/**
