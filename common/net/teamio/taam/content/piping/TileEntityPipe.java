@@ -11,6 +11,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IRenderable;
@@ -68,6 +69,17 @@ public class TileEntityPipe extends BaseTileEntity implements IPipe, IPipeTE, IT
 	public boolean isSideConnected(EnumFacing side) {
 		return (adjacentPipes & (1 << side.ordinal())) != 0;
 	}
+	
+	private IFluidHandler getFluidHandler(TileEntity te, EnumFacing mySide) {
+		if(te instanceof IFluidHandler) {
+			IFluidHandler fh = (IFluidHandler)te;
+			FluidTankInfo[] info = fh.getTankInfo(mySide.getOpposite());
+			if(info != null && info.length > 0) {
+				return fh;
+			}
+		}
+		return null;
+	}
 
 	public void renderUpdate() {
 		adjacentPipes = 0;
@@ -78,7 +90,7 @@ public class TileEntityPipe extends BaseTileEntity implements IPipe, IPipeTE, IT
 				continue;
 			}
 			TileEntity te = worldObj.getTileEntity(pos.offset(side));
-			if(te instanceof IFluidHandler) {
+			if(getFluidHandler(te, side) != null) {
 				adjacentPipes |= 1 << side.ordinal();
 			}
 		}
@@ -94,16 +106,17 @@ public class TileEntityPipe extends BaseTileEntity implements IPipe, IPipeTE, IT
 			IPipe[] pipesOnSide = PipeUtil.getConnectedPipes(worldObj, pos, side);
 			if (pipesOnSide == null || pipesOnSide.length == 0) {
 				TileEntity te = worldObj.getTileEntity(pos.offset(side));
-				if(te instanceof IFluidHandler) {
+				IFluidHandler fh = getFluidHandler(te, side);
+				if(fh != null) {
 					wrappersRequired = true;
 					// Fluid handler here, we need a wrapper.
 					if(adjacentFluidHandlers == null) {
 						adjacentFluidHandlers = new PipeEndFluidHandler[6];
-						adjacentFluidHandlers[sideIdx] = new PipeEndFluidHandler((IFluidHandler)te, side.getOpposite());
+						adjacentFluidHandlers[sideIdx] = new PipeEndFluidHandler(fh, side.getOpposite());
 					} else {
 						// Not yet known or a different TileEntity, we need a new wrapper.
 						if(adjacentFluidHandlers[sideIdx] == null || adjacentFluidHandlers[sideIdx].getOwner() != te) {
-							adjacentFluidHandlers[sideIdx] = new PipeEndFluidHandler((IFluidHandler)te, side.getOpposite());
+							adjacentFluidHandlers[sideIdx] = new PipeEndFluidHandler(fh, side.getOpposite());
 						}
 					}
 					
