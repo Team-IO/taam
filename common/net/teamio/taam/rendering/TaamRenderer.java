@@ -44,13 +44,13 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 	private float rot = 0;
 	private float rot_sensor = 0;
 	public static double rotSin = 0;
-	
+
 	public static final float shrinkValue = -0.001f;
 
 	public static final float b_tankBorder = 1.5f / 16f;
 	public static final float b_tankBorderSprayer = b_tankBorder + 4f / 16f;
 	public static final float b_basePlate = 2f / 16f;
-	
+
 	public static final AxisAlignedBB bounds_tank = new AxisAlignedBB(
 			b_tankBorder,	b_basePlate,	b_tankBorder,
 			1-b_tankBorder,	1,				1-b_tankBorder
@@ -58,7 +58,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 	
 	public static AxisAlignedBB bounds_sprayer = new AxisAlignedBB(
 			b_tankBorder,	b_basePlate,	b_tankBorder,
-			1-b_tankBorder,	1-4f/16f,				1-b_tankBorderSprayer
+			1-b_tankBorder,	1-4f/16f,		1-b_tankBorderSprayer
 	).expand(shrinkValue, shrinkValue, shrinkValue);
 
 	public TaamRenderer() {
@@ -67,13 +67,6 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 
 	@SubscribeEvent
 	public void onClientTick(TickEvent.ClientTickEvent event) {
-		
-		bounds_sprayer = new AxisAlignedBB(
-				b_tankBorder,	b_basePlate,	b_tankBorder,
-				1-b_tankBorder,	1-4f/16f,				1-b_tankBorderSprayer
-		).expand(shrinkValue, shrinkValue, shrinkValue);
-		
-		
 		if (event.phase == TickEvent.Phase.END) {
 			rot++;
 			rot_sensor++;
@@ -93,34 +86,33 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		if (tileEntity instanceof TileEntityTank) {
 			GL11.glPushMatrix();
 			GL11.glTranslated(x, y, z);
-			
-			FluidTank tank = ((TileEntityTank)tileEntity).getTank();
+
+			FluidTank tank = ((TileEntityTank) tileEntity).getTank();
 			FluidStack stack = tank.getFluid();
 
 			renderTankContent(stack, tank.getCapacity(), bounds_tank);
 
 			GL11.glPopMatrix();
 		}
-		
-		if(tileEntity instanceof ApplianceSprayer) {
+
+		if (tileEntity instanceof ApplianceSprayer) {
 			GL11.glPushMatrix();
 			GL11.glTranslated(x, y, z);
-			
+
 			float rotationDegrees = getRotationDegrees(tileEntity);
-			
+
 			GL11.glTranslated(.5f, .5f, .5f);
 			GL11.glRotatef(rotationDegrees, 0, 1, 0);
 			GL11.glTranslated(-.5f, -.5f, -.5f);
 
-
-			FluidTank tank = ((ApplianceSprayer)tileEntity).getTank();
+			FluidTank tank = ((ApplianceSprayer) tileEntity).getTank();
 			FluidStack stack = tank.getFluid();
 
 			renderTankContent(stack, tank.getCapacity(), bounds_sprayer);
 
 			GL11.glPopMatrix();
 		}
-		
+
 		if (tileEntity instanceof IPipe) {
 
 			FontRenderer fontRendererObj = Minecraft.getMinecraft().fontRendererObj;
@@ -249,7 +241,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		}
 		return direction;
 	}
-	
+
 	private float getRotationDegrees(Object tileEntity) {
 		EnumFacing direction = getDirection(tileEntity);
 		float rotationDegrees = 0;
@@ -284,7 +276,6 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 				 */
 
 				float rotationDegrees = getRotationDegrees(tileEntity);
-				
 
 				TileEntityConveyorProcessor processor = (TileEntityConveyorProcessor) tileEntity;
 				ItemStack processingStack = processor.getStackInSlot(0);

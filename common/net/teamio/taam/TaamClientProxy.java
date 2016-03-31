@@ -65,7 +65,7 @@ public class TaamClientProxy extends TaamCommonProxy {
 
 	@Override
 	public void registerRenderStuff() {
-		
+
 		OBJLoader.instance.addDomain("taam");
 
 		taamRenderer = new TaamRenderer();
@@ -94,11 +94,11 @@ public class TaamClientProxy extends TaamCommonProxy {
 		/*
 		 * Ores, Ingots, Dusts
 		 */
-		
+
 		Item itemOre = GameRegistry.findItem(Taam.MOD_ID, Taam.BLOCK_ORE);
 		Item itemIngot = GameRegistry.findItem(Taam.MOD_ID, Taam.ITEM_INGOT);
 		Item itemDust = GameRegistry.findItem(Taam.MOD_ID, Taam.ITEM_DUST);
-		
+
 		ModelBakery.registerItemVariants(itemOre, new ResourceLocation(Taam.MOD_ID, "ore.impossible"));
 		ModelBakery.registerItemVariants(itemIngot, new ResourceLocation(Taam.MOD_ID, "ingot.impossible"));
 		ModelBakery.registerItemVariants(itemDust, new ResourceLocation(Taam.MOD_ID, "dust.impossible"));
@@ -131,7 +131,7 @@ public class TaamClientProxy extends TaamCommonProxy {
 						new ModelResourceLocation(Taam.MOD_ID + ":dust.impossible", "inventory"));
 			}
 		}
-		
+
 		/*
 		 * Concrete
 		 */
@@ -146,11 +146,10 @@ public class TaamClientProxy extends TaamCommonProxy {
 					new ModelResourceLocation(Taam.MOD_ID + ":concrete." + metaName, "inventory"));
 		}
 
-
 		/*
 		 * Materials
 		 */
-		
+
 		itemToRegister = TaamMain.itemMaterial;
 
 		for (Taam.ITEM_MATERIAL_META meta : Taam.ITEM_MATERIAL_META.values()) {
@@ -159,11 +158,11 @@ public class TaamClientProxy extends TaamCommonProxy {
 			ModelBakery.registerItemVariants(itemToRegister, new ResourceLocation(Taam.MOD_ID, "material." + metaName));
 			modelMesher.register(itemToRegister, metaInt, new ModelResourceLocation(Taam.MOD_ID + ":material." + metaName, "inventory"));
 		}
-		
+
 		/*
 		 * Parts
 		 */
-		
+
 		itemToRegister = TaamMain.itemPart;
 
 		for (Taam.ITEM_PART_META meta : Taam.ITEM_PART_META.values()) {
@@ -172,24 +171,24 @@ public class TaamClientProxy extends TaamCommonProxy {
 			ModelBakery.registerItemVariants(itemToRegister, new ResourceLocation(Taam.MOD_ID, "part." + metaName));
 			modelMesher.register(itemToRegister, metaInt, new ModelResourceLocation(Taam.MOD_ID + ":part." + metaName, "inventory"));
 		}
-		
+
 		/*
 		 * Other Items
 		 */
-		
+
 		registerItemDefault(modelMesher, TaamMain.itemWrench, 0, Taam.MOD_ID + ":wrench");
 		registerItemDefault(modelMesher, TaamMain.itemSaw, 0, Taam.MOD_ID + ":tool.saw");
 		registerItemDefault(modelMesher, TaamMain.itemDebugTool, 0, Taam.MOD_ID + ":debugger");
-		
+
 		/*
 		 * OBJ Models
 		 */
 
 		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_SENSOR, 0, "sensor.obj");
 		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_SUPPORT_BEAM, 0, "support_beam.obj");
-		
+
 		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_PIPE, 0, "pipes.obj");
-		
+
 		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_MACHINES, Taam.BLOCK_MACHINES_META.chute.ordinal(), "chute.obj");
 		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_MACHINES, Taam.BLOCK_MACHINES_META.creativecache.ordinal(), "creative_cache.obj");
 
@@ -197,11 +196,11 @@ public class TaamClientProxy extends TaamCommonProxy {
 		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_PIPEMACHINES, Taam.BLOCK_PIPEMACHINES_META.creativewell.ordinal(), "creativewell.obj");
 		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_PIPEMACHINES, Taam.BLOCK_PIPEMACHINES_META.pump.ordinal(), "pump.obj");
 		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_PIPEMACHINES, Taam.BLOCK_PIPEMACHINES_META.mixer.ordinal(), "mixer.obj");
-		
+
 		registerItemOBJ(modelMesher, Taam.BLOCK_PRODUCTIONLINE, Taam.BLOCK_PRODUCTIONLINE_META.values().length, "conveyor.obj");
 		registerItemOBJ(modelMesher, Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE, Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META.values().length, "conveyor_attachables.obj");
 	}
-	
+
 	private final List<ModelResourceLocation> locationsToReplace = new ArrayList<ModelResourceLocation>();
 
 	/**
@@ -213,7 +212,8 @@ public class TaamClientProxy extends TaamCommonProxy {
 	 * @param modelMesher
 	 * @param itemId
 	 * @param metaCount
-	 * @param modelFile Expects the model file to be a something.obj
+	 * @param modelFile
+	 *            Expects the model file to be a something.obj
 	 */
 	private void registerItemOBJ(ItemModelMesher modelMesher, String itemId, int metaCount, String modelFile) {
 
@@ -239,7 +239,7 @@ public class TaamClientProxy extends TaamCommonProxy {
 			ModelLoader.setCustomModelResourceLocation(item, meta, resourceLocation);
 		}
 	}
-	
+
 	/**
 	 * Registers & remembers a model location for inventory rendering for the
 	 * given item, for a single meta value.
@@ -278,34 +278,39 @@ public class TaamClientProxy extends TaamCommonProxy {
 	private void registerItemDefault(ItemModelMesher modelMesher, Item item, int meta, String name) {
 		modelMesher.register(item, meta, new ModelResourceLocation(name, "inventory"));
 	}
-	
+
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
-    public void textureStitchPre(TextureStitchEvent.Pre event) {
-		for(Fluid fluid : TaamMain.fluidsDye) {
+	public void textureStitchPre(TextureStitchEvent.Pre event) {
+		for (Fluid fluid : TaamMain.fluidsDye) {
 			textureStitchPre(fluid, event);
 		}
-    }
-	
-	private void textureStitchPre(Fluid fluid, TextureStitchEvent.Pre event) {
-        TextureAtlasSprite still = event.map.getTextureExtry(fluid.getStill().toString());
-        if (still == null) event.map.registerSprite(fluid.getStill());
-
-        TextureAtlasSprite flow = event.map.getTextureExtry(fluid.getFlowing().toString());
-        if (flow == null) event.map.registerSprite(fluid.getFlowing());
 	}
-	
+
+	private void textureStitchPre(Fluid fluid, TextureStitchEvent.Pre event) {
+		TextureAtlasSprite still = event.map.getTextureExtry(fluid.getStill().toString());
+		if (still == null) {
+			event.map.registerSprite(fluid.getStill());
+		}
+
+		TextureAtlasSprite flow = event.map.getTextureExtry(fluid.getFlowing().toString());
+		if (flow == null) {
+			event.map.registerSprite(fluid.getFlowing());
+		}
+	}
+
 	@SubscribeEvent
 	public void onModelBakeEvent(ModelBakeEvent event) {
 		Log.debug("Beginning onModelBakeEvent");
-		
+
 		/*
-		 * We need to se the "flip-v" flag..
-		 * As the inventory-variant is "generated" above, MC will ignore what we have in the blockstates
+		 * We need to se the "flip-v" flag.. As the inventory-variant is
+		 * "generated" above, MC will ignore what we have in the blockstates
 		 * json & render the textures flipped in the inventory...
 		 * 
-		 * Doing it via reflection, as we'd need to redefine the original OBJModel somewhere
-		 * (OBJModel.process() will do that) but I have no idea WHERE!
+		 * Doing it via reflection, as we'd need to redefine the original
+		 * OBJModel somewhere (OBJModel.process() will do that) but I have no
+		 * idea WHERE!
 		 */
 
 		Field customDataField = null;
@@ -317,12 +322,14 @@ public class TaamClientProxy extends TaamCommonProxy {
 			customDataFlipVField = customDataType.getDeclaredField("flipV");
 			customDataFlipVField.setAccessible(true);
 		} catch (Exception e) {
-			Log.error("Failed to make OBJModel.customData accessible or access other reflection stuff. Inventory items will have wrong textures.", e);
+			Log.error(
+					"Failed to make OBJModel.customData accessible or access other reflection stuff. Inventory items will have wrong textures.",
+					e);
 		}
 
 		/*
-		 * Go through all registered locations from above & replace the baked model
-		 * with one that understands our items
+		 * Go through all registered locations from above & replace the baked
+		 * model with one that understands our items
 		 */
 
 		for (ModelResourceLocation resourceLocation : locationsToReplace) {
@@ -355,7 +362,7 @@ public class TaamClientProxy extends TaamCommonProxy {
 
 		Log.debug("Completed onModelBakeEvent");
 	}
-	
+
 	/**
 	 * Baked model implementation that checks with the item type for a list of
 	 * parts to render using an OBJBakedModel as parent.
@@ -387,7 +394,7 @@ public class TaamClientProxy extends TaamCommonProxy {
 		/*
 		 * ISmartItemModel
 		 */
-		
+
 		@Override
 		public IBakedModel handleItemState(ItemStack stack) {
 			if (stack != null && stack.getItem() instanceof IRenderableItem) {
@@ -404,7 +411,7 @@ public class TaamClientProxy extends TaamCommonProxy {
 		/*
 		 * IPerspectiveAwareModel
 		 */
-		
+
 		@Override
 		public Pair<? extends IFlexibleBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType) {
 			return original.handlePerspective(cameraTransformType);

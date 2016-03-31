@@ -14,7 +14,7 @@ public class PipeEnd implements IPipe {
 	 * pipe end per side.
 	 */
 	private final IPipe[] pipeArray;
-	
+
 	protected EnumFacing side;
 	public final PipeInfo info;
 	private final boolean active;
@@ -45,7 +45,7 @@ public class PipeEnd implements IPipe {
 	public void readFromNBT(NBTTagCompound tag) {
 		info.readFromNBT(tag);
 	}
-	
+
 	public IPipe[] asPipeArray() {
 		pipeArray[0] = this;
 		return pipeArray;
@@ -84,12 +84,12 @@ public class PipeEnd implements IPipe {
 	public int addFluid(FluidStack stack) {
 		return info.addFluid(stack);
 	}
-	
+
 	@Override
 	public int removeFluid(FluidStack like) {
 		return info.removeFluid(like);
 	}
-	
+
 	@Override
 	public int getFluidAmount(FluidStack like) {
 		return info.getFluidAmount(like);
