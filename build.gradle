@@ -41,7 +41,7 @@ minecraft {
     version = "${config.mc_version}-${config.forge_version}"
     runDir = "."
     replace "@VERSION@", project.version
-    mappings = "stable_20"
+    mappings = "${config.forge_mappings}"
 }
 
 sourceSets {
