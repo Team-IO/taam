@@ -49,8 +49,6 @@ item.material.aluminum_plate.name=Aluminum Plate
 item.material.resin.name=Resin
 # Tools
 item.tool.saw.name=Saw
-# Conveyor Appliances
-item.conveyor_appliance.sprayer.name=Sprayer
 
 #Creative Tab localization
 itemGroup.taam=Taam
@@ -80,7 +78,6 @@ tile.ore.aluminum.name=Native Aluminum Ore
 tile.ore.bauxite.name=Bauxite
 tile.ore.kaolinite.name=Kaolinite
 # Machines
-tile.productionline.invalid.name=#!#!#!Invalid Data!#!#!#
 tile.productionline.conveyor1.name=Wooden Conveyor
 tile.productionline.conveyor2.name=Conveyor
 tile.productionline.conveyor3.name=High Throughput Conveyor
@@ -100,6 +97,9 @@ tile.pipe.name=Pipe
 tile.pipemachines.tank.name=Tank
 tile.pipemachines.creativewell.name=Creative Fluid Well
 tile.pipemachines.pump.name=Pump
+tile.pipemachines.mixer.name=Mixer
+
+tile.productionline_appliance.sprayer.name=Sprayer
 
 # Fluids
 fluid.dye_black=Liquid Black Dye
