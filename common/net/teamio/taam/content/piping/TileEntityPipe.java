@@ -5,15 +5,18 @@ import java.util.Collections;
 import java.util.List;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.IFluidHandler;
 import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IRenderable;
 import net.teamio.taam.piping.IPipe;
 import net.teamio.taam.piping.IPipeTE;
+import net.teamio.taam.piping.PipeEndFluidHandler;
 import net.teamio.taam.piping.PipeInfo;
 import net.teamio.taam.piping.PipeUtil;
 
@@ -24,6 +27,8 @@ public class TileEntityPipe extends BaseTileEntity implements IPipe, IPipeTE, IT
 	private static final List<String> visibleParts = new ArrayList<String>(7);
 
 	private int adjacentPipes;
+	
+	private PipeEndFluidHandler[] adjacentFluidHandlers;
 
 	public TileEntityPipe() {
 		info = new PipeInfo(500);
@@ -61,19 +66,68 @@ public class TileEntityPipe extends BaseTileEntity implements IPipe, IPipeTE, IT
 			IPipe[] pipesOnSide = PipeUtil.getConnectedPipes(worldObj, pos, side);
 			if (pipesOnSide != null && pipesOnSide.length != 0) {
 				adjacentPipes |= 1 << side.ordinal();
+				continue;
+			}
+			TileEntity te = worldObj.getTileEntity(pos.offset(side));
+			if(te instanceof IFluidHandler) {
+				adjacentPipes |= 1 << side.ordinal();
 			}
 		}
 	};
 
 	@Override
 	public void blockUpdate() {
+		// Check surrounding blocks for IFluidHandler implementations that don't use the pipe system
+		// and create wrappers accordingly
+		boolean wrappersRequired = false;
+		for (EnumFacing side : EnumFacing.VALUES) {
+			int sideIdx = side.ordinal();
+			IPipe[] pipesOnSide = PipeUtil.getConnectedPipes(worldObj, pos, side);
+			if (pipesOnSide == null || pipesOnSide.length == 0) {
+				TileEntity te = worldObj.getTileEntity(pos.offset(side));
+				if(te instanceof IFluidHandler) {
+					wrappersRequired = true;
+					// Fluid handler here, we need a wrapper.
+					if(adjacentFluidHandlers == null) {
+						adjacentFluidHandlers = new PipeEndFluidHandler[6];
+						adjacentFluidHandlers[sideIdx] = new PipeEndFluidHandler((IFluidHandler)te, side.getOpposite());
+					} else {
+						// Not yet known or a different TileEntity, we need a new wrapper.
+						if(adjacentFluidHandlers[sideIdx] == null || adjacentFluidHandlers[sideIdx].getOwner() != te) {
+							adjacentFluidHandlers[sideIdx] = new PipeEndFluidHandler((IFluidHandler)te, side.getOpposite());
+						}
+					}
+					
+				}
+			} else {
+				// We have a regular pipe there, no need for a wrapper
+				if(adjacentFluidHandlers != null) {
+					adjacentFluidHandlers[sideIdx] = null;
+				}
+			}
+		}
+		// No wrappers required, delete the array
+		if(!wrappersRequired) {
+			adjacentFluidHandlers = null;
+		}
 		super.blockUpdate();
 	}
 
 	@Override
 	public void update() {
+		// Process "this"
 		PipeUtil.processPipes(this, worldObj, pos);
 
+		//Process the fluid handlers for adjecent non-pipe-machines (implementing IFluidHandler)
+		if(adjacentFluidHandlers != null) {
+			for (EnumFacing side : EnumFacing.VALUES) {
+				PipeEndFluidHandler handler = adjacentFluidHandlers[side.ordinal()];
+				if(handler != null) {
+					PipeUtil.processPipes(handler, worldObj, pos.offset(side));
+				}
+			}
+		}
+		
 		updateState();
 	}
 
@@ -147,6 +201,10 @@ public class TileEntityPipe extends BaseTileEntity implements IPipe, IPipeTE, IT
 			IPipe[] pipesOnSide = PipeUtil.getConnectedPipes(world, pos, side);
 			if (pipesOnSide != null) {
 				Collections.addAll(pipes, pipesOnSide);
+			}
+			int sideIdx = side.ordinal();
+			if(adjacentFluidHandlers != null && adjacentFluidHandlers[sideIdx] != null) {
+				pipes.add(adjacentFluidHandlers[sideIdx]);
 			}
 		}
 		return pipes.toArray(new IPipe[pipes.size()]);

@@ -27,6 +27,10 @@ public class PipeEndFluidHandler implements IPipe {
 		this.side = side;
 	}
 	
+	public IFluidHandler getOwner() {
+		return owner;
+	}
+	
 	@Override
 	public int getCapacity() {
 		FluidTankInfo[] tankInfo = owner.getTankInfo(side);
