@@ -22,74 +22,32 @@ import net.teamio.taam.util.TaamUtil;
 public class BlockProductionLineAttachable extends BlockProductionLine {
 
 	public static final PropertyEnum<Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META> VARIANT = PropertyEnum.create("variant", Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META.class);
-	public static final PropertyEnum<EnumFacing> FACING = PropertyEnum.create("facing", EnumFacing.class, EnumFacing.HORIZONTALS);
-	
+
 	public BlockProductionLineAttachable() {
 		super();
 	}
-	
+
 	@Override
 	protected BlockState createBlockState() {
-		return new BlockState(this, VARIANT, FACING);
+		return new BlockState(this, VARIANT);
 	}
-	
+
 	@Override
 	public int getMetaFromState(IBlockState state) {
-		Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META variant = (Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META)state.getValue(VARIANT);
-		int meta = variant.ordinal();
-		
-		int rot;
-		EnumFacing facing = (EnumFacing)state.getValue(FACING);
-		switch(facing) {
-		default:
-		case NORTH:
-			rot = 0;
-			break;
-		case SOUTH:
-			rot = 1;
-			break;
-		case EAST:
-			rot = 2;
-			break;
-		case WEST:
-			rot = 3;
-			break;
-		}
-		meta |= rot << 2;
-		return meta;
+		Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META variant = state.getValue(VARIANT);
+		return variant.ordinal();
 	}
-	
+
 	@Override
 	public IBlockState getStateFromMeta(int meta) {
 
-		int type = meta & 3;
-		int rot = (meta & 12) >> 2;
-		EnumFacing facing;
-		// In 1.7 this did not use the "regular" order, so we don't use it here as well.
-		switch(rot) {
-		default:
-		case 0:
-			facing = EnumFacing.NORTH;
-			break;
-		case 1:
-			facing = EnumFacing.SOUTH;
-			break;
-		case 2:
-			facing = EnumFacing.EAST;
-			break;
-		case 3:
-			facing = EnumFacing.WEST;
-			break;
-		}
-		
 		Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META[] values = Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META.values();
-		if(type < 0 || type > values.length) {
-			return getDefaultState().withProperty(FACING, facing);
+		if (meta < 0 || meta > values.length) {
+			meta = 0;
 		}
-		//Mouse.setGrabbed(false);
-		return getDefaultState().withProperty(VARIANT, values[type]).withProperty(FACING, facing);
+		return getDefaultState().withProperty(VARIANT, values[meta]);
 	}
-	
+
 	public String getUnlocalizedName(ItemStack itemStack) {
 		int i = itemStack.getItemDamage();
 		Enum<?>[] values = Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META.values();
@@ -99,7 +57,7 @@ public class BlockProductionLineAttachable extends BlockProductionLine {
 		}
 		return super.getUnlocalizedName() + "." + values[i].name();
 	}
-	
+
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void getSubBlocks(Item item, CreativeTabs creativeTab, List<ItemStack> list) {
@@ -111,8 +69,9 @@ public class BlockProductionLineAttachable extends BlockProductionLine {
 
 	@Override
 	public TileEntity createTileEntity(World world, IBlockState state) {
-		Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META variant = (Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META)state.getValue(VARIANT);
-		switch(variant) {
+		Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META variant = (Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META) state
+				.getValue(VARIANT);
+		switch (variant) {
 		case itembag:
 			// Item Bag
 			return new TileEntityConveyorItemBag();
@@ -122,21 +81,24 @@ public class BlockProductionLineAttachable extends BlockProductionLine {
 		}
 		return null;
 	}
+
 	@Override
-	public void setBlockBoundsBasedOnState(IBlockAccess world,
-			BlockPos pos) {
+	public void setBlockBoundsBasedOnState(IBlockAccess world, BlockPos pos) {
 		IBlockState state = world.getBlockState(pos);
 		this.minY = 0f;
 		this.maxY = 0.5f;
-		if(state.getBlock() != this) {
+		TileEntity te = world.getTileEntity(pos);
+
+		if (state.getBlock() != this || !(te instanceof IRotatable)) {
 			this.minX = 0;
-			this.maxX = 0;
+			this.maxX = 1;
 			this.minZ = 0;
-			this.maxZ = 0;
+			this.maxZ = 1;
 			return;
 		}
-		EnumFacing facing = (EnumFacing)state.getValue(FACING);
-		switch(facing) {
+
+		EnumFacing facing = ((IRotatable) te).getFacingDirection();
+		switch (facing) {
 		default:
 		case NORTH:
 			this.minX = 0;
@@ -164,20 +126,20 @@ public class BlockProductionLineAttachable extends BlockProductionLine {
 			break;
 		}
 	}
-	
+
 	@Override
 	public int damageDropped(IBlockState state) {
-		return ((Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META)state.getValue(VARIANT)).ordinal();
+		return state.getValue(VARIANT).ordinal();
 	}
-	
+
 	@Override
 	public boolean canPlaceBlockAt(World world, BlockPos pos) {
 		TileEntity te = world.getTileEntity(pos);
-		if(te instanceof IRotatable) {
+		if (te instanceof IRotatable) {
 			return TaamUtil.canAttach(world, pos, ((IRotatable) te).getFacingDirection());
 		} else {
 			return true;
 		}
 	}
-	
+
 }

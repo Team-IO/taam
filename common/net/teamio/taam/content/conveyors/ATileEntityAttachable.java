@@ -1,6 +1,5 @@
 package net.teamio.taam.content.conveyors;
 
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.EnumFacing;
 import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IRotatable;
@@ -17,7 +16,7 @@ public abstract class ATileEntityAttachable extends BaseTileEntity implements IC
 
 	@Override
 	public boolean isSlotAvailable(int slot) {
-		switch(direction) {
+		switch (direction) {
 		default:
 		case SOUTH:
 			return slot == 2 || slot == 5 || slot == 8;
@@ -33,11 +32,11 @@ public abstract class ATileEntityAttachable extends BaseTileEntity implements IC
 	public EnumFacing getNextSlot(int slot) {
 		return null;
 	}
-	
+
 	/*
 	 * IRotatable implementation
 	 */
-	
+
 	@Override
 	public EnumFacing getFacingDirection() {
 		return direction;
@@ -46,9 +45,9 @@ public abstract class ATileEntityAttachable extends BaseTileEntity implements IC
 	@Override
 	public EnumFacing getNextFacingDirection() {
 		EnumFacing dir = direction;
-		for(int i = 0; i < 3; i++) {
+		for (int i = 0; i < 3; i++) {
 			dir = dir.rotateY();
-			if(TaamUtil.canAttach(worldObj, pos, dir)) {
+			if (TaamUtil.canAttach(worldObj, pos, dir)) {
 				return dir;
 			}
 		}
@@ -58,8 +57,6 @@ public abstract class ATileEntityAttachable extends BaseTileEntity implements IC
 	@Override
 	public void setFacingDirection(EnumFacing direction) {
 		this.direction = direction;
-		IBlockState state = worldObj.getBlockState(pos);
-		worldObj.setBlockState(pos, state.withProperty(BlockProductionLineAttachable.FACING, direction));
 		updateState();
 	}
 
