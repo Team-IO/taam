@@ -16,7 +16,7 @@
         	"model": "taam:tank.obj"
         }],
         "variant=creativewell": [{
-        	"model": "taam:creativewell.obj"
+        	"model": "taam:creative_well.obj"
         }],
         "variant=pump": [{
         	"model": "taam:pump.obj"
