@@ -14,6 +14,7 @@ import net.teamio.taam.recipes.ChanceBasedRecipe;
 import net.teamio.taam.recipes.ChancedOutput;
 import net.teamio.taam.recipes.MixerRecipe;
 import net.teamio.taam.recipes.ProcessingRegistry;
+import net.teamio.taam.recipes.SprayerRecipe;
 
 public class TaamRecipes {
 
@@ -219,6 +220,47 @@ public class TaamRecipes {
 					);
 		}
 		
+		/*
+		 * Sprayer
+		 */
+		for(int dyeMeta = 0; dyeMeta < 16; dyeMeta++) {
+			ProcessingRegistry.registerRecipe(ProcessingRegistry.SPRAYER,
+					new SprayerRecipe(
+							new ItemStack(Blocks.wool, 1, OreDictionary.WILDCARD_VALUE),
+							new FluidStack(TaamMain.fluidsDye[dyeMeta], 5),
+							new ItemStack(Blocks.wool, 1, 15-dyeMeta))
+					);
+			ProcessingRegistry.registerRecipe(ProcessingRegistry.SPRAYER,
+					new SprayerRecipe(
+							new ItemStack(Blocks.carpet, 1, OreDictionary.WILDCARD_VALUE),
+							new FluidStack(TaamMain.fluidsDye[dyeMeta], 5),
+							new ItemStack(Blocks.carpet, 1, 15-dyeMeta))
+					);
+			ProcessingRegistry.registerRecipe(ProcessingRegistry.SPRAYER,
+					new SprayerRecipe(
+							new ItemStack(Blocks.stained_hardened_clay, 1, OreDictionary.WILDCARD_VALUE),
+							new FluidStack(TaamMain.fluidsDye[dyeMeta], 5),
+							new ItemStack(Blocks.stained_hardened_clay, 1, 15-dyeMeta))
+					);
+			ProcessingRegistry.registerRecipe(ProcessingRegistry.SPRAYER,
+					new SprayerRecipe(
+							new ItemStack(Blocks.hardened_clay, 1, 0),
+							new FluidStack(TaamMain.fluidsDye[dyeMeta], 5),
+							new ItemStack(Blocks.stained_hardened_clay, 1, 15-dyeMeta))
+					);
+			ProcessingRegistry.registerRecipe(ProcessingRegistry.SPRAYER,
+					new SprayerRecipe(
+							new ItemStack(Blocks.stained_glass, 1, OreDictionary.WILDCARD_VALUE),
+							new FluidStack(TaamMain.fluidsDye[dyeMeta], 5),
+							new ItemStack(Blocks.stained_glass, 1, 15-dyeMeta))
+					);
+			ProcessingRegistry.registerRecipe(ProcessingRegistry.SPRAYER,
+					new SprayerRecipe(
+							new ItemStack(Blocks.stained_glass_pane, 1, OreDictionary.WILDCARD_VALUE),
+							new FluidStack(TaamMain.fluidsDye[dyeMeta], 5),
+							new ItemStack(Blocks.stained_glass_pane, 1, 15-dyeMeta))
+					);
+		}
 	}
 	public static void addSmeltingRecipes(){
 		BLOCK_ORE_META[] values = Taam.BLOCK_ORE_META.values();
