@@ -14,14 +14,17 @@ You are also welcome to [support us on Patreon](https://www.patreon.com/Team_IO?
 ## Building the mod
 Taam uses a fairly simple implementation of ForgeGradle. To build a ready-to-use jar, you can use the gradle wrapper delivered with the rest of the source code.  
 For Windows systems, run this in the console:
+
     gradlew.bat build
+
 For *nix systems, run this in the terminal:
+
     ./gradlew build
+
 Installed Gradle versions should also work fine.
 
 ## Some info on the internal structure:
-Mod & Dependency versions are controlled in the upper half of the build.gradle. All mod metadata is done in code, with the version replaced by gradle on compile time.  
-There is a dependencies.info file that denots the dependency libraries to be downloaded / checked on launch. The versions in there are also replaced by Gradle. - The responsible class is DepLoader, largely 'borrowed' from ChickenBones. (Thanks, CB! That class works like a charm!)
+Mod & Dependency versions are controlled in the build.gradle and according build.properties file. All mod metadata is done in code, with the version replaced by gradle on compile time.
 
 Item/Block names are recorded in the class net.teamio.taam.Taam. Main mod class is net.teamio.taam.TaamMain. Anything else in that package is somewhat related to global registration with Minecraft or config stuff.
 
