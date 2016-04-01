@@ -3,7 +3,6 @@ package net.teamio.taam.content.piping;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Supplier;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -30,12 +29,12 @@ public class TileEntityPipe extends BaseTileEntity implements IPipe, IPipeTE, IT
 	 * ThreadLocal storage for the list of visible parts (required due to some concurrency issues, See issue #194)
 	 * TODO: central location for one list? Not one per entity type.. Adjust getVisibleParts
 	 */
-	private static final ThreadLocal<List<String>> visibleParts = ThreadLocal.withInitial(new Supplier<List<String>>() {
+	private static final ThreadLocal<List<String>> visibleParts = new ThreadLocal<List<String>>() {
 		@Override
-		public List<String> get() {
+		protected List<String> initialValue() {
 			return new ArrayList<String>(7);
 		}
-	});
+	};
 
 	/**
 	 * Bitmap containing the surrounding pipes Runtime-only, required for
