@@ -10,6 +10,7 @@ buildscript {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT'
     }
 }
+apply plugin: 'net.minecraftforge.gradle.forge'
 
 repositories {
 	maven {
@@ -26,20 +27,17 @@ configFile.withReader {
     project.ext.config = new ConfigSlurper().parse prop
 }
 
-apply plugin: 'net.minecraftforge.gradle.forge'
-
-
-
 version = config.mod_version
 group = config.mod_group
-archivesBaseName = "-${config.mod_name}-${config.mc_version}"
+archivesBaseName = "${config.mod_name}-${config.mc_version}"
+
 
 if(System.env.BUILD_NUMBER)
 	version = "${config.mod_version}.b${System.env.BUILD_NUMBER}"
 
 minecraft {
     version = "${config.mc_version}-${config.forge_version}"
-    runDir = "."
+    runDir = "run"
     replace "@VERSION@", project.version
     mappings = "${config.forge_mappings}"
 }
