@@ -7,7 +7,7 @@ For details on how to use this mod, check the [Wiki](https://github.com/Team-IO/
 Also find this mod on [CurseForge](http://minecraft.curseforge.com/projects/taam) and [on our homepage](https://team-io.net/taam.php).
 
 ## Contributing
-If you want to contribute, you can do so [by reporting bugs](https://github.com/Team-IO/taam/wiki), [by helping fix the bugs](https://github.com/Team-IO/taam/pulls) or by spreading the word!
+If you want to contribute, you can do so [by reporting bugs](https://github.com/Team-IO/taam/issues), [by helping fix the bugs](https://github.com/Team-IO/taam/pulls) or by spreading the word!
 
 You are also welcome to [support us on Patreon](https://www.patreon.com/Team_IO?ty=h)!
 
