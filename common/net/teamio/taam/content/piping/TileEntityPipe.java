@@ -172,6 +172,10 @@ public class TileEntityPipe extends BaseTileEntity implements IPipe, IPipeTE, IT
 	protected void writePropertiesToNBT(NBTTagCompound tag) {
 		info.writeToNBT(tag);
 	}
+	
+	public int getFillLevel() {
+		return info.fillLevel;
+	}
 
 	/*
 	 * IPipeTE implementation

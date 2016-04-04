@@ -31,6 +31,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.content.conveyors.TileEntityConveyorProcessor;
 import net.teamio.taam.content.conveyors.TileEntityConveyorSieve;
+import net.teamio.taam.content.piping.TileEntityPipe;
 import net.teamio.taam.content.piping.TileEntityTank;
 import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.conveyors.ItemWrapper;
@@ -119,35 +120,53 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 
 			IPipe pipe = (IPipe) tileEntity;
 
+			int fillLevel = 0;
+			
+			if(pipe instanceof TileEntityPipe) {
+				fillLevel = ((TileEntityPipe) pipe).getFillLevel();
+			}
+
+			String info0 = String.format("%03d/%d", 
+					fillLevel, pipe.getCapacity());;
+			String info1 = String.format("%d-%d", 
+					pipe.getPressure(), pipe.getSuction());
+			String info2 = "E: " + (pipe.getPressure() == 0 ? -pipe.getSuction() : pipe.getPressure());
+			
 			GL11.glPushMatrix();
-			GL11.glTranslated(x, y, z);
+			{
+				GL11.glTranslated(x, y, z);
+	
+				GL11.glPushMatrix();
+				{
+					GL11.glTranslated(0.5f, 0.5f, 0.25f);
+		
+					GL11.glScalef(.02f, .02f, .02f);
+					GL11.glRotatef(180, 0, 0, 1);
 
-			GL11.glPushMatrix();
-			GL11.glTranslated(0.4f, 0.4f, 0.25f);
+					fontRendererObj.drawString(info0, 0, 0, 0x00FFFF);
+					fontRendererObj.drawString(info1, 0, 8, 0xFFFFFF);
+					fontRendererObj.drawString(info2, 0, 16, 0xFFFF00);
+		
+				}
+				GL11.glPopMatrix();
+				
+				GL11.glTranslated(.5f, .5f, .5f);
+				GL11.glRotatef(180, 0, 1, 0);
+				GL11.glTranslated(-.5f, -.5f, -.5f);
+				
+				GL11.glPushMatrix();
+				{
+					GL11.glTranslated(0.5f, 0.5f, 0.25f);
+		
+					GL11.glScalef(.02f, .02f, .02f);
+					GL11.glRotatef(180, 0, 0, 1);
 
-			GL11.glScalef(.02f, .02f, .02f);
-			GL11.glRotatef(180, 0, 0, 1);
-
-			fontRendererObj.drawString(pipe.getPressure() + "-" + pipe.getSuction(), 0, 0, 0xFFFFFF);
-			fontRendererObj.drawString("E: " + (pipe.getPressure() == 0 ? -pipe.getSuction() : pipe.getPressure()), 0, 8, 0xFFFF00);
-
-			GL11.glPopMatrix();
-
-			GL11.glTranslated(.5f, .5f, .5f);
-			GL11.glRotatef(180, 0, 1, 0);
-			GL11.glTranslated(-.5f, -.5f, -.5f);
-
-			GL11.glPushMatrix();
-			GL11.glTranslated(0.4f, 0.4f, 0.25f);
-
-			GL11.glScalef(.02f, .02f, .02f);
-			GL11.glRotatef(180, 0, 0, 1);
-
-			fontRendererObj.drawString(pipe.getPressure() + "-" + pipe.getSuction(), 0, 0, 0xFFFFFF);
-			fontRendererObj.drawString("E: " + (pipe.getPressure() == 0 ? -pipe.getSuction() : pipe.getPressure()), 0, 8, 0xFFFF00);
-
-			GL11.glPopMatrix();
-
+					fontRendererObj.drawString(info0, 0, 0, 0x00FFFF);
+					fontRendererObj.drawString(info1, 0, 8, 0xFFFFFF);
+					fontRendererObj.drawString(info2, 0, 16, 0xFFFF00);
+				}
+				GL11.glPopMatrix();
+			}
 			GL11.glPopMatrix();
 		}
 	}
