@@ -192,7 +192,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		/*
 		 * Setup renderer
 		 */
-
+		
 		WorldRenderer renderer = Tessellator.getInstance().getWorldRenderer();
 
 		renderer.begin(7, DefaultVertexFormats.POSITION_TEX_NORMAL);
@@ -244,11 +244,27 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		renderer.pos(bounds.minX, fillHeight, bounds.maxZ)	.tex(minU, maxV).normal(0, 1, 0).endVertex();
 		renderer.pos(bounds.maxX, fillHeight, bounds.maxZ)	.tex(maxU, maxV).normal(0, 1, 0).endVertex();
 
-		GL11.glEnable(GL11.GL_BLEND);
+		setupDefaultGL();
 
 		Tessellator.getInstance().draw();
 
-		GL11.glDisable(GL11.GL_BLEND);
+		tearDownDefaultGL();
+	}
+
+	private void setupDefaultGL() {
+		RenderHelper.enableStandardItemLighting();
+		GlStateManager.enableRescaleNormal();
+		GlStateManager.enableBlend();
+		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		GlStateManager.enableAlpha();
+		GlStateManager.color(1, 1, 1, 1);
+	}
+
+	private void tearDownDefaultGL() {
+		GlStateManager.disableRescaleNormal();
+		GlStateManager.disableBlend();
+		GlStateManager.enableAlpha();
+		RenderHelper.disableStandardItemLighting();
 	}
 
 	private EnumFacing getDirection(Object tileEntity) {
@@ -279,11 +295,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		GL11.glPushMatrix();
 		GL11.glTranslated(x, y, z);
 
-		RenderHelper.enableStandardItemLighting();
-		GlStateManager.enableRescaleNormal();
-		GlStateManager.enableBlend();
-		GlStateManager.enableAlpha();
-		GlStateManager.color(1, 1, 1, 1);
+		setupDefaultGL();
 
 		if (tileEntity != null) {
 
@@ -371,7 +383,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 			}
 		}
 
-		RenderHelper.disableStandardItemLighting();
+		tearDownDefaultGL();
 
 		GL11.glPopMatrix();
 	}
