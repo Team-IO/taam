@@ -27,7 +27,7 @@ public class TileEntityPump extends BaseTileEntity implements IPipeTE, ITickable
 	
 	public static final List<String> visibleParts = Lists.newArrayList("Baseplate_pmdl", "Pump_pumdl");
 	
-	private static final int capacity = 50;
+	private static final int capacity = 125;
 	private static final int pressure = 50;
 	
 	public TileEntityPump() {
