@@ -11,6 +11,11 @@ public final class PipeUtil {
 	private PipeUtil() {
 		// Util Class
 	}
+	
+	/**
+	 * Factor used when transferring fluid between pipes, tanks, etc.
+	 */
+	public static final float pipeTransferFactor = 0.5f;
 
 	public static int calculateAppliedPressure(int current, int change, int limit) {
 		if (change > 0) {
@@ -100,16 +105,12 @@ public final class PipeUtil {
 		for (int i = 0; i < connected.length; i++) {
 			IPipe other = connected[i];
 			int otherPressure = other.getPressure() == 0 ? -other.getSuction() : other.getPressure();
-			float factor = 0;
-			if (effectivePressure > otherPressure + 10) {
-				factor = 1;
-			} else if (effectivePressure > otherPressure + 5) {
-				factor = 0.75f;
-			} else if (effectivePressure > otherPressure) {
-				factor = 0.5f;
+			if(effectivePressure <= otherPressure) {
+				// No transfer without pressure
+				continue;
 			}
 
-			int share = (int) Math.ceil(totalAmount * factor);
+			int share = (int) Math.ceil(totalAmount * pipeTransferFactor);
 			for (FluidStack fs : pipe.getFluids()) {
 				FluidStack transfer = fs.copy();
 				transfer.amount = Math.min(transfer.amount, share);
