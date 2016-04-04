@@ -114,12 +114,33 @@ public class ApplianceSprayer extends ATileEntityAppliance implements IFluidHand
 			return false;
 		}
 
+		/*
+		 * Fetch Recipe
+		 */
+		
 		IProcessingRecipeFluidBased recipe = getRecipe(wrapper.itemStack);
 		
 		if(recipe == null) {
 			wrapper.unblock();
 			return true;
 		}
+		
+		/*
+		 * Fetch Output
+		 */
+		
+		ItemStack result = recipe.getOutput(wrapper.itemStack, worldObj.rand)[0];
+		result.stackSize = wrapper.itemStack.stackSize;
+		
+		// Fix for re-coloring to the same color (Output == Input)
+		if(result.isItemEqual(wrapper.itemStack)) {
+			wrapper.unblock();
+			return true;
+		}
+		
+		/*
+		 * Check fluid requirements
+		 */
 		
 		int requiredAmount = wrapper.itemStack.stackSize * recipe.getInputFluid().amount;
 		
@@ -130,15 +151,20 @@ public class ApplianceSprayer extends ATileEntityAppliance implements IFluidHand
 			return true;
 		}
 		
+		/*
+		 * Consume fluid
+		 */
+		
 		inTank.amount -= requiredAmount;
 		if(inTank.amount == 0) {
 			tank.setFluid(null);
 		}
 		
-		ItemStack result = recipe.getOutput(wrapper.itemStack, worldObj.rand)[0];
-		result.stackSize = wrapper.itemStack.stackSize;
-		wrapper.itemStack = result;
+		/*
+		 * Replace input stack with output
+		 */
 		
+		wrapper.itemStack = result;
 		wrapper.unblock();
 		
 		updateState();
