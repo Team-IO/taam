@@ -73,10 +73,10 @@ public class PipeInfo {
 		if (stack == null || stack.amount == 0) {
 			return 0;
 		}
-
-		int current = fillLevel;
 		// TODO: Caching. Later.
 		recalculateFillLevel();
+
+		int current = fillLevel;
 		int free = capacity - current;
 
 		if (free < 1) {
@@ -90,7 +90,9 @@ public class PipeInfo {
 				return insert;
 			}
 		}
-		content.add(stack.copy());
+		FluidStack copy = stack.copy();
+		copy.amount = insert;
+		content.add(copy);
 
 		return insert;
 	}
