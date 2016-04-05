@@ -4,9 +4,11 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
+import net.minecraft.world.World;
 import net.minecraft.util.ITickable;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
@@ -15,12 +17,13 @@ import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IRenderable;
+import net.teamio.taam.content.IWorldInteractable;
 import net.teamio.taam.piping.IPipe;
 import net.teamio.taam.piping.IPipeTE;
 import net.teamio.taam.piping.PipeEndFluidHandler;
 import net.teamio.taam.piping.PipeUtil;
 
-public class TileEntityTank extends BaseTileEntity implements IFluidHandler, IPipeTE, ITickable, IRenderable {
+public class TileEntityTank extends BaseTileEntity implements IFluidHandler, IPipeTE, ITickable, IRenderable, IWorldInteractable {
 
 	private final PipeEndFluidHandler pipeEndUP;
 	private final PipeEndFluidHandler pipeEndDOWN;
@@ -61,6 +64,30 @@ public class TileEntityTank extends BaseTileEntity implements IFluidHandler, IPi
 		tank.readFromNBT(tag);
 	}
 
+	/*
+	 * IWorldInteractable implementation
+	 */
+	
+	@Override
+	public boolean onBlockActivated(World world, EntityPlayer player, boolean hasWrench, EnumFacing side, float hitX,
+			float hitY, float hitZ) {
+		boolean didSomething = PipeUtil.defaultPlayerInteraction(player, getTank());
+		
+		if(didSomething) {
+			updateState(true, false, false);
+		}
+		return didSomething;
+	}
+	
+	@Override
+	public boolean onBlockHit(World world, EntityPlayer player, boolean hasWrench) {
+		return false;
+	}
+	
+	/*
+	 * IPipeTE implementation
+	 */
+	
 	@Override
 	public IPipe[] getPipesForSide(EnumFacing side) {
 		if (side == EnumFacing.UP) {
@@ -72,6 +99,10 @@ public class TileEntityTank extends BaseTileEntity implements IFluidHandler, IPi
 		}
 	}
 
+	/*
+	 * IFluidHandler implementation
+	 */
+	
 	@Override
 	public int fill(EnumFacing from, FluidStack resource, boolean doFill) {
 		if(from.getAxis() != Axis.Y) {

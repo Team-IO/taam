@@ -1,14 +1,17 @@
 package net.teamio.taam.conveyors.appliances;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+import net.teamio.taam.content.IWorldInteractable;
 import net.teamio.taam.content.conveyors.ATileEntityAppliance;
 import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.conveyors.ItemWrapper;
@@ -20,7 +23,7 @@ import net.teamio.taam.piping.PipeUtil;
 import net.teamio.taam.recipes.IProcessingRecipeFluidBased;
 import net.teamio.taam.recipes.ProcessingRegistry;
 
-public class ApplianceSprayer extends ATileEntityAppliance implements IFluidHandler, IPipeTE, ITickable {
+public class ApplianceSprayer extends ATileEntityAppliance implements IFluidHandler, IPipeTE, ITickable, IWorldInteractable {
 
 	private static final int capacity = 2000;
 	
@@ -99,6 +102,10 @@ public class ApplianceSprayer extends ATileEntityAppliance implements IFluidHand
 		tag.setTag("tank", tagTank);
 	};
 
+	/*
+	 * IConveyorAppliance
+	 */
+	
 	@Override
 	public boolean processItem(IConveyorApplianceHost conveyor, int slot, ItemWrapper wrapper) {
 		if (wrapper.itemStack == null) {
@@ -184,6 +191,26 @@ public class ApplianceSprayer extends ATileEntityAppliance implements IFluidHand
 		super.setFacingDirection(direction);
 
 		pipeEnd.setSide(direction.getOpposite());
+	}
+
+	/*
+	 * IWorldInteractable implementation
+	 */
+	
+	@Override
+	public boolean onBlockActivated(World world, EntityPlayer player, boolean hasWrench, EnumFacing side, float hitX,
+			float hitY, float hitZ) {
+		boolean didSomething = PipeUtil.defaultPlayerInteraction(player, getTank());
+		
+		if(didSomething) {
+			updateState(true, false, false);
+		}
+		return didSomething;
+	}
+	
+	@Override
+	public boolean onBlockHit(World world, EntityPlayer player, boolean hasWrench) {
+		return false;
 	}
 
 	/*
