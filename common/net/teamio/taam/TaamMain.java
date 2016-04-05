@@ -37,6 +37,7 @@ import net.teamio.taam.content.common.BlockSensor;
 import net.teamio.taam.content.common.BlockSlidingDoor;
 import net.teamio.taam.content.common.BlockSupportBeam;
 import net.teamio.taam.content.common.FluidDye;
+import net.teamio.taam.content.common.FluidMaterial;
 import net.teamio.taam.content.common.ItemDebugTool;
 import net.teamio.taam.content.common.ItemTool;
 import net.teamio.taam.content.common.ItemWrench;
@@ -107,6 +108,7 @@ public class TaamMain {
 
 	public static FluidDye[] fluidsDye;
 	public static BlockFluidClassic[] blocksFluidDye;
+	public static FluidMaterial[] fluidsMaterial;
 
 	public static DamageSource ds_processed = new DamageSource("taam.processed").setDamageBypassesArmor();
 	public static DamageSource ds_shredded = new DamageSource("taam.shredded").setDamageBypassesArmor();
@@ -214,6 +216,10 @@ public class TaamMain {
 
 		registerBlock(blockPipe = new BlockPipe(), ItemBlock.class, Taam.BLOCK_PIPE);
 
+		/*
+		 * Tile Entities
+		 */
+		
 		GameRegistry.registerTileEntity(TileEntitySensor.class, Taam.TILEENTITY_SENSOR);
 		GameRegistry.registerTileEntity(TileEntityChute.class, Taam.TILEENTITY_CHUTE);
 		GameRegistry.registerTileEntity(TileEntityCreativeCache.class, Taam.TILEENTITY_CREATIVECACHE);
@@ -233,21 +239,30 @@ public class TaamMain {
 		GameRegistry.registerTileEntity(TileEntityPump.class, Taam.TILEENTITY_PUMP);
 		GameRegistry.registerTileEntity(TileEntityMixer.class, Taam.TILEENTITY_MIXER);
 
+		/*
+		 * Worldgen
+		 */
+		
 		OreGenerator worldgen = new OreGenerator();
 		MinecraftForge.EVENT_BUS.register(worldgen);
 
 		GameRegistry.registerWorldGenerator(worldgen, 2);
 
+		/*
+		 * Fluids
+		 */
+		
 		boolean registerFluidBlocks = false;
-
-		Enum<?>[] fluidsDyeValues = Taam.FLUID_DYE_META.values();
+		
+		Taam.FLUID_DYE_META[] fluidsDyeValues = Taam.FLUID_DYE_META.values();
 		fluidsDye = new FluidDye[fluidsDyeValues.length];
 		blocksFluidDye = new BlockFluidClassic[fluidsDyeValues.length];
+		
 		for (int i = 0; i < fluidsDyeValues.length; i++) {
 			fluidsDye[i] = new FluidDye(Taam.FLUID_DYE + fluidsDyeValues[i].name());
 			FluidRegistry.registerFluid(fluidsDye[i]);
 			FluidRegistry.addBucketForFluid(fluidsDye[i]);
-
+			
 			if (registerFluidBlocks) {
 				BlockFluidClassic fluidBlock = new BlockFluidClassic(fluidsDye[i], Material.water);
 				String blockName = "fluid.dye." + fluidsDyeValues[i].name();
@@ -259,16 +274,36 @@ public class TaamMain {
 
 		}
 
+		Taam.FLUID_MATERIAL_META[] fluidsMaterialValues = Taam.FLUID_MATERIAL_META.values();
+		fluidsMaterial = new FluidMaterial[fluidsMaterialValues.length];
+		
+		for(int i = 0; i < fluidsMaterialValues.length; i++) {
+			fluidsMaterial[i] = new FluidMaterial(fluidsMaterialValues[i]);
+			FluidRegistry.registerFluid(fluidsMaterial[i]);
+			FluidRegistry.addBucketForFluid(fluidsMaterial[i]);
+		}
+		
+		/*
+		 * Network
+		 */
+
 		network = NetworkRegistry.INSTANCE.newSimpleChannel(Taam.CHANNEL_NAME);
 		proxy.registerPackets(network);
 	}
 
 	@EventHandler
 	public void init(FMLInitializationEvent event) {
-
+		/*
+		 * Rendering & GUI
+		 */
+		
 		proxy.registerRenderStuff();
 		NetworkRegistry.INSTANCE.registerGuiHandler(this, new GuiHandler());
 
+		/*
+		 * Recipe Stuff
+		 */
+		
 		oreRegistration();
 		TaamRecipes.addRecipes();
 		// TaamRecipes.addSmeltingRecipes();

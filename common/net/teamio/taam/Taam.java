@@ -58,6 +58,9 @@ public final class Taam {
 		/*16*/gold(false, false, true),
 		/*17*/iron(false, false, true),
 		/*18*/coal(false, false, true),
+		
+		// Non-Ore stuff
+		/*19*/stone(false, false, true),
 		;
 		
 		public final boolean ore, ingot, dust;
@@ -287,7 +290,9 @@ public final class Taam {
 		silicon_wafer,
 		wooden_board,
 		aluminum_plate,
-		resin
+		resin,
+		cement,
+		cementRough
 		;
 		public static String[] valuesAsString() {
 			Enum<?>[] valuesAsEnum = values();
@@ -388,5 +393,32 @@ public final class Taam {
 	};
 
 	public static final String FLUID_DYE = "dye_";
+	
+	public static enum FLUID_MATERIAL_META {
+		concreteFine("concreteFine", 2000, 8000),
+		concreteRough("concreteRough", 2000, 10000),
+		coating("coating", 900, 4000)
+		;
+		
+		public final String registryName;
+		public final int viscosity;
+		public final int density;
+		
+		private FLUID_MATERIAL_META(String registryName, int viscosity, int density) {
+			this.registryName = registryName;
+			this.viscosity = viscosity;
+			this.density = density;
+		}
+		
+		public static String[] valuesAsString() {
+			Enum<?>[] valuesAsEnum = values();
+			String[] valuesAsString = new String[valuesAsEnum.length];
+			for(int i = 0; i < valuesAsEnum.length; i++) {
+				valuesAsString[i] = valuesAsEnum[i].name();
+			}
+			return valuesAsString;
+		}
+	};
+	
 	public static final String CHANNEL_NAME = "TAAM";
 }

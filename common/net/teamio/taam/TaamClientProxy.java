@@ -287,6 +287,9 @@ public class TaamClientProxy extends TaamCommonProxy {
 		for (Fluid fluid : TaamMain.fluidsDye) {
 			textureStitchPre(fluid, event);
 		}
+		for (Fluid fluid : TaamMain.fluidsMaterial) {
+			textureStitchPre(fluid, event);
+		}
 	}
 
 	private void textureStitchPre(Fluid fluid, TextureStitchEvent.Pre event) {

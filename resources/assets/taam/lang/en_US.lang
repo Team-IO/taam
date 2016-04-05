@@ -19,6 +19,7 @@ item.dust.kaolinite.name=Kaolinite Dust
 item.dust.gold.name=Gold Dust
 item.dust.iron.name=Iron Dust
 item.dust.coal.name=Coal Dust
+item.dust.stone.name=Stone Dust
 # Parts (Crafting Items)
 item.part.photocell.name=Photo Cell
 item.part.motor.name=Motor
@@ -47,6 +48,8 @@ item.material.iron_nugget.name=Iron Nugget
 item.material.wooden_board.name=Wooden Board
 item.material.aluminum_plate.name=Aluminum Plate
 item.material.resin.name=Resin
+item.material.cement.name=Cement
+item.material.cementRough.name=Rough Cement
 # Tools
 item.tool.saw.name=Saw
 
@@ -120,6 +123,10 @@ fluid.dye_purple=Liquid Purple Dye
 fluid.dye_red=Liquid Red Dye
 fluid.dye_white=Liquid White Dye
 fluid.dye_yellow=Liquid Yellow Dye
+
+fluid.concreteRough=Rough Concrete
+fluid.concreteFine=Fine Concrete
+fluid.coating=Resin-Based Coating
 
 # Lore localization
 lore.taam.shift=Hold Shift
