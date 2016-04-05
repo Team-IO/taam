@@ -414,6 +414,10 @@ public class ConveyorUtil {
 			 * Let the appliances process the current slot.
 			 */
 			if(appliances != null) {
+				// Unblock Wrapper to prevent them from staying blocked if we remove an appliance
+				wrapper.unblock();
+				
+				// Let each appliance process the item
 				for(IConveyorAppliance appliance : appliances) {
 					if(appliance.processItem(applianceHost, slot, wrapper)) {
 						needsUpdate = true;
