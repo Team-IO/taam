@@ -55,6 +55,8 @@ public class TileEntityCreativeCache extends BaseTileEntity implements IInventor
 		} else {
 			template = stack.copy();
 		}
+		updateState();
+		worldObj.markBlockForUpdate(pos);
 		return true;
 	}
 
