@@ -160,7 +160,7 @@ public class TileEntityPipe extends BaseTileEntity implements IPipe, IPipeTE, IT
 			}
 		}
 		
-		updateState();
+		updateState(false, false, false);
 	}
 
 	@Override

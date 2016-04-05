@@ -43,25 +43,27 @@ public abstract class BaseTileEntity extends TileEntity {
 	 * Updates block info & marks the containing block for update when on the
 	 * server.
 	 */
-	public final void updateState() {
-		if (worldObj.isRemote) {
+	public final void updateState(boolean worldUpdate, boolean renderUpdate, boolean blockUpdate) {
+		if (worldObj == null) {
 			return;
 		}
 		markDirty();
-		//this.worldObj.markBlockForUpdate(pos);
+		if(worldUpdate) {
+			this.worldObj.markBlockForUpdate(pos);
+		}
+		if(renderUpdate) {
+			worldObj.markBlockRangeForRenderUpdate(pos, pos);
+		}
+		if(blockUpdate) {
+			worldObj.notifyNeighborsOfStateChange(pos, blockType);
+		}
 	}
 	
 	/**
 	 * Called inside {@link BaseBlock#onNeighborBlockChange(net.minecraft.world.World, net.minecraft.util.BlockPos, net.minecraft.block.state.IBlockState, net.minecraft.block.Block)}.
 	 * (On server side)
-	 * Also called by implementations when rotating with a wrench.
-	 * (Both client and server)
-	 * Default implementation calls {@link World#markBlockRangeForRenderUpdate(net.minecraft.util.BlockPos, net.minecraft.util.BlockPos)}.
 	 */
 	public void blockUpdate() {
-		if(worldObj != null) {
-			worldObj.markBlockRangeForRenderUpdate(pos, pos);
-		}
 	}
 	
 	

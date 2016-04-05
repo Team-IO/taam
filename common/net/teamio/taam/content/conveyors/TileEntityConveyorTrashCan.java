@@ -48,7 +48,7 @@ public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements
 
 	public void clearOut() {
 		fillLevel = 0;
-		updateState();
+		updateState(true, true, false);
 	}
 
 
@@ -106,7 +106,7 @@ public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements
 		float added = stack.stackSize / (float)stack.getMaxStackSize();
 		if(fillLevel + added < Config.pl_trashcan_maxfill) {
 			fillLevel += added;
-			updateState();
+			updateState(true, true, false);
 		}
 	}
 
@@ -190,10 +190,15 @@ public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements
 		float added = item.stackSize / (float)item.getMaxStackSize();
 		if(fillLevel + added < Config.pl_trashcan_maxfill) {
 			fillLevel += added;
-			updateState();
+			updateState(true, true, false);
 			return item.stackSize;
 		}
 		return 0;
+	}
+	
+	@Override
+	public ItemStack removeItemAt(int slot) {
+		return null;
 	}
 	
 	@Override

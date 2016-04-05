@@ -15,12 +15,18 @@ public interface IConveyorAwareTE {
 	BlockPos getPos();
 	
 	/**
-	 * 
+	 * Add an item to a slot.
 	 * @param item
 	 * @param slot
 	 * @return The actual amount of items added
 	 */
 	int insertItemAt(ItemStack item, int slot);
+	/**
+	 * Remove an item from a slot.
+	 * @param slot
+	 * @return The itemStack that was in that slot before
+	 */
+	ItemStack removeItemAt(int slot);
 	EnumFacing getMovementDirection();
 	ItemWrapper getSlot(int slot);
 	EnumFacing getNextSlot(int slot);

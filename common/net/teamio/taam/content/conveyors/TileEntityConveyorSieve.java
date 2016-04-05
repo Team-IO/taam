@@ -140,7 +140,7 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 		}
 		
 		if(needsUpdate) {
-			updateState();
+			updateState(false, false, false);
 		}
 	}
 	
@@ -251,9 +251,20 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 	public int insertItemAt(ItemStack item, int slot) {
 		int count = ConveyorUtil.insertItemAt(this, item, slot, false);
 		if(count > 0) {
-			updateState();
+			updateState(true, false, false);
 		}
 		return count;
+	}
+	
+	@Override
+	public ItemStack removeItemAt(int slot) {
+		ItemWrapper candidate = items[slot];
+		ItemStack removed = candidate.itemStack;
+		if(removed != null) {
+			candidate.itemStack = null;
+			updateState(true, false, false);
+		}
+		return removed;
 	}
 	
 	@Override
@@ -308,8 +319,7 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 		if(direction == EnumFacing.UP || direction == EnumFacing.DOWN) {
 			this.direction = EnumFacing.NORTH;
 		}
-		blockUpdate();
-		updateState();
+		updateState(false, true, true);
 		worldObj.notifyBlockOfStateChange(pos, blockType);
 		if(blockType != null) {
 			blockType.onNeighborBlockChange(worldObj, pos, worldObj.getBlockState(pos), blockType);
@@ -349,7 +359,7 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 	public void setInventorySlotContents(int slot, ItemStack itemStack) {
 		if(itemStack == null) {
 			items[slot].itemStack = null;
-			updateState();
+			updateState(true, false, false);
 		} else {
 			insertItemAt(itemStack, slot);
 		}

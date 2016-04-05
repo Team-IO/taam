@@ -167,7 +167,7 @@ public class ApplianceSprayer extends ATileEntityAppliance implements IFluidHand
 		wrapper.itemStack = result;
 		wrapper.unblock();
 		
-		updateState();
+		updateState(false, false, false);
 		//TODO: Particles
 		
 		return true;

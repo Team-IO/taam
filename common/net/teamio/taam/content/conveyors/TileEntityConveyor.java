@@ -83,10 +83,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	@Override
 	public void blockUpdate() {
 		if(worldObj != null) {
-			
 			updateApplianceCache();
-
-			worldObj.markBlockRangeForRenderUpdate(pos, pos);
 		}
 	}
 	
@@ -271,7 +268,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 			needsUpdate = true;
 		}
 		if(needsUpdate) {
-			updateState();
+			updateState(false, false, false);
 		}
 	}
 
@@ -356,9 +353,20 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	public int insertItemAt(ItemStack item, int slot) {
 		int count = ConveyorUtil.insertItemAt(this, item, slot, false);
 		if(count > 0) {
-			updateState();
+			updateState(true, false, false);
 		}
 		return count;
+	}
+	
+	@Override
+	public ItemStack removeItemAt(int slot) {
+		ItemWrapper candidate = items[slot];
+		ItemStack removed = candidate.itemStack;
+		if(removed != null) {
+			candidate.itemStack = null;
+			updateState(true, false, false);
+		}
+		return removed;
 	}
 	
 	@Override
@@ -413,9 +421,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 		if(direction == EnumFacing.UP || direction == EnumFacing.DOWN) {
 			this.direction = EnumFacing.NORTH;
 		}
-		blockUpdate();
-		updateState();
-		worldObj.notifyNeighborsOfStateChange(pos, blockType);
+		updateState(false, true, true);
 		if(blockType != null) {
 			//TODO: Update this block -> drop if it can't stay anymore
 			//blockType.onNeighborBlockChange(worldObj, pos, blockType);
@@ -480,8 +486,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	@Override
 	public void setInventorySlotContents(int slot, ItemStack itemStack) {
 		if(itemStack == null) {
-			items[slot].itemStack = null;
-			updateState();
+			removeItemAt(slot);
 		} else {
 			insertItemAt(itemStack, slot);
 		}

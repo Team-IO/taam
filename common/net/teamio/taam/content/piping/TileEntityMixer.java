@@ -196,9 +196,7 @@ public class TileEntityMixer extends BaseTileEntity implements IRotatable, IConv
 		pipeEndOut.setSide(direction);
 		pipeEndIn.setSide(direction.getOpposite());
 		
-		blockUpdate();
-		updateState();
-		worldObj.notifyNeighborsOfStateChange(pos, blockType);
+		updateState(false, true, true);
 	}
 	
 	/*
@@ -256,6 +254,11 @@ public class TileEntityMixer extends BaseTileEntity implements IRotatable, IConv
 			return process(item);
 		}
 		return 0;
+	}
+	
+	@Override
+	public ItemStack removeItemAt(int slot) {
+		return null;
 	}
 
 	@Override

@@ -57,8 +57,7 @@ public abstract class ATileEntityAttachable extends BaseTileEntity implements IC
 	@Override
 	public void setFacingDirection(EnumFacing direction) {
 		this.direction = direction;
-		updateState();
-		renderUpdate();
+		updateState(false, true, true);
 	}
 
 }

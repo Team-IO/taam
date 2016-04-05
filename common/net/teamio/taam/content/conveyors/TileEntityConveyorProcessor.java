@@ -143,7 +143,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 		}
 		
 		if(needsUpdate) {
-			updateState();
+			updateState(true, false, false);
 		}
 		
 	}
@@ -367,7 +367,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 	public ItemStack decrStackSize(int slot, int amount) {
 		ItemStack retVal = inventory.decrStackSize(slot, amount);
 		checkRecipe();
-		updateState();
+		updateState(true, false, false);
 		return retVal;
 	}
 
@@ -380,7 +380,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 	public void setInventorySlotContents(int slot, ItemStack stack) {
 		inventory.setInventorySlotContents(slot, stack);
 		recipe = null;
-		updateState();
+		updateState(true, false, false);
 	}
 
 	@Override
@@ -470,8 +470,15 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 		}
 		// insertItem returns item count unable to insert.
 		int inserted = stack.stackSize - InventoryUtils.insertItem(inventory, stack, false);
-		updateState();
+		updateState(true, false, false);
 		return inserted;
+	}
+	
+	@Override
+	public ItemStack removeItemAt(int slot) {
+		ItemStack content = getStackInSlot(slot);
+		setInventorySlotContents(slot, null);
+		return content;
 	}
 
 	@Override
@@ -664,8 +671,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 	@Override
 	public void setFacingDirection(EnumFacing direction) {
 		this.direction = direction;
-		updateState();
-		blockUpdate();
+		updateState(false, true, false);
 	}
 	
 }

@@ -548,11 +548,8 @@ public class ConveyorUtil {
 		ItemStack playerStack = player.inventory.getCurrentItem();
 		if(playerStack == null) {
 			// Take from Conveyor
-			ItemWrapper wrapper = tileEntity.getSlot(clickedSlot);
-			if(!wrapper.isEmpty()) {
-				player.inventory.setInventorySlotContents(playerSlot, wrapper.itemStack);
-				wrapper.itemStack = null;
-			}
+			ItemStack removed = tileEntity.removeItemAt(clickedSlot);
+			player.inventory.setInventorySlotContents(playerSlot, removed);
 		} else {
 			// Put on conveyor
 			int inserted = tileEntity.insertItemAt(playerStack, clickedSlot);

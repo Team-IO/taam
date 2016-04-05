@@ -139,8 +139,7 @@ public class TileEntityCreativeWell extends BaseTileEntity implements IFluidHand
 			pipeEnds[index].info.content.clear();
 			pipeEnds[index].info.recalculateFillLevel();
 		}
-		updateState();
-		worldObj.markBlockForUpdate(pos);
+		updateState(true, false, true);
 		return true;
 	}
 	
