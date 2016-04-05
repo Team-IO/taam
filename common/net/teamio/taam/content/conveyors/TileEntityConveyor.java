@@ -51,7 +51,16 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	public boolean renderLeft = false;
 	public boolean renderAbove = false;
 	
-	private static final List<String> visibleParts = new ArrayList<String>(14);
+	/**
+	 * ThreadLocal storage for the list of visible parts (required due to some concurrency issues, See issue #194)
+	 * TODO: central location for one list? Not one per entity type.. Adjust getVisibleParts
+	 */
+	private static final ThreadLocal<List<String>> visibleParts = new ThreadLocal<List<String>>() {
+		@Override
+		protected List<String> initialValue() {
+			return new ArrayList<String>(14);
+		}
+	};
 	
 	/**
 	 * Appliance cache. Updated when loading & on block update
@@ -176,8 +185,9 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	
 	@Override
 	public List<String> getVisibleParts() {
-		// Visible parts list is re-used, as it is only used once for updating
-		// an OBJState anyways.
+		List<String> visibleParts = TileEntityConveyor.visibleParts.get();
+		
+		// Visible parts list is re-used to reduce object creation
 		visibleParts.clear();
 		
 		boolean isWood = speedLevel == 0;
