@@ -35,6 +35,15 @@ public class WrenchUtil {
 		// TODO: Check other wrench types once supported
 		return held.getItem() == TaamMain.itemWrench;
 	}
+	
+	public static boolean playerHasDebugTool(EntityPlayer player) {
+		ItemStack held = player.getHeldItem();
+		if (held == null) {
+			return false;
+		}
+		// TODO: Check other tool types once supported
+		return held.getItem() == TaamMain.itemDebugTool;
+	}
 
 	public static boolean wrenchBlock(World world, BlockPos pos, EntityPlayer player, EnumFacing side, float hitX, float hitY, float hitZ) {
 

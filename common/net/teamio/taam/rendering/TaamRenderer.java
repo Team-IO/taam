@@ -7,6 +7,7 @@ import org.lwjgl.opengl.GL11;
 import com.google.common.base.Function;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
@@ -38,6 +39,7 @@ import net.teamio.taam.conveyors.ItemWrapper;
 import net.teamio.taam.conveyors.api.IConveyorAwareTE;
 import net.teamio.taam.conveyors.appliances.ApplianceSprayer;
 import net.teamio.taam.piping.IPipe;
+import net.teamio.taam.util.WrenchUtil;
 
 public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 
@@ -114,7 +116,10 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 			GL11.glPopMatrix();
 		}
 
-		if (tileEntity instanceof IPipe) {
+		EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
+		boolean hasDebugTool = player != null && WrenchUtil.playerHasDebugTool(player);
+
+		if (hasDebugTool && tileEntity instanceof IPipe) {
 
 			FontRenderer fontRendererObj = Minecraft.getMinecraft().fontRendererObj;
 
@@ -135,31 +140,22 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 			GL11.glPushMatrix();
 			{
 				GL11.glTranslated(x, y, z);
-	
-				GL11.glPushMatrix();
-				{
-					GL11.glTranslated(0.5f, 0.5f, 0.25f);
-		
-					GL11.glScalef(.02f, .02f, .02f);
-					GL11.glRotatef(180, 0, 0, 1);
-
-					fontRendererObj.drawString(info0, 0, 0, 0x00FFFF);
-					fontRendererObj.drawString(info1, 0, 8, 0xFFFFFF);
-					fontRendererObj.drawString(info2, 0, 16, 0xFFFF00);
-		
-				}
-				GL11.glPopMatrix();
 				
 				GL11.glTranslated(.5f, .5f, .5f);
-				GL11.glRotatef(180, 0, 1, 0);
+				
+				float playerRot = player.getRotationYawHead();
+				float pitch = player.rotationPitch;
+
+				GL11.glRotatef(180, 0, 0, 1);
+				GL11.glRotatef(playerRot, 0, 1, 0);
+				GL11.glRotatef(-pitch, 1, 0, 0);
 				GL11.glTranslated(-.5f, -.5f, -.5f);
 				
 				GL11.glPushMatrix();
 				{
-					GL11.glTranslated(0.5f, 0.5f, 0.25f);
+					GL11.glTranslated(0.25f, 0.25f, 0.15f);
 		
 					GL11.glScalef(.02f, .02f, .02f);
-					GL11.glRotatef(180, 0, 0, 1);
 
 					fontRendererObj.drawString(info0, 0, 0, 0x00FFFF);
 					fontRendererObj.drawString(info1, 0, 8, 0xFFFFFF);
