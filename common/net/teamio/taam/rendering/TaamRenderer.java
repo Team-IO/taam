@@ -105,7 +105,6 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 					
 					Vec3 hitVec = event.target.hitVec;
 					int slot = ConveyorUtil.getSlotForRelativeCoordinates(hitVec.xCoord - pos.getX(), hitVec.zCoord - pos.getZ());
-					System.out.println(slot);
 					
 	                EnumFacing dir = cte.getNextSlot(slot);
 					float speedsteps = cte.getSpeedsteps();
