@@ -309,7 +309,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 	protected void writePropertiesToNBT(NBTTagCompound tag) {
 		tag.setTag("items", InventoryUtils.writeItemStacksToTag(inventory.items));
 		if(holdback != null) {
-			tag.setTag("holdback", InventoryUtils.writeItemStacksToTag(holdback));
+			tag.setTag("holdback", InventoryUtils.writeItemStacksToTagSequential(holdback));
 		}
 		tag.setByte("mode", mode);
 //		tag.setByte("redstoneMode", redstoneMode);
@@ -329,7 +329,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 			holdback = null;
 		} else {
 			holdback = new ItemStack[holdbackList.tagCount()];
-			InventoryUtils.readItemStacksFromTag(holdback, holdbackList);
+			InventoryUtils.readItemStacksFromTagSequential(holdback, holdbackList);
 		}
 
 		mode = tag.getByte("mode");

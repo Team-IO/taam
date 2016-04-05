@@ -405,11 +405,66 @@ public final class InventoryUtils {
 		}
 		return tagList;
 	}
+	
+	/**
+	 * NBT item saving function
+	 * 
+	 * Writes the itemStacks without adding the slot ID.
+	 * Useful for internal lists.
+	 * 
+	 * @author Oliver Kahrmann, based on {@link #writeItemStacksToTag(ItemStack[])}
+	 */
+	public static NBTTagList writeItemStacksToTagSequential(ItemStack[] items) {
+		return writeItemStacksToTagSequential(items, 64);
+	}
+	
+	/**
+	 * NBT item saving function with support for stack sizes > 32K
+	 * 
+	 * Writes the itemStacks without adding the slot ID.
+	 * Useful for internal lists.
+	 * 
+	 * @author Oliver Kahrmann, based on {@link #writeItemStacksToTag(ItemStack[], int)}
+	 */
+	public static NBTTagList writeItemStacksToTagSequential(ItemStack[] items, int maxQuantity) {
+		NBTTagList tagList = new NBTTagList();
+		for (int i = 0; i < items.length; i++) {
+			if (items[i] != null) {
+				NBTTagCompound tag = new NBTTagCompound();
+				items[i].writeToNBT(tag);
+
+				if (maxQuantity > Short.MAX_VALUE)
+					tag.setInteger("Quantity", items[i].stackSize);
+				else if (maxQuantity > Byte.MAX_VALUE)
+					tag.setShort("Quantity", (short) items[i].stackSize);
+
+				tagList.appendTag(tag);
+			}
+		}
+		return tagList;
+	}
 
 	/**
 	 * NBT item loading function with support for stack sizes > 32K
 	 */
 	public static void readItemStacksFromTag(ItemStack[] items, NBTTagList tagList) {
+		for (int i = 0; i < tagList.tagCount(); i++) {
+			NBTTagCompound tag = tagList.getCompoundTagAt(i);
+			int b = tag.getShort("Slot");
+			items[b] = ItemStack.loadItemStackFromNBT(tag);
+			if (tag.hasKey("Quantity"))
+				items[b].stackSize = ((NBTBase.NBTPrimitive) tag.getTag("Quantity")).getInt();
+		}
+	}
+
+	/**
+	 * NBT item loading function with support for stack sizes > 32K
+	 * Reads the itemStacks without checking the slot ID.
+	 * Useful for internal lists.
+	 * 
+	 * @author Oliver Kahrmann, based on {@link #readItemStacksFromTag(ItemStack[], NBTTagList)}
+	 */
+	public static void readItemStacksFromTagSequential(ItemStack[] items, NBTTagList tagList) {
 		for (int i = 0; i < tagList.tagCount(); i++) {
 			NBTTagCompound tag = tagList.getCompoundTagAt(i);
 			int b = tag.getShort("Slot");
