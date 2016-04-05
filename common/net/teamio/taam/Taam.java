@@ -36,16 +36,28 @@ public final class Taam {
 	public static final String BLOCK_PIPEMACHINES = "pipemachines";
 	
 	public static enum BLOCK_ORE_META implements IStringSerializable {
-		copper(true, true, true),
-		tin(true, true, true),
-		aluminum(true, true, true),
-		bauxite(true, false, true),  //No Ingot
-		kaolinite(true, false, true), //No Ingot
+		/*0*/copper(true, true, true),
+		/*1*/tin(true, true, true),
+		/*2*/aluminum(true, true, true),
+		/*3*/bauxite(true, false, true),  //No Ingot
+		/*4*/kaolinite(true, false, true), //No Ingot
+		// Reserved for future use as blocks
+		/*5*/reserved1(false, false, false),
+		/*6*/reserved2(false, false, false),
+		/*7*/reserved3(false, false, false),
+		/*8*/reserved4(false, false, false),
+		/*9*/reserved5(false, false, false),
+		/*10*/reserved6(false, false, false),
+		/*11*/reserved7(false, false, false),
+		/*12*/reserved8(false, false, false),
+		/*13*/reserved9(false, false, false),
+		/*14*/reserved10(false, false, false),
+		/*15*/reserved11(false, false, false),
 		
 		//Vanilla requires only the "custom" stuff
-		gold(false, false, true),
-		iron(false, false, true),
-		coal(false, false, true),
+		/*16*/gold(false, false, true),
+		/*17*/iron(false, false, true),
+		/*18*/coal(false, false, true),
 		;
 		
 		public final boolean ore, ingot, dust;
