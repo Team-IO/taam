@@ -48,7 +48,7 @@ public abstract class BaseTileEntity extends TileEntity {
 			return;
 		}
 		markDirty();
-		this.worldObj.markBlockForUpdate(pos);
+		//this.worldObj.markBlockForUpdate(pos);
 	}
 	
 	/**
