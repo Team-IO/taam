@@ -10,6 +10,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
@@ -19,11 +20,16 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.model.IBakedModel;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Vec3;
+import net.minecraft.world.World;
+import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
@@ -78,6 +84,66 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 			}
 			rotSin = Math.sin(Math.toRadians(rot * 32));
 		}
+	}
+	
+	@SubscribeEvent
+	public void onDrawBlockHighlight(DrawBlockHighlightEvent event) {
+		if(event.target.sideHit == EnumFacing.UP) {
+			BlockPos pos = event.target.getBlockPos();
+			TileEntity te;
+			if(pos != null) {
+				EntityPlayer player = event.player;
+				World world = player.worldObj; 
+				te = world.getTileEntity(pos);
+				if(te instanceof IConveyorAwareTE) {
+					IConveyorAwareTE cte = (IConveyorAwareTE)te;
+					
+					// Only render for TEs that actually have the items there
+					if(!cte.shouldRenderItemsDefault()) {
+						return;
+					}
+					
+					Vec3 hitVec = event.target.hitVec;
+					int slot = ConveyorUtil.getSlotForRelativeCoordinates(hitVec.xCoord - pos.getX(), hitVec.zCoord - pos.getZ());
+					System.out.println(slot);
+					
+	                EnumFacing dir = cte.getNextSlot(slot);
+					float speedsteps = cte.getSpeedsteps();
+	                float progress = cte.getMovementProgress(slot) / speedsteps;
+	                
+					double x = pos.getX() + Math.floor(slot / 3) * ConveyorUtil.oneThird // General Position
+							+ dir.getFrontOffsetX() * progress * ConveyorUtil.oneThird; // Apply Slot Movement
+					double y = pos.getY() + 0.51; // TODO: migrate to IConveyorAwareTE, same as below
+					double z = pos.getZ() + (slot % 3) * ConveyorUtil.oneThird // General Position
+							+ dir.getFrontOffsetZ() * progress * ConveyorUtil.oneThird; // Apply Slot Movement
+
+					
+					drawSelectionBoundingBox(player, event.partialTicks, new AxisAlignedBB(x, y, z,
+							x + ConveyorUtil.oneThird, y + ConveyorUtil.oneThird, z + ConveyorUtil.oneThird));
+				}
+			}
+		}
+	}
+	
+	public static final double boundingBoxExpand = 0.0020000000949949026D;
+	
+	public void drawSelectionBoundingBox(EntityPlayer player, float partialTicks, AxisAlignedBB box) {
+		GlStateManager.enableBlend();
+		GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
+		GlStateManager.color(0.0F, 0.0F, 0.0F, 0.4F);
+		GL11.glLineWidth(2.0F);
+		GlStateManager.disableTexture2D();
+		GlStateManager.depthMask(false);
+
+        double d0 = player.lastTickPosX + (player.posX - player.lastTickPosX) * partialTicks;
+        double d1 = player.lastTickPosY + (player.posY - player.lastTickPosY) * partialTicks;
+        double d2 = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * partialTicks;
+		
+		RenderGlobal.drawSelectionBoundingBox(box.offset(-d0, -d1, -d2).expand(boundingBoxExpand, boundingBoxExpand, boundingBoxExpand));
+
+		GlStateManager.depthMask(true);
+		GlStateManager.enableTexture2D();
+		GlStateManager.disableBlend();
 	}
 
 	@Override
