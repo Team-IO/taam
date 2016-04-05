@@ -19,6 +19,7 @@ package net.teamio.taam.util.inv;
 
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryLargeChest;
 import net.minecraft.item.Item;
@@ -71,6 +72,8 @@ public final class InventoryUtils {
 			if (!player.worldObj.isRemote) {
 				dropItem(stack, player.worldObj, x, y, z);
 			}
+		} else if (player instanceof EntityPlayerMP) {
+			((EntityPlayerMP) player).sendContainerToPlayer(player.inventoryContainer);
 		}
 	}
 
