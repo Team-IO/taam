@@ -59,7 +59,7 @@ public class PipeInfo {
 		recalculateFillLevel();
 	}
 
-	private void recalculateFillLevel() {
+	public void recalculateFillLevel() {
 		fillLevel = 0;
 		for (FluidStack stack : content) {
 			if(stack == null) {
