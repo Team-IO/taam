@@ -102,6 +102,7 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 		 */
 
 		boolean needsUpdate = false;
+		boolean needsWorldUpdate = false;
 		
 		if(ConveyorUtil.tryInsertItemsFromWorld(this, worldObj, null, false)) {
 			needsUpdate = true;
@@ -128,6 +129,7 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 			 */
 			if(processSieve(slotOrder)) {
 				needsUpdate = true;
+				needsWorldUpdate = true;
 			}
 			
 			/*
@@ -140,7 +142,7 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 		}
 		
 		if(needsUpdate) {
-			updateState(false, false, false);
+			updateState(needsWorldUpdate, false, false);
 		}
 	}
 	
