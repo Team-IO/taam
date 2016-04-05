@@ -69,7 +69,9 @@ tile.concrete.fine.name=Fine Concrete
 tile.concrete.fine_chiseled.name=Fine Concrete (Chiseled)
 tile.concrete.coated.name=Coated Concrete
 tile.concrete.coated_chiseled.name=Coated Concrete (Chiseled)
-tile.concrete.warn1.name=Concrete (Black Warning Paint)
+tile.concrete.black.name=Black Coated Concrete
+tile.concrete.black_chiseled.name=Black Coated Concrete (Chiseled)
+tile.concrete.warn1.name=Concrete (Yellow Warning Paint)
 tile.concrete.warn2.name=Concrete (Red Warning Paint)
 # Ores
 tile.ore.copper.name=Copper Ore

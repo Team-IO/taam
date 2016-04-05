@@ -98,6 +98,8 @@ public final class Taam {
 		fine_chiseled,
 		coated,
 		coated_chiseled,
+		black,
+		black_chiseled,
 		warn1,
 		warn2
 		;
