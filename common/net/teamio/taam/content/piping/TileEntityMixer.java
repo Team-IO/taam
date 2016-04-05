@@ -31,7 +31,7 @@ public class TileEntityMixer extends BaseTileEntity implements IRotatable, IConv
 	private FluidStack lastInputFluid;
 	private IProcessingRecipeFluidBased[] matchingRecipes;
 	
-	private static final int capacity = 50;
+	private static final int capacity = 2000;
 	
 	public TileEntityMixer() {
 		pipeEndOut = new PipeEnd(direction, capacity, false);
