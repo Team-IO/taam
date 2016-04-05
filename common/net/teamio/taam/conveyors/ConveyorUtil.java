@@ -382,6 +382,15 @@ public class ConveyorUtil {
 		}
 	}
 
+	/**
+	 * Runs the default transition logic for the items on a conveyor entity.
+	 * 
+	 * Respects the supplied slot order, processes items if tileEntity instanceof {@link IConveyorApplianceHost}.
+	 * @param world
+	 * @param tileEntity
+	 * @param slotOrder The order used when working through the slots.
+	 * @return true if the state of any item changed (TIleEntity should be marked dirty). 
+	 */
 	public static boolean defaultTransition(World world, IConveyorAwareTE tileEntity, int[] slotOrder) {
 		/*
 		 * Fetch info on appliances
