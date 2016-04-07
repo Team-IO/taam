@@ -261,10 +261,9 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 		/*
 		 * Find items laying on the conveyor.
 		 */
-		boolean needsUpdate = false;
 		
 		if(ConveyorUtil.tryInsertItemsFromWorld(this, worldObj, null, false)) {
-			needsUpdate = true;
+			updateState(false, false, false);
 		}
 
 		/*
@@ -275,10 +274,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 		// as we depend on the status of the next slot
 		int[] slotOrder = ConveyorUtil.getSlotOrderForDirection(direction);
 		if(ConveyorUtil.defaultTransition(worldObj, this, slotOrder)) {
-			needsUpdate = true;
-		}
-		if(needsUpdate) {
-			updateState(false, false, false);
+			updateState(true, false, false);
 		}
 	}
 

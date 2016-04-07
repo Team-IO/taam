@@ -403,9 +403,13 @@ public class ConveyorUtil {
 		}
 		
 		/**
-		 * Tracks if the tileEntity state needs to be updates
+		 * Tracks if the tileEntity state needs to be updated
 		 */
 		boolean needsUpdate = false;
+		/**
+		 * Tracks if we need a world update (send to client)
+		 */
+		boolean needsWorldUpdate = false;
 		/*
 		 * Process each slot individually, using the predefined slot order
 		 */
@@ -431,7 +435,7 @@ public class ConveyorUtil {
 				// Let each appliance process the item
 				for(IConveyorAppliance appliance : appliances) {
 					if(appliance.processItem(applianceHost, slot, wrapper)) {
-						needsUpdate = true;
+						needsWorldUpdate = true;
 					}
 				}
 			}
@@ -541,7 +545,8 @@ public class ConveyorUtil {
 				}
 			}
 		}
-		return needsUpdate;
+		//TODO: needsUpdate -> markDirty ??
+		return needsWorldUpdate;
 	}
 
 	public static void defaultPlayerInteraction(EntityPlayer player, IConveyorAwareTE tileEntity, float hitX, float hitZ) {
