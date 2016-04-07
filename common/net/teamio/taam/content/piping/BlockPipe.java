@@ -32,8 +32,8 @@ public class BlockPipe extends BaseBlock implements ITileEntityProvider {
 	private static final float pipeWidth = 0.25f;
 	private static final float fromBorder = (1f-pipeWidth) / 2;
 	
-	private static AxisAlignedBB bbCenter = new AxisAlignedBB(fromBorder, fromBorder, fromBorder, 1-fromBorder, 1-fromBorder, 1-fromBorder);
-	private static final AxisAlignedBB[] bbFaces = new AxisAlignedBB[6];
+	public static AxisAlignedBB bbCenter = new AxisAlignedBB(fromBorder, fromBorder, fromBorder, 1-fromBorder, 1-fromBorder, 1-fromBorder);
+	public static final AxisAlignedBB[] bbFaces = new AxisAlignedBB[6];
 	private AxisAlignedBB closestBB;
 	
 	static {

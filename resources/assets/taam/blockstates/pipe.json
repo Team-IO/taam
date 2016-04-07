@@ -8,6 +8,7 @@
         }
      },
     "variants": {
+        "multipart": [{}],
         "normal": [{}],
         "inventory": [{
             "transform": "forge:default-block"
