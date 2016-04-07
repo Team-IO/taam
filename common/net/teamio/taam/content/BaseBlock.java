@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
+import mcmultipart.block.BlockCoverable;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
@@ -34,7 +35,7 @@ import net.teamio.taam.util.TaamUtil;
 import net.teamio.taam.util.WrenchUtil;
 import net.teamio.taam.util.inv.InventoryUtils;
 
-public abstract class BaseBlock extends Block {
+public abstract class BaseBlock extends BlockCoverable {
 
 	private ExtendedBlockState state = new ExtendedBlockState(this, new IProperty[] {}, new IUnlistedProperty[]{OBJModel.OBJProperty.instance});
 
@@ -56,7 +57,7 @@ public abstract class BaseBlock extends Block {
 	public abstract boolean canBlockStay(World worldIn, BlockPos pos, IBlockState state);
 	
 	@Override
-	public void onNeighborBlockChange(World worldIn, BlockPos pos, IBlockState state, Block neighborBlock) {
+	public void onNeighborBlockChangeDefault(World worldIn, BlockPos pos, IBlockState state, Block neighborBlock) {
 		if(!canBlockStay(worldIn, pos, state)) {
 			TaamUtil.breakBlockInWorld(worldIn, pos, state);
 			if(this != TaamMain.blockSensor) {
@@ -112,7 +113,7 @@ public abstract class BaseBlock extends Block {
 	}
 	
 	@Override
-	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn,
+	public boolean onBlockActivatedDefault(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn,
 			EnumFacing side, float hitX, float hitY, float hitZ) {
 				
 		if(WrenchUtil.wrenchBlock(worldIn, pos, playerIn, side, hitX, hitY, hitZ)) {
@@ -145,7 +146,7 @@ public abstract class BaseBlock extends Block {
 	}
 	
 	@Override
-	public void onBlockClicked(World worldIn, BlockPos pos, EntityPlayer playerIn) {
+	public void onBlockClickedDefault(World worldIn, BlockPos pos, EntityPlayer playerIn) {
 		if(!worldIn.isRemote) {
 			TileEntity te = worldIn.getTileEntity(pos);
 			
@@ -204,7 +205,7 @@ public abstract class BaseBlock extends Block {
 	private static List<String> ALL = Lists.newArrayList(OBJModel.Group.ALL);
 	
 	@Override
-	public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
+	public IExtendedBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
 		List<String> visibleParts = null;
 	
 		TileEntity te = world.getTileEntity(pos);
@@ -227,7 +228,10 @@ public abstract class BaseBlock extends Block {
 		// Apply rotation to the model
 		OBJModel.OBJState retState = new OBJModel.OBJState(visibleParts, true, new TRSRTransformation(rotateRenderDirection(facing)));
 		
-		return ((IExtendedBlockState) this.state.getBaseState()).withProperty(OBJModel.OBJProperty.instance, retState);
+		// Let the BlockCoverable att the microblock stuff first.
+		IExtendedBlockState coverableBlockState = super.getExtendedState(state, world, pos);
+		
+		return coverableBlockState.withProperty(OBJModel.OBJProperty.instance, retState);
 	}
 	
 	private EnumFacing rotateRenderDirection(EnumFacing facing) {

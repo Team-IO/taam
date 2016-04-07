@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import org.apache.logging.log4j.Level;
 
+import mcmultipart.block.TileCoverable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -18,7 +19,7 @@ import net.teamio.taam.Log;
  * @author oliverkahrmann
  *
  */
-public abstract class BaseTileEntity extends TileEntity {
+public abstract class BaseTileEntity extends TileCoverable {
 
 	private UUID owner = null;
 
@@ -81,14 +82,15 @@ public abstract class BaseTileEntity extends TileEntity {
 		NBTTagCompound nbt = pkt.getNbtCompound();
 
 		readPropertiesFromNBTInternal(nbt);
+        getMicroblockContainer().getPartContainer().readDescription(pkt.getNbtCompound());
 	}
 
 	@Override
 	public S35PacketUpdateTileEntity getDescriptionPacket() {
 		NBTTagCompound nbt = new NBTTagCompound();
 		writePropertiesToNBTInternal(nbt);
-
-		return new S35PacketUpdateTileEntity(pos, 0, nbt);
+        getMicroblockContainer().getPartContainer().writeDescription(nbt);
+        return new S35PacketUpdateTileEntity(getPosIn(), getBlockMetadata(), nbt);
 	}
 
 	/*

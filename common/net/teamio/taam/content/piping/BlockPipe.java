@@ -3,7 +3,10 @@ package net.teamio.taam.content.piping;
 import java.util.ArrayList;
 import java.util.List;
 
+import mcmultipart.block.BlockMultipart;
 import net.minecraft.block.ITileEntityProvider;
+import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -16,6 +19,9 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.client.model.obj.OBJModel;
+import net.minecraftforge.common.property.ExtendedBlockState;
+import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.teamio.taam.content.BaseBlock;
@@ -46,6 +52,11 @@ public class BlockPipe extends BaseBlock implements ITileEntityProvider {
 																1-fromBorder,	fromBorder,		1-fromBorder);
 	}
 	
+	@Override
+	protected BlockState createBlockState() {
+		return new ExtendedBlockState(this, new IProperty[] {}, new IUnlistedProperty[]{BlockMultipart.properties[0], OBJModel.OBJProperty.instance});
+	}
+	
 	public BlockPipe() {
 		super(MaterialMachinesTransparent.INSTANCE);
 		this.fullBlock = false;
@@ -58,7 +69,7 @@ public class BlockPipe extends BaseBlock implements ITileEntityProvider {
 
 	
 	@Override
-	public MovingObjectPosition collisionRayTrace(World world, BlockPos pos, Vec3 start, Vec3 end) {
+	public MovingObjectPosition collisionRayTraceDefault(World world, BlockPos pos, Vec3 start, Vec3 end) {
 		start = start.subtract(pos.getX(), pos.getY(), pos.getZ());
 		end = end.subtract(pos.getX(), pos.getY(), pos.getZ());
 
@@ -149,7 +160,7 @@ public class BlockPipe extends BaseBlock implements ITileEntityProvider {
 	}
 
 	@Override
-	public void addCollisionBoxesToList(World world, BlockPos pos, IBlockState state, AxisAlignedBB mask,
+	public void addCollisionBoxesToListDefault(World world, BlockPos pos, IBlockState state, AxisAlignedBB mask,
 			List<AxisAlignedBB> list, Entity par7Entity) {
 		if (!isCollidable()) {
 			return;

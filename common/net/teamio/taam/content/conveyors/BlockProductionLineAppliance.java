@@ -78,7 +78,7 @@ public class BlockProductionLineAppliance extends BlockProductionLine {
 	}
 	
 	@Override
-	public void setBlockBoundsBasedOnState(IBlockAccess world, BlockPos pos) {
+	public void setBlockBoundsBasedOnStateDefault(IBlockAccess world, BlockPos pos) {
 		this.minX = 0;
 		this.maxX = 1;
 		this.minZ = 0;
