@@ -38,11 +38,12 @@ public final class ProcessingRegistry {
 	private static Map<String, IProcessingRecipe[]>[] recipesOreDict;
 	private static Map<Fluid, IProcessingRecipeFluidBased[]>[] recipesFluid;
 
-	public static final int count = 4;
+	public static final int count = 5;
 	public static final int GRINDER = 0;
 	public static final int CRUSHER = 1;
 	public static final int SPRAYER = 2;
 	public static final int MIXER = 3;
+	public static final int FLUIDDRIER = 4;
 
 	static {
 		recipes = new Map[count];
@@ -221,6 +222,41 @@ public final class ProcessingRegistry {
 	 * @param recipe
 	 */
 	public static void registerRecipe(int machine, IProcessingRecipe recipe) {
+		
+		Item key = null;
+		{
+			ItemStack inputStack = recipe.getInput();
+			if (inputStack != null) {
+				key = inputStack.getItem();
+			}
+		}
+		String keyOreDict = recipe.getInputOreDict();
+
+		boolean isFluidBased = recipe instanceof IProcessingRecipeFluidBased;
+		boolean isItemBased = key != null || keyOreDict != null;
+		
+		if (!isItemBased && !isFluidBased) {
+			throw new RuntimeException("Error registering recipe " + recipe + " for machine " + machine
+					+ ". Both keys (item and ore dict) were null, and not a fluid recipe.");
+		}
+		
+		if(isItemBased) {
+			registerRecipeItemBased(machine, recipe);
+		}
+
+		if (isFluidBased) {
+			registerRecipeFluidBased(machine, (IProcessingRecipeFluidBased) recipe);
+		}
+	}
+	
+	/**
+	 * Registers an {@link IProcessingRecipe} for search via {@link ItemStack}.
+	 * 
+	 * @param machine
+	 * @param recipe
+	 */
+	private static void registerRecipeItemBased(int machine, IProcessingRecipe recipe) {
+
 		Map<Item, IProcessingRecipe[]> recipes = ProcessingRegistry.recipes[machine];
 		Map<String, IProcessingRecipe[]> recipesOreDict = ProcessingRegistry.recipesOreDict[machine];
 
@@ -234,19 +270,18 @@ public final class ProcessingRegistry {
 		String keyOreDict = recipe.getInputOreDict();
 
 		Log.debug("Registering recipe for machine %d: %s->%s", machine, (key == null ? keyOreDict : key), recipe);
-
+		
 		IProcessingRecipe[] matches;
-
+		
 		if (key == null) {
 			if (keyOreDict == null) {
-				throw new RuntimeException("Error registering recipe " + recipe + " for machine " + machine
-						+ ". Both keys (item and ore dict) were null.");
+				return;
 			}
 			matches = recipesOreDict.get(keyOreDict);
 		} else {
 			matches = recipes.get(key);
 		}
-
+		
 		if (matches == null) {
 			Log.debug("First recipe for this item.");
 			matches = new IProcessingRecipe[1];
@@ -260,15 +295,11 @@ public final class ProcessingRegistry {
 		} else {
 			recipes.put(key, matches);
 		}
-
-		if (recipe instanceof IProcessingRecipeFluidBased) {
-			registerRecipeFluidBased(machine, (IProcessingRecipeFluidBased) recipe);
-		}
 	}
 
 	/**
-	 * Registers an {@link IProcessingRecipeFluidBased} for search via a
-	 * {@link FluidStack} in {@link #getRecipe(int, FluidStack)}.
+	 * Registers an {@link IProcessingRecipeFluidBased} for search via
+	 * {@link FluidStack}.
 	 * 
 	 * @param machine
 	 * @param recipe

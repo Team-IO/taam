@@ -75,13 +75,13 @@ public class Config {
 	public static boolean pl_processor_hurt = true;
 	public static float pl_processor_hurt_chance = 0.2f;
 	
-	public static int pl_appl_sprayer_maxProgress = 1;
-	//TODO: Change to mB
-	public static int pl_appl_sprayer_resourceUsage = 1;
+//	public static int pl_appl_sprayer_resourceUsage = 1;
 
 	public static int pl_processor_shredder_timeout = 1;
 	public static int pl_processor_grinder_timeout = 15;
 	public static int pl_processor_crusher_timeout = 15;
+	public static int pl_processor_fluid_drier_timeout = 50;
+	
 	public static void init(File configFile)
 	{
 				
@@ -150,9 +150,10 @@ public class Config {
 		pl_processor_crusher_timeout = config.getInt("pl_processor_crusher_timeout", "production_line", 15, 1, 200, "Ticks between each shredded item in the conveyor crusher.");
 		pl_sieve_speedsteps = (byte)config.getInt("pl_sieve_speedsteps", "production_line", 20, 1, Byte.MAX_VALUE, "Speedsteps (1/speed) for conveyor sieves.");
 		
-		pl_appl_sprayer_maxProgress = config.getInt("sprayer_maxProgress", "production_line_appliances", 20, 1, 500, "Maximum processing steps for the sprayer appliance.");
-		pl_appl_sprayer_resourceUsage = config.getInt("sprayer_resourceUsage", "production_line_appliances", 1, 1, 500, "Resource usage per spray step in the sprayer.");
+		//pl_appl_sprayer_resourceUsage = config.getInt("sprayer_resourceUsage", "production_line_appliances", 1, 1, 500, "Resource usage per spray step in the sprayer.");
 
+		pl_processor_fluid_drier_timeout = config.getInt("pl_processor_fluid_drier_timeout", "production_line_fluids", 50, 1, 200, "Ticks between each processed item in the fluid drier.");
+		
 		if(config.hasChanged())
 		{
 			config.save();

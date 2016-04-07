@@ -60,6 +60,7 @@ import net.teamio.taam.content.piping.BlockPipe;
 import net.teamio.taam.content.piping.BlockPipeMachines;
 import net.teamio.taam.content.piping.ItemPipeMachines;
 import net.teamio.taam.content.piping.TileEntityCreativeWell;
+import net.teamio.taam.content.piping.TileEntityFluidDrier;
 import net.teamio.taam.content.piping.TileEntityMixer;
 import net.teamio.taam.content.piping.TileEntityPipe;
 import net.teamio.taam.content.piping.TileEntityPump;
@@ -238,6 +239,7 @@ public class TaamMain {
 		GameRegistry.registerTileEntity(TileEntityCreativeWell.class, Taam.TILEENTITY_CREATIVEWELL);
 		GameRegistry.registerTileEntity(TileEntityPump.class, Taam.TILEENTITY_PUMP);
 		GameRegistry.registerTileEntity(TileEntityMixer.class, Taam.TILEENTITY_MIXER);
+		GameRegistry.registerTileEntity(TileEntityFluidDrier.class, Taam.TILEENTITY_FLUID_DRIER);
 
 		/*
 		 * Worldgen

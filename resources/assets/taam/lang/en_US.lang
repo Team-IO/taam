@@ -103,6 +103,7 @@ tile.pipemachines.tank.name=Tank
 tile.pipemachines.creativewell.name=Creative Fluid Well
 tile.pipemachines.pump.name=Pump
 tile.pipemachines.mixer.name=Mixer
+tile.pipemachines.fluid_drier.name=Fluid Drier
 
 tile.productionline_appliance.sprayer.name=Sprayer
 

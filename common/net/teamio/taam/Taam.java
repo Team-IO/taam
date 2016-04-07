@@ -212,6 +212,7 @@ public final class Taam {
 		creativewell,
 		pump,
 		mixer,
+		fluid_drier,
 		;
 		public static String[] valuesAsString() {
 			Enum<?>[] valuesAsEnum = values();
@@ -350,6 +351,7 @@ public final class Taam {
 	public static final String TILEENTITY_CREATIVEWELL = "taam.creativewell";
 	public static final String TILEENTITY_PUMP = "taam.pump";
 	public static final String TILEENTITY_MIXER = "taam.mixer";
+	public static final String TILEENTITY_FLUID_DRIER = "taam.fluid_drier";
 	
 	public static final String TILEENTITY_APPLIANCE_SPRAYER = "taam.appliance.sprayer";
 

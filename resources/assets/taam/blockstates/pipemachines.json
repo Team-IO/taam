@@ -23,6 +23,9 @@
         }],
         "variant=mixer": [{
         	"model": "taam:mixer.obj"
+        }],
+        "variant=fluid_drier": [{
+        	"model": "taam:fluid_drier.obj"
         }]
     }
 }

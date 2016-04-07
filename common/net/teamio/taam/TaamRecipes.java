@@ -13,6 +13,7 @@ import net.minecraftforge.oredict.ShapelessOreRecipe;
 import net.teamio.taam.Taam.BLOCK_ORE_META;
 import net.teamio.taam.recipes.ChanceBasedRecipe;
 import net.teamio.taam.recipes.ChancedOutput;
+import net.teamio.taam.recipes.FluidDrierRecipe;
 import net.teamio.taam.recipes.MixerRecipe;
 import net.teamio.taam.recipes.ProcessingRegistry;
 import net.teamio.taam.recipes.SprayerRecipe;
@@ -255,6 +256,22 @@ public class TaamRecipes {
 						new ItemStack(TaamMain.itemMaterial, 1, Taam.ITEM_MATERIAL_META.resin.ordinal()),
 						new FluidStack(FluidRegistry.WATER, 500),
 						new FluidStack(TaamMain.fluidsMaterial[Taam.FLUID_MATERIAL_META.coating.ordinal()], 25))
+				);
+		
+		/*
+		 * Fluid Dryer
+		 */
+		
+		ProcessingRegistry.registerRecipe(ProcessingRegistry.FLUIDDRIER,
+				new FluidDrierRecipe(
+						new FluidStack(TaamMain.fluidsMaterial[Taam.FLUID_MATERIAL_META.concreteFine.ordinal()], 1000),
+						new ItemStack(TaamMain.blockConcrete, 1, Taam.BLOCK_CONCRETE_META.fine.ordinal()))
+				);
+		
+		ProcessingRegistry.registerRecipe(ProcessingRegistry.FLUIDDRIER,
+				new FluidDrierRecipe(
+						new FluidStack(TaamMain.fluidsMaterial[Taam.FLUID_MATERIAL_META.concreteRough.ordinal()], 1000),
+						new ItemStack(TaamMain.blockConcrete, 1, Taam.BLOCK_CONCRETE_META.rough.ordinal()))
 				);
 		
 		/*

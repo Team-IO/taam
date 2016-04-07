@@ -6,7 +6,6 @@ import java.util.List;
 import com.google.common.collect.Lists;
 
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
@@ -36,9 +35,9 @@ import net.teamio.taam.conveyors.api.IConveyorAwareTE;
 import net.teamio.taam.network.TPMachineConfiguration;
 import net.teamio.taam.recipes.IProcessingRecipe;
 import net.teamio.taam.recipes.ProcessingRegistry;
+import net.teamio.taam.util.ProcessingUtil;
 import net.teamio.taam.util.TaamUtil;
 import net.teamio.taam.util.WorldCoord;
-import net.teamio.taam.util.inv.InventoryRange;
 import net.teamio.taam.util.inv.InventorySimple;
 import net.teamio.taam.util.inv.InventoryUtils;
 
@@ -50,11 +49,12 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 
 	private InventorySimple inventory;
 	private byte mode;
+	
+	private ItemStack[] backlog;
 
 	private byte redstoneMode = IRedstoneControlled.MODE_ACTIVE_ON_LOW;
 	private EnumFacing direction = EnumFacing.NORTH;
 	
-	private byte progress;
 	private int timeout;
 	
 	public static List<String> parts_shredder = Collections.unmodifiableList(Lists.newArrayList("Support_Alu_smdl_alu", "ProcessorChute_chutemdl", "Processor_Walzes", "ProcessorMarker_Shredder_pmmdl_shr", "BumpsShredder"));
@@ -78,6 +78,11 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 	public TileEntityConveyorProcessor(byte mode) {
 		inventory = new InventorySimple(1, getName());
 		this.mode = mode;
+		if(mode == Grinder) {
+			timeout = Config.pl_processor_grinder_timeout;
+		} else {
+			timeout = Config.pl_processor_crusher_timeout;
+		}
 	}
 	
 	@Override
@@ -97,7 +102,6 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 		return timeout > 0;
 	}
 	
-	private ItemStack[] holdback;
 	
 	@Override
 	public void update() {
@@ -182,13 +186,15 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 			return false;
 		}
 
-		ItemStack[] outputQueue = holdback;
-		boolean decrease = false;
-		
+		// Output the backlog. Returns true if there were items transferred or there are still items left.
+		if(!ProcessingUtil.chuteMechanicsOutput(worldObj, down, outputInventory, backlog, 0)) {
+			backlog = null;
+		} else {
+			return false;
+		}
+
 		// If output finished, continue processing.
-		// else, the holdback queue will be processed below.
-		
-		if(outputQueue == null) {
+		if(backlog == null) {
 			
 			if(isCoolingDown()) {
 				timeout--;
@@ -207,64 +213,19 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 			}
 			
 			if(recipe != null) {
-				decrease = true;
-				
-				outputQueue = recipe.getOutput(input, worldObj.rand);
+				backlog = recipe.getOutput(input, worldObj.rand);
 				
 				if(mode == Grinder) {
 					timeout += Config.pl_processor_grinder_timeout;
 				} else {
 					timeout += Config.pl_processor_crusher_timeout;
 				}
+				// Consume input
+				return true;
 			}
 		}
 		
-		// No output, we can skip.
-		
-		if(outputQueue == null) {
-			return false;
-		}
-		
-		if(outputInventory == null) {
-			// Output to world
-			for(ItemStack itemStack : outputQueue) {
-				if(itemStack == null) {
-					continue;
-				}
-				EntityItem item = new EntityItem(worldObj, pos.getX() + 0.5, pos.getY()- 0.3, pos.getZ() + 0.5, itemStack);
-		        item.motionX = 0;
-		        item.motionY = 0;
-		        item.motionZ = 0;
-		        worldObj.spawnEntityInWorld(item);
-			}
-
-			holdback = null;
-		} else {
-			// Output to inventory
-			boolean hasOutputLeft = false;
-			InventoryRange range = new InventoryRange(outputInventory, EnumFacing.UP.ordinal());
-			
-			for(int i = 0; i < outputQueue.length; i++) {
-				ItemStack itemStack = outputQueue[i];
-				if(itemStack == null) {
-					continue;
-				}
-				int unable = InventoryUtils.insertItem(range, itemStack, false);
-				if(unable > 0) {
-					itemStack.stackSize = unable;
-					hasOutputLeft = true;
-				} else {
-					outputQueue[i] = null;
-				}
-			}
-			if(hasOutputLeft) {
-				holdback = outputQueue;
-			} else {
-				holdback = null;
-			}
-		}
-		
-		return decrease;
+		return false;
 	}
 	
 	private boolean processShredder() {
@@ -304,16 +265,15 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 		IProcessingRecipe recipe = ProcessingRegistry.getRecipe(machine, input);
 		return recipe;
 	}
-	
+
 	@Override
 	protected void writePropertiesToNBT(NBTTagCompound tag) {
 		tag.setTag("items", InventoryUtils.writeItemStacksToTag(inventory.items));
-		if(holdback != null) {
-			tag.setTag("holdback", InventoryUtils.writeItemStacksToTagSequential(holdback));
+		if (backlog != null) {
+			tag.setTag("holdback", InventoryUtils.writeItemStacksToTagSequential(backlog));
 		}
 		tag.setByte("mode", mode);
-//		tag.setByte("redstoneMode", redstoneMode);
-		tag.setByte("progress", progress);
+		// tag.setByte("redstoneMode", redstoneMode);
 		tag.setInteger("timeout", timeout);
 		tag.setBoolean("isShutdown", isShutdown);
 		tag.setInteger("direction", direction.ordinal());
@@ -323,22 +283,21 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 	protected void readPropertiesFromNBT(NBTTagCompound tag) {
 		inventory.items = new ItemStack[inventory.getSizeInventory()];
 		InventoryUtils.readItemStacksFromTag(inventory.items, tag.getTagList("items", NBT.TAG_COMPOUND));
-		
+
 		NBTTagList holdbackList = tag.getTagList("holdback", NBT.TAG_COMPOUND);
-		if(holdbackList == null) {
-			holdback = null;
+		if (holdbackList == null) {
+			backlog = null;
 		} else {
-			holdback = new ItemStack[holdbackList.tagCount()];
-			InventoryUtils.readItemStacksFromTagSequential(holdback, holdbackList);
+			backlog = new ItemStack[holdbackList.tagCount()];
+			InventoryUtils.readItemStacksFromTagSequential(backlog, holdbackList);
 		}
 
 		mode = tag.getByte("mode");
-//		redstoneMode = tag.getByte("redstoneMode");
-		progress = tag.getByte("progress");
+		// redstoneMode = tag.getByte("redstoneMode");
 		timeout = tag.getInteger("timeout");
 		isShutdown = tag.getBoolean("isShutdown");
 		direction = EnumFacing.getFront(tag.getInteger("direction"));
-		if(direction == EnumFacing.UP || direction == EnumFacing.DOWN) {
+		if (direction == EnumFacing.UP || direction == EnumFacing.DOWN) {
 			direction = EnumFacing.NORTH;
 		}
 	}
