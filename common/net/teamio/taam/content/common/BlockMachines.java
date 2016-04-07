@@ -91,7 +91,7 @@ public class BlockMachines extends BaseBlock {
 	}
 	
 	@Override
-	public void setBlockBoundsBasedOnStateDefault(IBlockAccess world, BlockPos pos) {
+	public void setBlockBoundsBasedOnState(IBlockAccess world, BlockPos pos) {
 		IBlockState state = world.getBlockState(pos);
 		if(state.getBlock() != this) {
 			Log.warn("Received 'setBlockBoundsBasedOnState' with invalid block in blockstate. This might not be relevant - but does not influence anything at the moment.");
@@ -130,7 +130,7 @@ public class BlockMachines extends BaseBlock {
 	}
 	
 	@Override
-	public boolean isSideSolidDefault(IBlockAccess world, BlockPos pos, EnumFacing side) {
+	public boolean isSideSolid(IBlockAccess world, BlockPos pos, EnumFacing side) {
 		IBlockState state = world.getBlockState(pos);
 		Taam.BLOCK_MACHINES_META variant = (Taam.BLOCK_MACHINES_META)state.getValue(VARIANT);
 		if(variant == BLOCK_MACHINES_META.chute) {

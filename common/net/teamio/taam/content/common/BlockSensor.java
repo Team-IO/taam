@@ -1,6 +1,5 @@
 package net.teamio.taam.content.common;
 
-import mcmultipart.microblock.MicroblockContainer;
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockState;
@@ -72,7 +71,7 @@ public class BlockSensor extends BaseBlock {
 		
 	}
 	@Override
-	public void setBlockBoundsBasedOnStateDefault(IBlockAccess worldIn, BlockPos pos) {
+	public void setBlockBoundsBasedOnState(IBlockAccess worldIn, BlockPos pos) {
 		IBlockState blockState = worldIn.getBlockState(pos);
 		// Type is determined by the tile entity, we just need the rotation here
 		EnumFacing dir = (EnumFacing)blockState.getValue(DIRECTION);
@@ -142,11 +141,12 @@ public class BlockSensor extends BaseBlock {
 	}
 
 	@Override
-	public int getWeakPowerDefault(IBlockAccess world, BlockPos pos, IBlockState state, EnumFacing side, MicroblockContainer partContainer) {
+	public int getWeakPower(IBlockAccess world, BlockPos pos, IBlockState state, EnumFacing side) {
 		return getRedstoneLevel(world, pos);
 	}
 	
-	public int getStrongPowerDefault(IBlockAccess world, BlockPos pos, IBlockState state, EnumFacing side, MicroblockContainer partContainer) {
+	@Override
+	public int getStrongPower(IBlockAccess world, BlockPos pos, IBlockState state, EnumFacing side) {
 		IBlockState blockState = world.getBlockState(pos);
 		EnumFacing dir = (EnumFacing)blockState.getValue(DIRECTION);
 		if(dir == side) {

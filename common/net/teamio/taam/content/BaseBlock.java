@@ -4,10 +4,8 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import mcmultipart.block.BlockCoverable;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -22,9 +20,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.TRSRTransformation;
 import net.minecraftforge.client.model.obj.OBJModel;
-import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IExtendedBlockState;
-import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.teamio.taam.TaamMain;
@@ -35,9 +31,7 @@ import net.teamio.taam.util.TaamUtil;
 import net.teamio.taam.util.WrenchUtil;
 import net.teamio.taam.util.inv.InventoryUtils;
 
-public abstract class BaseBlock extends BlockCoverable {
-
-	private ExtendedBlockState state = new ExtendedBlockState(this, new IProperty[] {}, new IUnlistedProperty[]{OBJModel.OBJProperty.instance});
+public abstract class BaseBlock extends Block {
 
 	public BaseBlock(Material material) {
 		super(material);
@@ -57,7 +51,7 @@ public abstract class BaseBlock extends BlockCoverable {
 	public abstract boolean canBlockStay(World worldIn, BlockPos pos, IBlockState state);
 	
 	@Override
-	public void onNeighborBlockChangeDefault(World worldIn, BlockPos pos, IBlockState state, Block neighborBlock) {
+	public void onNeighborBlockChange(World worldIn, BlockPos pos, IBlockState state, Block neighborBlock) {
 		if(!canBlockStay(worldIn, pos, state)) {
 			TaamUtil.breakBlockInWorld(worldIn, pos, state);
 			if(this != TaamMain.blockSensor) {
@@ -113,7 +107,7 @@ public abstract class BaseBlock extends BlockCoverable {
 	}
 	
 	@Override
-	public boolean onBlockActivatedDefault(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn,
+	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn,
 			EnumFacing side, float hitX, float hitY, float hitZ) {
 				
 		if(WrenchUtil.wrenchBlock(worldIn, pos, playerIn, side, hitX, hitY, hitZ)) {
@@ -146,7 +140,7 @@ public abstract class BaseBlock extends BlockCoverable {
 	}
 	
 	@Override
-	public void onBlockClickedDefault(World worldIn, BlockPos pos, EntityPlayer playerIn) {
+	public void onBlockClicked(World worldIn, BlockPos pos, EntityPlayer playerIn) {
 		if(!worldIn.isRemote) {
 			TileEntity te = worldIn.getTileEntity(pos);
 			
@@ -228,10 +222,9 @@ public abstract class BaseBlock extends BlockCoverable {
 		// Apply rotation to the model
 		OBJModel.OBJState retState = new OBJModel.OBJState(visibleParts, true, new TRSRTransformation(rotateRenderDirection(facing)));
 		
-		// Let the BlockCoverable att the microblock stuff first.
-		IExtendedBlockState coverableBlockState = super.getExtendedState(state, world, pos);
+		IExtendedBlockState extendedState = (IExtendedBlockState)state;
 		
-		return coverableBlockState.withProperty(OBJModel.OBJProperty.instance, retState);
+		return extendedState.withProperty(OBJModel.OBJProperty.instance, retState);
 	}
 	
 	private EnumFacing rotateRenderDirection(EnumFacing facing) {

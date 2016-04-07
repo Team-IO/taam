@@ -83,7 +83,7 @@ public class BlockProductionLineAttachable extends BlockProductionLine {
 	}
 
 	@Override
-	public void setBlockBoundsBasedOnStateDefault(IBlockAccess world, BlockPos pos) {
+	public void setBlockBoundsBasedOnState(IBlockAccess world, BlockPos pos) {
 		IBlockState state = world.getBlockState(pos);
 		this.minY = 0f;
 		this.maxY = 0.5f;

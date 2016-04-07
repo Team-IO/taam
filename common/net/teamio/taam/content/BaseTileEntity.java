@@ -4,7 +4,6 @@ import java.util.UUID;
 
 import org.apache.logging.log4j.Level;
 
-import mcmultipart.block.TileCoverable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -19,18 +18,18 @@ import net.teamio.taam.Log;
  * @author oliverkahrmann
  *
  */
-public abstract class BaseTileEntity extends TileCoverable {
+public abstract class BaseTileEntity extends TileEntity {
 
 	private UUID owner = null;
 
 	public void setOwner(EntityPlayer player) {
-		if(player == null) {
+		if (player == null) {
 			owner = null;
 		} else {
 			owner = player.getUniqueID();
 		}
 	}
-	
+
 	public void setOwner(UUID owner) {
 		this.owner = owner;
 	}
@@ -48,27 +47,29 @@ public abstract class BaseTileEntity extends TileCoverable {
 			return;
 		}
 		markDirty();
-		if(worldUpdate) {
+		if (worldUpdate) {
 			this.worldObj.markBlockForUpdate(pos);
 		}
-		if(renderUpdate) {
+		if (renderUpdate) {
 			worldObj.markBlockRangeForRenderUpdate(pos, pos);
 		}
-		if(blockUpdate) {
+		if (blockUpdate) {
 			worldObj.notifyNeighborsOfStateChange(pos, blockType);
 		}
 	}
-	
+
 	/**
-	 * Called inside {@link BaseBlock#onNeighborBlockChange(net.minecraft.world.World, net.minecraft.util.BlockPos, net.minecraft.block.state.IBlockState, net.minecraft.block.Block)}.
-	 * (On server side)
+	 * Called inside
+	 * {@link BaseBlock#onNeighborBlockChange(net.minecraft.world.World, net.minecraft.util.BlockPos, net.minecraft.block.state.IBlockState, net.minecraft.block.Block)}
+	 * . (On server side)
 	 */
 	public void blockUpdate() {
 	}
-	
-	
+
 	/**
-	 * Called within {@link BaseBlock#getActualState(net.minecraft.block.state.IBlockState, net.minecraft.world.IBlockAccess, net.minecraft.util.BlockPos)} to update render state in the tile entity.
+	 * Called within
+	 * {@link BaseBlock#getActualState(net.minecraft.block.state.IBlockState, net.minecraft.world.IBlockAccess, net.minecraft.util.BlockPos)}
+	 * to update render state in the tile entity.
 	 */
 	public void renderUpdate() {
 	}
@@ -82,15 +83,13 @@ public abstract class BaseTileEntity extends TileCoverable {
 		NBTTagCompound nbt = pkt.getNbtCompound();
 
 		readPropertiesFromNBTInternal(nbt);
-        getMicroblockContainer().getPartContainer().readDescription(pkt.getNbtCompound());
 	}
 
 	@Override
 	public S35PacketUpdateTileEntity getDescriptionPacket() {
 		NBTTagCompound nbt = new NBTTagCompound();
 		writePropertiesToNBTInternal(nbt);
-        getMicroblockContainer().getPartContainer().writeDescription(nbt);
-        return new S35PacketUpdateTileEntity(getPosIn(), getBlockMetadata(), nbt);
+		return new S35PacketUpdateTileEntity(getPos(), getBlockMetadata(), nbt);
 	}
 
 	/*
@@ -118,7 +117,7 @@ public abstract class BaseTileEntity extends TileCoverable {
 	 * @param tag
 	 */
 	private void writePropertiesToNBTInternal(NBTTagCompound tag) {
-		if(owner != null) {
+		if (owner != null) {
 			tag.setString("owner", owner.toString());
 		}
 		writePropertiesToNBT(tag);
@@ -139,7 +138,7 @@ public abstract class BaseTileEntity extends TileCoverable {
 	 */
 	private void readPropertiesFromNBTInternal(NBTTagCompound tag) {
 		String ownerString = tag.getString("owner");
-		if(ownerString != null && !ownerString.isEmpty()) {
+		if (ownerString != null && !ownerString.isEmpty()) {
 			try {
 				owner = UUID.fromString(ownerString);
 			} catch (IllegalArgumentException e) {

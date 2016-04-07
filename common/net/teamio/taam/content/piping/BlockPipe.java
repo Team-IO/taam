@@ -69,7 +69,7 @@ public class BlockPipe extends BaseBlock implements ITileEntityProvider {
 
 	
 	@Override
-	public MovingObjectPosition collisionRayTraceDefault(World world, BlockPos pos, Vec3 start, Vec3 end) {
+	public MovingObjectPosition collisionRayTrace(World world, BlockPos pos, Vec3 start, Vec3 end) {
 		start = start.subtract(pos.getX(), pos.getY(), pos.getZ());
 		end = end.subtract(pos.getX(), pos.getY(), pos.getZ());
 
@@ -160,7 +160,7 @@ public class BlockPipe extends BaseBlock implements ITileEntityProvider {
 	}
 
 	@Override
-	public void addCollisionBoxesToListDefault(World world, BlockPos pos, IBlockState state, AxisAlignedBB mask,
+	public void addCollisionBoxesToList(World world, BlockPos pos, IBlockState state, AxisAlignedBB mask,
 			List<AxisAlignedBB> list, Entity par7Entity) {
 		if (!isCollidable()) {
 			return;

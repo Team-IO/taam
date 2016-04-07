@@ -128,7 +128,7 @@ public class BlockProductionLine extends BaseBlock {
 	}
 	
 	@Override
-	public void setBlockBoundsBasedOnStateDefault(IBlockAccess world, BlockPos pos) {
+	public void setBlockBoundsBasedOnState(IBlockAccess world, BlockPos pos) {
 		//IBlockState state = world.getBlockState(pos);
 		//Taam.BLOCK_PRODUCTIONLINE_META variant = state.getValue(VARIANT);
 		this.minX = 0;

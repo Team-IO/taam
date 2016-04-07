@@ -6,7 +6,6 @@ import org.lwjgl.opengl.GL11;
 
 import com.google.common.base.Function;
 
-import mcmultipart.client.multipart.MultipartContainerSpecialRenderer.TileCoverableSpecialRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
@@ -18,6 +17,7 @@ import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.entity.player.EntityPlayer;
@@ -48,7 +48,7 @@ import net.teamio.taam.conveyors.appliances.ApplianceSprayer;
 import net.teamio.taam.piping.IPipe;
 import net.teamio.taam.util.WrenchUtil;
 
-public class TaamRenderer extends TileCoverableSpecialRenderer<BaseTileEntity> {
+public class TaamRenderer extends TileEntitySpecialRenderer<BaseTileEntity> {
 
 	private RenderItem ri;
 	private float rot = 0;
@@ -147,7 +147,7 @@ public class TaamRenderer extends TileCoverableSpecialRenderer<BaseTileEntity> {
 	}
 
 	@Override
-	public void renderTileEntityAtDefault(BaseTileEntity tileEntity, double x, double y, double z, float partialTicks, int destroyStage) {
+	public void renderTileEntityAt(BaseTileEntity tileEntity, double x, double y, double z, float partialTicks, int destroyStage) {
 		if (tileEntity instanceof IConveyorAwareTE) {
 			renderConveyorItems((IConveyorAwareTE) tileEntity, x, y, z);
 		}
