@@ -11,13 +11,11 @@ import net.minecraft.util.ITickable;
 import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IRenderable;
 import net.teamio.taam.content.IRotatable;
-import net.teamio.taam.piping.IPipe;
-import net.teamio.taam.piping.IPipeTE;
 import net.teamio.taam.piping.PipeEndSharedDistinct;
 import net.teamio.taam.piping.PipeInfo;
 import net.teamio.taam.piping.PipeUtil;
 
-public class TileEntityPump extends BaseTileEntity implements IPipeTE, ITickable, IRenderable, IRotatable {
+public class TileEntityPump extends BaseTileEntity implements ITickable, IRenderable, IRotatable {
 
 	private final PipeEndSharedDistinct pipeEndOut;
 	private final PipeEndSharedDistinct pipeEndIn;
@@ -70,16 +68,16 @@ public class TileEntityPump extends BaseTileEntity implements IPipeTE, ITickable
 	 * IPipeTE implementation
 	 */
 
-	@Override
-	public IPipe[] getPipesForSide(EnumFacing side) {
-		if (side == direction) {
-			return pipeEndOut.asPipeArray();
-		} else if (side == direction.getOpposite()) {
-			return pipeEndIn.asPipeArray();
-		} else {
-			return null;
-		}
-	}
+//	@Override
+//	public IPipe[] getPipesForSide(EnumFacing side) {
+//		if (side == direction) {
+//			return pipeEndOut.asPipeArray();
+//		} else if (side == direction.getOpposite()) {
+//			return pipeEndIn.asPipeArray();
+//		} else {
+//			return null;
+//		}
+//	}
 
 	/*
 	 * IRotatable implementation

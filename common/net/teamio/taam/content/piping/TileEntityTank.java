@@ -8,8 +8,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.world.World;
 import net.minecraft.util.ITickable;
+import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
@@ -18,12 +18,10 @@ import net.minecraftforge.fluids.IFluidHandler;
 import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IRenderable;
 import net.teamio.taam.content.IWorldInteractable;
-import net.teamio.taam.piping.IPipe;
-import net.teamio.taam.piping.IPipeTE;
 import net.teamio.taam.piping.PipeEndFluidHandler;
 import net.teamio.taam.piping.PipeUtil;
 
-public class TileEntityTank extends BaseTileEntity implements IFluidHandler, IPipeTE, ITickable, IRenderable, IWorldInteractable {
+public class TileEntityTank extends BaseTileEntity implements IFluidHandler, ITickable, IRenderable, IWorldInteractable {
 
 	private final PipeEndFluidHandler pipeEndUP;
 	private final PipeEndFluidHandler pipeEndDOWN;
@@ -88,16 +86,16 @@ public class TileEntityTank extends BaseTileEntity implements IFluidHandler, IPi
 	 * IPipeTE implementation
 	 */
 	
-	@Override
-	public IPipe[] getPipesForSide(EnumFacing side) {
-		if (side == EnumFacing.UP) {
-			return new IPipe[] { pipeEndUP };
-		} else if (side == EnumFacing.DOWN) {
-			return new IPipe[] { pipeEndDOWN };
-		} else {
-			return null;
-		}
-	}
+//	@Override
+//	public IPipe[] getPipesForSide(EnumFacing side) {
+//		if (side == EnumFacing.UP) {
+//			return new IPipe[] { pipeEndUP };
+//		} else if (side == EnumFacing.DOWN) {
+//			return new IPipe[] { pipeEndDOWN };
+//		} else {
+//			return null;
+//		}
+//	}
 
 	/*
 	 * IFluidHandler implementation

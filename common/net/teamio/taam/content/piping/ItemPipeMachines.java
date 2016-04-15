@@ -9,9 +9,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
+import net.teamio.taam.Taam;
 import net.teamio.taam.content.IRotatable;
-import net.teamio.taam.piping.IPipe;
-import net.teamio.taam.piping.IPipeTE;
 
 public class ItemPipeMachines extends ItemMultiTexture {
 
@@ -37,14 +36,8 @@ public class ItemPipeMachines extends ItemMultiTexture {
 				} else {
 					placeDir = dir;
 				}
-			} else if (ent instanceof IPipeTE) {
-				IPipeTE pipeTE = (IPipeTE) ent;
-				IPipe[] pipes = pipeTE.getPipesForSide(dir);
-				if (pipes != null && pipes.length > 0) {
-					placeDir = dir;
-				} else {
-					defaultPlacement = true;
-				}
+			} else if (ent.hasCapability(Taam.CAPABILITY_PIPE, dir)) {
+				placeDir = dir;
 			} else {
 				defaultPlacement = true;
 			}

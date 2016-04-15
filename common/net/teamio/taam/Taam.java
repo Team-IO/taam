@@ -1,11 +1,24 @@
 package net.teamio.taam;
 
+import java.util.List;
+
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.IStringSerializable;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityInject;
+import net.teamio.taam.content.piping.MachinePipe;
+import net.teamio.taam.machines.IMachine;
+import net.teamio.taam.machines.IMachineMetaInfo;
+import net.teamio.taam.piping.IPipe;
 
 public final class Taam {
 	private Taam() {
 		//Util Class
 	}
+	
+	@CapabilityInject(IPipe.class)
+	public static Capability<IPipe> CAPABILITY_PIPE;
 	
 	public static final String MOD_ID = "taam";
 	public static final String MOD_NAME = "Taam";
@@ -432,6 +445,37 @@ public final class Taam {
 			return valuesAsString;
 		}
 	};
+	
+	public static enum MACHINE_META implements IMachineMetaInfo {
+		pipe;
+
+		@Override
+		public IMachine createMachine() {
+			// TODO Auto-generated method stub
+			return new MachinePipe();
+		}
+
+		@Override
+		public int metaData() {
+			return ordinal();
+		}
+
+		@Override
+		public String unlocalizedName() {
+			// TODO Auto-generated method stub
+			return "pipe";
+		}
+
+		@Override
+		public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+		public static IMachineMetaInfo fromId(String id) {
+			return pipe;
+		}
+	}
 	
 	public static final String CHANNEL_NAME = "TAAM";
 }

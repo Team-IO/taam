@@ -14,12 +14,10 @@ import net.minecraftforge.fluids.IFluidHandler;
 import net.teamio.taam.Log;
 import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IWorldInteractable;
-import net.teamio.taam.piping.IPipe;
-import net.teamio.taam.piping.IPipeTE;
 import net.teamio.taam.piping.PipeEnd;
 import net.teamio.taam.piping.PipeUtil;
 
-public class TileEntityCreativeWell extends BaseTileEntity implements IFluidHandler, IPipeTE, ITickable, IWorldInteractable {
+public class TileEntityCreativeWell extends BaseTileEntity implements IFluidHandler, ITickable, IWorldInteractable {
 
 	private final PipeEnd[] pipeEnds;
 
@@ -71,11 +69,11 @@ public class TileEntityCreativeWell extends BaseTileEntity implements IFluidHand
 	 * IPipeTE implementation
 	 */
 	
-	@Override
-	public IPipe[] getPipesForSide(EnumFacing side) {
-		int index = side.ordinal();
-		return new IPipe[] { pipeEnds[index] };
-	}
+//	@Override
+//	public IPipe[] getPipesForSide(EnumFacing side) {
+//		int index = side.ordinal();
+//		return new IPipe[] { pipeEnds[index] };
+//	}
 
 	/*
 	 * IFluidHandler implementation

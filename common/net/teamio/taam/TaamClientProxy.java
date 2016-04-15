@@ -51,7 +51,6 @@ import net.teamio.taam.content.conveyors.TileEntityConveyorItemBag;
 import net.teamio.taam.content.conveyors.TileEntityConveyorProcessor;
 import net.teamio.taam.content.conveyors.TileEntityConveyorSieve;
 import net.teamio.taam.content.conveyors.TileEntityConveyorTrashCan;
-import net.teamio.taam.content.piping.TileEntityPipe;
 import net.teamio.taam.content.piping.TileEntityTank;
 import net.teamio.taam.conveyors.appliances.ApplianceSprayer;
 import net.teamio.taam.rendering.TaamRenderer;
@@ -81,7 +80,7 @@ public class TaamClientProxy extends TaamCommonProxy {
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityConveyorItemBag.class, taamRenderer);
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityConveyorTrashCan.class, taamRenderer);
 
-		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityPipe.class, taamRenderer);
+//		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityPipe.class, taamRenderer);
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityTank.class, taamRenderer);
 
 		ClientRegistry.bindTileEntitySpecialRenderer(ApplianceSprayer.class, taamRenderer);
@@ -187,7 +186,7 @@ public class TaamClientProxy extends TaamCommonProxy {
 		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_SENSOR, 0, "sensor.obj");
 		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_SUPPORT_BEAM, 0, "support_beam.obj");
 
-		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_PIPE, 0, "pipes.obj");
+//		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_PIPE, 0, "pipes.obj");
 
 		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_MACHINES, Taam.BLOCK_MACHINES_META.chute.ordinal(), "chute.obj");
 		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_MACHINES, Taam.BLOCK_MACHINES_META.creativecache.ordinal(), "creative_cache.obj");

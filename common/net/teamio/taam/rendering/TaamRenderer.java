@@ -39,7 +39,6 @@ import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.content.conveyors.TileEntityConveyorProcessor;
 import net.teamio.taam.content.conveyors.TileEntityConveyorSieve;
-import net.teamio.taam.content.piping.TileEntityPipe;
 import net.teamio.taam.content.piping.TileEntityTank;
 import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.conveyors.ItemWrapper;
@@ -193,9 +192,10 @@ public class TaamRenderer extends TileEntitySpecialRenderer<BaseTileEntity> {
 
 			int fillLevel = 0;
 			
-			if(pipe instanceof TileEntityPipe) {
-				fillLevel = ((TileEntityPipe) pipe).getFillLevel();
-			}
+			//TODO: Pipe Fill Level
+//			if(pipe instanceof TileEntityPipe) {
+//				fillLevel = ((TileEntityPipe) pipe).getFillLevel();
+//			}
 
 			String info0 = String.format("%03d/%d", 
 					fillLevel, pipe.getCapacity());;

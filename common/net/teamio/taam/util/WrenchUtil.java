@@ -17,7 +17,7 @@ import net.teamio.taam.content.common.TileEntitySensor;
 import net.teamio.taam.conveyors.api.IConveyorAppliance;
 import net.teamio.taam.conveyors.api.IConveyorApplianceHost;
 import net.teamio.taam.conveyors.api.IConveyorAwareTE;
-import net.teamio.taam.piping.IPipeTE;
+import net.teamio.taam.machines.MachineTileEntity;
 
 public class WrenchUtil {
 
@@ -82,7 +82,7 @@ public class WrenchUtil {
 
 	private static boolean isWrenchableEntity(TileEntity te) {
 		return te instanceof IConveyorAwareTE ||
-				te instanceof IPipeTE ||
+				te instanceof MachineTileEntity ||
 				te instanceof TileEntityCreativeCache ||
 				te instanceof TileEntitySensor ||
 				te instanceof IConveyorAppliance ||

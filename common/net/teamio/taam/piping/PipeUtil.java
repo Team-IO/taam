@@ -10,6 +10,7 @@ import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.teamio.taam.Log;
+import net.teamio.taam.Taam;
 import net.teamio.taam.util.inv.InventoryUtils;
 
 public final class PipeUtil {
@@ -38,27 +39,27 @@ public final class PipeUtil {
 	}
 
 	/**
-	 * Returns all pipes connected to a side of a block. (Looks for an IPipeTE
-	 * in the direction of side, the asks that block for pipes in direction of
+	 * Returns a pipe connected to a side of a block. Looks for a TileEntity
+	 * in the direction of side, then asks that tile for a pipe in direction of
 	 * side.getOpposite().
 	 * 
 	 * @param world
 	 * @param pos
 	 * @param side
-	 * @return An array of IPipe (may be empty) or null.
+	 * @return An IPipe or null.
 	 */
-	public static IPipe[] getConnectedPipes(IBlockAccess world, BlockPos pos, EnumFacing side) {
+	public static IPipe getConnectedPipe(IBlockAccess world, BlockPos pos, EnumFacing side) {
 		TileEntity ent = world.getTileEntity(pos.offset(side));
-		if (ent instanceof IPipeTE) {
-			IPipeTE pipeTE = (IPipeTE) ent;
-			return pipeTE.getPipesForSide(side.getOpposite());
+		if(ent == null) {
+			return null;
 		}
-		return null;
+		return ent.getCapability(Taam.CAPABILITY_PIPE, side.getOpposite());
 	}
 
 	public static void processPipes(IPipe pipe, IBlockAccess world, BlockPos pos) {
 
-		IPipe[] connected = pipe.getConnectedPipes(world, pos);
+		IPipe[] connected = pipe.getInternalPipes(world, pos);
+		//TODO: Not only consider internal pipes!
 		if (connected == null || connected.length == 0) {
 			return;
 		}

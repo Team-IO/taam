@@ -2,6 +2,8 @@ package net.teamio.taam;
 
 import java.util.List;
 
+import org.apache.commons.lang3.NotImplementedException;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
@@ -10,8 +12,12 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemMultiTexture;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.fluids.BlockFluidClassic;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.Mod;
@@ -56,18 +62,19 @@ import net.teamio.taam.content.conveyors.TileEntityConveyorItemBag;
 import net.teamio.taam.content.conveyors.TileEntityConveyorProcessor;
 import net.teamio.taam.content.conveyors.TileEntityConveyorSieve;
 import net.teamio.taam.content.conveyors.TileEntityConveyorTrashCan;
-import net.teamio.taam.content.piping.BlockPipe;
 import net.teamio.taam.content.piping.BlockPipeMachines;
 import net.teamio.taam.content.piping.ItemPipeMachines;
 import net.teamio.taam.content.piping.TileEntityCreativeWell;
 import net.teamio.taam.content.piping.TileEntityFluidDrier;
 import net.teamio.taam.content.piping.TileEntityMixer;
-import net.teamio.taam.content.piping.TileEntityPipe;
 import net.teamio.taam.content.piping.TileEntityPump;
 import net.teamio.taam.content.piping.TileEntityTank;
-import net.teamio.taam.content.piping.multiparts.MultitpartHandlerPiping;
 import net.teamio.taam.conveyors.appliances.ApplianceSprayer;
 import net.teamio.taam.gui.GuiHandler;
+import net.teamio.taam.machines.MachineBlock;
+import net.teamio.taam.machines.MachineItemBlock;
+import net.teamio.taam.piping.IPipe;
+import net.teamio.taam.piping.PipeEnd;
 
 
 @Mod(modid = Taam.MOD_ID, name = Taam.MOD_NAME, version = Taam.MOD_VERSION, guiFactory = Taam.GUI_FACTORY_CLASS)
@@ -93,6 +100,9 @@ public class TaamMain {
 	public static ItemWithMetadata<Taam.BLOCK_ORE_META> itemIngot;
 	public static ItemWithMetadata<Taam.BLOCK_ORE_META> itemDust;
 
+	public static MachineBlock blockMachine;
+	public static Item itemMachine;
+	
 	public static CreativeTabs creativeTab;
 
 	public static BlockSensor blockSensor;
@@ -106,7 +116,6 @@ public class TaamMain {
 	public static BlockSupportBeam blockSupportBeam;
 
 	public static BlockPipeMachines blockPipeMachines;
-	public static BlockPipe blockPipe;
 
 	public static FluidDye[] fluidsDye;
 	public static BlockFluidClassic[] blocksFluidDye;
@@ -216,8 +225,6 @@ public class TaamMain {
 		registerBlock(blockPipeMachines = new BlockPipeMachines(), null, Taam.BLOCK_PIPEMACHINES);
 		registerItem(new ItemPipeMachines(blockPipeMachines, Taam.BLOCK_PIPEMACHINES_META.valuesAsString()), Taam.BLOCK_PIPEMACHINES);
 
-		registerBlock(blockPipe = new BlockPipe(), ItemBlock.class, Taam.BLOCK_PIPE);
-
 		/*
 		 * Tile Entities
 		 */
@@ -235,14 +242,26 @@ public class TaamMain {
 
 		GameRegistry.registerTileEntity(ApplianceSprayer.class, Taam.TILEENTITY_APPLIANCE_SPRAYER);
 
-		GameRegistry.registerTileEntity(TileEntityPipe.class, Taam.TILEENTITY_PIPE);
+//		GameRegistry.registerTileEntity(TileEntityPipe.class, Taam.TILEENTITY_PIPE);
 		GameRegistry.registerTileEntity(TileEntityTank.class, Taam.TILEENTITY_TANK);
 		GameRegistry.registerTileEntity(TileEntityCreativeWell.class, Taam.TILEENTITY_CREATIVEWELL);
 		GameRegistry.registerTileEntity(TileEntityPump.class, Taam.TILEENTITY_PUMP);
 		GameRegistry.registerTileEntity(TileEntityMixer.class, Taam.TILEENTITY_MIXER);
 		GameRegistry.registerTileEntity(TileEntityFluidDrier.class, Taam.TILEENTITY_FLUID_DRIER);
 
-		MultitpartHandlerPiping.registerMultiparts();
+		if(Config.multipart_load) {
+			MultipartHandler.registerMultipartStuff();
+		}
+		
+		blockMachine = new MachineBlock(Material.iron, Taam.MACHINE_META.values());
+		GameRegistry.registerBlock(blockMachine, null, "machine");
+		
+		if(Config.multipart_load && Config.multipart_register_items) {
+			itemMachine = MultipartHandler.registerMultipartItem("machine", Taam.MACHINE_META.values());
+		} else {
+			itemMachine = new MachineItemBlock(blockMachine, Taam.MACHINE_META.values());
+		}
+		GameRegistry.registerItem(itemMachine, "machine");
 		
 		/*
 		 * Worldgen
@@ -287,6 +306,26 @@ public class TaamMain {
 			FluidRegistry.registerFluid(fluidsMaterial[i]);
 			FluidRegistry.addBucketForFluid(fluidsMaterial[i]);
 		}
+		
+		/*
+		 * Capabilities
+		 */
+		
+		CapabilityManager.INSTANCE.register(IPipe.class, new Capability.IStorage<IPipe>() {
+
+			@Override
+			public NBTBase writeNBT(Capability<IPipe> capability, IPipe instance, EnumFacing side) {
+				//TODO: Think of a default implementation here.
+				throw new NotImplementedException("Cannot save a generic IPipe instance to NBT (yet).");
+			}
+
+			@Override
+			public void readNBT(Capability<IPipe> capability, IPipe instance, EnumFacing side, NBTBase nbt) {
+				//TODO: Think of a default implementation here.
+				throw new NotImplementedException("Cannot read a generic IPipe instance from NBT (yet).");
+			}
+			
+		}, PipeEnd.class);
 		
 		/*
 		 * Network

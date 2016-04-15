@@ -15,8 +15,6 @@ import net.teamio.taam.Log;
 import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IRedstoneControlled;
 import net.teamio.taam.content.IRotatable;
-import net.teamio.taam.piping.IPipe;
-import net.teamio.taam.piping.IPipeTE;
 import net.teamio.taam.piping.PipeEndRestricted;
 import net.teamio.taam.piping.PipeUtil;
 import net.teamio.taam.recipes.IProcessingRecipeFluidBased;
@@ -25,7 +23,7 @@ import net.teamio.taam.util.ProcessingUtil;
 import net.teamio.taam.util.TaamUtil;
 import net.teamio.taam.util.inv.InventoryUtils;
 
-public class TileEntityFluidDrier extends BaseTileEntity implements IRotatable, ITickable, IPipeTE {
+public class TileEntityFluidDrier extends BaseTileEntity implements IRotatable, ITickable {
 
 	private EnumFacing direction = EnumFacing.NORTH;
 	
@@ -254,12 +252,12 @@ public class TileEntityFluidDrier extends BaseTileEntity implements IRotatable, 
 	 * IPipeTE implementation
 	 */
 	
-	@Override
-	public IPipe[] getPipesForSide(EnumFacing side) {
-		if (side == EnumFacing.UP) {
-			return pipeEndIn.asPipeArray();
-		} else {
-			return null;
-		}
-	}
+//	@Override
+//	public IPipe[] getPipesForSide(EnumFacing side) {
+//		if (side == EnumFacing.UP) {
+//			return pipeEndIn.asPipeArray();
+//		} else {
+//			return null;
+//		}
+//	}
 }

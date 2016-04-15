@@ -106,8 +106,8 @@ public class PipeEnd implements IPipe {
 	}
 
 	@Override
-	public IPipe[] getConnectedPipes(IBlockAccess world, BlockPos pos) {
-		return PipeUtil.getConnectedPipes(world, pos, side);
+	public IPipe[] getInternalPipes(IBlockAccess world, BlockPos pos) {
+		return null;
 	}
 
 }
