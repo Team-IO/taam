@@ -36,39 +36,59 @@ public final class Taam {
 	public static final String BLOCK_PIPEMACHINES = "pipemachines";
 	
 	public static enum BLOCK_ORE_META implements IStringSerializable {
-		/*0*/copper(true, true, true),
-		/*1*/tin(true, true, true),
-		/*2*/aluminum(true, true, true),
-		/*3*/bauxite(true, false, true),  //No Ingot
-		/*4*/kaolinite(true, false, true), //No Ingot
+		/*0*/copper		(true, true, "Copper",		14, 7, 0, 59),
+		/*1*/tin		(true, true, "Tin",			13, 7, 0, 59),
+		/*2*/aluminum	(true, true, "Aluminum",	2,  3,  0, 59),
+		/*3*/bauxite	(false, true, "Bauxite",	35, 10, 0, 128),  //No Ingot
+		/*4*/kaolinite	(false, true, "Kaolinite", 	35, 5, 0, 100), //No Ingot
 		// Reserved for future use as blocks
-		/*5*/reserved1(false, false, false),
-		/*6*/reserved2(false, false, false),
-		/*7*/reserved3(false, false, false),
-		/*8*/reserved4(false, false, false),
-		/*9*/reserved5(false, false, false),
-		/*10*/reserved6(false, false, false),
-		/*11*/reserved7(false, false, false),
-		/*12*/reserved8(false, false, false),
-		/*13*/reserved9(false, false, false),
-		/*14*/reserved10(false, false, false),
-		/*15*/reserved11(false, false, false),
+		/*5*/reserved1	(false, false),
+		/*6*/reserved2	(false, false),
+		/*7*/reserved3	(false, false),
+		/*8*/reserved4	(false, false),
+		/*9*/reserved5	(false, false),
+		/*10*/reserved6	(false, false),
+		/*11*/reserved7	(false, false),
+		/*12*/reserved8	(false, false),
+		/*13*/reserved9	(false, false),
+		/*14*/reserved10(false, false),
+		/*15*/reserved11(false, false),
 		
 		//Vanilla requires only the "custom" stuff
-		/*16*/gold(false, false, true),
-		/*17*/iron(false, false, true),
-		/*18*/coal(false, false, true),
+		/*16*/gold		(false, true),
+		/*17*/iron		(false, true),
+		/*18*/coal		(false, true),
 		
 		// Non-Ore stuff
-		/*19*/stone(false, false, true),
+		/*19*/stone		(false, true),
 		;
 		
 		public final boolean ore, ingot, dust;
 		
-		private BLOCK_ORE_META(boolean ore, boolean ingot, boolean dust) {
-			this.ore = ore;
+		public final int gen_default_size, gen_default_count, gen_default_above, gen_default_below;
+		
+		public final String config_name;
+		
+		private BLOCK_ORE_META(boolean ingot, boolean dust) {
+			this.ore = false;
 			this.ingot = ingot;
 			this.dust = dust;
+			this.gen_default_size = 0;
+			this.gen_default_count = 0;
+			this.gen_default_above = 0;
+			this.gen_default_below = 0;
+			this.config_name = name();
+		}
+		
+		private BLOCK_ORE_META(boolean ingot, boolean dust, String config_name, int default_size, int default_count, int default_above, int default_below) {
+			this.ore = true;
+			this.ingot = ingot;
+			this.dust = dust;
+			this.gen_default_size = default_size;
+			this.gen_default_count = default_count;
+			this.gen_default_above = default_above;
+			this.gen_default_below = default_below;
+			this.config_name = config_name;
 		}
 		
 		public static String[] valuesAsString() {
@@ -356,15 +376,6 @@ public final class Taam {
 	public static final String TILEENTITY_APPLIANCE_SPRAYER = "taam.appliance.sprayer";
 
 	public static final String ENTITY_LOGISTICS_CART = "taam.logistics_manager";
-	
-	public static final String CFG_COMMENT_SENSOR_DELAY = "Sensor [Motion, Minect] delay (minimum activation time) in game ticks, minimum 10";
-	public static final String CFG_COMMENT_SENSOR_PLACEMENT_MODE = "Sensor [Motion, Minect] placement mode when side by side. 1 = move together, 2 = merge into one";
-	public static final String CFG_COMMENT_GEN_COPPER_ORE = "Should Taam generate Copper Ore in the World";
-	public static final String CFG_COMMENT_GEN_TIN_ORE  = "Should Taam generate Tin Ore in the World";
-	public static final String CFG_COMMENT_GEN_BAUXITE_ORE  = "Should Taam generate B Ore in the World";
-	public static final String CFG_COMMENT_GEN_ALUMINUM_ORE  = "Should Taam generate Aluminum Ore in the World";
-	public static final String CFG_COMMENT_GEN_KAOLINITE_ORE  = "Should Taam generate Kaolinte Ore in the World";
-	public static final String CFG_COMMENT_DEBUG_OUTPUT = "Should the Debug mode form Taam be activated";
 	
 	public static enum FLUID_DYE_META {
 		black,
