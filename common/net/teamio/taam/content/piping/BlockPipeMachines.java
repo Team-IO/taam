@@ -3,6 +3,7 @@ package net.teamio.taam.content.piping;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
@@ -13,6 +14,9 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.world.World;
+import net.minecraftforge.client.model.obj.OBJModel;
+import net.minecraftforge.common.property.ExtendedBlockState;
+import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.teamio.taam.Log;
@@ -33,7 +37,7 @@ public class BlockPipeMachines extends BaseBlock {
 
 	@Override
 	protected BlockState createBlockState() {
-		return new BlockState(this, VARIANT);
+		return new ExtendedBlockState(this, new IProperty[] {VARIANT}, new IUnlistedProperty[]{OBJModel.OBJProperty.instance});
 	}
 
 	@Override
@@ -80,8 +84,6 @@ public class BlockPipeMachines extends BaseBlock {
 	public TileEntity createTileEntity(World world, IBlockState state) {
 		Taam.BLOCK_PIPEMACHINES_META variant = (Taam.BLOCK_PIPEMACHINES_META) state.getValue(VARIANT);
 		switch (variant) {
-		case tank:
-			return new TileEntityTank();
 		case creativewell:
 			return new TileEntityCreativeWell();
 		case pump:

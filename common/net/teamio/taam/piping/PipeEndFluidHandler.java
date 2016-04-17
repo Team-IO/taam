@@ -127,4 +127,9 @@ public class PipeEndFluidHandler implements IPipe {
 	public IPipe[] getInternalPipes(IBlockAccess world, BlockPos pos) {
 		return null;
 	}
+
+	@Override
+	public boolean isSideAvailable(EnumFacing side) {
+		return this.side == side;
+	}
 }

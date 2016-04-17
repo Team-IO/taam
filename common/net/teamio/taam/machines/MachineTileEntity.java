@@ -39,12 +39,12 @@ public class MachineTileEntity extends BaseTileEntity implements ITickable {
 	
 	@Override
 	protected void writePropertiesToNBT(NBTTagCompound tag) {
-		machine.writePropertiesToNBT(tag, false);
+		machine.writePropertiesToNBT(tag);
 	}
 
 	@Override
 	protected void readPropertiesFromNBT(NBTTagCompound tag) {
-		machine.readPropertiesFromNBT(tag, false);
+		machine.readPropertiesFromNBT(tag);
 	}
 
 	@Override

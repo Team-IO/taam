@@ -39,7 +39,6 @@ import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.content.conveyors.TileEntityConveyorProcessor;
 import net.teamio.taam.content.conveyors.TileEntityConveyorSieve;
-import net.teamio.taam.content.piping.TileEntityTank;
 import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.conveyors.ItemWrapper;
 import net.teamio.taam.conveyors.api.IConveyorAwareTE;
@@ -150,18 +149,20 @@ public class TaamRenderer extends TileEntitySpecialRenderer<BaseTileEntity> {
 		if (tileEntity instanceof IConveyorAwareTE) {
 			renderConveyorItems((IConveyorAwareTE) tileEntity, x, y, z);
 		}
+		
+		//TODO: replace with capability!
 
-		if (tileEntity instanceof TileEntityTank) {
-			GL11.glPushMatrix();
-			GL11.glTranslated(x, y, z);
-
-			FluidTank tank = ((TileEntityTank) tileEntity).getTank();
-			FluidStack stack = tank.getFluid();
-
-			renderTankContent(stack, tank.getCapacity(), bounds_tank);
-
-			GL11.glPopMatrix();
-		}
+//		if (tileEntity instanceof TileEntityTank) {
+//			GL11.glPushMatrix();
+//			GL11.glTranslated(x, y, z);
+//
+//			FluidTank tank = ((TileEntityTank) tileEntity).getTank();
+//			FluidStack stack = tank.getFluid();
+//
+//			renderTankContent(stack, tank.getCapacity(), bounds_tank);
+//
+//			GL11.glPopMatrix();
+//		}
 
 		if (tileEntity instanceof ApplianceSprayer) {
 			GL11.glPushMatrix();

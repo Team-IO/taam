@@ -6,12 +6,14 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 import net.teamio.taam.Log;
+import net.teamio.taam.Taam;
 import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IWorldInteractable;
 import net.teamio.taam.piping.PipeEnd;
@@ -63,6 +65,23 @@ public class TileEntityCreativeWell extends BaseTileEntity implements IFluidHand
 		} else {
 			fluid = FluidStack.loadFluidStackFromNBT(fluidTag);
 		}
+	}
+	
+	@Override
+	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+		if(capability == Taam.CAPABILITY_PIPE) {
+			return true;
+		}
+		return false;
+	}
+	
+	@Override
+	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+		if(capability == Taam.CAPABILITY_PIPE) {
+			int index = facing.ordinal();
+			return (T) pipeEnds[index];
+		}
+		return null;
 	}
 	
 	/*
@@ -129,8 +148,10 @@ public class TileEntityCreativeWell extends BaseTileEntity implements IFluidHand
 			fluid = null;
 		} else {
 			fluid = FluidContainerRegistry.getFluidForFilledItem(stack);
-			fluid.amount = capacity;
-			Log.debug("Set creative well fluid to " + fluid);
+			if(fluid != null) {
+				fluid.amount = capacity;
+				Log.debug("Set creative well fluid to " + fluid);
+			}
 		}
 		for (EnumFacing peSide : EnumFacing.VALUES) {
 			int index = peSide.ordinal();

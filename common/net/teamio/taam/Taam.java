@@ -1,6 +1,10 @@
 package net.teamio.taam;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -8,6 +12,7 @@ import net.minecraft.util.IStringSerializable;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.teamio.taam.content.piping.MachinePipe;
+import net.teamio.taam.content.piping.MachineTank;
 import net.teamio.taam.machines.IMachine;
 import net.teamio.taam.machines.IMachineMetaInfo;
 import net.teamio.taam.piping.IPipe;
@@ -447,12 +452,41 @@ public final class Taam {
 	};
 	
 	public static enum MACHINE_META implements IMachineMetaInfo {
-		pipe;
+		
+		pipe(MachinePipe.class, "pipe", null),
+		tank(MachineTank.class, "tank", null);
+
+		private Class<? extends IMachine> machineClass;
+		private String unlocalizedName;
+		private String[] info;
+		
+		
+		
+		/**
+		 * @param machineClass
+		 * @param unlocalizedName
+		 * @param info
+		 */
+		private MACHINE_META(Class<? extends IMachine> machineClass, String unlocalizedName, String[] info) {
+			this.machineClass = machineClass;
+			this.unlocalizedName = unlocalizedName;
+			this.info = info;
+		}
+		
+		/*
+		 * IMachineMetaInfo implementation
+		 */
 
 		@Override
 		public IMachine createMachine() {
-			// TODO Auto-generated method stub
-			return new MachinePipe();
+			try {
+				return machineClass.newInstance();
+			} catch (InstantiationException e) {
+				Log.error("Could not create machine instance. Returning null. THIS IS AN ERROR, please report!", e);
+			} catch (IllegalAccessException e) {
+				Log.error("Could not create machine instance. Returning null. THIS IS AN ERROR, please report!", e);
+			}
+			return null;
 		}
 
 		@Override
@@ -462,18 +496,48 @@ public final class Taam {
 
 		@Override
 		public String unlocalizedName() {
-			// TODO Auto-generated method stub
-			return "pipe";
+			return unlocalizedName;
 		}
 
 		@Override
 		public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
-			// TODO Auto-generated method stub
-			
+			if(info != null) {
+				Collections.addAll(tooltip, info);
+			}
+		}
+		
+		/*
+		 * IStringSerializable implementation
+		 */
+		
+		@Override
+		public String getName() {
+			return unlocalizedName();
+		}
+		
+		/*
+		 * Static stuff
+		 */
+		
+		private static Map<String, MACHINE_META> nameToInstanceMap = new HashMap<String, MACHINE_META>();
+		
+		static {
+			for(MACHINE_META value : values()) {
+				nameToInstanceMap.put(value.unlocalizedName(), value);
+			}
 		}
 		
 		public static IMachineMetaInfo fromId(String id) {
-			return pipe;
+			return nameToInstanceMap.get(id);
+		}
+		
+		public static String[] valuesAsString() {
+			MACHINE_META[] valuesAsEnum = values();
+			String[] valuesAsString = new String[valuesAsEnum.length];
+			for(int i = 0; i < valuesAsEnum.length; i++) {
+				valuesAsString[i] = valuesAsEnum[i].unlocalizedName();
+			}
+			return valuesAsString;
 		}
 	}
 	

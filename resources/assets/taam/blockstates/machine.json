@@ -1,0 +1,40 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "textures": {},
+        "model": "taam:creative_cache.obj",
+        "custom": {
+            "flip-v": true
+        }
+     },
+    "variants": {
+        "normal": [{}],
+        "inventory": [{
+            "transform": "forge:default-block"
+        }],
+        "variant=creativecache": [{
+       	    "model": "taam:creative_cache.obj"
+        }],
+        "variant=chute": [{
+           "model": "taam:chute.obj"
+        }],
+        "variant=pipe": [{
+           "model": "taam:pipes.obj"
+        }],
+        "variant=tank": [{
+           "model": "taam:tank.obj"
+        }],
+        "variant=creativewell": [{
+        	"model": "taam:creative_well.obj"
+        }],
+        "variant=pump": [{
+        	"model": "taam:pump.obj"
+        }],
+        "variant=mixer": [{
+        	"model": "taam:mixer.obj"
+        }],
+        "variant=fluid_drier": [{
+        	"model": "taam:fluid_drier.obj"
+        }]
+    }
+}

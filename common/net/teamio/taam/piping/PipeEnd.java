@@ -110,4 +110,9 @@ public class PipeEnd implements IPipe {
 		return null;
 	}
 
+	@Override
+	public boolean isSideAvailable(EnumFacing side) {
+		return this.side == side;
+	}
+
 }

@@ -38,11 +38,9 @@ public class MachineItemMultipart extends ItemMultiPart {
 		int meta = stack.getMetadata();
 		IMachineMetaInfo info = getInfo(meta);
 
-		IMachine machine = info.createMachine();
-
 		// TODO: distinguish between IMachine and IMachineWithSpecialRenderer later
 
-		return new MachineMultipart(machine);
+		return new MachineMultipart(info);
 	}
 
 	@Override

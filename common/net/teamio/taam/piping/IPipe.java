@@ -1,6 +1,7 @@
 package net.teamio.taam.piping;
 
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -116,4 +117,12 @@ public interface IPipe {
 	 *         pipes.
 	 */
 	IPipe[] getInternalPipes(IBlockAccess world, BlockPos pos);
+
+	/**
+	 * Asks the pipe if it does connect on the given side.
+	 * 
+	 * @param side
+	 * @return
+	 */
+	boolean isSideAvailable(EnumFacing side);
 }

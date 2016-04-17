@@ -4,8 +4,9 @@ import java.util.List;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.IStringSerializable;
 
-public interface IMachineMetaInfo {
+public interface IMachineMetaInfo extends IStringSerializable {
 	IMachine createMachine();
 
 	int metaData();
