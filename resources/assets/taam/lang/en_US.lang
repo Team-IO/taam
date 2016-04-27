@@ -19,6 +19,7 @@ item.dust.kaolinite.name=Kaolinite Dust
 item.dust.gold.name=Gold Dust
 item.dust.iron.name=Iron Dust
 item.dust.coal.name=Coal Dust
+item.dust.stone.name=Stone Dust
 # Parts (Crafting Items)
 item.part.photocell.name=Photo Cell
 item.part.motor.name=Motor
@@ -47,10 +48,10 @@ item.material.iron_nugget.name=Iron Nugget
 item.material.wooden_board.name=Wooden Board
 item.material.aluminum_plate.name=Aluminum Plate
 item.material.resin.name=Resin
+item.material.cement.name=Cement
+item.material.cementRough.name=Rough Cement
 # Tools
 item.tool.saw.name=Saw
-# Conveyor Appliances
-item.conveyor_appliance.sprayer.name=Sprayer
 
 #Creative Tab localization
 itemGroup.taam=Taam
@@ -71,7 +72,9 @@ tile.concrete.fine.name=Fine Concrete
 tile.concrete.fine_chiseled.name=Fine Concrete (Chiseled)
 tile.concrete.coated.name=Coated Concrete
 tile.concrete.coated_chiseled.name=Coated Concrete (Chiseled)
-tile.concrete.warn1.name=Concrete (Black Warning Paint)
+tile.concrete.black.name=Black Coated Concrete
+tile.concrete.black_chiseled.name=Black Coated Concrete (Chiseled)
+tile.concrete.warn1.name=Concrete (Yellow Warning Paint)
 tile.concrete.warn2.name=Concrete (Red Warning Paint)
 # Ores
 tile.ore.copper.name=Copper Ore
@@ -80,7 +83,6 @@ tile.ore.aluminum.name=Native Aluminum Ore
 tile.ore.bauxite.name=Bauxite
 tile.ore.kaolinite.name=Kaolinite
 # Machines
-tile.productionline.invalid.name=#!#!#!Invalid Data!#!#!#
 tile.productionline.conveyor1.name=Wooden Conveyor
 tile.productionline.conveyor2.name=Conveyor
 tile.productionline.conveyor3.name=High Throughput Conveyor
@@ -100,6 +102,32 @@ tile.pipe.name=Pipe
 tile.pipemachines.tank.name=Tank
 tile.pipemachines.creativewell.name=Creative Fluid Well
 tile.pipemachines.pump.name=Pump
+tile.pipemachines.mixer.name=Mixer
+tile.pipemachines.fluid_drier.name=Fluid Drier
+
+tile.productionline_appliance.sprayer.name=Sprayer
+
+# Fluids
+fluid.dye_black=Liquid Black Dye
+fluid.dye_blue=Liquid Blue Dye
+fluid.dye_brown=Liquid Brown Dye
+fluid.dye_cyan=Liquid Cyan Dye
+fluid.dye_gray=Liquid Gray Dye
+fluid.dye_green=Liquid Green Dye
+fluid.dye_lightBlue=Liquid Light Blue Dye
+fluid.dye_lightGray=Liquid Light Gray Dye
+fluid.dye_lime=Liquid Terminal Dye
+fluid.dye_magenta=Liquid Magenta Dye
+fluid.dye_orange=Liquid Orange Dye
+fluid.dye_pink=Liquid Pink Dye
+fluid.dye_purple=Liquid Purple Dye
+fluid.dye_red=Liquid Red Dye
+fluid.dye_white=Liquid White Dye
+fluid.dye_yellow=Liquid Yellow Dye
+
+fluid.concreteRough=Rough Concrete
+fluid.concreteFine=Fine Concrete
+fluid.coating=Resin-Based Coating
 
 # Lore localization
 lore.taam.shift=Hold Shift

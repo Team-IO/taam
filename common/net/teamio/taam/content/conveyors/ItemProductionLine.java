@@ -19,16 +19,15 @@ import net.teamio.taam.conveyors.api.IConveyorAwareTE;
 
 public class ItemProductionLine extends ItemMultiTexture implements IRenderableItem {
 
-	
-	public ItemProductionLine(Block blockA, Block blockB, String[] names) {
-		super(blockA, blockB, names);
+	public ItemProductionLine(Block block, String[] names) {
+		super(block, block, names);
 	}
 
 	@Override
 	public List<String> getVisibleParts(ItemStack stack) {
 		int meta = stack.getMetadata();
 		Taam.BLOCK_PRODUCTIONLINE_META variant = Taam.BLOCK_PRODUCTIONLINE_META.values()[meta];
-		switch(variant) {
+		switch (variant) {
 		case chute:
 			return TileEntityChute.parts_conveyor_version;
 		case conveyor1:
@@ -53,68 +52,68 @@ public class ItemProductionLine extends ItemMultiTexture implements IRenderableI
 			return TileEntityConveyor.parts_invalid;
 		}
 	}
-	
+
 	@Override
 	public boolean placeBlockAt(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side,
 			float hitX, float hitY, float hitZ, IBlockState newState) {
 		EnumFacing dir = side.getOpposite();
 		EnumFacing placeDir = EnumFacing.NORTH;
 		boolean defaultPlacement = false;
-		
-		if(dir == EnumFacing.UP || dir == EnumFacing.DOWN) {
+
+		if (dir == EnumFacing.UP || dir == EnumFacing.DOWN) {
 			defaultPlacement = true;
 		} else {
 			TileEntity ent = world.getTileEntity(pos.offset(dir));
-			if(ent instanceof IRotatable) {
+			if (ent instanceof IRotatable) {
 				EnumFacing otherDir = ((IRotatable) ent).getFacingDirection();
-				if(otherDir == dir || otherDir == dir.getOpposite()) {
+				if (otherDir == dir || otherDir == dir.getOpposite()) {
 					placeDir = otherDir;
 				} else {
 					placeDir = dir;
 				}
-			} else if(ent instanceof IConveyorAwareTE) {
+			} else if (ent instanceof IConveyorAwareTE) {
 				placeDir = dir;
 			} else {
 				defaultPlacement = true;
 			}
 		}
-		
-		if(defaultPlacement) {
+
+		if (defaultPlacement) {
 			// We hit top/bottom of a block
 			double xDist = player.posX - pos.getX();
 			double zDist = player.posZ - pos.getZ();
-			if(Math.abs(xDist) > Math.abs(zDist)) {
-				if(xDist < 0) {
+			if (Math.abs(xDist) > Math.abs(zDist)) {
+				if (xDist < 0) {
 					placeDir = EnumFacing.EAST;
 				} else {
 					placeDir = EnumFacing.WEST;
 				}
 			} else {
-				if(zDist < 0) {
+				if (zDist < 0) {
 					placeDir = EnumFacing.SOUTH;
 				} else {
 					placeDir = EnumFacing.NORTH;
 				}
 			}
 		}
-		
-		Taam.BLOCK_PRODUCTIONLINE_META variant = (Taam.BLOCK_PRODUCTIONLINE_META)newState.getValue(BlockProductionLine.VARIANT);
-		
+
+		Taam.BLOCK_PRODUCTIONLINE_META variant = (Taam.BLOCK_PRODUCTIONLINE_META) newState.getValue(BlockProductionLine.VARIANT);
+
 		boolean canStay;
-		if(variant == Taam.BLOCK_PRODUCTIONLINE_META.conveyor1 || variant == Taam.BLOCK_PRODUCTIONLINE_META.conveyor2 || variant == Taam.BLOCK_PRODUCTIONLINE_META.conveyor3) {
+		if (variant == Taam.BLOCK_PRODUCTIONLINE_META.conveyor1
+				|| variant == Taam.BLOCK_PRODUCTIONLINE_META.conveyor2
+				|| variant == Taam.BLOCK_PRODUCTIONLINE_META.conveyor3) {
 			// Conveyor
 			canStay = BlockProductionLine.canBlockStay(world, pos, placeDir);
 		} else {
-			canStay = BlockProductionLine.canBlockStay(world, pos, (EnumFacing)null);
+			canStay = BlockProductionLine.canBlockStay(world, pos, (EnumFacing) null);
 		}
-		
-		
-		
-		if(canStay) {
+
+		if (canStay) {
 			boolean success = super.placeBlockAt(stack, player, world, pos, side, hitX, hitY, hitZ, newState);
-			if(success) {
+			if (success) {
 				TileEntity te = world.getTileEntity(pos);
-				if(te instanceof IRotatable) {
+				if (te instanceof IRotatable) {
 					((IRotatable) te).setFacingDirection(placeDir);
 				}
 			}

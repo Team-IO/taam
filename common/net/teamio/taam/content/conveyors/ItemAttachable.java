@@ -18,23 +18,22 @@ import net.teamio.taam.util.TaamUtil;
 
 public class ItemAttachable extends ItemMultiTexture implements IRenderableItem {
 
-	
-	public ItemAttachable(Block blockA, Block blockB, String[] names) {
-		super(blockA, blockB, names);
+	public ItemAttachable(Block block, String[] names) {
+		super(block, block, names);
 	}
 
 	@Override
 	public boolean placeBlockAt(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side,
 			float hitX, float hitY, float hitZ, IBlockState newState) {
 		EnumFacing dir = side.getOpposite();
-		if(TaamUtil.canAttach(world, pos, dir)) {
-			if(dir == EnumFacing.UP || dir == EnumFacing.DOWN) {
+		if (TaamUtil.canAttach(world, pos, dir)) {
+			if (dir == EnumFacing.UP || dir == EnumFacing.DOWN) {
 				dir = EnumFacing.NORTH;
 			}
-			boolean success = super.placeBlockAt(stack, player, world, pos, side, hitX, hitY, hitZ, newState.withProperty(BlockProductionLineAttachable.FACING, dir));
-			if(success) {
+			boolean success = super.placeBlockAt(stack, player, world, pos, side, hitX, hitY, hitZ, newState);
+			if (success) {
 				TileEntity te = world.getTileEntity(pos);
-				if(te instanceof IRotatable) {
+				if (te instanceof IRotatable) {
 					((IRotatable) te).setFacingDirection(dir);
 				}
 			}
@@ -47,7 +46,7 @@ public class ItemAttachable extends ItemMultiTexture implements IRenderableItem 
 	public List<String> getVisibleParts(ItemStack stack) {
 		int meta = stack.getMetadata();
 		Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META variant = Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META.values()[meta];
-		switch(variant) {
+		switch (variant) {
 		case itembag:
 			return TileEntityConveyorItemBag.parts;
 		case trashcan:

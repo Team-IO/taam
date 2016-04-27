@@ -24,12 +24,12 @@ public class TileEntityPump extends BaseTileEntity implements IPipeTE, ITickable
 
 	private EnumFacing direction = EnumFacing.NORTH;
 	private final PipeInfo info;
-	
+
 	public static final List<String> visibleParts = Lists.newArrayList("Baseplate_pmdl", "Pump_pumdl");
-	
-	private static final int capacity = 50;
+
+	private static final int capacity = 125;
 	private static final int pressure = 50;
-	
+
 	public TileEntityPump() {
 		info = new PipeInfo(capacity);
 		pipeEndOut = new PipeEndSharedDistinct(direction, info, true);
@@ -37,12 +37,12 @@ public class TileEntityPump extends BaseTileEntity implements IPipeTE, ITickable
 		pipeEndOut.setPressure(pressure);
 		pipeEndIn.setSuction(pressure);
 	}
-	
+
 	@Override
 	public List<String> getVisibleParts() {
 		return visibleParts;
 	}
-	
+
 	@Override
 	public void update() {
 		PipeUtil.processPipes(pipeEndOut, worldObj, pos);
@@ -58,7 +58,7 @@ public class TileEntityPump extends BaseTileEntity implements IPipeTE, ITickable
 	@Override
 	protected void readPropertiesFromNBT(NBTTagCompound tag) {
 		direction = EnumFacing.getFront(tag.getInteger("direction"));
-		if(direction == EnumFacing.UP || direction == EnumFacing.DOWN) {
+		if (direction == EnumFacing.UP || direction == EnumFacing.DOWN) {
 			direction = EnumFacing.NORTH;
 		}
 		pipeEndOut.setSide(direction);
@@ -69,7 +69,7 @@ public class TileEntityPump extends BaseTileEntity implements IPipeTE, ITickable
 	/*
 	 * IPipeTE implementation
 	 */
-	
+
 	@Override
 	public IPipe[] getPipesForSide(EnumFacing side) {
 		if (side == direction) {
@@ -84,7 +84,7 @@ public class TileEntityPump extends BaseTileEntity implements IPipeTE, ITickable
 	/*
 	 * IRotatable implementation
 	 */
-	
+
 	@Override
 	public EnumFacing getFacingDirection() {
 		return direction;
@@ -97,16 +97,14 @@ public class TileEntityPump extends BaseTileEntity implements IPipeTE, ITickable
 
 	@Override
 	public void setFacingDirection(EnumFacing direction) {
-		if(direction.getAxis() == Axis.Y) {
+		if (direction.getAxis() == Axis.Y) {
 			return;
 		}
 		this.direction = direction;
-		
+
 		pipeEndOut.setSide(direction);
 		pipeEndIn.setSide(direction.getOpposite());
-		
-		blockUpdate();
-		updateState();
-		worldObj.notifyNeighborsOfStateChange(pos, blockType);
+
+		updateState(true, true, true);
 	}
 }

@@ -49,16 +49,22 @@ public class PipeInfo {
 			content.ensureCapacity(list.tagCount());
 			for (int i = 0; i < list.tagCount(); i++) {
 				NBTTagCompound fluidTag = list.getCompoundTagAt(i);
-				content.add(FluidStack.loadFluidStackFromNBT(fluidTag));
+				FluidStack stack = FluidStack.loadFluidStackFromNBT(fluidTag);
+				if(stack != null) {
+					content.add(stack);
+				}
 			}
 		}
 		content.trimToSize();
 		recalculateFillLevel();
 	}
 
-	private void recalculateFillLevel() {
+	public void recalculateFillLevel() {
 		fillLevel = 0;
 		for (FluidStack stack : content) {
+			if(stack == null) {
+				continue;
+			}
 			fillLevel += stack.amount;
 		}
 	}
@@ -67,10 +73,10 @@ public class PipeInfo {
 		if (stack == null || stack.amount == 0) {
 			return 0;
 		}
-
-		int current = fillLevel;
 		// TODO: Caching. Later.
 		recalculateFillLevel();
+
+		int current = fillLevel;
 		int free = capacity - current;
 
 		if (free < 1) {
@@ -84,7 +90,9 @@ public class PipeInfo {
 				return insert;
 			}
 		}
-		content.add(stack.copy());
+		FluidStack copy = stack.copy();
+		copy.amount = insert;
+		content.add(copy);
 
 		return insert;
 	}

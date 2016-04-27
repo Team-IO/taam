@@ -16,6 +16,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.OreDictionary;
 import net.teamio.taam.content.IRedstoneControlled;
+import net.teamio.taam.conveyors.api.IConveyorApplianceHost;
 import net.teamio.taam.conveyors.api.IConveyorAwareTE;
 import net.teamio.taam.util.inv.InventoryUtils;
 
@@ -100,6 +101,11 @@ public final class TaamUtil {
 		TileEntity ent = world.getTileEntity(pos.offset(dir));
 		return ent instanceof IConveyorAwareTE;
 	}
+	
+	public static boolean canAttachAppliance(IBlockAccess world, BlockPos pos, EnumFacing dir) {
+		TileEntity ent = world.getTileEntity(pos.offset(dir));
+		return ent instanceof IConveyorApplianceHost;
+	}
 
 	/**
 	 * Checks if actualInput is the same item as inputDefinition (respecting
@@ -120,7 +126,7 @@ public final class TaamUtil {
 				int myID = OreDictionary.getOreID(inputOreDictName);
 				return ArrayUtils.contains(oreIDs, myID);
 			} else {
-				return inputDefinition.isItemEqual(actualInput) || OreDictionary.itemMatches(actualInput, inputDefinition, true);
+				return inputDefinition.isItemEqual(actualInput) || OreDictionary.itemMatches(inputDefinition, actualInput, false);
 			}
 		}
 	}

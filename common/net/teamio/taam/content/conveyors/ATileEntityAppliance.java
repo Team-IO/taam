@@ -3,7 +3,6 @@ package net.teamio.taam.content.conveyors;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.teamio.taam.content.BaseBlock;
 import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.conveyors.api.IConveyorAppliance;
 import net.teamio.taam.conveyors.api.IConveyorApplianceHost;
@@ -47,8 +46,7 @@ public abstract class ATileEntityAppliance extends BaseTileEntity implements ICo
 	@Override
 	public void setFacingDirection(EnumFacing direction) {
 		this.direction = direction;
-		updateState();
-		BaseBlock.updateBlocksAround(worldObj, pos);
+		updateState(false, true, true);
 	}
 
 }

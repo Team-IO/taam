@@ -1,16 +1,26 @@
 package net.teamio.taam.piping;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
+import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.IFluidTank;
 import net.teamio.taam.Log;
+import net.teamio.taam.util.inv.InventoryUtils;
 
 public final class PipeUtil {
 	private PipeUtil() {
 		// Util Class
 	}
+	
+	/**
+	 * Factor used when transferring fluid between pipes, tanks, etc.
+	 */
+	public static final float pipeTransferFactor = 0.5f;
 
 	public static int calculateAppliedPressure(int current, int change, int limit) {
 		if (change > 0) {
@@ -100,16 +110,12 @@ public final class PipeUtil {
 		for (int i = 0; i < connected.length; i++) {
 			IPipe other = connected[i];
 			int otherPressure = other.getPressure() == 0 ? -other.getSuction() : other.getPressure();
-			float factor = 0;
-			if (effectivePressure > otherPressure + 10) {
-				factor = 1;
-			} else if (effectivePressure > otherPressure + 5) {
-				factor = 0.75f;
-			} else if (effectivePressure > otherPressure) {
-				factor = 0.5f;
+			if(effectivePressure <= otherPressure) {
+				// No transfer without pressure
+				continue;
 			}
 
-			int share = (int) Math.ceil(totalAmount * factor);
+			int share = (int) Math.ceil(totalAmount * pipeTransferFactor);
 			for (FluidStack fs : pipe.getFluids()) {
 				FluidStack transfer = fs.copy();
 				transfer.amount = Math.min(transfer.amount, share);
@@ -138,5 +144,54 @@ public final class PipeUtil {
 				}
 			}
 		}
+	}
+	
+	/**
+	 * The default interaction for tanks, usually fills/drains a selected fluid container.
+	 * @param player
+	 * @param tank
+	 * @return
+	 */
+	public static boolean defaultPlayerInteraction(EntityPlayer player, IFluidTank tank) {
+		
+		ItemStack playerStack = player.inventory.getCurrentItem();
+		if(playerStack == null) {
+			return false;
+		}
+		int playerSlot = player.inventory.currentItem;
+		if(FluidContainerRegistry.isEmptyContainer(playerStack)) {
+			FluidStack inTank = tank.getFluid();
+			if(inTank != null && inTank.amount > 0) {
+				ItemStack filled = FluidContainerRegistry.fillFluidContainer(tank.getFluid(), playerStack);
+				if(filled != null) {
+					int capa = FluidContainerRegistry.getContainerCapacity(filled);
+					tank.drain(capa, true);
+					playerStack.stackSize--;
+					if(playerStack.stackSize == 0) {
+						player.inventory.setInventorySlotContents(playerSlot, filled);
+					} else {
+						InventoryUtils.tryDropToInventory(player, filled, player.getPosition());
+					}
+				}
+			}
+			return true;
+		} else if(FluidContainerRegistry.isFilledContainer(playerStack)) {
+			FluidStack inContainer = FluidContainerRegistry.getFluidForFilledItem(playerStack);
+			if(inContainer != null) {
+				int allowed = tank.fill(inContainer, false);
+				if(allowed == inContainer.amount) {
+					ItemStack drained = FluidContainerRegistry.drainFluidContainer(playerStack);
+					tank.fill(inContainer, true);
+					playerStack.stackSize--;
+					if(playerStack.stackSize == 0) {
+						player.inventory.setInventorySlotContents(playerSlot, drained);
+					} else {
+						InventoryUtils.tryDropToInventory(player, drained, player.getPosition());
+					}
+				}
+			}
+			return true;
+		}
+		return false;
 	}
 }

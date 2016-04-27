@@ -1,5 +1,7 @@
 package net.teamio.taam.util;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -9,15 +11,20 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.teamio.taam.Log;
 import net.teamio.taam.TaamMain;
+import net.teamio.taam.content.BaseBlock;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.content.common.TileEntityCreativeCache;
 import net.teamio.taam.content.common.TileEntitySensor;
+import net.teamio.taam.conveyors.api.IConveyorAppliance;
+import net.teamio.taam.conveyors.api.IConveyorApplianceHost;
 import net.teamio.taam.conveyors.api.IConveyorAwareTE;
+import net.teamio.taam.piping.IPipeTE;
 
 public class WrenchUtil {
 
 	/**
 	 * Returns true if the player is holding a wrench in his hand.
+	 *
 	 * @param player
 	 * @return
 	 */
@@ -37,42 +44,40 @@ public class WrenchUtil {
 			//TODO: Check other wrench types once supported
 		return held.getItem() == TaamMain.itemWrench;
 	}
-	
+
 	public static EnumActionResult wrenchBlock(World world, BlockPos pos, EntityPlayer player,
 			EnumFacing side, float hitX, float hitY,
 			float hitZ) {
 		Log.debug("Checking for wrench activity.");
-		
+
 		boolean playerHasWrench = WrenchUtil.playerHasWrenchInMainhand(player);
 		Log.debug("Player has wrench: " + playerHasWrench);
-		
+
 		if(!playerHasWrench) {
 			Log.debug("Player has no wrench, skipping.");
 			return EnumActionResult.PASS;
 		}
-		
+
 		boolean playerIsSneaking = player.isSneaking();
-		Log.debug("Player is sneaking: " + playerIsSneaking);
-		
+		Log.debug("Wrenching block. Player is sneaking: {}", playerIsSneaking);
+
 		TileEntity te = world.getTileEntity(pos);
-		
-		if(playerHasWrench) {
-			
-			if(playerIsSneaking) {
-				if(WrenchUtil.isWrenchableEntity(te)) {
-					TaamUtil.breakBlockToInventory(player, world, pos);
-					return EnumActionResult.SUCCESS;
-				}
-			} else {
-				world.getBlockState(pos).getBlock().rotateBlock(world, pos, side);
-				return EnumActionResult.SUCCESS;
+
+		IBlockState blockState = world.getBlockState(pos);
+		if (playerIsSneaking) {
+			if (WrenchUtil.isWrenchableBlock(blockState) || WrenchUtil.isWrenchableEntity(te)) {
+				TaamUtil.breakBlockToInventory(player, world, pos, blockState);
+				return true;
 			}
+		} else {
+			blockState.getBlock().rotateBlock(world, pos, side);
+			return true;
 		}
 		return EnumActionResult.FAIL;
 	}
-	
+
 	public static boolean rotateBlock(TileEntity te) {
-		if(te instanceof IRotatable) {
+		if (te instanceof IRotatable) {
 			IRotatable rotatable = (IRotatable) te;
 			rotatable.setFacingDirection(rotatable.getNextFacingDirection());
 			return true;
@@ -82,8 +87,16 @@ public class WrenchUtil {
 
 	private static boolean isWrenchableEntity(TileEntity te) {
 		return te instanceof IConveyorAwareTE ||
+				te instanceof IPipeTE ||
 				te instanceof TileEntityCreativeCache ||
-				te instanceof TileEntitySensor;
+				te instanceof TileEntitySensor ||
+				te instanceof IConveyorAppliance ||
+				te instanceof IConveyorApplianceHost;
+	}
+
+	private static boolean isWrenchableBlock(IBlockState blockState) {
+		Block block = blockState.getBlock();
+		return block == TaamMain.blockSupportBeam || block instanceof BaseBlock;
 	}
 
 }

@@ -218,7 +218,7 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 			}
 		}
 		if(changed) {
-			updateState();
+			updateState(false, false, false);
 		}
 	}
 	
@@ -367,7 +367,16 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 	public int insertItemAt(ItemStack item, int slot) {
 		// insertItem returns item count unable to insert.
 		int inserted = item.stackSize - InventoryUtils.insertItem(inventory, item, false);
+		updateState(false, false, false);
 		return inserted;
+	}
+	
+	@Override
+	public ItemStack removeItemAt(int slot) {
+		ItemStack content = getStackInSlot(slot);
+		setInventorySlotContents(slot, null);
+		updateState(false, false, false);
+		return content;
 	}
 	
 	@Override
@@ -521,7 +530,7 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 	@Override
 	public void setFacingDirection(EnumFacing direction) {
 		this.direction = direction;
-		updateState();
+		updateState(false, true, false);
 	}
 
 	public EnumFacing getNextSlot(int slot) {

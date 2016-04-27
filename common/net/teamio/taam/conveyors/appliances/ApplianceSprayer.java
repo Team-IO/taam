@@ -1,163 +1,299 @@
 package net.teamio.taam.conveyors.appliances;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockCarpet;
-import net.minecraft.block.BlockColored;
-import net.minecraft.block.BlockHardenedClay;
-import net.minecraft.block.BlockStainedGlass;
-import net.minecraft.block.BlockStainedGlassPane;
-import net.minecraft.item.Item;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ITickable;
+import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
-import net.minecraftforge.oredict.OreDictionary;
-import net.teamio.taam.Config;
+import net.teamio.taam.content.IWorldInteractable;
 import net.teamio.taam.content.conveyors.ATileEntityAppliance;
+import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.conveyors.ItemWrapper;
 import net.teamio.taam.conveyors.api.IConveyorApplianceHost;
+import net.teamio.taam.piping.IPipe;
+import net.teamio.taam.piping.IPipeTE;
+import net.teamio.taam.piping.PipeEndFluidHandler;
+import net.teamio.taam.piping.PipeUtil;
+import net.teamio.taam.recipes.IProcessingRecipeFluidBased;
+import net.teamio.taam.recipes.ProcessingRegistry;
 
-public class ApplianceSprayer extends ATileEntityAppliance implements IFluidHandler {
+public class ApplianceSprayer extends ATileEntityAppliance implements IFluidHandler, IPipeTE, ITickable, IWorldInteractable {
 
+	private static final int capacity = 2000;
+	
 	public ApplianceSprayer() {
+		tank = new FluidTank(capacity);
+		pipeEnd = new PipeEndFluidHandler(this, direction.getOpposite(), false);
 	}
 	
-	static final String[] dyes = { "Black", "Red", "Green", "Brown", "Blue",
-			"Purple", "Cyan", "LightGray", "Gray", "Pink", "Lime", "Yellow",
-			"LightBlue", "Magenta", "Orange", "White" };
+	private FluidTank tank;
+	private PipeEndFluidHandler pipeEnd;
+
+	private FluidStack lastInputFluid;
+	private IProcessingRecipeFluidBased[] matchingRecipes;
 	
-	private int getItemPaintType(ItemStack is) {
-		//TODO: Migrate to tanks once ready
-		if(is == null) {
-			return -1;
+	/**
+	 * Checks if there is a recipe for the current input fluid and the provided
+	 * item stack.
+	 * 
+	 * @param stack
+	 * @return true if there is a recipe available, false if not. Also returns
+	 *         false if there is no input fluid. Does not check for the amount
+	 *         of fluid, so {@link #processItem(IConveyorApplianceHost, int, ItemWrapper)} may still fail.
+	 */
+	private IProcessingRecipeFluidBased getRecipe(ItemStack stack) {
+		FluidStack inside = tank.getFluid();
+		
+		// If we have no remembered fluid, or a new fluid (empty tank is considered "same"), fetch new fluid
+		if(inside != null) {
+			if(lastInputFluid == null || !lastInputFluid.isFluidEqual(inside)) {
+				lastInputFluid = inside;
+			}
 		}
-		Item item = is.getItem();
-		if (item == null) {
-			return -1;
+		
+		if(lastInputFluid == null) {
+			return null;
 		}
-		Block block = Block.getBlockFromItem(item);
-		if(block instanceof BlockColored ||
-				block instanceof BlockHardenedClay ||
-				block instanceof BlockCarpet ||
-				block instanceof BlockStainedGlass ||
-				block instanceof BlockStainedGlassPane) {
-			return is.getItemDamage();
+		if(matchingRecipes == null) {
+			matchingRecipes = ProcessingRegistry.getRecipes(ProcessingRegistry.SPRAYER, lastInputFluid);
 		}
-		return -1;
+		if(matchingRecipes != null) {
+			for(IProcessingRecipeFluidBased recipe : matchingRecipes) {
+				if(recipe.inputMatches(stack)) {
+					return recipe;
+				}
+			}
+		}
+		return null;
 	}
 	
-	private void setItemPaintType(ItemStack is, int paintType) {
-		if(is == null) {
-			return;
-		}
-		Item item = is.getItem();
-		if (item == null) {
-			return;
-		}
-		Block block = Block.getBlockFromItem(item);
-		if(block instanceof BlockColored ||
-				block instanceof BlockHardenedClay ||
-				block instanceof BlockCarpet ||
-				block instanceof BlockStainedGlass ||
-				block instanceof BlockStainedGlassPane) {
-			is.setItemDamage(paintType);
+	public FluidTank getTank() {
+		return tank;
+	}
+	
+	@Override
+	public void update() {
+		PipeUtil.processPipes(pipeEnd, worldObj, pos);
+	}
+
+	@Override
+	protected void readPropertiesFromNBT(NBTTagCompound tag) {
+		super.readPropertiesFromNBT(tag);
+
+		pipeEnd.setSide(direction.getOpposite());
+
+		NBTTagCompound tagTank = tag.getCompoundTag("tank");
+		if (tagTank != null) {
+			tank.readFromNBT(tagTank);
 		}
 	}
+
+	protected void writePropertiesToNBT(NBTTagCompound tag) {
+		super.writePropertiesToNBT(tag);
+
+		NBTTagCompound tagTank = new NBTTagCompound();
+		tank.writeToNBT(tagTank);
+		tag.setTag("tank", tagTank);
+	};
+
+	/*
+	 * IConveyorAppliance
+	 */
 	
 	@Override
 	public boolean processItem(IConveyorApplianceHost conveyor, int slot, ItemWrapper wrapper) {
-		//TODO: Review this, and change to fluid usage (will use fluid during progress, can leave half-processed items.)
-		if(wrapper.processing > 1) {//Config.pl_appl_sprayer_maxProgress) {
-			int paintType = 0;//getAvailablePaintType();
-			int itemPaintType = getItemPaintType(wrapper.itemStack);
-			if(paintType == itemPaintType) {
-				System.out.println("No need to paint");
-				//Reset progress, as we cannot spray it
-				wrapper.processing = 0;
-			}
-			int resourceLevel = 0;//checkResource();
-			if(resourceLevel >= Config.pl_appl_sprayer_resourceUsage) {
-				//consumeResource();
-				setItemPaintType(wrapper.itemStack, paintType);
-				wrapper.processing = -1;
-			} else {
-				System.out.println("No resources");
-				//Reset progress, as we cannot spray it
-				wrapper.processing = 0;
-			}
-			return true;
-		}
-		return false;
-	}
-
-	public boolean canProcessItem(ItemWrapper wrapper) {
-		Item item = wrapper.itemStack.getItem();
-		if (item == null) {
+		if (wrapper.itemStack == null) {
 			return false;
 		}
-		Block block = Block.getBlockFromItem(item);
-		if(block instanceof BlockColored ||
-				block instanceof BlockHardenedClay ||
-				block instanceof BlockCarpet ||
-				block instanceof BlockStainedGlass ||
-				block instanceof BlockStainedGlassPane) {
+
+		boolean isProcessableSlot = slot == 4
+				|| slot == ConveyorUtil.getSlot(direction)
+				|| slot == ConveyorUtil.getSlot(direction.getOpposite());
+
+		// We can only process what is directly in front of us
+		if (!isProcessableSlot) {
+			return false;
+		}
+
+		/*
+		 * Fetch Recipe
+		 */
+		
+		IProcessingRecipeFluidBased recipe = getRecipe(wrapper.itemStack);
+		
+		if(recipe == null) {
+			wrapper.unblock();
 			return true;
 		}
-		return false;
-	}
-
-	public boolean isItemValidForSlot(int slot, ItemStack itemStack) {
-		List<ItemStack> dyeOres = OreDictionary.getOres("dye");
-		Iterator<ItemStack> itr = ((ArrayList<ItemStack>)dyeOres).iterator();
-        while (itr.hasNext())
-        {
-            if(OreDictionary.itemMatches(itr.next(), itemStack, false)) {
-            	return true;
-            }
-        }
-        return false;
-	}
-
-	@Override
-	public boolean canFill(EnumFacing from, Fluid fluid) {
-		// TODO: Check if fluid is a matching type
-		return false;
-	}
-
-	@Override
-	public boolean canDrain(EnumFacing from, Fluid fluid) {
-		// TODO Auto-generated method stub
+		
+		/*
+		 * Fetch Output
+		 */
+		
+		ItemStack result = recipe.getOutput(wrapper.itemStack, worldObj.rand)[0];
+		result.stackSize = wrapper.itemStack.stackSize;
+		
+		// Fix for re-coloring to the same color (Output == Input)
+		if(result.isItemEqual(wrapper.itemStack)) {
+			wrapper.unblock();
+			return true;
+		}
+		
+		/*
+		 * Check fluid requirements
+		 */
+		
+		int requiredAmount = wrapper.itemStack.stackSize * recipe.getInputFluid().amount;
+		
+		FluidStack inTank = tank.getFluid();
+		
+		if(inTank == null || inTank.amount < requiredAmount) {
+			wrapper.block();
+			return true;
+		}
+		
+		/*
+		 * Consume fluid
+		 */
+		
+		inTank.amount -= requiredAmount;
+		if(inTank.amount == 0) {
+			tank.setFluid(null);
+		}
+		
+		/*
+		 * Replace input stack with output
+		 */
+		
+		wrapper.itemStack = result;
+		wrapper.unblock();
+		
+		updateState(false, false, false);
+		//TODO: Particles
+		
 		return true;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see net.teamio.taam.content.conveyors.ATileEntityAppliance#setFacingDirection(net.minecraft.util.EnumFacing)
+	 * 
+	 * Overridden because of the pipeEnd.
+	 */
+	@Override
+	public void setFacingDirection(EnumFacing direction) {
+		super.setFacingDirection(direction);
+
+		pipeEnd.setSide(direction.getOpposite());
+	}
+
+	/*
+	 * IWorldInteractable implementation
+	 */
+	
+	@Override
+	public boolean onBlockActivated(World world, EntityPlayer player, boolean hasWrench, EnumFacing side, float hitX,
+			float hitY, float hitZ) {
+		boolean didSomething = PipeUtil.defaultPlayerInteraction(player, getTank());
+		
+		if(didSomething) {
+			updateState(true, false, false);
+		}
+		return didSomething;
+	}
+	
+	@Override
+	public boolean onBlockHit(World world, EntityPlayer player, boolean hasWrench) {
+		return false;
+	}
+
+	/*
+	 * IPipeTE
+	 */
+
+	@Override
+	public IPipe[] getPipesForSide(EnumFacing side) {
+		if (side == direction.getOpposite()) {
+			return pipeEnd.asPipeArray();
+		} else {
+			return null;
+		}
+	}
+
+	/*
+	 * IFluidHandler implementation
+	 */
+
 	@Override
 	public int fill(EnumFacing from, FluidStack resource, boolean doFill) {
-		// TODO Auto-generated method stub
-		return 0;
+		if (from != direction.getOpposite()) {
+			return 0;
+		}
+		return tank.fill(resource, doFill);
 	}
 
 	@Override
 	public FluidStack drain(EnumFacing from, FluidStack resource, boolean doDrain) {
-		// TODO Auto-generated method stub
-		return null;
+		if (from != direction.getOpposite()) {
+			return null;
+		}
+		if (tank.getFluid() == null || resource == null) {
+			return null;
+		}
+		if (!tank.getFluid().isFluidEqual(resource)) {
+			return null;
+		}
+		FluidStack drained = tank.drain(resource.amount, doDrain);
+		if (tank.getFluidAmount() == 0) {
+			tank.setFluid(null);
+		}
+		return drained;
 	}
 
 	@Override
 	public FluidStack drain(EnumFacing from, int maxDrain, boolean doDrain) {
-		// TODO Auto-generated method stub
-		return null;
+		if (from != direction.getOpposite()) {
+			return null;
+		}
+		FluidStack drained = tank.drain(maxDrain, doDrain);
+		if (tank.getFluidAmount() == 0) {
+			tank.setFluid(null);
+		}
+		return drained;
+	}
+
+	@Override
+	public boolean canFill(EnumFacing from, Fluid fluid) {
+		if (from != direction.getOpposite()) {
+			return false;
+		}
+		if (fluid == null) {
+			return false;
+		}
+		if (tank.getFluid() == null) {
+			// TODO: Check recipes?
+			return true;
+		} else {
+			return tank.getFluid().getFluid() == fluid;
+		}
+	}
+
+	@Override
+	public boolean canDrain(EnumFacing from, Fluid fluid) {
+		if (from != direction.getOpposite()) {
+			return false;
+		}
+		return true;
 	}
 
 	@Override
 	public FluidTankInfo[] getTankInfo(EnumFacing from) {
-		// TODO Auto-generated method stub
-		return null;
+		return new FluidTankInfo[] { tank.getInfo() };
 	}
-
 }

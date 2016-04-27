@@ -8,7 +8,6 @@ import net.minecraft.util.ITickable;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
@@ -26,10 +25,9 @@ public class TileEntityCreativeWell extends BaseTileEntity implements IFluidHand
 
 	private FluidStack fluid;
 	
-	private static final int capacity = 50; 
+	private static final int capacity = Integer.MAX_VALUE; 
 	
 	public TileEntityCreativeWell() {
-		fluid = new FluidStack(FluidRegistry.WATER, 50);
 		pipeEnds = new PipeEnd[6];
 		for (EnumFacing side : EnumFacing.VALUES) {
 			int index = side.ordinal();
@@ -133,9 +131,15 @@ public class TileEntityCreativeWell extends BaseTileEntity implements IFluidHand
 			fluid = null;
 		} else {
 			fluid = FluidContainerRegistry.getFluidForFilledItem(stack);
+			fluid.amount = capacity;
 			Log.debug("Set creative well fluid to " + fluid);
 		}
-		updateState();
+		for (EnumFacing peSide : EnumFacing.VALUES) {
+			int index = peSide.ordinal();
+			pipeEnds[index].info.content.clear();
+			pipeEnds[index].info.recalculateFillLevel();
+		}
+		updateState(true, false, true);
 		return true;
 	}
 	

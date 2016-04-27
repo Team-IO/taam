@@ -2,7 +2,6 @@ package net.teamio.taam.content.conveyors;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -52,7 +51,16 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	public boolean renderLeft = false;
 	public boolean renderAbove = false;
 	
-	private static final List<String> visibleParts = new ArrayList<String>(14);
+	/**
+	 * ThreadLocal storage for the list of visible parts (required due to some concurrency issues, See issue #194)
+	 * TODO: central location for one list? Not one per entity type.. Adjust getVisibleParts
+	 */
+	private static final ThreadLocal<List<String>> visibleParts = new ThreadLocal<List<String>>() {
+		@Override
+		protected List<String> initialValue() {
+			return new ArrayList<String>(14);
+		}
+	};
 	
 	/**
 	 * Appliance cache. Updated when loading & on block update
@@ -84,10 +92,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	@Override
 	public void blockUpdate() {
 		if(worldObj != null) {
-			
 			updateApplianceCache();
-
-			worldObj.markBlockRangeForRenderUpdate(pos, pos);
 		}
 	}
 	
@@ -180,8 +185,9 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	
 	@Override
 	public List<String> getVisibleParts() {
-		// Visible parts list is re-used, as it is only used once for updating
-		// an OBJState anyways.
+		List<String> visibleParts = TileEntityConveyor.visibleParts.get();
+		
+		// Visible parts list is re-used to reduce object creation
 		visibleParts.clear();
 		
 		boolean isWood = speedLevel == 0;
@@ -255,10 +261,9 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 		/*
 		 * Find items laying on the conveyor.
 		 */
-		boolean needsUpdate = false;
 		
 		if(ConveyorUtil.tryInsertItemsFromWorld(this, worldObj, null, false)) {
-			needsUpdate = true;
+			updateState(false, false, false);
 		}
 
 		/*
@@ -269,10 +274,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 		// as we depend on the status of the next slot
 		int[] slotOrder = ConveyorUtil.getSlotOrderForDirection(direction);
 		if(ConveyorUtil.defaultTransition(worldObj, this, slotOrder)) {
-			needsUpdate = true;
-		}
-		if(needsUpdate) {
-			updateState();
+			updateState(true, false, false);
 		}
 	}
 
@@ -357,9 +359,20 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	public int insertItemAt(ItemStack item, int slot) {
 		int count = ConveyorUtil.insertItemAt(this, item, slot, false);
 		if(count > 0) {
-			updateState();
+			updateState(true, false, false);
 		}
 		return count;
+	}
+	
+	@Override
+	public ItemStack removeItemAt(int slot) {
+		ItemWrapper candidate = items[slot];
+		ItemStack removed = candidate.itemStack;
+		if(removed != null) {
+			candidate.itemStack = null;
+			updateState(true, false, false);
+		}
+		return removed;
 	}
 	
 	@Override
@@ -414,9 +427,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 		if(direction == EnumFacing.UP || direction == EnumFacing.DOWN) {
 			this.direction = EnumFacing.NORTH;
 		}
-		blockUpdate();
-		updateState();
-		worldObj.notifyNeighborsOfStateChange(pos, blockType);
+		updateState(false, true, true);
 		if(blockType != null) {
 			//TODO: Update this block -> drop if it can't stay anymore
 			//blockType.onNeighborBlockChange(worldObj, pos, blockType);
@@ -440,6 +451,9 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	
 	@Override
 	public List<IConveyorAppliance> getAppliances() {
+		if(applianceCache == null) {
+			updateApplianceCache();
+		}
 		return applianceCache;
 	}
 	
@@ -478,8 +492,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	@Override
 	public void setInventorySlotContents(int slot, ItemStack itemStack) {
 		if(itemStack == null) {
-			items[slot].itemStack = null;
-			updateState();
+			removeItemAt(slot);
 		} else {
 			insertItemAt(itemStack, slot);
 		}

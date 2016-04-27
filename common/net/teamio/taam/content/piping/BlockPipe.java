@@ -28,6 +28,7 @@ public class BlockPipe extends BaseBlock implements ITileEntityProvider {
 
 	private static AxisAlignedBB bbCenter = new AxisAlignedBB(fromBorder, fromBorder, fromBorder, 1-fromBorder, 1-fromBorder, 1-fromBorder);
 	private static final AxisAlignedBB[] bbFaces = new AxisAlignedBB[6];
+	private AxisAlignedBB closestBB;
 
 	static {
 		System.out.println(fromBorder);
@@ -55,7 +56,6 @@ public class BlockPipe extends BaseBlock implements ITileEntityProvider {
 		return true;
 	}
 
-	private AxisAlignedBB closestBB;
 
 	@Override
 	public RayTraceResult collisionRayTrace(IBlockState blockState, World worldIn, BlockPos pos, Vec3d start, Vec3d end) {
@@ -139,6 +139,13 @@ public class BlockPipe extends BaseBlock implements ITileEntityProvider {
 		} else {
 			return closestBB.offset(pos.getX(), pos.getY(), pos.getZ());
 		}
+	}
+
+	@Override
+	public AxisAlignedBB getCollisionBoundingBox(World worldIn, BlockPos pos, IBlockState state) {
+		// For this block, this method is only used when placing a new block in the world.
+		// Return only the center to allow placig if the player is half way into the block
+		return bbCenter.offset(pos.getX(), pos.getY(), pos.getZ());
 	}
 
 	@Override

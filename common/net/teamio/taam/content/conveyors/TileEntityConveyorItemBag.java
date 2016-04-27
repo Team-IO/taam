@@ -14,7 +14,6 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.teamio.taam.content.IRenderable;
-import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.conveyors.ItemWrapper;
 import net.teamio.taam.conveyors.api.IConveyorAwareTE;
 import net.teamio.taam.util.inv.InventorySimple;
@@ -26,7 +25,7 @@ import net.teamio.taam.util.inv.InventoryUtils;
  * @author founderio
  *
  */
-public class TileEntityConveyorItemBag extends ATileEntityAttachable implements IConveyorAwareTE, IInventory, IRotatable, IRenderable {
+public class TileEntityConveyorItemBag extends ATileEntityAttachable implements IConveyorAwareTE, IInventory, IRenderable {
 
 	private InventorySimple inventory;
 	
@@ -99,8 +98,7 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable implements 
 	@Override
 	public ItemStack decrStackSize(int slot, int amount) {
 		ItemStack stack = inventory.decrStackSize(slot, amount);
-		updateState();
-		blockUpdate();
+		updateState(true, true, false);
 		return stack;
 	}
 
@@ -112,8 +110,7 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable implements 
 	@Override
 	public void setInventorySlotContents(int slot, ItemStack stack) {
 		inventory.setInventorySlotContents(slot, stack);
-		updateState();
-		blockUpdate();
+		updateState(true, true, false);
 	}
 
 	@Override
@@ -192,9 +189,16 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable implements 
 	public int insertItemAt(ItemStack item, int slot) {
 		// insertItem returns item count unable to insert.
 		int inserted = item.stackSize - InventoryUtils.insertItem(inventory, item, false);
-		updateState();
-		blockUpdate();
+		updateState(true, true, false);
 		return inserted;
+	}
+	
+	@Override
+	public ItemStack removeItemAt(int slot) {
+		ItemStack content = getStackInSlot(slot);
+		setInventorySlotContents(slot, null);
+		updateState(true, true, false);
+		return content;
 	}
 	
 	@Override

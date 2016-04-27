@@ -46,6 +46,11 @@ public class BlockBuilding extends Block {
 		}
 		return getDefaultState().withProperty(VARIANT, values[meta]);
 	}
+	
+	@Override
+	public int damageDropped(IBlockState state) {
+		return state.getValue(VARIANT).ordinal();
+	}
 
 	public String getUnlocalizedName(ItemStack itemStack) {
 		int i = itemStack.getItemDamage();

@@ -31,7 +31,6 @@ import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.conveyors.TileEntityConveyor;
 import net.teamio.taam.content.conveyors.TileEntityConveyorHopper;
 import net.teamio.taam.content.conveyors.TileEntityConveyorItemBag;
-import net.teamio.taam.content.conveyors.TileEntityConveyorTrashCan;
 import net.teamio.taam.util.TaamUtil;
 import net.teamio.taam.util.WrenchUtil;
 import net.teamio.taam.util.inv.InventoryUtils;
@@ -124,25 +123,26 @@ public abstract class BaseBlock extends Block {
 		if(playerIn.isSneaking()) {
 			return false;
 		}
-	
-		if(!worldIn.isRemote) {
-			TileEntity te = worldIn.getTileEntity(pos);
+
+		TileEntity te = worldIn.getTileEntity(pos);
+		if(worldIn.isRemote) {
+			return te instanceof IWorldInteractable
+					|| te instanceof TileEntityConveyorHopper
+					|| te instanceof TileEntityConveyorItemBag;
+		} else {
 			
 			if(te instanceof IWorldInteractable) {
 				// All world interaction (perform action, open gui, etc.) is handled within the entity
 				IWorldInteractable interactable = ((IWorldInteractable) te);
 				boolean playerHasWrench = WrenchUtil.playerHasWrenchInMainhand(playerIn);
 				boolean intercepted = interactable.onBlockActivated(worldIn, playerIn, playerHasWrench, side, hitX, hitY, hitZ);
-				if(intercepted) {
-					return true;
-				}
+				return intercepted;
 			} else if(te instanceof TileEntityConveyorHopper || te instanceof TileEntityConveyorItemBag) {
 				playerIn.openGui(TaamMain.instance, 0, worldIn, pos.getX(), pos.getY(), pos.getZ());
-			} else if(te instanceof TileEntityConveyorTrashCan) {
-				((TileEntityConveyorTrashCan)te).clearOut();
+				return true;
 			}
+			return false;
 		}
-		return true;
 	}
 	
 	@Override
@@ -197,6 +197,8 @@ public abstract class BaseBlock extends Block {
 		return state;
 	}
 	
+	private static List<String> ALL = Lists.newArrayList(OBJModel.Group.ALL);
+	
 	@Override
 	public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
 		List<String> visibleParts = null;
@@ -209,7 +211,7 @@ public abstract class BaseBlock extends Block {
 			visibleParts = ((IRenderable) te).getVisibleParts();
 		}
 		if(visibleParts == null) {
-			visibleParts = Lists.newArrayList(OBJModel.Group.ALL);
+			visibleParts = ALL;
 		}
 		
 		EnumFacing facing = EnumFacing.NORTH;

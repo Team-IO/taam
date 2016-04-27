@@ -22,6 +22,7 @@ public final class Taam {
 	public static final String BLOCK_MACHINES = "machines";
 	public static final String BLOCK_PRODUCTIONLINE = "productionline";
 	public static final String BLOCK_PRODUCTIONLINE_ATTACHABLE = "productionline_attachable";
+	public static final String BLOCK_PRODUCTIONLINE_APPLIANCE = "productionline_appliance";
 	public static final String BLOCK_LOGISTICS = "logistics";
 	public static final String BLOCK_SLIDINGDOOR = "slidingdoor";
 	public static final String BLOCK_SENSOR_MOTION = "sensor.motion";
@@ -35,16 +36,31 @@ public final class Taam {
 	public static final String BLOCK_PIPEMACHINES = "pipemachines";
 	
 	public static enum BLOCK_ORE_META implements IStringSerializable {
-		copper(true, true, true),
-		tin(true, true, true),
-		aluminum(true, true, true),
-		bauxite(true, false, true),  //No Ingot
-		kaolinite(true, false, true), //No Ingot
+		/*0*/copper(true, true, true),
+		/*1*/tin(true, true, true),
+		/*2*/aluminum(true, true, true),
+		/*3*/bauxite(true, false, true),  //No Ingot
+		/*4*/kaolinite(true, false, true), //No Ingot
+		// Reserved for future use as blocks
+		/*5*/reserved1(false, false, false),
+		/*6*/reserved2(false, false, false),
+		/*7*/reserved3(false, false, false),
+		/*8*/reserved4(false, false, false),
+		/*9*/reserved5(false, false, false),
+		/*10*/reserved6(false, false, false),
+		/*11*/reserved7(false, false, false),
+		/*12*/reserved8(false, false, false),
+		/*13*/reserved9(false, false, false),
+		/*14*/reserved10(false, false, false),
+		/*15*/reserved11(false, false, false),
 		
 		//Vanilla requires only the "custom" stuff
-		gold(false, false, true),
-		iron(false, false, true),
-		coal(false, false, true),
+		/*16*/gold(false, false, true),
+		/*17*/iron(false, false, true),
+		/*18*/coal(false, false, true),
+		
+		// Non-Ore stuff
+		/*19*/stone(false, false, true),
 		;
 		
 		public final boolean ore, ingot, dust;
@@ -85,6 +101,8 @@ public final class Taam {
 		fine_chiseled,
 		coated,
 		coated_chiseled,
+		black,
+		black_chiseled,
 		warn1,
 		warn2
 		;
@@ -169,6 +187,24 @@ public final class Taam {
 		}
 	};
 	
+	public static enum BLOCK_PRODUCTIONLINE_APPLIANCE_META implements IStringSerializable {
+		sprayer,
+		;
+		public static String[] valuesAsString() {
+			Enum<?>[] valuesAsEnum = values();
+			String[] valuesAsString = new String[valuesAsEnum.length];
+			for(int i = 0; i < valuesAsEnum.length; i++) {
+				valuesAsString[i] = valuesAsEnum[i].name();
+			}
+			return valuesAsString;
+		}
+
+		@Override
+		public String getName() {
+			return name();
+		}
+	};
+	
 
 	
 	public static enum BLOCK_PIPEMACHINES_META implements IStringSerializable {
@@ -176,6 +212,7 @@ public final class Taam {
 		creativewell,
 		pump,
 		mixer,
+		fluid_drier,
 		;
 		public static String[] valuesAsString() {
 			Enum<?>[] valuesAsEnum = values();
@@ -218,27 +255,8 @@ public final class Taam {
 	public static final String ITEM_TOOL = "tool";
 	public static final String ITEM_INGOT = "ingot";
 	public static final String ITEM_DUST = "dust";
-	public static final String ITEM_CONVEYOR_APPLIANCE = "conveyor_appliance";
 	public static final String ITEM_LOGISTICS_CART = "logistics_cart";
 	
-	public static enum ITEM_CONVEYOR_APPLIANCE_META implements IStringSerializable {
-		sprayer,
-		inserter
-		;
-		public static String[] valuesAsString() {
-			Enum<?>[] valuesAsEnum = values();
-			String[] valuesAsString = new String[valuesAsEnum.length];
-			for(int i = 0; i < valuesAsEnum.length; i++) {
-				valuesAsString[i] = valuesAsEnum[i].name();
-			}
-			return valuesAsString;
-		}
-
-		@Override
-		public String getName() {
-			return name();
-		}
-	};
 	public static enum ITEM_LOGISTICS_CART_META {
 		basic
 		;
@@ -273,7 +291,9 @@ public final class Taam {
 		silicon_wafer,
 		wooden_board,
 		aluminum_plate,
-		resin
+		resin,
+		cement,
+		cementRough
 		;
 		public static String[] valuesAsString() {
 			Enum<?>[] valuesAsEnum = values();
@@ -316,6 +336,7 @@ public final class Taam {
 	public static final String TILEENTITY_CHUTE = "taam.chute";
 	public static final String TILEENTITY_CREATIVECACHE = "taam.creativecache";
 	public static final String TILEENTITY_SLIDINGDOOR = "taam.slidingdoor";
+	
 	public static final String TILEENTITY_CONVEYOR = "taam.conveyor";
 	public static final String TILEENTITY_CONVEYOR_HOPPER = "taam.conveyor_hopper";
 	public static final String TILEENTITY_CONVEYOR_PROCESSOR = "taam.conveyor_processor";
@@ -324,11 +345,15 @@ public final class Taam {
 	public static final String TILEENTITY_CONVEYOR_ITEMBAG = "taam.itembag";
 	public static final String TILEENTITY_CONVEYOR_TRASHCAN = "taam.trashcan";
 	public static final String TILEENTITY_CONVEYOR_SIEVE = "taam.sieve";
+	
 	public static final String TILEENTITY_PIPE = "taam.pipe";
 	public static final String TILEENTITY_TANK = "taam.tank";
 	public static final String TILEENTITY_CREATIVEWELL = "taam.creativewell";
 	public static final String TILEENTITY_PUMP = "taam.pump";
 	public static final String TILEENTITY_MIXER = "taam.mixer";
+	public static final String TILEENTITY_FLUID_DRIER = "taam.fluid_drier";
+	
+	public static final String TILEENTITY_APPLIANCE_SPRAYER = "taam.appliance.sprayer";
 
 	public static final String ENTITY_LOGISTICS_CART = "taam.logistics_manager";
 	
@@ -341,8 +366,6 @@ public final class Taam {
 	public static final String CFG_COMMENT_GEN_KAOLINITE_ORE  = "Should Taam generate Kaolinte Ore in the World";
 	public static final String CFG_COMMENT_DEBUG_OUTPUT = "Should the Debug mode form Taam be activated";
 	
-	public static final String APPLIANCE_SPRAYER = "taam.sprayer";
-
 	public static enum FLUID_DYE_META {
 		black,
 		red,
@@ -371,6 +394,33 @@ public final class Taam {
 		}
 	};
 
-	public static final String FLUID_DYE = "taam.dye";
+	public static final String FLUID_DYE = "dye_";
+	
+	public static enum FLUID_MATERIAL_META {
+		concreteFine("concreteFine", 2000, 8000),
+		concreteRough("concreteRough", 2000, 10000),
+		coating("coating", 900, 4000)
+		;
+		
+		public final String registryName;
+		public final int viscosity;
+		public final int density;
+		
+		private FLUID_MATERIAL_META(String registryName, int viscosity, int density) {
+			this.registryName = registryName;
+			this.viscosity = viscosity;
+			this.density = density;
+		}
+		
+		public static String[] valuesAsString() {
+			Enum<?>[] valuesAsEnum = values();
+			String[] valuesAsString = new String[valuesAsEnum.length];
+			for(int i = 0; i < valuesAsEnum.length; i++) {
+				valuesAsString[i] = valuesAsEnum[i].name();
+			}
+			return valuesAsString;
+		}
+	};
+	
 	public static final String CHANNEL_NAME = "TAAM";
 }

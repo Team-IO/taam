@@ -138,12 +138,6 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 
 	@Override
 	public ItemStack getStackInSlot(int slot) {
-		/*InventoryRange target = getTargetRange();
-		if(target == null) {
-			return null;
-		} else {
-			return InventoryUtils.getExtractableStack(target, target.slots[slot]);
-		}*/
 		return null;
 	}
 
@@ -419,6 +413,11 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 			return stack.stackSize - InventoryUtils.insertItem(target, stack, false);
 		}
 	}
+	
+	@Override
+	public ItemStack removeItemAt(int slot) {
+		return null;
+	}
 
 	@Override
 	public EnumFacing getMovementDirection() {
@@ -472,8 +471,7 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 			if(!ArrayUtils.contains(EnumFacing.HORIZONTALS, direction)) {
 				this.direction = EnumFacing.NORTH;
 			}
-			updateState();
-			blockUpdate();
+			updateState(false, true, false);
 		}
 	}
 

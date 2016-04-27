@@ -333,9 +333,6 @@ public class ConveyorUtil {
 			if(slotObject.itemStack.stackSize <= 0) {
 				slotObject.itemStack = null;
 	
-				// Reset processing state, so next item starts "fresh"
-				slotObject.processing = 0;
-				
 				// Stack moved completely
 				return true;
 			}
@@ -354,9 +351,6 @@ public class ConveyorUtil {
 			
 			slotObject.itemStack = null;
 	
-			// Reset processing state, so next item starts "fresh"
-			slotObject.processing = 0;
-			
 			// Stack moved completely
 			return true;
 		}
@@ -388,6 +382,15 @@ public class ConveyorUtil {
 		}
 	}
 
+	/**
+	 * Runs the default transition logic for the items on a conveyor entity.
+	 * 
+	 * Respects the supplied slot order, processes items if tileEntity instanceof {@link IConveyorApplianceHost}.
+	 * @param world
+	 * @param tileEntity
+	 * @param slotOrder The order used when working through the slots.
+	 * @return true if the state of any item changed (TIleEntity should be marked dirty). 
+	 */
 	public static boolean defaultTransition(World world, IConveyorAwareTE tileEntity, int[] slotOrder) {
 		/*
 		 * Fetch info on appliances
@@ -400,9 +403,13 @@ public class ConveyorUtil {
 		}
 		
 		/**
-		 * Tracks if the tileEntity state needs to be updates
+		 * Tracks if the tileEntity state needs to be updated
 		 */
 		boolean needsUpdate = false;
+		/**
+		 * Tracks if we need a world update (send to client)
+		 */
+		boolean needsWorldUpdate = false;
 		/*
 		 * Process each slot individually, using the predefined slot order
 		 */
@@ -416,15 +423,25 @@ public class ConveyorUtil {
 				continue;
 			}
 			
+
+			// Unblock Wrapper to prevent them from staying blocked if we remove an appliance
+			wrapper.unblock();
+			
 			/*
 			 * Let the appliances process the current slot.
 			 */
 			if(appliances != null) {
+				
+				// Let each appliance process the item
 				for(IConveyorAppliance appliance : appliances) {
 					if(appliance.processItem(applianceHost, slot, wrapper)) {
-						needsUpdate = true;
+						needsWorldUpdate = true;
 					}
 				}
+			}
+			
+			if(wrapper.isBlocked()) {
+				continue;
 			}
 			
 			/*
@@ -497,7 +514,7 @@ public class ConveyorUtil {
 			}
 			
 			// Check transition to next slot
-			if(!wrapper.isBlocked() && (nextSlotFree || nextSlotMovable)) {
+			if(nextSlotFree || nextSlotMovable) {
 				if(wrapper.movementProgress == speedsteps && nextSlotFree) {
 					if(slotWrapped && (nextBlock == null || !nextBlock.isSlotAvailable(nextSlot))) {
 						// No next block, drop it.
@@ -528,7 +545,8 @@ public class ConveyorUtil {
 				}
 			}
 		}
-		return needsUpdate;
+		//TODO: needsUpdate -> markDirty ??
+		return needsWorldUpdate;
 	}
 
 	public static void defaultPlayerInteraction(EntityPlayer player, IConveyorAwareTE tileEntity, float hitX, float hitZ) {
@@ -537,11 +555,8 @@ public class ConveyorUtil {
 		ItemStack playerStack = player.inventory.getCurrentItem();
 		if(playerStack == null) {
 			// Take from Conveyor
-			ItemWrapper wrapper = tileEntity.getSlot(clickedSlot);
-			if(!wrapper.isEmpty()) {
-				player.inventory.setInventorySlotContents(playerSlot, wrapper.itemStack);
-				wrapper.itemStack = null;
-			}
+			ItemStack removed = tileEntity.removeItemAt(clickedSlot);
+			player.inventory.setInventorySlotContents(playerSlot, removed);
 		} else {
 			// Put on conveyor
 			int inserted = tileEntity.insertItemAt(playerStack, clickedSlot);

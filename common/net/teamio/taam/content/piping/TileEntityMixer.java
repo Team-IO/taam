@@ -26,7 +26,12 @@ public class TileEntityMixer extends BaseTileEntity implements IRotatable, IConv
 	private PipeEndRestricted pipeEndIn;
 	private PipeEnd pipeEndOut;
 	
-	private static final int capacity = 50;
+	private FluidStack backlog;
+
+	private FluidStack lastInputFluid;
+	private IProcessingRecipeFluidBased[] matchingRecipes;
+	
+	private static final int capacity = 2000;
 	
 	public TileEntityMixer() {
 		pipeEndOut = new PipeEnd(direction, capacity, false);
@@ -65,9 +70,6 @@ public class TileEntityMixer extends BaseTileEntity implements IRotatable, IConv
 			pipeEndOut.readFromNBT(tagOut);
 		}
 	}
-
-	private FluidStack lastInputFluid;
-	private IProcessingRecipeFluidBased[] matchingRecipes;
 	
 	@Override
 	public void update() {
@@ -111,8 +113,6 @@ public class TileEntityMixer extends BaseTileEntity implements IRotatable, IConv
 		}
 		return null;
 	}
-	
-	private FluidStack backlog;
 	
 	/**
 	 * Processes the item by consuming input fluid and generating output fluid if there is space in the output pipe end.
@@ -196,9 +196,7 @@ public class TileEntityMixer extends BaseTileEntity implements IRotatable, IConv
 		pipeEndOut.setSide(direction);
 		pipeEndIn.setSide(direction.getOpposite());
 		
-		blockUpdate();
-		updateState();
-		worldObj.notifyNeighborsOfStateChange(pos, blockType);
+		updateState(false, true, true);
 	}
 	
 	/*
@@ -256,6 +254,11 @@ public class TileEntityMixer extends BaseTileEntity implements IRotatable, IConv
 			return process(item);
 		}
 		return 0;
+	}
+	
+	@Override
+	public ItemStack removeItemAt(int slot) {
+		return null;
 	}
 
 	@Override

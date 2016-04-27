@@ -9,13 +9,12 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
 import net.teamio.taam.Log;
 
 /**
  * Base class for Taam's TileEntities. Keeps track of the block owner, manages
  * network updates and saving to/loading from disk.
- * 
+ *
  * @author oliverkahrmann
  *
  */
@@ -30,7 +29,7 @@ public abstract class BaseTileEntity extends TileEntity {
 			owner = player.getUniqueID();
 		}
 	}
-	
+
 	public void setOwner(UUID owner) {
 		this.owner = owner;
 	}
@@ -43,29 +42,30 @@ public abstract class BaseTileEntity extends TileEntity {
 	 * Updates block info & marks the containing block for update when on the
 	 * server.
 	 */
-	public final void updateState() {
-		if (worldObj.isRemote) {
+	public final void updateState(boolean worldUpdate, boolean renderUpdate, boolean blockUpdate) {
+		if (worldObj == null) {
 			return;
 		}
 		markDirty();
-		//TODO
-		//this.worldObj.markBlockForUpdate(pos);
+		if(worldUpdate) {
+			this.worldObj.markBlockForUpdate(pos);
+		}
+		if(renderUpdate) {
+			worldObj.markBlockRangeForRenderUpdate(pos, pos);
+		}
+		if(blockUpdate) {
+			worldObj.notifyNeighborsOfStateChange(pos, blockType);
+		}
 	}
-	
+
 	/**
 	 * Called inside {@link BaseBlock#onNeighborBlockChange(net.minecraft.world.World, net.minecraft.util.BlockPos, net.minecraft.block.state.IBlockState, net.minecraft.block.Block)}.
 	 * (On server side)
-	 * Also called by implementations when rotating with a wrench.
-	 * (Both client and server)
-	 * Default implementation calls {@link World#markBlockRangeForRenderUpdate(net.minecraft.util.BlockPos, net.minecraft.util.BlockPos)}.
 	 */
 	public void blockUpdate() {
-		if(worldObj != null) {
-			worldObj.markBlockRangeForRenderUpdate(pos, pos);
-		}
 	}
-	
-	
+
+
 	/**
 	 * Called within {@link BaseBlock#getActualState(net.minecraft.block.state.IBlockState, net.minecraft.world.IBlockAccess, net.minecraft.util.BlockPos)} to update render state in the tile entity.
 	 */
@@ -112,7 +112,7 @@ public abstract class BaseTileEntity extends TileEntity {
 	/**
 	 * Internal, writes common properties to NBT & calls the write method on the
 	 * subclass.
-	 * 
+	 *
 	 * @param tag
 	 */
 	private void writePropertiesToNBTInternal(NBTTagCompound tag) {
@@ -124,7 +124,7 @@ public abstract class BaseTileEntity extends TileEntity {
 
 	/**
 	 * Write-method for subclasses to store their properties easily.
-	 * 
+	 *
 	 * @param tag
 	 */
 	protected abstract void writePropertiesToNBT(NBTTagCompound tag);
@@ -132,7 +132,7 @@ public abstract class BaseTileEntity extends TileEntity {
 	/**
 	 * Internal, reads common properties from NBT & calls the read method on the
 	 * subclass.
-	 * 
+	 *
 	 * @param tag
 	 */
 	private void readPropertiesFromNBTInternal(NBTTagCompound tag) {
@@ -151,7 +151,7 @@ public abstract class BaseTileEntity extends TileEntity {
 
 	/**
 	 * Write-method for subclasses to read their properties easily.
-	 * 
+	 *
 	 * @param tag
 	 */
 	protected abstract void readPropertiesFromNBT(NBTTagCompound tag);

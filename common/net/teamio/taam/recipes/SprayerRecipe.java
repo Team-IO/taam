@@ -9,15 +9,15 @@ public class SprayerRecipe extends BaseProcessingRecipeFluidBased implements IPr
 
 	private ChancedOutput[] output;
 
-	public SprayerRecipe(String inputOreDict, FluidStack inputFluid, ChancedOutput output) {
+	public SprayerRecipe(String inputOreDict, FluidStack inputFluid, ItemStack output) {
 		this.inputOreDict = inputOreDict;
-		this.output = new ChancedOutput[] { output };
+		this.output = new ChancedOutput[] { new ChancedOutput(output, 1) };
 		this.inputFluid = inputFluid;
 	}
 
-	public SprayerRecipe(ItemStack input, FluidStack inputFluid, ChancedOutput output) {
+	public SprayerRecipe(ItemStack input, FluidStack inputFluid, ItemStack output) {
 		this.input = input;
-		this.output = new ChancedOutput[] { output };
+		this.output = new ChancedOutput[] { new ChancedOutput(output, 1) };
 		this.inputFluid = inputFluid;
 	}
 

@@ -10,6 +10,7 @@ buildscript {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT'
     }
 }
+apply plugin: 'net.minecraftforge.gradle.forge'
 
 repositories {
 	maven {
@@ -26,20 +27,17 @@ configFile.withReader {
     project.ext.config = new ConfigSlurper().parse prop
 }
 
-apply plugin: 'net.minecraftforge.gradle.forge'
-
-
-
 version = config.mod_version
 group = config.mod_group
-archivesBaseName = "-${config.mod_name}-${config.mc_version}"
+archivesBaseName = "${config.mod_name}-${config.mc_version}"
+
 
 if(System.env.BUILD_NUMBER)
 	version = "${config.mod_version}.b${System.env.BUILD_NUMBER}"
 
 minecraft {
     version = "${config.mc_version}-${config.forge_version}-${config.mc_version}"
-    runDir = "."
+    runDir = "run"
     replace "@VERSION@", project.version
     mappings = "${config.forge_mappings}"
 }
@@ -99,4 +97,50 @@ processResources
         include '*.info'
         expand 'version':config.version,'mcversion':project.minecraft.version
     }
+    // Filter out unsupported keys from the material files to keep console output clean
+    from(sourceSets.main.resources.srcDirs) {
+        include '**/*.mtl'
+        filter {String line ->
+        	isValidMtlLine(line) ? line : null
+        }
+    }
+}
+
+// Cleans up all material files in-place.
+// Manually run to have a clean repository.
+task cleanupMtl <<
+{
+	FileTree tree = fileTree('resources/assets/taam/models') {
+	    include '**/*.mtl'
+	}
+	tree.each {File file ->
+		println "Attempting to fix $file.name"
+		List<String> content = new ArrayList<String>(20)
+		BufferedReader reader = new BufferedReader(new FileReader(file))
+		String currentLine
+		while((currentLine = reader.readLine()) != null) {
+			if(isValidMtlLine(currentLine)) {
+				content.add(currentLine);
+			}
+		}
+		reader.close()
+		BufferedWriter writer = new BufferedWriter(new FileWriter(file))
+		content.each {String line ->
+			writer.write(line)
+			writer.write('\n')
+		}
+		writer.close()
+	}
+}
+
+boolean isValidMtlLine(String line) {
+	if(
+	line.startsWith('illum') ||
+	line.startsWith('Ns') ||
+	line.startsWith('Ni') ||
+	line.startsWith('Ks')
+	) {
+		return false;
+	}
+	return true;
 }

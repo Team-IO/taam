@@ -12,6 +12,7 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IRenderable;
@@ -25,7 +26,16 @@ public class TileEntityPipe extends BaseTileEntity implements IPipe, IPipeTE, IT
 
 	private final PipeInfo info;
 
-	private static final List<String> visibleParts = new ArrayList<String>(7);
+	/**
+	 * ThreadLocal storage for the list of visible parts (required due to some concurrency issues, See issue #194)
+	 * TODO: central location for one list? Not one per entity type.. Adjust getVisibleParts
+	 */
+	private static final ThreadLocal<List<String>> visibleParts = new ThreadLocal<List<String>>() {
+		@Override
+		protected List<String> initialValue() {
+			return new ArrayList<String>(7);
+		}
+	};
 
 	/**
 	 * Bitmap containing the surrounding pipes Runtime-only, required for
@@ -44,8 +54,9 @@ public class TileEntityPipe extends BaseTileEntity implements IPipe, IPipeTE, IT
 
 	@Override
 	public List<String> getVisibleParts() {
-		// Visible parts list is re-used, as it is only used once for updating
-		// an OBJState anyways.
+		List<String> visibleParts = TileEntityPipe.visibleParts.get();
+
+		// Visible parts list is re-used to reduce object creation
 		visibleParts.clear();
 		visibleParts.add("Center_pcmdl");
 		if (isSideConnected(EnumFacing.EAST))
@@ -70,6 +81,17 @@ public class TileEntityPipe extends BaseTileEntity implements IPipe, IPipeTE, IT
 		return (adjacentPipes & (1 << side.ordinal())) != 0;
 	}
 
+	private IFluidHandler getFluidHandler(TileEntity te, EnumFacing mySide) {
+		if(te instanceof IFluidHandler) {
+			IFluidHandler fh = (IFluidHandler)te;
+			FluidTankInfo[] info = fh.getTankInfo(mySide.getOpposite());
+			if(info != null && info.length > 0) {
+				return fh;
+			}
+		}
+		return null;
+	}
+
 	public void renderUpdate() {
 		adjacentPipes = 0;
 		for (EnumFacing side : EnumFacing.VALUES) {
@@ -79,7 +101,7 @@ public class TileEntityPipe extends BaseTileEntity implements IPipe, IPipeTE, IT
 				continue;
 			}
 			TileEntity te = worldObj.getTileEntity(pos.offset(side));
-			if(te instanceof IFluidHandler) {
+			if(getFluidHandler(te, side) != null) {
 				adjacentPipes |= 1 << side.ordinal();
 			}
 		}
@@ -95,16 +117,17 @@ public class TileEntityPipe extends BaseTileEntity implements IPipe, IPipeTE, IT
 			IPipe[] pipesOnSide = PipeUtil.getConnectedPipes(worldObj, pos, side);
 			if (pipesOnSide == null || pipesOnSide.length == 0) {
 				TileEntity te = worldObj.getTileEntity(pos.offset(side));
-				if(te instanceof IFluidHandler) {
+				IFluidHandler fh = getFluidHandler(te, side);
+				if(fh != null) {
 					wrappersRequired = true;
 					// Fluid handler here, we need a wrapper.
 					if(adjacentFluidHandlers == null) {
 						adjacentFluidHandlers = new PipeEndFluidHandler[6];
-						adjacentFluidHandlers[sideIdx] = new PipeEndFluidHandler((IFluidHandler)te, side.getOpposite());
+						adjacentFluidHandlers[sideIdx] = new PipeEndFluidHandler(fh, side.getOpposite(), false);
 					} else {
 						// Not yet known or a different TileEntity, we need a new wrapper.
 						if(adjacentFluidHandlers[sideIdx] == null || adjacentFluidHandlers[sideIdx].getOwner() != te) {
-							adjacentFluidHandlers[sideIdx] = new PipeEndFluidHandler((IFluidHandler)te, side.getOpposite());
+							adjacentFluidHandlers[sideIdx] = new PipeEndFluidHandler(fh, side.getOpposite(), false);
 						}
 					}
 
@@ -149,6 +172,10 @@ public class TileEntityPipe extends BaseTileEntity implements IPipe, IPipeTE, IT
 	@Override
 	protected void writePropertiesToNBT(NBTTagCompound tag) {
 		info.writeToNBT(tag);
+	}
+
+	public int getFillLevel() {
+		return info.fillLevel;
 	}
 
 	/*
