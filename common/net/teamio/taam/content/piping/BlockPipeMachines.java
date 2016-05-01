@@ -86,8 +86,6 @@ public class BlockPipeMachines extends BaseBlock {
 		switch (variant) {
 		case creativewell:
 			return new TileEntityCreativeWell();
-		case pump:
-			return new TileEntityPump();
 		case mixer:
 			return new TileEntityMixer();
 		case fluid_drier:

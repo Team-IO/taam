@@ -1,5 +1,6 @@
 package net.teamio.taam;
 
+import mcmultipart.client.multipart.MultipartRegistryClient;
 import mcmultipart.multipart.IMultipart;
 import mcmultipart.multipart.IPartFactory.IAdvancedPartFactory;
 import mcmultipart.multipart.MultipartRegistry;

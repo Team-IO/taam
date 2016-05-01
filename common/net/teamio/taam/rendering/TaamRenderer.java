@@ -35,7 +35,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
-import net.teamio.taam.content.BaseTileEntity;
+import net.teamio.taam.Taam;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.content.conveyors.TileEntityConveyorProcessor;
 import net.teamio.taam.content.conveyors.TileEntityConveyorSieve;
@@ -46,7 +46,7 @@ import net.teamio.taam.conveyors.appliances.ApplianceSprayer;
 import net.teamio.taam.piping.IPipe;
 import net.teamio.taam.util.WrenchUtil;
 
-public class TaamRenderer extends TileEntitySpecialRenderer<BaseTileEntity> {
+public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 
 	private RenderItem ri;
 	private float rot = 0;
@@ -145,7 +145,26 @@ public class TaamRenderer extends TileEntitySpecialRenderer<BaseTileEntity> {
 	}
 
 	@Override
-	public void renderTileEntityAt(BaseTileEntity tileEntity, double x, double y, double z, float partialTicks, int destroyStage) {
+	public void renderTileEntityAt(TileEntity tileEntity, double x, double y, double z, float partialTicks, int destroyStage) {
+		
+		TankRenderInfo[] tankRI = tileEntity.getCapability(Taam.CAPABILITY_RENDER_TANK, null);
+		
+		if(tankRI != null) {
+			GL11.glPushMatrix();
+			GL11.glTranslated(x, y, z);
+
+			float rotationDegrees = getRotationDegrees(tileEntity);
+
+			GL11.glTranslated(.5f, .5f, .5f);
+			GL11.glRotatef(rotationDegrees, 0, 1, 0);
+			GL11.glTranslated(-.5f, -.5f, -.5f);
+			
+			for(TankRenderInfo renderInfo : tankRI) {
+				renderTankContent(renderInfo.tankInfo.fluid, renderInfo.tankInfo.capacity, renderInfo.bounds);
+			}
+			GL11.glPopMatrix();
+		}
+		
 		if (tileEntity instanceof IConveyorAwareTE) {
 			renderConveyorItems((IConveyorAwareTE) tileEntity, x, y, z);
 		}
@@ -234,7 +253,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<BaseTileEntity> {
 		}
 	}
 
-	private void renderTankContent(FluidStack content, int capacity, AxisAlignedBB bounds) {
+	public void renderTankContent(FluidStack content, int capacity, AxisAlignedBB bounds) {
 		// Nullcheck
 		if (content == null || content.amount == 0) {
 			return;
@@ -330,7 +349,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<BaseTileEntity> {
 		RenderHelper.disableStandardItemLighting();
 	}
 
-	private EnumFacing getDirection(Object tileEntity) {
+	public static EnumFacing getDirection(Object tileEntity) {
 		EnumFacing direction;
 		if (tileEntity instanceof IRotatable) {
 			direction = ((IRotatable) tileEntity).getFacingDirection();
@@ -340,7 +359,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<BaseTileEntity> {
 		return direction;
 	}
 
-	private float getRotationDegrees(Object tileEntity) {
+	public static float getRotationDegrees(Object tileEntity) {
 		EnumFacing direction = getDirection(tileEntity);
 		float rotationDegrees = 0;
 		if (direction == EnumFacing.WEST) {

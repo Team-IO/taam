@@ -25,29 +25,40 @@ import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 import net.teamio.taam.Log;
 import net.teamio.taam.Taam;
+import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.content.IWorldInteractable;
 import net.teamio.taam.machines.IMachine;
 import net.teamio.taam.piping.PipeEndFluidHandler;
+import net.teamio.taam.piping.PipeEndSharedDistinct;
+import net.teamio.taam.piping.PipeInfo;
 import net.teamio.taam.piping.PipeUtil;
 import net.teamio.taam.rendering.TaamRenderer;
 import net.teamio.taam.rendering.TankRenderInfo;
 
-public class MachineTank implements IMachine, IFluidHandler, IWorldInteractable {
+public class MachineFluidDrier implements IMachine, IRotatable {
+
+	private final PipeEndSharedDistinct pipeEndOut;
+	private final PipeEndSharedDistinct pipeEndIn;
+
+	private EnumFacing direction = EnumFacing.NORTH;
+	private final PipeInfo info;
+
+	private static final int capacity = 125;
+	private static final int pressure = 50;
+
+	public static final List<String> visibleParts = Lists.newArrayList("Baseplate_pmdl", "Pump_pumdl");
+
+	public static final AxisAlignedBB boundsPump = new AxisAlignedBB(0, 0, 0, 1, 1f - 1/16f, 1);
+	public static final AxisAlignedBB boundsPumpTank = new AxisAlignedBB(0, 0, 0, 3/16f, 3/16f, 3/16f);
 	
-	private final PipeEndFluidHandler pipeEndUP;
-	private final PipeEndFluidHandler pipeEndDOWN;
-	private final FluidTank tank;
+	private TankRenderInfo tankRI = new TankRenderInfo(boundsPumpTank, null);
 	
-	private TankRenderInfo tankRI = new TankRenderInfo(TaamRenderer.bounds_tank, null);
-	
-	public static final List<String> visibleParts = Lists.newArrayList("BaseplateConnector_pmdl_c", "Tank_tmdl");
-	
-	public MachineTank() {
-		pipeEndUP = new PipeEndFluidHandler(this, EnumFacing.UP, true);
-		pipeEndDOWN = new PipeEndFluidHandler(this, EnumFacing.DOWN, true);
-		pipeEndUP.setSuction(10);
-		pipeEndDOWN.setSuction(9);
-		tank = new FluidTank(8000);
+	public MachineFluidDrier() {
+		info = new PipeInfo(capacity);
+		pipeEndOut = new PipeEndSharedDistinct(direction, info, true);
+		pipeEndIn = new PipeEndSharedDistinct(direction.getOpposite(), info, true);
+		pipeEndOut.setPressure(pressure);
+		pipeEndIn.setSuction(pressure);
 	}
 	
 	public List<String> getVisibleParts() {
@@ -56,24 +67,31 @@ public class MachineTank implements IMachine, IFluidHandler, IWorldInteractable 
 	
 	@Override
 	public void writePropertiesToNBT(NBTTagCompound tag) {
-		tank.writeToNBT(tag);
+		tag.setInteger("direction", direction.ordinal());
+		info.writeToNBT(tag);
 	}
 
 	@Override
 	public void readPropertiesFromNBT(NBTTagCompound tag) {
-		tank.readFromNBT(tag);
+		direction = EnumFacing.getFront(tag.getInteger("direction"));
+		if (direction == EnumFacing.UP || direction == EnumFacing.DOWN) {
+			direction = EnumFacing.NORTH;
+		}
+		pipeEndOut.setSide(direction);
+		pipeEndIn.setSide(direction.getOpposite());
+		info.readFromNBT(tag);
 	}
 
 	public void writeUpdatePacket(PacketBuffer buf) {
 		NBTTagCompound tag = new NBTTagCompound();
-		tank.writeToNBT(tag);
+		writePropertiesToNBT(tag);
 		buf.writeNBTTagCompoundToBuffer(tag);
 	}
 
 	public void readUpdatePacket(PacketBuffer buf) {
 		try {
 			NBTTagCompound tag = buf.readNBTTagCompoundFromBuffer();
-			tank.readFromNBT(tag);
+			readPropertiesFromNBT(tag);
 		} catch (IOException e) {
 			Log.error(getClass().getSimpleName()
 					+ " has trouble reading tag from update packet. THIS IS AN ERROR, please report.", e);
@@ -98,8 +116,8 @@ public class MachineTank implements IMachine, IFluidHandler, IWorldInteractable 
 
 	@Override
 	public void update(World world, BlockPos pos) {
-		PipeUtil.processPipes(pipeEndUP, world, pos);
-		PipeUtil.processPipes(pipeEndDOWN, world, pos);
+		PipeUtil.processPipes(pipeEndOut, world, pos);
+		PipeUtil.processPipes(pipeEndIn, world, pos);
 	}
 
 	@Override
@@ -145,119 +163,45 @@ public class MachineTank implements IMachine, IFluidHandler, IWorldInteractable 
 	@Override
 	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
 		if (capability == Taam.CAPABILITY_PIPE) {
-			if (facing == EnumFacing.UP) {
-				return (T) pipeEndUP;
-			} else if (facing == EnumFacing.DOWN) {
-				return (T) pipeEndDOWN;
+			if (facing == direction) {
+				return (T) pipeEndOut;
+			} else if (facing == direction.getOpposite()) {
+				return (T) pipeEndIn;
 			} else {
 				return null;
 			}
 		}
 		if (capability == Taam.CAPABILITY_RENDER_TANK) {
-			tankRI.tankInfo = tank.getInfo();
+			tankRI.tankInfo = new FluidTankInfo(info.content.isEmpty() ? null : info.content.get(0), info.capacity);
 			return (T) tankRI.asArray();
 		}
 		return null;
 	}
-
-	/*
-	 * IWorldInteractable implementation
-	 */
-	
-	@Override
-	public boolean onBlockActivated(World world, EntityPlayer player, boolean hasWrench, EnumFacing side, float hitX,
-			float hitY, float hitZ) {
-		boolean didSomething = PipeUtil.defaultPlayerInteraction(player, tank);
-		
-		if(didSomething) {
-			//TODO: updateState(true, false, false);
-		}
-		return didSomething;
-	}
-	
-	@Override
-	public boolean onBlockHit(World world, EntityPlayer player, boolean hasWrench) {
-		return false;
-	}
 	
 	/*
-	 * IFluidHandler implementation
+	 * IRotatable implementation
 	 */
-	
+
 	@Override
-	public int fill(EnumFacing from, FluidStack resource, boolean doFill) {
-		if(from.getAxis() != Axis.Y) {
-			return 0;
-		}
-		if(resource == null || resource.amount == 0) {
-			return 0;
-		}
-		if(tank.getFluidAmount() == 0) {
-			tank.setFluid(null);
-		}
-		int filled = tank.fill(resource, doFill);
-		//TODO: markDirty();
-		return filled;
+	public EnumFacing getFacingDirection() {
+		return direction;
 	}
 
 	@Override
-	public FluidStack drain(EnumFacing from, FluidStack resource, boolean doDrain) {
-		if(from.getAxis() != Axis.Y) {
-			return null;
-		}
-		if(resource.isFluidEqual(tank.getFluid())) {
-			//TODO: markDirty();
-			FluidStack returnStack = tank.drain(resource.amount, doDrain);
-			if(tank.getFluidAmount() == 0) {
-				tank.setFluid(null);
-			}
-			return returnStack;
-		} else {
-			return null;
-		}
+	public EnumFacing getNextFacingDirection() {
+		return direction.rotateY();
 	}
 
 	@Override
-	public FluidStack drain(EnumFacing from, int maxDrain, boolean doDrain) {
-		if(from.getAxis() != Axis.Y) {
-			return null;
+	public void setFacingDirection(EnumFacing direction) {
+		if (direction.getAxis() == Axis.Y) {
+			return;
 		}
-		//TODO: markDirty();
-		FluidStack returnStack = tank.drain(maxDrain, doDrain);
-		if(tank.getFluidAmount() == 0) {
-			tank.setFluid(null);
-		}
-		return returnStack;
-	}
+		this.direction = direction;
 
-	@Override
-	public boolean canFill(EnumFacing from, Fluid fluid) {
-		if(from.getAxis() != Axis.Y) {
-			return false;
-		}
-		if(tank.getFluidAmount() == 0) {
-			tank.setFluid(null);
-		}
-		FluidStack tankFluid = tank.getFluid();
-		return tankFluid == null || tankFluid.getFluid() == fluid;
-	}
+		pipeEndOut.setSide(direction);
+		pipeEndIn.setSide(direction.getOpposite());
 
-	@Override
-	public boolean canDrain(EnumFacing from, Fluid fluid) {
-		if(from.getAxis() != Axis.Y) {
-			return false;
-		}
-		FluidStack tankFluid = tank.getFluid();
-		return tankFluid != null && tankFluid.getFluid() == fluid;
+		//TODO: updateState(true, true, true);
 	}
-
-	@Override
-	public FluidTankInfo[] getTankInfo(EnumFacing from) {
-		if(from.getAxis() == Axis.Y) {
-			return new FluidTankInfo[] { new FluidTankInfo(tank) };
-		} else {
-			return new FluidTankInfo[0];
-		}
-	}
-
 }

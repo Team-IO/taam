@@ -30,11 +30,11 @@ import net.teamio.taam.piping.PipeUtil;
 public class MachinePipe implements IMachine, IPipe {
 
 	private static final float pipeWidth = 0.25f;
-	private static final float fromBorder = (1f-pipeWidth) / 2;
-	
+	private static final float fromBorder = (1f - pipeWidth) / 2;
+
 	public static AxisAlignedBB bbCenter = new AxisAlignedBB(fromBorder, fromBorder, fromBorder, 1-fromBorder, 1-fromBorder, 1-fromBorder);
 	public static final AxisAlignedBB[] bbFaces = new AxisAlignedBB[6];
-	
+
 	static {
 		System.out.println(fromBorder);
 		bbFaces[EnumFacing.EAST.ordinal()]	= new AxisAlignedBB(1-fromBorder,	fromBorder,		fromBorder,
@@ -51,7 +51,6 @@ public class MachinePipe implements IMachine, IPipe {
 																1-fromBorder,	fromBorder,		1-fromBorder);
 	}
 	
-	
 	private final PipeInfo info;
 	/**
 	 * Bitmap containing the surrounding pipes Runtime-only, required for
@@ -64,8 +63,9 @@ public class MachinePipe implements IMachine, IPipe {
 	
 	private PipeEndFluidHandler[] adjacentFluidHandlers;
 	/**
-	 * ThreadLocal storage for the list of visible parts (required due to some concurrency issues, See issue #194)
-	 * TODO: central location for one list? Not one per entity type.. Adjust getVisibleParts
+	 * ThreadLocal storage for the list of visible parts (required due to some
+	 * concurrency issues, See issue #194) TODO: central location for one list?
+	 * Not one per entity type.. Adjust getVisibleParts
 	 */
 	private static final ThreadLocal<List<String>> visibleParts = new ThreadLocal<List<String>>() {
 		@Override
@@ -73,14 +73,14 @@ public class MachinePipe implements IMachine, IPipe {
 			return new ArrayList<String>(7);
 		}
 	};
-	
+
 	public MachinePipe() {
 		info = new PipeInfo(500);
 	}
 
 	public List<String> getVisibleParts() {
 		List<String> visibleParts = MachinePipe.visibleParts.get();
-		
+
 		// Visible parts list is re-used to reduce object creation
 		visibleParts.clear();
 		visibleParts.add("Center_pcmdl");
@@ -105,12 +105,12 @@ public class MachinePipe implements IMachine, IPipe {
 	public boolean isSideConnected(EnumFacing side) {
 		return (adjacentPipes & (1 << side.ordinal())) != 0;
 	}
-	
+
 	private IFluidHandler getFluidHandler(TileEntity te, EnumFacing mySide) {
-		if(te instanceof IFluidHandler) {
-			IFluidHandler fh = (IFluidHandler)te;
+		if (te instanceof IFluidHandler) {
+			IFluidHandler fh = (IFluidHandler) te;
 			FluidTankInfo[] info = fh.getTankInfo(mySide.getOpposite());
-			if(info != null && info.length > 0) {
+			if (info != null && info.length > 0) {
 				return fh;
 			}
 		}
@@ -128,14 +128,13 @@ public class MachinePipe implements IMachine, IPipe {
 				continue;
 			}
 			TileEntity te = world.getTileEntity(pos.offset(side));
-			if(getFluidHandler(te, side) != null) {
+			if (getFluidHandler(te, side) != null) {
 				adjacentPipes |= 1 << side.ordinal();
 			}
 		}
-		System.out.println("Render update. Before: " + old + " after: " + adjacentPipes);
 		return old != adjacentPipes;
 	};
-	
+
 	@Override
 	public void blockUpdate(World world, BlockPos pos) {
 		// Check surrounding blocks for IFluidHandler implementations that don't use the pipe system
@@ -146,17 +145,18 @@ public class MachinePipe implements IMachine, IPipe {
 			IPipe pipeOnSide = PipeUtil.getConnectedPipe(world, pos, side);
 			if (pipeOnSide == null) {
 				TileEntity te = world.getTileEntity(pos.offset(side));
-				if(te != null && !te.hasCapability(Taam.CAPABILITY_PIPE, side)) {
+				if (te != null && !te.hasCapability(Taam.CAPABILITY_PIPE, side)) {
 					IFluidHandler fh = getFluidHandler(te, side);
-					if(fh != null) {
+					if (fh != null) {
 						wrappersRequired = true;
 						// Fluid handler here, we need a wrapper.
-						if(adjacentFluidHandlers == null) {
+						if (adjacentFluidHandlers == null) {
 							adjacentFluidHandlers = new PipeEndFluidHandler[6];
 							adjacentFluidHandlers[sideIdx] = new PipeEndFluidHandler(fh, side.getOpposite(), false);
 						} else {
 							// Not yet known or a different TileEntity, we need a new wrapper.
-							if(adjacentFluidHandlers[sideIdx] == null || adjacentFluidHandlers[sideIdx].getOwner() != te) {
+							if (adjacentFluidHandlers[sideIdx] == null
+									|| adjacentFluidHandlers[sideIdx].getOwner() != te) {
 								adjacentFluidHandlers[sideIdx] = new PipeEndFluidHandler(fh, side.getOpposite(), false);
 							}
 						}
@@ -164,26 +164,26 @@ public class MachinePipe implements IMachine, IPipe {
 				}
 			} else {
 				// We have a regular pipe there, no need for a wrapper
-				if(adjacentFluidHandlers != null) {
+				if (adjacentFluidHandlers != null) {
 					adjacentFluidHandlers[sideIdx] = null;
 				}
 			}
 		}
 		// No wrappers required, delete the array
-		if(!wrappersRequired) {
+		if (!wrappersRequired) {
 			adjacentFluidHandlers = null;
 		}
 	}
-	
+
 	@Override
 	public void update(World world, BlockPos pos) {
 		// Process "this"
 		PipeUtil.processPipes(this, world, pos);
-		//Process the fluid handlers for adjecent non-pipe-machines (implementing IFluidHandler)
-		if(adjacentFluidHandlers != null) {
+		// Process the fluid handlers for adjecent non-pipe-machines (implementing IFluidHandler)
+		if (adjacentFluidHandlers != null) {
 			for (EnumFacing side : EnumFacing.VALUES) {
 				PipeEndFluidHandler handler = adjacentFluidHandlers[side.ordinal()];
-				if(handler != null) {
+				if (handler != null) {
 					PipeUtil.processPipes(handler, world, pos.offset(side));
 				}
 			}
@@ -201,12 +201,12 @@ public class MachinePipe implements IMachine, IPipe {
 	public void readPropertiesFromNBT(NBTTagCompound tag) {
 		info.readFromNBT(tag);
 	}
-	
+
 	@Override
 	public void writeUpdatePacket(PacketBuffer buf) {
 		info.writeUpdatePacket(buf);
 	}
-	
+
 	@Override
 	public void readUpdatePacket(PacketBuffer buf) {
 		info.readUpdatePacket(buf);
@@ -217,9 +217,8 @@ public class MachinePipe implements IMachine, IPipe {
 		renderUpdate(world, blockPos);
 		// Apply rotation to the model
 		OBJModel.OBJState retState = new OBJModel.OBJState(getVisibleParts(), true, new TRSRTransformation(EnumFacing.SOUTH));
-		
-		IExtendedBlockState extendedState = (IExtendedBlockState)state;
-		System.out.println("Fetching extended state: " + adjacentPipes);
+
+		IExtendedBlockState extendedState = (IExtendedBlockState) state;
 		return extendedState.withProperty(OBJModel.OBJProperty.instance, retState);
 	}
 
@@ -227,38 +226,50 @@ public class MachinePipe implements IMachine, IPipe {
 	public String getModelPath() {
 		return "taam:machine";
 	}
-	
+
 	@Override
 	public void addCollisionBoxes(AxisAlignedBB mask, List<AxisAlignedBB> list, Entity collidingEntity) {
-		// TODO Auto-generated method stub
-		if(mask.intersectsWith(bbCenter)) {
+		if (mask.intersectsWith(bbCenter)) {
 			list.add(bbCenter);
+		}
+		for (EnumFacing side : EnumFacing.VALUES) {
+			if (isSideConnected(side)) {
+				AxisAlignedBB box = bbFaces[side.ordinal()];
+				if (mask.intersectsWith(box)) {
+					list.add(box);
+				}
+			}
 		}
 	}
 
 	@Override
 	public void addSelectionBoxes(List<AxisAlignedBB> list) {
-		// TODO Auto-generated method stub
 		list.add(bbCenter);
+		for (EnumFacing side : EnumFacing.VALUES) {
+			if (isSideConnected(side)) {
+				AxisAlignedBB box = bbFaces[side.ordinal()];
+				list.add(box);
+			}
+		}
 	}
 
 	@Override
 	public void addOcclusionBoxes(List<AxisAlignedBB> list) {
-		// TODO Auto-generated method stub
 		list.add(bbCenter);
 	}
-	
+
 	@Override
 	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-		if(capability == Taam.CAPABILITY_PIPE) {
+		if (capability == Taam.CAPABILITY_PIPE) {
 			return true;
 		}
 		return false;
 	}
-	
+
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-		if(capability == Taam.CAPABILITY_PIPE) {
+		if (capability == Taam.CAPABILITY_PIPE) {
 			return (T) this;
 		}
 		return null;

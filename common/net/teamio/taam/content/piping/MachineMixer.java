@@ -1,23 +1,48 @@
 package net.teamio.taam.content.piping;
 
+import java.io.IOException;
+import java.util.List;
+
+import com.google.common.collect.Lists;
+
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.util.ITickable;
+import net.minecraft.world.World;
+import net.minecraftforge.client.model.obj.OBJModel;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.property.IExtendedBlockState;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTank;
+import net.minecraftforge.fluids.FluidTankInfo;
+import net.minecraftforge.fluids.IFluidHandler;
 import net.teamio.taam.Log;
-import net.teamio.taam.content.BaseTileEntity;
+import net.teamio.taam.Taam;
 import net.teamio.taam.content.IRotatable;
+import net.teamio.taam.content.IWorldInteractable;
 import net.teamio.taam.conveyors.ItemWrapper;
 import net.teamio.taam.conveyors.api.IConveyorAwareTE;
+import net.teamio.taam.machines.IMachine;
 import net.teamio.taam.piping.PipeEnd;
+import net.teamio.taam.piping.PipeEndFluidHandler;
 import net.teamio.taam.piping.PipeEndRestricted;
+import net.teamio.taam.piping.PipeEndSharedDistinct;
+import net.teamio.taam.piping.PipeInfo;
 import net.teamio.taam.piping.PipeUtil;
 import net.teamio.taam.recipes.IProcessingRecipeFluidBased;
 import net.teamio.taam.recipes.ProcessingRegistry;
+import net.teamio.taam.rendering.TaamRenderer;
+import net.teamio.taam.rendering.TankRenderInfo;
 
-public class TileEntityMixer extends BaseTileEntity implements IRotatable, IConveyorAwareTE, ITickable {
+public class MachineMixer implements IMachine, IRotatable, IConveyorAwareTE {
 
 	private EnumFacing direction = EnumFacing.NORTH;
 	
@@ -30,14 +55,16 @@ public class TileEntityMixer extends BaseTileEntity implements IRotatable, IConv
 	private IProcessingRecipeFluidBased[] matchingRecipes;
 	
 	private static final int capacity = 2000;
+
+	public static final AxisAlignedBB bounds = new AxisAlignedBB(0, 0, 0, 1, 0.5f, 1);
 	
-	public TileEntityMixer() {
+	public MachineMixer() {
 		pipeEndOut = new PipeEnd(direction, capacity, false);
 		pipeEndIn = new PipeEndRestricted(direction.getOpposite(), capacity, false);
 	}
 	
 	@Override
-	protected void writePropertiesToNBT(NBTTagCompound tag) {
+	public void writePropertiesToNBT(NBTTagCompound tag) {
 		tag.setInteger("direction", direction.ordinal());
 		
 		NBTTagCompound tagIn = new NBTTagCompound();
@@ -50,7 +77,7 @@ public class TileEntityMixer extends BaseTileEntity implements IRotatable, IConv
 	}
 
 	@Override
-	protected void readPropertiesFromNBT(NBTTagCompound tag) {
+	public void readPropertiesFromNBT(NBTTagCompound tag) {
 		direction = EnumFacing.getFront(tag.getInteger("direction"));
 		if(direction == EnumFacing.UP || direction == EnumFacing.DOWN) {
 			direction = EnumFacing.NORTH;
@@ -68,9 +95,41 @@ public class TileEntityMixer extends BaseTileEntity implements IRotatable, IConv
 			pipeEndOut.readFromNBT(tagOut);
 		}
 	}
-	
+
+	public void writeUpdatePacket(PacketBuffer buf) {
+		NBTTagCompound tag = new NBTTagCompound();
+		writePropertiesToNBT(tag);
+		buf.writeNBTTagCompoundToBuffer(tag);
+	}
+
+	public void readUpdatePacket(PacketBuffer buf) {
+		try {
+			NBTTagCompound tag = buf.readNBTTagCompoundFromBuffer();
+			readPropertiesFromNBT(tag);
+		} catch (IOException e) {
+			Log.error(getClass().getSimpleName()
+					+ " has trouble reading tag from update packet. THIS IS AN ERROR, please report.", e);
+		}
+	}
+
 	@Override
-	public void update() {
+	public IBlockState getExtendedState(IBlockState state, World world, BlockPos blockPos) {
+		renderUpdate(world, blockPos);
+		// Apply rotation to the model
+		OBJModel.OBJState retState = new OBJModel.OBJState(getVisibleParts(), true);
+		
+		IExtendedBlockState extendedState = (IExtendedBlockState)state;
+		
+		return extendedState.withProperty(OBJModel.OBJProperty.instance, retState);
+	}
+
+	@Override
+	public String getModelPath() {
+		return "taam:machine";
+	}
+
+	@Override
+	public void update(World world, BlockPos pos) {
 		// Output backlog of already processed stuff
 		if(backlog != null) {
 			backlog.amount -= pipeEndOut.addFluid(backlog);
@@ -78,8 +137,57 @@ public class TileEntityMixer extends BaseTileEntity implements IRotatable, IConv
 				backlog = null;
 			}
 		}
-		PipeUtil.processPipes(pipeEndIn, worldObj, pos);
-		PipeUtil.processPipes(pipeEndOut, worldObj, pos);
+		PipeUtil.processPipes(pipeEndIn, world, pos);
+		PipeUtil.processPipes(pipeEndOut, world, pos);
+	}
+
+	@Override
+	public boolean renderUpdate(World world, BlockPos pos) {
+		return false;
+	}
+
+	@Override
+	public void blockUpdate(World world, BlockPos pos) {
+	}
+
+	@Override
+	public void addCollisionBoxes(AxisAlignedBB mask, List<AxisAlignedBB> list, Entity collidingEntity) {
+		if (mask.intersectsWith(bounds)) {
+			list.add(bounds);
+		}
+	}
+
+	@Override
+	public void addSelectionBoxes(List<AxisAlignedBB> list) {
+		list.add(bounds);
+	}
+
+	@Override
+	public void addOcclusionBoxes(List<AxisAlignedBB> list) {
+		list.add(bounds);
+	}
+	
+	@Override
+	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+		if(capability == Taam.CAPABILITY_PIPE) {
+			return facing.getAxis() == direction.getAxis();
+		}
+		return false;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+		if (capability == Taam.CAPABILITY_PIPE) {
+			if (facing == direction) {
+				return (T) pipeEndOut;
+			} else if (facing == direction.getOpposite()) {
+				return (T) pipeEndIn;
+			} else {
+				return null;
+			}
+		}
+		return null;
 	}
 	
 	/**
@@ -173,7 +281,7 @@ public class TileEntityMixer extends BaseTileEntity implements IRotatable, IConv
 	/*
 	 * IRotatable implementation
 	 */
-	
+
 	@Override
 	public EnumFacing getFacingDirection() {
 		return direction;
@@ -194,24 +302,9 @@ public class TileEntityMixer extends BaseTileEntity implements IRotatable, IConv
 		pipeEndOut.setSide(direction);
 		pipeEndIn.setSide(direction.getOpposite());
 		
-		updateState(false, true, true);
+		//TODO: updateState(false, true, true);
 	}
 	
-	/*
-	 * IPipeTE implementation
-	 */
-	
-//	@Override
-//	public IPipe[] getPipesForSide(EnumFacing side) {
-//		if (side == direction) {
-//			return pipeEndOut.asPipeArray();
-//		} else if (side == direction.getOpposite()) {
-//			return pipeEndIn.asPipeArray();
-//		} else {
-//			return null;
-//		}
-//	}
-
 	/*
 	 * IConveyorAwareTE implementation
 	 */
@@ -287,5 +380,11 @@ public class TileEntityMixer extends BaseTileEntity implements IRotatable, IConv
 	@Override
 	public double getInsertMinY() {
 		return .4f;
+	}
+	
+	@Override
+	public BlockPos getPos() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

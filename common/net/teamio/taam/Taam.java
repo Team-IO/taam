@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -12,10 +11,12 @@ import net.minecraft.util.IStringSerializable;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.teamio.taam.content.piping.MachinePipe;
+import net.teamio.taam.content.piping.MachinePump;
 import net.teamio.taam.content.piping.MachineTank;
 import net.teamio.taam.machines.IMachine;
 import net.teamio.taam.machines.IMachineMetaInfo;
 import net.teamio.taam.piping.IPipe;
+import net.teamio.taam.rendering.TankRenderInfo;
 
 public final class Taam {
 	private Taam() {
@@ -24,6 +25,8 @@ public final class Taam {
 	
 	@CapabilityInject(IPipe.class)
 	public static Capability<IPipe> CAPABILITY_PIPE;
+	@CapabilityInject(TankRenderInfo[].class)
+	public static Capability<TankRenderInfo[]> CAPABILITY_RENDER_TANK;
 	
 	public static final String MOD_ID = "taam";
 	public static final String MOD_NAME = "Taam";
@@ -50,8 +53,9 @@ public final class Taam {
 	public static final String BLOCK_MAGNET_RAIL = "magnet_rail";
 	public static final String BLOCK_SUPPORT_BEAM = "support_beam";
 
-	public static final String BLOCK_PIPE = "pipe";
 	public static final String BLOCK_PIPEMACHINES = "pipemachines";
+	
+	public static final String BLOCK_MACHINE_WRAPPER = "machine";
 	
 	public static enum BLOCK_ORE_META implements IStringSerializable {
 		/*0*/copper		(true, true, "Copper",		14, 7, 0, 59),
@@ -384,10 +388,7 @@ public final class Taam {
 	public static final String TILEENTITY_CONVEYOR_TRASHCAN = "taam.trashcan";
 	public static final String TILEENTITY_CONVEYOR_SIEVE = "taam.sieve";
 	
-	public static final String TILEENTITY_PIPE = "taam.pipe";
-	public static final String TILEENTITY_TANK = "taam.tank";
 	public static final String TILEENTITY_CREATIVEWELL = "taam.creativewell";
-	public static final String TILEENTITY_PUMP = "taam.pump";
 	public static final String TILEENTITY_MIXER = "taam.mixer";
 	public static final String TILEENTITY_FLUID_DRIER = "taam.fluid_drier";
 	
@@ -454,7 +455,10 @@ public final class Taam {
 	public static enum MACHINE_META implements IMachineMetaInfo {
 		
 		pipe(MachinePipe.class, "pipe", null),
-		tank(MachineTank.class, "tank", null);
+		tank(MachineTank.class, "tank", null),
+		pump(MachinePump.class, "pump", null),
+		mixer(MachinePump.class, "mixer", null),
+		fluid_drier(MachinePump.class, "fluid_drier", null);
 
 		private Class<? extends IMachine> machineClass;
 		private String unlocalizedName;

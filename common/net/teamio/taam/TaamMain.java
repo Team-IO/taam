@@ -67,13 +67,13 @@ import net.teamio.taam.content.piping.ItemPipeMachines;
 import net.teamio.taam.content.piping.TileEntityCreativeWell;
 import net.teamio.taam.content.piping.TileEntityFluidDrier;
 import net.teamio.taam.content.piping.TileEntityMixer;
-import net.teamio.taam.content.piping.TileEntityPump;
 import net.teamio.taam.conveyors.appliances.ApplianceSprayer;
 import net.teamio.taam.gui.GuiHandler;
 import net.teamio.taam.machines.MachineBlock;
 import net.teamio.taam.machines.MachineItemBlock;
 import net.teamio.taam.piping.IPipe;
 import net.teamio.taam.piping.PipeEnd;
+import net.teamio.taam.rendering.TankRenderInfo;
 
 
 @Mod(modid = Taam.MOD_ID, name = Taam.MOD_NAME, version = Taam.MOD_VERSION, guiFactory = Taam.GUI_FACTORY_CLASS)
@@ -241,26 +241,35 @@ public class TaamMain {
 
 		GameRegistry.registerTileEntity(ApplianceSprayer.class, Taam.TILEENTITY_APPLIANCE_SPRAYER);
 
-//		GameRegistry.registerTileEntity(TileEntityPipe.class, Taam.TILEENTITY_PIPE);
-//		GameRegistry.registerTileEntity(TileEntityTank.class, Taam.TILEENTITY_TANK);
 		GameRegistry.registerTileEntity(TileEntityCreativeWell.class, Taam.TILEENTITY_CREATIVEWELL);
-		GameRegistry.registerTileEntity(TileEntityPump.class, Taam.TILEENTITY_PUMP);
 		GameRegistry.registerTileEntity(TileEntityMixer.class, Taam.TILEENTITY_MIXER);
 		GameRegistry.registerTileEntity(TileEntityFluidDrier.class, Taam.TILEENTITY_FLUID_DRIER);
 
+		/*
+		 * Multiparts
+		 */
+		
 		if(Config.multipart_load) {
 			MultipartHandler.registerMultipartStuff();
 		}
 		
+		/*
+		 * Wrapper block for machines if multipart is not available
+		 */
 		blockMachine = new MachineBlock(Material.iron, Taam.MACHINE_META.values());
-		GameRegistry.registerBlock(blockMachine, null, "machine");
+		GameRegistry.registerBlock(blockMachine, null, Taam.BLOCK_MACHINE_WRAPPER);
 		
+		/*
+		 * Either Multipart or regular items
+		 */
 		if(Config.multipart_load && Config.multipart_register_items) {
-			itemMachine = MultipartHandler.registerMultipartItem("machine", Taam.MACHINE_META.values());
+			// Mutlipart Item
+			itemMachine = MultipartHandler.registerMultipartItem(Taam.BLOCK_MACHINE_WRAPPER, Taam.MACHINE_META.values());
 		} else {
+			// Regular item, places a wrapper block
 			itemMachine = new MachineItemBlock(blockMachine, Taam.MACHINE_META.values());
 		}
-		GameRegistry.registerItem(itemMachine, "machine");
+		GameRegistry.registerItem(itemMachine, Taam.BLOCK_MACHINE_WRAPPER);
 		
 		/*
 		 * Worldgen
@@ -325,6 +334,20 @@ public class TaamMain {
 			}
 			
 		}, PipeEnd.class);
+		CapabilityManager.INSTANCE.register(TankRenderInfo[].class, new Capability.IStorage<TankRenderInfo[]>() {
+
+			@Override
+			public NBTBase writeNBT(Capability<TankRenderInfo[]> capability, TankRenderInfo[] instance, EnumFacing side) {
+				throw new NotImplementedException("Cannot save a generic TankRenderInfo[] instance to NBT (only used for rendering).");
+			}
+
+			@Override
+			public void readNBT(Capability<TankRenderInfo[]> capability, TankRenderInfo[] instance, EnumFacing side, NBTBase nbt) {
+				throw new NotImplementedException("Cannot read a generic TankRenderInfo[] instance from NBT (only usedfor rendering).");
+				
+			}
+			
+		}, TankRenderInfo[].class);
 		
 		/*
 		 * Network

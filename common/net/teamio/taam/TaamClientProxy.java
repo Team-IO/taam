@@ -9,6 +9,7 @@ import javax.vecmath.Matrix4f;
 import org.apache.commons.lang3.tuple.Pair;
 
 import mcmultipart.client.multipart.ISmartMultipartModel;
+import mcmultipart.client.multipart.MultipartRegistryClient;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemMeshDefinition;
@@ -35,7 +36,10 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.client.model.obj.OBJModel;
 import net.minecraftforge.client.model.obj.OBJModel.OBJBakedModel;
+import net.minecraftforge.client.model.obj.OBJModel.OBJProperty;
+import net.minecraftforge.client.model.obj.OBJModel.OBJState;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -53,6 +57,9 @@ import net.teamio.taam.content.conveyors.TileEntityConveyorProcessor;
 import net.teamio.taam.content.conveyors.TileEntityConveyorSieve;
 import net.teamio.taam.content.conveyors.TileEntityConveyorTrashCan;
 import net.teamio.taam.conveyors.appliances.ApplianceSprayer;
+import net.teamio.taam.machines.MachineMultipart;
+import net.teamio.taam.machines.MachineTileEntity;
+import net.teamio.taam.rendering.TaamMultipartRenderer;
 import net.teamio.taam.rendering.TaamRenderer;
 
 @SuppressWarnings("deprecation")
@@ -61,6 +68,8 @@ public class TaamClientProxy extends TaamCommonProxy {
 	public static int blockRendererId;
 
 	public static TaamRenderer taamRenderer;
+
+	private final List<ModelResourceLocation> locationsToReplace = new ArrayList<ModelResourceLocation>();
 
 	@Override
 	public void registerRenderStuff() {
@@ -84,6 +93,12 @@ public class TaamClientProxy extends TaamCommonProxy {
 //		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityTank.class, taamRenderer);
 
 		ClientRegistry.bindTileEntitySpecialRenderer(ApplianceSprayer.class, taamRenderer);
+		
+
+		ClientRegistry.bindTileEntitySpecialRenderer(MachineTileEntity.class, taamRenderer);
+		
+		//TODO: Extract from here to decouple from Multipart
+		MultipartRegistryClient.bindMultipartSpecialRenderer(MachineMultipart.class, new TaamMultipartRenderer(taamRenderer));
 
 		// Receive event for Client Ticks
 		MinecraftForge.EVENT_BUS.register(taamRenderer);
@@ -186,8 +201,6 @@ public class TaamClientProxy extends TaamCommonProxy {
 		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_SENSOR, 0, "sensor.obj");
 		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_SUPPORT_BEAM, 0, "support_beam.obj");
 
-//		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_PIPE, 0, "pipes.obj");
-
 		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_MACHINES, Taam.BLOCK_MACHINES_META.chute.ordinal(), "chute.obj");
 		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_MACHINES, Taam.BLOCK_MACHINES_META.creativecache.ordinal(), "creative_cache.obj");
 		
@@ -199,11 +212,15 @@ public class TaamClientProxy extends TaamCommonProxy {
 		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_PIPEMACHINES, Taam.BLOCK_PIPEMACHINES_META.mixer.ordinal(), "mixer.obj");
 		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_PIPEMACHINES, Taam.BLOCK_PIPEMACHINES_META.fluid_drier.ordinal(), "fluid_drier.obj");
 
+		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_MACHINE_WRAPPER, Taam.MACHINE_META.pipe.ordinal(), "pipes.obj");
+		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_MACHINE_WRAPPER, Taam.MACHINE_META.tank.ordinal(), "tank.obj");
+		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_MACHINE_WRAPPER, Taam.MACHINE_META.pump.ordinal(), "pump.obj");
+		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_MACHINE_WRAPPER, Taam.MACHINE_META.mixer.ordinal(), "mixer.obj");
+		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_MACHINE_WRAPPER, Taam.MACHINE_META.fluid_drier.ordinal(), "fluid_drier.obj");
+		
 		registerItemOBJ(modelMesher, Taam.BLOCK_PRODUCTIONLINE, Taam.BLOCK_PRODUCTIONLINE_META.values().length, "conveyor.obj");
 		registerItemOBJ(modelMesher, Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE, Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META.values().length, "conveyor_attachables.obj");
 	}
-
-	private final List<ModelResourceLocation> locationsToReplace = new ArrayList<ModelResourceLocation>();
 
 	/**
 	 * Registers & remembers a model location for inventory rendering for the
@@ -457,6 +474,9 @@ public class TaamClientProxy extends TaamCommonProxy {
 
 		@Override
 		public IBakedModel handleBlockState(IBlockState state) {
+
+            OBJState s = ((IExtendedBlockState)state).getValue(OBJProperty.instance);
+            System.out.println(s == null ? "no obj state" : s.parent);
 			return original.handleBlockState(state);
 		}
 

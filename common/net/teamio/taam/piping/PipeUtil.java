@@ -1,7 +1,7 @@
 package net.teamio.taam.piping;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.function.Supplier;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -59,10 +59,16 @@ public final class PipeUtil {
 		return ent.getCapability(Taam.CAPABILITY_PIPE, side.getOpposite());
 	}
 
-	private static final  ArrayList<IPipe> connected = new ArrayList<IPipe>();
+	private static final ThreadLocal<ArrayList<IPipe>> connected = ThreadLocal.withInitial(new Supplier<ArrayList<IPipe>>() {
+		public ArrayList<IPipe> get() {
+			return new ArrayList<IPipe>(6);
+		};
+	}) ;
 	
 	public static void processPipes(IPipe pipe, IBlockAccess world, BlockPos pos) {
 
+		ArrayList<IPipe> connected = PipeUtil.connected.get();
+		
 		connected.clear();
 		
 		IPipe[] internal = pipe.getInternalPipes(world, pos);
@@ -97,6 +103,9 @@ public final class PipeUtil {
 
 			for (int i = 0; i < connected.size(); i++) {
 				IPipe other = connected.get(i);
+				if(other == null) {
+					continue;
+				}
 				int otherPressure = other.getPressure();
 
 				if (otherPressure > maxPressure) {
@@ -134,6 +143,9 @@ public final class PipeUtil {
 
 		for (int i = 0; i < connected.size(); i++) {
 			IPipe other = connected.get(i);
+			if(other == null) {
+				continue;
+			}
 			int otherPressure = other.getPressure() == 0 ? -other.getSuction() : other.getPressure();
 			if(effectivePressure <= otherPressure) {
 				// No transfer without pressure
