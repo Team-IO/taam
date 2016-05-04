@@ -29,14 +29,14 @@ import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.content.IWorldInteractable;
 import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.conveyors.ItemWrapper;
-import net.teamio.taam.conveyors.api.IConveyorAwareTE;
+import net.teamio.taam.conveyors.api.IConveyorSlots;
 import net.teamio.taam.network.TPMachineConfiguration;
 import net.teamio.taam.util.TaamUtil;
 import net.teamio.taam.util.WorldCoord;
 import net.teamio.taam.util.inv.InventoryRange;
 import net.teamio.taam.util.inv.InventoryUtils;
 
-public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInventory, IConveyorAwareTE, IRotatable, IWorldInteractable, IRedstoneControlled, ITickable, IRenderable {
+public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInventory, IConveyorSlots, IRotatable, IWorldInteractable, IRedstoneControlled, ITickable, IRenderable {
 
 	public static List<String> parts = Collections.unmodifiableList(Lists.newArrayList("Support_Alu_smdl_alu", "SieveChute_cscmdl", "Sieve_csvmdl"));
 	/*
@@ -90,7 +90,7 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 	 */
 	public void dropItems() {
 		for (int index = 0; index < items.length; index++) {
-			ConveyorUtil.dropItem(worldObj, this, index, false);
+			ConveyorUtil.dropItem(worldObj, pos, this, index, false);
 		}
 	}
 	
@@ -136,7 +136,7 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 			 * Move items already on the conveyor
 			 */
 		
-			if(ConveyorUtil.defaultTransition(worldObj, this, slotOrder)) {
+			if(ConveyorUtil.defaultTransition(worldObj, pos, this, slotOrder)) {
 				needsUpdate = true;
 			}
 		}

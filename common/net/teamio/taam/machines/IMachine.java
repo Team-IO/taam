@@ -2,8 +2,6 @@ package net.teamio.taam.machines;
 
 import java.util.List;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
@@ -16,11 +14,11 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 public interface IMachine extends ICapabilityProvider {
 	void writePropertiesToNBT(NBTTagCompound tag);
 	void readPropertiesFromNBT(NBTTagCompound tag);
-	
+
 	void writeUpdatePacket(PacketBuffer buf);
 	void readUpdatePacket(PacketBuffer buf);
 
-    IBlockState getExtendedState(IBlockState state, World world, BlockPos blockPos);
+	IBlockState getExtendedState(IBlockState state, World world, BlockPos blockPos);
 	String getModelPath();
     
 	void update(World world, BlockPos pos);

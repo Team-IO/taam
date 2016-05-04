@@ -41,7 +41,7 @@ import net.teamio.taam.content.conveyors.TileEntityConveyorProcessor;
 import net.teamio.taam.content.conveyors.TileEntityConveyorSieve;
 import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.conveyors.ItemWrapper;
-import net.teamio.taam.conveyors.api.IConveyorAwareTE;
+import net.teamio.taam.conveyors.api.IConveyorSlots;
 import net.teamio.taam.conveyors.appliances.ApplianceSprayer;
 import net.teamio.taam.piping.IPipe;
 import net.teamio.taam.util.WrenchUtil;
@@ -94,8 +94,8 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 				EntityPlayer player = event.player;
 				World world = player.worldObj; 
 				te = world.getTileEntity(pos);
-				if(te instanceof IConveyorAwareTE) {
-					IConveyorAwareTE cte = (IConveyorAwareTE)te;
+				if(te instanceof IConveyorSlots) {
+					IConveyorSlots cte = (IConveyorSlots)te;
 					
 					// Only render for TEs that actually have the items there
 					if(!cte.shouldRenderItemsDefault()) {
@@ -165,8 +165,8 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 			GL11.glPopMatrix();
 		}
 		
-		if (tileEntity instanceof IConveyorAwareTE) {
-			renderConveyorItems((IConveyorAwareTE) tileEntity, x, y, z);
+		if (tileEntity instanceof IConveyorSlots) {
+			renderConveyorItems((IConveyorSlots) tileEntity, x, y, z);
 		}
 		
 		//TODO: replace with capability!
@@ -372,7 +372,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		return rotationDegrees;
 	}
 
-	public void renderConveyorItems(IConveyorAwareTE tileEntity, double x, double y, double z) {
+	public void renderConveyorItems(IConveyorSlots tileEntity, double x, double y, double z) {
 
 		GL11.glPushMatrix();
 		GL11.glTranslated(x, y, z);

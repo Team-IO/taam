@@ -17,7 +17,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.oredict.OreDictionary;
 import net.teamio.taam.content.IRedstoneControlled;
 import net.teamio.taam.conveyors.api.IConveyorApplianceHost;
-import net.teamio.taam.conveyors.api.IConveyorAwareTE;
+import net.teamio.taam.conveyors.api.IConveyorSlots;
 import net.teamio.taam.util.inv.InventoryUtils;
 
 /**
@@ -30,6 +30,11 @@ public final class TaamUtil {
 		// Util class
 	}
 
+	/**
+	 * Global random instance for things that can't access the world's random..
+	 */
+	public static final Random RANDOM = new Random();
+	
 	public static boolean canDropIntoWorld(IBlockAccess world, BlockPos pos) {
 		IBlockState state = world.getBlockState(pos);
 		Block block = state.getBlock();
@@ -86,7 +91,7 @@ public final class TaamUtil {
 
 	/**
 	 * Decides whether an attachable block can be placed somewhere.
-	 * Checks for a solid side or a TileEntity implementing {@link IConveyorAwareTE}.
+	 * Checks for a solid side or a TileEntity implementing {@link IConveyorSlots}.
 	 * @param world
 	 * @param x The attachable block.
 	 * @param y The attachable block.
@@ -99,7 +104,7 @@ public final class TaamUtil {
 			return true;
 		}
 		TileEntity ent = world.getTileEntity(pos.offset(dir));
-		return ent instanceof IConveyorAwareTE;
+		return ent instanceof IConveyorSlots;
 	}
 	
 	public static boolean canAttachAppliance(IBlockAccess world, BlockPos pos, EnumFacing dir) {

@@ -15,7 +15,7 @@ import net.minecraft.util.IChatComponent;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.teamio.taam.content.IRenderable;
 import net.teamio.taam.conveyors.ItemWrapper;
-import net.teamio.taam.conveyors.api.IConveyorAwareTE;
+import net.teamio.taam.conveyors.api.IConveyorSlots;
 import net.teamio.taam.util.inv.InventorySimple;
 import net.teamio.taam.util.inv.InventoryUtils;
 
@@ -25,7 +25,7 @@ import net.teamio.taam.util.inv.InventoryUtils;
  * @author founderio
  *
  */
-public class TileEntityConveyorItemBag extends ATileEntityAttachable implements IConveyorAwareTE, IInventory, IRenderable {
+public class TileEntityConveyorItemBag extends ATileEntityAttachable implements IConveyorSlots, IInventory, IRenderable {
 
 	private InventorySimple inventory;
 	

@@ -28,9 +28,9 @@ import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.conveyors.ItemWrapper;
 import net.teamio.taam.conveyors.api.IConveyorAppliance;
 import net.teamio.taam.conveyors.api.IConveyorApplianceHost;
-import net.teamio.taam.conveyors.api.IConveyorAwareTE;
+import net.teamio.taam.conveyors.api.IConveyorSlots;
 
-public class TileEntityConveyor extends BaseTileEntity implements ISidedInventory, IConveyorAwareTE, IRotatable, IConveyorApplianceHost, IWorldInteractable, ITickable, IRenderable {
+public class TileEntityConveyor extends BaseTileEntity implements ISidedInventory, IConveyorSlots, IRotatable, IConveyorApplianceHost, IWorldInteractable, ITickable, IRenderable {
 
 	/*
 	 * Content
@@ -107,7 +107,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 			isEnd = renderEnd;
 		} else {
 			isEnd = true;
-			renderEnd = te instanceof IConveyorAwareTE;
+			renderEnd = te instanceof IConveyorSlots;
 		}
 		
 		// Check behind
@@ -120,7 +120,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 			isBegin = renderBegin;
 		} else {
 			isBegin = true;
-			renderBegin = te instanceof IConveyorAwareTE;
+			renderBegin = te instanceof IConveyorSlots;
 		}
 		
 		// Check right
@@ -132,7 +132,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 			EnumFacing nextFacing = next.getFacingDirection();
 			renderRight = nextFacing != direction && nextFacing != direction.getOpposite();
 		} else {
-			renderRight = te instanceof IConveyorAwareTE;
+			renderRight = te instanceof IConveyorSlots;
 		}
 		
 		// Check left
@@ -144,12 +144,12 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 			EnumFacing nextFacing = next.getFacingDirection();
 			renderLeft = nextFacing != direction && nextFacing != direction.getOpposite();
 		} else {
-			renderLeft = te instanceof IConveyorAwareTE;
+			renderLeft = te instanceof IConveyorSlots;
 		}
 		
 		// Check above
 		renderAbove = worldObj.isSideSolid(pos.offset(EnumFacing.UP), EnumFacing.DOWN) ||
-				worldObj.getTileEntity(pos.offset(EnumFacing.UP)) instanceof IConveyorAwareTE;
+				worldObj.getTileEntity(pos.offset(EnumFacing.UP)) instanceof IConveyorSlots;
 	}
 	
 	/*
@@ -248,7 +248,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	 */
 	public void dropItems() {
 		for (int index = 0; index < items.length; index++) {
-			ConveyorUtil.dropItem(worldObj, this, index, false);
+			ConveyorUtil.dropItem(worldObj, pos, this, index, false);
 		}
 	}
 	
@@ -273,7 +273,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 		// process from movement direction backward to keep slot order inside one conveyor,
 		// as we depend on the status of the next slot
 		int[] slotOrder = ConveyorUtil.getSlotOrderForDirection(direction);
-		if(ConveyorUtil.defaultTransition(worldObj, this, slotOrder)) {
+		if(ConveyorUtil.defaultTransition(worldObj, pos, this, slotOrder)) {
 			updateState(true, false, false);
 		}
 	}

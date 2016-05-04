@@ -14,7 +14,6 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.world.World;
-import net.minecraftforge.client.model.TRSRTransformation;
 import net.minecraftforge.client.model.obj.OBJModel;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.property.IExtendedBlockState;
@@ -94,19 +93,11 @@ public class MachinePump implements IMachine, IRotatable {
 	@Override
 	public IBlockState getExtendedState(IBlockState state, World world, BlockPos blockPos) {
 		renderUpdate(world, blockPos);
-		// Apply rotation to the model
+
 		OBJModel.OBJState retState = new OBJModel.OBJState(getVisibleParts(), true);
 		IExtendedBlockState extendedState = (IExtendedBlockState)state;
 		
 		return extendedState.withProperty(OBJModel.OBJProperty.instance, retState);
-	}
-
-	private EnumFacing rotateRenderDirection(EnumFacing facing) {
-		if(facing.getAxis() == Axis.Y) {
-			return facing.getOpposite();
-		} else {
-			return facing.rotateY().rotateY();
-		}
 	}
 
 	@Override

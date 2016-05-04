@@ -134,7 +134,7 @@ public class ApplianceSprayer extends ATileEntityAppliance implements IFluidHand
 		 * Fetch Output
 		 */
 		
-		ItemStack result = recipe.getOutput(wrapper.itemStack, worldObj.rand)[0];
+		ItemStack result = recipe.getOutput(wrapper.itemStack)[0];
 		result.stackSize = wrapper.itemStack.stackSize;
 		
 		// Fix for re-coloring to the same color (Output == Input)

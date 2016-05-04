@@ -75,6 +75,7 @@ public class TileEntityCreativeWell extends BaseTileEntity implements IFluidHand
 		return false;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
 		if(capability == Taam.CAPABILITY_PIPE) {
@@ -84,16 +85,6 @@ public class TileEntityCreativeWell extends BaseTileEntity implements IFluidHand
 		return null;
 	}
 	
-	/*
-	 * IPipeTE implementation
-	 */
-	
-//	@Override
-//	public IPipe[] getPipesForSide(EnumFacing side) {
-//		int index = side.ordinal();
-//		return new IPipe[] { pipeEnds[index] };
-//	}
-
 	/*
 	 * IFluidHandler implementation
 	 */

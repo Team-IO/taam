@@ -31,7 +31,7 @@ import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.content.IWorldInteractable;
 import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.conveyors.ItemWrapper;
-import net.teamio.taam.conveyors.api.IConveyorAwareTE;
+import net.teamio.taam.conveyors.api.IConveyorSlots;
 import net.teamio.taam.network.TPMachineConfiguration;
 import net.teamio.taam.recipes.IProcessingRecipe;
 import net.teamio.taam.recipes.ProcessingRegistry;
@@ -41,7 +41,7 @@ import net.teamio.taam.util.WorldCoord;
 import net.teamio.taam.util.inv.InventorySimple;
 import net.teamio.taam.util.inv.InventoryUtils;
 
-public class TileEntityConveyorProcessor extends BaseTileEntity implements ISidedInventory, IConveyorAwareTE, IHopper, IRedstoneControlled, IWorldInteractable, IRotatable, ITickable, IRenderable {
+public class TileEntityConveyorProcessor extends BaseTileEntity implements ISidedInventory, IConveyorSlots, IHopper, IRedstoneControlled, IWorldInteractable, IRotatable, ITickable, IRenderable {
 
 	public static final byte Shredder = 0;
 	public static final byte Grinder = 1;
@@ -213,7 +213,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 			}
 			
 			if(recipe != null) {
-				backlog = recipe.getOutput(input, worldObj.rand);
+				backlog = recipe.getOutput(input);
 				
 				if(mode == Grinder) {
 					timeout += Config.pl_processor_grinder_timeout;

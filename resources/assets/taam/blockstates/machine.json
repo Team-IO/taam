@@ -52,15 +52,15 @@
         	"model": "taam:mixer.obj"
         }],
         "direction=north,variant=mixer": [{
-        	"model": "taam:mixer.obj"
+        	"model": "taam:mixer.obj",
         	"y": 180
         }],
         "direction=west,variant=mixer": [{
-        	"model": "taam:mixer.obj"
+        	"model": "taam:mixer.obj",
         	"y": 90
         }],
         "direction=east,variant=mixer": [{
-        	"model": "taam:mixer.obj"
+        	"model": "taam:mixer.obj",
         	"y": 270
         }],
         "variant=fluid_drier": [{

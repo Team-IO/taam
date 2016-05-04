@@ -15,6 +15,7 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.teamio.taam.content.IRotatable;
 
 public class MachineItemMultipart extends ItemMultiPart {
 
@@ -38,9 +39,39 @@ public class MachineItemMultipart extends ItemMultiPart {
 		int meta = stack.getMetadata();
 		IMachineMetaInfo info = getInfo(meta);
 
-		// TODO: distinguish between IMachine and IMachineWithSpecialRenderer later
+		MachineMultipart multipart = new MachineMultipart(info);
+		
+		if(multipart.machine instanceof IRotatable) {
 
-		return new MachineMultipart(info);
+			boolean defaultPlacement = true;
+			
+			EnumFacing placeDir = EnumFacing.NORTH;
+			
+			//TODO: Determination of special placement
+			
+			if (defaultPlacement) {
+				// We hit top/bottom of a block
+				double xDist = player.posX - pos.getX();
+				double zDist = player.posZ - pos.getZ();
+				if (Math.abs(xDist) > Math.abs(zDist)) {
+					if (xDist < 0) {
+						placeDir = EnumFacing.EAST;
+					} else {
+						placeDir = EnumFacing.WEST;
+					}
+				} else {
+					if (zDist < 0) {
+						placeDir = EnumFacing.SOUTH;
+					} else {
+						placeDir = EnumFacing.NORTH;
+					}
+				}
+			}
+			
+			((IRotatable) multipart.machine).setFacingDirection(placeDir);
+		}
+		
+		return multipart;
 	}
 
 	@Override

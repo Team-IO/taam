@@ -3,11 +3,8 @@ package net.teamio.taam.content.piping;
 import java.io.IOException;
 import java.util.List;
 
-import com.google.common.collect.Lists;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -16,33 +13,21 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.world.World;
-import net.minecraftforge.client.model.obj.OBJModel;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.property.IExtendedBlockState;
-import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTank;
-import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidHandler;
 import net.teamio.taam.Log;
 import net.teamio.taam.Taam;
 import net.teamio.taam.content.IRotatable;
-import net.teamio.taam.content.IWorldInteractable;
-import net.teamio.taam.conveyors.ItemWrapper;
-import net.teamio.taam.conveyors.api.IConveyorAwareTE;
+import net.teamio.taam.conveyors.SlotMatrix;
+import net.teamio.taam.conveyors.api.ConveyorSlotsStatic;
 import net.teamio.taam.machines.IMachine;
 import net.teamio.taam.piping.PipeEnd;
-import net.teamio.taam.piping.PipeEndFluidHandler;
 import net.teamio.taam.piping.PipeEndRestricted;
-import net.teamio.taam.piping.PipeEndSharedDistinct;
-import net.teamio.taam.piping.PipeInfo;
 import net.teamio.taam.piping.PipeUtil;
 import net.teamio.taam.recipes.IProcessingRecipeFluidBased;
 import net.teamio.taam.recipes.ProcessingRegistry;
-import net.teamio.taam.rendering.TaamRenderer;
-import net.teamio.taam.rendering.TankRenderInfo;
 
-public class MachineMixer implements IMachine, IRotatable, IConveyorAwareTE {
+public class MachineMixer implements IMachine, IRotatable {
 
 	private EnumFacing direction = EnumFacing.NORTH;
 	
@@ -57,6 +42,34 @@ public class MachineMixer implements IMachine, IRotatable, IConveyorAwareTE {
 	private static final int capacity = 2000;
 
 	public static final AxisAlignedBB bounds = new AxisAlignedBB(0, 0, 0, 1, 0.5f, 1);
+	
+	/**
+	 * Conveyor Slot set for input on the sides
+	 */
+	private ConveyorSlotsStatic conveyorSlots = new ConveyorSlotsStatic() {
+		
+		{
+			slotMatrix = new SlotMatrix(
+					true, true, true,
+					false, false, false,
+					true, true, true);
+			insertMaxY = 1;
+			insertMinY = 0.4;
+		}
+		
+		@Override
+		public ItemStack removeItemAt(int slot) {
+			return null;
+		}
+		
+		@Override
+		public int insertItemAt(ItemStack item, int slot) {
+			if(isSlotAvailable(slot)) {
+				return process(item);
+			}
+			return 0;
+		}
+	};
 	
 	public MachineMixer() {
 		pipeEndOut = new PipeEnd(direction, capacity, false);
@@ -115,12 +128,7 @@ public class MachineMixer implements IMachine, IRotatable, IConveyorAwareTE {
 	@Override
 	public IBlockState getExtendedState(IBlockState state, World world, BlockPos blockPos) {
 		renderUpdate(world, blockPos);
-		// Apply rotation to the model
-		OBJModel.OBJState retState = new OBJModel.OBJState(getVisibleParts(), true);
-		
-		IExtendedBlockState extendedState = (IExtendedBlockState)state;
-		
-		return extendedState.withProperty(OBJModel.OBJProperty.instance, retState);
+		return state;
 	}
 
 	@Override
@@ -172,6 +180,9 @@ public class MachineMixer implements IMachine, IRotatable, IConveyorAwareTE {
 		if(capability == Taam.CAPABILITY_PIPE) {
 			return facing.getAxis() == direction.getAxis();
 		}
+		if(capability == Taam.CAPABILITY_CONVEYOR) {
+			return true;
+		}
 		return false;
 	}
 
@@ -186,6 +197,9 @@ public class MachineMixer implements IMachine, IRotatable, IConveyorAwareTE {
 			} else {
 				return null;
 			}
+		}
+		if(capability == Taam.CAPABILITY_CONVEYOR) {
+			return (T) conveyorSlots;
 		}
 		return null;
 	}
@@ -267,7 +281,7 @@ public class MachineMixer implements IMachine, IRotatable, IConveyorAwareTE {
 		/*
 		 * Get output fluid
 		 */
-		FluidStack outputFluid = recipe.getOutputFluid(stack, inputFluid, worldObj.rand);
+		FluidStack outputFluid = recipe.getOutputFluid(stack, inputFluid);
 		
 		/*
 		 * Add to backlog
@@ -305,86 +319,5 @@ public class MachineMixer implements IMachine, IRotatable, IConveyorAwareTE {
 		//TODO: updateState(false, true, true);
 	}
 	
-	/*
-	 * IConveyorAwareTE implementation
-	 */
-	
-	@Override
-	public boolean canSlotMove(int slot) {
-		return false;
-	}
 
-	@Override
-	public boolean isSlotAvailable(int slot) {
-		switch(direction) {
-		default:
-		case SOUTH:
-		case NORTH:
-			return slot == 6 || slot == 7 || slot == 8
-			|| slot == 0 || slot == 1 || slot == 2;
-		case EAST:
-		case WEST:
-			return slot == 2 || slot == 5 || slot == 8
-			|| slot == 0 || slot == 3 || slot == 6;
-		}
-	}
-
-	@Override
-	public int getMovementProgress(int slot) {
-		return 0;
-	}
-
-	@Override
-	public byte getSpeedsteps() {
-		return 0;
-	}
-
-	@Override
-	public int insertItemAt(ItemStack item, int slot) {
-		if(isSlotAvailable(slot)) {
-			return process(item);
-		}
-		return 0;
-	}
-	
-	@Override
-	public ItemStack removeItemAt(int slot) {
-		return null;
-	}
-
-	@Override
-	public EnumFacing getMovementDirection() {
-		return EnumFacing.DOWN;
-	}
-
-	@Override
-	public ItemWrapper getSlot(int slot) {
-		return ItemWrapper.EMPTY;
-	}
-
-	@Override
-	public EnumFacing getNextSlot(int slot) {
-		return EnumFacing.DOWN;
-	}
-
-	@Override
-	public boolean shouldRenderItemsDefault() {
-		return false;
-	}
-
-	@Override
-	public double getInsertMaxY() {
-		return 1;
-	}
-
-	@Override
-	public double getInsertMinY() {
-		return .4f;
-	}
-	
-	@Override
-	public BlockPos getPos() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }

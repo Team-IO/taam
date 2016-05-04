@@ -33,7 +33,7 @@ import net.teamio.taam.util.WrenchUtil;
 import net.teamio.taam.util.inv.InventoryUtils;
 
 public class MachineMultipart extends Multipart implements IOccludingPart, ITickable {
-	private IMachine machine;
+	public IMachine machine;
 	private IMachineMetaInfo meta;
 
 	public MachineMultipart() {

@@ -1,13 +1,11 @@
 package net.teamio.taam;
 
-import mcmultipart.client.multipart.MultipartRegistryClient;
 import mcmultipart.multipart.IMultipart;
 import mcmultipart.multipart.IPartFactory.IAdvancedPartFactory;
 import mcmultipart.multipart.MultipartRegistry;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
-import net.teamio.taam.machines.IMachine;
 import net.teamio.taam.machines.IMachineMetaInfo;
 import net.teamio.taam.machines.MachineItemMultipart;
 import net.teamio.taam.machines.MachineMultipart;

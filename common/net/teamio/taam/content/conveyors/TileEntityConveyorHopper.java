@@ -15,16 +15,20 @@ import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.ITickable;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import net.teamio.taam.Config;
+import net.teamio.taam.Taam;
 import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IRedstoneControlled;
 import net.teamio.taam.content.IRenderable;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.conveyors.ConveyorUtil;
-import net.teamio.taam.conveyors.ItemWrapper;
-import net.teamio.taam.conveyors.api.IConveyorAwareTE;
+import net.teamio.taam.conveyors.api.ConveyorSlotsInventory;
 import net.teamio.taam.network.TPMachineConfiguration;
 import net.teamio.taam.util.TaamUtil;
 import net.teamio.taam.util.WorldCoord;
@@ -33,7 +37,7 @@ import net.teamio.taam.util.inv.InventorySimple;
 import net.teamio.taam.util.inv.InventoryUtils;
 
 
-public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyorAwareTE, IInventory, IHopper, IRedstoneControlled, IRotatable, ITickable, IRenderable {
+public class TileEntityConveyorHopper extends BaseTileEntity implements IInventory, IHopper, IRedstoneControlled, IRotatable, ITickable, IRenderable {
 
 	private InventorySimple inventory;
 	
@@ -257,6 +261,32 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 			direction = EnumFacing.NORTH;
 		}
 	}
+	
+	private IItemHandler itemHandler = new InvWrapper(inventory);
+	private ConveyorSlotsInventory conveyorSlots = new ConveyorSlotsInventory(itemHandler);
+	
+	@Override
+	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+			return true;
+		}
+		if(capability == Taam.CAPABILITY_CONVEYOR) {
+			return true;
+		}
+		return false;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+			return (T) itemHandler;
+		}
+		if(capability == Taam.CAPABILITY_CONVEYOR) {
+			return (T) conveyorSlots;
+		}
+		return null;
+	}
 
 	/*
 	 * IInventory implementation
@@ -347,71 +377,6 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 
 	@Override
 	public void clear() {
-	}
-	
-	/*
-	 * IConveyorAwareTE implementation
-	 */
-
-	@Override
-	public boolean shouldRenderItemsDefault() {
-		return false;
-	}
-
-	@Override
-	public EnumFacing getMovementDirection() {
-		return EnumFacing.DOWN;
-	}
-	
-	@Override
-	public int insertItemAt(ItemStack item, int slot) {
-		// insertItem returns item count unable to insert.
-		int inserted = item.stackSize - InventoryUtils.insertItem(inventory, item, false);
-		updateState(false, false, false);
-		return inserted;
-	}
-	
-	@Override
-	public ItemStack removeItemAt(int slot) {
-		ItemStack content = getStackInSlot(slot);
-		setInventorySlotContents(slot, null);
-		updateState(false, false, false);
-		return content;
-	}
-	
-	@Override
-	public boolean canSlotMove(int slot) {
-		return false;
-	}
-	
-	@Override
-	public boolean isSlotAvailable(int slot) {
-		return true;
-	}
-
-	@Override
-	public int getMovementProgress(int slot) {
-		return 0;
-	}
-
-	@Override
-	public byte getSpeedsteps() {
-		return 1;
-	}
-
-	@Override
-	public ItemWrapper getSlot(int slot) {
-		return ItemWrapper.EMPTY;
-	}
-
-	@Override
-	public double getInsertMaxY() {
-		return 0.9;
-	}
-
-	@Override
-	public double getInsertMinY() {
-		return 0.3;
 	}
 	
 	/*
@@ -531,10 +496,6 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IConveyo
 	public void setFacingDirection(EnumFacing direction) {
 		this.direction = direction;
 		updateState(false, true, false);
-	}
-
-	public EnumFacing getNextSlot(int slot) {
-		return EnumFacing.DOWN;
 	}
 
 }

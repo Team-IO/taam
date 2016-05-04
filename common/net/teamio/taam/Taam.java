@@ -10,9 +10,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.IStringSerializable;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
+import net.teamio.taam.content.piping.MachineFluidDrier;
+import net.teamio.taam.content.piping.MachineMixer;
 import net.teamio.taam.content.piping.MachinePipe;
 import net.teamio.taam.content.piping.MachinePump;
 import net.teamio.taam.content.piping.MachineTank;
+import net.teamio.taam.conveyors.api.IConveyorSlots;
 import net.teamio.taam.machines.IMachine;
 import net.teamio.taam.machines.IMachineMetaInfo;
 import net.teamio.taam.piping.IPipe;
@@ -27,6 +30,8 @@ public final class Taam {
 	public static Capability<IPipe> CAPABILITY_PIPE;
 	@CapabilityInject(TankRenderInfo[].class)
 	public static Capability<TankRenderInfo[]> CAPABILITY_RENDER_TANK;
+	@CapabilityInject(IConveyorSlots.class)
+	public static Capability<IConveyorSlots> CAPABILITY_CONVEYOR;
 	
 	public static final String MOD_ID = "taam";
 	public static final String MOD_NAME = "Taam";
@@ -36,6 +41,11 @@ public final class Taam {
 	public static final String MOD_DESCRIPTION = "Tech and Acessories Mod";
 	public static final String MOD_CREDITS = "";
 	public static final String MOD_LOGO_PATH = "";
+	
+	/**
+	 * Network channel name
+	 */
+	public static final String CHANNEL_NAME = "TAAM";
 	
 	public static final String GUI_FACTORY_CLASS = "net.teamio.taam.gui.GuiFactory";
 
@@ -250,11 +260,7 @@ public final class Taam {
 
 	
 	public static enum BLOCK_PIPEMACHINES_META implements IStringSerializable {
-		tank,
 		creativewell,
-		pump,
-		mixer,
-		fluid_drier,
 		;
 		public static String[] valuesAsString() {
 			Enum<?>[] valuesAsEnum = values();
@@ -389,8 +395,6 @@ public final class Taam {
 	public static final String TILEENTITY_CONVEYOR_SIEVE = "taam.sieve";
 	
 	public static final String TILEENTITY_CREATIVEWELL = "taam.creativewell";
-	public static final String TILEENTITY_MIXER = "taam.mixer";
-	public static final String TILEENTITY_FLUID_DRIER = "taam.fluid_drier";
 	
 	public static final String TILEENTITY_APPLIANCE_SPRAYER = "taam.appliance.sprayer";
 
@@ -457,8 +461,8 @@ public final class Taam {
 		pipe(MachinePipe.class, "pipe", null),
 		tank(MachineTank.class, "tank", null),
 		pump(MachinePump.class, "pump", null),
-		mixer(MachinePump.class, "mixer", null),
-		fluid_drier(MachinePump.class, "fluid_drier", null);
+		mixer(MachineMixer.class, "mixer", null),
+		fluid_drier(MachineFluidDrier.class, "fluid_drier", null);
 
 		private Class<? extends IMachine> machineClass;
 		private String unlocalizedName;
@@ -544,6 +548,4 @@ public final class Taam {
 			return valuesAsString;
 		}
 	}
-	
-	public static final String CHANNEL_NAME = "TAAM";
 }

@@ -65,8 +65,6 @@ import net.teamio.taam.content.conveyors.TileEntityConveyorTrashCan;
 import net.teamio.taam.content.piping.BlockPipeMachines;
 import net.teamio.taam.content.piping.ItemPipeMachines;
 import net.teamio.taam.content.piping.TileEntityCreativeWell;
-import net.teamio.taam.content.piping.TileEntityFluidDrier;
-import net.teamio.taam.content.piping.TileEntityMixer;
 import net.teamio.taam.conveyors.appliances.ApplianceSprayer;
 import net.teamio.taam.gui.GuiHandler;
 import net.teamio.taam.machines.MachineBlock;
@@ -242,8 +240,6 @@ public class TaamMain {
 		GameRegistry.registerTileEntity(ApplianceSprayer.class, Taam.TILEENTITY_APPLIANCE_SPRAYER);
 
 		GameRegistry.registerTileEntity(TileEntityCreativeWell.class, Taam.TILEENTITY_CREATIVEWELL);
-		GameRegistry.registerTileEntity(TileEntityMixer.class, Taam.TILEENTITY_MIXER);
-		GameRegistry.registerTileEntity(TileEntityFluidDrier.class, Taam.TILEENTITY_FLUID_DRIER);
 
 		/*
 		 * Multiparts

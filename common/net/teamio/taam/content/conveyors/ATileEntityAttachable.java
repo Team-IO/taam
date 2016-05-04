@@ -3,10 +3,10 @@ package net.teamio.taam.content.conveyors;
 import net.minecraft.util.EnumFacing;
 import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IRotatable;
-import net.teamio.taam.conveyors.api.IConveyorAwareTE;
+import net.teamio.taam.conveyors.api.IConveyorSlots;
 import net.teamio.taam.util.TaamUtil;
 
-public abstract class ATileEntityAttachable extends BaseTileEntity implements IConveyorAwareTE, IRotatable {
+public abstract class ATileEntityAttachable extends BaseTileEntity implements IConveyorSlots, IRotatable {
 
 	protected EnumFacing direction = EnumFacing.NORTH;
 
