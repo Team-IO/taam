@@ -59,11 +59,11 @@ public final class PipeUtil {
 		return ent.getCapability(Taam.CAPABILITY_PIPE, side.getOpposite());
 	}
 
-	private static final ThreadLocal<ArrayList<IPipe>> connected = ThreadLocal.withInitial(new Supplier<ArrayList<IPipe>>() {
-		public ArrayList<IPipe> get() {
+	private static final ThreadLocal<ArrayList<IPipe>> connected = new ThreadLocal<ArrayList<IPipe>>() {
+		protected ArrayList<IPipe> initialValue() {
 			return new ArrayList<IPipe>(6);
 		};
-	}) ;
+	};
 	
 	public static void processPipes(IPipe pipe, IBlockAccess world, BlockPos pos) {
 
