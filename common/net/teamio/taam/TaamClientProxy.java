@@ -86,12 +86,8 @@ public class TaamClientProxy extends TaamCommonProxy {
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityConveyorItemBag.class, taamRenderer);
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityConveyorTrashCan.class, taamRenderer);
 
-//		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityPipe.class, taamRenderer);
-//		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityTank.class, taamRenderer);
-
 		ClientRegistry.bindTileEntitySpecialRenderer(ApplianceSprayer.class, taamRenderer);
 		
-
 		ClientRegistry.bindTileEntitySpecialRenderer(MachineTileEntity.class, taamRenderer);
 		
 		//TODO: Extract from here to decouple from Multipart
@@ -200,10 +196,9 @@ public class TaamClientProxy extends TaamCommonProxy {
 
 		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_MACHINES, Taam.BLOCK_MACHINES_META.chute.ordinal(), "chute.obj");
 		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_MACHINES, Taam.BLOCK_MACHINES_META.creativecache.ordinal(), "creative_cache.obj");
+		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_MACHINES, Taam.BLOCK_MACHINES_META.creativewell.ordinal(), "creative_well.obj");
 		
 		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_PRODUCTIONLINE_APPLIANCE, Taam.BLOCK_PRODUCTIONLINE_APPLIANCE_META.sprayer.ordinal(), "sprayer.obj");
-
-		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_PIPEMACHINES, Taam.BLOCK_PIPEMACHINES_META.creativewell.ordinal(), "creative_well.obj");
 
 		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_MACHINE_WRAPPER, Taam.MACHINE_META.pipe.ordinal(), "pipes.obj");
 		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_MACHINE_WRAPPER, Taam.MACHINE_META.tank.ordinal(), "tank.obj");

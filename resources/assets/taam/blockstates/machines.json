@@ -15,6 +15,9 @@
         "variant=creativecache": [{
        	    "model": "taam:creative_cache.obj"
         }],
+        "variant=creativewell": [{
+        	"model": "taam:creative_well.obj"
+        }],
         "variant=chute": [{
            "model": "taam:chute.obj"
         }]

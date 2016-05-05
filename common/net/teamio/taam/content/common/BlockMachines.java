@@ -2,7 +2,9 @@ package net.teamio.taam.content.common;
 
 import java.util.List;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
@@ -15,20 +17,24 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.client.model.obj.OBJModel;
+import net.minecraftforge.common.property.ExtendedBlockState;
+import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.teamio.taam.Log;
 import net.teamio.taam.Taam;
 import net.teamio.taam.Taam.BLOCK_MACHINES_META;
 import net.teamio.taam.content.BaseBlock;
+import net.teamio.taam.content.piping.TileEntityCreativeWell;
 
 public class BlockMachines extends BaseBlock {
 
 	public static final PropertyEnum<Taam.BLOCK_MACHINES_META> VARIANT = PropertyEnum.create("variant", Taam.BLOCK_MACHINES_META.class);
-	
+
 	public BlockMachines() {
 		super(Material.wood);
-		this.setStepSound(soundTypeWood);
+		this.setStepSound(Block.soundTypeMetal);
 		this.setHardness(6);
 		this.setHarvestLevel("pickaxe", 2);
 	}
@@ -40,9 +46,12 @@ public class BlockMachines extends BaseBlock {
 	
 	@Override
 	protected BlockState createBlockState() {
-		return new BlockState(this, VARIANT);
+		return new ExtendedBlockState(this,
+				new IProperty[] { VARIANT },
+				new IUnlistedProperty[] { OBJModel.OBJProperty.instance }
+		);
 	}
-	
+
 	@Override
 	public int getMetaFromState(IBlockState state) {
 		Taam.BLOCK_MACHINES_META meta = (Taam.BLOCK_MACHINES_META)state.getValue(VARIANT);
@@ -66,6 +75,8 @@ public class BlockMachines extends BaseBlock {
 			return new TileEntityChute(false);
 		case creativecache:
 			return new TileEntityCreativeCache();
+		case creativewell:
+			return new TileEntityCreativeWell();
 		}
 		return null;
 	}
@@ -108,6 +119,7 @@ public class BlockMachines extends BaseBlock {
 			this.maxY = 1;
 			this.maxZ = 0.9;
 			break;*/
+		case creativewell:
 		case creativecache:
 			this.minX = 0;
 			this.minY = 0;

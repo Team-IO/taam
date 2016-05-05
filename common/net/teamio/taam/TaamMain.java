@@ -62,8 +62,6 @@ import net.teamio.taam.content.conveyors.TileEntityConveyorItemBag;
 import net.teamio.taam.content.conveyors.TileEntityConveyorProcessor;
 import net.teamio.taam.content.conveyors.TileEntityConveyorSieve;
 import net.teamio.taam.content.conveyors.TileEntityConveyorTrashCan;
-import net.teamio.taam.content.piping.BlockPipeMachines;
-import net.teamio.taam.content.piping.ItemPipeMachines;
 import net.teamio.taam.content.piping.TileEntityCreativeWell;
 import net.teamio.taam.conveyors.appliances.ApplianceSprayer;
 import net.teamio.taam.gui.GuiHandler;
@@ -111,8 +109,6 @@ public class TaamMain {
 	public static BlockOre blockOre;
 	public static BlockBuilding blockConcrete;
 	public static BlockSupportBeam blockSupportBeam;
-
-	public static BlockPipeMachines blockPipeMachines;
 
 	public static FluidDye[] fluidsDye;
 	public static BlockFluidClassic[] blocksFluidDye;
@@ -218,9 +214,6 @@ public class TaamMain {
 							boolean detailedInfoSetting) {
 					}
 				}), Taam.ITEM_DUST);
-
-		registerBlock(blockPipeMachines = new BlockPipeMachines(), null, Taam.BLOCK_PIPEMACHINES);
-		registerItem(new ItemPipeMachines(blockPipeMachines, Taam.BLOCK_PIPEMACHINES_META.valuesAsString()), Taam.BLOCK_PIPEMACHINES);
 
 		/*
 		 * Tile Entities

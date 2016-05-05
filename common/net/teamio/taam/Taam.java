@@ -63,8 +63,6 @@ public final class Taam {
 	public static final String BLOCK_MAGNET_RAIL = "magnet_rail";
 	public static final String BLOCK_SUPPORT_BEAM = "support_beam";
 
-	public static final String BLOCK_PIPEMACHINES = "pipemachines";
-	
 	public static final String BLOCK_MACHINE_WRAPPER = "machine";
 	
 	public static enum BLOCK_ORE_META implements IStringSerializable {
@@ -177,6 +175,7 @@ public final class Taam {
 	public static enum BLOCK_MACHINES_META implements IStringSerializable {
 		chute,
 		creativecache,
+		creativewell
 		;
 		public static String[] valuesAsString() {
 			Enum<?>[] valuesAsEnum = values();
@@ -241,26 +240,6 @@ public final class Taam {
 	
 	public static enum BLOCK_PRODUCTIONLINE_APPLIANCE_META implements IStringSerializable {
 		sprayer,
-		;
-		public static String[] valuesAsString() {
-			Enum<?>[] valuesAsEnum = values();
-			String[] valuesAsString = new String[valuesAsEnum.length];
-			for(int i = 0; i < valuesAsEnum.length; i++) {
-				valuesAsString[i] = valuesAsEnum[i].name();
-			}
-			return valuesAsString;
-		}
-
-		@Override
-		public String getName() {
-			return name();
-		}
-	};
-	
-
-	
-	public static enum BLOCK_PIPEMACHINES_META implements IStringSerializable {
-		creativewell,
 		;
 		public static String[] valuesAsString() {
 			Enum<?>[] valuesAsEnum = values();

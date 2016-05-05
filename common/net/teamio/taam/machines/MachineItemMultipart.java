@@ -48,6 +48,30 @@ public class MachineItemMultipart extends ItemMultiPart {
 			EnumFacing placeDir = EnumFacing.NORTH;
 			
 			//TODO: Determination of special placement
+			/*
+		 	EnumFacing dir = side.getOpposite();
+			EnumFacing placeDir = EnumFacing.NORTH;
+			boolean defaultPlacement = false;
+	
+			if (dir == EnumFacing.UP || dir == EnumFacing.DOWN) {
+				defaultPlacement = true;
+			} else {
+				TileEntity ent = world.getTileEntity(pos.offset(dir));
+				if (ent instanceof IRotatable) {
+					EnumFacing otherDir = ((IRotatable) ent).getFacingDirection();
+					if (otherDir == dir || otherDir == dir.getOpposite()) {
+						placeDir = otherDir;
+					} else {
+						placeDir = dir;
+					}
+				} else if (ent.hasCapability(Taam.CAPABILITY_PIPE, dir)) {
+					placeDir = dir;
+				} else {
+					defaultPlacement = true;
+				}
+			}
+			 */
+			
 			
 			if (defaultPlacement) {
 				// We hit top/bottom of a block
