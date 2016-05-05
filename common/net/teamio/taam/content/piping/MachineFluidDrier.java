@@ -5,39 +5,34 @@ import java.util.List;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fluids.FluidStack;
 import net.teamio.taam.Config;
 import net.teamio.taam.Log;
 import net.teamio.taam.Taam;
 import net.teamio.taam.content.IRedstoneControlled;
+import net.teamio.taam.conveyors.OutputChuteBacklog;
 import net.teamio.taam.machines.IMachine;
 import net.teamio.taam.piping.PipeEndRestricted;
 import net.teamio.taam.piping.PipeUtil;
 import net.teamio.taam.recipes.IProcessingRecipeFluidBased;
 import net.teamio.taam.recipes.ProcessingRegistry;
-import net.teamio.taam.util.ProcessingUtil;
 import net.teamio.taam.util.TaamUtil;
-import net.teamio.taam.util.inv.InventoryUtils;
 
 public class MachineFluidDrier implements IMachine {
 
 	private PipeEndRestricted pipeEndIn;
+	
+	private OutputChuteBacklog chute = new OutputChuteBacklog();
 
 	private FluidStack lastInputFluid;
 	private IProcessingRecipeFluidBased[] matchingRecipes;
-
-	private ItemStack[] backlog;
 
 	private byte redstoneMode = IRedstoneControlled.MODE_ACTIVE_ON_LOW;
 	private static final int capacity = 1000;
@@ -58,11 +53,11 @@ public class MachineFluidDrier implements IMachine {
 	public void writePropertiesToNBT(NBTTagCompound tag) {
 		tag.setBoolean("isShutdown", isShutdown);
 		tag.setInteger("timeout", timeout);
-
-		if (backlog != null) {
-			tag.setTag("holdback", InventoryUtils.writeItemStacksToTagSequential(backlog));
-		}
-
+		
+		NBTTagCompound tagChute = new NBTTagCompound();
+		chute.writeToNBT(tagChute);
+		tag.setTag("chute", tagChute);
+		
 		NBTTagCompound tagIn = new NBTTagCompound();
 		pipeEndIn.writeToNBT(tagIn);
 		tag.setTag("pipeEndIn", tagIn);
@@ -73,13 +68,7 @@ public class MachineFluidDrier implements IMachine {
 		isShutdown = tag.getBoolean("isShutdown");
 		timeout = tag.getInteger("timeout");
 
-		NBTTagList holdbackList = tag.getTagList("holdback", NBT.TAG_COMPOUND);
-		if (holdbackList == null) {
-			backlog = null;
-		} else {
-			backlog = new ItemStack[holdbackList.tagCount()];
-			InventoryUtils.readItemStacksFromTagSequential(backlog, holdbackList);
-		}
+		chute.readFromNBT(tag.getCompoundTag("chute"));
 
 		NBTTagCompound tagIn = tag.getCompoundTag("pipeEndIn");
 		if (tagIn != null) {
@@ -137,20 +126,8 @@ public class MachineFluidDrier implements IMachine {
 	public void blockUpdate(World world, BlockPos pos) {
 	}
 	
-
-	
 	private boolean process(World world, BlockPos pos) {
 		BlockPos down = pos.down();
-		
-		/*
-		 * Check blocked & fetch output inventory
-		 */
-		
-		IInventory outputInventory = InventoryUtils.getInventory(world, down);
-		if(outputInventory == null && !TaamUtil.canDropIntoWorld(world, down)) {
-			resetTimeout();
-			return false;
-		}
 		
 		/*
 		 * Check redstone level
@@ -165,18 +142,26 @@ public class MachineFluidDrier implements IMachine {
 			resetTimeout();
 			return true;
 		}
+
+		
+		/*
+		 * Check blocked & fetch output inventory
+		 */
+		chute.refreshOuptutInventory(world, down);
+		if(!chute.isOperable()) {
+			resetTimeout();
+			return false;
+		}
 		
 		/*
 		 * Output Backlog
 		 */
-		
+
 		// Output the backlog. Returns true if there were items transferred or there are still items left.
-		if(ProcessingUtil.chuteMechanicsOutput(world, down, outputInventory, backlog, 0)) {
+		if(chute.output(world, down)) {
 			resetTimeout();
 			return true;
 		}
-
-		backlog = null;
 		
 		/*
 		 * Check Recipe
@@ -226,7 +211,7 @@ public class MachineFluidDrier implements IMachine {
 		 * Set Output Backlog
 		 */
 		
-		backlog = recipe.getOutput(null);
+		chute.backlog = recipe.getOutput(null);
 		resetTimeout();
 		return true;
 	}
