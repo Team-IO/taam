@@ -41,6 +41,10 @@ public class MachineTank implements IMachine, IFluidHandler, IWorldInteractable 
 	private TankRenderInfo tankRI = new TankRenderInfo(TaamRenderer.bounds_tank, null);
 	
 	public static final List<String> visibleParts = Lists.newArrayList("BaseplateConnector_pmdl_c", "Tank_tmdl");
+	private static final float fromBorder = 1.5f/16;
+	private static final float fromBorderOcclusion = 2f/16;
+	public static final AxisAlignedBB bbTank = new AxisAlignedBB(fromBorder, 0, fromBorder, 1-fromBorder, 1, 1-fromBorder);
+	public static final AxisAlignedBB bbCoolusion = new AxisAlignedBB(fromBorderOcclusion, fromBorderOcclusion, fromBorderOcclusion, 1-fromBorderOcclusion, 1-fromBorderOcclusion, 1-fromBorderOcclusion);
 	
 	public MachineTank() {
 		pipeEndUP = new PipeEndFluidHandler(this, EnumFacing.UP, true);
@@ -110,11 +114,6 @@ public class MachineTank implements IMachine, IFluidHandler, IWorldInteractable 
 	@Override
 	public void blockUpdate(World world, BlockPos pos) {
 	}
-
-	private static final float fromBorder = 2f/16;
-	private static final float fromBorderOcclusion = 2f/16;
-	public static final AxisAlignedBB bbTank = new AxisAlignedBB(fromBorder, 0, fromBorder, 1-fromBorder, 1, 1-fromBorder);
-	public static final AxisAlignedBB bbCoolusion = new AxisAlignedBB(fromBorderOcclusion, fromBorderOcclusion, fromBorderOcclusion, 1-fromBorderOcclusion, 1-fromBorderOcclusion, 1-fromBorderOcclusion);
 
 	@Override
 	public void addCollisionBoxes(AxisAlignedBB mask, List<AxisAlignedBB> list, Entity collidingEntity) {

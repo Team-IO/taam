@@ -14,9 +14,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.world.World;
-import net.minecraftforge.client.model.obj.OBJModel;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.teamio.taam.Log;
 import net.teamio.taam.Taam;
@@ -40,8 +38,13 @@ public class MachinePump implements IMachine, IRotatable {
 
 	public static final List<String> visibleParts = Lists.newArrayList("Baseplate_pmdl", "Pump_pumdl");
 
-	public static final AxisAlignedBB boundsPump = new AxisAlignedBB(0, 0, 0, 1, 1f - 1/16f, 1);
+	private static final float fromBorder = 2f/16;
+	public static final AxisAlignedBB boundsPump = new AxisAlignedBB(fromBorder, 0, fromBorder, 1-fromBorder, 1-4/16f, 1-fromBorder);
 	public static final AxisAlignedBB boundsPumpTank = new AxisAlignedBB(0, 0, 0, 3/16f, 3/16f, 3/16f);
+	
+	private static final float fromBorderOcclusion = 2f/16;
+	public static final AxisAlignedBB bbCoolusion = new AxisAlignedBB(fromBorderOcclusion, fromBorderOcclusion, fromBorderOcclusion, 1-fromBorderOcclusion, 1-fromBorderOcclusion, 1-fromBorderOcclusion);
+
 	
 	private TankRenderInfo tankRI = new TankRenderInfo(boundsPumpTank, null);
 	
@@ -94,10 +97,11 @@ public class MachinePump implements IMachine, IRotatable {
 	public IBlockState getExtendedState(IBlockState state, World world, BlockPos blockPos) {
 		renderUpdate(world, blockPos);
 
-		OBJModel.OBJState retState = new OBJModel.OBJState(getVisibleParts(), true);
+		return state;
+		/*OBJModel.OBJState retState = new OBJModel.OBJState(getVisibleParts(), true);
 		IExtendedBlockState extendedState = (IExtendedBlockState)state;
 		
-		return extendedState.withProperty(OBJModel.OBJProperty.instance, retState);
+		return extendedState.withProperty(OBJModel.OBJProperty.instance, retState);*/
 	}
 
 	@Override
@@ -120,21 +124,17 @@ public class MachinePump implements IMachine, IRotatable {
 	public void blockUpdate(World world, BlockPos pos) {
 	}
 
-	private static final float fromBorder = 2f/16;
-	private static final float fromBorderOcclusion = 2f/16;
-	public static final AxisAlignedBB bbTank = new AxisAlignedBB(fromBorder, 0, fromBorder, 1-fromBorder, 1, 1-fromBorder);
-	public static final AxisAlignedBB bbCoolusion = new AxisAlignedBB(fromBorderOcclusion, fromBorderOcclusion, fromBorderOcclusion, 1-fromBorderOcclusion, 1-fromBorderOcclusion, 1-fromBorderOcclusion);
-
+	
 	@Override
 	public void addCollisionBoxes(AxisAlignedBB mask, List<AxisAlignedBB> list, Entity collidingEntity) {
-		if (mask.intersectsWith(bbTank)) {
-			list.add(bbTank);
+		if (mask.intersectsWith(boundsPump)) {
+			list.add(boundsPump);
 		}
 	}
 
 	@Override
 	public void addSelectionBoxes(List<AxisAlignedBB> list) {
-		list.add(bbTank);
+		list.add(boundsPump);
 	}
 
 	@Override

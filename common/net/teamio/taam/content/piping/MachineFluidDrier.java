@@ -45,6 +45,10 @@ public class MachineFluidDrier implements IMachine {
 	
 	public boolean isShutdown;
 	
+	private static final float fromBorderOcclusion = 2f/16;
+	public static final AxisAlignedBB bbCollision = new AxisAlignedBB(0, 0, 0, 1, 1-3/16f, 1);
+	public static final AxisAlignedBB bbCoolusion = new AxisAlignedBB(fromBorderOcclusion, fromBorderOcclusion, fromBorderOcclusion, 1-fromBorderOcclusion, 1-fromBorderOcclusion, 1-fromBorderOcclusion);
+	
 	public MachineFluidDrier() {
 		pipeEndIn = new PipeEndRestricted(EnumFacing.UP, capacity, false);
 		resetTimeout();
@@ -256,11 +260,6 @@ public class MachineFluidDrier implements IMachine {
 		}
 		return null;
 	}
-
-	private static final float fromBorder = 2f/16;
-	private static final float fromBorderOcclusion = 2f/16;
-	public static final AxisAlignedBB bbCollision = new AxisAlignedBB(0, 0, 0, 1, 1-fromBorder, 1);
-	public static final AxisAlignedBB bbCoolusion = new AxisAlignedBB(fromBorderOcclusion, fromBorderOcclusion, fromBorderOcclusion, 1-fromBorderOcclusion, 1-fromBorderOcclusion, 1-fromBorderOcclusion);
 
 	@Override
 	public void addCollisionBoxes(AxisAlignedBB mask, List<AxisAlignedBB> list, Entity collidingEntity) {

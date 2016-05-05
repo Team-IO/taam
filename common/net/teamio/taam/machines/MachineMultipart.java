@@ -130,7 +130,7 @@ public class MachineMultipart extends Multipart implements IOccludingPart, ITick
 	@Override
 	public IBlockState getExtendedState(IBlockState state) {
 		if(machine instanceof IRotatable) {
-			return machine.getExtendedState(state, getWorld(), getPos()).withProperty(VARIANT, (Taam.MACHINE_META)meta).withProperty(DIRECTION, ((IRotatable)machine).getFacingDirection());
+			return machine.getExtendedState(state, getWorld(), getPos()).withProperty(DIRECTION, ((IRotatable)machine).getFacingDirection()).withProperty(VARIANT, (Taam.MACHINE_META)meta);
 		} else {
 			return machine.getExtendedState(state, getWorld(), getPos()).withProperty(VARIANT, (Taam.MACHINE_META)meta);
 		}
@@ -147,7 +147,7 @@ public class MachineMultipart extends Multipart implements IOccludingPart, ITick
 	@Override
 	public BlockState createBlockState() {
 		if(machine instanceof IRotatable) {
-			return new ExtendedBlockState(MCMultiPartMod.multipart, new IProperty[] { VARIANT, DIRECTION }, new IUnlistedProperty[]{BlockMultipart.properties[0], OBJModel.OBJProperty.instance});
+			return new ExtendedBlockState(MCMultiPartMod.multipart, new IProperty[] { DIRECTION, VARIANT }, new IUnlistedProperty[]{BlockMultipart.properties[0], OBJModel.OBJProperty.instance});
 		} else {
 			return new ExtendedBlockState(MCMultiPartMod.multipart, new IProperty[] { VARIANT }, new IUnlistedProperty[]{BlockMultipart.properties[0], OBJModel.OBJProperty.instance});
 		}
