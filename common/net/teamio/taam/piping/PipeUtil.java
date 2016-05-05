@@ -1,7 +1,6 @@
 package net.teamio.taam.piping;
 
 import java.util.ArrayList;
-import java.util.function.Supplier;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
