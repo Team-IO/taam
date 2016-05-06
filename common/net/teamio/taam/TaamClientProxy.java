@@ -8,8 +8,6 @@ import javax.vecmath.Matrix4f;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import mcmultipart.client.multipart.ISmartMultipartModel;
-import mcmultipart.client.multipart.MultipartRegistryClient;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemMeshDefinition;
@@ -54,9 +52,7 @@ import net.teamio.taam.content.conveyors.TileEntityConveyorProcessor;
 import net.teamio.taam.content.conveyors.TileEntityConveyorSieve;
 import net.teamio.taam.content.conveyors.TileEntityConveyorTrashCan;
 import net.teamio.taam.conveyors.appliances.ApplianceSprayer;
-import net.teamio.taam.machines.MachineMultipart;
 import net.teamio.taam.machines.MachineTileEntity;
-import net.teamio.taam.rendering.TaamMultipartRenderer;
 import net.teamio.taam.rendering.TaamRenderer;
 
 @SuppressWarnings("deprecation")
@@ -90,9 +86,11 @@ public class TaamClientProxy extends TaamCommonProxy {
 		
 		ClientRegistry.bindTileEntitySpecialRenderer(MachineTileEntity.class, taamRenderer);
 		
-		//TODO: Extract from here to decouple from Multipart
-		MultipartRegistryClient.bindMultipartSpecialRenderer(MachineMultipart.class, new TaamMultipartRenderer(taamRenderer));
-
+		// If we load multipart, register multipart things, too
+		if(Config.multipart_load) {
+			MultipartHandlerClient.registerRenderStuff();
+		}
+		
 		// Receive event for Client Ticks
 		MinecraftForge.EVENT_BUS.register(taamRenderer);
 
@@ -370,38 +368,13 @@ public class TaamClientProxy extends TaamCommonProxy {
 			}
 		}
 		
-		{
-			ModelResourceLocation resourceLocation = new ModelResourceLocation("taam:machine#variant=pipe");
-			IBakedModel bakedModel = event.modelRegistry.getObject(resourceLocation);
-			if (bakedModel instanceof OBJBakedModel) {
-				Log.debug("Replacing (multipart) " + resourceLocation);
-	
-				OBJBakedModel bakedAsObj = (OBJBakedModel) bakedModel;
-				/*
-				 * Create custom baked model as replacement
-				 */
-	
-				bakedModel = new SmartBlockPartModel(bakedAsObj);
-				event.modelRegistry.putObject(resourceLocation, bakedModel);
-			}
+		if(Config.multipart_load) {
+			MultipartHandlerClient.onModelBakeEvent(event);
 		}
 
 		Log.debug("Completed onModelBakeEvent");
 	}
 
-	public static class SmartBlockPartModel extends ItemAwareOBJBakedModel implements ISmartMultipartModel {
-
-		public SmartBlockPartModel(OBJBakedModel original) {
-			super(original);
-		}
-
-		@Override
-		public IBakedModel handlePartState(IBlockState state) {
-			return this.handleBlockState(state);
-		}
-		
-	}
-	
 	/**
 	 * Baked model implementation that checks with the item type for a list of
 	 * parts to render using an OBJBakedModel as parent.

@@ -84,6 +84,12 @@ public class Config {
 	
 	public static boolean multipart_load = true;
 	public static boolean multipart_register_items = true;
+
+	/**
+	 * Set by {@link TaamMain} in {@link TaamMain#preInit(net.minecraftforge.fml.common.event.FMLPreInitializationEvent)}.
+	 * If true, mcmultipart was found & can be used.
+	 */
+	public static boolean multipart_present;
 	
 	public static final String SECTION_WORLDGEN = "worldgen";
 	public static final String SECTION_PRODUCTIONLINE = "production_line";
@@ -154,6 +160,7 @@ public class Config {
 		{
 			config.save();
 		}
+		
 	}
 	
 	
@@ -163,6 +170,11 @@ public class Config {
 		if (event.modID.equalsIgnoreCase(Taam.MOD_ID))
 		{
 			loadConfig();
+			
+			if(multipart_load && !multipart_present) {
+				Log.warn("Config has multipart enabled, but it was not found. Multipart support will not be loaded.");
+				multipart_load = false;
+			}
 		}
 	}
 	
