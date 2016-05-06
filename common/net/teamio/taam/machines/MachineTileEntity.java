@@ -10,12 +10,15 @@ import net.teamio.taam.content.BaseTileEntity;
 public class MachineTileEntity extends BaseTileEntity implements ITickable {
 
 	public IMachine machine;
+	public IMachineMetaInfo meta;
 	
 	public MachineTileEntity() {
+		machine = new MachineDummy();
 	}
 	
-	public MachineTileEntity(IMachine machine) {
-		this.machine = machine;
+	public MachineTileEntity(IMachineMetaInfo meta) {
+		this.meta = meta;
+		this.machine = meta.createMachine();
 	}
 	
 	@Override
@@ -24,26 +27,23 @@ public class MachineTileEntity extends BaseTileEntity implements ITickable {
 	}
 	
 	@Override
-	public void readFromNBT(NBTTagCompound tag) {
-		String machineID = tag.getString("machine");
-		IMachineMetaInfo meta = Taam.MACHINE_META.fromId(machineID);
-		machine = meta.createMachine();
-		super.readFromNBT(tag);
-	}
-	
-	public void writeToNBT(NBTTagCompound tag) {
-		super.writeToNBT(tag);
-		//TODO: write actual ID
-		tag.setString("machine", "pipe");
-	};
-	
-	@Override
 	protected void writePropertiesToNBT(NBTTagCompound tag) {
+		if(meta != null) {
+			System.out.println("Saving " + meta.unlocalizedName());
+			tag.setString("machine", meta.unlocalizedName());
+		}
 		machine.writePropertiesToNBT(tag);
 	}
 
 	@Override
 	protected void readPropertiesFromNBT(NBTTagCompound tag) {
+		String machineID = tag.getString("machine");
+		System.out.println("Reading " + machineID);
+		IMachineMetaInfo meta = Taam.MACHINE_META.fromId(machineID);
+		if(meta != null) {
+			this.meta = meta;
+			machine = meta.createMachine();
+		}
 		machine.readPropertiesFromNBT(tag);
 	}
 

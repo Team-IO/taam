@@ -13,21 +13,19 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.client.model.TRSRTransformation;
-import net.minecraftforge.client.model.obj.OBJModel;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 import net.teamio.taam.Taam;
+import net.teamio.taam.content.IRenderable;
 import net.teamio.taam.machines.IMachine;
 import net.teamio.taam.piping.IPipe;
 import net.teamio.taam.piping.PipeEndFluidHandler;
 import net.teamio.taam.piping.PipeInfo;
 import net.teamio.taam.piping.PipeUtil;
 
-public class MachinePipe implements IMachine, IPipe {
+public class MachinePipe implements IMachine, IPipe, IRenderable {
 
 	public static final float pipeWidth = 4/16f;
 	public static final float fromBorder = (1f - pipeWidth) / 2;
@@ -105,6 +103,7 @@ public class MachinePipe implements IMachine, IPipe {
 		info = new PipeInfo(500);
 	}
 
+	@Override
 	public List<String> getVisibleParts() {
 		List<String> visibleParts = MachinePipe.visibleParts.get();
 
@@ -145,7 +144,7 @@ public class MachinePipe implements IMachine, IPipe {
 	}
 
 	@Override
-	public boolean renderUpdate(World world, BlockPos pos) {
+	public boolean renderUpdate(IBlockAccess world, BlockPos pos) {
 		int old = adjacentPipes;
 		adjacentPipes = 0;
 		for (EnumFacing side : EnumFacing.VALUES) {
@@ -240,13 +239,8 @@ public class MachinePipe implements IMachine, IPipe {
 	}
 
 	@Override
-	public IBlockState getExtendedState(IBlockState state, World world, BlockPos blockPos) {
-		renderUpdate(world, blockPos);
-		// Apply rotation to the model
-		OBJModel.OBJState retState = new OBJModel.OBJState(getVisibleParts(), true, new TRSRTransformation(EnumFacing.SOUTH));
-
-		IExtendedBlockState extendedState = (IExtendedBlockState) state;
-		return extendedState.withProperty(OBJModel.OBJProperty.instance, retState);
+	public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos blockPos) {
+		return state;
 	}
 
 	@Override

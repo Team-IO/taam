@@ -3,14 +3,19 @@ package net.teamio.taam.machines;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MathHelper;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.teamio.taam.content.IRotatable;
 
 public class MachineItemBlock extends ItemBlock {
 
@@ -22,12 +27,22 @@ public class MachineItemBlock extends ItemBlock {
 			throw new IllegalArgumentException("Specified meta values were null or empty");
 		}
 		this.values = values;
+		this.setHasSubtypes(true);//org.lwjgl.input.Mouse.setGrabbed(false);
 	}
 
 	public IMachineMetaInfo getInfo(int meta) {
 		int ordinal = MathHelper.clamp_int(meta, 0, values.length);
 		return values[ordinal];
 	}
+
+    /**
+     * Converts the given ItemStack damage value into a metadata value to be placed in the world when this Item is
+     * placed as a Block (mostly used with ItemBlocks).
+     */
+    public int getMetadata(int damage)
+    {
+        return 0;
+    }
 
 	@Override
 	public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
@@ -50,6 +65,55 @@ public class MachineItemBlock extends ItemBlock {
 		for (int i = 0; i < values.length; i++) {
 			list.add(new ItemStack(item, 1, values[i].metaData()));
 		}
+	}
+	
+	@Override
+	public boolean placeBlockAt(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side,
+			float hitX, float hitY, float hitZ, IBlockState newState) {
+
+		boolean success = super.placeBlockAt(stack, player, world, pos, side, hitX, hitY, hitZ, newState);
+		if (success) {
+			MachineTileEntity te = (MachineTileEntity) world.getTileEntity(pos);
+			
+			int meta = stack.getMetadata();
+			IMachineMetaInfo info = getInfo(meta);
+			
+			te.meta = info;
+			te.machine = info.createMachine();
+			te.markDirty();
+			world.markBlockForUpdate(pos);
+			
+			if(te.machine instanceof IRotatable) {
+
+				boolean defaultPlacement = true;
+				
+				EnumFacing placeDir = EnumFacing.NORTH;
+				
+				//TODO: Determination of special placement
+				
+				if (defaultPlacement) {
+					// We hit top/bottom of a block
+					double xDist = player.posX - pos.getX();
+					double zDist = player.posZ - pos.getZ();
+					if (Math.abs(xDist) > Math.abs(zDist)) {
+						if (xDist < 0) {
+							placeDir = EnumFacing.EAST;
+						} else {
+							placeDir = EnumFacing.WEST;
+						}
+					} else {
+						if (zDist < 0) {
+							placeDir = EnumFacing.SOUTH;
+						} else {
+							placeDir = EnumFacing.NORTH;
+						}
+					}
+				}
+				System.out.println("Setting " + placeDir);
+				((IRotatable) te.machine).setFacingDirection(placeDir);
+			}
+		}
+		return success;
 	}
 
 }

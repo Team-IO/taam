@@ -67,6 +67,7 @@ import net.teamio.taam.conveyors.appliances.ApplianceSprayer;
 import net.teamio.taam.gui.GuiHandler;
 import net.teamio.taam.machines.MachineBlock;
 import net.teamio.taam.machines.MachineItemBlock;
+import net.teamio.taam.machines.MachineTileEntity;
 import net.teamio.taam.piping.IPipe;
 import net.teamio.taam.piping.PipeEnd;
 import net.teamio.taam.rendering.TankRenderInfo;
@@ -238,6 +239,9 @@ public class TaamMain {
 		 * Multiparts
 		 */
 		
+		GameRegistry.registerTileEntity(MachineTileEntity.class, Taam.TILEENTITY_MACHINE_WRAPPER);
+
+		
 		if(Config.multipart_load) {
 			MultipartHandler.registerMultipartStuff();
 		}
@@ -246,6 +250,8 @@ public class TaamMain {
 		 * Wrapper block for machines if multipart is not available
 		 */
 		blockMachine = new MachineBlock(Material.iron, Taam.MACHINE_META.values());
+		blockMachine.setUnlocalizedName(Taam.BLOCK_MACHINE_WRAPPER);
+		blockMachine.setCreativeTab(creativeTab);
 		GameRegistry.registerBlock(blockMachine, null, Taam.BLOCK_MACHINE_WRAPPER);
 		
 		/*
@@ -253,11 +259,13 @@ public class TaamMain {
 		 */
 		if(Config.multipart_load && Config.multipart_register_items) {
 			// Mutlipart Item
-			itemMachine = MultipartHandler.registerMultipartItem(Taam.BLOCK_MACHINE_WRAPPER, Taam.MACHINE_META.values());
+			itemMachine = MultipartHandler.createMultipartItem(Taam.BLOCK_MACHINE_WRAPPER, Taam.MACHINE_META.values());
 		} else {
 			// Regular item, places a wrapper block
 			itemMachine = new MachineItemBlock(blockMachine, Taam.MACHINE_META.values());
 		}
+		itemMachine.setCreativeTab(TaamMain.creativeTab);
+		itemMachine.setUnlocalizedName(Taam.BLOCK_MACHINE_WRAPPER);
 		GameRegistry.registerItem(itemMachine, Taam.BLOCK_MACHINE_WRAPPER);
 		
 		/*

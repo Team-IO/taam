@@ -12,6 +12,7 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
@@ -133,8 +134,7 @@ public class MachineMixer implements IMachine, IRotatable {
 	}
 
 	@Override
-	public IBlockState getExtendedState(IBlockState state, World world, BlockPos blockPos) {
-		renderUpdate(world, blockPos);
+	public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos blockPos) {
 		return state;
 	}
 
@@ -157,7 +157,7 @@ public class MachineMixer implements IMachine, IRotatable {
 	}
 
 	@Override
-	public boolean renderUpdate(World world, BlockPos pos) {
+	public boolean renderUpdate(IBlockAccess world, BlockPos pos) {
 		return false;
 	}
 
@@ -169,6 +169,15 @@ public class MachineMixer implements IMachine, IRotatable {
 	public void addCollisionBoxes(AxisAlignedBB mask, List<AxisAlignedBB> list, Entity collidingEntity) {
 		if (mask.intersectsWith(bounds)) {
 			list.add(bounds);
+		}
+		if(direction.getAxis() == Axis.X) {
+			if (mask.intersectsWith(boundsPipeX)) {
+				list.add(boundsPipeX);
+			}
+		} else {
+			if (mask.intersectsWith(boundsPipeZ)) {
+				list.add(boundsPipeZ);
+			}
 		}
 	}
 

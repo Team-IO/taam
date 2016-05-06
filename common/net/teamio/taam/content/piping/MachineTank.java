@@ -3,8 +3,6 @@ package net.teamio.taam.content.piping;
 import java.io.IOException;
 import java.util.List;
 
-import com.google.common.collect.Lists;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -14,10 +12,9 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.client.model.obj.OBJModel;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
@@ -40,7 +37,7 @@ public class MachineTank implements IMachine, IFluidHandler, IWorldInteractable 
 	
 	private TankRenderInfo tankRI = new TankRenderInfo(TaamRenderer.bounds_tank, null);
 	
-	public static final List<String> visibleParts = Lists.newArrayList("BaseplateConnector_pmdl_c", "Tank_tmdl");
+	//public static final List<String> visibleParts = Lists.newArrayList("BaseplateConnector_pmdl_c", "Tank_tmdl");
 	private static final float fromBorder = 1.5f/16;
 	private static final float fromBorderOcclusion = 2f/16;
 	public static final AxisAlignedBB bbTank = new AxisAlignedBB(fromBorder, 0, fromBorder, 1-fromBorder, 1, 1-fromBorder);
@@ -52,10 +49,6 @@ public class MachineTank implements IMachine, IFluidHandler, IWorldInteractable 
 		pipeEndUP.setSuction(10);
 		pipeEndDOWN.setSuction(9);
 		tank = new FluidTank(8000);
-	}
-	
-	public List<String> getVisibleParts() {
-		return visibleParts;
 	}
 	
 	@Override
@@ -85,14 +78,8 @@ public class MachineTank implements IMachine, IFluidHandler, IWorldInteractable 
 	}
 
 	@Override
-	public IBlockState getExtendedState(IBlockState state, World world, BlockPos blockPos) {
-		renderUpdate(world, blockPos);
-		// Apply rotation to the model
-		OBJModel.OBJState retState = new OBJModel.OBJState(getVisibleParts(), true);
-		
-		IExtendedBlockState extendedState = (IExtendedBlockState)state;
-		
-		return extendedState.withProperty(OBJModel.OBJProperty.instance, retState);
+	public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos blockPos) {
+		return state;
 	}
 
 	@Override
@@ -107,7 +94,7 @@ public class MachineTank implements IMachine, IFluidHandler, IWorldInteractable 
 	}
 
 	@Override
-	public boolean renderUpdate(World world, BlockPos pos) {
+	public boolean renderUpdate(IBlockAccess world, BlockPos pos) {
 		return false;
 	}
 

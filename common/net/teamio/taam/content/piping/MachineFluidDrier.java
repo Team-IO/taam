@@ -10,6 +10,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
@@ -93,9 +94,7 @@ public class MachineFluidDrier implements IMachine {
 	}
 
 	@Override
-	public IBlockState getExtendedState(IBlockState state, World world, BlockPos blockPos) {
-		renderUpdate(world, blockPos);
-		
+	public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos blockPos) {
 		return state;
 	}
 
@@ -118,7 +117,7 @@ public class MachineFluidDrier implements IMachine {
 	}
 
 	@Override
-	public boolean renderUpdate(World world, BlockPos pos) {
+	public boolean renderUpdate(IBlockAccess world, BlockPos pos) {
 		return false;
 	}
 

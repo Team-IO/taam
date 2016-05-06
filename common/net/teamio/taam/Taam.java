@@ -377,6 +377,8 @@ public final class Taam {
 	
 	public static final String TILEENTITY_APPLIANCE_SPRAYER = "taam.appliance.sprayer";
 
+	public static final String TILEENTITY_MACHINE_WRAPPER = "taam.machine_wrapper";
+	
 	public static final String ENTITY_LOGISTICS_CART = "taam.logistics_manager";
 	
 	public static enum FLUID_DYE_META {

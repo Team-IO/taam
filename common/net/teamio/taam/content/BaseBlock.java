@@ -27,6 +27,7 @@ import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.conveyors.TileEntityConveyor;
 import net.teamio.taam.content.conveyors.TileEntityConveyorHopper;
 import net.teamio.taam.content.conveyors.TileEntityConveyorItemBag;
+import net.teamio.taam.machines.MachineTileEntity;
 import net.teamio.taam.util.TaamUtil;
 import net.teamio.taam.util.WrenchUtil;
 import net.teamio.taam.util.inv.InventoryUtils;
@@ -196,7 +197,7 @@ public abstract class BaseBlock extends Block {
 		return state;
 	}
 	
-	private static List<String> ALL = Lists.newArrayList(OBJModel.Group.ALL);
+	public static final List<String> ALL = Lists.newArrayList(OBJModel.Group.ALL);
 	
 	@Override
 	public IExtendedBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
@@ -206,20 +207,45 @@ public abstract class BaseBlock extends Block {
 		
 		// Decide which parts to render, delegated to the tileEntity (if required)
 		
+		
+		EnumFacing facing = EnumFacing.NORTH;
+	
+		IRotatable rotatable = null;
+		IRenderable renderable = null;
+		
+
 		if(te instanceof IRenderable) {
-			visibleParts = ((IRenderable) te).getVisibleParts();
+			renderable = (IRenderable) te;
+		}
+		
+		if (te instanceof IRotatable) {
+			rotatable = (IRotatable) te;
+		}
+		
+		if(te instanceof MachineTileEntity) {
+			MachineTileEntity mte = (MachineTileEntity)te;
+			if(mte.machine instanceof IRotatable) {
+				rotatable = (IRotatable) mte.machine;
+			}
+			if(mte.machine instanceof IRenderable) {
+				renderable = (IRenderable) mte.machine;
+			}
+			mte.machine.renderUpdate(world, pos);
+		}
+
+		if(renderable != null) {
+			visibleParts = renderable.getVisibleParts();
 		}
 		if(visibleParts == null) {
 			visibleParts = ALL;
 		}
-		
-		EnumFacing facing = EnumFacing.NORTH;
 	
-		if (te instanceof IRotatable) {
-			facing = ((IRotatable) te).getFacingDirection();
+		if(rotatable != null) {
+			facing = rotatable.getFacingDirection();
 		}
-	
-		// Apply rotation to the model
+		
+		// Apply rotation to the model, as rotation in the blockstates-file is not applied for OBJ models
+		// Additional info: it is applied for multiparts, though.
 		OBJModel.OBJState retState = new OBJModel.OBJState(visibleParts, true, new TRSRTransformation(rotateRenderDirection(facing)));
 		
 		IExtendedBlockState extendedState = (IExtendedBlockState)state;

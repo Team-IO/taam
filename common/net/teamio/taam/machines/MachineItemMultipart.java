@@ -39,6 +39,8 @@ public class MachineItemMultipart extends ItemMultiPart {
 		int meta = stack.getMetadata();
 		IMachineMetaInfo info = getInfo(meta);
 
+		//TODO: distinguish between IMachine and IMachineWithSpecialRenderer later
+		
 		MachineMultipart multipart = new MachineMultipart(info);
 		
 		if(multipart.machine instanceof IRotatable) {

@@ -19,15 +19,21 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.util.ITickable;
+import net.minecraft.world.World;
+import net.minecraftforge.client.model.TRSRTransformation;
 import net.minecraftforge.client.model.obj.OBJModel;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.property.ExtendedBlockState;
+import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
 import net.teamio.taam.Log;
 import net.teamio.taam.Taam;
+import net.teamio.taam.content.BaseBlock;
+import net.teamio.taam.content.IRenderable;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.util.WrenchUtil;
 import net.teamio.taam.util.inv.InventoryUtils;
@@ -35,6 +41,9 @@ import net.teamio.taam.util.inv.InventoryUtils;
 public class MachineMultipart extends Multipart implements IOccludingPart, ITickable {
 	public IMachine machine;
 	private IMachineMetaInfo meta;
+
+	public static final PropertyEnum<Taam.MACHINE_META> VARIANT = PropertyEnum.create("variant", Taam.MACHINE_META.class);
+	public static final PropertyEnum<EnumFacing> DIRECTION = PropertyEnum.create("direction", EnumFacing.class);
 
 	public MachineMultipart() {
 	}
@@ -129,20 +138,36 @@ public class MachineMultipart extends Multipart implements IOccludingPart, ITick
 	
 	@Override
 	public IBlockState getExtendedState(IBlockState state) {
-		if(machine instanceof IRotatable) {
-			return machine.getExtendedState(state, getWorld(), getPos()).withProperty(DIRECTION, ((IRotatable)machine).getFacingDirection()).withProperty(VARIANT, (Taam.MACHINE_META)meta);
-		} else {
-			return machine.getExtendedState(state, getWorld(), getPos()).withProperty(VARIANT, (Taam.MACHINE_META)meta);
+		World world = getWorld();
+		BlockPos pos = getPos();
+		machine.renderUpdate(world, pos);
+		
+		IBlockState newState = state;
+		List<String> visibleParts = null;
+		if(machine instanceof IRenderable) {
+			visibleParts = ((IRenderable) machine).getVisibleParts();
+
+			if(visibleParts == null) {
+				visibleParts = BaseBlock.ALL;
+			}
+			OBJModel.OBJState retState = new OBJModel.OBJState(visibleParts, true, new TRSRTransformation(EnumFacing.SOUTH));
+
+			IExtendedBlockState extendedState = (IExtendedBlockState)state;
+			newState = extendedState.withProperty(OBJModel.OBJProperty.instance, retState);
 		}
+		
+		if(machine instanceof IRotatable) {
+			newState = newState.withProperty(DIRECTION, ((IRotatable)machine).getFacingDirection()).withProperty(VARIANT, (Taam.MACHINE_META)meta);
+		} else {
+			newState = newState.withProperty(VARIANT, (Taam.MACHINE_META)meta);
+		}
+		return machine.getExtendedState(newState, world, pos);
 	}
 	
 	@Override
 	public boolean canRenderInLayer(EnumWorldBlockLayer layer) {
 		return layer == EnumWorldBlockLayer.CUTOUT;
 	}
-
-	public static final PropertyEnum<Taam.MACHINE_META> VARIANT = PropertyEnum.create("variant", Taam.MACHINE_META.class);
-	public static final PropertyEnum<EnumFacing> DIRECTION = PropertyEnum.create("direction", EnumFacing.class);
 	
 	@Override
 	public BlockState createBlockState() {

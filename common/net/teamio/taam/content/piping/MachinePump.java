@@ -13,6 +13,7 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidTankInfo;
@@ -72,6 +73,7 @@ public class MachinePump implements IMachine, IRotatable {
 		if (direction == EnumFacing.UP || direction == EnumFacing.DOWN) {
 			direction = EnumFacing.NORTH;
 		}
+		System.out.println("Read " + direction);
 		pipeEndOut.setSide(direction);
 		pipeEndIn.setSide(direction.getOpposite());
 		info.readFromNBT(tag);
@@ -94,14 +96,8 @@ public class MachinePump implements IMachine, IRotatable {
 	}
 
 	@Override
-	public IBlockState getExtendedState(IBlockState state, World world, BlockPos blockPos) {
-		renderUpdate(world, blockPos);
-
+	public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos blockPos) {
 		return state;
-		/*OBJModel.OBJState retState = new OBJModel.OBJState(getVisibleParts(), true);
-		IExtendedBlockState extendedState = (IExtendedBlockState)state;
-		
-		return extendedState.withProperty(OBJModel.OBJProperty.instance, retState);*/
 	}
 
 	@Override
@@ -116,7 +112,7 @@ public class MachinePump implements IMachine, IRotatable {
 	}
 
 	@Override
-	public boolean renderUpdate(World world, BlockPos pos) {
+	public boolean renderUpdate(IBlockAccess world, BlockPos pos) {
 		return false;
 	}
 

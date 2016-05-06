@@ -35,10 +35,8 @@ public class MultipartHandler {
 		//MultipartRegistry.registerPart(MachineMultipart.class, "taam.machine");
 	}
 	
-	public static Item registerMultipartItem(String unlocalizedName, IMachineMetaInfo[] meta) {
+	public static Item createMultipartItem(String unlocalizedName, IMachineMetaInfo[] meta) {
 		MachineItemMultipart item = new MachineItemMultipart(meta);
-		item.setUnlocalizedName(unlocalizedName);
-		item.setCreativeTab(TaamMain.creativeTab);
 		return item;
 	}
 }

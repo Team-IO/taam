@@ -8,6 +8,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 
@@ -18,11 +19,11 @@ public interface IMachine extends ICapabilityProvider {
 	void writeUpdatePacket(PacketBuffer buf);
 	void readUpdatePacket(PacketBuffer buf);
 
-	IBlockState getExtendedState(IBlockState state, World world, BlockPos blockPos);
+	IBlockState getExtendedState(IBlockState state, IBlockAccess worldIn, BlockPos blockPos);
 	String getModelPath();
     
 	void update(World world, BlockPos pos);
-	boolean renderUpdate(World world, BlockPos pos);
+	boolean renderUpdate(IBlockAccess world, BlockPos pos);
 	void blockUpdate(World world, BlockPos pos);
 	void addCollisionBoxes(AxisAlignedBB mask, List<AxisAlignedBB> list, Entity collidingEntity);
 	void addSelectionBoxes(List<AxisAlignedBB> list);

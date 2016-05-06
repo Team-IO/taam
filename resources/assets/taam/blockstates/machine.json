@@ -12,21 +12,20 @@
         "inventory": [{
             "transform": "forge:default-block"
         }],
-        "variant=creativecache": [{
-       	    "model": "taam:creative_cache.obj"
-        }],
-        "variant=chute": [{
-           "model": "taam:chute.obj"
-        }],
         "variant=pipe": [{
            "model": "taam:pipes.obj"
         }],
+        "direction=down,variant=pipe": [{
+           "model": "taam:pipes.obj"
+        }],
+        
         "variant=tank": [{
            "model": "taam:tank.obj"
         }],
-        "variant=creativewell": [{
-        	"model": "taam:creative_well.obj"
+        "direction=down,variant=tank": [{
+           "model": "taam:tank.obj"
         }],
+        
         "variant=pump": [{
         	"model": "taam:pump.obj"
         }],
@@ -45,6 +44,7 @@
         	"model": "taam:pump.obj",
         	"y": 270
         }],
+        
         "variant=mixer": [{
         	"model": "taam:mixer.obj"
         }],
@@ -63,7 +63,11 @@
         	"model": "taam:mixer.obj",
         	"y": 270
         }],
+        
         "variant=fluid_drier": [{
+        	"model": "taam:fluid_drier.obj"
+        }],
+        "direction=down,variant=fluid_drier": [{
         	"model": "taam:fluid_drier.obj"
         }]
     }
