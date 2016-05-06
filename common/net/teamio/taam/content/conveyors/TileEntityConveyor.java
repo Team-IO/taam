@@ -100,6 +100,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	public void renderUpdate() {
 		// Check in front
 		TileEntity te = worldObj.getTileEntity(pos.offset(direction));
+		
 		if(te instanceof TileEntityConveyor) {
 			TileEntityConveyor next = (TileEntityConveyor)te;
 			renderEnd = next.speedLevel != speedLevel;
@@ -107,7 +108,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 			isEnd = renderEnd;
 		} else {
 			isEnd = true;
-			renderEnd = te instanceof IConveyorSlots;
+			renderEnd = ConveyorUtil.getSlots(te, direction.getOpposite()) != null;
 		}
 		
 		// Check behind
@@ -120,36 +121,37 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 			isBegin = renderBegin;
 		} else {
 			isBegin = true;
-			renderBegin = te instanceof IConveyorSlots;
+			renderBegin = ConveyorUtil.getSlots(te, direction) != null;
 		}
 		
 		// Check right
-		inverse = direction.rotateAround(Axis.Y);
+		inverse = direction.rotateY();
 		te = worldObj.getTileEntity(pos.offset(inverse));
 		
 		if(te instanceof TileEntityConveyor) {
 			TileEntityConveyor next = (TileEntityConveyor)te;
 			EnumFacing nextFacing = next.getFacingDirection();
-			renderRight = nextFacing != direction && nextFacing != direction.getOpposite();
+			renderRight = nextFacing.getAxis() != direction.getAxis();
 		} else {
-			renderRight = te instanceof IConveyorSlots;
+			renderRight = ConveyorUtil.getSlots(te, inverse.getOpposite()) != null;
 		}
 		
 		// Check left
-		inverse = direction.getOpposite().rotateAround(Axis.Y);
+		inverse = direction.rotateYCCW();
 		te = worldObj.getTileEntity(pos.offset(inverse));
 		
 		if(te instanceof TileEntityConveyor) {
 			TileEntityConveyor next = (TileEntityConveyor)te;
 			EnumFacing nextFacing = next.getFacingDirection();
-			renderLeft = nextFacing != direction && nextFacing != direction.getOpposite();
+			renderLeft = nextFacing.getAxis() != direction.getAxis();
 		} else {
-			renderLeft = te instanceof IConveyorSlots;
+			renderLeft = ConveyorUtil.getSlots(te, inverse.getOpposite()) != null;
 		}
 		
 		// Check above
+		// Render supports if above face is solid or there is a conveyor machine there.
 		renderAbove = worldObj.isSideSolid(pos.offset(EnumFacing.UP), EnumFacing.DOWN) ||
-				worldObj.getTileEntity(pos.offset(EnumFacing.UP)) instanceof IConveyorSlots;
+				ConveyorUtil.getSlots(worldObj.getTileEntity(pos.offset(EnumFacing.UP)), EnumFacing.DOWN) != null;
 	}
 	
 	/*
