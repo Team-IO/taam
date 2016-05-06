@@ -29,11 +29,25 @@ import net.teamio.taam.piping.PipeUtil;
 
 public class MachinePipe implements IMachine, IPipe {
 
-	private static final float pipeWidth = 0.25f;
-	private static final float fromBorder = (1f - pipeWidth) / 2;
+	public static final float pipeWidth = 4/16f;
+	public static final float fromBorder = (1f - pipeWidth) / 2;
+	
+	public static final float flangeWidth = 7.25f/16f;
+	public static final float flangeSize = 2/16f;
+	public static final float fromBorderFlange = (1f - flangeWidth) / 2;
 
-	public static AxisAlignedBB bbCenter = new AxisAlignedBB(fromBorder, fromBorder, fromBorder, 1-fromBorder, 1-fromBorder, 1-fromBorder);
+	public static final float baseplateWidth = 15/16f;
+	public static final float baseplateSize = 2/16f;
+	public static final float fromBorderBaseplate = (1f - baseplateWidth) / 2;
+	
+	public static AxisAlignedBB bbCenter = new AxisAlignedBB(
+			fromBorder, fromBorder, fromBorder,
+			1-fromBorder, 1-fromBorder, 1-fromBorder);
 	public static final AxisAlignedBB[] bbFaces = new AxisAlignedBB[6];
+	public static final AxisAlignedBB[] bbFlanges = new AxisAlignedBB[6];
+	public static AxisAlignedBB bbBaseplate = new AxisAlignedBB(
+			fromBorderBaseplate, 0, fromBorderBaseplate,
+			1-fromBorderBaseplate, baseplateSize, 1-fromBorderBaseplate);
 
 	static {
 		System.out.println(fromBorder);
@@ -49,6 +63,19 @@ public class MachinePipe implements IMachine, IPipe {
 																1-fromBorder,	1,				1-fromBorder);
 		bbFaces[EnumFacing.DOWN.ordinal()]	= new AxisAlignedBB(fromBorder,		0,				fromBorder,
 																1-fromBorder,	fromBorder,		1-fromBorder);
+		
+		bbFlanges[EnumFacing.EAST.ordinal()]	= new AxisAlignedBB(1-flangeSize,		fromBorderFlange,	fromBorderFlange,
+																	1,					1-fromBorderFlange,	1-fromBorderFlange);
+		bbFlanges[EnumFacing.WEST.ordinal()]	= new AxisAlignedBB(0,					fromBorderFlange,	fromBorderFlange,
+																	flangeSize,			1-fromBorderFlange,	1-fromBorderFlange);
+		bbFlanges[EnumFacing.SOUTH.ordinal()]	= new AxisAlignedBB(fromBorderFlange,	fromBorderFlange,	1-flangeSize,
+																	1-fromBorderFlange,	1-fromBorderFlange,	1);
+		bbFlanges[EnumFacing.NORTH.ordinal()]	= new AxisAlignedBB(fromBorderFlange,	fromBorderFlange,	0,
+																	1-fromBorderFlange,	1-fromBorderFlange,	flangeSize);
+		bbFlanges[EnumFacing.UP.ordinal()]	= new AxisAlignedBB(fromBorderFlange,		1-flangeSize,		fromBorderFlange,
+																	1-fromBorderFlange,	1,					1-fromBorderFlange);
+		bbFlanges[EnumFacing.DOWN.ordinal()]	= new AxisAlignedBB(fromBorderFlange,	0,					fromBorderFlange,
+																	1-fromBorderFlange,	flangeSize,			1-fromBorderFlange);
 	}
 	
 	private final PipeInfo info;
@@ -248,6 +275,8 @@ public class MachinePipe implements IMachine, IPipe {
 		for (EnumFacing side : EnumFacing.VALUES) {
 			if (isSideConnected(side)) {
 				AxisAlignedBB box = bbFaces[side.ordinal()];
+				list.add(box);
+				box = bbFlanges[side.ordinal()];
 				list.add(box);
 			}
 		}

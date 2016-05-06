@@ -40,8 +40,15 @@ public class MachineMixer implements IMachine, IRotatable {
 	private IProcessingRecipeFluidBased[] matchingRecipes;
 	
 	private static final int capacity = 2000;
-
-	public static final AxisAlignedBB bounds = new AxisAlignedBB(0, 0, 0, 1, 0.5f, 1);
+	
+	public static final AxisAlignedBB bounds = new AxisAlignedBB(0, MachinePipe.baseplateSize, 0, 1, 0.5f, 1);
+	
+	public static final AxisAlignedBB boundsPipeX = new AxisAlignedBB(
+			0, MachinePipe.fromBorderFlange, MachinePipe.fromBorderFlange, 1,
+			1 - MachinePipe.fromBorderFlange, 1 - MachinePipe.fromBorderFlange);
+	public static final AxisAlignedBB boundsPipeZ = new AxisAlignedBB(
+			MachinePipe.fromBorderFlange, MachinePipe.fromBorderFlange, 0,
+			1 - MachinePipe.fromBorderFlange, 1 - MachinePipe.fromBorderFlange, 1);
 	
 	/**
 	 * Conveyor Slot set for input on the sides
@@ -168,6 +175,12 @@ public class MachineMixer implements IMachine, IRotatable {
 	@Override
 	public void addSelectionBoxes(List<AxisAlignedBB> list) {
 		list.add(bounds);
+		list.add(MachinePipe.bbBaseplate);
+		if(direction.getAxis() == Axis.X) {
+			list.add(boundsPipeX);
+		} else {
+			list.add(boundsPipeZ);
+		}
 	}
 
 	@Override

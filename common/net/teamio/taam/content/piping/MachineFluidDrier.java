@@ -256,6 +256,8 @@ public class MachineFluidDrier implements IMachine {
 	@Override
 	public void addSelectionBoxes(List<AxisAlignedBB> list) {
 		list.add(bbCollision);
+		list.add(MachinePipe.bbFaces[EnumFacing.UP.ordinal()]);
+		list.add(MachinePipe.bbFlanges[EnumFacing.UP.ordinal()]);
 	}
 
 	@Override

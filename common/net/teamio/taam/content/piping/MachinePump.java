@@ -130,11 +130,22 @@ public class MachinePump implements IMachine, IRotatable {
 		if (mask.intersectsWith(boundsPump)) {
 			list.add(boundsPump);
 		}
+		if (mask.intersectsWith(MachinePipe.bbBaseplate)) {
+			list.add(MachinePipe.bbBaseplate);
+		}
 	}
 
 	@Override
 	public void addSelectionBoxes(List<AxisAlignedBB> list) {
 		list.add(boundsPump);
+		list.add(MachinePipe.bbBaseplate);
+		if(direction.getAxis() == Axis.X) {
+			list.add(MachinePipe.bbFlanges[EnumFacing.EAST.ordinal()]);
+			list.add(MachinePipe.bbFlanges[EnumFacing.WEST.ordinal()]);
+		} else {
+			list.add(MachinePipe.bbFlanges[EnumFacing.NORTH.ordinal()]);
+			list.add(MachinePipe.bbFlanges[EnumFacing.SOUTH.ordinal()]);
+		}
 	}
 
 	@Override
