@@ -26,6 +26,13 @@ public final class Taam {
 		//Util Class
 	}
 	
+	/*
+	 * Capabilities
+	 * 
+	 * REMEMBER TO REGISTER THEM in TaamMain, end of preInit!
+	 * Else there will be conflicts (null value!)
+	 */
+	
 	@CapabilityInject(IPipe.class)
 	public static Capability<IPipe> CAPABILITY_PIPE;
 	@CapabilityInject(TankRenderInfo[].class)

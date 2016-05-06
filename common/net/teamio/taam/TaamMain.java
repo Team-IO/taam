@@ -13,6 +13,7 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemMultiTexture;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.MinecraftForge;
@@ -63,6 +64,8 @@ import net.teamio.taam.content.conveyors.TileEntityConveyorProcessor;
 import net.teamio.taam.content.conveyors.TileEntityConveyorSieve;
 import net.teamio.taam.content.conveyors.TileEntityConveyorTrashCan;
 import net.teamio.taam.content.piping.TileEntityCreativeWell;
+import net.teamio.taam.conveyors.api.ConveyorSlotsStandard;
+import net.teamio.taam.conveyors.api.IConveyorSlots;
 import net.teamio.taam.conveyors.appliances.ApplianceSprayer;
 import net.teamio.taam.gui.GuiHandler;
 import net.teamio.taam.machines.MachineBlock;
@@ -345,6 +348,30 @@ public class TaamMain {
 			}
 			
 		}, TankRenderInfo[].class);
+		
+		CapabilityManager.INSTANCE.register(IConveyorSlots.class, new Capability.IStorage<IConveyorSlots>() {
+
+			@Override
+			public NBTBase writeNBT(Capability<IConveyorSlots> capability, IConveyorSlots instance, EnumFacing side) {
+				NBTTagCompound tag = new NBTTagCompound();
+				if(instance instanceof ConveyorSlotsStandard) {
+					((ConveyorSlotsStandard) instance).writeToNBT(tag);
+					return tag;
+				}
+				throw new NotImplementedException("Cannot save a generic IConveyorSlots instance to NBT. Only ConveyorSlotsStandard is supported.");
+			}
+
+			@Override
+			public void readNBT(Capability<IConveyorSlots> capability, IConveyorSlots instance, EnumFacing side,
+					NBTBase nbt) {
+				if(instance instanceof ConveyorSlotsStandard) {
+					((ConveyorSlotsStandard) instance).readFromNBT((NBTTagCompound) nbt);
+				}
+				throw new NotImplementedException("Cannot read a generic IConveyorSlots instance from NBT. Only ConveyorSlotsStandard is supported.");
+				
+			}
+			
+		}, ConveyorSlotsStandard.class);
 		
 		/*
 		 * Network
