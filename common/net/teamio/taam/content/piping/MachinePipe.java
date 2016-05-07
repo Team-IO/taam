@@ -236,21 +236,25 @@ public class MachinePipe implements IMachine, IPipe, IRenderable {
 	@Override
 	public void writePropertiesToNBT(NBTTagCompound tag) {
 		info.writeToNBT(tag);
+		tag.setByte("occludedSides", occludedSides);
 	}
 
 	@Override
 	public void readPropertiesFromNBT(NBTTagCompound tag) {
 		info.readFromNBT(tag);
+		occludedSides = tag.getByte("occludedSides");
 	}
 
 	@Override
 	public void writeUpdatePacket(PacketBuffer buf) {
 		info.writeUpdatePacket(buf);
+		buf.writeByte(occludedSides);
 	}
 
 	@Override
 	public void readUpdatePacket(PacketBuffer buf) {
 		info.readUpdatePacket(buf);
+		occludedSides = buf.readByte();
 	}
 
 	@Override
