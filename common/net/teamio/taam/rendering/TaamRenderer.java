@@ -53,6 +53,8 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 	private float rot_sensor = 0;
 	public static double rotSin = 0;
 
+	public static final double boundingBoxExpand = 0.0020000000949949026D;
+	
 	public static final float shrinkValue = -0.001f;
 
 	public static final float b_tankBorder = 1.5f / 16f;
@@ -69,6 +71,13 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 			1-b_tankBorder,	1-4f/16f,		1-b_tankBorderSprayer
 	).expand(shrinkValue, shrinkValue, shrinkValue);
 
+	
+	Function<ResourceLocation, TextureAtlasSprite> textureGetter = new Function<ResourceLocation, TextureAtlasSprite>() {
+		public TextureAtlasSprite apply(ResourceLocation location) {
+			return Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString());
+		}
+	};
+	
 	public TaamRenderer() {
 		ri = Minecraft.getMinecraft().getRenderItem();
 	}
@@ -123,7 +132,6 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		}
 	}
 	
-	public static final double boundingBoxExpand = 0.0020000000949949026D;
 	
 	public void drawSelectionBoundingBox(EntityPlayer player, float partialTicks, AxisAlignedBB box) {
 		GlStateManager.enableBlend();
@@ -263,12 +271,6 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		/*
 		 * Get texture
 		 */
-		Function<ResourceLocation, TextureAtlasSprite> textureGetter;
-		textureGetter = new Function<ResourceLocation, TextureAtlasSprite>() {
-			public TextureAtlasSprite apply(ResourceLocation location) {
-				return Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString());
-			}
-		};
 		TextureAtlasSprite sprite = textureGetter.apply(fluid.getStill());
 
 		/*
@@ -313,29 +315,32 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		double minV_Z = minV + centeringOffsetZ;
 		double maxV_Z = minV + V * widthZ + centeringOffsetZ;
 
-		// +Z
-		renderer.pos(bounds.minX, bounds.minY, bounds.maxZ)	.tex(maxU_Z, minV_Y).normal(0, 0, 1).endVertex();
-		renderer.pos(bounds.maxX, bounds.minY, bounds.maxZ)	.tex(minU_Z, minV_Y).normal(0, 0, 1).endVertex();
-		renderer.pos(bounds.maxX, fillHeight, bounds.maxZ)	.tex(minU_Z, maxV_Y).normal(0, 0, 1).endVertex();
-		renderer.pos(bounds.minX, fillHeight, bounds.maxZ)	.tex(maxU_Z, maxV_Y).normal(0, 0, 1).endVertex();
-
-		// -Z
-		renderer.pos(bounds.maxX, bounds.minY, bounds.minZ)	.tex(maxU_Z, minV_Y).normal(0, 0, -1).endVertex();
-		renderer.pos(bounds.minX, bounds.minY, bounds.minZ)	.tex(minU_Z, minV_Y).normal(0, 0, -1).endVertex();
-		renderer.pos(bounds.minX, fillHeight, bounds.minZ)	.tex(minU_Z, maxV_Y).normal(0, 0, -1).endVertex();
-		renderer.pos(bounds.maxX, fillHeight, bounds.minZ)	.tex(maxU_Z, maxV_Y).normal(0, 0, -1).endVertex();
-
-		// +X
-		renderer.pos(bounds.maxX, bounds.minY, bounds.maxZ)	.tex(maxU_X, minV_Y).normal(1, 0, 0).endVertex();
-		renderer.pos(bounds.maxX, bounds.minY, bounds.minZ)	.tex(minU_X, minV_Y).normal(1, 0, 0).endVertex();
-		renderer.pos(bounds.maxX, fillHeight, bounds.minZ)	.tex(minU_X, maxV_Y).normal(1, 0, 0).endVertex();
-		renderer.pos(bounds.maxX, fillHeight, bounds.maxZ)	.tex(maxU_X, maxV_Y).normal(1, 0, 0).endVertex();
-
-		// -X
-		renderer.pos(bounds.minX, bounds.minY, bounds.minZ)	.tex(maxU_X, minV_Y).normal(-1, 0, 0).endVertex();
-		renderer.pos(bounds.minX, bounds.minY, bounds.maxZ)	.tex(minU_X, minV_Y).normal(-1, 0, 0).endVertex();
-		renderer.pos(bounds.minX, fillHeight, bounds.maxZ)	.tex(minU_X, maxV_Y).normal(-1, 0, 0).endVertex();
-		renderer.pos(bounds.minX, fillHeight, bounds.minZ)	.tex(maxU_X, maxV_Y).normal(-1, 0, 0).endVertex();
+		if(height > 0.01f) {
+			// +Z
+			renderer.pos(bounds.minX, bounds.minY, bounds.maxZ)	.tex(maxU_Z, minV_Y).normal(0, 0, 1).endVertex();
+			renderer.pos(bounds.maxX, bounds.minY, bounds.maxZ)	.tex(minU_Z, minV_Y).normal(0, 0, 1).endVertex();
+			renderer.pos(bounds.maxX, fillHeight, bounds.maxZ)	.tex(minU_Z, maxV_Y).normal(0, 0, 1).endVertex();
+			renderer.pos(bounds.minX, fillHeight, bounds.maxZ)	.tex(maxU_Z, maxV_Y).normal(0, 0, 1).endVertex();
+	
+			// -Z
+			renderer.pos(bounds.maxX, bounds.minY, bounds.minZ)	.tex(maxU_Z, minV_Y).normal(0, 0, -1).endVertex();
+			renderer.pos(bounds.minX, bounds.minY, bounds.minZ)	.tex(minU_Z, minV_Y).normal(0, 0, -1).endVertex();
+			renderer.pos(bounds.minX, fillHeight, bounds.minZ)	.tex(minU_Z, maxV_Y).normal(0, 0, -1).endVertex();
+			renderer.pos(bounds.maxX, fillHeight, bounds.minZ)	.tex(maxU_Z, maxV_Y).normal(0, 0, -1).endVertex();
+	
+			// +X
+			renderer.pos(bounds.maxX, bounds.minY, bounds.maxZ)	.tex(maxU_X, minV_Y).normal(1, 0, 0).endVertex();
+			renderer.pos(bounds.maxX, bounds.minY, bounds.minZ)	.tex(minU_X, minV_Y).normal(1, 0, 0).endVertex();
+			renderer.pos(bounds.maxX, fillHeight, bounds.minZ)	.tex(minU_X, maxV_Y).normal(1, 0, 0).endVertex();
+			renderer.pos(bounds.maxX, fillHeight, bounds.maxZ)	.tex(maxU_X, maxV_Y).normal(1, 0, 0).endVertex();
+	
+			// -X
+			renderer.pos(bounds.minX, bounds.minY, bounds.minZ)	.tex(maxU_X, minV_Y).normal(-1, 0, 0).endVertex();
+			renderer.pos(bounds.minX, bounds.minY, bounds.maxZ)	.tex(minU_X, minV_Y).normal(-1, 0, 0).endVertex();
+			renderer.pos(bounds.minX, fillHeight, bounds.maxZ)	.tex(minU_X, maxV_Y).normal(-1, 0, 0).endVertex();
+			renderer.pos(bounds.minX, fillHeight, bounds.minZ)	.tex(maxU_X, maxV_Y).normal(-1, 0, 0).endVertex();
+			
+		}
 
 		// +Y
 		renderer.pos(bounds.maxX, fillHeight, bounds.minZ)	.tex(maxU_X, minV_Z).normal(0, 1, 0).endVertex();

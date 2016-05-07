@@ -276,7 +276,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 		// as we depend on the status of the next slot
 		int[] slotOrder = ConveyorUtil.getSlotOrderForDirection(direction);
 		if(ConveyorUtil.defaultTransition(worldObj, pos, this, slotOrder)) {
-			updateState(true, false, false);
+			updateState(false, false, false);
 		}
 	}
 
