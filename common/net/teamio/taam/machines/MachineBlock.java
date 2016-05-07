@@ -100,6 +100,19 @@ public class MachineBlock extends BaseBlock implements ITileEntityProvider {
 	};
 	
 	@Override
+	public boolean rotateBlock(World worldObj, BlockPos pos, EnumFacing axis) {
+		MachineTileEntity te = (MachineTileEntity) worldObj.getTileEntity(pos);
+		if(te.machine instanceof IRotatable) {
+			IRotatable rotatable = (IRotatable)te.machine;
+			rotatable.setFacingDirection(rotatable.getNextFacingDirection());
+			worldObj.markBlockRangeForRenderUpdate(pos, pos);
+			te.markDirty();
+			return true;
+		}
+		return false;
+	}
+	
+	@Override
 	public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
 		MachineTileEntity te = (MachineTileEntity) worldIn.getTileEntity(pos);
 		Taam.MACHINE_META vari = (Taam.MACHINE_META)te.meta;

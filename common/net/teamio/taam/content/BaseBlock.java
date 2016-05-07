@@ -130,10 +130,18 @@ public abstract class BaseBlock extends Block {
 					|| te instanceof TileEntityConveyorItemBag;
 		} else {
 
+			IWorldInteractable interactable = null;
 			if (te instanceof IWorldInteractable) {
+				interactable = (IWorldInteractable) te;
+			} else if(te instanceof MachineTileEntity) {
+				MachineTileEntity mte = (MachineTileEntity)te;
+				if(mte.machine instanceof IWorldInteractable) {
+					interactable = (IWorldInteractable) mte.machine;
+				}
+			}
+			if(interactable != null) {
 				// All world interaction (perform action, open gui, etc.) is
 				// handled within the entity
-				IWorldInteractable interactable = ((IWorldInteractable) te);
 				boolean playerHasWrench = WrenchUtil.playerHasWrench(playerIn);
 				boolean intercepted = interactable.onBlockActivated(worldIn, playerIn, playerHasWrench, side, hitX,
 						hitY, hitZ);
@@ -151,10 +159,18 @@ public abstract class BaseBlock extends Block {
 		if (!worldIn.isRemote) {
 			TileEntity te = worldIn.getTileEntity(pos);
 
+			IWorldInteractable interactable = null;
 			if (te instanceof IWorldInteractable) {
+				interactable = (IWorldInteractable) te;
+			} else if(te instanceof MachineTileEntity) {
+				MachineTileEntity mte = (MachineTileEntity)te;
+				if(mte.machine instanceof IWorldInteractable) {
+					interactable = (IWorldInteractable) mte.machine;
+				}
+			}
+			if(interactable != null) {
 				// All world interaction (perform action, open gui, etc.) is
 				// handled within the entity
-				IWorldInteractable interactable = ((IWorldInteractable) te);
 				boolean playerHasWrench = WrenchUtil.playerHasWrench(playerIn);
 
 				interactable.onBlockHit(worldIn, playerIn, playerHasWrench);
