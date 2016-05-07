@@ -40,17 +40,19 @@ public class MachinePump implements IMachine, IRotatable {
 
 	public static final List<String> visibleParts = Lists.newArrayList("Baseplate_pmdl", "Pump_pumdl");
 
-	private static final float fromBorder = 2f/16;
-	public static final AxisAlignedBB boundsPump = new AxisAlignedBB(fromBorder, 0, fromBorder, 1-fromBorder, 1-4/16f, 1-fromBorder);
-	public static final AxisAlignedBB boundsPumpTank = new AxisAlignedBB(0, 0, 0, 3/16f, 3/16f, 3/16f);
-	
-	private static final float fromBorderOcclusion = 2f/16;
-	public static final AxisAlignedBB bbCoolusion = new AxisAlignedBB(fromBorderOcclusion, fromBorderOcclusion, fromBorderOcclusion, 1-fromBorderOcclusion, 1-fromBorderOcclusion, 1-fromBorderOcclusion);
+	private static final float fromBorder = 2f / 16;
+	public static final AxisAlignedBB boundsPump = new AxisAlignedBB(fromBorder, 0, fromBorder, 1 - fromBorder,
+			1 - 4 / 16f, 1 - fromBorder);
+	public static final AxisAlignedBB boundsPumpTank = new AxisAlignedBB(0, 0, 0, 3 / 16f, 3 / 16f, 3 / 16f);
+
+	private static final float fromBorderOcclusion = 2f / 16;
+	public static final AxisAlignedBB bbCoolusion = new AxisAlignedBB(fromBorderOcclusion, fromBorderOcclusion,
+			fromBorderOcclusion, 1 - fromBorderOcclusion, 1 - fromBorderOcclusion, 1 - fromBorderOcclusion);
 
 	private TankRenderInfo tankRI = new TankRenderInfo(boundsPumpTank, null);
 
 	private byte occludedSides;
-	
+
 	public MachinePump() {
 		info = new PipeInfo(capacity);
 		pipeEndOut = new PipeEndSharedDistinct(direction, info, true);
@@ -58,16 +60,16 @@ public class MachinePump implements IMachine, IRotatable {
 		pipeEndOut.setPressure(pressure);
 		pipeEndIn.setSuction(pressure);
 	}
-	
+
 	private void updateOcclusion() {
 		pipeEndOut.occluded = FaceBitmap.isSideBitSet(occludedSides, pipeEndOut.getSide());
 		pipeEndIn.occluded = FaceBitmap.isSideBitSet(occludedSides, pipeEndIn.getSide());
 	}
-	
+
 	public List<String> getVisibleParts() {
 		return visibleParts;
 	}
-	
+
 	@Override
 	public void writePropertiesToNBT(NBTTagCompound tag) {
 		tag.setInteger("direction", direction.ordinal());
@@ -134,7 +136,6 @@ public class MachinePump implements IMachine, IRotatable {
 		updateOcclusion();
 	}
 
-	
 	@Override
 	public void addCollisionBoxes(AxisAlignedBB mask, List<AxisAlignedBB> list, Entity collidingEntity) {
 		if (mask.intersectsWith(boundsPump)) {
@@ -149,7 +150,7 @@ public class MachinePump implements IMachine, IRotatable {
 	public void addSelectionBoxes(List<AxisAlignedBB> list) {
 		list.add(boundsPump);
 		list.add(MachinePipe.bbBaseplate);
-		if(direction.getAxis() == Axis.X) {
+		if (direction.getAxis() == Axis.X) {
 			list.add(MachinePipe.bbFlanges[EnumFacing.EAST.ordinal()]);
 			list.add(MachinePipe.bbFlanges[EnumFacing.WEST.ordinal()]);
 		} else {
@@ -162,10 +163,10 @@ public class MachinePump implements IMachine, IRotatable {
 	public void addOcclusionBoxes(List<AxisAlignedBB> list) {
 		list.add(bbCoolusion);
 	}
-	
+
 	@Override
 	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-		if(capability == Taam.CAPABILITY_PIPE) {
+		if (capability == Taam.CAPABILITY_PIPE) {
 			return facing.getAxis() == direction.getAxis();
 		}
 		return false;
@@ -189,7 +190,7 @@ public class MachinePump implements IMachine, IRotatable {
 		}
 		return null;
 	}
-	
+
 	/*
 	 * IRotatable implementation
 	 */
@@ -215,6 +216,6 @@ public class MachinePump implements IMachine, IRotatable {
 		pipeEndIn.setSide(direction.getOpposite());
 		updateOcclusion();
 
-		//TODO: updateState(true, true, true);
+		// TODO: updateState(true, true, true);
 	}
 }

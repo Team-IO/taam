@@ -35,10 +35,10 @@ import net.teamio.taam.util.TaamUtil;
 public class MachineMixer implements IMachine, IRotatable {
 
 	private EnumFacing direction = EnumFacing.NORTH;
-	
+
 	private PipeEndRestricted pipeEndIn;
 	private PipeEnd pipeEndOut;
-	
+
 	private FluidStack backlog;
 
 	private FluidStack lastInputFluid;
@@ -49,7 +49,7 @@ public class MachineMixer implements IMachine, IRotatable {
 	public boolean isShutdown;
 	private int timeout;
 	private byte occludedSides;
-	
+
 	private static final int capacity = 2000;
 	
 	public static final AxisAlignedBB bounds = new AxisAlignedBB(0, MachinePipe.baseplateSize, 0, 1, 0.5f, 1);
@@ -74,38 +74,35 @@ public class MachineMixer implements IMachine, IRotatable {
 	 * Conveyor Slot set for input on the sides
 	 */
 	private ConveyorSlotsStatic conveyorSlots = new ConveyorSlotsStatic() {
-		
+
 		{
-			slotMatrix = new SlotMatrix(
-					true, true, true,
-					false, false, false,
-					true, true, true);
+			slotMatrix = new SlotMatrix(true, true, true, false, false, false, true, true, true);
 			insertMaxY = 1;
 			insertMinY = 0.4;
 		}
-		
+
 		@Override
 		public ItemStack removeItemAt(int slot) {
 			return null;
 		}
-		
+
 		@Override
 		public int insertItemAt(ItemStack item, int slot) {
-			if(isSlotAvailable(slot)) {
+			if (isSlotAvailable(slot)) {
 				return process(item);
 			}
 			return 0;
 		}
 	};
-	
+
 	public MachineMixer() {
 		pipeEndOut = new PipeEnd(direction, capacity, false);
 		pipeEndIn = new PipeEndRestricted(direction.getOpposite(), capacity, false);
-		
+
 		updateOcclusion();
 		resetTimeout();
 	}
-	
+
 	private void updateOcclusion() {
 		pipeEndOut.occluded = FaceBitmap.isSideBitSet(occludedSides, pipeEndOut.getSide());
 		pipeEndIn.occluded = FaceBitmap.isSideBitSet(occludedSides, pipeEndIn.getSide());
@@ -120,7 +117,7 @@ public class MachineMixer implements IMachine, IRotatable {
 	@Override
 	public void writePropertiesToNBT(NBTTagCompound tag) {
 		tag.setInteger("direction", direction.ordinal());
-		
+
 		NBTTagCompound tagIn = new NBTTagCompound();
 		pipeEndIn.writeToNBT(tagIn);
 		tag.setTag("pipeEndIn", tagIn);
@@ -137,19 +134,19 @@ public class MachineMixer implements IMachine, IRotatable {
 	@Override
 	public void readPropertiesFromNBT(NBTTagCompound tag) {
 		direction = EnumFacing.getFront(tag.getInteger("direction"));
-		if(direction == EnumFacing.UP || direction == EnumFacing.DOWN) {
+		if (direction == EnumFacing.UP || direction == EnumFacing.DOWN) {
 			direction = EnumFacing.NORTH;
 		}
 		pipeEndOut.setSide(direction);
 		pipeEndIn.setSide(direction.getOpposite());
-		
+
 		NBTTagCompound tagIn = tag.getCompoundTag("pipeEndIn");
-		if(tagIn != null) {
+		if (tagIn != null) {
 			pipeEndIn.readFromNBT(tagIn);
 		}
 
 		NBTTagCompound tagOut = tag.getCompoundTag("pipeEndOut");
-		if(tagOut != null) {
+		if (tagOut != null) {
 			pipeEndOut.readFromNBT(tagOut);
 		}
 		
@@ -188,9 +185,9 @@ public class MachineMixer implements IMachine, IRotatable {
 	@Override
 	public void update(World world, BlockPos pos) {
 		// Output backlog of already processed stuff
-		if(backlog != null) {
+		if (backlog != null) {
 			backlog.amount -= pipeEndOut.addFluid(backlog);
-			if(backlog.amount <= 0) {
+			if (backlog.amount <= 0) {
 				backlog = null;
 			}
 		}
@@ -216,7 +213,7 @@ public class MachineMixer implements IMachine, IRotatable {
 		if (mask.intersectsWith(bounds)) {
 			list.add(bounds);
 		}
-		if(direction.getAxis() == Axis.X) {
+		if (direction.getAxis() == Axis.X) {
 			if (mask.intersectsWith(boundsPipeX)) {
 				list.add(boundsPipeX);
 			}
@@ -231,7 +228,7 @@ public class MachineMixer implements IMachine, IRotatable {
 	public void addSelectionBoxes(List<AxisAlignedBB> list) {
 		list.add(bounds);
 		list.add(MachinePipe.bbBaseplate);
-		if(direction.getAxis() == Axis.X) {
+		if (direction.getAxis() == Axis.X) {
 			list.add(boundsPipeX);
 		} else {
 			list.add(boundsPipeZ);
@@ -242,13 +239,13 @@ public class MachineMixer implements IMachine, IRotatable {
 	public void addOcclusionBoxes(List<AxisAlignedBB> list) {
 		list.add(bounds);
 	}
-	
+
 	@Override
 	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-		if(capability == Taam.CAPABILITY_PIPE) {
+		if (capability == Taam.CAPABILITY_PIPE) {
 			return facing.getAxis() == direction.getAxis();
 		}
-		if(capability == Taam.CAPABILITY_CONVEYOR) {
+		if (capability == Taam.CAPABILITY_CONVEYOR) {
 			return true;
 		}
 		return false;
@@ -266,12 +263,12 @@ public class MachineMixer implements IMachine, IRotatable {
 				return null;
 			}
 		}
-		if(capability == Taam.CAPABILITY_CONVEYOR) {
+		if (capability == Taam.CAPABILITY_CONVEYOR) {
 			return (T) conveyorSlots;
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Checks if there is a recipe for the current input fluid and the provided
 	 * item stack.
@@ -283,27 +280,29 @@ public class MachineMixer implements IMachine, IRotatable {
 	 */
 	private IProcessingRecipeFluidBased getRecipe(ItemStack stack) {
 		FluidStack inside = pipeEndIn.getFluid();
-		if(inside == null) {
+		if (inside == null) {
 			lastInputFluid = null;
 			matchingRecipes = null;
 			return null;
 		}
-		if(lastInputFluid == null || !lastInputFluid.isFluidEqual(inside)) {
+		if (lastInputFluid == null || !lastInputFluid.isFluidEqual(inside)) {
 			lastInputFluid = inside;
 			matchingRecipes = ProcessingRegistry.getRecipes(ProcessingRegistry.MIXER, lastInputFluid);
 		}
-		if(matchingRecipes != null) {
-			for(IProcessingRecipeFluidBased recipe : matchingRecipes) {
-				if(recipe.inputMatches(stack)) {
+		if (matchingRecipes != null) {
+			for (IProcessingRecipeFluidBased recipe : matchingRecipes) {
+				if (recipe.inputMatches(stack)) {
 					return recipe;
 				}
 			}
 		}
 		return null;
 	}
-	
+
 	/**
-	 * Processes the item by consuming input fluid and generating output fluid if there is space in the output pipe end.
+	 * Processes the item by consuming input fluid and generating output fluid
+	 * if there is space in the output pipe end.
+	 * 
 	 * @param stack
 	 * @return the amount of items consumed.
 	 */
@@ -389,7 +388,7 @@ public class MachineMixer implements IMachine, IRotatable {
 
 		return recipe.getInput().stackSize;
 	}
-	
+
 	/*
 	 * IRotatable implementation
 	 */
@@ -406,18 +405,16 @@ public class MachineMixer implements IMachine, IRotatable {
 
 	@Override
 	public void setFacingDirection(EnumFacing direction) {
-		if(direction.getAxis() == Axis.Y) {
+		if (direction.getAxis() == Axis.Y) {
 			return;
 		}
 		this.direction = direction;
-		
+
 		pipeEndOut.setSide(direction);
 		pipeEndIn.setSide(direction.getOpposite());
-		
-		updateOcclusion();
-		
-		//TODO: updateState(false, true, true);
-	}
-	
 
+		updateOcclusion();
+
+		// TODO: updateState(false, true, true);
+	}
 }

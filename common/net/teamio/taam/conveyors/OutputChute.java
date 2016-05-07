@@ -15,7 +15,7 @@ public abstract class OutputChute {
 	IInventory outputInventory;
 	boolean canDrop;
 
-	public void refreshOuptutInventory(World world, BlockPos pos) {
+	public void refreshOutputInventory(World world, BlockPos pos) {
 		outputInventory = InventoryUtils.getInventory(world, pos);
 		canDrop = TaamUtil.canDropIntoWorld(world, pos);
 	}

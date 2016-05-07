@@ -34,11 +34,16 @@ import net.teamio.taam.util.inv.InventoryUtils;
 
 public abstract class BaseBlock extends Block {
 
+	/**
+	 * One instance for the OBJState visible parts constant "ALL"
+	 */
+	public static final List<String> ALL = Lists.newArrayList(OBJModel.Group.ALL);
+
 	public BaseBlock(Material material) {
 		super(material);
 		this.fullBlock = false;
 	}
-	
+
 	@Override
 	public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer,
 			ItemStack stack) {
@@ -50,46 +55,46 @@ public abstract class BaseBlock extends Block {
 	}
 
 	public abstract boolean canBlockStay(World worldIn, BlockPos pos, IBlockState state);
-	
+
 	@Override
 	public void onNeighborBlockChange(World worldIn, BlockPos pos, IBlockState state, Block neighborBlock) {
-		if(!canBlockStay(worldIn, pos, state)) {
+		if (!canBlockStay(worldIn, pos, state)) {
 			TaamUtil.breakBlockInWorld(worldIn, pos, state);
-			if(this != TaamMain.blockSensor) {
+			if (this != TaamMain.blockSensor) {
 				breakBlock(worldIn, pos, state);
 			}
 			return;
 		}
 		TileEntity te = worldIn.getTileEntity(pos);
-		if(te != null) {
+		if (te != null) {
 			// Update stuff like conveyors if something changes
-			((BaseTileEntity)te).blockUpdate();
+			((BaseTileEntity) te).blockUpdate();
 			worldIn.markBlockForUpdate(pos);
 		}
 	}
-	
+
 	@Override
 	public int damageDropped(IBlockState state) {
 		return getMetaFromState(state);
 	}
-	
+
 	@Override
 	public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
 		if (worldIn.isRemote) {
 			return;
 		}
-		
+
 		TileEntity te = worldIn.getTileEntity(pos);
 
-		if(te instanceof TileEntityConveyor) {
+		if (te instanceof TileEntityConveyor) {
 			((TileEntityConveyor) te).dropItems();
 		}
 
 		/*
 		 * Drop Items
 		 */
-		if(te instanceof IInventory) {
-			IInventory inventory = (IInventory)te;
+		if (te instanceof IInventory) {
+			IInventory inventory = (IInventory) te;
 			for (int index = 0; index < inventory.getSizeInventory(); index++) {
 				ItemStack itemstack = inventory.getStackInSlot(index);
 
@@ -98,62 +103,61 @@ public abstract class BaseBlock extends Block {
 				}
 			}
 		}
-		
+
 		super.breakBlock(worldIn, pos, state);
 	}
-	
+
 	@Override
 	public boolean rotateBlock(World worldObj, BlockPos pos, EnumFacing axis) {
 		return WrenchUtil.rotateBlock(worldObj.getTileEntity(pos));
 	}
-	
+
 	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn,
 			EnumFacing side, float hitX, float hitY, float hitZ) {
-				
-		if(WrenchUtil.wrenchBlock(worldIn, pos, playerIn, side, hitX, hitY, hitZ)) {
+
+		if (WrenchUtil.wrenchBlock(worldIn, pos, playerIn, side, hitX, hitY, hitZ)) {
 			return true;
 		}
-		
-		if(playerIn.isSneaking()) {
+
+		if (playerIn.isSneaking()) {
 			return false;
 		}
 
 		TileEntity te = worldIn.getTileEntity(pos);
-		if(worldIn.isRemote) {
-			return te instanceof IWorldInteractable
-					|| te instanceof TileEntityConveyorHopper
+		if (worldIn.isRemote) {
+			return te instanceof IWorldInteractable || te instanceof TileEntityConveyorHopper
 					|| te instanceof TileEntityConveyorItemBag;
 		} else {
-			
-			if(te instanceof IWorldInteractable) {
-				// All world interaction (perform action, open gui, etc.) is handled within the entity
+
+			if (te instanceof IWorldInteractable) {
+				// All world interaction (perform action, open gui, etc.) is
+				// handled within the entity
 				IWorldInteractable interactable = ((IWorldInteractable) te);
 				boolean playerHasWrench = WrenchUtil.playerHasWrench(playerIn);
-				boolean intercepted = interactable.onBlockActivated(worldIn, playerIn, playerHasWrench, side, hitX, hitY, hitZ);
+				boolean intercepted = interactable.onBlockActivated(worldIn, playerIn, playerHasWrench, side, hitX,
+						hitY, hitZ);
 				return intercepted;
-			} else if(te instanceof TileEntityConveyorHopper || te instanceof TileEntityConveyorItemBag) {
+			} else if (te instanceof TileEntityConveyorHopper || te instanceof TileEntityConveyorItemBag) {
 				playerIn.openGui(TaamMain.instance, 0, worldIn, pos.getX(), pos.getY(), pos.getZ());
 				return true;
 			}
 			return false;
 		}
 	}
-	
+
 	@Override
 	public void onBlockClicked(World worldIn, BlockPos pos, EntityPlayer playerIn) {
-		if(!worldIn.isRemote) {
+		if (!worldIn.isRemote) {
 			TileEntity te = worldIn.getTileEntity(pos);
-			
-			if(te instanceof IWorldInteractable) {
-				// All world interaction (perform action, open gui, etc.) is handled within the entity
+
+			if (te instanceof IWorldInteractable) {
+				// All world interaction (perform action, open gui, etc.) is
+				// handled within the entity
 				IWorldInteractable interactable = ((IWorldInteractable) te);
 				boolean playerHasWrench = WrenchUtil.playerHasWrench(playerIn);
-				/*boolean intercepted = */
+
 				interactable.onBlockHit(worldIn, playerIn, playerHasWrench);
-//				if(intercepted) {
-//					return true;
-//				}
 			}
 		}
 	}
@@ -167,7 +171,7 @@ public abstract class BaseBlock extends Block {
 	public boolean isOpaqueCube() {
 		return false;
 	}
-	
+
 	@Override
 	public boolean isFullCube() {
 		// Required false to prevent suffocation
@@ -179,88 +183,87 @@ public abstract class BaseBlock extends Block {
 		setBlockBoundsBasedOnState(worldIn, pos);
 		return super.getCollisionBoundingBox(worldIn, pos, state);
 	}
-	
+
 	@Override
 	@SideOnly(Side.CLIENT)
 	public boolean isBlockNormalCube() {
 		return false;
 	}
-	
+
 	@Override
 	public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
-			
+
 		// Let the tile entity update anything that is required for rendering
-		BaseTileEntity te = (BaseTileEntity)worldIn.getTileEntity(pos);
+		BaseTileEntity te = (BaseTileEntity) worldIn.getTileEntity(pos);
 		te.renderUpdate();
 		
 		// This would make it so the state shows up in F3. Not actually applied on the rendering, though.
 		// Rendering Transform is applied below, in getExtendedState
 			
-	//		TileEntity te = worldIn.getTileEntity(pos);
-	//		if(te instanceof IRotatable) {
-	//			return state.withProperty(FACING, ((IRotatable) te).getFacingDirection());
-	//		}
+		//	TileEntity te = worldIn.getTileEntity(pos);
+		//	if(te instanceof IRotatable) {
+		//		return state.withProperty(FACING, ((IRotatable) te).getFacingDirection());
+		//	}
 		return state;
 	}
-	
-	public static final List<String> ALL = Lists.newArrayList(OBJModel.Group.ALL);
-	
+
 	@Override
 	public IExtendedBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
 		List<String> visibleParts = null;
-	
+
 		TileEntity te = world.getTileEntity(pos);
-		
-		// Decide which parts to render, delegated to the tileEntity (if required)
-		
-		
+
+		// Decide which parts to render, delegated to the tileEntity (if
+		// required)
+
 		EnumFacing facing = EnumFacing.NORTH;
-	
+
 		IRotatable rotatable = null;
 		IRenderable renderable = null;
-		
 
-		if(te instanceof IRenderable) {
+		if (te instanceof IRenderable) {
 			renderable = (IRenderable) te;
 		}
-		
+
 		if (te instanceof IRotatable) {
 			rotatable = (IRotatable) te;
 		}
-		
-		if(te instanceof MachineTileEntity) {
-			MachineTileEntity mte = (MachineTileEntity)te;
-			if(mte.machine instanceof IRotatable) {
+
+		if (te instanceof MachineTileEntity) {
+			MachineTileEntity mte = (MachineTileEntity) te;
+			if (mte.machine instanceof IRotatable) {
 				rotatable = (IRotatable) mte.machine;
 			}
-			if(mte.machine instanceof IRenderable) {
+			if (mte.machine instanceof IRenderable) {
 				renderable = (IRenderable) mte.machine;
 			}
 			mte.machine.renderUpdate(world, pos);
 		}
 
-		if(renderable != null) {
+		if (renderable != null) {
 			visibleParts = renderable.getVisibleParts();
 		}
-		if(visibleParts == null) {
+		if (visibleParts == null) {
 			visibleParts = ALL;
 		}
-	
-		if(rotatable != null) {
+
+		if (rotatable != null) {
 			facing = rotatable.getFacingDirection();
 		}
-		
-		// Apply rotation to the model, as rotation in the blockstates-file is not applied for OBJ models
+
+		// Apply rotation to the model, as rotation in the blockstates-file is
+		// not applied for OBJ models
 		// Additional info: it is applied for multiparts, though.
-		OBJModel.OBJState retState = new OBJModel.OBJState(visibleParts, true, new TRSRTransformation(rotateRenderDirection(facing)));
-		
-		IExtendedBlockState extendedState = (IExtendedBlockState)state;
-		
+		OBJModel.OBJState retState = new OBJModel.OBJState(visibleParts, true,
+				new TRSRTransformation(rotateRenderDirection(facing)));
+
+		IExtendedBlockState extendedState = (IExtendedBlockState) state;
+
 		return extendedState.withProperty(OBJModel.OBJProperty.instance, retState);
 	}
-	
+
 	private EnumFacing rotateRenderDirection(EnumFacing facing) {
-		if(facing.getAxis() == Axis.Y) {
+		if (facing.getAxis() == Axis.Y) {
 			return facing.getOpposite();
 		} else {
 			return facing.rotateY().rotateY();
@@ -286,7 +289,7 @@ public abstract class BaseBlock extends Block {
 		world.notifyNeighborsOfStateChange(pos.down(), blockType);
 		world.notifyNeighborsOfStateChange(pos.up(), blockType);
 		world.notifyNeighborsOfStateChange(pos.north(), blockType);
-        world.notifyNeighborsOfStateChange(pos.south(), blockType);
+		world.notifyNeighborsOfStateChange(pos.south(), blockType);
 	}
 
 }

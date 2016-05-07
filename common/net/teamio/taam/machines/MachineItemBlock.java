@@ -20,14 +20,14 @@ import net.teamio.taam.content.IRotatable;
 public class MachineItemBlock extends ItemBlock {
 
 	private final IMachineMetaInfo[] values;
-	
+
 	public MachineItemBlock(Block block, IMachineMetaInfo[] values) {
 		super(block);
 		if (values == null || values.length == 0) {
 			throw new IllegalArgumentException("Specified meta values were null or empty");
 		}
 		this.values = values;
-		this.setHasSubtypes(true);//org.lwjgl.input.Mouse.setGrabbed(false);
+		this.setHasSubtypes(true);
 	}
 
 	public IMachineMetaInfo getInfo(int meta) {
@@ -35,14 +35,10 @@ public class MachineItemBlock extends ItemBlock {
 		return values[ordinal];
 	}
 
-    /**
-     * Converts the given ItemStack damage value into a metadata value to be placed in the world when this Item is
-     * placed as a Block (mostly used with ItemBlocks).
-     */
-    public int getMetadata(int damage)
-    {
-        return 0;
-    }
+	@Override
+	public int getMetadata(int damage) {
+		return 0;
+	}
 
 	@Override
 	public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
@@ -66,7 +62,7 @@ public class MachineItemBlock extends ItemBlock {
 			list.add(new ItemStack(item, 1, values[i].metaData()));
 		}
 	}
-	
+
 	@Override
 	public boolean placeBlockAt(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side,
 			float hitX, float hitY, float hitZ, IBlockState newState) {
@@ -74,23 +70,23 @@ public class MachineItemBlock extends ItemBlock {
 		boolean success = super.placeBlockAt(stack, player, world, pos, side, hitX, hitY, hitZ, newState);
 		if (success) {
 			MachineTileEntity te = (MachineTileEntity) world.getTileEntity(pos);
-			
+
 			int meta = stack.getMetadata();
 			IMachineMetaInfo info = getInfo(meta);
-			
+
 			te.meta = info;
 			te.machine = info.createMachine();
 			te.markDirty();
 			world.markBlockForUpdate(pos);
-			
-			if(te.machine instanceof IRotatable) {
+
+			if (te.machine instanceof IRotatable) {
 
 				boolean defaultPlacement = true;
-				
+
 				EnumFacing placeDir = EnumFacing.NORTH;
-				
-				//TODO: Determination of special placement
-				
+
+				// TODO: Determination of special placement
+
 				if (defaultPlacement) {
 					// We hit top/bottom of a block
 					double xDist = player.posX - pos.getX();
@@ -115,5 +111,4 @@ public class MachineItemBlock extends ItemBlock {
 		}
 		return success;
 	}
-
 }

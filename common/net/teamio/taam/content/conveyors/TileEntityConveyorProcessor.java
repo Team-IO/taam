@@ -182,7 +182,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 		/*
 		 * Check blocked & fetch output inventory
 		 */
-		chute.refreshOuptutInventory(worldObj, down);
+		chute.refreshOutputInventory(worldObj, down);
 		if(!chute.isOperable()) {
 			return false;
 		}

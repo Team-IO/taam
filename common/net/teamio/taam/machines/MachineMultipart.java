@@ -159,10 +159,10 @@ public class MachineMultipart extends Multipart implements IOccludingPart, ITick
 			sendUpdatePacket(true);
 		}
 	}
-	
+
 	@Override
 	public boolean onActivated(EntityPlayer player, ItemStack stack, PartMOP hit) {
-		
+
 		boolean playerHasWrench = WrenchUtil.playerHasWrench(player);
 
 		if (!playerHasWrench) {
@@ -182,7 +182,7 @@ public class MachineMultipart extends Multipart implements IOccludingPart, ITick
 			return true;
 		}
 	}
-	
+
 	@Override
 	public boolean rotatePart(EnumFacing axis) {
 		if(machine instanceof IRotatable) {

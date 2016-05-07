@@ -40,14 +40,14 @@ public class MachineItemMultipart extends ItemMultiPart {
 		int meta = stack.getMetadata();
 		IMachineMetaInfo info = getInfo(meta);
 
-		//TODO: distinguish between IMachine and IMachineWithSpecialRenderer later
-		
+		// TODO: distinguish between IMachine and IMachineWithSpecialRenderer later
+
 		MachineMultipart multipart = new MachineMultipart(info);
-		
-		if(multipart.machine instanceof IRotatable) {
+
+		if (multipart.machine instanceof IRotatable) {
 
 			boolean defaultPlacement = true;
-			
+
 			EnumFacing placeDir = EnumFacing.NORTH;
 			
 			//TODO: Determination of special placement
@@ -74,8 +74,7 @@ public class MachineItemMultipart extends ItemMultiPart {
 				}
 			}
 			 */
-			
-			
+
 			if (defaultPlacement) {
 				// We hit top/bottom of a block
 				double xDist = player.posX - pos.getX();
@@ -94,10 +93,10 @@ public class MachineItemMultipart extends ItemMultiPart {
 					}
 				}
 			}
-			
+
 			((IRotatable) multipart.machine).setFacingDirection(placeDir);
 		}
-		
+
 		return multipart;
 	}
 
@@ -123,5 +122,4 @@ public class MachineItemMultipart extends ItemMultiPart {
 			list.add(new ItemStack(item, 1, values[i].metaData()));
 		}
 	}
-
 }
