@@ -287,6 +287,8 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		float fillFactor = content.amount / (float) capacity;
 
 		double height = bounds.maxY - bounds.minY;
+		double widthX = bounds.maxX - bounds.minX;
+		double widthZ = bounds.maxZ - bounds.minZ;
 		double fillHeight = bounds.minY + fillFactor * height;
 
 		float minU = sprite.getMinU();
@@ -294,37 +296,52 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		float maxU = sprite.getMaxU();
 		float maxV = sprite.getMaxV();
 
-		double textureFactor = minV + (maxV - minV) * fillFactor * height;
+		float V = maxV - minV;
+		float U = maxU - minU;
+		
+		double minV_Y = minV;
+		double maxV_Y = minV + V * fillFactor * height;
+		
+		double centeringOffsetZ = U * (1-widthZ) / 2f;
+		double centeringOffsetX = U * (1-widthX) / 2f;
+		
+		double minU_Z = minU + centeringOffsetZ;
+		double maxU_Z = minU + U * widthZ + centeringOffsetZ;
+		double minU_X = minU + centeringOffsetX;
+		double maxU_X = minU + U * widthX + centeringOffsetX;
+
+		double minV_Z = minV + centeringOffsetZ;
+		double maxV_Z = minV + V * widthZ + centeringOffsetZ;
 
 		// +Z
-		renderer.pos(bounds.minX, bounds.minY, bounds.maxZ)	.tex(maxU, minV).normal(0, 0, 1).endVertex();
-		renderer.pos(bounds.maxX, bounds.minY, bounds.maxZ)	.tex(minU, minV).normal(0, 0, 1).endVertex();
-		renderer.pos(bounds.maxX, fillHeight, bounds.maxZ)	.tex(minU, textureFactor).normal(0, 0, 1).endVertex();
-		renderer.pos(bounds.minX, fillHeight, bounds.maxZ)	.tex(maxU, textureFactor).normal(0, 0, 1).endVertex();
+		renderer.pos(bounds.minX, bounds.minY, bounds.maxZ)	.tex(maxU_Z, minV_Y).normal(0, 0, 1).endVertex();
+		renderer.pos(bounds.maxX, bounds.minY, bounds.maxZ)	.tex(minU_Z, minV_Y).normal(0, 0, 1).endVertex();
+		renderer.pos(bounds.maxX, fillHeight, bounds.maxZ)	.tex(minU_Z, maxV_Y).normal(0, 0, 1).endVertex();
+		renderer.pos(bounds.minX, fillHeight, bounds.maxZ)	.tex(maxU_Z, maxV_Y).normal(0, 0, 1).endVertex();
 
 		// -Z
-		renderer.pos(bounds.maxX, bounds.minY, bounds.minZ)	.tex(maxU, minV).normal(0, 0, -1).endVertex();
-		renderer.pos(bounds.minX, bounds.minY, bounds.minZ)	.tex(minU, minV).normal(0, 0, -1).endVertex();
-		renderer.pos(bounds.minX, fillHeight, bounds.minZ)	.tex(minU, textureFactor).normal(0, 0, -1).endVertex();
-		renderer.pos(bounds.maxX, fillHeight, bounds.minZ)	.tex(maxU, textureFactor).normal(0, 0, -1).endVertex();
+		renderer.pos(bounds.maxX, bounds.minY, bounds.minZ)	.tex(maxU_Z, minV_Y).normal(0, 0, -1).endVertex();
+		renderer.pos(bounds.minX, bounds.minY, bounds.minZ)	.tex(minU_Z, minV_Y).normal(0, 0, -1).endVertex();
+		renderer.pos(bounds.minX, fillHeight, bounds.minZ)	.tex(minU_Z, maxV_Y).normal(0, 0, -1).endVertex();
+		renderer.pos(bounds.maxX, fillHeight, bounds.minZ)	.tex(maxU_Z, maxV_Y).normal(0, 0, -1).endVertex();
 
 		// +X
-		renderer.pos(bounds.maxX, bounds.minY, bounds.maxZ)	.tex(maxU, minV).normal(1, 0, 0).endVertex();
-		renderer.pos(bounds.maxX, bounds.minY, bounds.minZ)	.tex(minU, minV).normal(1, 0, 0).endVertex();
-		renderer.pos(bounds.maxX, fillHeight, bounds.minZ)	.tex(minU, textureFactor).normal(1, 0, 0).endVertex();
-		renderer.pos(bounds.maxX, fillHeight, bounds.maxZ)	.tex(maxU, textureFactor).normal(1, 0, 0).endVertex();
+		renderer.pos(bounds.maxX, bounds.minY, bounds.maxZ)	.tex(maxU_X, minV_Y).normal(1, 0, 0).endVertex();
+		renderer.pos(bounds.maxX, bounds.minY, bounds.minZ)	.tex(minU_X, minV_Y).normal(1, 0, 0).endVertex();
+		renderer.pos(bounds.maxX, fillHeight, bounds.minZ)	.tex(minU_X, maxV_Y).normal(1, 0, 0).endVertex();
+		renderer.pos(bounds.maxX, fillHeight, bounds.maxZ)	.tex(maxU_X, maxV_Y).normal(1, 0, 0).endVertex();
 
 		// -X
-		renderer.pos(bounds.minX, bounds.minY, bounds.minZ)	.tex(maxU, minV).normal(-1, 0, 0).endVertex();
-		renderer.pos(bounds.minX, bounds.minY, bounds.maxZ)	.tex(minU, minV).normal(-1, 0, 0).endVertex();
-		renderer.pos(bounds.minX, fillHeight, bounds.maxZ)	.tex(minU, textureFactor).normal(-1, 0, 0).endVertex();
-		renderer.pos(bounds.minX, fillHeight, bounds.minZ)	.tex(maxU, textureFactor).normal(-1, 0, 0).endVertex();
+		renderer.pos(bounds.minX, bounds.minY, bounds.minZ)	.tex(maxU_X, minV_Y).normal(-1, 0, 0).endVertex();
+		renderer.pos(bounds.minX, bounds.minY, bounds.maxZ)	.tex(minU_X, minV_Y).normal(-1, 0, 0).endVertex();
+		renderer.pos(bounds.minX, fillHeight, bounds.maxZ)	.tex(minU_X, maxV_Y).normal(-1, 0, 0).endVertex();
+		renderer.pos(bounds.minX, fillHeight, bounds.minZ)	.tex(maxU_X, maxV_Y).normal(-1, 0, 0).endVertex();
 
 		// +Y
-		renderer.pos(bounds.maxX, fillHeight, bounds.minZ)	.tex(maxU, minV).normal(0, 1, 0).endVertex();
-		renderer.pos(bounds.minX, fillHeight, bounds.minZ)	.tex(minU, minV).normal(0, 1, 0).endVertex();
-		renderer.pos(bounds.minX, fillHeight, bounds.maxZ)	.tex(minU, maxV).normal(0, 1, 0).endVertex();
-		renderer.pos(bounds.maxX, fillHeight, bounds.maxZ)	.tex(maxU, maxV).normal(0, 1, 0).endVertex();
+		renderer.pos(bounds.maxX, fillHeight, bounds.minZ)	.tex(maxU_X, minV_Z).normal(0, 1, 0).endVertex();
+		renderer.pos(bounds.minX, fillHeight, bounds.minZ)	.tex(minU_X, minV_Z).normal(0, 1, 0).endVertex();
+		renderer.pos(bounds.minX, fillHeight, bounds.maxZ)	.tex(minU_X, maxV_Z).normal(0, 1, 0).endVertex();
+		renderer.pos(bounds.maxX, fillHeight, bounds.maxZ)	.tex(maxU_X, maxV_Z).normal(0, 1, 0).endVertex();
 
 		setupDefaultGL();
 
