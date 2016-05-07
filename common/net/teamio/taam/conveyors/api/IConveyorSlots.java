@@ -1,18 +1,15 @@
 package net.teamio.taam.conveyors.api;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.teamio.taam.conveyors.ItemWrapper;
 
-public interface IConveyorAwareTE {
+public interface IConveyorSlots {
 	
 	boolean canSlotMove(int slot);
 	boolean isSlotAvailable(int slot);
 	int getMovementProgress(int slot);
 	byte getSpeedsteps();
-	
-	BlockPos getPos();
 	
 	/**
 	 * Add an item to a slot.

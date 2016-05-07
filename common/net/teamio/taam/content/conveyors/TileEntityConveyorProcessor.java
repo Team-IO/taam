@@ -7,11 +7,9 @@ import com.google.common.collect.Lists;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.IHopper;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
@@ -31,17 +29,17 @@ import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.content.IWorldInteractable;
 import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.conveyors.ItemWrapper;
-import net.teamio.taam.conveyors.api.IConveyorAwareTE;
+import net.teamio.taam.conveyors.OutputChuteBacklog;
+import net.teamio.taam.conveyors.api.IConveyorSlots;
 import net.teamio.taam.network.TPMachineConfiguration;
 import net.teamio.taam.recipes.IProcessingRecipe;
 import net.teamio.taam.recipes.ProcessingRegistry;
-import net.teamio.taam.util.ProcessingUtil;
 import net.teamio.taam.util.TaamUtil;
 import net.teamio.taam.util.WorldCoord;
 import net.teamio.taam.util.inv.InventorySimple;
 import net.teamio.taam.util.inv.InventoryUtils;
 
-public class TileEntityConveyorProcessor extends BaseTileEntity implements ISidedInventory, IConveyorAwareTE, IHopper, IRedstoneControlled, IWorldInteractable, IRotatable, ITickable, IRenderable {
+public class TileEntityConveyorProcessor extends BaseTileEntity implements ISidedInventory, IConveyorSlots, IHopper, IRedstoneControlled, IWorldInteractable, IRotatable, ITickable, IRenderable {
 
 	public static final byte Shredder = 0;
 	public static final byte Grinder = 1;
@@ -50,7 +48,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 	private InventorySimple inventory;
 	private byte mode;
 	
-	private ItemStack[] backlog;
+	private OutputChuteBacklog chute = new OutputChuteBacklog();
 
 	private byte redstoneMode = IRedstoneControlled.MODE_ACTIVE_ON_LOW;
 	private EnumFacing direction = EnumFacing.NORTH;
@@ -181,48 +179,49 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 	private boolean processOther() {
 		BlockPos down = pos.down();
 		
-		IInventory outputInventory = InventoryUtils.getInventory(worldObj, down);
-		if(outputInventory == null && !TaamUtil.canDropIntoWorld(worldObj, down)) {
+		/*
+		 * Check blocked & fetch output inventory
+		 */
+		chute.refreshOuptutInventory(worldObj, down);
+		if(!chute.isOperable()) {
 			return false;
 		}
-
+		
+		/*
+		 * Output Backlog
+		 */
 		// Output the backlog. Returns true if there were items transferred or there are still items left.
-		if(!ProcessingUtil.chuteMechanicsOutput(worldObj, down, outputInventory, backlog, 0)) {
-			backlog = null;
-		} else {
-			return false;
+		if(chute.output(worldObj, down)) {
+			return true;
 		}
 
 		// If output finished, continue processing.
-		if(backlog == null) {
+		if(isCoolingDown()) {
+			timeout--;
+			return false;
+		}
+		
+		ItemStack input = getStackInSlot(0);
+		
+		if(input == null) {
+			recipe = null;
+			return false;
+		}
+		
+		if(recipe == null) {
+			recipe = getRecipe(input);
+		}
+		
+		if(recipe != null) {
+			chute.backlog = recipe.getOutput(input);
 			
-			if(isCoolingDown()) {
-				timeout--;
-				return false;
+			if(mode == Grinder) {
+				timeout += Config.pl_processor_grinder_timeout;
+			} else {
+				timeout += Config.pl_processor_crusher_timeout;
 			}
-			
-			ItemStack input = getStackInSlot(0);
-			
-			if(input == null) {
-				recipe = null;
-				return false;
-			}
-			
-			if(recipe == null) {
-				recipe = getRecipe(input);
-			}
-			
-			if(recipe != null) {
-				backlog = recipe.getOutput(input, worldObj.rand);
-				
-				if(mode == Grinder) {
-					timeout += Config.pl_processor_grinder_timeout;
-				} else {
-					timeout += Config.pl_processor_crusher_timeout;
-				}
-				// Consume input
-				return true;
-			}
+			// Consume input
+			return true;
 		}
 		
 		return false;
@@ -269,9 +268,11 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 	@Override
 	protected void writePropertiesToNBT(NBTTagCompound tag) {
 		tag.setTag("items", InventoryUtils.writeItemStacksToTag(inventory.items));
-		if (backlog != null) {
-			tag.setTag("holdback", InventoryUtils.writeItemStacksToTagSequential(backlog));
-		}
+		
+		NBTTagCompound tagChute = new NBTTagCompound();
+		chute.writeToNBT(tagChute);
+		tag.setTag("chute", tagChute);
+		
 		tag.setByte("mode", mode);
 		// tag.setByte("redstoneMode", redstoneMode);
 		tag.setInteger("timeout", timeout);
@@ -284,13 +285,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 		inventory.items = new ItemStack[inventory.getSizeInventory()];
 		InventoryUtils.readItemStacksFromTag(inventory.items, tag.getTagList("items", NBT.TAG_COMPOUND));
 
-		NBTTagList holdbackList = tag.getTagList("holdback", NBT.TAG_COMPOUND);
-		if (holdbackList == null) {
-			backlog = null;
-		} else {
-			backlog = new ItemStack[holdbackList.tagCount()];
-			InventoryUtils.readItemStacksFromTagSequential(backlog, holdbackList);
-		}
+		chute.readFromNBT(tag.getCompoundTag("chute"));
 
 		mode = tag.getByte("mode");
 		// redstoneMode = tag.getByte("redstoneMode");

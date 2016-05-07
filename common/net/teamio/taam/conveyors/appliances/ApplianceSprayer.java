@@ -16,14 +16,12 @@ import net.teamio.taam.content.conveyors.ATileEntityAppliance;
 import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.conveyors.ItemWrapper;
 import net.teamio.taam.conveyors.api.IConveyorApplianceHost;
-import net.teamio.taam.piping.IPipe;
-import net.teamio.taam.piping.IPipeTE;
 import net.teamio.taam.piping.PipeEndFluidHandler;
 import net.teamio.taam.piping.PipeUtil;
 import net.teamio.taam.recipes.IProcessingRecipeFluidBased;
 import net.teamio.taam.recipes.ProcessingRegistry;
 
-public class ApplianceSprayer extends ATileEntityAppliance implements IFluidHandler, IPipeTE, ITickable, IWorldInteractable {
+public class ApplianceSprayer extends ATileEntityAppliance implements IFluidHandler, ITickable, IWorldInteractable {
 
 	private static final int capacity = 2000;
 	
@@ -136,7 +134,7 @@ public class ApplianceSprayer extends ATileEntityAppliance implements IFluidHand
 		 * Fetch Output
 		 */
 		
-		ItemStack result = recipe.getOutput(wrapper.itemStack, worldObj.rand)[0];
+		ItemStack result = recipe.getOutput(wrapper.itemStack)[0];
 		result.stackSize = wrapper.itemStack.stackSize;
 		
 		// Fix for re-coloring to the same color (Output == Input)
@@ -217,14 +215,14 @@ public class ApplianceSprayer extends ATileEntityAppliance implements IFluidHand
 	 * IPipeTE
 	 */
 
-	@Override
-	public IPipe[] getPipesForSide(EnumFacing side) {
-		if (side == direction.getOpposite()) {
-			return pipeEnd.asPipeArray();
-		} else {
-			return null;
-		}
-	}
+//	@Override
+//	public IPipe[] getPipesForSide(EnumFacing side) {
+//		if (side == direction.getOpposite()) {
+//			return pipeEnd.asPipeArray();
+//		} else {
+//			return null;
+//		}
+//	}
 
 	/*
 	 * IFluidHandler implementation

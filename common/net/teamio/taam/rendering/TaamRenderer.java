@@ -35,14 +35,13 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.teamio.taam.Taam;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.content.conveyors.TileEntityConveyorProcessor;
 import net.teamio.taam.content.conveyors.TileEntityConveyorSieve;
-import net.teamio.taam.content.piping.TileEntityPipe;
-import net.teamio.taam.content.piping.TileEntityTank;
 import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.conveyors.ItemWrapper;
-import net.teamio.taam.conveyors.api.IConveyorAwareTE;
+import net.teamio.taam.conveyors.api.IConveyorSlots;
 import net.teamio.taam.conveyors.appliances.ApplianceSprayer;
 import net.teamio.taam.piping.IPipe;
 import net.teamio.taam.util.WrenchUtil;
@@ -95,8 +94,8 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 				EntityPlayer player = event.player;
 				World world = player.worldObj; 
 				te = world.getTileEntity(pos);
-				if(te instanceof IConveyorAwareTE) {
-					IConveyorAwareTE cte = (IConveyorAwareTE)te;
+				if(te instanceof IConveyorSlots) {
+					IConveyorSlots cte = (IConveyorSlots)te;
 					
 					// Only render for TEs that actually have the items there
 					if(!cte.shouldRenderItemsDefault()) {
@@ -147,21 +146,42 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 
 	@Override
 	public void renderTileEntityAt(TileEntity tileEntity, double x, double y, double z, float partialTicks, int destroyStage) {
-		if (tileEntity instanceof IConveyorAwareTE) {
-			renderConveyorItems((IConveyorAwareTE) tileEntity, x, y, z);
-		}
-
-		if (tileEntity instanceof TileEntityTank) {
+		
+		TankRenderInfo[] tankRI = tileEntity.getCapability(Taam.CAPABILITY_RENDER_TANK, null);
+		
+		if(tankRI != null) {
 			GL11.glPushMatrix();
 			GL11.glTranslated(x, y, z);
 
-			FluidTank tank = ((TileEntityTank) tileEntity).getTank();
-			FluidStack stack = tank.getFluid();
+			float rotationDegrees = getRotationDegrees(tileEntity);
 
-			renderTankContent(stack, tank.getCapacity(), bounds_tank);
-
+			GL11.glTranslated(.5f, .5f, .5f);
+			GL11.glRotatef(rotationDegrees, 0, 1, 0);
+			GL11.glTranslated(-.5f, -.5f, -.5f);
+			
+			for(TankRenderInfo renderInfo : tankRI) {
+				renderTankContent(renderInfo.tankInfo.fluid, renderInfo.tankInfo.capacity, renderInfo.bounds);
+			}
 			GL11.glPopMatrix();
 		}
+		
+		if (tileEntity instanceof IConveyorSlots) {
+			renderConveyorItems((IConveyorSlots) tileEntity, x, y, z);
+		}
+		
+		//TODO: replace with capability!
+
+//		if (tileEntity instanceof TileEntityTank) {
+//			GL11.glPushMatrix();
+//			GL11.glTranslated(x, y, z);
+//
+//			FluidTank tank = ((TileEntityTank) tileEntity).getTank();
+//			FluidStack stack = tank.getFluid();
+//
+//			renderTankContent(stack, tank.getCapacity(), bounds_tank);
+//
+//			GL11.glPopMatrix();
+//		}
 
 		if (tileEntity instanceof ApplianceSprayer) {
 			GL11.glPushMatrix();
@@ -192,9 +212,10 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 
 			int fillLevel = 0;
 			
-			if(pipe instanceof TileEntityPipe) {
-				fillLevel = ((TileEntityPipe) pipe).getFillLevel();
-			}
+			//TODO: Pipe Fill Level
+//			if(pipe instanceof TileEntityPipe) {
+//				fillLevel = ((TileEntityPipe) pipe).getFillLevel();
+//			}
 
 			String info0 = String.format("%03d/%d", 
 					fillLevel, pipe.getCapacity());;
@@ -232,7 +253,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		}
 	}
 
-	private void renderTankContent(FluidStack content, int capacity, AxisAlignedBB bounds) {
+	public void renderTankContent(FluidStack content, int capacity, AxisAlignedBB bounds) {
 		// Nullcheck
 		if (content == null || content.amount == 0) {
 			return;
@@ -328,7 +349,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		RenderHelper.disableStandardItemLighting();
 	}
 
-	private EnumFacing getDirection(Object tileEntity) {
+	public static EnumFacing getDirection(Object tileEntity) {
 		EnumFacing direction;
 		if (tileEntity instanceof IRotatable) {
 			direction = ((IRotatable) tileEntity).getFacingDirection();
@@ -338,7 +359,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		return direction;
 	}
 
-	private float getRotationDegrees(Object tileEntity) {
+	public static float getRotationDegrees(Object tileEntity) {
 		EnumFacing direction = getDirection(tileEntity);
 		float rotationDegrees = 0;
 		if (direction == EnumFacing.WEST) {
@@ -351,7 +372,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		return rotationDegrees;
 	}
 
-	public void renderConveyorItems(IConveyorAwareTE tileEntity, double x, double y, double z) {
+	public void renderConveyorItems(IConveyorSlots tileEntity, double x, double y, double z) {
 
 		GL11.glPushMatrix();
 		GL11.glTranslated(x, y, z);

@@ -18,6 +18,7 @@ public class PipeEnd implements IPipe {
 	protected EnumFacing side;
 	public final PipeInfo info;
 	private final boolean active;
+	public boolean occluded;
 
 	public PipeEnd(EnumFacing side, PipeInfo info, boolean active) {
 		this.side = side;
@@ -106,8 +107,13 @@ public class PipeEnd implements IPipe {
 	}
 
 	@Override
-	public IPipe[] getConnectedPipes(IBlockAccess world, BlockPos pos) {
-		return PipeUtil.getConnectedPipes(world, pos, side);
+	public IPipe[] getInternalPipes(IBlockAccess world, BlockPos pos) {
+		return null;
+	}
+
+	@Override
+	public boolean isSideAvailable(EnumFacing side) {
+		return !occluded && this.side == side;
 	}
 
 }

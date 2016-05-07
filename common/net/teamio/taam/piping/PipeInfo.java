@@ -1,11 +1,14 @@
 package net.teamio.taam.piping;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fluids.FluidStack;
+import net.teamio.taam.Log;
 
 /**
  * Data class that implements most methods of {@link IPipe} to ease
@@ -57,6 +60,22 @@ public class PipeInfo {
 		}
 		content.trimToSize();
 		recalculateFillLevel();
+	}
+
+	public void writeUpdatePacket(PacketBuffer buf) {
+		NBTTagCompound tag = new NBTTagCompound();
+		writeToNBT(tag);
+		buf.writeNBTTagCompoundToBuffer(tag);
+	}
+
+	public void readUpdatePacket(PacketBuffer buf) {
+		try {
+			NBTTagCompound tag = buf.readNBTTagCompoundFromBuffer();
+			readFromNBT(tag);
+		} catch (IOException e) {
+			Log.error(getClass().getSimpleName()
+					+ " has trouble reading tag from update packet. THIS IS AN ERROR, please report.", e);
+		}
 	}
 
 	public void recalculateFillLevel() {

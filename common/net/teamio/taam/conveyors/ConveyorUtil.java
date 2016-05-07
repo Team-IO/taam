@@ -14,9 +14,10 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.teamio.taam.Taam;
 import net.teamio.taam.conveyors.api.IConveyorAppliance;
 import net.teamio.taam.conveyors.api.IConveyorApplianceHost;
-import net.teamio.taam.conveyors.api.IConveyorAwareTE;
+import net.teamio.taam.conveyors.api.IConveyorSlots;
 import net.teamio.taam.util.inv.InventoryRange;
 import net.teamio.taam.util.inv.InventoryUtils;
 
@@ -36,8 +37,8 @@ public class ConveyorUtil {
 		double relativeY = ei.posY - pos.getY();
 		double relativeZ = ei.posZ - pos.getZ();
 		
-		if(tileEntity instanceof IConveyorAwareTE) {
-			IConveyorAwareTE conveyorTE = (IConveyorAwareTE) tileEntity;
+		if(tileEntity instanceof IConveyorSlots) {
+			IConveyorSlots conveyorTE = (IConveyorSlots) tileEntity;
 			
 			int slot = getSlotForRelativeCoordinates(relativeX, relativeZ);
 
@@ -289,7 +290,7 @@ public class ConveyorUtil {
 	 * Drops the item in the passed slot, exactly where it is rendered now.
 	 * @param slot The slot to be dropped.
 	 */
-	public static void dropItem(World world, IConveyorAwareTE tileEntity, int slot, boolean withVelocity) {
+	public static void dropItem(World world, BlockPos pos, IConveyorSlots tileEntity, int slot, boolean withVelocity) {
 		ItemWrapper slotObject = tileEntity.getSlot(slot);
 		// System.out.println("Dropping slot " + slot + " >>" + slotObject.itemStack);
 		
@@ -298,7 +299,6 @@ public class ConveyorUtil {
 			EnumFacing direction = tileEntity.getMovementDirection();
 			float progress = slotObject.movementProgress / speedsteps;
 			
-			BlockPos pos = tileEntity.getPos();
 			double posX = pos.getX() + getItemPositionX(slot, progress, direction);
 			double posY = pos.getY() + 0.5f;
 			double posZ = pos.getZ() + getItemPositionZ(slot, progress, direction);
@@ -322,7 +322,7 @@ public class ConveyorUtil {
 		slotObject.itemStack = null;
 	}
 
-	public static boolean transferSlot(IConveyorAwareTE tileEntity, int slot, IConveyorAwareTE nextBlock, int nextSlot) {
+	public static boolean transferSlot(IConveyorSlots tileEntity, int slot, IConveyorSlots nextBlock, int nextSlot) {
 		// System.out.println("Transfer external " + slot + " to " + nextSlot);
 		
 		ItemWrapper slotObject = tileEntity.getSlot(slot);
@@ -341,7 +341,7 @@ public class ConveyorUtil {
 		return false;
 	}
 
-	public static boolean transferSlot(IConveyorAwareTE tileEntity, int slot, int nextSlot) {
+	public static boolean transferSlot(IConveyorSlots tileEntity, int slot, int nextSlot) {
 		// System.out.println("Transfer internal " + slot + " to " + nextSlot);
 		
 		ItemWrapper slotObject = tileEntity.getSlot(slot);
@@ -357,7 +357,7 @@ public class ConveyorUtil {
 		return false;
 	}
 
-	public static int insertItemAt(IConveyorAwareTE tileEntity, ItemStack item, int slot, boolean simulate) {
+	public static int insertItemAt(IConveyorSlots tileEntity, ItemStack item, int slot, boolean simulate) {
 		ItemWrapper slotObject = tileEntity.getSlot(slot);
 		if(slotObject.itemStack == null) {
 			if(!simulate) {
@@ -382,16 +382,28 @@ public class ConveyorUtil {
 		}
 	}
 
+	public static IConveyorSlots getSlots(TileEntity tileEntity, EnumFacing side) {
+		if(tileEntity == null) {
+			return null;
+		}
+		if (tileEntity instanceof IConveyorSlots) {
+			return (IConveyorSlots) tileEntity;
+		} else {
+			return tileEntity.getCapability(Taam.CAPABILITY_CONVEYOR, side);
+		}
+	}
+	
 	/**
 	 * Runs the default transition logic for the items on a conveyor entity.
 	 * 
 	 * Respects the supplied slot order, processes items if tileEntity instanceof {@link IConveyorApplianceHost}.
 	 * @param world
+	 * @param pos
 	 * @param tileEntity
 	 * @param slotOrder The order used when working through the slots.
 	 * @return true if the state of any item changed (TIleEntity should be marked dirty). 
 	 */
-	public static boolean defaultTransition(World world, IConveyorAwareTE tileEntity, int[] slotOrder) {
+	public static boolean defaultTransition(World world, BlockPos pos, IConveyorSlots tileEntity, int[] slotOrder) {
 		/*
 		 * Fetch info on appliances
 		 */
@@ -457,7 +469,7 @@ public class ConveyorUtil {
 			int nextSlotProgress = 0;
 			boolean wrappedIsSameDirection = true;
 			
-			IConveyorAwareTE nextBlock = null;
+			IConveyorSlots nextBlock = null;
 			
 			/*
 			 * Get next slot
@@ -481,13 +493,18 @@ public class ConveyorUtil {
 			// Check the condition of the next slot
 			if(slotWrapped) {
 				// Next block, potentially a conveyor-aware block.
-				BlockPos nextBlockPos = tileEntity.getPos().offset(direction);
+				BlockPos nextBlockPos = pos.offset(direction);
 				
 				TileEntity te = world.getTileEntity(nextBlockPos);
 				
-				if(te instanceof IConveyorAwareTE) {
-					nextBlock = (IConveyorAwareTE) te;
-					
+				nextBlock = getSlots(te, direction.getOpposite());
+				
+				if(nextBlock == null) {
+					// Drop it
+					nextSlotFree = true;
+					nextSlotMovable = true;
+				} else {
+					// Move it to next block
 					nextSlotFree = nextBlock.getSlot(nextSlot).isEmpty();
 					wrappedIsSameDirection = nextBlock.getMovementDirection() == direction;
 					nextSlotMovable = nextBlock.canSlotMove(nextSlot) && wrappedIsSameDirection;
@@ -501,10 +518,6 @@ public class ConveyorUtil {
 						}
 					}
 					
-				} else {
-					// Drop it
-					nextSlotFree = true;
-					nextSlotMovable = true;
 				}
 			} else {
 				ItemWrapper nextWrapper = tileEntity.getSlot(nextSlot);
@@ -518,13 +531,13 @@ public class ConveyorUtil {
 				if(wrapper.movementProgress == speedsteps && nextSlotFree) {
 					if(slotWrapped && (nextBlock == null || !nextBlock.isSlotAvailable(nextSlot))) {
 						// No next block, drop it.
-						dropItem(world, tileEntity, slot, true);
+						dropItem(world, pos, tileEntity, slot, true);
 					} else {
 						boolean completeTransfer;
 						if(slotWrapped) {
 							completeTransfer = transferSlot(tileEntity, slot, nextBlock, nextSlot);
 						} else {
-							completeTransfer = transferSlot(tileEntity,slot, nextSlot);
+							completeTransfer = transferSlot(tileEntity, slot, nextSlot);
 						}
 						if(!completeTransfer) {
 							// We still have some items pending here..
@@ -549,7 +562,7 @@ public class ConveyorUtil {
 		return needsWorldUpdate;
 	}
 
-	public static void defaultPlayerInteraction(EntityPlayer player, IConveyorAwareTE tileEntity, float hitX, float hitZ) {
+	public static void defaultPlayerInteraction(EntityPlayer player, IConveyorSlots tileEntity, float hitX, float hitZ) {
 		int clickedSlot = getSlotForRelativeCoordinates(hitX, hitZ);
 		int playerSlot = player.inventory.currentItem;
 		ItemStack playerStack = player.inventory.getCurrentItem();

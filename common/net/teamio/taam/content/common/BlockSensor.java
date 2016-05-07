@@ -43,18 +43,18 @@ public class BlockSensor extends BaseBlock {
 		this.setStepSound(Block.soundTypeMetal);
 		this.setHarvestLevel("pickaxe", 1);
 	}
-	
+
 	@Override
 	protected BlockState createBlockState() {
 		return new BlockState(this, DIRECTION);
 	}
-	
+
 	@Override
 	public int getMetaFromState(IBlockState state) {
-		EnumFacing meta = (EnumFacing)state.getValue(DIRECTION);
+		EnumFacing meta = (EnumFacing) state.getValue(DIRECTION);
 		return meta.ordinal();
 	}
-	
+
 	@Override
 	public IBlockState getStateFromMeta(int meta) {
 		return getDefaultState().withProperty(DIRECTION, EnumFacing.getFront(meta));

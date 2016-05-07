@@ -274,6 +274,12 @@ public class TaamRecipes {
 						new ItemStack(TaamMain.blockConcrete, 1, Taam.BLOCK_CONCRETE_META.rough.ordinal()))
 				);
 		
+		ProcessingRegistry.registerRecipe(ProcessingRegistry.FLUIDDRIER,
+				new FluidDrierRecipe(
+						new FluidStack(FluidRegistry.LAVA, 1000),
+						new ItemStack(Blocks.obsidian, 1))
+				);
+		
 		/*
 		 * Sprayer
 		 */

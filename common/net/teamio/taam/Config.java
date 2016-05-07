@@ -82,6 +82,20 @@ public class Config {
 	public static int pl_processor_crusher_timeout = 15;
 	public static int pl_processor_fluid_drier_timeout = 50;
 	
+	public static boolean multipart_load = true;
+	public static boolean multipart_register_items = true;
+
+	/**
+	 * Set by {@link TaamMain} in {@link TaamMain#preInit(net.minecraftforge.fml.common.event.FMLPreInitializationEvent)}.
+	 * If true, mcmultipart was found & can be used.
+	 */
+	public static boolean multipart_present;
+	
+	public static final String SECTION_WORLDGEN = "worldgen";
+	public static final String SECTION_PRODUCTIONLINE = "production_line";
+	public static final String SECTION_PRODUCTIONLINE_FLUIDS = "production_line_fluids";
+	public static final String SECTION_COMPAT_MULTIPART = "compat_multipart";
+	
 	public static void init(File configFile)
 	{
 				
@@ -96,68 +110,57 @@ public class Config {
 	}
 	private static void loadConfig()
 	{
-		
-		genOre[0] = config.getBoolean("generateCopper", "worldgen", true, Taam.CFG_COMMENT_GEN_COPPER_ORE);
-		genOre[1] = config.getBoolean("generateTin", "worldgen", true , Taam.CFG_COMMENT_GEN_TIN_ORE);
-		genOre[2]= config.getBoolean("generateAluminum", "worldgen", true , Taam.CFG_COMMENT_GEN_ALUMINUM_ORE);
-		genOre[3] = config.getBoolean("generateBauxite", "worldgen", true , Taam.CFG_COMMENT_GEN_BAUXITE_ORE);
-		genOre[4] = config.getBoolean("generateKaolinite", "worldgen", true , Taam.CFG_COMMENT_GEN_KAOLINITE_ORE);
-				
-		oreSize[0] = config.getInt("oreSize_Copper", "worldgen", 14 , 0, Integer.MAX_VALUE , "");
-		oreSize[1] = config.getInt("oreSize_Tin", "worldgen", 13 , 0, Integer.MAX_VALUE , "");
-		oreSize[2] = config.getInt("oreSize_Aluminum", "worldgen", 2 , 0, Integer.MAX_VALUE , "");
-		oreSize[3] = config.getInt("oreSize_Bauxite", "worldgen", 35 , 0, Integer.MAX_VALUE , "");
-		oreSize[4] = config.getInt("oreSize_Kaolinite", "worldgen", 35 , 0, Integer.MAX_VALUE , "");
-		
-		oreAbove[0] = config.getInt("oreAbove_Copper", "worldgen", 0 , 0, 255 , "");
-		oreAbove[1] = config.getInt("oreAbove_Tin", "worldgen", 0 , 0, 255 , "");
-		oreAbove[2] = config.getInt("oreAbove_Aluminum", "worldgen", 0 , 0, 255 , "");
-		oreAbove[3] = config.getInt("oreAbove_Bauxite", "worldgen", 0 , 0, 255 , "");
-		oreAbove[4] = config.getInt("oreAbove_Kaolinite", "worldgen", 0 , 0, 255 , "");
+		Taam.BLOCK_ORE_META[] oreMeta = Taam.BLOCK_ORE_META.values();
+		for(int i = 0; i < 5; i++) {
+			String name = oreMeta[i].config_name;
+			genOre[i] = config.getBoolean("generate" + name, SECTION_WORLDGEN, true,
+					"Should Taam generate " + name + " ore in the world?");
+			oreSize[0] =	config.getInt("oreSize_" + name, SECTION_WORLDGEN, oreMeta[i].gen_default_size, 0, Integer.MAX_VALUE ,
+					"Size of " + name + " ore veins");
+			oreAbove[0] =	config.getInt("oreAbove_" + name, SECTION_WORLDGEN, oreMeta[i].gen_default_above, 0, 255 ,
+					name + " ore veins spawn above this y-level");
+			oreBelow[0] =	config.getInt("oreBelow_" + name, SECTION_WORLDGEN, oreMeta[i].gen_default_below, 0, 255 ,
+					name + " ore veins spawn below this y-level");
+			oreDepositCount[0] = config.getInt("oreDepositCount_Copper", SECTION_WORLDGEN, oreMeta[i].gen_default_count, 0, Integer.MAX_VALUE ,
+					"Number of " + name + " ore veins per chunk");
+		}
 
-		oreBelow[0] = config.getInt("oreBelow_Copper", "worldgen", 64 , 0, 255 , "");
-		oreBelow[1] = config.getInt("oreBelow_Tin", "worldgen", 64 , 0, 255 , "");
-		oreBelow[2] = config.getInt("oreBelow_Aluminum", "worldgen", 64 , 0, 255 , "");
-		oreBelow[3] = config.getInt("oreBelow_Bauxite", "worldgen", 128 , 0, 255 , "");
-		oreBelow[4] = config.getInt("oreBelow_Kaolinite", "worldgen", 100 , 0, 255 , "");
+		debug = config.getBoolean("debug_output", Configuration.CATEGORY_GENERAL, false, "Should the Debug mode form Taam be activated");
 		
-		oreDepositCount[0] = config.getInt("oreDepositCount_Copper", "worldgen", 64 , 0, Integer.MAX_VALUE , "");
-		oreDepositCount[1] = config.getInt("oreDepositCount_Tin", "worldgen", 64 , 0, Integer.MAX_VALUE , "");
-		oreDepositCount[2] = config.getInt("oreDepositCount_Aluminum", "worldgen", 64 , 0, Integer.MAX_VALUE , "");
-		oreDepositCount[3] = config.getInt("oreDepositCount_Bauxite", "worldgen", 128 , 0, Integer.MAX_VALUE , "");
-		oreDepositCount[4] = config.getInt("oreDepositCount_Kaolinite", "worldgen", 100 , 0, Integer.MAX_VALUE , "");
-
-		debug = config.getBoolean("debug_output", Configuration.CATEGORY_GENERAL, false, Taam.CFG_COMMENT_DEBUG_OUTPUT);
+		sensor_delay = config.getInt("sensor_delay", "multitronix", 30, 10, 100, "Sensor [Motion, Minect] delay (minimum activation time) in game ticks, minimum 10");
+		sensor_placement_mode = config.getInt("sensor_placement_mode", "multitronix", 1, 1, 2, "Sensor [Motion, Minect] placement mode when side by side. 1 = move together, 2 = merge into one");
 		
-		sensor_delay = config.getInt("sensor_delay", "multitronix", 30, 10, 100, Taam.CFG_COMMENT_SENSOR_DELAY);
-		sensor_placement_mode = config.getInt("sensor_placement_mode", "multitronix", 1, 1, 2, Taam.CFG_COMMENT_SENSOR_PLACEMENT_MODE);
+		pl_trashcan_maxfill = config.getFloat("pl_trashcan_maxfill", SECTION_PRODUCTIONLINE, 64f, 1f, Float.MAX_VALUE, "Maximum fill level of trashcans. This counts stacks. (Fill Level 1 == 1 stack and it is full)");
 		
-		pl_trashcan_maxfill = config.getFloat("pl_trashcan_maxfill", "production_line", 64f, 1f, Float.MAX_VALUE, "Maximum fill level of trashcans. This counts stacks. (Fill Level 1 == 1 stack and it is full)");
+		pl_conveyor_supportrange = config.getInt("pl_conveyor_supportrange", SECTION_PRODUCTIONLINE, 2, 0, Integer.MAX_VALUE, "!!Performance critical!! Keep this value low! Determines, how many blocks away a conveyor can be supported by other conveyors in the same direction.");
+		pl_conveyor_speedsteps[0] = (byte)config.getInt("pl_conveyor_speedsteps_1", SECTION_PRODUCTIONLINE, 80, 1, Byte.MAX_VALUE, "Speedsteps (1/speed) for tier 1 conveyors (wooden)");
+		pl_conveyor_speedsteps[1] = (byte)config.getInt("pl_conveyor_speedsteps_2", SECTION_PRODUCTIONLINE, 40, 1, Byte.MAX_VALUE, "Speedsteps (1/speed) for tier 2 conveyors (aluminum)");
+		pl_conveyor_speedsteps[2] = (byte)config.getInt("pl_conveyor_speedsteps_3", SECTION_PRODUCTIONLINE, 5, 1, Byte.MAX_VALUE, "Speedsteps (1/speed) for tier 3 conveyors (high throughput)");
 		
-		pl_conveyor_supportrange = config.getInt("pl_conveyor_supportrange", "production_line", 2, 0, Integer.MAX_VALUE, "!!Performance critical!! Keep this value low! Determines, how many blocks away a conveyor can be supported by other conveyors in the same direction.");
-		pl_conveyor_speedsteps[0] = (byte)config.getInt("pl_conveyor_speedsteps_1", "production_line", 80, 1, Byte.MAX_VALUE, "Speedsteps (1/speed) for tier 1 conveyors (wooden)");
-		pl_conveyor_speedsteps[1] = (byte)config.getInt("pl_conveyor_speedsteps_2", "production_line", 40, 1, Byte.MAX_VALUE, "Speedsteps (1/speed) for tier 2 conveyors (aluminum)");
-		pl_conveyor_speedsteps[2] = (byte)config.getInt("pl_conveyor_speedsteps_3", "production_line", 5, 1, Byte.MAX_VALUE, "Speedsteps (1/speed) for tier 3 conveyors (high throughput)");
+		pl_hopper_delay = config.getInt("hopper_delay", SECTION_PRODUCTIONLINE, 8, 1, 500, "Drop Delay (ticks) for the conveyor hopper.");
+		pl_hopper_highspeed_delay = config.getInt("hopper_highspeed_delay", SECTION_PRODUCTIONLINE, 0, 1, 500, "Drop Delay (ticks) for the high-speed conveyor hopper.");
+		pl_hopper_stackmode_normal_speed = config.getBoolean("hopper_stackmode_normal_speed", SECTION_PRODUCTIONLINE, true, "Disabling this makes the High-Speed Hoppers eject in 'slow' speed when in stack-mode. (Same delay as the regular conveyor hopper)");
 		
-		pl_hopper_delay = config.getInt("hopper_delay", "production_line", 8, 1, 500, "Drop Delay (ticks) for the conveyor hopper.");
-		pl_hopper_highspeed_delay = config.getInt("hopper_highspeed_delay", "production_line", 0, 1, 500, "Drop Delay (ticks) for the high-speed conveyor hopper.");
-		pl_hopper_stackmode_normal_speed = config.getBoolean("hopper_stackmode_normal_speed", "production_line", true, "Disabling this makes the High-Speed Hoppers eject in 'slow' speed when in stack-mode. (Same delay as the regular conveyor hopper)");
-		
-		pl_processor_hurt = config.getBoolean("pl_processor_hurt", "production_line", true, "Decides, whether standing on conveyor processors (Grinder, Crusher, Shredder) should hurt players/NPCs.");
-		pl_processor_hurt_chance = config.getFloat("pl_processor_hurt_chance", "production_line", 0.2f, 0.00001f, 1f, "The likelyhood of being hurt by a processor. Calculated every tick.");
-		pl_processor_shredder_timeout = config.getInt("pl_processor_shredder_timeout", "production_line", 1, 1, 200, "Ticks between each shredded item in the conveyor shredder.");
-		pl_processor_grinder_timeout = config.getInt("pl_processor_grinder_timeout", "production_line", 15, 1, 200, "Ticks between each shredded item in the conveyor grinder.");
-		pl_processor_crusher_timeout = config.getInt("pl_processor_crusher_timeout", "production_line", 15, 1, 200, "Ticks between each shredded item in the conveyor crusher.");
-		pl_sieve_speedsteps = (byte)config.getInt("pl_sieve_speedsteps", "production_line", 20, 1, Byte.MAX_VALUE, "Speedsteps (1/speed) for conveyor sieves.");
+		pl_processor_hurt = config.getBoolean("pl_processor_hurt", SECTION_PRODUCTIONLINE, true, "Decides, whether standing on conveyor processors (Grinder, Crusher, Shredder) should hurt players/NPCs.");
+		pl_processor_hurt_chance = config.getFloat("pl_processor_hurt_chance", SECTION_PRODUCTIONLINE, 0.2f, 0.00001f, 1f, "The likelyhood of being hurt by a processor. Calculated every tick.");
+		pl_processor_shredder_timeout = config.getInt("pl_processor_shredder_timeout", SECTION_PRODUCTIONLINE, 1, 1, 200, "Ticks between each shredded item in the conveyor shredder.");
+		pl_processor_grinder_timeout = config.getInt("pl_processor_grinder_timeout", SECTION_PRODUCTIONLINE, 15, 1, 200, "Ticks between each shredded item in the conveyor grinder.");
+		pl_processor_crusher_timeout = config.getInt("pl_processor_crusher_timeout", SECTION_PRODUCTIONLINE, 15, 1, 200, "Ticks between each shredded item in the conveyor crusher.");
+		pl_sieve_speedsteps = (byte)config.getInt("pl_sieve_speedsteps", SECTION_PRODUCTIONLINE, 20, 1, Byte.MAX_VALUE, "Speedsteps (1/speed) for conveyor sieves.");
 		
 		//pl_appl_sprayer_resourceUsage = config.getInt("sprayer_resourceUsage", "production_line_appliances", 1, 1, 500, "Resource usage per spray step in the sprayer.");
 
-		pl_processor_fluid_drier_timeout = config.getInt("pl_processor_fluid_drier_timeout", "production_line_fluids", 50, 1, 200, "Ticks between each processed item in the fluid drier.");
+		pl_processor_fluid_drier_timeout = config.getInt("pl_processor_fluid_drier_timeout", SECTION_PRODUCTIONLINE_FLUIDS, 50, 1, 200, "Ticks between each processed item in the fluid drier.");
+		
+		
+		multipart_load = config.getBoolean("load_multiparts", SECTION_COMPAT_MULTIPART, true, "Load machines as multiparts if McMultipart is found.");
+		multipart_register_items = config.getBoolean("register_multipart_items", SECTION_COMPAT_MULTIPART, true, "Allows you to disable registering of the multipart-variants of the items. Setting this to false means that multiparts will load without an issue, but all new machines will be created as full blocks and not as multiparts.");
 		
 		if(config.hasChanged())
 		{
 			config.save();
 		}
+		
 	}
 	
 	
@@ -167,6 +170,11 @@ public class Config {
 		if (event.modID.equalsIgnoreCase(Taam.MOD_ID))
 		{
 			loadConfig();
+			
+			if(multipart_load && !multipart_present) {
+				Log.warn("Config has multipart enabled, but it was not found. Multipart support will not be loaded.");
+				multipart_load = false;
+			}
 		}
 	}
 	

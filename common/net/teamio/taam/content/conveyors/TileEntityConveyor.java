@@ -28,9 +28,9 @@ import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.conveyors.ItemWrapper;
 import net.teamio.taam.conveyors.api.IConveyorAppliance;
 import net.teamio.taam.conveyors.api.IConveyorApplianceHost;
-import net.teamio.taam.conveyors.api.IConveyorAwareTE;
+import net.teamio.taam.conveyors.api.IConveyorSlots;
 
-public class TileEntityConveyor extends BaseTileEntity implements ISidedInventory, IConveyorAwareTE, IRotatable, IConveyorApplianceHost, IWorldInteractable, ITickable, IRenderable {
+public class TileEntityConveyor extends BaseTileEntity implements ISidedInventory, IConveyorSlots, IRotatable, IConveyorApplianceHost, IWorldInteractable, ITickable, IRenderable {
 
 	/*
 	 * Content
@@ -100,6 +100,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	public void renderUpdate() {
 		// Check in front
 		TileEntity te = worldObj.getTileEntity(pos.offset(direction));
+		
 		if(te instanceof TileEntityConveyor) {
 			TileEntityConveyor next = (TileEntityConveyor)te;
 			renderEnd = next.speedLevel != speedLevel;
@@ -107,7 +108,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 			isEnd = renderEnd;
 		} else {
 			isEnd = true;
-			renderEnd = te instanceof IConveyorAwareTE;
+			renderEnd = ConveyorUtil.getSlots(te, direction.getOpposite()) != null;
 		}
 		
 		// Check behind
@@ -120,36 +121,37 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 			isBegin = renderBegin;
 		} else {
 			isBegin = true;
-			renderBegin = te instanceof IConveyorAwareTE;
+			renderBegin = ConveyorUtil.getSlots(te, direction) != null;
 		}
 		
 		// Check right
-		inverse = direction.rotateAround(Axis.Y);
+		inverse = direction.rotateY();
 		te = worldObj.getTileEntity(pos.offset(inverse));
 		
 		if(te instanceof TileEntityConveyor) {
 			TileEntityConveyor next = (TileEntityConveyor)te;
 			EnumFacing nextFacing = next.getFacingDirection();
-			renderRight = nextFacing != direction && nextFacing != direction.getOpposite();
+			renderRight = nextFacing.getAxis() != direction.getAxis();
 		} else {
-			renderRight = te instanceof IConveyorAwareTE;
+			renderRight = ConveyorUtil.getSlots(te, inverse.getOpposite()) != null;
 		}
 		
 		// Check left
-		inverse = direction.getOpposite().rotateAround(Axis.Y);
+		inverse = direction.rotateYCCW();
 		te = worldObj.getTileEntity(pos.offset(inverse));
 		
 		if(te instanceof TileEntityConveyor) {
 			TileEntityConveyor next = (TileEntityConveyor)te;
 			EnumFacing nextFacing = next.getFacingDirection();
-			renderLeft = nextFacing != direction && nextFacing != direction.getOpposite();
+			renderLeft = nextFacing.getAxis() != direction.getAxis();
 		} else {
-			renderLeft = te instanceof IConveyorAwareTE;
+			renderLeft = ConveyorUtil.getSlots(te, inverse.getOpposite()) != null;
 		}
 		
 		// Check above
+		// Render supports if above face is solid or there is a conveyor machine there.
 		renderAbove = worldObj.isSideSolid(pos.offset(EnumFacing.UP), EnumFacing.DOWN) ||
-				worldObj.getTileEntity(pos.offset(EnumFacing.UP)) instanceof IConveyorAwareTE;
+				ConveyorUtil.getSlots(worldObj.getTileEntity(pos.offset(EnumFacing.UP)), EnumFacing.DOWN) != null;
 	}
 	
 	/*
@@ -248,7 +250,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	 */
 	public void dropItems() {
 		for (int index = 0; index < items.length; index++) {
-			ConveyorUtil.dropItem(worldObj, this, index, false);
+			ConveyorUtil.dropItem(worldObj, pos, this, index, false);
 		}
 	}
 	
@@ -273,7 +275,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 		// process from movement direction backward to keep slot order inside one conveyor,
 		// as we depend on the status of the next slot
 		int[] slotOrder = ConveyorUtil.getSlotOrderForDirection(direction);
-		if(ConveyorUtil.defaultTransition(worldObj, this, slotOrder)) {
+		if(ConveyorUtil.defaultTransition(worldObj, pos, this, slotOrder)) {
 			updateState(true, false, false);
 		}
 	}

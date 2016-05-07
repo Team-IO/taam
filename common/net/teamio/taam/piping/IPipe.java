@@ -1,6 +1,7 @@
 package net.teamio.taam.piping;
 
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -15,6 +16,10 @@ import net.minecraftforge.fluids.FluidStack;
  *
  */
 public interface IPipe {
+	
+	
+	
+	
 	/**
 	 * Get the pressure currently on the pipe. Effective pressure is calculated
 	 * using getPressure and getSuction.
@@ -111,5 +116,13 @@ public interface IPipe {
 	 * @return An array of pipes. May return null if there are no connected
 	 *         pipes.
 	 */
-	IPipe[] getConnectedPipes(IBlockAccess world, BlockPos pos);
+	IPipe[] getInternalPipes(IBlockAccess world, BlockPos pos);
+
+	/**
+	 * Asks the pipe if it does connect on the given side.
+	 * 
+	 * @param side
+	 * @return
+	 */
+	boolean isSideAvailable(EnumFacing side);
 }

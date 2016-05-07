@@ -1,7 +1,5 @@
 package net.teamio.taam.recipes;
 
-import java.util.Random;
-
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -27,12 +25,12 @@ public class SprayerRecipe extends BaseProcessingRecipeFluidBased implements IPr
 	}
 
 	@Override
-	public ItemStack[] getOutput(ItemStack input, Random rand) {
+	public ItemStack[] getOutput(ItemStack input) {
 		return new ItemStack[] { output[0].output.copy() };
 	}
 
 	@Override
-	public FluidStack getOutputFluid(ItemStack input, FluidStack inputFluid, Random rand) {
+	public FluidStack getOutputFluid(ItemStack input, FluidStack inputFluid) {
 		return null;
 	}
 

@@ -6,7 +6,6 @@ import com.google.common.collect.Lists;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -21,22 +20,19 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.TRSRTransformation;
 import net.minecraftforge.client.model.obj.OBJModel;
-import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IExtendedBlockState;
-import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.conveyors.TileEntityConveyor;
 import net.teamio.taam.content.conveyors.TileEntityConveyorHopper;
 import net.teamio.taam.content.conveyors.TileEntityConveyorItemBag;
+import net.teamio.taam.machines.MachineTileEntity;
 import net.teamio.taam.util.TaamUtil;
 import net.teamio.taam.util.WrenchUtil;
 import net.teamio.taam.util.inv.InventoryUtils;
 
 public abstract class BaseBlock extends Block {
-
-	private ExtendedBlockState state = new ExtendedBlockState(this, new IProperty[] {}, new IUnlistedProperty[]{OBJModel.OBJProperty.instance});
 
 	public BaseBlock(Material material) {
 		super(material);
@@ -201,33 +197,60 @@ public abstract class BaseBlock extends Block {
 		return state;
 	}
 	
-	private static List<String> ALL = Lists.newArrayList(OBJModel.Group.ALL);
+	public static final List<String> ALL = Lists.newArrayList(OBJModel.Group.ALL);
 	
 	@Override
-	public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
+	public IExtendedBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
 		List<String> visibleParts = null;
 	
 		TileEntity te = world.getTileEntity(pos);
 		
 		// Decide which parts to render, delegated to the tileEntity (if required)
 		
+		
+		EnumFacing facing = EnumFacing.NORTH;
+	
+		IRotatable rotatable = null;
+		IRenderable renderable = null;
+		
+
 		if(te instanceof IRenderable) {
-			visibleParts = ((IRenderable) te).getVisibleParts();
+			renderable = (IRenderable) te;
+		}
+		
+		if (te instanceof IRotatable) {
+			rotatable = (IRotatable) te;
+		}
+		
+		if(te instanceof MachineTileEntity) {
+			MachineTileEntity mte = (MachineTileEntity)te;
+			if(mte.machine instanceof IRotatable) {
+				rotatable = (IRotatable) mte.machine;
+			}
+			if(mte.machine instanceof IRenderable) {
+				renderable = (IRenderable) mte.machine;
+			}
+			mte.machine.renderUpdate(world, pos);
+		}
+
+		if(renderable != null) {
+			visibleParts = renderable.getVisibleParts();
 		}
 		if(visibleParts == null) {
 			visibleParts = ALL;
 		}
-		
-		EnumFacing facing = EnumFacing.NORTH;
 	
-		if (te instanceof IRotatable) {
-			facing = ((IRotatable) te).getFacingDirection();
+		if(rotatable != null) {
+			facing = rotatable.getFacingDirection();
 		}
-	
-		// Apply rotation to the model
+		
+		// Apply rotation to the model, as rotation in the blockstates-file is not applied for OBJ models
+		// Additional info: it is applied for multiparts, though.
 		OBJModel.OBJState retState = new OBJModel.OBJState(visibleParts, true, new TRSRTransformation(rotateRenderDirection(facing)));
 		
-		return ((IExtendedBlockState) this.state.getBaseState()).withProperty(OBJModel.OBJProperty.instance, retState);
+		IExtendedBlockState extendedState = (IExtendedBlockState)state;
+		
+		return extendedState.withProperty(OBJModel.OBJProperty.instance, retState);
 	}
 	
 	private EnumFacing rotateRenderDirection(EnumFacing facing) {

@@ -2,7 +2,9 @@ package net.teamio.taam.content.conveyors;
 
 import java.util.List;
 
+import mcmultipart.block.BlockMultipart;
 import net.minecraft.block.Block;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
@@ -17,6 +19,9 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.client.model.obj.OBJModel;
+import net.minecraftforge.common.property.ExtendedBlockState;
+import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.teamio.taam.Config;
@@ -40,7 +45,7 @@ public class BlockProductionLine extends BaseBlock {
 	
 	@Override
 	protected BlockState createBlockState() {
-		return new BlockState(this, VARIANT);
+		return new ExtendedBlockState(this, new IProperty[] {VARIANT}, new IUnlistedProperty[]{BlockMultipart.properties[0], OBJModel.OBJProperty.instance});
 	}
 	
 	@Override

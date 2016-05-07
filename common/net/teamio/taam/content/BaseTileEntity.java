@@ -23,13 +23,13 @@ public abstract class BaseTileEntity extends TileEntity {
 	private UUID owner = null;
 
 	public void setOwner(EntityPlayer player) {
-		if(player == null) {
+		if (player == null) {
 			owner = null;
 		} else {
 			owner = player.getUniqueID();
 		}
 	}
-	
+
 	public void setOwner(UUID owner) {
 		this.owner = owner;
 	}
@@ -47,27 +47,29 @@ public abstract class BaseTileEntity extends TileEntity {
 			return;
 		}
 		markDirty();
-		if(worldUpdate) {
+		if (worldUpdate) {
 			this.worldObj.markBlockForUpdate(pos);
 		}
-		if(renderUpdate) {
+		if (renderUpdate) {
 			worldObj.markBlockRangeForRenderUpdate(pos, pos);
 		}
-		if(blockUpdate) {
+		if (blockUpdate) {
 			worldObj.notifyNeighborsOfStateChange(pos, blockType);
 		}
 	}
-	
+
 	/**
-	 * Called inside {@link BaseBlock#onNeighborBlockChange(net.minecraft.world.World, net.minecraft.util.BlockPos, net.minecraft.block.state.IBlockState, net.minecraft.block.Block)}.
-	 * (On server side)
+	 * Called inside
+	 * {@link BaseBlock#onNeighborBlockChange(net.minecraft.world.World, net.minecraft.util.BlockPos, net.minecraft.block.state.IBlockState, net.minecraft.block.Block)}
+	 * . (On server side)
 	 */
 	public void blockUpdate() {
 	}
-	
-	
+
 	/**
-	 * Called within {@link BaseBlock#getActualState(net.minecraft.block.state.IBlockState, net.minecraft.world.IBlockAccess, net.minecraft.util.BlockPos)} to update render state in the tile entity.
+	 * Called within
+	 * {@link BaseBlock#getActualState(net.minecraft.block.state.IBlockState, net.minecraft.world.IBlockAccess, net.minecraft.util.BlockPos)}
+	 * to update render state in the tile entity.
 	 */
 	public void renderUpdate() {
 	}
@@ -87,8 +89,7 @@ public abstract class BaseTileEntity extends TileEntity {
 	public S35PacketUpdateTileEntity getDescriptionPacket() {
 		NBTTagCompound nbt = new NBTTagCompound();
 		writePropertiesToNBTInternal(nbt);
-
-		return new S35PacketUpdateTileEntity(pos, 0, nbt);
+		return new S35PacketUpdateTileEntity(getPos(), getBlockMetadata(), nbt);
 	}
 
 	/*
@@ -96,14 +97,14 @@ public abstract class BaseTileEntity extends TileEntity {
 	 */
 
 	@Override
-	public final void writeToNBT(NBTTagCompound tag) {
+	public void writeToNBT(NBTTagCompound tag) {
 		super.writeToNBT(tag);
 
 		writePropertiesToNBTInternal(tag);
 	}
 
 	@Override
-	public final void readFromNBT(NBTTagCompound tag) {
+	public void readFromNBT(NBTTagCompound tag) {
 		super.readFromNBT(tag);
 
 		readPropertiesFromNBTInternal(tag);
@@ -116,7 +117,7 @@ public abstract class BaseTileEntity extends TileEntity {
 	 * @param tag
 	 */
 	private void writePropertiesToNBTInternal(NBTTagCompound tag) {
-		if(owner != null) {
+		if (owner != null) {
 			tag.setString("owner", owner.toString());
 		}
 		writePropertiesToNBT(tag);
@@ -137,7 +138,7 @@ public abstract class BaseTileEntity extends TileEntity {
 	 */
 	private void readPropertiesFromNBTInternal(NBTTagCompound tag) {
 		String ownerString = tag.getString("owner");
-		if(ownerString != null && !ownerString.isEmpty()) {
+		if (ownerString != null && !ownerString.isEmpty()) {
 			try {
 				owner = UUID.fromString(ownerString);
 			} catch (IllegalArgumentException e) {
