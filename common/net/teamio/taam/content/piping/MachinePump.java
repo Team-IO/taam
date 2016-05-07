@@ -24,6 +24,7 @@ import net.teamio.taam.machines.IMachine;
 import net.teamio.taam.piping.PipeEndSharedDistinct;
 import net.teamio.taam.piping.PipeInfo;
 import net.teamio.taam.piping.PipeUtil;
+import net.teamio.taam.rendering.TaamRenderer;
 import net.teamio.taam.rendering.TankRenderInfo;
 import net.teamio.taam.util.FaceBitmap;
 
@@ -43,13 +44,29 @@ public class MachinePump implements IMachine, IRotatable {
 	private static final float fromBorder = 2f / 16;
 	public static final AxisAlignedBB boundsPump = new AxisAlignedBB(fromBorder, 0, fromBorder, 1 - fromBorder,
 			1 - 4 / 16f, 1 - fromBorder);
-	public static final AxisAlignedBB boundsPumpTank = new AxisAlignedBB(0, 0, 0, 3 / 16f, 3 / 16f, 3 / 16f);
+	
+
+	private static final float tankBottom = 5 / 16f;
+	private static final float tankHeight = 5 / 16f;
+	private static final float tankTop = tankBottom + tankHeight;
+	
+	private static final float tankLeft = 3 / 16f;
+	private static final float tankWidth = 2 / 16f;
+	
+	private static final float tankBack = 6 / 16f;
+	
+	public static final AxisAlignedBB[] boundsPumpTank = new AxisAlignedBB[] {
+			new AxisAlignedBB(1-tankLeft,	tankBottom, tankBack,	1-tankLeft-tankWidth,	tankTop,	tankBack+tankWidth).expand(TaamRenderer.shrinkValue, TaamRenderer.shrinkValue, TaamRenderer.shrinkValue),//S
+			new AxisAlignedBB(1-tankBack,	tankBottom,	1-tankLeft, 1-tankBack-tankWidth,	tankTop,	1-tankLeft-tankWidth).expand(TaamRenderer.shrinkValue, TaamRenderer.shrinkValue, TaamRenderer.shrinkValue),//W
+			new AxisAlignedBB(tankLeft,		tankBottom, 1-tankBack,	tankLeft+tankWidth,		tankTop,	1-tankBack-tankWidth).expand(TaamRenderer.shrinkValue, TaamRenderer.shrinkValue, TaamRenderer.shrinkValue),//N
+			new AxisAlignedBB(tankBack,		tankBottom, tankLeft,	tankBack+tankWidth,		tankTop,	tankLeft+tankWidth).expand(TaamRenderer.shrinkValue, TaamRenderer.shrinkValue, TaamRenderer.shrinkValue)//E
+	};
 
 	private static final float fromBorderOcclusion = 2f / 16;
 	public static final AxisAlignedBB bbCoolusion = new AxisAlignedBB(fromBorderOcclusion, fromBorderOcclusion,
 			fromBorderOcclusion, 1 - fromBorderOcclusion, 1 - fromBorderOcclusion, 1 - fromBorderOcclusion);
 
-	private TankRenderInfo tankRI = new TankRenderInfo(boundsPumpTank, null);
+	private TankRenderInfo tankRI = new TankRenderInfo(boundsPumpTank[2], null);
 
 	private byte occludedSides;
 
@@ -64,6 +81,8 @@ public class MachinePump implements IMachine, IRotatable {
 	private void updateOcclusion() {
 		pipeEndOut.occluded = FaceBitmap.isSideBitSet(occludedSides, pipeEndOut.getSide());
 		pipeEndIn.occluded = FaceBitmap.isSideBitSet(occludedSides, pipeEndIn.getSide());
+		
+		tankRI.bounds = boundsPumpTank[direction.getHorizontalIndex()];
 	}
 
 	public List<String> getVisibleParts() {
