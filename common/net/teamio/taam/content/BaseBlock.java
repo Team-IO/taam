@@ -167,6 +167,12 @@ public abstract class BaseBlock extends Block {
 	public boolean isOpaqueCube() {
 		return false;
 	}
+	
+	@Override
+	public boolean isFullCube() {
+		// Required false to prevent suffocation
+		return false;
+	}
 
 	@Override
 	public AxisAlignedBB getCollisionBoundingBox(World worldIn, BlockPos pos, IBlockState state) {

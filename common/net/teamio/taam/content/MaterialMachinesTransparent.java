@@ -22,12 +22,14 @@ public class MaterialMachinesTransparent extends Material {
 		return false;
 	}
 	
-    @Override
-    public boolean blocksMovement()
-    {
-        return true;
-    }
-    
+	@Override
+	public boolean blocksMovement() {
+		// Required to be true, else will be broken by fluids!
+		// Player suffocation: checked with Block.isVisuallyOpaque() with also
+		// checks Block.isFullCube()
+		return true;
+	}
+
     @Override
     public boolean isOpaque() {
     	return false;
