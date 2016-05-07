@@ -327,7 +327,23 @@ public final class Taam {
 		aluminum_plate,
 		resin,
 		cement,
-		cementRough
+		cementRough,
+		pigment_black,
+		pigment_red,
+		pigment_green,
+		pigment_brown,
+		pigment_blue,
+		pigment_purple,
+		pigment_cyan,
+		pigment_lightGray,
+		pigment_gray,
+		pigment_pink,
+		pigment_lime,
+		pigment_yellow,
+		pigment_lightBlue,
+		pigment_magenta,
+		pigment_orange,
+		pigment_white
 		;
 		public static String[] valuesAsString() {
 			Enum<?>[] valuesAsEnum = values();

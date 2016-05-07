@@ -279,6 +279,20 @@ public class TaamRecipes {
 						new FluidStack(FluidRegistry.LAVA, 1000),
 						new ItemStack(Blocks.obsidian, 1))
 				);
+
+		
+		int metaBlack = Taam.ITEM_MATERIAL_META.pigment_black.ordinal();
+		for(int dyeMeta = 0; dyeMeta < 16; dyeMeta++) {
+			Fluid fluid = TaamMain.fluidsDye[dyeMeta];
+			
+			// 1:1 ratio from dyes to pellets
+			FluidStack input = new FluidStack(fluid, 10);
+			ItemStack output = new ItemStack(TaamMain.itemMaterial, 1, metaBlack + dyeMeta);
+			
+				ProcessingRegistry.registerRecipe(ProcessingRegistry.FLUIDDRIER,
+						new FluidDrierRecipe(input, output));
+		}
+		
 		
 		/*
 		 * Sprayer

@@ -472,5 +472,30 @@ public class TaamMain {
 		OreDictionary.registerOre("partMotor", new ItemStack(itemPart, 1, Taam.ITEM_PART_META.motor.ordinal()));
 		OreDictionary.registerOre("partBasicCircuit", new ItemStack(itemPart, 1, Taam.ITEM_PART_META.circuit_basic.ordinal()));
 		OreDictionary.registerOre("partAdvancedCircuit", new ItemStack(itemPart, 1, Taam.ITEM_PART_META.circuit_advanced.ordinal()));
+		
+		String[] dyes = {
+				"Black",
+				"Red",
+				"Green",
+				"Brown",
+				"Blue",
+				"Purple",
+				"Cyan",
+				"LightGray",
+				"Gray",
+				"Pink",
+				"Lime",
+				"Yellow",
+				"LightBlue",
+				"Magenta",
+				"Orange",
+				"White"
+				};
+		
+		int metaBlack = Taam.ITEM_MATERIAL_META.pigment_black.ordinal();
+		for(int dyeMeta = 0; dyeMeta < 16; dyeMeta++) {
+			
+			OreDictionary.registerOre("dye" + dyes[dyeMeta], new ItemStack(TaamMain.itemMaterial, 1, metaBlack + dyeMeta));
+		}
 	}
 }
