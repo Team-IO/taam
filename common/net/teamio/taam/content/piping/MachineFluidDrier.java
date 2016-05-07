@@ -56,6 +56,10 @@ public class MachineFluidDrier implements IMachine {
 		pipeEndIn.occluded = FaceBitmap.isSideBitSet(occludedSides, EnumFacing.UP);
 	}
 	
+	private void resetTimeout() {
+		timeout = Config.pl_processor_fluid_drier_timeout;
+	}
+	
 	@Override
 	public void writePropertiesToNBT(NBTTagCompound tag) {
 		tag.setBoolean("isShutdown", isShutdown);
@@ -147,10 +151,9 @@ public class MachineFluidDrier implements IMachine {
 		
 		boolean redstoneHigh = world.isBlockIndirectlyGettingPowered(pos) > 0;
 		
-		boolean newShutdown = TaamUtil.isShutdown(world.rand, redstoneMode, redstoneHigh);
+		isShutdown = TaamUtil.isShutdown(world.rand, redstoneMode, redstoneHigh);
 		
-		if(isShutdown != newShutdown) {
-			isShutdown = newShutdown;
+		if(isShutdown) {
 			resetTimeout();
 			return true;
 		}
@@ -159,7 +162,7 @@ public class MachineFluidDrier implements IMachine {
 		/*
 		 * Check blocked & fetch output inventory
 		 */
-		chute.refreshOuptutInventory(world, down);
+		chute.refreshOutputInventory(world, down);
 		if(!chute.isOperable()) {
 			resetTimeout();
 			return false;
@@ -226,10 +229,6 @@ public class MachineFluidDrier implements IMachine {
 		chute.backlog = recipe.getOutput(null);
 		resetTimeout();
 		return true;
-	}
-	
-	private void resetTimeout() {
-		timeout = Config.pl_processor_fluid_drier_timeout;
 	}
 	
 	/**

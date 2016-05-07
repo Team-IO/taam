@@ -81,6 +81,7 @@ public class Config {
 	public static int pl_processor_grinder_timeout = 15;
 	public static int pl_processor_crusher_timeout = 15;
 	public static int pl_processor_fluid_drier_timeout = 50;
+	public static int pl_processor_mixer_timeout = 15;
 	
 	public static boolean multipart_load = true;
 	public static boolean multipart_register_items = true;
@@ -148,9 +149,8 @@ public class Config {
 		pl_processor_crusher_timeout = config.getInt("pl_processor_crusher_timeout", SECTION_PRODUCTIONLINE, 15, 1, 200, "Ticks between each shredded item in the conveyor crusher.");
 		pl_sieve_speedsteps = (byte)config.getInt("pl_sieve_speedsteps", SECTION_PRODUCTIONLINE, 20, 1, Byte.MAX_VALUE, "Speedsteps (1/speed) for conveyor sieves.");
 		
-		//pl_appl_sprayer_resourceUsage = config.getInt("sprayer_resourceUsage", "production_line_appliances", 1, 1, 500, "Resource usage per spray step in the sprayer.");
-
 		pl_processor_fluid_drier_timeout = config.getInt("pl_processor_fluid_drier_timeout", SECTION_PRODUCTIONLINE_FLUIDS, 50, 1, 200, "Ticks between each processed item in the fluid drier.");
+		pl_processor_mixer_timeout = config.getInt("pl_processor_fluid_drier_timeout", SECTION_PRODUCTIONLINE_FLUIDS, 15, 1, 200, "Ticks between each processed item in the mixer.");
 		
 		
 		multipart_load = config.getBoolean("load_multiparts", SECTION_COMPAT_MULTIPART, true, "Load machines as multiparts if McMultipart is found.");

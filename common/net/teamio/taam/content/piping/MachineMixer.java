@@ -16,8 +16,10 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
+import net.teamio.taam.Config;
 import net.teamio.taam.Log;
 import net.teamio.taam.Taam;
+import net.teamio.taam.content.IRedstoneControlled;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.conveyors.SlotMatrix;
 import net.teamio.taam.conveyors.api.ConveyorSlotsStatic;
@@ -28,6 +30,7 @@ import net.teamio.taam.piping.PipeUtil;
 import net.teamio.taam.recipes.IProcessingRecipeFluidBased;
 import net.teamio.taam.recipes.ProcessingRegistry;
 import net.teamio.taam.util.FaceBitmap;
+import net.teamio.taam.util.TaamUtil;
 
 public class MachineMixer implements IMachine, IRotatable {
 
@@ -41,6 +44,10 @@ public class MachineMixer implements IMachine, IRotatable {
 	private FluidStack lastInputFluid;
 	private IProcessingRecipeFluidBased[] matchingRecipes;
 
+
+	private byte redstoneMode = IRedstoneControlled.MODE_ACTIVE_ON_LOW;
+	public boolean isShutdown;
+	private int timeout;
 	private byte occludedSides;
 	
 	private static final int capacity = 2000;
@@ -53,6 +60,15 @@ public class MachineMixer implements IMachine, IRotatable {
 	public static final AxisAlignedBB boundsPipeZ = new AxisAlignedBB(
 			MachinePipe.fromBorderFlange, MachinePipe.fromBorderFlange, 0,
 			1 - MachinePipe.fromBorderFlange, 1 - MachinePipe.fromBorderFlange, 1);
+
+	/**
+	 * Cached from last block update
+	 */
+	private World world;
+	/**
+	 * Cached from last block update
+	 */
+	private BlockPos pos;
 	
 	/**
 	 * Conveyor Slot set for input on the sides
@@ -87,6 +103,7 @@ public class MachineMixer implements IMachine, IRotatable {
 		pipeEndIn = new PipeEndRestricted(direction.getOpposite(), capacity, false);
 		
 		updateOcclusion();
+		resetTimeout();
 	}
 	
 	private void updateOcclusion() {
@@ -96,6 +113,10 @@ public class MachineMixer implements IMachine, IRotatable {
 		conveyorSlots.rotation = direction;
 	}
 	
+	private void resetTimeout() {
+		timeout = Config.pl_processor_fluid_drier_timeout;
+	}
+
 	@Override
 	public void writePropertiesToNBT(NBTTagCompound tag) {
 		tag.setInteger("direction", direction.ordinal());
@@ -107,6 +128,9 @@ public class MachineMixer implements IMachine, IRotatable {
 		NBTTagCompound tagOut = new NBTTagCompound();
 		pipeEndOut.writeToNBT(tagOut);
 		tag.setTag("pipeEndOut", tagOut);
+		
+		tag.setBoolean("isShutdown", isShutdown);
+		tag.setInteger("timeout", timeout);
 		tag.setByte("occludedSides", occludedSides);
 	}
 
@@ -128,6 +152,9 @@ public class MachineMixer implements IMachine, IRotatable {
 		if(tagOut != null) {
 			pipeEndOut.readFromNBT(tagOut);
 		}
+		
+		isShutdown = tag.getBoolean("isShutdown");
+		timeout = tag.getInteger("timeout");
 		occludedSides = tag.getByte("occludedSides");
 		updateOcclusion();
 	}
@@ -179,6 +206,8 @@ public class MachineMixer implements IMachine, IRotatable {
 	@Override
 	public void blockUpdate(World world, BlockPos pos, byte occlusionField) {
 		occludedSides = occlusionField;
+		this.world = world;
+		this.pos = pos;
 		updateOcclusion();
 	}
 
@@ -279,33 +308,67 @@ public class MachineMixer implements IMachine, IRotatable {
 	 * @return the amount of items consumed.
 	 */
 	private int process(ItemStack stack) {
-		// When there is backlog, we cannot process more
-		if(backlog != null) {
+		
+		/*
+		 * When there is backlog, we cannot process more
+		 */
+		if (backlog != null) {
 			// Skip processing until next tick.
 			return 0;
 		}
-		
-		// Actual processing
-		
-		IProcessingRecipeFluidBased recipe = getRecipe(stack);
-		
-		if(recipe == null) {
-			return 0;
-		}
-		
-		//TODO: Speed limit, cooldown, ...
-		
+
 		/*
-		 * Get input fluid
+		 * Check redstone level
 		 */
 		
-		FluidStack inputFluid = recipe.getInputFluid();
-		int amount = pipeEndIn.getFluidAmount(inputFluid);
-		if(amount < inputFluid.amount) {
+		//TODO: move process() to the update method & save one stack in an internal inventory
+		boolean redstoneHigh = world != null && world.isBlockIndirectlyGettingPowered(pos) > 0;
+		
+		isShutdown = TaamUtil.isShutdown(TaamUtil.RANDOM, redstoneMode, redstoneHigh);
+		
+		if(isShutdown) {
+			resetTimeout();
 			return 0;
 		}
+
+		
+		/*
+		 * Check Recipe
+		 */
+		
+		IProcessingRecipeFluidBased recipe = getRecipe(stack);
+
+		if (recipe == null) {
+			resetTimeout();
+			return 0;
+		}
+
+		/*
+		 * Check fluid requirements
+		 */
+
+		FluidStack inputFluid = recipe.getInputFluid();
+		int amount = pipeEndIn.getFluidAmount(inputFluid);
+		if (amount < inputFluid.amount) {
+			resetTimeout();
+			return 0;
+		}
+		
+		/*
+		 * Check timeout, only if we actually can process.
+		 */
+		
+		if(timeout > 0) {
+			timeout--;
+			return 0;
+		}
+		
+		/*
+		 * Consume fluid
+		 */
+		
 		amount = pipeEndIn.removeFluid(inputFluid);
-		if(amount != inputFluid.amount) {
+		if (amount != inputFluid.amount) {
 			// Not enough, back into the pipe.
 			int reinserted = pipeEndIn.addFluid(new FluidStack(inputFluid, amount));
 			if (reinserted != amount) {
@@ -318,16 +381,12 @@ public class MachineMixer implements IMachine, IRotatable {
 		}
 		
 		/*
-		 * Get output fluid
+		 * Set Output Backlog
 		 */
 		FluidStack outputFluid = recipe.getOutputFluid(stack, inputFluid);
-		
-		/*
-		 * Add to backlog
-		 */
-		
+
 		backlog = outputFluid.copy();
-		
+
 		return recipe.getInput().stackSize;
 	}
 	
