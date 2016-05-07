@@ -362,13 +362,15 @@ public class MachinePipe implements IMachine, IPipe, IRenderable {
 	public IPipe[] getInternalPipes(IBlockAccess world, BlockPos pos) {
 		List<IPipe> pipes = new ArrayList<IPipe>(6);
 		for (EnumFacing side : EnumFacing.values()) {
-			IPipe pipeOnSide = PipeUtil.getConnectedPipe(world, pos, side);
-			if (pipeOnSide != null) {
-				pipes.add(pipeOnSide);
-			} else {
-				int sideIdx = side.ordinal();
-				if(adjacentFluidHandlers != null && adjacentFluidHandlers[sideIdx] != null) {
-					pipes.add(adjacentFluidHandlers[sideIdx]);
+			if(isSideAvailable(side)) {
+				// If there is no "regular" pipe on that side
+				IPipe pipeOnSide = PipeUtil.getConnectedPipe(world, pos, side);
+				if (pipeOnSide == null) {
+					// Check for fluid handler wrappers
+					int sideIdx = side.ordinal();
+					if(adjacentFluidHandlers != null && adjacentFluidHandlers[sideIdx] != null) {
+						pipes.add(adjacentFluidHandlers[sideIdx]);
+					}
 				}
 			}
 		}

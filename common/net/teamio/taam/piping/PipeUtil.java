@@ -11,7 +11,9 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
+import net.teamio.taam.Config;
 import net.teamio.taam.Log;
+import net.teamio.taam.MultipartHandler;
 import net.teamio.taam.Taam;
 import net.teamio.taam.util.inv.InventoryUtils;
 
@@ -45,17 +47,55 @@ public final class PipeUtil {
 	 * in the direction of side, then asks that tile for a pipe in direction of
 	 * side.getOpposite().
 	 * 
+	 * Checks for blocked/disabled pipes. To get any pipe, regardless of blocked/disabled state, use {@link #getPipe(IBlockAccess, BlockPos, EnumFacing)}.
+	 * 
 	 * @param world
 	 * @param pos
 	 * @param side
 	 * @return An IPipe or null.
 	 */
 	public static IPipe getConnectedPipe(IBlockAccess world, BlockPos pos, EnumFacing side) {
-		TileEntity ent = world.getTileEntity(pos.offset(side));
+		BlockPos offsetPos = pos.offset(side);
+		TileEntity ent = world.getTileEntity(offsetPos);
 		if(ent == null) {
 			return null;
 		}
-		return ent.getCapability(Taam.CAPABILITY_PIPE, side.getOpposite());
+		EnumFacing opposite = side.getOpposite();
+		IPipe candidate = ent.getCapability(Taam.CAPABILITY_PIPE, opposite);
+		if(candidate == null && Config.multipart_present) {
+			candidate = MultipartHandler.getCapabilityForCenter(Taam.CAPABILITY_PIPE, world, offsetPos, opposite);
+		}
+		if(candidate != null && candidate.isSideAvailable(opposite)) {
+			return candidate;
+		}
+		return null;
+	}
+	
+	/**
+	 * Returns a pipe connected to a side of a block. Looks for a TileEntity in
+	 * the direction of side, then asks that tile for a pipe in direction of
+	 * side.getOpposite().
+	 * 
+	 * Does not check for blocked/disabled pipes! For that, use
+	 * {@link #getConnectedPipe(IBlockAccess, BlockPos, EnumFacing)}.
+	 * 
+	 * @param world
+	 * @param pos
+	 * @param side
+	 * @return An IPipe or null.
+	 */
+	public static IPipe getPipe(IBlockAccess world, BlockPos pos, EnumFacing side) {
+		BlockPos offsetPos = pos.offset(side);
+		TileEntity ent = world.getTileEntity(offsetPos);
+		if(ent == null) {
+			return null;
+		}
+		EnumFacing opposite = side.getOpposite();
+		IPipe candidate = ent.getCapability(Taam.CAPABILITY_PIPE, opposite);
+		if(candidate == null && Config.multipart_present) {
+			candidate = MultipartHandler.getCapabilityForCenter(Taam.CAPABILITY_PIPE, world, offsetPos, opposite);
+		}
+		return candidate;
 	}
 
 	private static final ThreadLocal<ArrayList<IPipe>> connected = new ThreadLocal<ArrayList<IPipe>>() {

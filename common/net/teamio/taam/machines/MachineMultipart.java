@@ -1,12 +1,16 @@
 package net.teamio.taam.machines;
 
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.List;
 
 import mcmultipart.MCMultiPartMod;
 import mcmultipart.block.BlockMultipart;
+import mcmultipart.capabilities.ISlottedCapabilityProvider;
+import mcmultipart.microblock.IMicroblock;
 import mcmultipart.multipart.IMultipart;
 import mcmultipart.multipart.IOccludingPart;
+import mcmultipart.multipart.ISlottedPart;
 import mcmultipart.multipart.Multipart;
 import mcmultipart.multipart.OcclusionHelper;
 import mcmultipart.multipart.PartSlot;
@@ -38,11 +42,12 @@ import net.teamio.taam.Taam;
 import net.teamio.taam.content.BaseBlock;
 import net.teamio.taam.content.IRenderable;
 import net.teamio.taam.content.IRotatable;
+import net.teamio.taam.content.piping.MachinePipe;
 import net.teamio.taam.util.FaceBitmap;
 import net.teamio.taam.util.WrenchUtil;
 import net.teamio.taam.util.inv.InventoryUtils;
 
-public class MachineMultipart extends Multipart implements IOccludingPart, ITickable {
+public class MachineMultipart extends Multipart implements IOccludingPart, ITickable, ISlottedPart, ISlottedCapabilityProvider {
 	public IMachine machine;
 	private IMachineMetaInfo meta;
 
@@ -96,17 +101,35 @@ public class MachineMultipart extends Multipart implements IOccludingPart, ITick
 		byte occlusionField = 0;
 		Collection<? extends IMultipart> parts = this.getContainer().getParts();
 		for(EnumFacing side : EnumFacing.VALUES) {
-			if(OcclusionHelper.isSlotOccluded(parts, this, PartSlot.getFaceSlot(side))) {
+			PartSlot slot = PartSlot.getFaceSlot(side);
+			
+			/*
+			 * Physical occlusion
+			 */
+			if(!OcclusionHelper.occlusionTest(parts, this, MachinePipe.bbFaces[side.ordinal()])) {
+				occlusionField = FaceBitmap.setSideBit(occlusionField, side);
+				continue;
+			}
+
+			/*
+			 * Check for face parts & if they are hollow (covers, panels, ..)
+			 */
+			ISlottedPart part = getContainer().getPartInSlot(slot);
+			if (part instanceof IMicroblock.IFaceMicroblock) {
+				IMicroblock.IFaceMicroblock faceMicro = (IMicroblock.IFaceMicroblock) part;
+				// Only occluded if the face is NOT hollow
+				if (!faceMicro.isFaceHollow()) {
+					occlusionField = FaceBitmap.setSideBit(occlusionField, side);
+				}
+				continue;
+			/*
+			 * Last resort: slotted occluding parts
+			 */
+			} else if(OcclusionHelper.isSlotOccluded(parts, this, slot)) {
 				occlusionField = FaceBitmap.setSideBit(occlusionField, side);
 			}
-//			if(OcclusionHelper.occlusionTest(parts, this, MachinePipe.bbFaces[side.ordinal()])) {
-//				occlusionField = FaceBitmap.setSideBit(occlusionField, side);
-//			}
 		}
-		if(occlusionField != 0) {
-			System.out.println("Occlusion: " + occlusionField);
-		}
-		
+
 		machine.blockUpdate(getWorld(), getPos(), occlusionField);
 		if(machine.renderUpdate(getWorld(), getPos())) {
 			markRenderUpdate();
@@ -241,6 +264,7 @@ public class MachineMultipart extends Multipart implements IOccludingPart, ITick
 		return machine.getCapability(capability, facing);
 	}
 	
+	
 	/*
 	 * ITickable implementation
 	 */
@@ -250,14 +274,29 @@ public class MachineMultipart extends Multipart implements IOccludingPart, ITick
 		machine.update(getWorld(), getPos());
 	}
 
-// Does not seem to work, now we can't place covers & such anymore...
-//	/*
-//	 * ISlottedPart implementation
-//	 */
-//	
-//	@Override
-//	public EnumSet<PartSlot> getSlotMask() {
-//		return EnumSet.of(PartSlot.CENTER, PartSlot.FACES);
-//	}
+	/*
+	 * ISlottedCapabilityProvider
+	 */
+	
+	@Override
+	public boolean hasCapability(Capability<?> capability, PartSlot slot, EnumFacing facing) {
+		return machine.hasCapability(capability, facing);
+	}
+
+	@Override
+	public <T> T getCapability(Capability<T> capability, PartSlot slot, EnumFacing facing) {
+		return machine.getCapability(capability, facing);
+	}
+
+	/*
+	 * ISlottedPart implementation
+	 */
+	
+	private static final EnumSet<PartSlot> slotSet = EnumSet.of(PartSlot.CENTER);
+	
+	@Override
+	public EnumSet<PartSlot> getSlotMask() {
+		return slotSet;
+	}
 
 }

@@ -1,11 +1,21 @@
 package net.teamio.taam;
 
+import mcmultipart.capabilities.ISlottedCapabilityProvider;
 import mcmultipart.multipart.IMultipart;
+import mcmultipart.multipart.IMultipartContainer;
+import mcmultipart.multipart.ISlottedPart;
 import mcmultipart.multipart.IPartFactory.IAdvancedPartFactory;
+import mcmultipart.multipart.MultipartHelper;
 import mcmultipart.multipart.MultipartRegistry;
+import mcmultipart.multipart.PartSlot;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.world.IBlockAccess;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.teamio.taam.machines.IMachineMetaInfo;
 import net.teamio.taam.machines.MachineItemMultipart;
 import net.teamio.taam.machines.MachineMultipart;
@@ -38,5 +48,20 @@ public class MultipartHandler {
 	public static Item createMultipartItem(String unlocalizedName, IMachineMetaInfo[] meta) {
 		MachineItemMultipart item = new MachineItemMultipart(meta);
 		return item;
+	}
+	
+	public static <T> T getCapabilityForCenter(Capability<T> capability, IBlockAccess world, BlockPos pos, EnumFacing facing) {
+		IMultipartContainer container = MultipartHelper.getPartContainer(world, pos);
+		if(container == null) {
+			return null;
+		}
+		ISlottedPart part = container.getPartInSlot(PartSlot.CENTER);
+		if(part instanceof ISlottedCapabilityProvider) {
+			return ((ISlottedCapabilityProvider) part).getCapability(capability, PartSlot.getFaceSlot(facing), facing);
+		} else if(part instanceof ICapabilityProvider) {
+			return ((ICapabilityProvider) part).getCapability(capability, facing);
+		} else {
+			return container.getCapability(capability, PartSlot.CENTER, facing);
+		}
 	}
 }
