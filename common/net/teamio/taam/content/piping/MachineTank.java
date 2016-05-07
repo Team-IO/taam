@@ -28,6 +28,7 @@ import net.teamio.taam.piping.PipeEndFluidHandler;
 import net.teamio.taam.piping.PipeUtil;
 import net.teamio.taam.rendering.TaamRenderer;
 import net.teamio.taam.rendering.TankRenderInfo;
+import net.teamio.taam.util.FaceBitmap;
 
 public class MachineTank implements IMachine, IFluidHandler, IWorldInteractable {
 	
@@ -43,6 +44,8 @@ public class MachineTank implements IMachine, IFluidHandler, IWorldInteractable 
 	public static final AxisAlignedBB bbTank = new AxisAlignedBB(fromBorder, 0, fromBorder, 1-fromBorder, 1, 1-fromBorder);
 	public static final AxisAlignedBB bbCoolusion = new AxisAlignedBB(fromBorderOcclusion, fromBorderOcclusion, fromBorderOcclusion, 1-fromBorderOcclusion, 1-fromBorderOcclusion, 1-fromBorderOcclusion);
 	
+	private byte occludedSides;
+	
 	public MachineTank() {
 		pipeEndUP = new PipeEndFluidHandler(this, EnumFacing.UP, true);
 		pipeEndDOWN = new PipeEndFluidHandler(this, EnumFacing.DOWN, true);
@@ -51,26 +54,37 @@ public class MachineTank implements IMachine, IFluidHandler, IWorldInteractable 
 		tank = new FluidTank(8000);
 	}
 	
+	private void updateOcclusion() {
+		pipeEndUP.occluded = FaceBitmap.isSideBitSet(occludedSides, EnumFacing.UP);
+		pipeEndDOWN.occluded = FaceBitmap.isSideBitSet(occludedSides, EnumFacing.DOWN);
+	}
+	
 	@Override
 	public void writePropertiesToNBT(NBTTagCompound tag) {
 		tank.writeToNBT(tag);
+		tag.setByte("occludedSides", occludedSides);
 	}
 
 	@Override
 	public void readPropertiesFromNBT(NBTTagCompound tag) {
 		tank.readFromNBT(tag);
+		occludedSides = tag.getByte("occludedSides");
+		updateOcclusion();
 	}
 
 	public void writeUpdatePacket(PacketBuffer buf) {
 		NBTTagCompound tag = new NBTTagCompound();
 		tank.writeToNBT(tag);
 		buf.writeNBTTagCompoundToBuffer(tag);
+		buf.writeByte(occludedSides);
 	}
 
 	public void readUpdatePacket(PacketBuffer buf) {
 		try {
 			NBTTagCompound tag = buf.readNBTTagCompoundFromBuffer();
 			tank.readFromNBT(tag);
+			occludedSides = buf.readByte();
+			updateOcclusion();
 		} catch (IOException e) {
 			Log.error(getClass().getSimpleName()
 					+ " has trouble reading tag from update packet. THIS IS AN ERROR, please report.", e);
@@ -100,6 +114,8 @@ public class MachineTank implements IMachine, IFluidHandler, IWorldInteractable 
 
 	@Override
 	public void blockUpdate(World world, BlockPos pos, byte occlusionField) {
+		occludedSides = occlusionField;
+		updateOcclusion();
 	}
 
 	@Override

@@ -24,6 +24,7 @@ import net.teamio.taam.piping.PipeEndRestricted;
 import net.teamio.taam.piping.PipeUtil;
 import net.teamio.taam.recipes.IProcessingRecipeFluidBased;
 import net.teamio.taam.recipes.ProcessingRegistry;
+import net.teamio.taam.util.FaceBitmap;
 import net.teamio.taam.util.TaamUtil;
 
 public class MachineFluidDrier implements IMachine {
@@ -40,6 +41,7 @@ public class MachineFluidDrier implements IMachine {
 	private int timeout;
 	
 	public boolean isShutdown;
+	private byte occludedSides;
 	
 	private static final float fromBorderOcclusion = 2f/16;
 	public static final AxisAlignedBB bbCollision = new AxisAlignedBB(0, 0, 0, 1, 1-3/16f, 1);
@@ -48,6 +50,10 @@ public class MachineFluidDrier implements IMachine {
 	public MachineFluidDrier() {
 		pipeEndIn = new PipeEndRestricted(EnumFacing.UP, capacity, false);
 		resetTimeout();
+	}
+	
+	private void updateOcclusion() {
+		pipeEndIn.occluded = FaceBitmap.isSideBitSet(occludedSides, EnumFacing.UP);
 	}
 	
 	@Override
@@ -62,6 +68,8 @@ public class MachineFluidDrier implements IMachine {
 		NBTTagCompound tagIn = new NBTTagCompound();
 		pipeEndIn.writeToNBT(tagIn);
 		tag.setTag("pipeEndIn", tagIn);
+		
+		tag.setByte("occludedSides", occludedSides);
 	}
 
 	@Override
@@ -75,6 +83,9 @@ public class MachineFluidDrier implements IMachine {
 		if (tagIn != null) {
 			pipeEndIn.readFromNBT(tagIn);
 		}
+
+		occludedSides = tag.getByte("occludedSides");
+		updateOcclusion();
 	}
 
 	public void writeUpdatePacket(PacketBuffer buf) {
@@ -123,6 +134,8 @@ public class MachineFluidDrier implements IMachine {
 
 	@Override
 	public void blockUpdate(World world, BlockPos pos, byte occlusionField) {
+		occludedSides = occlusionField;
+		updateOcclusion();
 	}
 	
 	private boolean process(World world, BlockPos pos) {

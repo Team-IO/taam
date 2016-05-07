@@ -18,6 +18,7 @@ public class PipeEnd implements IPipe {
 	protected EnumFacing side;
 	public final PipeInfo info;
 	private final boolean active;
+	public boolean occluded;
 
 	public PipeEnd(EnumFacing side, PipeInfo info, boolean active) {
 		this.side = side;
@@ -112,7 +113,7 @@ public class PipeEnd implements IPipe {
 
 	@Override
 	public boolean isSideAvailable(EnumFacing side) {
-		return this.side == side;
+		return !occluded && this.side == side;
 	}
 
 }

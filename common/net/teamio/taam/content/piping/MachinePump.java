@@ -25,6 +25,7 @@ import net.teamio.taam.piping.PipeEndSharedDistinct;
 import net.teamio.taam.piping.PipeInfo;
 import net.teamio.taam.piping.PipeUtil;
 import net.teamio.taam.rendering.TankRenderInfo;
+import net.teamio.taam.util.FaceBitmap;
 
 public class MachinePump implements IMachine, IRotatable {
 
@@ -46,8 +47,9 @@ public class MachinePump implements IMachine, IRotatable {
 	private static final float fromBorderOcclusion = 2f/16;
 	public static final AxisAlignedBB bbCoolusion = new AxisAlignedBB(fromBorderOcclusion, fromBorderOcclusion, fromBorderOcclusion, 1-fromBorderOcclusion, 1-fromBorderOcclusion, 1-fromBorderOcclusion);
 
-	
 	private TankRenderInfo tankRI = new TankRenderInfo(boundsPumpTank, null);
+
+	private byte occludedSides;
 	
 	public MachinePump() {
 		info = new PipeInfo(capacity);
@@ -55,6 +57,11 @@ public class MachinePump implements IMachine, IRotatable {
 		pipeEndIn = new PipeEndSharedDistinct(direction.getOpposite(), info, true);
 		pipeEndOut.setPressure(pressure);
 		pipeEndIn.setSuction(pressure);
+	}
+	
+	private void updateOcclusion() {
+		pipeEndOut.occluded = FaceBitmap.isSideBitSet(occludedSides, pipeEndOut.getSide());
+		pipeEndIn.occluded = FaceBitmap.isSideBitSet(occludedSides, pipeEndIn.getSide());
 	}
 	
 	public List<String> getVisibleParts() {
@@ -65,6 +72,7 @@ public class MachinePump implements IMachine, IRotatable {
 	public void writePropertiesToNBT(NBTTagCompound tag) {
 		tag.setInteger("direction", direction.ordinal());
 		info.writeToNBT(tag);
+		tag.setByte("occludedSides", occludedSides);
 	}
 
 	@Override
@@ -77,18 +85,23 @@ public class MachinePump implements IMachine, IRotatable {
 		pipeEndOut.setSide(direction);
 		pipeEndIn.setSide(direction.getOpposite());
 		info.readFromNBT(tag);
+		occludedSides = tag.getByte("occludedSides");
+		updateOcclusion();
 	}
 
 	public void writeUpdatePacket(PacketBuffer buf) {
 		NBTTagCompound tag = new NBTTagCompound();
 		writePropertiesToNBT(tag);
 		buf.writeNBTTagCompoundToBuffer(tag);
+		buf.writeByte(occludedSides);
 	}
 
 	public void readUpdatePacket(PacketBuffer buf) {
 		try {
 			NBTTagCompound tag = buf.readNBTTagCompoundFromBuffer();
 			readPropertiesFromNBT(tag);
+			occludedSides = buf.readByte();
+			updateOcclusion();
 		} catch (IOException e) {
 			Log.error(getClass().getSimpleName()
 					+ " has trouble reading tag from update packet. THIS IS AN ERROR, please report.", e);
@@ -118,6 +131,8 @@ public class MachinePump implements IMachine, IRotatable {
 
 	@Override
 	public void blockUpdate(World world, BlockPos pos, byte occlusionField) {
+		occludedSides = occlusionField;
+		updateOcclusion();
 	}
 
 	
@@ -199,6 +214,7 @@ public class MachinePump implements IMachine, IRotatable {
 
 		pipeEndOut.setSide(direction);
 		pipeEndIn.setSide(direction.getOpposite());
+		updateOcclusion();
 
 		//TODO: updateState(true, true, true);
 	}

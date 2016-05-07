@@ -27,6 +27,7 @@ public class PipeEndFluidHandler implements IPipe {
 	private int pressure;
 	private int suction;
 	private boolean active;
+	public boolean occluded;
 
 	public PipeEndFluidHandler(IFluidHandler owner, EnumFacing side, boolean active) {
 		this.owner = owner;
@@ -130,6 +131,6 @@ public class PipeEndFluidHandler implements IPipe {
 
 	@Override
 	public boolean isSideAvailable(EnumFacing side) {
-		return this.side == side;
+		return !occluded && this.side == side;
 	}
 }

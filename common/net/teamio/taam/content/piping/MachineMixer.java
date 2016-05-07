@@ -27,6 +27,7 @@ import net.teamio.taam.piping.PipeEndRestricted;
 import net.teamio.taam.piping.PipeUtil;
 import net.teamio.taam.recipes.IProcessingRecipeFluidBased;
 import net.teamio.taam.recipes.ProcessingRegistry;
+import net.teamio.taam.util.FaceBitmap;
 
 public class MachineMixer implements IMachine, IRotatable {
 
@@ -39,6 +40,8 @@ public class MachineMixer implements IMachine, IRotatable {
 
 	private FluidStack lastInputFluid;
 	private IProcessingRecipeFluidBased[] matchingRecipes;
+
+	private byte occludedSides;
 	
 	private static final int capacity = 2000;
 	
@@ -84,6 +87,11 @@ public class MachineMixer implements IMachine, IRotatable {
 		pipeEndIn = new PipeEndRestricted(direction.getOpposite(), capacity, false);
 	}
 	
+	private void updateOcclusion() {
+		pipeEndOut.occluded = FaceBitmap.isSideBitSet(occludedSides, pipeEndOut.getSide());
+		pipeEndIn.occluded = FaceBitmap.isSideBitSet(occludedSides, pipeEndIn.getSide());
+	}
+	
 	@Override
 	public void writePropertiesToNBT(NBTTagCompound tag) {
 		tag.setInteger("direction", direction.ordinal());
@@ -95,6 +103,7 @@ public class MachineMixer implements IMachine, IRotatable {
 		NBTTagCompound tagOut = new NBTTagCompound();
 		pipeEndOut.writeToNBT(tagOut);
 		tag.setTag("pipeEndOut", tagOut);
+		tag.setByte("occludedSides", occludedSides);
 	}
 
 	@Override
@@ -115,6 +124,8 @@ public class MachineMixer implements IMachine, IRotatable {
 		if(tagOut != null) {
 			pipeEndOut.readFromNBT(tagOut);
 		}
+		occludedSides = tag.getByte("occludedSides");
+		updateOcclusion();
 	}
 
 	public void writeUpdatePacket(PacketBuffer buf) {
@@ -163,6 +174,8 @@ public class MachineMixer implements IMachine, IRotatable {
 
 	@Override
 	public void blockUpdate(World world, BlockPos pos, byte occlusionField) {
+		occludedSides = occlusionField;
+		updateOcclusion();
 	}
 
 	@Override
@@ -337,6 +350,8 @@ public class MachineMixer implements IMachine, IRotatable {
 		
 		pipeEndOut.setSide(direction);
 		pipeEndIn.setSide(direction.getOpposite());
+
+		updateOcclusion();
 		
 		//TODO: updateState(false, true, true);
 	}
