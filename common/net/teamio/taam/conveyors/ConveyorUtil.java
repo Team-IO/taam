@@ -14,6 +14,8 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.teamio.taam.Config;
+import net.teamio.taam.MultipartHandler;
 import net.teamio.taam.Taam;
 import net.teamio.taam.conveyors.api.IConveyorAppliance;
 import net.teamio.taam.conveyors.api.IConveyorApplianceHost;
@@ -389,7 +391,11 @@ public class ConveyorUtil {
 		if (tileEntity instanceof IConveyorSlots) {
 			return (IConveyorSlots) tileEntity;
 		} else {
-			return tileEntity.getCapability(Taam.CAPABILITY_CONVEYOR, side);
+			IConveyorSlots candidate = tileEntity.getCapability(Taam.CAPABILITY_CONVEYOR, side);
+			if(candidate == null && Config.multipart_present) {
+				candidate = MultipartHandler.getCapabilityForCenter(Taam.CAPABILITY_CONVEYOR, tileEntity.getWorld(), tileEntity.getPos(), side);
+			}
+			return candidate;
 		}
 	}
 	

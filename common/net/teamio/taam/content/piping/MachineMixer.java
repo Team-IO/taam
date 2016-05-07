@@ -85,11 +85,15 @@ public class MachineMixer implements IMachine, IRotatable {
 	public MachineMixer() {
 		pipeEndOut = new PipeEnd(direction, capacity, false);
 		pipeEndIn = new PipeEndRestricted(direction.getOpposite(), capacity, false);
+		
+		updateOcclusion();
 	}
 	
 	private void updateOcclusion() {
 		pipeEndOut.occluded = FaceBitmap.isSideBitSet(occludedSides, pipeEndOut.getSide());
 		pipeEndIn.occluded = FaceBitmap.isSideBitSet(occludedSides, pipeEndIn.getSide());
+
+		conveyorSlots.rotation = direction;
 	}
 	
 	@Override
@@ -350,7 +354,7 @@ public class MachineMixer implements IMachine, IRotatable {
 		
 		pipeEndOut.setSide(direction);
 		pipeEndIn.setSide(direction.getOpposite());
-
+		
 		updateOcclusion();
 		
 		//TODO: updateState(false, true, true);
