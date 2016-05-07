@@ -122,7 +122,7 @@ public class MachineFluidDrier implements IMachine {
 	}
 
 	@Override
-	public void blockUpdate(World world, BlockPos pos) {
+	public void blockUpdate(World world, BlockPos pos, byte occlusionField) {
 	}
 	
 	private boolean process(World world, BlockPos pos) {

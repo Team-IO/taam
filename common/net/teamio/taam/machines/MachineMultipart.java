@@ -1,5 +1,6 @@
 package net.teamio.taam.machines;
 
+import java.util.Collection;
 import java.util.List;
 
 import mcmultipart.MCMultiPartMod;
@@ -7,6 +8,8 @@ import mcmultipart.block.BlockMultipart;
 import mcmultipart.multipart.IMultipart;
 import mcmultipart.multipart.IOccludingPart;
 import mcmultipart.multipart.Multipart;
+import mcmultipart.multipart.OcclusionHelper;
+import mcmultipart.multipart.PartSlot;
 import mcmultipart.raytrace.PartMOP;
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.IProperty;
@@ -35,6 +38,7 @@ import net.teamio.taam.Taam;
 import net.teamio.taam.content.BaseBlock;
 import net.teamio.taam.content.IRenderable;
 import net.teamio.taam.content.IRotatable;
+import net.teamio.taam.util.FaceBitmap;
 import net.teamio.taam.util.WrenchUtil;
 import net.teamio.taam.util.inv.InventoryUtils;
 
@@ -75,25 +79,35 @@ public class MachineMultipart extends Multipart implements IOccludingPart, ITick
 	
 	@Override
 	public void onPartChanged(IMultipart part) {
-		machine.blockUpdate(getWorld(), getPos());
-		if(machine.renderUpdate(getWorld(), getPos())) {
-			markRenderUpdate();
-			sendUpdatePacket(true);
-		}
+		doBlockUpdate();
 	}
 	
 	@Override
 	public void onNeighborBlockChange(Block block) {
-		machine.blockUpdate(getWorld(), getPos());
-		if(machine.renderUpdate(getWorld(), getPos())) {
-			markRenderUpdate();
-			sendUpdatePacket(true);
-		}
+		doBlockUpdate();
 	}
 	
 	@Override
 	public void onNeighborTileChange(EnumFacing facing) {
-		machine.blockUpdate(getWorld(), getPos());
+		doBlockUpdate();
+	}
+	
+	private void doBlockUpdate() {
+		byte occlusionField = 0;
+		Collection<? extends IMultipart> parts = this.getContainer().getParts();
+		for(EnumFacing side : EnumFacing.VALUES) {
+			if(OcclusionHelper.isSlotOccluded(parts, this, PartSlot.getFaceSlot(side))) {
+				occlusionField = FaceBitmap.setSideBit(occlusionField, side);
+			}
+//			if(OcclusionHelper.occlusionTest(parts, this, MachinePipe.bbFaces[side.ordinal()])) {
+//				occlusionField = FaceBitmap.setSideBit(occlusionField, side);
+//			}
+		}
+		if(occlusionField != 0) {
+			System.out.println("Occlusion: " + occlusionField);
+		}
+		
+		machine.blockUpdate(getWorld(), getPos(), occlusionField);
 		if(machine.renderUpdate(getWorld(), getPos())) {
 			markRenderUpdate();
 			sendUpdatePacket(true);
@@ -235,5 +249,15 @@ public class MachineMultipart extends Multipart implements IOccludingPart, ITick
 	public void update() {
 		machine.update(getWorld(), getPos());
 	}
+
+// Does not seem to work, now we can't place covers & such anymore...
+//	/*
+//	 * ISlottedPart implementation
+//	 */
+//	
+//	@Override
+//	public EnumSet<PartSlot> getSlotMask() {
+//		return EnumSet.of(PartSlot.CENTER, PartSlot.FACES);
+//	}
 
 }

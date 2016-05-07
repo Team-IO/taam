@@ -8,9 +8,11 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.ITickable;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.teamio.taam.util.FaceBitmap;
 
 public interface IMachine extends ICapabilityProvider {
 	void writePropertiesToNBT(NBTTagCompound tag);
@@ -22,9 +24,36 @@ public interface IMachine extends ICapabilityProvider {
 	IBlockState getExtendedState(IBlockState state, IBlockAccess worldIn, BlockPos blockPos);
 	String getModelPath();
     
+	/**
+	 * Called in {@link ITickable#update()}
+	 * 
+	 * @param world
+	 * @param pos
+	 */
 	void update(World world, BlockPos pos);
+
+	/**
+	 * Called when a neighbor block changes, or for multiparts, a part in the
+	 * same/neighboring block changes. If true is returned, the block is marked
+	 * for a render update.
+	 * 
+	 * @param world
+	 * @param pos
+	 * @return true to mark the containing block for a render update.
+	 */
 	boolean renderUpdate(IBlockAccess world, BlockPos pos);
-	void blockUpdate(World world, BlockPos pos);
+
+	/**
+	 * Called when a neighbor block changes, or for multiparts, a part in the
+	 * same/neighboring block changes.
+	 * 
+	 * @param world
+	 * @param pos
+	 * @param occlusionField
+	 *            A {@link FaceBitmap}-compatible value describing which sides
+	 *            are occluded for pipes/cables. Probably 0 for non-multiparts.
+	 */
+	void blockUpdate(World world, BlockPos pos, byte occlusionField);
 	void addCollisionBoxes(AxisAlignedBB mask, List<AxisAlignedBB> list, Entity collidingEntity);
 	void addSelectionBoxes(List<AxisAlignedBB> list);
 	void addOcclusionBoxes(List<AxisAlignedBB> list);

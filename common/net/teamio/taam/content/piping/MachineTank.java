@@ -99,7 +99,7 @@ public class MachineTank implements IMachine, IFluidHandler, IWorldInteractable 
 	}
 
 	@Override
-	public void blockUpdate(World world, BlockPos pos) {
+	public void blockUpdate(World world, BlockPos pos, byte occlusionField) {
 	}
 
 	@Override

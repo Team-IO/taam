@@ -24,6 +24,7 @@ import net.teamio.taam.piping.IPipe;
 import net.teamio.taam.piping.PipeEndFluidHandler;
 import net.teamio.taam.piping.PipeInfo;
 import net.teamio.taam.piping.PipeUtil;
+import net.teamio.taam.util.FaceBitmap;
 
 public class MachinePipe implements IMachine, IPipe, IRenderable {
 
@@ -85,7 +86,12 @@ public class MachinePipe implements IMachine, IPipe, IRenderable {
 	 * just before rendering.
 	 */
 	private byte adjacentPipes;
-	
+	/**
+	 * Cache for the occlusion bitmap provided in
+	 * {@link #blockUpdate(World, BlockPos, byte)}
+	 */
+	private byte occludedSides;
+
 	private PipeEndFluidHandler[] adjacentFluidHandlers;
 	/**
 	 * ThreadLocal storage for the list of visible parts (required due to some
@@ -129,7 +135,7 @@ public class MachinePipe implements IMachine, IPipe, IRenderable {
 	}
 
 	public boolean isSideConnected(EnumFacing side) {
-		return (adjacentPipes & (1 << side.ordinal())) != 0;
+		return FaceBitmap.isSideBitSet(adjacentPipes, side);
 	}
 
 	private IFluidHandler getFluidHandler(TileEntity te, EnumFacing mySide) {
@@ -145,46 +151,55 @@ public class MachinePipe implements IMachine, IPipe, IRenderable {
 
 	@Override
 	public boolean renderUpdate(IBlockAccess world, BlockPos pos) {
-		int old = adjacentPipes;
+		byte old = adjacentPipes;
 		adjacentPipes = 0;
 		for (EnumFacing side : EnumFacing.VALUES) {
+			// Side occluded? Skip.
+			if(FaceBitmap.isSideBitSet(occludedSides, side)) {
+				continue;
+			}
 			IPipe pipeOnSide = PipeUtil.getConnectedPipe(world, pos, side);
 			if (pipeOnSide != null) {
-				adjacentPipes |= 1 << side.ordinal();
+				adjacentPipes = FaceBitmap.setSideBit(adjacentPipes, side);
 				continue;
 			}
 			TileEntity te = world.getTileEntity(pos.offset(side));
 			if (getFluidHandler(te, side) != null) {
-				adjacentPipes |= 1 << side.ordinal();
+				adjacentPipes = FaceBitmap.setSideBit(adjacentPipes, side);
 			}
 		}
 		return old != adjacentPipes;
 	};
 
 	@Override
-	public void blockUpdate(World world, BlockPos pos) {
+	public void blockUpdate(World world, BlockPos pos, byte occlusionField) {
+		occludedSides = occlusionField;
 		// Check surrounding blocks for IFluidHandler implementations that don't use the pipe system
 		// and create wrappers accordingly
 		boolean wrappersRequired = false;
 		for (EnumFacing side : EnumFacing.VALUES) {
+			// Side occluded? Skip.
+			if(FaceBitmap.isSideBitSet(occludedSides, side)) {
+				continue;
+			}
+			// Check for pipes
 			int sideIdx = side.ordinal();
 			IPipe pipeOnSide = PipeUtil.getConnectedPipe(world, pos, side);
+			// if there is no pipe, check for an IFluidHandler to wrap
 			if (pipeOnSide == null) {
 				TileEntity te = world.getTileEntity(pos.offset(side));
-				if (te != null && !te.hasCapability(Taam.CAPABILITY_PIPE, side)) {
-					IFluidHandler fh = getFluidHandler(te, side);
-					if (fh != null) {
-						wrappersRequired = true;
-						// Fluid handler here, we need a wrapper.
-						if (adjacentFluidHandlers == null) {
-							adjacentFluidHandlers = new PipeEndFluidHandler[6];
+				IFluidHandler fh = getFluidHandler(te, side);
+				if (fh != null) {
+					wrappersRequired = true;
+					// Fluid handler here, we need a wrapper.
+					if (adjacentFluidHandlers == null) {
+						adjacentFluidHandlers = new PipeEndFluidHandler[6];
+						adjacentFluidHandlers[sideIdx] = new PipeEndFluidHandler(fh, side.getOpposite(), false);
+					} else {
+						// Not yet known or a different TileEntity, we need a new wrapper.
+						if (adjacentFluidHandlers[sideIdx] == null
+								|| adjacentFluidHandlers[sideIdx].getOwner() != te) {
 							adjacentFluidHandlers[sideIdx] = new PipeEndFluidHandler(fh, side.getOpposite(), false);
-						} else {
-							// Not yet known or a different TileEntity, we need a new wrapper.
-							if (adjacentFluidHandlers[sideIdx] == null
-									|| adjacentFluidHandlers[sideIdx].getOwner() != te) {
-								adjacentFluidHandlers[sideIdx] = new PipeEndFluidHandler(fh, side.getOpposite(), false);
-							}
 						}
 					}
 				}
@@ -372,8 +387,8 @@ public class MachinePipe implements IMachine, IPipe, IRenderable {
 	
 	@Override
 	public boolean isSideAvailable(EnumFacing side) {
-		//TODO: Check multipart occlusion?
-		return true;
+		return !FaceBitmap.isSideBitSet(occludedSides, side);
+		//TODO: Check disabled sides once available
 	}
 
 }

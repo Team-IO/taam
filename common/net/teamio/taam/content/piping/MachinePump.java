@@ -117,7 +117,7 @@ public class MachinePump implements IMachine, IRotatable {
 	}
 
 	@Override
-	public void blockUpdate(World world, BlockPos pos) {
+	public void blockUpdate(World world, BlockPos pos, byte occlusionField) {
 	}
 
 	
