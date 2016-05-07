@@ -286,7 +286,7 @@ public class TaamMain {
 		/*
 		 * Wrapper block for machines if multipart is not available
 		 */
-		blockMachine = new MachineBlock(Material.iron, Taam.MACHINE_META.values());
+		blockMachine = new MachineBlock(Taam.MACHINE_META.values());
 		blockMachine.setUnlocalizedName(Taam.BLOCK_MACHINE_WRAPPER);
 		blockMachine.setCreativeTab(creativeTab);
 		GameRegistry.registerBlock(blockMachine, null, Taam.BLOCK_MACHINE_WRAPPER);

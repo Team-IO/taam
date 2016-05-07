@@ -5,7 +5,6 @@ import java.util.List;
 
 import mcmultipart.block.BlockMultipart;
 import net.minecraft.block.ITileEntityProvider;
-import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockState;
@@ -33,6 +32,7 @@ import net.teamio.taam.Taam;
 import net.teamio.taam.Taam.MACHINE_META;
 import net.teamio.taam.content.BaseBlock;
 import net.teamio.taam.content.IRotatable;
+import net.teamio.taam.content.MaterialMachinesTransparent;
 
 public class MachineBlock extends BaseBlock implements ITileEntityProvider {
 
@@ -41,8 +41,8 @@ public class MachineBlock extends BaseBlock implements ITileEntityProvider {
 	public static final PropertyEnum<Taam.MACHINE_META> VARIANT = PropertyEnum.create("variant", Taam.MACHINE_META.class);
 	public static final PropertyEnum<EnumFacing> DIRECTION = PropertyEnum.create("direction", EnumFacing.class);
 	
-	public MachineBlock(Material material, IMachineMetaInfo[] values) {
-		super(material);
+	public MachineBlock(IMachineMetaInfo[] values) {
+		super(MaterialMachinesTransparent.INSTANCE);
 		if (values == null || values.length == 0) {
 			throw new IllegalArgumentException("Specified meta values were null or empty");
 		}
