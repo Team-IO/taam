@@ -107,11 +107,15 @@ public class MachineTank implements IMachine, IFluidHandler, IWorldInteractable 
 		if (mask.intersectsWith(bbTank)) {
 			list.add(bbTank);
 		}
+		if (mask.intersectsWith(MachinePipe.bbBaseplate)) {
+			list.add(MachinePipe.bbBaseplate);
+		}
 	}
 
 	@Override
 	public void addSelectionBoxes(List<AxisAlignedBB> list) {
 		list.add(bbTank);
+		list.add(MachinePipe.bbBaseplate);
 	}
 
 	@Override
