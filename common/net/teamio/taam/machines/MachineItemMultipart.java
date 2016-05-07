@@ -27,6 +27,7 @@ public class MachineItemMultipart extends ItemMultiPart {
 			throw new IllegalArgumentException("Specified meta values were null or empty");
 		}
 		this.values = values;
+		setHasSubtypes(true);
 	}
 
 	public IMachineMetaInfo getInfo(int meta) {

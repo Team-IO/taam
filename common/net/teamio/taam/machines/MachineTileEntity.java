@@ -29,7 +29,6 @@ public class MachineTileEntity extends BaseTileEntity implements ITickable {
 	@Override
 	protected void writePropertiesToNBT(NBTTagCompound tag) {
 		if(meta != null) {
-			System.out.println("Saving " + meta.unlocalizedName());
 			tag.setString("machine", meta.unlocalizedName());
 		}
 		machine.writePropertiesToNBT(tag);
@@ -38,7 +37,6 @@ public class MachineTileEntity extends BaseTileEntity implements ITickable {
 	@Override
 	protected void readPropertiesFromNBT(NBTTagCompound tag) {
 		String machineID = tag.getString("machine");
-		System.out.println("Reading " + machineID);
 		IMachineMetaInfo meta = Taam.MACHINE_META.fromId(machineID);
 		if(meta != null) {
 			this.meta = meta;

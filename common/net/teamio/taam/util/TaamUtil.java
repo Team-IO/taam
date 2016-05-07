@@ -1,5 +1,6 @@
 package net.teamio.taam.util;
 
+import java.util.List;
 import java.util.Random;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -7,7 +8,6 @@ import org.apache.commons.lang3.ArrayUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
@@ -58,22 +58,18 @@ public final class TaamUtil {
 	}
 
 	public static void breakBlockToInventory(EntityPlayer player, World world, BlockPos pos, IBlockState blockState) {
-		ItemStack toDrop = getItemStackFromWorld(world, pos, blockState);
+		List<ItemStack> toDrop = getDropsFromWorld(world, pos, blockState);
 		if(toDrop != null) {
-			InventoryUtils.tryDropToInventory(player, toDrop, pos);
+			for(ItemStack stack : toDrop) {
+				InventoryUtils.tryDropToInventory(player, stack, pos);
+			}
 		}
 		world.setBlockToAir(pos);
 	}
 	
-	public static ItemStack getItemStackFromWorld(World world, BlockPos pos, IBlockState blockState) {
+	public static List<ItemStack> getDropsFromWorld(World world, BlockPos pos, IBlockState blockState) {
 		Block block = blockState.getBlock();
-        Item item = Item.getItemFromBlock(block);
-        if (item == null) {
-        	return null;
-        } else {
-        	int damage = block.damageDropped(blockState);
-        	return new ItemStack(block, 1, damage);
-        }
+		return block.getDrops(world, pos, blockState, 0);
 	}
 
 	public static boolean isShutdown(Random rand, int redstoneMode, boolean redstoneHigh) {

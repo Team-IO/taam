@@ -81,7 +81,6 @@ public class MachinePump implements IMachine, IRotatable {
 		if (direction == EnumFacing.UP || direction == EnumFacing.DOWN) {
 			direction = EnumFacing.NORTH;
 		}
-		System.out.println("Read " + direction);
 		pipeEndOut.setSide(direction);
 		pipeEndIn.setSide(direction.getOpposite());
 		info.readFromNBT(tag);

@@ -1,5 +1,6 @@
 package net.teamio.taam.machines;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.List;
@@ -39,6 +40,7 @@ import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
 import net.teamio.taam.Log;
 import net.teamio.taam.Taam;
+import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.BaseBlock;
 import net.teamio.taam.content.IRenderable;
 import net.teamio.taam.content.IRotatable;
@@ -62,6 +64,15 @@ public class MachineMultipart extends Multipart implements IOccludingPart, ITick
 		this.machine = meta.createMachine();
 	}
 
+	@Override
+	public boolean isToolEffective(String type, int level) {
+		return "pickaxe".equals(type) && level >= 1;
+	}
+	
+	public float getHardness(PartMOP hit) {
+		return 3.5f;
+	};
+	
 	@Override
 	public String getType() {
 		return meta.unlocalizedName();
@@ -95,6 +106,18 @@ public class MachineMultipart extends Multipart implements IOccludingPart, ITick
 	@Override
 	public void onNeighborTileChange(EnumFacing facing) {
 		doBlockUpdate();
+	}
+	
+	@Override
+	public List<ItemStack> getDrops() {
+		System.out.println("Getting drops: " + new ItemStack(TaamMain.itemMachine, 1, meta.metaData()));
+		return Arrays.asList(new ItemStack(TaamMain.itemMachine, 1, meta.metaData()));
+	}
+	
+	@Override
+	public ItemStack getPickBlock(EntityPlayer player, PartMOP hit) {
+		System.out.println("Getting pickblock: " + new ItemStack(TaamMain.itemMachine, 1, meta.metaData()));
+		return new ItemStack(TaamMain.itemMachine, 1, meta.metaData());
 	}
 	
 	private void doBlockUpdate() {
@@ -147,7 +170,7 @@ public class MachineMultipart extends Multipart implements IOccludingPart, ITick
 		}
 
 		boolean playerIsSneaking = player.isSneaking();
-		Log.debug("Wrenching block. Player is sneaking: {}", playerIsSneaking);
+		Log.debug("Wrenching multipart. Player is sneaking: {}", playerIsSneaking);
 
 		if (playerIsSneaking) {
 			ItemStack dropStack = this.getPickBlock(player, hit);

@@ -1,9 +1,11 @@
 package net.teamio.taam.machines;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import mcmultipart.block.BlockMultipart;
+import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
@@ -12,6 +14,8 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.Entity;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
@@ -30,6 +34,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.teamio.taam.Log;
 import net.teamio.taam.Taam;
 import net.teamio.taam.Taam.MACHINE_META;
+import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.BaseBlock;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.content.MaterialMachinesTransparent;
@@ -40,6 +45,8 @@ public class MachineBlock extends BaseBlock implements ITileEntityProvider {
 
 	public static final PropertyEnum<Taam.MACHINE_META> VARIANT = PropertyEnum.create("variant", Taam.MACHINE_META.class);
 	public static final PropertyEnum<EnumFacing> DIRECTION = PropertyEnum.create("direction", EnumFacing.class);
+
+	private AxisAlignedBB closestBB; 
 	
 	public MachineBlock(IMachineMetaInfo[] values) {
 		super(MaterialMachinesTransparent.INSTANCE);
@@ -47,6 +54,9 @@ public class MachineBlock extends BaseBlock implements ITileEntityProvider {
 			throw new IllegalArgumentException("Specified meta values were null or empty");
 		}
 		this.values = values;
+		this.setHardness(3.5f);
+		this.setStepSound(Block.soundTypeMetal);
+		this.setHarvestLevel("pickaxe", 1);
 	}
 	
 	@Override
@@ -65,6 +75,23 @@ public class MachineBlock extends BaseBlock implements ITileEntityProvider {
 	protected BlockState createBlockState() {
 		return new ExtendedBlockState(this, new IProperty[] { DIRECTION, VARIANT }, new IUnlistedProperty[]{BlockMultipart.properties[0], OBJModel.OBJProperty.instance});
 	};
+	
+	@Override
+	public int getDamageValue(World worldIn, BlockPos pos) {
+		MachineTileEntity te = (MachineTileEntity) worldIn.getTileEntity(pos);
+		return te.meta.metaData();
+	}
+	
+	@Override
+	public Item getItem(World worldIn, BlockPos pos) {
+		return TaamMain.itemMachine;
+	}
+	
+	@Override
+	public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
+		MachineTileEntity te = (MachineTileEntity) world.getTileEntity(pos);
+		return Arrays.asList(new ItemStack(TaamMain.itemMachine, 1, te.meta.metaData()));
+	}
 	
 	@Override
 	@SideOnly(Side.CLIENT)
@@ -110,7 +137,6 @@ public class MachineBlock extends BaseBlock implements ITileEntityProvider {
 			return new ArrayList<AxisAlignedBB>(6);
 		}
 	};
-	private AxisAlignedBB closestBB; 
 	
 	@Override
 	public void addCollisionBoxesToList(World worldIn, BlockPos pos, IBlockState state, AxisAlignedBB mask, List<AxisAlignedBB> list, Entity collidingEntity) {
