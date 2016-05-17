@@ -1,5 +1,7 @@
 package net.teamio.taam.piping;
 
+import java.util.ArrayList;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -9,7 +11,10 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
+import net.teamio.taam.Config;
 import net.teamio.taam.Log;
+import net.teamio.taam.MultipartHandler;
+import net.teamio.taam.Taam;
 import net.teamio.taam.util.inv.InventoryUtils;
 
 public final class PipeUtil {
@@ -38,28 +43,93 @@ public final class PipeUtil {
 	}
 
 	/**
-	 * Returns all pipes connected to a side of a block. (Looks for an IPipeTE
-	 * in the direction of side, the asks that block for pipes in direction of
+	 * Returns a pipe connected to a side of a block. Looks for a TileEntity
+	 * in the direction of side, then asks that tile for a pipe in direction of
 	 * side.getOpposite().
+	 * 
+	 * Checks for blocked/disabled pipes. To get any pipe, regardless of blocked/disabled state, use {@link #getPipe(IBlockAccess, BlockPos, EnumFacing)}.
 	 * 
 	 * @param world
 	 * @param pos
 	 * @param side
-	 * @return An array of IPipe (may be empty) or null.
+	 * @return An IPipe or null.
 	 */
-	public static IPipe[] getConnectedPipes(IBlockAccess world, BlockPos pos, EnumFacing side) {
-		TileEntity ent = world.getTileEntity(pos.offset(side));
-		if (ent instanceof IPipeTE) {
-			IPipeTE pipeTE = (IPipeTE) ent;
-			return pipeTE.getPipesForSide(side.getOpposite());
+	public static IPipe getConnectedPipe(IBlockAccess world, BlockPos pos, EnumFacing side) {
+		BlockPos offsetPos = pos.offset(side);
+		TileEntity ent = world.getTileEntity(offsetPos);
+		if(ent == null) {
+			return null;
+		}
+		EnumFacing opposite = side.getOpposite();
+		IPipe candidate = ent.getCapability(Taam.CAPABILITY_PIPE, opposite);
+		if(candidate == null && Config.multipart_present) {
+			candidate = MultipartHandler.getCapabilityForCenter(Taam.CAPABILITY_PIPE, world, offsetPos, opposite);
+		}
+		if(candidate != null && candidate.isSideAvailable(opposite)) {
+			return candidate;
 		}
 		return null;
 	}
+	
+	/**
+	 * Returns a pipe connected to a side of a block. Looks for a TileEntity in
+	 * the direction of side, then asks that tile for a pipe in direction of
+	 * side.getOpposite().
+	 * 
+	 * Does not check for blocked/disabled pipes! For that, use
+	 * {@link #getConnectedPipe(IBlockAccess, BlockPos, EnumFacing)}.
+	 * 
+	 * @param world
+	 * @param pos
+	 * @param side
+	 * @return An IPipe or null.
+	 */
+	public static IPipe getPipe(IBlockAccess world, BlockPos pos, EnumFacing side) {
+		BlockPos offsetPos = pos.offset(side);
+		TileEntity ent = world.getTileEntity(offsetPos);
+		if(ent == null) {
+			return null;
+		}
+		EnumFacing opposite = side.getOpposite();
+		IPipe candidate = ent.getCapability(Taam.CAPABILITY_PIPE, opposite);
+		if(candidate == null && Config.multipart_present) {
+			candidate = MultipartHandler.getCapabilityForCenter(Taam.CAPABILITY_PIPE, world, offsetPos, opposite);
+		}
+		return candidate;
+	}
 
+	private static final ThreadLocal<ArrayList<IPipe>> connected = new ThreadLocal<ArrayList<IPipe>>() {
+		protected ArrayList<IPipe> initialValue() {
+			return new ArrayList<IPipe>(6);
+		};
+	};
+	
 	public static void processPipes(IPipe pipe, IBlockAccess world, BlockPos pos) {
 
-		IPipe[] connected = pipe.getConnectedPipes(world, pos);
-		if (connected == null || connected.length == 0) {
+		ArrayList<IPipe> connected = PipeUtil.connected.get();
+		
+		connected.clear();
+		
+		IPipe[] internal = pipe.getInternalPipes(world, pos);
+
+		if(internal != null) {
+			for(IPipe intPipe : internal) {
+				if(intPipe != null) {
+					connected.add(intPipe);
+				}
+			}
+		}
+		
+		for(EnumFacing side : EnumFacing.VALUES) {
+			if(pipe.isSideAvailable(side)) {
+				IPipe external = PipeUtil.getConnectedPipe(world, pos, side);
+				if(external != null) {
+					connected.add(external);
+				}
+			}
+		}
+		
+		if (connected.isEmpty()) {
 			return;
 		}
 		/*
@@ -70,8 +140,11 @@ public final class PipeUtil {
 			int maxPressure = 0;
 			int maxSuction = 0;
 
-			for (int i = 0; i < connected.length; i++) {
-				IPipe other = connected[i];
+			for (int i = 0; i < connected.size(); i++) {
+				IPipe other = connected.get(i);
+				if(other == null) {
+					continue;
+				}
 				int otherPressure = other.getPressure();
 
 				if (otherPressure > maxPressure) {
@@ -107,8 +180,11 @@ public final class PipeUtil {
 		 * Transfer based on the share
 		 */
 
-		for (int i = 0; i < connected.length; i++) {
-			IPipe other = connected[i];
+		for (int i = 0; i < connected.size(); i++) {
+			IPipe other = connected.get(i);
+			if(other == null) {
+				continue;
+			}
 			int otherPressure = other.getPressure() == 0 ? -other.getSuction() : other.getPressure();
 			if(effectivePressure <= otherPressure) {
 				// No transfer without pressure
@@ -126,7 +202,7 @@ public final class PipeUtil {
 				if(simuDrain < transfer.amount) {
 					transfer.amount = simuDrain;
 				}
-				int actualFill = connected[i].addFluid(transfer);
+				int actualFill = other.addFluid(transfer);
 				// Limit to what was actually pushed into the next pipe
 				if(actualFill < simuDrain) {
 					transfer.amount = actualFill;
@@ -136,7 +212,7 @@ public final class PipeUtil {
 				if(actualDrain != actualFill) {
 					// This should not happen.
 					Log.error("Transferring from pipe {} to pipe {} yielded inconsistent results (actual drain != actual fill). Simulated drain: {} Fill: {} Actual Drain: {}. Fluid was potentially lost or duplicated. This is an issue.",
-							pipe, connected[i], simuDrain, actualFill, actualDrain);
+							pipe, other, simuDrain, actualFill, actualDrain);
 				}
 				share -= actualFill;
 				if (share <= 0) {

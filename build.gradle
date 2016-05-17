@@ -17,6 +17,10 @@ repositories {
 		name 'CB Maven FS'
 		url "http://chickenbones.net/maven/"
 	}
+    maven {
+    	name 'amadornes Maven, for MCMultipart'
+    	url "http://maven.amadornes.com/"
+    }
 }
 
 ext.configFile = file "build.properties"
@@ -67,7 +71,7 @@ repositories {
 
 dependencies {
     //compile 'com.mod-buildcraft:buildcraft:6.0.8:dev'
-    // compile fileTree(dir: 'lib', include: '*.jar')
+    deobfCompile "MCMultiPart:MCMultiPart:${config.mcmultipart_version}:universal"
 }
 
 jar {

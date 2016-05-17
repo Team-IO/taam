@@ -1,7 +1,5 @@
 package net.teamio.taam.recipes;
 
-import java.util.Random;
-
 import net.minecraft.item.ItemStack;
 
 public interface IProcessingRecipe {
@@ -14,5 +12,5 @@ public interface IProcessingRecipe {
 
 	public ChancedOutput[] getOutput();
 
-	public ItemStack[] getOutput(ItemStack input, Random rand);
+	public ItemStack[] getOutput(ItemStack input);
 }

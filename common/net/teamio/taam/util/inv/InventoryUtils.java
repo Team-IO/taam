@@ -34,6 +34,7 @@ import net.minecraft.util.EnumFacing.Plane;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.items.IItemHandler;
 
 /**
  * Utilities for working with inventories. Mostly code is based on by
@@ -266,6 +267,29 @@ public final class InventoryUtils {
 
 	public static int insertItem(IInventory inv, ItemStack stack, boolean simulate) {
 		return insertItem(new InventoryRange(inv), stack, simulate);
+	}
+	
+	/**
+	 * 
+	 * @param inv
+	 * @param stack
+	 * @param simulate
+	 *            If set to true, no items will actually be inserted
+	 * @return The number of items unable to be inserted
+	 * 
+	 * @author Oliver Kahrmann
+	 */
+	public static int insertItem(IItemHandler inv, ItemStack stack, boolean simulate) {
+		int invSlots = inv.getSlots();
+		ItemStack toInsert = stack;
+		for(int i = 0; i < invSlots; i++) {
+			// insertItem returns item stack unable to insert, or null
+			toInsert = inv.insertItem(i, toInsert, false);
+			if(toInsert == null) {
+				return 0;
+			}
+		}
+		return toInsert.stackSize;
 	}
 
 	public static int fitStackInSlot(InventoryRange inv, int slot, ItemStack stack) {

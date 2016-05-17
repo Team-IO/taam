@@ -1,4 +1,4 @@
-package net.teamio.taam.util;
+package net.teamio.taam.conveyors;
 
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.inventory.IInventory;
@@ -6,13 +6,38 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
+import net.teamio.taam.util.TaamUtil;
 import net.teamio.taam.util.inv.InventoryRange;
 import net.teamio.taam.util.inv.InventoryUtils;
 
-public final class ProcessingUtil {
-	private ProcessingUtil() {
-		// Util class
+public abstract class OutputChute {
+
+	IInventory outputInventory;
+	boolean canDrop;
+
+	public void refreshOutputInventory(World world, BlockPos pos) {
+		outputInventory = InventoryUtils.getInventory(world, pos);
+		canDrop = TaamUtil.canDropIntoWorld(world, pos);
 	}
+
+	public boolean isOperable() {
+		return canDrop || outputInventory != null;
+	}
+
+	/**
+	 * Output the chute content.
+	 * 
+	 * @param world
+	 * @param pos
+	 * @return Returns true if there were items transferred or there are still
+	 *         items left.
+	 */
+	public abstract boolean output(World world, BlockPos pos);
+
+	public void output(ItemStack stack) {
+
+	}
+	
 	
 	/**
 	 * Tries to output into the outputInventory, or drop down into the world
@@ -81,4 +106,5 @@ public final class ProcessingUtil {
 		}
 		return wasAble || hasOutputLeft;
 	}
+	
 }

@@ -15,7 +15,7 @@ import net.teamio.taam.Taam;
 import net.teamio.taam.content.IRenderableItem;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.content.common.TileEntityChute;
-import net.teamio.taam.conveyors.api.IConveyorAwareTE;
+import net.teamio.taam.conveyors.api.IConveyorSlots;
 
 public class ItemProductionLine extends ItemMultiTexture implements IRenderableItem {
 
@@ -71,7 +71,7 @@ public class ItemProductionLine extends ItemMultiTexture implements IRenderableI
 				} else {
 					placeDir = dir;
 				}
-			} else if (ent instanceof IConveyorAwareTE) {
+			} else if (ent instanceof IConveyorSlots) {
 				placeDir = dir;
 			} else {
 				defaultPlacement = true;

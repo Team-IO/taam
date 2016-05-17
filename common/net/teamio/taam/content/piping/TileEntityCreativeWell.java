@@ -6,20 +6,20 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 import net.teamio.taam.Log;
+import net.teamio.taam.Taam;
 import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IWorldInteractable;
-import net.teamio.taam.piping.IPipe;
-import net.teamio.taam.piping.IPipeTE;
 import net.teamio.taam.piping.PipeEnd;
 import net.teamio.taam.piping.PipeUtil;
 
-public class TileEntityCreativeWell extends BaseTileEntity implements IFluidHandler, IPipeTE, ITickable, IWorldInteractable {
+public class TileEntityCreativeWell extends BaseTileEntity implements IFluidHandler, ITickable, IWorldInteractable {
 
 	private final PipeEnd[] pipeEnds;
 
@@ -67,16 +67,24 @@ public class TileEntityCreativeWell extends BaseTileEntity implements IFluidHand
 		}
 	}
 	
-	/*
-	 * IPipeTE implementation
-	 */
-	
 	@Override
-	public IPipe[] getPipesForSide(EnumFacing side) {
-		int index = side.ordinal();
-		return new IPipe[] { pipeEnds[index] };
+	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+		if(capability == Taam.CAPABILITY_PIPE) {
+			return true;
+		}
+		return false;
 	}
-
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+		if(capability == Taam.CAPABILITY_PIPE) {
+			int index = facing.ordinal();
+			return (T) pipeEnds[index];
+		}
+		return null;
+	}
+	
 	/*
 	 * IFluidHandler implementation
 	 */
@@ -131,8 +139,10 @@ public class TileEntityCreativeWell extends BaseTileEntity implements IFluidHand
 			fluid = null;
 		} else {
 			fluid = FluidContainerRegistry.getFluidForFilledItem(stack);
-			fluid.amount = capacity;
-			Log.debug("Set creative well fluid to " + fluid);
+			if(fluid != null) {
+				fluid.amount = capacity;
+				Log.debug("Set creative well fluid to " + fluid);
+			}
 		}
 		for (EnumFacing peSide : EnumFacing.VALUES) {
 			int index = peSide.ordinal();

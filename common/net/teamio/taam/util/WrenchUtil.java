@@ -17,8 +17,8 @@ import net.teamio.taam.content.common.TileEntityCreativeCache;
 import net.teamio.taam.content.common.TileEntitySensor;
 import net.teamio.taam.conveyors.api.IConveyorAppliance;
 import net.teamio.taam.conveyors.api.IConveyorApplianceHost;
-import net.teamio.taam.conveyors.api.IConveyorAwareTE;
-import net.teamio.taam.piping.IPipeTE;
+import net.teamio.taam.conveyors.api.IConveyorSlots;
+import net.teamio.taam.machines.MachineTileEntity;
 
 public class WrenchUtil {
 
@@ -36,6 +36,7 @@ public class WrenchUtil {
 			//TODO: Check other wrench types once supported
 		return held.getItem() == TaamMain.itemWrench;
 	}
+
 	public static boolean playerHasHasWrenchInOffhand(EntityPlayer player){
 		ItemStack held = player.getHeldItemOffhand();
 		if(held == null) {
@@ -43,6 +44,14 @@ public class WrenchUtil {
 		}
 			//TODO: Check other wrench types once supported
 		return held.getItem() == TaamMain.itemWrench;
+	}
+
+	public static boolean playerHasDebugTool(EntityPlayer player) {
+		ItemStack held = player.getHeldItem();
+		if (held == null) {
+			return false;
+		}
+		return held.getItem() == TaamMain.itemDebugTool;
 	}
 
 	public static EnumActionResult wrenchBlock(World world, BlockPos pos, EntityPlayer player,
@@ -86,8 +95,8 @@ public class WrenchUtil {
 	}
 
 	private static boolean isWrenchableEntity(TileEntity te) {
-		return te instanceof IConveyorAwareTE ||
-				te instanceof IPipeTE ||
+		return te instanceof IConveyorSlots ||
+				te instanceof MachineTileEntity ||
 				te instanceof TileEntityCreativeCache ||
 				te instanceof TileEntitySensor ||
 				te instanceof IConveyorAppliance ||

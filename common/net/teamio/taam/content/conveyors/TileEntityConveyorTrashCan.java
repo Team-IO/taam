@@ -16,7 +16,7 @@ import net.teamio.taam.Config;
 import net.teamio.taam.content.IRenderable;
 import net.teamio.taam.content.IWorldInteractable;
 import net.teamio.taam.conveyors.ItemWrapper;
-import net.teamio.taam.conveyors.api.IConveyorAwareTE;
+import net.teamio.taam.conveyors.api.IConveyorSlots;
 
 /**
  * Conveyor Trash Can.
@@ -24,7 +24,7 @@ import net.teamio.taam.conveyors.api.IConveyorAwareTE;
  * @author Oliver Kahrmann
  *
  */
-public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements IConveyorAwareTE, IInventory, IRenderable, IWorldInteractable {
+public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements IConveyorSlots, IInventory, IRenderable, IWorldInteractable {
 
 	public float fillLevel;
 	public static final List<String> parts = Collections.unmodifiableList(Lists.newArrayList("BagTrash_btmdl"));

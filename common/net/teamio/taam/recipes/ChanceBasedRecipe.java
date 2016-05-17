@@ -2,25 +2,24 @@ package net.teamio.taam.recipes;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Random;
 
 import net.minecraft.item.ItemStack;
+import net.teamio.taam.util.TaamUtil;
 
 public class ChanceBasedRecipe extends BaseProcessingRecipe implements IProcessingRecipe {
 
 	private ChancedOutput[] output;
-	
 
 	public ChanceBasedRecipe(String inputOreDict, ChancedOutput... output) {
 		this.inputOreDict = inputOreDict;
 		this.output = output;
 	}
-	
+
 	public ChanceBasedRecipe(ItemStack input, ChancedOutput... output) {
 		this.input = input;
 		this.output = output;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -56,16 +55,16 @@ public class ChanceBasedRecipe extends BaseProcessingRecipe implements IProcessi
 	}
 
 	@Override
-	public ItemStack[] getOutput(ItemStack input, Random rand) {
+	public ItemStack[] getOutput(ItemStack input) {
 		ArrayList<ItemStack> output = new ArrayList<ItemStack>();
-		for(ChancedOutput co : this.output) {
-			if(co != null && co.chance > 0 && co.output != null) {
-				if(rand.nextFloat() < co.chance) {
+		for (ChancedOutput co : this.output) {
+			if (co != null && co.chance > 0 && co.output != null) {
+				if (TaamUtil.RANDOM.nextFloat() < co.chance) {
 					output.add(co.output.copy());
 				}
 			}
 		}
 		return output.toArray(new ItemStack[output.size()]);
 	}
-	
+
 }

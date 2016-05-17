@@ -1,6 +1,7 @@
 package net.teamio.taam.piping;
 
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -28,6 +29,7 @@ public class PipeEndFluidHandler implements IPipe {
 	private int pressure;
 	private int suction;
 	private boolean active;
+	public boolean occluded;
 
 	public PipeEndFluidHandler(IFluidHandler owner, EnumFacing side, boolean active) {
 		this.owner = owner;
@@ -125,13 +127,12 @@ public class PipeEndFluidHandler implements IPipe {
 	}
 
 	@Override
-	public IPipe[] getConnectedPipes(IBlockAccess world, BlockPos pos) {
-		TileEntity ent = world.getTileEntity(pos.offset(side));
-		if (ent instanceof IPipeTE) {
-			IPipeTE pipeTE = (IPipeTE) ent;
-			return pipeTE.getPipesForSide(side.getOpposite());
-		} else {
-			return null;
-		}
+	public IPipe[] getInternalPipes(IBlockAccess world, BlockPos pos) {
+		return null;
+	}
+
+	@Override
+	public boolean isSideAvailable(EnumFacing side) {
+		return !occluded && this.side == side;
 	}
 }

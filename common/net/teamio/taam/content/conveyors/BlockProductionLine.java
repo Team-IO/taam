@@ -3,6 +3,9 @@ package net.teamio.taam.content.conveyors;
 import java.util.List;
 
 import net.minecraft.block.SoundType;
+import mcmultipart.block.BlockMultipart;
+import net.minecraft.block.Block;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -18,6 +21,9 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.client.model.obj.OBJModel;
+import net.minecraftforge.common.property.ExtendedBlockState;
+import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.teamio.taam.Config;
@@ -30,35 +36,37 @@ import net.teamio.taam.util.inv.InventoryUtils;
 
 public class BlockProductionLine extends BaseBlock {
 
-	public static final PropertyEnum<Taam.BLOCK_PRODUCTIONLINE_META> VARIANT = PropertyEnum.create("variant", Taam.BLOCK_PRODUCTIONLINE_META.class);
-	
+	public static final PropertyEnum<Taam.BLOCK_PRODUCTIONLINE_META> VARIANT = PropertyEnum.create("variant",
+			Taam.BLOCK_PRODUCTIONLINE_META.class);
+
 	public BlockProductionLine() {
 		super(MaterialMachinesTransparent.INSTANCE);
 		this.setHardness(3.5f);
 		this.setSoundType(SoundType.METAL);
 		this.setHarvestLevel("pickaxe", 1);
 	}
-	
+
 	@Override
 	protected BlockStateContainer createBlockState() {
-		return new BlockStateContainer(this, VARIANT);
+		return new ExtendedBlockState(this, new IProperty[] { VARIANT },
+				new IUnlistedProperty[] { BlockMultipart.properties[0], OBJModel.OBJProperty.instance });
 	}
-	
+
 	@Override
 	public int getMetaFromState(IBlockState state) {
-		Taam.BLOCK_PRODUCTIONLINE_META meta = (Taam.BLOCK_PRODUCTIONLINE_META)state.getValue(VARIANT);
+		Taam.BLOCK_PRODUCTIONLINE_META meta = (Taam.BLOCK_PRODUCTIONLINE_META) state.getValue(VARIANT);
 		return meta.ordinal();
 	}
-	
+
 	@Override
 	public IBlockState getStateFromMeta(int meta) {
 		Taam.BLOCK_PRODUCTIONLINE_META[] values = Taam.BLOCK_PRODUCTIONLINE_META.values();
-		if(meta < 0 || meta > values.length) {
+		if (meta < 0 || meta > values.length) {
 			return getDefaultState();
 		}
 		return getDefaultState().withProperty(VARIANT, values[meta]);
 	}
-	
+
 	public String getUnlocalizedName(ItemStack itemStack) {
 		int i = itemStack.getItemDamage();
 		Enum<?>[] values = Taam.BLOCK_PRODUCTIONLINE_META.values();
@@ -74,7 +82,7 @@ public class BlockProductionLine extends BaseBlock {
 	public BlockRenderLayer getBlockLayer() {
 		return BlockRenderLayer.CUTOUT;
 	}
-	
+
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void getSubBlocks(Item item, CreativeTabs creativeTab, List<ItemStack> list) {
@@ -83,11 +91,11 @@ public class BlockProductionLine extends BaseBlock {
 			list.add(new ItemStack(item, 1, i));
 		}
 	}
-	
+
 	@Override
 	public TileEntity createTileEntity(World world, IBlockState state) {
-		Taam.BLOCK_PRODUCTIONLINE_META variant = (Taam.BLOCK_PRODUCTIONLINE_META)state.getValue(VARIANT);
-		switch(variant) {
+		Taam.BLOCK_PRODUCTIONLINE_META variant = (Taam.BLOCK_PRODUCTIONLINE_META) state.getValue(VARIANT);
+		switch (variant) {
 		case conveyor1:
 			// Plain Conveyor, Tier 1
 			return new TileEntityConveyor(0);
@@ -122,37 +130,28 @@ public class BlockProductionLine extends BaseBlock {
 		Log.error("Was not able to create a TileEntity for " + getClass().getName());
 		return null;
 	}
-	
+
 	@Override
 	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-		//IBlockState state = world.getBlockState(pos);
-		//Taam.BLOCK_PRODUCTIONLINE_META variant = state.getValue(VARIANT);
-		float minY, maxY, minX,maxX, minZ, maxZ;
-		minX = 0;
-		maxX = 1;
-		minZ = 0;
-		maxZ = 1;
-		//if(false) {
-			// Standalone (not in use at the moment)
-		//	this.maxY = 1;
-		//} else {
-			// Conveyor Machinery
-			maxY = 0.5f;
-			minY = 0f;
-		//}		
+		this.minX = 0;
+		this.maxX = 1;
+		this.minZ = 0;
+		this.maxZ = 1;
+		this.minY = 0;
+		this.maxY = 0.5f;
 			return new AxisAlignedBB(minX, minY, minZ, maxX, maxY, maxZ);
 	}
-	
+
 	@Override
 	public boolean isBlockSolid(IBlockAccess world, BlockPos pos, EnumFacing side) {
 		return false;
 	}
-	
+
 	@Override
 	public boolean hasComparatorInputOverride(IBlockState state) {
 		return true;
 	}
-	
+
 	@Override
 	public int getComparatorInputOverride(IBlockState blockState, World worldIn, BlockPos pos) {
 		IInventory inventory = InventoryUtils.getInventory(worldIn, pos);
@@ -162,46 +161,47 @@ public class BlockProductionLine extends BaseBlock {
 			return Container.calcRedstoneFromInventory(inventory);
 		}
 	}
-	
+
 	@Override
 	public boolean canBlockStay(World worldIn, BlockPos pos, IBlockState state) {
 		return canPlaceBlockAt(worldIn, pos);
 	}
-	
+
 	@Override
 	public boolean canPlaceBlockAt(World world, BlockPos pos) {
 		TileEntity ent = world.getTileEntity(pos);
-		
+
 		EnumFacing myDir = null;
-		if(ent instanceof TileEntityConveyor) {
+		if (ent instanceof TileEntityConveyor) {
 			myDir = ((TileEntityConveyor) ent).getFacingDirection();
 		}
 		return canBlockStay(world, pos, myDir);
 	}
-	
+
 	public static boolean canBlockStay(World world, BlockPos pos, EnumFacing myDir) {
-		return  checkSupport(world, pos, EnumFacing.DOWN, myDir, Config.pl_conveyor_supportrange, false) ||
-				checkSupport(world, pos, EnumFacing.UP, myDir, Config.pl_conveyor_supportrange, false) ||
-				checkSupport(world, pos, EnumFacing.NORTH, myDir, Config.pl_conveyor_supportrange, false) ||
-				checkSupport(world, pos, EnumFacing.SOUTH, myDir, Config.pl_conveyor_supportrange, false) ||
-				checkSupport(world, pos, EnumFacing.WEST, myDir, Config.pl_conveyor_supportrange, false) ||
-				checkSupport(world, pos, EnumFacing.EAST, myDir, Config.pl_conveyor_supportrange, false);
+		return checkSupport(world, pos, EnumFacing.DOWN, myDir, Config.pl_conveyor_supportrange, false)
+				|| checkSupport(world, pos, EnumFacing.UP, myDir, Config.pl_conveyor_supportrange, false)
+				|| checkSupport(world, pos, EnumFacing.NORTH, myDir, Config.pl_conveyor_supportrange, false)
+				|| checkSupport(world, pos, EnumFacing.SOUTH, myDir, Config.pl_conveyor_supportrange, false)
+				|| checkSupport(world, pos, EnumFacing.WEST, myDir, Config.pl_conveyor_supportrange, false)
+				|| checkSupport(world, pos, EnumFacing.EAST, myDir, Config.pl_conveyor_supportrange, false);
 	}
-	
-	public static boolean checkSupport(World world, BlockPos pos, EnumFacing side, EnumFacing myDir, int supportCount, boolean conveyorOnly) {
+
+	public static boolean checkSupport(World world, BlockPos pos, EnumFacing side, EnumFacing myDir, int supportCount,
+			boolean conveyorOnly) {
 		EnumFacing otherDir = null;
-		
-		if(checkDirectSupport(world, pos)) {
+
+		if (checkDirectSupport(world, pos)) {
 			return true;
 		} else {
 			TileEntity ent = world.getTileEntity(pos.offset(side));
-			if(ent instanceof TileEntityConveyor) {
-				
+			if (ent instanceof TileEntityConveyor) {
+
 				boolean checkFurther = false;
-				
+
 				// The other is a conveyor and we are not a conveyor (no myDir)
-				if(myDir == null && !conveyorOnly) {
-					switch(side) {
+				if (myDir == null && !conveyorOnly) {
+					switch (side) {
 					case UP:
 					default:
 						// Up is usually not connected
@@ -215,20 +215,21 @@ public class BlockProductionLine extends BaseBlock {
 						return true;
 					}
 				} else {
-					if(side == EnumFacing.UP || side == EnumFacing.DOWN) {
+					if (side == EnumFacing.UP || side == EnumFacing.DOWN) {
 						// Up and Down are connected by the supports
 						checkFurther = true;
 					} else {
-						// Only connect conveyors directly working with each other (no sidealongs)
+						// Only connect conveyors directly working with each
+						// other (no sidealongs)
 						otherDir = ((TileEntityConveyor) ent).getFacingDirection();
 						checkFurther = myDir == otherDir && (myDir == side || myDir == side.getOpposite());
 					}
 				}
-				if(checkFurther && supportCount > 0) {
-					if(checkDirectSupport(world, pos.offset(side))) {
+				if (checkFurther && supportCount > 0) {
+					if (checkDirectSupport(world, pos.offset(side))) {
 						return true;
 					} else {
-						if(checkSupport(world, pos.offset(side), side, myDir, supportCount - 1, conveyorOnly)) {
+						if (checkSupport(world, pos.offset(side), side, myDir, supportCount - 1, conveyorOnly)) {
 							return true;
 						}
 					}
@@ -237,10 +238,10 @@ public class BlockProductionLine extends BaseBlock {
 		}
 		return false;
 	}
-	
+
 	public static boolean checkDirectSupport(World world, BlockPos pos) {
-		for(EnumFacing side : EnumFacing.VALUES) {
-			if(world.isSideSolid(pos.offset(side), side.getOpposite())) {
+		for (EnumFacing side : EnumFacing.VALUES) {
+			if (world.isSideSolid(pos.offset(side), side.getOpposite())) {
 				return true;
 			}
 		}

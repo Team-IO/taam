@@ -50,15 +50,29 @@ item.material.aluminum_plate.name=Aluminum Plate
 item.material.resin.name=Resin
 item.material.cement.name=Cement
 item.material.cementRough.name=Rough Cement
+
+item.material.pigment_black.name=Black Pigment Pellet
+item.material.pigment_red.name=Red Pigment Pellet
+item.material.pigment_green.name=Green Pigment Pellet
+item.material.pigment_brown.name=Brown Pigment Pellet
+item.material.pigment_blue.name=Blue Pigment Pellet
+item.material.pigment_purple.name=Purple Pigment Pellet
+item.material.pigment_cyan.name=Cyan Pigment Pellet
+item.material.pigment_lightGray.name=Light Gray Pigment Pellet
+item.material.pigment_gray.name=Gray Pigment Pellet
+item.material.pigment_pink.name=Pink Pigment Pellet
+item.material.pigment_lime.name=Lime Pigment Pellet
+item.material.pigment_yellow.name=Yellow Pigment Pellet
+item.material.pigment_lightBlue.name=Light Blue Pigment Pellet
+item.material.pigment_magenta.name=Magenta Pigment Pellet
+item.material.pigment_orange.name=Orange Pigment Pellet
+item.material.pigment_white.name=White Pigment Pellet
+
 # Tools
 item.tool.saw.name=Saw
 
 #Creative Tab localization
 itemGroup.taam=Taam
-
-#Non-Productionline Machines
-tile.machines.chute.name=Chute
-tile.machines.creativecache.name=Creative Item Cache
 
 # Block localization
 tile.sensor.name=Motion Sensor
@@ -82,7 +96,12 @@ tile.ore.tin.name=Tin Ore
 tile.ore.aluminum.name=Native Aluminum Ore
 tile.ore.bauxite.name=Bauxite
 tile.ore.kaolinite.name=Kaolinite
-# Machines
+# Machine Blocks
+
+tile.machines.chute.name=Chute
+tile.machines.creativecache.name=Creative Item Cache
+tile.machines.creativewell.name=Creative Fluid Well
+
 tile.productionline.conveyor1.name=Wooden Conveyor
 tile.productionline.conveyor2.name=Conveyor
 tile.productionline.conveyor3.name=High Throughput Conveyor
@@ -98,14 +117,20 @@ tile.productionline_attachable.itembag.name=Conveyor Item Bag
 tile.productionline_attachable.trashcan.name=Conveyor Trash Can
 tile.productionline_attachable.lamp.name=Conveyor Lamp
 
-tile.pipe.name=Pipe
-tile.pipemachines.tank.name=Tank
-tile.pipemachines.creativewell.name=Creative Fluid Well
-tile.pipemachines.pump.name=Pump
-tile.pipemachines.mixer.name=Mixer
-tile.pipemachines.fluid_drier.name=Fluid Drier
-
 tile.productionline_appliance.sprayer.name=Sprayer
+
+#Machines
+tile.machine.pipe.name=Pipe
+tile.machine.tank.name=Tank
+tile.machine.pump.name=Pump
+tile.machine.mixer.name=Mixer
+tile.machine.fluid_drier.name=Fluid Drier
+
+item.machine.pipe.name=Pipe
+item.machine.tank.name=Tank
+item.machine.pump.name=Pump
+item.machine.mixer.name=Mixer
+item.machine.fluid_drier.name=Fluid Drier
 
 # Fluids
 fluid.dye_black=Liquid Black Dye
