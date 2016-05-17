@@ -29,8 +29,8 @@ public class BlockProductionLineAttachable extends BlockProductionLine {
 	}
 
 	@Override
-	protected BlockState createBlockState() {
-		return new BlockStateContainer(this, VARIANT, FACING);
+	protected BlockStateContainer createBlockState() {
+		return new BlockStateContainer(this, VARIANT);
 	}
 
 	@Override
@@ -85,10 +85,12 @@ public class BlockProductionLineAttachable extends BlockProductionLine {
 
 	@Override
 	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
+		//TODO: Optimize
 		float minY, maxY, minX,maxX, minZ, maxZ;
 		minY = 0f;
 		maxY = 0.5f;
-		if(state.getBlock() != this || !(te instanceof IRotatable) {
+		TileEntity te = source.getTileEntity(pos);
+		if(state.getBlock() != this || !(te instanceof IRotatable)) {
 			minX = 0;
 			maxX = 1;
 			minZ = 0;

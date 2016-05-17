@@ -1,6 +1,6 @@
 package net.teamio.taam.rendering;
 
-import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.teamio.taam.Taam;
 

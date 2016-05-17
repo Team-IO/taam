@@ -47,7 +47,19 @@ public class WrenchUtil {
 	}
 
 	public static boolean playerHasDebugTool(EntityPlayer player) {
-		ItemStack held = player.getHeldItem();
+		return playerHasDebugToolInMainhand(player) || playerHasDebugToolInOffhand(player);
+	}
+
+	public static boolean playerHasDebugToolInMainhand(EntityPlayer player) {
+		ItemStack held = player.getHeldItemMainhand();
+		if (held == null) {
+			return false;
+		}
+		return held.getItem() == TaamMain.itemDebugTool;
+	}
+
+	public static boolean playerHasDebugToolInOffhand(EntityPlayer player) {
+		ItemStack held = player.getHeldItemOffhand();
 		if (held == null) {
 			return false;
 		}
@@ -76,13 +88,14 @@ public class WrenchUtil {
 		if (playerIsSneaking) {
 			if (WrenchUtil.isWrenchableBlock(blockState) || WrenchUtil.isWrenchableEntity(te)) {
 				TaamUtil.breakBlockToInventory(player, world, pos, blockState);
-				return true;
+				return EnumActionResult.SUCCESS;
+			} else {
+				return EnumActionResult.FAIL;
 			}
 		} else {
 			blockState.getBlock().rotateBlock(world, pos, side);
-			return true;
+			return EnumActionResult.SUCCESS;
 		}
-		return EnumActionResult.FAIL;
 	}
 
 	public static boolean rotateBlock(TileEntity te) {

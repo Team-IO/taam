@@ -5,8 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.vecmath.Matrix4f;
+import javax.vecmath.Vector3f;
 
 import org.apache.commons.lang3.tuple.Pair;
+
+import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableMap;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -16,30 +20,36 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
+import net.minecraft.client.renderer.block.model.ItemOverrideList;
+import net.minecraft.client.renderer.block.model.ItemTransformVec3f;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.renderer.block.model.ModelRotation;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.vertex.VertexFormat;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.registry.IRegistry;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.client.model.IFlexibleBakedModel;
 import net.minecraftforge.client.model.IPerspectiveAwareModel;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.client.model.SimpleModelState;
 import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.client.model.obj.OBJModel;
 import net.minecraftforge.client.model.obj.OBJModel.OBJBakedModel;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.model.IModelState;
+import net.minecraftforge.common.model.TRSRTransformation;
+import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.teamio.taam.content.IRenderableItem;
 import net.teamio.taam.content.common.TileEntityChute;
 import net.teamio.taam.content.common.TileEntityCreativeCache;
 import net.teamio.taam.content.common.TileEntitySensor;
@@ -293,14 +303,15 @@ public class TaamClientProxy extends TaamCommonProxy {
 	}
 
 	private void textureStitchPre(Fluid fluid, TextureStitchEvent.Pre event) {
-		TextureAtlasSprite still = event.map.getTextureExtry(fluid.getStill().toString());
+		TextureMap map = event.getMap();
+		TextureAtlasSprite still = map.getTextureExtry(fluid.getStill().toString());
 		if (still == null) {
-			event.map.registerSprite(fluid.getStill());
+			map.registerSprite(fluid.getStill());
 		}
 
-		TextureAtlasSprite flow = event.map.getTextureExtry(fluid.getFlowing().toString());
+		TextureAtlasSprite flow = map.getTextureExtry(fluid.getFlowing().toString());
 		if (flow == null) {
-			event.map.registerSprite(fluid.getFlowing());
+			map.registerSprite(fluid.getFlowing());
 		}
 	}
 
@@ -309,7 +320,7 @@ public class TaamClientProxy extends TaamCommonProxy {
 		Log.debug("Beginning onModelBakeEvent");
 
 		/*
-		 * We need to se the "flip-v" flag.. As the inventory-variant is
+		 * We need to set the "flip-v" flag.. As the inventory-variant is
 		 * "generated" above, MC will ignore what we have in the blockstates
 		 * json & render the textures flipped in the inventory...
 		 * 
@@ -337,8 +348,9 @@ public class TaamClientProxy extends TaamCommonProxy {
 		 * model with one that understands our items
 		 */
 
+		IRegistry<ModelResourceLocation, IBakedModel> modelRegistry = event.getModelRegistry();
 		for (ModelResourceLocation resourceLocation : locationsToReplace) {
-			IBakedModel bakedModel = event.modelRegistry.getObject(resourceLocation);
+			IBakedModel bakedModel = modelRegistry.getObject(resourceLocation);
 			if (bakedModel instanceof OBJBakedModel) {
 				Log.debug("Replacing " + resourceLocation);
 
@@ -361,17 +373,52 @@ public class TaamClientProxy extends TaamCommonProxy {
 				 */
 
 				bakedModel = new ItemAwareOBJBakedModel(bakedAsObj);
-				event.modelRegistry.putObject(resourceLocation, bakedModel);
+				modelRegistry.putObject(resourceLocation, bakedModel);
 			}
 		}
 		
-		if(Config.multipart_load) {
-			MultipartHandlerClient.onModelBakeEvent(event);
-		}
+//		if(Config.multipart_load) {
+//			MultipartHandlerClient.onModelBakeEvent(event);
+//		}
 
 		Log.debug("Completed onModelBakeEvent");
 	}
 
+	/**
+	 * Original: {@link net.minecraftforge.client.model.ForgeBlockStateV1.Variant.Deserializer.get(float, float, float, float, float, float, float)}
+	 * @param tx
+	 * @param ty
+	 * @param tz
+	 * @param ax
+	 * @param ay
+	 * @param az
+	 * @param s
+	 * @return
+	 */
+	 public static TRSRTransformation get(float tx, float ty, float tz, float ax, float ay, float az, float s)
+     {
+         return TRSRTransformation.blockCenterToCorner(new TRSRTransformation(
+             new Vector3f(tx / 16, ty / 16, tz / 16),
+             TRSRTransformation.quatFromXYZDegrees(new Vector3f(ax, ay, az)),
+             new Vector3f(s, s, s),
+             null));
+     }
+	 
+	 /**
+	  * Original: {@link net.minecraftforge.client.model.ForgeBlockStateV1.Variant.Deserializer.flipX}
+	  */
+	 public static final TRSRTransformation flipX = new TRSRTransformation(null, null, new Vector3f(-1, 1, 1), null);
+
+	 /**
+	  * Original: {@link net.minecraftforge.client.model.ForgeBlockStateV1.Variant.Deserializer.leftify(TRSRTransformation)}
+	  * @param transform
+	  * @return
+	  */
+     public static TRSRTransformation leftify(TRSRTransformation transform)
+     {
+         return TRSRTransformation.blockCenterToCorner(flipX.compose(TRSRTransformation.blockCornerToCenter(transform)).compose(flipX));
+     }
+	
 	/**
 	 * Baked model implementation that checks with the item type for a list of
 	 * parts to render using an OBJBakedModel as parent.
@@ -382,9 +429,29 @@ public class TaamClientProxy extends TaamCommonProxy {
 	 * @author Oliver Kahrmann
 	 *
 	 */
-	public static class ItemAwareOBJBakedModel
-			implements IFlexibleBakedModel, ISmartBlockModel, ISmartItemModel, IPerspectiveAwareModel {
+	public static class ItemAwareOBJBakedModel implements IPerspectiveAwareModel {
 
+		public static final IModelState defaultBlockTransform;
+		
+		/**
+		 * Original: {@link net.minecraftforge.client.model.ForgeBlockStateV1.Variant.Deserializer.deserialize(JsonElement, Type, JsonDeserializationContext)}
+		 * 
+		 * Load the default transform for block models to rotate the models in GUI & Co accordingly.
+		 * These are the same transforms that are applied by forge when loaded from the blockstates using "forge:default-block".
+		 */
+		static {
+            TRSRTransformation thirdperson = get(0, 2.5f, 0, 75, 45, 0, 0.375f);
+            ImmutableMap.Builder<TransformType, TRSRTransformation> builder = ImmutableMap.builder();
+            builder.put(TransformType.GUI,                     get(0, 0, 0, 30, 225, 0, 0.625f));
+            builder.put(TransformType.GROUND,                  get(0, 3, 0, 0, 0, 0, 0.25f));
+            builder.put(TransformType.FIXED,                   get(0, 0, 0, 0, 0, 0, 0.5f));
+            builder.put(TransformType.THIRD_PERSON_RIGHT_HAND, thirdperson);
+            builder.put(TransformType.THIRD_PERSON_LEFT_HAND,  leftify(thirdperson));
+            builder.put(TransformType.FIRST_PERSON_RIGHT_HAND, get(0, 0, 0, 0, 45, 0, 0.4f));
+            builder.put(TransformType.FIRST_PERSON_LEFT_HAND,  get(0, 0, 0, 0, 225, 0, 0.4f));
+            defaultBlockTransform = new SimpleModelState(builder.build());
+		}
+		
 		private OBJBakedModel original;
 
 		public ItemAwareOBJBakedModel(OBJBakedModel original) {
@@ -392,47 +459,13 @@ public class TaamClientProxy extends TaamCommonProxy {
 		}
 
 		/*
-		 * IFlexibleBakedModel
-		 */
-
-		@Override
-		public VertexFormat getFormat() {
-			return original.getFormat();
-		}
-
-		/*
-		 * ISmartItemModel
-		 */
-
-		@Override
-		public IBakedModel handleItemState(ItemStack stack) {
-			if (stack != null && stack.getItem() instanceof IRenderableItem) {
-				// Ask what to render
-				List<String> visibleParts = ((IRenderableItem) stack.getItem()).getVisibleParts(stack);
-				// Create matching state
-				OBJModel.OBJState retState = new OBJModel.OBJState(visibleParts, true);
-				return original.getCachedModel(retState);
-			}
-			// Not one of ours, whatever, just render everything...
-			return original;
-		}
-
-		/*
 		 * IPerspectiveAwareModel
 		 */
-
+		
 		@Override
-		public Pair<? extends IFlexibleBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType) {
-			return original.handlePerspective(cameraTransformType);
-		}
-
-		/*
-		 * ISmartBlockModel
-		 */
-
-		@Override
-		public IBakedModel handleBlockState(IBlockState state) {
-			return original.handleBlockState(state);
+		public Pair<? extends IBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType) {
+			// Use forge default block transform
+			return IPerspectiveAwareModel.MapWrapper.handlePerspective(this, defaultBlockTransform, cameraTransformType);
 		}
 
 		/*
@@ -440,13 +473,12 @@ public class TaamClientProxy extends TaamCommonProxy {
 		 */
 
 		@Override
-		public List<BakedQuad> getFaceQuads(EnumFacing side) {
-			return original.getFaceQuads(side);
-		}
-
-		@Override
-		public List<BakedQuad> getGeneralQuads() {
-			return original.getGeneralQuads();
+		public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand) {
+			if(state instanceof IExtendedBlockState) {
+				
+			}
+//			System.out.println(original.getState());
+			return original.getQuads(state, side, rand);
 		}
 
 		@Override
@@ -456,7 +488,7 @@ public class TaamClientProxy extends TaamCommonProxy {
 
 		@Override
 		public boolean isGui3d() {
-			return original.isGui3d();
+			return true;
 		}
 
 		@Override
@@ -471,7 +503,12 @@ public class TaamClientProxy extends TaamCommonProxy {
 
 		@Override
 		public ItemCameraTransforms getItemCameraTransforms() {
-			return original.getItemCameraTransforms();
+			return ItemCameraTransforms.DEFAULT;
+		}
+
+		@Override
+		public ItemOverrideList getOverrides() {
+			return original.getOverrides();
 		}
 
 	}

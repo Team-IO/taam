@@ -48,7 +48,7 @@ public abstract class BaseTileEntity extends TileEntity {
 		}
 		markDirty();
 		if (worldUpdate) {
-			this.worldObj.markBlockForUpdate(pos);
+			//TODO: this.worldObj.markBlockForUpdate(pos);
 		}
 		if (renderUpdate) {
 			worldObj.markBlockRangeForRenderUpdate(pos, pos);
@@ -89,7 +89,7 @@ public abstract class BaseTileEntity extends TileEntity {
 	public SPacketUpdateTileEntity getDescriptionPacket() {
 		NBTTagCompound nbt = new NBTTagCompound();
 		writePropertiesToNBTInternal(nbt);
-		return new S35PacketUpdateTileEntity(getPos(), getBlockMetadata(), nbt);
+		return new SPacketUpdateTileEntity(getPos(), getBlockMetadata(), nbt);
 	}
 
 	/*

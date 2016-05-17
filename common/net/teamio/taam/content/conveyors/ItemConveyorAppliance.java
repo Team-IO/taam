@@ -13,10 +13,10 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.teamio.taam.Taam;
 import net.teamio.taam.content.ItemWithMetadata;
 
-public class ItemConveyorAppliance extends ItemWithMetadata<Taam.ITEM_CONVEYOR_APPLIANCE_META> {
+public class ItemConveyorAppliance extends ItemWithMetadata<Taam.BLOCK_PRODUCTIONLINE_APPLIANCE_META> {
 
 	public ItemConveyorAppliance() {
-		super("conveyor_appliance", Taam.ITEM_CONVEYOR_APPLIANCE_META.values(), null);
+		super("conveyor_appliance", Taam.BLOCK_PRODUCTIONLINE_APPLIANCE_META.values(), null);
 	}
 	
 	@Override

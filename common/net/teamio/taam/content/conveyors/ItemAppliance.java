@@ -10,9 +10,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemMultiTexture;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -46,9 +46,9 @@ public class ItemAppliance extends ItemMultiTexture {
 	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean detailInfo) {
 
-		list.add(EnumChatFormatting.DARK_GREEN + I18n.format("lore.taam.conveyor_appliance", new Object[0]));
+		list.add(TextFormatting.DARK_GREEN + I18n.format("lore.taam.conveyor_appliance", new Object[0]));
 		if (!GuiScreen.isShiftKeyDown()) {
-			list.add(EnumChatFormatting.DARK_PURPLE + I18n.format("lore.taam.shift", new Object[0]));
+			list.add(TextFormatting.DARK_PURPLE + I18n.format("lore.taam.shift", new Object[0]));
 		} else {
 			String usage = I18n.format("lore.taam.conveyor_appliance.usage", new Object[0]);
 			// Split at literal \n in the translated text. a lot of escaping here.

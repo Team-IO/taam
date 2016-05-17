@@ -5,12 +5,15 @@ import java.util.Collection;
 import java.util.EnumSet;
 import java.util.List;
 
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+
 import mcmultipart.MCMultiPartMod;
-import mcmultipart.block.BlockMultipart;
+import mcmultipart.block.BlockMultipartContainer;
 import mcmultipart.capabilities.ISlottedCapabilityProvider;
 import mcmultipart.microblock.IMicroblock;
 import mcmultipart.multipart.IMultipart;
-import mcmultipart.multipart.IOccludingPart;
+import mcmultipart.multipart.INormallyOccludingPart;
 import mcmultipart.multipart.ISlottedPart;
 import mcmultipart.multipart.Multipart;
 import mcmultipart.multipart.OcclusionHelper;
@@ -19,22 +22,24 @@ import mcmultipart.raytrace.PartMOP;
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
-import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumWorldBlockLayer;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.client.model.TRSRTransformation;
 import net.minecraftforge.client.model.obj.OBJModel;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
@@ -49,7 +54,7 @@ import net.teamio.taam.util.FaceBitmap;
 import net.teamio.taam.util.WrenchUtil;
 import net.teamio.taam.util.inv.InventoryUtils;
 
-public class MachineMultipart extends Multipart implements IOccludingPart, ITickable, ISlottedPart, ISlottedCapabilityProvider {
+public class MachineMultipart extends Multipart implements INormallyOccludingPart, ITickable, ISlottedPart, ISlottedCapabilityProvider {
 	public IMachine machine;
 	private IMachineMetaInfo meta;
 
@@ -74,8 +79,8 @@ public class MachineMultipart extends Multipart implements IOccludingPart, ITick
 	};
 	
 	@Override
-	public String getType() {
-		return meta.unlocalizedName();
+	public ResourceLocation getType() {
+		return new ResourceLocation(Taam.MOD_ID, meta.unlocalizedName());
 	}
 	
 	@Override
@@ -123,13 +128,14 @@ public class MachineMultipart extends Multipart implements IOccludingPart, ITick
 	private void doBlockUpdate() {
 		byte occlusionField = 0;
 		Collection<? extends IMultipart> parts = this.getContainer().getParts();
+		Predicate<IMultipart> predicateThis = Predicates.equalTo((IMultipart)this);
 		for(EnumFacing side : EnumFacing.VALUES) {
 			PartSlot slot = PartSlot.getFaceSlot(side);
 			
 			/*
 			 * Physical occlusion
 			 */
-			if(!OcclusionHelper.occlusionTest(parts, this, MachinePipe.bbFaces[side.ordinal()])) {
+			if(!OcclusionHelper.occlusionTest(parts, predicateThis, MachinePipe.bbFaces[side.ordinal()])) {
 				occlusionField = FaceBitmap.setSideBit(occlusionField, side);
 				continue;
 			}
@@ -148,7 +154,7 @@ public class MachineMultipart extends Multipart implements IOccludingPart, ITick
 			/*
 			 * Last resort: slotted occluding parts
 			 */
-			} else if(OcclusionHelper.isSlotOccluded(parts, this, slot)) {
+			} else if(OcclusionHelper.isSlotOccluded(parts, slot, predicateThis)) {
 				occlusionField = FaceBitmap.setSideBit(occlusionField, side);
 			}
 		}
@@ -161,9 +167,8 @@ public class MachineMultipart extends Multipart implements IOccludingPart, ITick
 	}
 
 	@Override
-	public boolean onActivated(EntityPlayer player, ItemStack stack, PartMOP hit) {
-
-		boolean playerHasWrench = WrenchUtil.playerHasWrench(player);
+	public boolean onActivated(EntityPlayer player, EnumHand hand, ItemStack heldItem, PartMOP hit) {
+		boolean playerHasWrench = WrenchUtil.playerHasWrenchInMainhand(player);
 
 		if (!playerHasWrench) {
 			return false;
@@ -213,34 +218,40 @@ public class MachineMultipart extends Multipart implements IOccludingPart, ITick
 			OBJModel.OBJState retState = new OBJModel.OBJState(visibleParts, true, new TRSRTransformation(EnumFacing.SOUTH));
 
 			IExtendedBlockState extendedState = (IExtendedBlockState)state;
-			newState = extendedState.withProperty(OBJModel.OBJProperty.instance, retState);
+			newState = extendedState.withProperty(OBJModel.OBJProperty.INSTANCE, retState);
 		}
 		
 		if(machine instanceof IRotatable) {
 			newState = newState.withProperty(DIRECTION, ((IRotatable)machine).getFacingDirection()).withProperty(VARIANT, (Taam.MACHINE_META)meta);
 		} else {
-			newState = newState.withProperty(VARIANT, (Taam.MACHINE_META)meta);
+			newState = newState.withProperty(DIRECTION, EnumFacing.DOWN).withProperty(VARIANT, (Taam.MACHINE_META)meta);
 		}
 		return machine.getExtendedState(newState, world, pos);
 	}
 	
 	@Override
-	public boolean canRenderInLayer(EnumWorldBlockLayer layer) {
-		return layer == EnumWorldBlockLayer.CUTOUT;
+	public boolean canRenderInLayer(BlockRenderLayer layer) {
+		return layer == BlockRenderLayer.CUTOUT;
 	}
 	
 	@Override
-	public BlockState createBlockState() {
-		if(machine instanceof IRotatable) {
-			return new ExtendedBlockState(MCMultiPartMod.multipart, new IProperty[] { DIRECTION, VARIANT }, new IUnlistedProperty[]{BlockMultipart.properties[0], OBJModel.OBJProperty.instance});
+	public BlockStateContainer createBlockState() {
+		if (machine instanceof IRotatable) {
+			return new ExtendedBlockState(MCMultiPartMod.multipart,
+					new IProperty[] { DIRECTION, VARIANT },
+					new IUnlistedProperty[] { BlockMultipartContainer.PROPERTY_MULTIPART_CONTAINER, OBJModel.OBJProperty.INSTANCE }
+			);
 		} else {
-			return new ExtendedBlockState(MCMultiPartMod.multipart, new IProperty[] { VARIANT }, new IUnlistedProperty[]{BlockMultipart.properties[0], OBJModel.OBJProperty.instance});
+			return new ExtendedBlockState(MCMultiPartMod.multipart,
+					new IProperty[] { DIRECTION, VARIANT },
+					new IUnlistedProperty[] { BlockMultipartContainer.PROPERTY_MULTIPART_CONTAINER, OBJModel.OBJProperty.INSTANCE }
+			);
 		}
 	}
-	
+
 	@Override
-	public String getModelPath() {
-		return machine.getModelPath();
+	public ResourceLocation getModelPath() {
+		return new ResourceLocation(machine.getModelPath());
 	}
 	
 	@Override

@@ -3,8 +3,6 @@ package net.teamio.taam.content.conveyors;
 import java.util.List;
 
 import net.minecraft.block.SoundType;
-import mcmultipart.block.BlockMultipart;
-import net.minecraft.block.Block;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
@@ -38,6 +36,8 @@ public class BlockProductionLine extends BaseBlock {
 
 	public static final PropertyEnum<Taam.BLOCK_PRODUCTIONLINE_META> VARIANT = PropertyEnum.create("variant",
 			Taam.BLOCK_PRODUCTIONLINE_META.class);
+	
+	public static final AxisAlignedBB BLOCK_BOUNDS = new AxisAlignedBB(0, 0, 0, 1, 0.5f, 1);
 
 	public BlockProductionLine() {
 		super(MaterialMachinesTransparent.INSTANCE);
@@ -49,7 +49,7 @@ public class BlockProductionLine extends BaseBlock {
 	@Override
 	protected BlockStateContainer createBlockState() {
 		return new ExtendedBlockState(this, new IProperty[] { VARIANT },
-				new IUnlistedProperty[] { BlockMultipart.properties[0], OBJModel.OBJProperty.instance });
+				new IUnlistedProperty[] { OBJModel.OBJProperty.INSTANCE });
 	}
 
 	@Override
@@ -130,16 +130,10 @@ public class BlockProductionLine extends BaseBlock {
 		Log.error("Was not able to create a TileEntity for " + getClass().getName());
 		return null;
 	}
-
+	
 	@Override
 	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-		this.minX = 0;
-		this.maxX = 1;
-		this.minZ = 0;
-		this.maxZ = 1;
-		this.minY = 0;
-		this.maxY = 0.5f;
-			return new AxisAlignedBB(minX, minY, minZ, maxX, maxY, maxZ);
+		return BLOCK_BOUNDS;
 	}
 
 	@Override

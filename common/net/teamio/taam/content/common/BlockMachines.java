@@ -35,8 +35,7 @@ public class BlockMachines extends BaseBlock {
 
 	public BlockMachines() {
 		super(Material.wood);
-		this.setSoundType(SoundType.WOOD);
-		this.setStepSound(Block.soundTypeMetal);
+		this.setSoundType(SoundType.METAL);
 		this.setHardness(6);
 		this.setHarvestLevel("pickaxe", 2);
 	}
@@ -50,7 +49,7 @@ public class BlockMachines extends BaseBlock {
 	protected BlockStateContainer createBlockState() {
 		return new ExtendedBlockState(this,
 				new IProperty[] { VARIANT },
-				new IUnlistedProperty[] { OBJModel.OBJProperty.instance }
+				new IUnlistedProperty[] { OBJModel.OBJProperty.INSTANCE }
 		);
 	}
 

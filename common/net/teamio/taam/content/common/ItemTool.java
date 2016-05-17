@@ -12,11 +12,10 @@ public class ItemTool extends Item implements IItemSaw {
 		setMaxStackSize(1);
 		setMaxDamage(256);
 		setFull3D();
-
 	}
 
 	@Override
-	public int getCuttingStrength(ItemStack stack) {
+	public int getSawStrength(ItemStack stack) {
 		return 2;
 	}
 }

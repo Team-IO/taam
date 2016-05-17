@@ -7,6 +7,11 @@ import org.lwjgl.opengl.GL11;
 import com.google.common.base.Function;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderGlobal;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
@@ -15,13 +20,15 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.fluids.Fluid;
@@ -90,11 +97,12 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 
 	@SubscribeEvent
 	public void onDrawBlockHighlight(DrawBlockHighlightEvent event) {
-		if(event.target.sideHit == EnumFacing.UP) {
-			BlockPos pos = event.target.getBlockPos();
+		RayTraceResult target = event.getTarget();
+		if(target.sideHit == EnumFacing.UP) {
+			BlockPos pos = target.getBlockPos();
 			TileEntity te;
 			if(pos != null) {
-				EntityPlayer player = event.player;
+				EntityPlayer player = event.getPlayer();
 				World world = player.worldObj;
 				te = world.getTileEntity(pos);
 				if(te instanceof IConveyorSlots) {
@@ -105,7 +113,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 						return;
 					}
 
-					Vec3 hitVec = event.target.hitVec;
+					Vec3d hitVec = target.hitVec;
 					int slot = ConveyorUtil.getSlotForRelativeCoordinates(hitVec.xCoord - pos.getX(), hitVec.zCoord - pos.getZ());
 
 	                EnumFacing dir = cte.getNextSlot(slot);
@@ -119,7 +127,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 							+ dir.getFrontOffsetZ() * progress * ConveyorUtil.oneThird; // Apply Slot Movement
 
 
-					drawSelectionBoundingBox(player, event.partialTicks, new AxisAlignedBB(x, y, z,
+					drawSelectionBoundingBox(player, event.getPartialTicks(), new AxisAlignedBB(x, y, z,
 							x + ConveyorUtil.oneThird, y + ConveyorUtil.oneThird, z + ConveyorUtil.oneThird));
 				}
 			}
@@ -268,17 +276,6 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		TextureAtlasSprite sprite = textureGetter.apply(fluid.getStill());
 
 		VertexBuffer renderer = Tessellator.getInstance().getBuffer();
-
-		renderer.begin(7, DefaultVertexFormats.OLDMODEL_POSITION_TEX_NORMAL);
-		Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
-
-		float border = 1.7f/16f;
-		float socket = 2f/16f;
-
-		float fillFactor = stack.amount / 8000f;
-		float fillHeight = socket + fillFactor * (13.8f/16f);
-
-		WorldRenderer renderer = Tessellator.getInstance().getWorldRenderer();
 
 		renderer.begin(7, DefaultVertexFormats.POSITION_TEX_NORMAL);
 		bindTexture(TextureMap.locationBlocksTexture);

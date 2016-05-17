@@ -3,14 +3,13 @@ package net.teamio.taam.content.conveyors;
 import java.util.List;
 
 import net.minecraft.block.properties.PropertyEnum;
-import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -28,8 +27,8 @@ public class BlockProductionLineAppliance extends BlockProductionLine {
 	}
 	
 	@Override
-	protected BlockState createBlockState() {
-		return new BlockState(this, VARIANT);
+	protected BlockStateContainer createBlockState() {
+		return new BlockStateContainer(this, VARIANT);
 	}
 	
 	@Override
@@ -75,16 +74,6 @@ public class BlockProductionLineAppliance extends BlockProductionLine {
 			return new ApplianceSprayer();
 		}
 		return null;
-	}
-	
-	@Override
-	public void setBlockBoundsBasedOnState(IBlockAccess world, BlockPos pos) {
-		this.minX = 0;
-		this.maxX = 1;
-		this.minZ = 0;
-		this.maxZ = 1;
-		this.minY = 0;
-		this.maxY = 1;
 	}
 	
 	@Override

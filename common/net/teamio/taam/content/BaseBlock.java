@@ -16,10 +16,12 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumFacing.Axis;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.obj.OBJModel;
+import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -186,17 +188,10 @@ public abstract class BaseBlock extends Block {
 		return false;
 	}
 
-
 	@Override
-	public boolean isFullCube() {
+	public boolean isFullCube(IBlockState state) {
 		// Required false to prevent suffocation
 		return false;
-	}
-
-	@Override
-	public AxisAlignedBB getCollisionBoundingBox(World worldIn, BlockPos pos, IBlockState state) {
-		setBlockBoundsBasedOnState(worldIn, pos);
-		return super.getCollisionBoundingBox(worldIn, pos, state);
 	}
 
 	@Override
@@ -266,6 +261,11 @@ public abstract class BaseBlock extends Block {
 			facing = rotatable.getFacingDirection();
 		}
 		OBJModel.OBJState retState = new OBJModel.OBJState(visibleParts, true,
+				new TRSRTransformation(rotateRenderDirection(facing)));
+
+		IExtendedBlockState extendedState = (IExtendedBlockState) state;
+
+		return extendedState.withProperty(OBJModel.OBJProperty.INSTANCE, retState);
 	}
 
 	private EnumFacing rotateRenderDirection(EnumFacing facing) {
