@@ -10,6 +10,7 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.teamio.taam.Log;
+import net.teamio.taam.util.TaamUtil;
 
 /**
  * Base class for Taam's TileEntities. Keeps track of the block owner, manages
@@ -41,6 +42,13 @@ public abstract class BaseTileEntity extends TileEntity {
 	/**
 	 * Updates block info & marks the containing block for update when on the
 	 * server.
+	 * 
+	 * @param worldUpdate
+	 *            Send update to client (notify block change / send via network)
+	 * @param renderUpdate
+	 *            Update rendering (client only)
+	 * @param blockUpdate
+	 *            Notify neighbor blocks (block update)
 	 */
 	public final void updateState(boolean worldUpdate, boolean renderUpdate, boolean blockUpdate) {
 		if (worldObj == null) {
@@ -48,7 +56,7 @@ public abstract class BaseTileEntity extends TileEntity {
 		}
 		markDirty();
 		if (worldUpdate) {
-			//TODO: this.worldObj.markBlockForUpdate(pos);
+			TaamUtil.updateBlock(worldObj, pos);
 		}
 		if (renderUpdate) {
 			worldObj.markBlockRangeForRenderUpdate(pos, pos);

@@ -36,6 +36,19 @@ public final class TaamUtil {
 	 */
 	public static final Random RANDOM = new Random();
 
+	/**
+	 * Updates a block on server-side so that an update packet is sent to the player.
+	 * @param world
+	 * @param pos
+	 */
+	public static void updateBlock(World world, BlockPos pos) {
+		if(world.isRemote) {
+			return;
+		}
+		IBlockState state = world.getBlockState(pos);
+		world.notifyBlockUpdate(pos, state, state, 0);
+	}
+	
 	public static boolean canDropIntoWorld(IBlockAccess world, BlockPos pos) {
 		IBlockState state = world.getBlockState(pos);
 		Block block = state.getBlock();

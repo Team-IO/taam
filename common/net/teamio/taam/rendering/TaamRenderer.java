@@ -38,8 +38,10 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.teamio.taam.Taam;
 import net.teamio.taam.content.IRotatable;
+import net.teamio.taam.content.conveyors.TileEntityConveyorItemBag;
 import net.teamio.taam.content.conveyors.TileEntityConveyorProcessor;
 import net.teamio.taam.content.conveyors.TileEntityConveyorSieve;
+import net.teamio.taam.content.conveyors.TileEntityConveyorTrashCan;
 import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.conveyors.ItemWrapper;
 import net.teamio.taam.conveyors.api.IConveyorSlots;
@@ -211,6 +213,40 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 			GL11.glPopMatrix();
 		}
 
+		if(tileEntity instanceof TileEntityConveyorItemBag) {
+			GL11.glPushMatrix();
+			GL11.glTranslated(x, y, z);
+
+			float rotationDegrees = getRotationDegrees(tileEntity);
+
+			GL11.glTranslated(.5f, .5f, .5f);
+			GL11.glRotatef(rotationDegrees, 0, 1, 0);
+			GL11.glTranslated(-.5f, -.5f, -.5f);
+			
+			float fillFactor = ((TileEntityConveyorItemBag) tileEntity).fillPercent;
+			
+			renderBagFilling(fillFactor);
+			
+			GL11.glPopMatrix();
+		}
+
+		if(tileEntity instanceof TileEntityConveyorTrashCan) {
+			GL11.glPushMatrix();
+			GL11.glTranslated(x, y, z);
+
+			float rotationDegrees = getRotationDegrees(tileEntity);
+
+			GL11.glTranslated(.5f, .5f, .5f);
+			GL11.glRotatef(rotationDegrees, 0, 1, 0);
+			GL11.glTranslated(-.5f, -.5f, -.5f);
+			
+			float fillFactor = ((TileEntityConveyorTrashCan) tileEntity).fillLevel;
+			
+			renderBagFilling(fillFactor);
+			
+			GL11.glPopMatrix();
+		}
+		
 		EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
 		boolean hasDebugTool = player != null && WrenchUtil.playerHasDebugTool(player);
 
@@ -345,6 +381,55 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		renderer.pos(bounds.minX, fillHeight, bounds.minZ)	.tex(minU_X, minV_Z).normal(0, 1, 0).endVertex();
 		renderer.pos(bounds.minX, fillHeight, bounds.maxZ)	.tex(minU_X, maxV_Z).normal(0, 1, 0).endVertex();
 		renderer.pos(bounds.maxX, fillHeight, bounds.maxZ)	.tex(maxU_X, maxV_Z).normal(0, 1, 0).endVertex();
+
+		setupDefaultGL();
+
+		Tessellator.getInstance().draw();
+
+		tearDownDefaultGL();
+	}
+	
+	public static final ResourceLocation conveyorTextures = new ResourceLocation("Taam", "blocks/conveyor");
+	
+	public void renderBagFilling(float fillFactor) {
+
+		/*
+		 * Prepare rendering
+		 */
+
+		TextureAtlasSprite sprite = textureGetter.apply(conveyorTextures);
+		VertexBuffer renderer = Tessellator.getInstance().getBuffer();
+
+		renderer.begin(7, DefaultVertexFormats.POSITION_TEX_NORMAL);
+		bindTexture(TextureMap.locationBlocksTexture);
+		
+		/* Vertex infos from exported .obj file
+		v 0.020000 0.030001 0.977282
+		v 0.980000 0.030001 0.977282
+		v 0.111853 0.029999 0.667282
+		v 0.888147 0.029999 0.667282
+		vt 0.187500 0.527344
+		vt 0.000000 0.527344
+		vt 0.000000 0.480469
+		vt 0.187500 0.480469*/
+
+		GL11.glTranslatef(0, fillFactor * 0.3f, 0);
+
+		float minU = sprite.getMinU();
+		float minV = sprite.getMinV();
+		float maxU = sprite.getMaxU();
+		float maxV = sprite.getMaxV();
+
+		float V = maxV - minV;
+		float U = maxU - minU;
+		
+		/*
+		 * Begin rendering
+		 */
+		renderer.pos(0.020000, 0.03, 0.977282).tex(minU + U*0.187500, minV + V*(1-0.527344)).normal(0, 1, 0).endVertex();
+		renderer.pos(0.980000, 0.03, 0.977282).tex(minU + U*0.000000, minV + V*(1-0.527344)).normal(0, 1, 0).endVertex();
+		renderer.pos(0.888147, 0.03, 0.667282).tex(minU + U*0.000000, minV + V*(1-0.480469)).normal(0, 1, 0).endVertex();
+		renderer.pos(0.111853, 0.03, 0.667282).tex(minU + U*0.187500, minV + V*(1-0.480469)).normal(0, 1, 0).endVertex();
 
 		setupDefaultGL();
 
