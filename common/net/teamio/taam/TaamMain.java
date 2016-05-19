@@ -125,16 +125,23 @@ public class TaamMain {
 	public static DamageSource ds_crushed = new DamageSource("taam.crushed").setDamageBypassesArmor();
 	public static DamageSource ds_reconfigured = new DamageSource("taam.reconfigured").setDamageIsAbsolute();
 
-	private void registerBlock(Block block, Class<? extends ItemBlock> itemClass, String name) {
+	private void registerBlock(Block block, ItemBlock item, String name) {
+		registerBlock(block, name);
+		registerItem(item, name);
+	}
+	
+	private void registerBlock(Block block, String name) {
 		block.setUnlocalizedName(name);
 		block.setCreativeTab(creativeTab);
-		GameRegistry.registerBlock(block, itemClass, name);
+		block.setRegistryName(name);
+		GameRegistry.register(block);
 	}
 
 	private void registerItem(Item item, String name) {
 		item.setUnlocalizedName(name);
 		item.setCreativeTab(creativeTab);
-		GameRegistry.registerItem(item, name);
+		item.setRegistryName(name);
+		GameRegistry.register(item);
 	}
 
 	@EventHandler
@@ -199,27 +206,53 @@ public class TaamMain {
 		 * Register Stuff
 		 */
 
-		registerBlock(blockSensor = new BlockSensor(), ItemBlock.class, Taam.BLOCK_SENSOR);
+		registerBlock(
+				blockSensor = new BlockSensor(),
+				new ItemBlock(blockSensor),
+				Taam.BLOCK_SENSOR
+				);
 
-		registerBlock(blockMachines = new BlockMachines(), null, Taam.BLOCK_MACHINES);
-		registerItem(new ItemMultiTexture(blockMachines, blockMachines, Taam.BLOCK_MACHINES_META.valuesAsString()), Taam.BLOCK_MACHINES);
+		registerBlock(
+				blockMachines = new BlockMachines(),
+				new ItemMultiTexture(blockMachines, blockMachines, Taam.BLOCK_MACHINES_META.valuesAsString()),
+				Taam.BLOCK_MACHINES
+				);
 
-		registerBlock(blockProductionLine = new BlockProductionLine(), null, Taam.BLOCK_PRODUCTIONLINE);
-		registerItem(new ItemProductionLine(blockProductionLine, Taam.BLOCK_PRODUCTIONLINE_META.valuesAsString()), Taam.BLOCK_PRODUCTIONLINE);
+		registerBlock(
+				blockProductionLine = new BlockProductionLine(),
+				new ItemProductionLine(blockProductionLine, Taam.BLOCK_PRODUCTIONLINE_META.valuesAsString()),
+				Taam.BLOCK_PRODUCTIONLINE
+				);
 
-		registerBlock(blockProductionLineAttachable = new BlockProductionLineAttachable(), null, Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE);
-		registerItem(new ItemAttachable(blockProductionLineAttachable, Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META.valuesAsString()), Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE);
+		registerBlock(
+				blockProductionLineAttachable = new BlockProductionLineAttachable(),
+				new ItemAttachable(blockProductionLineAttachable, Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META.valuesAsString()),
+				Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE
+				);
 
-		registerBlock(blockProductionLineAppliance = new BlockProductionLineAppliance(), null, Taam.BLOCK_PRODUCTIONLINE_APPLIANCE);
-		registerItem(new ItemAppliance(blockProductionLineAppliance, Taam.BLOCK_PRODUCTIONLINE_APPLIANCE_META.valuesAsString()), Taam.BLOCK_PRODUCTIONLINE_APPLIANCE);
+		registerBlock(
+				blockProductionLineAppliance = new BlockProductionLineAppliance(),
+				new ItemAppliance(blockProductionLineAppliance, Taam.BLOCK_PRODUCTIONLINE_APPLIANCE_META.valuesAsString()),
+				Taam.BLOCK_PRODUCTIONLINE_APPLIANCE
+				);
 
-		registerBlock(blockOre = new BlockOre(), null, Taam.BLOCK_ORE);
-		registerItem(new ItemMultiTexture(blockOre, blockOre, Taam.BLOCK_ORE_META.valuesAsString()), Taam.BLOCK_ORE);
+		registerBlock(
+				blockOre = new BlockOre(),
+				new ItemMultiTexture(blockOre, blockOre, Taam.BLOCK_ORE_META.valuesAsString()),
+				Taam.BLOCK_ORE
+				);
 
-		registerBlock(blockConcrete = new BlockBuilding(), null, Taam.BLOCK_CONCRETE);
-		registerItem(new ItemMultiTexture(blockConcrete, blockConcrete, Taam.BLOCK_CONCRETE_META.valuesAsString()), Taam.BLOCK_CONCRETE);
+		registerBlock(
+				blockConcrete = new BlockBuilding(),
+				new ItemMultiTexture(blockConcrete, blockConcrete, Taam.BLOCK_CONCRETE_META.valuesAsString()),
+				Taam.BLOCK_CONCRETE
+				);
 
-		registerBlock(blockSupportBeam = new BlockSupportBeam(), ItemBlock.class, Taam.BLOCK_SUPPORT_BEAM);
+		registerBlock(
+				blockSupportBeam = new BlockSupportBeam(),
+				new ItemBlock(blockSupportBeam),
+				Taam.BLOCK_SUPPORT_BEAM
+				);
 
 		registerItem(itemDebugTool = new ItemDebugTool(), Taam.ITEM_DEBUG_TOOL);
 		registerItem(itemWrench = new ItemWrench(), Taam.ITEM_WRENCH);
@@ -286,10 +319,10 @@ public class TaamMain {
 		/*
 		 * Wrapper block for machines if multipart is not available
 		 */
-		blockMachine = new MachineBlock(Taam.MACHINE_META.values());
-		blockMachine.setUnlocalizedName(Taam.BLOCK_MACHINE_WRAPPER);
-		blockMachine.setCreativeTab(creativeTab);
-		GameRegistry.registerBlock(blockMachine, null, Taam.BLOCK_MACHINE_WRAPPER);
+		registerBlock(
+				blockMachine = new MachineBlock(Taam.MACHINE_META.values()),
+				Taam.BLOCK_MACHINE_WRAPPER
+				);
 		
 		/*
 		 * Either Multipart or regular items
@@ -301,9 +334,7 @@ public class TaamMain {
 			// Regular item, places a wrapper block
 			itemMachine = new MachineItemBlock(blockMachine, Taam.MACHINE_META.values());
 		}
-		itemMachine.setCreativeTab(TaamMain.creativeTab);
-		itemMachine.setUnlocalizedName(Taam.BLOCK_MACHINE_WRAPPER);
-		GameRegistry.registerItem(itemMachine, Taam.BLOCK_MACHINE_WRAPPER);
+		registerItem(itemMachine, Taam.BLOCK_MACHINE_WRAPPER);
 		
 		/*
 		 * Worldgen
@@ -332,9 +363,10 @@ public class TaamMain {
 			if (registerFluidBlocks) {
 				BlockFluidClassic fluidBlock = new BlockFluidClassic(fluidsDye[i], Material.water);
 				String blockName = "fluid.dye." + fluidsDyeValues[i].name();
-				GameRegistry.registerBlock(fluidBlock, blockName);
-				fluidBlock.setUnlocalizedName(blockName);
-				fluidBlock.setCreativeTab(creativeTab);
+				registerBlock(
+						fluidBlock,
+						new ItemBlock(fluidBlock),
+						blockName);
 				blocksFluidDye[i] = fluidBlock;
 			}
 
