@@ -2,6 +2,7 @@ package net.teamio.taam.content.conveyors;
 
 import java.util.List;
 
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -14,6 +15,9 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.client.model.obj.OBJModel;
+import net.minecraftforge.common.property.ExtendedBlockState;
+import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.teamio.taam.Taam;
@@ -30,7 +34,8 @@ public class BlockProductionLineAttachable extends BlockProductionLine {
 
 	@Override
 	protected BlockStateContainer createBlockState() {
-		return new BlockStateContainer(this, VARIANT);
+		return new ExtendedBlockState(this, new IProperty[] { VARIANT },
+				new IUnlistedProperty[] { OBJModel.OBJProperty.INSTANCE });
 	}
 
 	@Override
@@ -95,35 +100,35 @@ public class BlockProductionLineAttachable extends BlockProductionLine {
 			maxX = 1;
 			minZ = 0;
 			maxZ = 1;
-		}
-
-		EnumFacing facing = ((IRotatable) te).getFacingDirection();
-		switch (facing) {
-		default:
-		case NORTH:
-			minX = 0;
-			maxX = 1;
-			minZ = 0;
-			maxZ = 0.35f;
-			break;
-		case SOUTH:
-			minX = 0;
-			maxX = 1;
-			minZ = 0.65f;
-			maxZ = 1;
-			break;
-		case EAST:
-			minX = 0.65f;
-			maxX = 1;
-			minZ = 0;
-			maxZ = 1;
-			break;
-		case WEST:
-			minX = 0;
-			maxX = 0.35f;
-			minZ = 0;
-			maxZ = 1;
-			break;
+		} else {
+			EnumFacing facing = ((IRotatable) te).getFacingDirection();
+			switch (facing) {
+			default:
+			case NORTH:
+				minX = 0;
+				maxX = 1;
+				minZ = 0;
+				maxZ = 0.35f;
+				break;
+			case SOUTH:
+				minX = 0;
+				maxX = 1;
+				minZ = 0.65f;
+				maxZ = 1;
+				break;
+			case EAST:
+				minX = 0.65f;
+				maxX = 1;
+				minZ = 0;
+				maxZ = 1;
+				break;
+			case WEST:
+				minX = 0;
+				maxX = 0.35f;
+				minZ = 0;
+				maxZ = 1;
+				break;
+			}
 		}
 		return new AxisAlignedBB(minX,minY,minZ, maxX, maxY,maxZ);
 	}
