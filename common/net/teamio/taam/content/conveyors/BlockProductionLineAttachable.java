@@ -27,6 +27,7 @@ import net.teamio.taam.util.TaamUtil;
 public class BlockProductionLineAttachable extends BlockProductionLine {
 
 	public static final PropertyEnum<Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META> VARIANT = PropertyEnum.create("variant", Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META.class);
+	public static final PropertyEnum<EnumFacing> DIRECTION = PropertyEnum.create("direction", EnumFacing.class, EnumFacing.HORIZONTALS);
 
 	public BlockProductionLineAttachable() {
 		super();
@@ -34,7 +35,7 @@ public class BlockProductionLineAttachable extends BlockProductionLine {
 
 	@Override
 	protected BlockStateContainer createBlockState() {
-		return new ExtendedBlockState(this, new IProperty[] { VARIANT },
+		return new ExtendedBlockState(this, new IProperty[] { DIRECTION, VARIANT },
 				new IUnlistedProperty[] { OBJModel.OBJProperty.INSTANCE });
 	}
 
@@ -52,6 +53,21 @@ public class BlockProductionLineAttachable extends BlockProductionLine {
 			meta = 0;
 		}
 		return getDefaultState().withProperty(VARIANT, values[meta]);
+	}
+
+	@Override
+	public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
+
+		// Let the tile entity update anything that is required for rendering
+		ATileEntityAttachable te = (ATileEntityAttachable) worldIn.getTileEntity(pos);
+		te.renderUpdate();
+		
+		// This makes the state shows up in F3. Previously it was not actually applied on the rendering, though.
+		// Rendering Transform was applied in getExtendedState
+		// Since 1.9 this seems to work, though
+		
+		// Add rotation to state
+		return state.withProperty(DIRECTION, ((IRotatable) te).getFacingDirection());
 	}
 
 	public String getUnlocalizedName(ItemStack itemStack) {

@@ -206,13 +206,6 @@ public abstract class BaseBlock extends Block {
 		BaseTileEntity te = (BaseTileEntity) worldIn.getTileEntity(pos);
 		te.renderUpdate();
 		
-		// This would make it so the state shows up in F3. Not actually applied on the rendering, though.
-		// Rendering Transform is applied below, in getExtendedState
-			
-		//	TileEntity te = worldIn.getTileEntity(pos);
-		//	if(te instanceof IRotatable) {
-		//		return state.withProperty(FACING, ((IRotatable) te).getFacingDirection());
-		//	}
 		return state;
 	}
 
