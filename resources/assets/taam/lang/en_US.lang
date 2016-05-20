@@ -1,136 +1,136 @@
 #Item localization
-item.debugger.name=Coffee
-item.wrench.name=Adjustable Wrench
+item.taam.debugger.name=Coffee
+item.taam.wrench.name=Adjustable Wrench
 # Ingots
-item.ingot.tin.name=Tin Ingot
-item.ingot.copper.name=Copper Ingot
-item.ingot.aluminum.name=Aluminum Ingot
-item.ingot.bauxite.name=The Impossible Bauxite Ingot
-item.ingot.kaolinite.name=The Impossible Kaolinite Ingot
-item.ingot.gold.name=Cheated Gold Ingot
-item.ingot.iron.name=Cheated Iron Ingot
-item.ingot.coal.name=Cheated Coal Ingot (what is that?)
+item.taam.ingot.tin.name=Tin Ingot
+item.taam.ingot.copper.name=Copper Ingot
+item.taam.ingot.aluminum.name=Aluminum Ingot
+item.taam.ingot.bauxite.name=The Impossible Bauxite Ingot
+item.taam.ingot.kaolinite.name=The Impossible Kaolinite Ingot
+item.taam.ingot.gold.name=Cheated Gold Ingot
+item.taam.ingot.iron.name=Cheated Iron Ingot
+item.taam.ingot.coal.name=Cheated Coal Ingot (what is that?)
 # Dusts
-item.dust.tin.name=Tin Dust
-item.dust.copper.name=Copper Dust
-item.dust.aluminum.name=Aluminum Dust
-item.dust.bauxite.name=Bauxite Dust
-item.dust.kaolinite.name=Kaolinite Dust
-item.dust.gold.name=Gold Dust
-item.dust.iron.name=Iron Dust
-item.dust.coal.name=Coal Dust
-item.dust.stone.name=Stone Dust
+item.taam.dust.tin.name=Tin Dust
+item.taam.dust.copper.name=Copper Dust
+item.taam.dust.aluminum.name=Aluminum Dust
+item.taam.dust.bauxite.name=Bauxite Dust
+item.taam.dust.kaolinite.name=Kaolinite Dust
+item.taam.dust.gold.name=Gold Dust
+item.taam.dust.iron.name=Iron Dust
+item.taam.dust.coal.name=Coal Dust
+item.taam.dust.stone.name=Stone Dust
 # Parts (Crafting Items)
-item.part.photocell.name=Photo Cell
-item.part.motor.name=Motor
-item.part.support_frame_wood.name=Wooden Support Frame
-item.part.support_frame.name=Support Frame
-item.part.circuit_basic.name=Basic Circuit
-item.part.circuit_advanced.name=Advanced Circuit
-item.part.logistics_chip.name=Logistics Chip
-item.part.rubber_band.name=Rubber Band
-item.part.tank.name=Tank
-item.part.pump.name=Pump
-item.part.nozzle.name=Nozzle
-item.part.magnetic_coil.name=Magnetic Coil
-item.part.iron_frame.name=Iron Frame
-item.part.metal_bearing.name=Metal Bearing
-item.part.copper_wire.name=Copper Wire
-item.part.sieve.name=Sieve
+item.taam.part.photocell.name=Photo Cell
+item.taam.part.motor.name=Motor
+item.taam.part.support_frame_wood.name=Wooden Support Frame
+item.taam.part.support_frame.name=Support Frame
+item.taam.part.circuit_basic.name=Basic Circuit
+item.taam.part.circuit_advanced.name=Advanced Circuit
+item.taam.part.logistics_chip.name=Logistics Chip
+item.taam.part.rubber_band.name=Rubber Band
+item.taam.part.tank.name=Tank
+item.taam.part.pump.name=Pump
+item.taam.part.nozzle.name=Nozzle
+item.taam.part.magnetic_coil.name=Magnetic Coil
+item.taam.part.iron_frame.name=Iron Frame
+item.taam.part.metal_bearing.name=Metal Bearing
+item.taam.part.copper_wire.name=Copper Wire
+item.taam.part.sieve.name=Sieve
 # Materials
-item.material.plastic_sheet.name=Plastic Sheet
-item.material.plastic_bar.name=Plastic Bar
-item.material.rubber_bar.name=Rubber Bar
-item.material.rubber_sheet.name=Rubber Sheet
-item.material.graphite.name=Graphite Bar
-item.material.silicon_wafer.name=Silicon Wafer
-item.material.iron_nugget.name=Iron Nugget
-item.material.wooden_board.name=Wooden Board
-item.material.aluminum_plate.name=Aluminum Plate
-item.material.resin.name=Resin
-item.material.cement.name=Cement
-item.material.cementRough.name=Rough Cement
+item.taam.material.plastic_sheet.name=Plastic Sheet
+item.taam.material.plastic_bar.name=Plastic Bar
+item.taam.material.rubber_bar.name=Rubber Bar
+item.taam.material.rubber_sheet.name=Rubber Sheet
+item.taam.material.graphite.name=Graphite Bar
+item.taam.material.silicon_wafer.name=Silicon Wafer
+item.taam.material.iron_nugget.name=Iron Nugget
+item.taam.material.wooden_board.name=Wooden Board
+item.taam.material.aluminum_plate.name=Aluminum Plate
+item.taam.material.resin.name=Resin
+item.taam.material.cement.name=Cement
+item.taam.material.cementRough.name=Rough Cement
 
-item.material.pigment_black.name=Black Pigment Pellet
-item.material.pigment_red.name=Red Pigment Pellet
-item.material.pigment_green.name=Green Pigment Pellet
-item.material.pigment_brown.name=Brown Pigment Pellet
-item.material.pigment_blue.name=Blue Pigment Pellet
-item.material.pigment_purple.name=Purple Pigment Pellet
-item.material.pigment_cyan.name=Cyan Pigment Pellet
-item.material.pigment_lightGray.name=Light Gray Pigment Pellet
-item.material.pigment_gray.name=Gray Pigment Pellet
-item.material.pigment_pink.name=Pink Pigment Pellet
-item.material.pigment_lime.name=Lime Pigment Pellet
-item.material.pigment_yellow.name=Yellow Pigment Pellet
-item.material.pigment_lightBlue.name=Light Blue Pigment Pellet
-item.material.pigment_magenta.name=Magenta Pigment Pellet
-item.material.pigment_orange.name=Orange Pigment Pellet
-item.material.pigment_white.name=White Pigment Pellet
+item.taam.material.pigment_black.name=Black Pigment Pellet
+item.taam.material.pigment_red.name=Red Pigment Pellet
+item.taam.material.pigment_green.name=Green Pigment Pellet
+item.taam.material.pigment_brown.name=Brown Pigment Pellet
+item.taam.material.pigment_blue.name=Blue Pigment Pellet
+item.taam.material.pigment_purple.name=Purple Pigment Pellet
+item.taam.material.pigment_cyan.name=Cyan Pigment Pellet
+item.taam.material.pigment_lightGray.name=Light Gray Pigment Pellet
+item.taam.material.pigment_gray.name=Gray Pigment Pellet
+item.taam.material.pigment_pink.name=Pink Pigment Pellet
+item.taam.material.pigment_lime.name=Lime Pigment Pellet
+item.taam.material.pigment_yellow.name=Yellow Pigment Pellet
+item.taam.material.pigment_lightBlue.name=Light Blue Pigment Pellet
+item.taam.material.pigment_magenta.name=Magenta Pigment Pellet
+item.taam.material.pigment_orange.name=Orange Pigment Pellet
+item.taam.material.pigment_white.name=White Pigment Pellet
 
 # Tools
-item.tool.saw.name=Saw
+item.taam.tool.saw.name=Saw
 
 #Creative Tab localization
 itemGroup.taam=Taam
 
 # Block localization
-tile.sensor.name=Motion Sensor
-tile.slidingdoor.name=Sliding Door
-tile.support_beam.name=Support Beam
+tile.taam.sensor.name=Motion Sensor
+tile.taam.slidingdoor.name=Sliding Door
+tile.taam.support_beam.name=Support Beam
 # Concrete
-tile.concrete.name=Concrete
-tile.concrete.rough.name=Rough Concrete
-tile.concrete.rough_chiseled.name=Rough Concrete (Chiseled)
-tile.concrete.fine.name=Fine Concrete
-tile.concrete.fine_chiseled.name=Fine Concrete (Chiseled)
-tile.concrete.coated.name=Coated Concrete
-tile.concrete.coated_chiseled.name=Coated Concrete (Chiseled)
-tile.concrete.black.name=Black Coated Concrete
-tile.concrete.black_chiseled.name=Black Coated Concrete (Chiseled)
-tile.concrete.warn1.name=Concrete (Yellow Warning Paint)
-tile.concrete.warn2.name=Concrete (Red Warning Paint)
+tile.taam.concrete.name=Concrete
+tile.taam.concrete.rough.name=Rough Concrete
+tile.taam.concrete.rough_chiseled.name=Rough Concrete (Chiseled)
+tile.taam.concrete.fine.name=Fine Concrete
+tile.taam.concrete.fine_chiseled.name=Fine Concrete (Chiseled)
+tile.taam.concrete.coated.name=Coated Concrete
+tile.taam.concrete.coated_chiseled.name=Coated Concrete (Chiseled)
+tile.taam.concrete.black.name=Black Coated Concrete
+tile.taam.concrete.black_chiseled.name=Black Coated Concrete (Chiseled)
+tile.taam.concrete.warn1.name=Concrete (Yellow Warning Paint)
+tile.taam.concrete.warn2.name=Concrete (Red Warning Paint)
 # Ores
-tile.ore.copper.name=Copper Ore
-tile.ore.tin.name=Tin Ore
-tile.ore.aluminum.name=Native Aluminum Ore
-tile.ore.bauxite.name=Bauxite
-tile.ore.kaolinite.name=Kaolinite
+tile.taam.ore.copper.name=Copper Ore
+tile.taam.ore.tin.name=Tin Ore
+tile.taam.ore.aluminum.name=Native Aluminum Ore
+tile.taam.ore.bauxite.name=Bauxite
+tile.taam.ore.kaolinite.name=Kaolinite
 # Machine Blocks
 
-tile.machines.chute.name=Chute
-tile.machines.creativecache.name=Creative Item Cache
-tile.machines.creativewell.name=Creative Fluid Well
+tile.taam.machines.chute.name=Chute
+tile.taam.machines.creativecache.name=Creative Item Cache
+tile.taam.machines.creativewell.name=Creative Fluid Well
 
-tile.productionline.conveyor1.name=Wooden Conveyor
-tile.productionline.conveyor2.name=Conveyor
-tile.productionline.conveyor3.name=High Throughput Conveyor
-tile.productionline.hopper.name=Conveyor Hopper
-tile.productionline.hopper_hs.name=High Speed Conveyor Hopper
-tile.productionline.sieve.name=Conveyor Sieve
-tile.productionline.shredder.name=Conveyor Shredder
-tile.productionline.grinder.name=Conveyor Grinder
-tile.productionline.crusher.name=Conveyor Crusher
-tile.productionline.chute.name=Conveyor Chute
+tile.taam.productionline.conveyor1.name=Wooden Conveyor
+tile.taam.productionline.conveyor2.name=Conveyor
+tile.taam.productionline.conveyor3.name=High Throughput Conveyor
+tile.taam.productionline.hopper.name=Conveyor Hopper
+tile.taam.productionline.hopper_hs.name=High Speed Conveyor Hopper
+tile.taam.productionline.sieve.name=Conveyor Sieve
+tile.taam.productionline.shredder.name=Conveyor Shredder
+tile.taam.productionline.grinder.name=Conveyor Grinder
+tile.taam.productionline.crusher.name=Conveyor Crusher
+tile.taam.productionline.chute.name=Conveyor Chute
 
-tile.productionline_attachable.itembag.name=Conveyor Item Bag
-tile.productionline_attachable.trashcan.name=Conveyor Trash Can
-tile.productionline_attachable.lamp.name=Conveyor Lamp
+tile.taam.productionline_attachable.itembag.name=Conveyor Item Bag
+tile.taam.productionline_attachable.trashcan.name=Conveyor Trash Can
+tile.taam.productionline_attachable.lamp.name=Conveyor Lamp
 
-tile.productionline_appliance.sprayer.name=Sprayer
+tile.taam.productionline_appliance.sprayer.name=Sprayer
 
 #Machines
-tile.machine.pipe.name=Pipe
-tile.machine.tank.name=Tank
-tile.machine.pump.name=Pump
-tile.machine.mixer.name=Mixer
-tile.machine.fluid_drier.name=Fluid Drier
+tile.taam.machine.pipe.name=Pipe
+tile.taam.machine.tank.name=Tank
+tile.taam.machine.pump.name=Pump
+tile.taam.machine.mixer.name=Mixer
+tile.taam.machine.fluid_drier.name=Fluid Drier
 
-item.machine.pipe.name=Pipe
-item.machine.tank.name=Tank
-item.machine.pump.name=Pump
-item.machine.mixer.name=Mixer
-item.machine.fluid_drier.name=Fluid Drier
+item.taam.machine.pipe.name=Pipe
+item.taam.machine.tank.name=Tank
+item.taam.machine.pump.name=Pump
+item.taam.machine.mixer.name=Mixer
+item.taam.machine.fluid_drier.name=Fluid Drier
 
 # Fluids
 fluid.dye_black=Liquid Black Dye

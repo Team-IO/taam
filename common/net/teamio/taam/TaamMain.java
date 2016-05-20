@@ -131,14 +131,14 @@ public class TaamMain {
 	}
 	
 	private void registerBlock(Block block, String name) {
-		block.setUnlocalizedName(name);
+		block.setUnlocalizedName(Taam.MOD_ID + "." + name);
 		block.setCreativeTab(creativeTab);
 		block.setRegistryName(name);
 		GameRegistry.register(block);
 	}
 
 	private void registerItem(Item item, String name) {
-		item.setUnlocalizedName(name);
+		item.setUnlocalizedName(Taam.MOD_ID + "." + name);
 		item.setCreativeTab(creativeTab);
 		item.setRegistryName(name);
 		GameRegistry.register(item);
