@@ -162,7 +162,7 @@ lore.taam.productionline=Komponente einer Produktionskette
 lore.taam.productionline.usage=Kann mit anderen Produktionsketten-\nKomponenten zu einem integrierten Verarbeitungs-\n und Transportsystem verbunden werden.
 lore.taam.productionline.isappliancehost=Ist mit Appliances kompatibel
 lore.taam.debugtool=Debug Tool
-lore.taam.debugtool.usage=Dieses item kann nicht hergestellt werden.\nGibt Debug-Informationen in Chat oder Log aus.
+lore.taam.debugtool.usage=Dieses Item kann nicht hergestellt werden.\nGibt Debug-Informationen in Chat oder Log aus.
 lore.taam.wrench=Das Werkzeug eines Ingenieurs
 lore.taam.wrench.usage=Benutze diese Schraubzwinge zum rotieren\nund konfigurieren der Teile einer Produktionskette.
 
