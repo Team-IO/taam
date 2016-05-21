@@ -13,14 +13,13 @@ buildscript {
 apply plugin: 'net.minecraftforge.gradle.forge'
 
 repositories {
-	maven {
-		name 'CB Maven FS'
-		url "http://chickenbones.net/maven/"
-	}
     maven {
     	name 'amadornes Maven, for MCMultipart'
     	url "http://maven.amadornes.com/"
     }
+	maven { 
+		url "http://dvs1.progwml6.com/files/maven" 
+	} 
 }
 
 ext.configFile = file "build.properties"
@@ -61,17 +60,11 @@ sourceSets {
         }
     }
 }
-repositories {
-
-    maven {
-        name 'CB Maven FS'
-        url "http://chickenbones.net/maven/"
-    }
-}
 
 dependencies {
     //compile 'com.mod-buildcraft:buildcraft:6.0.8:dev'
     deobfCompile "MCMultiPart:MCMultiPart:${config.mcmultipart_version}:universal"
+    compile "mezz.jei:jei_${config.jei_mc_version}:${config.jei_version}"
 }
 
 jar {

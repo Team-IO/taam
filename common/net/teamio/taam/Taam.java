@@ -56,6 +56,12 @@ public final class Taam {
 	
 	public static final String GUI_FACTORY_CLASS = "net.teamio.taam.gui.GuiFactory";
 
+	/*
+	 * Integration
+	 */
+	
+	public static final String INTEGRATION_JEI_CAT_PROCESSING = "taam.integration.jei.processing";
+	
 	public static final String BLOCK_SENSOR = "sensor";
 	public static final String BLOCK_MACHINES = "machines";
 	public static final String BLOCK_PRODUCTIONLINE = "productionline";
