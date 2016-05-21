@@ -10,26 +10,41 @@ import mezz.jei.api.recipe.IRecipeWrapper;
 import mezz.jei.util.Translator;
 import net.minecraft.util.ResourceLocation;
 import net.teamio.taam.Taam;
+import net.teamio.taam.recipes.ProcessingRegistry;
 
 public class ProcessingCategory extends BlankRecipeCategory {
 
 	private String localizedName = Translator.translateToLocal("taam.integration.jei.categories.processing");
 
 	@Nonnull
-	private final IDrawable background_grinder;
-	@Nonnull
-	private final IDrawable background_crusher;
+	private final IDrawable background;
+	
+	public final int machineID;
+	private final String uid;
 
-	public ProcessingCategory(IGuiHelper guiHelper) {
+	public ProcessingCategory(int machineID, IGuiHelper guiHelper) {
+		this.machineID = machineID;
+		
 		ResourceLocation bgLocation = new ResourceLocation("taam", "gui/processors");
-		background_crusher = guiHelper.createDrawable(bgLocation, 0, 0, 166, 66);
-		background_grinder = guiHelper.createDrawable(bgLocation, 0, 67, 166, 66);
-		// background_shredder = guiHelper.createDrawable(bgLocation, 0, 134, 166, 66);
+		switch(machineID) {
+		case ProcessingRegistry.CRUSHER:
+			background = guiHelper.createDrawable(bgLocation, 0, 0, 166, 66);
+			uid = Taam.INTEGRATION_JEI_CAT_CRUSHER;
+			break;
+		case ProcessingRegistry.GRINDER:
+			background = guiHelper.createDrawable(bgLocation, 0, 67, 166, 66);
+			uid = Taam.INTEGRATION_JEI_CAT_GRINDER;
+			break;
+			// Shredder:
+			// background = guiHelper.createDrawable(bgLocation, 0, 134, 166, 66);
+		default:
+			throw new IllegalArgumentException("Unsupported machine ID: " + machineID);
+		}
 	}
 
 	@Override
 	public String getUid() {
-		return Taam.INTEGRATION_JEI_CAT_PROCESSING;
+		return uid;
 	}
 
 	@Override
@@ -39,8 +54,7 @@ public class ProcessingCategory extends BlankRecipeCategory {
 
 	@Override
 	public IDrawable getBackground() {
-		// TODO Auto-generated method stub
-		return null;
+		return background;
 	}
 
 	@Override
