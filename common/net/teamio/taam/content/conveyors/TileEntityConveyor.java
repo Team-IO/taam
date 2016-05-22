@@ -413,6 +413,11 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	public double getInsertMinY() {
 		return 0.3;
 	}
+
+	@Override
+	public float getVerticalPosition(int slot) {
+		return 0.51f;
+	}
 	
 	/*
 	 * IRotatable implementation

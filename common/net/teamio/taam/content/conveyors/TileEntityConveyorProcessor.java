@@ -387,6 +387,24 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 		// Removed this check for performance reasons... Clog will happen at processor, not at conveyor.
 //		return mode == Shredder || getRecipe(itemStack) != null;
 	}
+	
+	@Override
+	public int getField(int id) {
+		return 0;
+	}
+
+	@Override
+	public void setField(int id, int value) {
+	}
+
+	@Override
+	public int getFieldCount() {
+		return 0;
+	}
+
+	@Override
+	public void clear() {
+	}
 
 	/*
 	 * IConveyorAwareTE
@@ -455,26 +473,14 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 		return 0.3;
 	}
 
+	@Override
 	public EnumFacing getNextSlot(int slot) {
 		return EnumFacing.DOWN;
 	}
 
 	@Override
-	public int getField(int id) {
-		return 0;
-	}
-
-	@Override
-	public void setField(int id, int value) {
-	}
-
-	@Override
-	public int getFieldCount() {
-		return 0;
-	}
-
-	@Override
-	public void clear() {
+	public float getVerticalPosition(int slot) {
+		return 0.51f;
 	}
 	
 	/*

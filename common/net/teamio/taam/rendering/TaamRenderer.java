@@ -107,8 +107,8 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 				EntityPlayer player = event.getPlayer();
 				World world = player.worldObj;
 				te = world.getTileEntity(pos);
-				if(te instanceof IConveyorSlots) {
-					IConveyorSlots cte = (IConveyorSlots)te;
+				IConveyorSlots cte = ConveyorUtil.getSlots(te, null);
+				if(cte != null) {
 					
 					// Only render for TEs that actually have the items there
 					if(!cte.shouldRenderItemsDefault()) {
@@ -124,7 +124,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 
 					double x = pos.getX() + Math.floor(slot / 3) * ConveyorUtil.oneThird // General Position
 							+ dir.getFrontOffsetX() * progress * ConveyorUtil.oneThird; // Apply Slot Movement
-					double y = pos.getY() + 0.51; // TODO: migrate to IConveyorAwareTE, same as below
+					double y = pos.getY() + cte.getVerticalPosition(slot);
 					double z = pos.getZ() + (slot % 3) * ConveyorUtil.oneThird // General Position
 							+ dir.getFrontOffsetZ() * progress * ConveyorUtil.oneThird; // Apply Slot Movement
 

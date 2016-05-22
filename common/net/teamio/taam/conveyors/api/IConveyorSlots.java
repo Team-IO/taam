@@ -27,6 +27,7 @@ public interface IConveyorSlots {
 	EnumFacing getMovementDirection();
 	ItemWrapper getSlot(int slot);
 	EnumFacing getNextSlot(int slot);
+	float getVerticalPosition(int slot);
 	/**
 	 * Used to skip default item rendering on select machines,
 	 * e.g. the processors.

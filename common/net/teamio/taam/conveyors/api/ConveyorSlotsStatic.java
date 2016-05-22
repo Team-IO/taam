@@ -16,7 +16,7 @@ public abstract class ConveyorSlotsStatic implements IConveyorSlots {
 	public EnumFacing rotation = EnumFacing.NORTH;
 	public double insertMaxY = 0.9;
 	public double insertMinY = 0.3;
-	
+
 	@Override
 	public boolean canSlotMove(int slot) {
 		return false;
@@ -65,6 +65,11 @@ public abstract class ConveyorSlotsStatic implements IConveyorSlots {
 	@Override
 	public double getInsertMinY() {
 		return insertMinY;
+	}
+
+	@Override
+	public float getVerticalPosition(int slot) {
+		return 0.51f;
 	}
 
 }

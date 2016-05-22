@@ -216,6 +216,8 @@ public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements
 		return EnumFacing.DOWN;
 	}
 
-
-
+	@Override
+	public float getVerticalPosition(int slot) {
+		return 0.51f;
+	}
 }

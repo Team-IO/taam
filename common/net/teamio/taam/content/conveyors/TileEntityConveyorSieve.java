@@ -305,6 +305,11 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 	public double getInsertMinY() {
 		return 0.3;
 	}
+
+	@Override
+	public float getVerticalPosition(int slot) {
+		return 0.51f;
+	}
 	
 	/*
 	 * IRotatable implementation

@@ -450,6 +450,12 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 			return 0.9;
 		}
 	}
+
+	@Override
+	public float getVerticalPosition(int slot) {
+		return 0.51f;
+	}
+	
 	/*
 	 * IRotatable Implementation
 	 */
