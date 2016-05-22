@@ -361,7 +361,7 @@ public class TaamMain {
 			FluidRegistry.addBucketForFluid(fluidsDye[i]);
 
 			if (registerFluidBlocks) {
-				BlockFluidClassic fluidBlock = new BlockFluidClassic(fluidsDye[i], Material.water);
+				BlockFluidClassic fluidBlock = new BlockFluidClassic(fluidsDye[i], Material.WATER);
 				String blockName = "fluid.dye." + fluidsDyeValues[i].name();
 				registerBlock(
 						fluidBlock,

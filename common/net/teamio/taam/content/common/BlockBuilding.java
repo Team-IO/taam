@@ -20,7 +20,7 @@ public class BlockBuilding extends Block {
 	public static final PropertyEnum<Taam.BLOCK_CONCRETE_META> VARIANT = PropertyEnum.create("variant", Taam.BLOCK_CONCRETE_META.class);
 	
 	public BlockBuilding() {
-		super(Material.rock);
+		super(Material.ROCK);
 		this.setSoundType(SoundType.STONE);
 		this.setHarvestLevel("pickaxe", 1);
 		this.setResistance(3.7f);

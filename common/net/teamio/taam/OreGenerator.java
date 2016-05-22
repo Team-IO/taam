@@ -57,7 +57,7 @@ public class OreGenerator implements IWorldGenerator {
 			
 			@Override
 			public boolean apply(IBlockState input){
-				return input != null && input.getBlock() == Blocks.stone;
+				return input != null && input.getBlock() == Blocks.STONE;
 			}
 		};
 		if(Config.genOre[0]) {

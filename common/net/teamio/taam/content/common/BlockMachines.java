@@ -34,7 +34,7 @@ public class BlockMachines extends BaseBlock {
 	public static final PropertyEnum<Taam.BLOCK_MACHINES_META> VARIANT = PropertyEnum.create("variant", Taam.BLOCK_MACHINES_META.class);
 
 	public BlockMachines() {
-		super(Material.wood);
+		super(Material.WOOD);
 		this.setSoundType(SoundType.METAL);
 		this.setHardness(6);
 		this.setHarvestLevel("pickaxe", 2);

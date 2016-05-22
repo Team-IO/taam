@@ -314,7 +314,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		VertexBuffer renderer = Tessellator.getInstance().getBuffer();
 
 		renderer.begin(7, DefaultVertexFormats.POSITION_TEX_NORMAL);
-		bindTexture(TextureMap.locationBlocksTexture);
+		bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 
 		/*
 		 * Begin rendering
@@ -401,7 +401,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		VertexBuffer renderer = Tessellator.getInstance().getBuffer();
 
 		renderer.begin(7, DefaultVertexFormats.POSITION_TEX_NORMAL);
-		bindTexture(TextureMap.locationBlocksTexture);
+		bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 		
 		/* Vertex infos from exported .obj file
 		v 0.020000 0.030001 0.977282
@@ -486,7 +486,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 
 		if (tileEntity != null) {
 
-			bindTexture(TextureMap.locationBlocksTexture);
+			bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 			if (tileEntity instanceof TileEntityConveyorProcessor) {
 
 				/*

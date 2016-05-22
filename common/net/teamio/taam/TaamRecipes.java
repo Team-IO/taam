@@ -48,75 +48,75 @@ public class TaamRecipes {
 			ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
 					new CrusherRecipe(oreDic[ore],
 						new ChancedOutput(new ItemStack(TaamMain.itemDust, 2, ore), 1.0f),
-						new ChancedOutput(new ItemStack(Blocks.cobblestone), 0.4f),
+						new ChancedOutput(new ItemStack(Blocks.COBBLESTONE), 0.4f),
 						new ChancedOutput(new ItemStack(TaamMain.itemDust, 1, stoneDustMeta), 0.3f),
-						new ChancedOutput(new ItemStack(Blocks.mossy_cobblestone), 0.0001f)
+						new ChancedOutput(new ItemStack(Blocks.MOSSY_COBBLESTONE), 0.0001f)
 					));
 		}
 		
 		// Vanilla Ores
 		ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
 				new CrusherRecipe("oreDiamond",
-					new ChancedOutput(new ItemStack(Items.diamond, 1), 1.0f),
-					new ChancedOutput(new ItemStack(Items.diamond, 1), 0.01f),
-					new ChancedOutput(new ItemStack(Blocks.cobblestone), 0.4f),
+					new ChancedOutput(new ItemStack(Items.DIAMOND, 1), 1.0f),
+					new ChancedOutput(new ItemStack(Items.DIAMOND, 1), 0.01f),
+					new ChancedOutput(new ItemStack(Blocks.COBBLESTONE), 0.4f),
 					new ChancedOutput(new ItemStack(TaamMain.itemDust, 1, stoneDustMeta), 0.3f),
-					new ChancedOutput(new ItemStack(Blocks.mossy_cobblestone), 0.0001f)
+					new ChancedOutput(new ItemStack(Blocks.MOSSY_COBBLESTONE), 0.0001f)
 					));
 		ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
 				new CrusherRecipe("oreEmerald",
-					new ChancedOutput(new ItemStack(Items.emerald, 1), 1.0f),
-					new ChancedOutput(new ItemStack(Items.emerald, 1), 0.01f),
-					new ChancedOutput(new ItemStack(Blocks.cobblestone), 0.4f),
+					new ChancedOutput(new ItemStack(Items.EMERALD, 1), 1.0f),
+					new ChancedOutput(new ItemStack(Items.EMERALD, 1), 0.01f),
+					new ChancedOutput(new ItemStack(Blocks.COBBLESTONE), 0.4f),
 					new ChancedOutput(new ItemStack(TaamMain.itemDust, 1, stoneDustMeta), 0.3f),
-					new ChancedOutput(new ItemStack(Blocks.mossy_cobblestone), 0.0001f)
+					new ChancedOutput(new ItemStack(Blocks.MOSSY_COBBLESTONE), 0.0001f)
 					));
 		ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
 				new CrusherRecipe("oreRedstone",
-					new ChancedOutput(new ItemStack(Items.redstone, 4), 1.0f),
-					new ChancedOutput(new ItemStack(Items.redstone, 2), 0.05f),
-					new ChancedOutput(new ItemStack(Items.redstone, 1), 0.01f),
-					new ChancedOutput(new ItemStack(Blocks.cobblestone), 0.4f),
+					new ChancedOutput(new ItemStack(Items.REDSTONE, 4), 1.0f),
+					new ChancedOutput(new ItemStack(Items.REDSTONE, 2), 0.05f),
+					new ChancedOutput(new ItemStack(Items.REDSTONE, 1), 0.01f),
+					new ChancedOutput(new ItemStack(Blocks.COBBLESTONE), 0.4f),
 					new ChancedOutput(new ItemStack(TaamMain.itemDust, 1, stoneDustMeta), 0.3f),
-					new ChancedOutput(new ItemStack(Blocks.mossy_cobblestone), 0.0001f)
+					new ChancedOutput(new ItemStack(Blocks.MOSSY_COBBLESTONE), 0.0001f)
 					));
 		ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
 				new CrusherRecipe("oreLapis",
-					new ChancedOutput(new ItemStack(Items.dye, 4, 4), 1.0f),
-					new ChancedOutput(new ItemStack(Items.dye, 2, 4), 0.05f),
-					new ChancedOutput(new ItemStack(Items.dye, 1, 4), 0.01f),
-					new ChancedOutput(new ItemStack(Blocks.cobblestone), 0.4f),
+					new ChancedOutput(new ItemStack(Items.DYE, 4, 4), 1.0f),
+					new ChancedOutput(new ItemStack(Items.DYE, 2, 4), 0.05f),
+					new ChancedOutput(new ItemStack(Items.DYE, 1, 4), 0.01f),
+					new ChancedOutput(new ItemStack(Blocks.COBBLESTONE), 0.4f),
 					new ChancedOutput(new ItemStack(TaamMain.itemDust, 1, stoneDustMeta), 0.3f),
-					new ChancedOutput(new ItemStack(Blocks.mossy_cobblestone), 0.0001f)
+					new ChancedOutput(new ItemStack(Blocks.MOSSY_COBBLESTONE), 0.0001f)
 					));
 		ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
 				new CrusherRecipe("oreQuartz",
-					new ChancedOutput(new ItemStack(Items.quartz, 1), 1.0f),
-					new ChancedOutput(new ItemStack(Items.quartz, 1), 0.01f),
-					new ChancedOutput(new ItemStack(Blocks.netherrack), 0.4f),
-					new ChancedOutput(new ItemStack(Blocks.soul_sand), 0.0001f)
+					new ChancedOutput(new ItemStack(Items.QUARTZ, 1), 1.0f),
+					new ChancedOutput(new ItemStack(Items.QUARTZ, 1), 0.01f),
+					new ChancedOutput(new ItemStack(Blocks.NETHERRACK), 0.4f),
+					new ChancedOutput(new ItemStack(Blocks.SOUL_SAND), 0.0001f)
 					));
 		ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
 				new CrusherRecipe("oreCoal",
-					new ChancedOutput(new ItemStack(Items.coal, 1), 1.0f),
-					new ChancedOutput(new ItemStack(Items.coal, 1), 0.01f),
-					new ChancedOutput(new ItemStack(Blocks.cobblestone), 0.4f),
+					new ChancedOutput(new ItemStack(Items.COAL, 1), 1.0f),
+					new ChancedOutput(new ItemStack(Items.COAL, 1), 0.01f),
+					new ChancedOutput(new ItemStack(Blocks.COBBLESTONE), 0.4f),
 					new ChancedOutput(new ItemStack(TaamMain.itemDust, 1, stoneDustMeta), 0.3f),
-					new ChancedOutput(new ItemStack(Blocks.mossy_cobblestone), 0.0001f)
+					new ChancedOutput(new ItemStack(Blocks.MOSSY_COBBLESTONE), 0.0001f)
 					));
 		ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
 				new CrusherRecipe("oreGold",
 					new ChancedOutput(new ItemStack(TaamMain.itemDust, 2, Taam.BLOCK_ORE_META.gold.ordinal()), 1.0f),
-					new ChancedOutput(new ItemStack(Blocks.cobblestone), 0.4f),
+					new ChancedOutput(new ItemStack(Blocks.COBBLESTONE), 0.4f),
 					new ChancedOutput(new ItemStack(TaamMain.itemDust, 1, stoneDustMeta), 0.3f),
-					new ChancedOutput(new ItemStack(Blocks.mossy_cobblestone), 0.0001f)
+					new ChancedOutput(new ItemStack(Blocks.MOSSY_COBBLESTONE), 0.0001f)
 					));
 		ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
 				new CrusherRecipe("oreIron",
 					new ChancedOutput(new ItemStack(TaamMain.itemDust, 2, Taam.BLOCK_ORE_META.iron.ordinal()), 1.0f),
-					new ChancedOutput(new ItemStack(Blocks.cobblestone), 0.4f),
+					new ChancedOutput(new ItemStack(Blocks.COBBLESTONE), 0.4f),
 					new ChancedOutput(new ItemStack(TaamMain.itemDust, 1, stoneDustMeta), 0.3f),
-					new ChancedOutput(new ItemStack(Blocks.mossy_cobblestone), 0.0001f)
+					new ChancedOutput(new ItemStack(Blocks.MOSSY_COBBLESTONE), 0.0001f)
 					));
 		ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
 				new CrusherRecipe("ingotGold",
@@ -130,62 +130,62 @@ public class TaamRecipes {
 		// Stone/Cobble/Gravel/etc
 		
 		ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
-				new CrusherRecipe(new ItemStack(Blocks.stone),
-						new ChancedOutput(new ItemStack(Blocks.cobblestone), 1.0f),
-						new ChancedOutput(new ItemStack(Blocks.gravel), 0.15f),
+				new CrusherRecipe(new ItemStack(Blocks.STONE),
+						new ChancedOutput(new ItemStack(Blocks.COBBLESTONE), 1.0f),
+						new ChancedOutput(new ItemStack(Blocks.GRAVEL), 0.15f),
 						new ChancedOutput(new ItemStack(TaamMain.itemDust, 1, stoneDustMeta), 0.3f)
 				)
 		);
 		ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
-				new CrusherRecipe(new ItemStack(Blocks.cobblestone),
-						new ChancedOutput(new ItemStack(Blocks.gravel), 1.0f),
-						new ChancedOutput(new ItemStack(Blocks.sand), 0.15f)
+				new CrusherRecipe(new ItemStack(Blocks.COBBLESTONE),
+						new ChancedOutput(new ItemStack(Blocks.GRAVEL), 1.0f),
+						new ChancedOutput(new ItemStack(Blocks.SAND), 0.15f)
 				)
 		);
 		ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
-				new CrusherRecipe(new ItemStack(Blocks.gravel),
-						new ChancedOutput(new ItemStack(Blocks.sand), 1.0f),
-						new ChancedOutput(new ItemStack(Blocks.sand), 0.05f)
+				new CrusherRecipe(new ItemStack(Blocks.GRAVEL),
+						new ChancedOutput(new ItemStack(Blocks.SAND), 1.0f),
+						new ChancedOutput(new ItemStack(Blocks.SAND), 0.05f)
 				)
 		);
 		
 		// Ore/Dust Blocks
 		
 		ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
-				new CrusherRecipe(new ItemStack(Blocks.gold_block),
-						new ChancedOutput(new ItemStack(Items.gold_ingot, 9), 1.0f)
+				new CrusherRecipe(new ItemStack(Blocks.GOLD_BLOCK),
+						new ChancedOutput(new ItemStack(Items.GOLD_INGOT, 9), 1.0f)
 				)
 		);
 		ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
-				new CrusherRecipe(new ItemStack(Blocks.iron_block),
-						new ChancedOutput(new ItemStack(Items.iron_ingot, 9), 1.0f)
+				new CrusherRecipe(new ItemStack(Blocks.IRON_BLOCK),
+						new ChancedOutput(new ItemStack(Items.IRON_INGOT, 9), 1.0f)
 				)
 		);
 		ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
-				new CrusherRecipe(new ItemStack(Blocks.diamond_block),
-						new ChancedOutput(new ItemStack(Items.diamond, 9), 1.0f)
+				new CrusherRecipe(new ItemStack(Blocks.DIAMOND_BLOCK),
+						new ChancedOutput(new ItemStack(Items.DIAMOND, 9), 1.0f)
 				)
 		);
 		ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
-				new CrusherRecipe(new ItemStack(Blocks.emerald_block),
-						new ChancedOutput(new ItemStack(Items.emerald, 9), 1.0f)
+				new CrusherRecipe(new ItemStack(Blocks.EMERALD_BLOCK),
+						new ChancedOutput(new ItemStack(Items.EMERALD, 9), 1.0f)
 				)
 		);
 		ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
-				new CrusherRecipe(new ItemStack(Blocks.redstone_block),
-						new ChancedOutput(new ItemStack(Items.redstone, 9), 1.0f)
+				new CrusherRecipe(new ItemStack(Blocks.REDSTONE_BLOCK),
+						new ChancedOutput(new ItemStack(Items.REDSTONE, 9), 1.0f)
 				)
 		);
 		ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
-				new CrusherRecipe(new ItemStack(Blocks.lapis_block),
-						new ChancedOutput(new ItemStack(Items.dye, 9, 4), 1.0f)
+				new CrusherRecipe(new ItemStack(Blocks.LAPIS_BLOCK),
+						new ChancedOutput(new ItemStack(Items.DYE, 9, 4), 1.0f)
 				)
 		);
 		
 		ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
-				new CrusherRecipe(new ItemStack(Blocks.quartz_block),
-						new ChancedOutput(new ItemStack(Items.quartz, 3), 1.0f),
-						new ChancedOutput(new ItemStack(Items.quartz, 1), 0.25f)
+				new CrusherRecipe(new ItemStack(Blocks.QUARTZ_BLOCK),
+						new ChancedOutput(new ItemStack(Items.QUARTZ, 3), 1.0f),
+						new ChancedOutput(new ItemStack(Items.QUARTZ, 1), 0.25f)
 				)
 		);
 		
@@ -194,31 +194,40 @@ public class TaamRecipes {
 		 */
 
 		ProcessingRegistry.registerRecipe(ProcessingRegistry.GRINDER,
-				new GrinderRecipe(new ItemStack(Blocks.grass),
-						new ChancedOutput(new ItemStack(Blocks.dirt), 1.0f),
-						new ChancedOutput(new ItemStack(Items.wheat_seeds), 0.05f),
-						new ChancedOutput(new ItemStack(Items.pumpkin_seeds), 0.05f),
-						new ChancedOutput(new ItemStack(Items.melon_seeds), 0.05f),
-						new ChancedOutput(new ItemStack(Blocks.vine), 0.005f)
+				new GrinderRecipe(new ItemStack(Blocks.GRASS),
+						new ChancedOutput(new ItemStack(Blocks.DIRT), 1.0f),
+						new ChancedOutput(new ItemStack(Items.WHEAT_SEEDS), 0.05f),
+						new ChancedOutput(new ItemStack(Items.PUMPKIN_SEEDS), 0.05f),
+						new ChancedOutput(new ItemStack(Items.MELON_SEEDS), 0.05f),
+						new ChancedOutput(new ItemStack(Items.BEETROOT_SEEDS), 0.05f),
+						new ChancedOutput(new ItemStack(Blocks.VINE), 0.005f)
+				));
+		ProcessingRegistry.registerRecipe(ProcessingRegistry.GRINDER,
+				new GrinderRecipe(new ItemStack(Blocks.GRASS_PATH),
+						new ChancedOutput(new ItemStack(Blocks.DIRT), 1.0f),
+						new ChancedOutput(new ItemStack(Items.WHEAT_SEEDS), 0.02f),
+						new ChancedOutput(new ItemStack(Items.PUMPKIN_SEEDS), 0.02f),
+						new ChancedOutput(new ItemStack(Items.MELON_SEEDS), 0.02f),
+						new ChancedOutput(new ItemStack(Items.BEETROOT_SEEDS), 0.02f)
 				));
 		ProcessingRegistry.registerRecipe(ProcessingRegistry.GRINDER, new GrinderRecipe("treeLeaves", 
-					new ChancedOutput(new ItemStack(Items.stick), 1.0f),
+					new ChancedOutput(new ItemStack(Items.STICK), 1.0f),
 					new ChancedOutput(new ItemStack(TaamMain.itemMaterial, 1, Taam.ITEM_MATERIAL_META.resin.ordinal()), 0.2f )
 				));
 		ProcessingRegistry.registerRecipe(ProcessingRegistry.GRINDER, new GrinderRecipe("treeSapling", 
-				new ChancedOutput(new ItemStack(Items.stick), 0.5f),
+				new ChancedOutput(new ItemStack(Items.STICK), 0.5f),
 				new ChancedOutput(new ItemStack(TaamMain.itemMaterial, 1, Taam.ITEM_MATERIAL_META.resin.ordinal()), 0.001f )
 			));
 		for (int col = 0; col < 16; col++) {
-			ProcessingRegistry.registerRecipe(ProcessingRegistry.GRINDER, new GrinderRecipe(new ItemStack(Blocks.wool, 1, col), 
-					new ChancedOutput(new ItemStack(Items.string, 3), 1f), 
-					new ChancedOutput(new ItemStack(Items.string), 0.1f),
-					new ChancedOutput(new ItemStack(Items.dye, 1, 15-col), 0.001f )
+			ProcessingRegistry.registerRecipe(ProcessingRegistry.GRINDER, new GrinderRecipe(new ItemStack(Blocks.WOOL, 1, col), 
+					new ChancedOutput(new ItemStack(Items.STRING, 3), 1f), 
+					new ChancedOutput(new ItemStack(Items.STRING), 0.1f),
+					new ChancedOutput(new ItemStack(Items.DYE, 1, 15-col), 0.001f )
 				));
-			ProcessingRegistry.registerRecipe(ProcessingRegistry.GRINDER, new GrinderRecipe(new ItemStack(Blocks.carpet, 1, col), 
-					new ChancedOutput(new ItemStack(Items.string, 6), 1f), 
-					new ChancedOutput(new ItemStack(Items.string, 2), 0.1f),
-					new ChancedOutput(new ItemStack(Items.dye, 1, 15-col), 0.001f )
+			ProcessingRegistry.registerRecipe(ProcessingRegistry.GRINDER, new GrinderRecipe(new ItemStack(Blocks.CARPET, 1, col), 
+					new ChancedOutput(new ItemStack(Items.STRING, 6), 1f), 
+					new ChancedOutput(new ItemStack(Items.STRING, 2), 0.1f),
+					new ChancedOutput(new ItemStack(Items.DYE, 1, 15-col), 0.001f )
 				));
 		}
 		
@@ -229,7 +238,7 @@ public class TaamRecipes {
 		for(int dyeMeta = 0; dyeMeta < 16; dyeMeta++) {
 			ProcessingRegistry.registerRecipe(ProcessingRegistry.MIXER,
 					new MixerRecipe(
-							new ItemStack(Items.dye, 1, dyeMeta),
+							new ItemStack(Items.DYE, 1, dyeMeta),
 							new FluidStack(FluidRegistry.WATER, 10),
 							new FluidStack(TaamMain.fluidsDye[dyeMeta], 10))
 					);
@@ -278,7 +287,7 @@ public class TaamRecipes {
 		ProcessingRegistry.registerRecipe(ProcessingRegistry.FLUIDDRIER,
 				new FluidDrierRecipe(
 						new FluidStack(FluidRegistry.LAVA, 1000),
-						new ItemStack(Blocks.obsidian, 1))
+						new ItemStack(Blocks.OBSIDIAN, 1))
 				);
 
 		
@@ -309,55 +318,55 @@ public class TaamRecipes {
 			// Wool
 			ProcessingRegistry.registerRecipe(ProcessingRegistry.SPRAYER,
 					new SprayerRecipe(
-							new ItemStack(Blocks.wool, 1, OreDictionary.WILDCARD_VALUE),
+							new ItemStack(Blocks.WOOL, 1, OreDictionary.WILDCARD_VALUE),
 							new FluidStack(fluid, amountWool),
-							new ItemStack(Blocks.wool, 1, blockMeta))
+							new ItemStack(Blocks.WOOL, 1, blockMeta))
 					);
 			// Carpet
 			ProcessingRegistry.registerRecipe(ProcessingRegistry.SPRAYER,
 					new SprayerRecipe(
-							new ItemStack(Blocks.carpet, 1, OreDictionary.WILDCARD_VALUE),
+							new ItemStack(Blocks.CARPET, 1, OreDictionary.WILDCARD_VALUE),
 							new FluidStack(fluid, amountCarpet),
-							new ItemStack(Blocks.carpet, 1, blockMeta))
+							new ItemStack(Blocks.CARPET, 1, blockMeta))
 					);
 			// Hardened Clay
 			ProcessingRegistry.registerRecipe(ProcessingRegistry.SPRAYER,
 					new SprayerRecipe(
-							new ItemStack(Blocks.stained_hardened_clay, 1, OreDictionary.WILDCARD_VALUE),
+							new ItemStack(Blocks.STAINED_HARDENED_CLAY, 1, OreDictionary.WILDCARD_VALUE),
 							new FluidStack(fluid, amountClayAndClass),
-							new ItemStack(Blocks.stained_hardened_clay, 1, blockMeta))
+							new ItemStack(Blocks.STAINED_HARDENED_CLAY, 1, blockMeta))
 					);
 			ProcessingRegistry.registerRecipe(ProcessingRegistry.SPRAYER,
 					new SprayerRecipe(
-							new ItemStack(Blocks.hardened_clay, 1, 0),
+							new ItemStack(Blocks.HARDENED_CLAY, 1, 0),
 							new FluidStack(fluid, amountClayAndClass),
-							new ItemStack(Blocks.stained_hardened_clay, 1, blockMeta))
+							new ItemStack(Blocks.STAINED_HARDENED_CLAY, 1, blockMeta))
 					);
 			// Stained Glass
 			ProcessingRegistry.registerRecipe(ProcessingRegistry.SPRAYER,
 					new SprayerRecipe(
-							new ItemStack(Blocks.stained_glass, 1, OreDictionary.WILDCARD_VALUE),
+							new ItemStack(Blocks.STAINED_GLASS, 1, OreDictionary.WILDCARD_VALUE),
 							new FluidStack(fluid, amountClayAndClass),
-							new ItemStack(Blocks.stained_glass, 1, blockMeta))
+							new ItemStack(Blocks.STAINED_GLASS, 1, blockMeta))
 					);
 			ProcessingRegistry.registerRecipe(ProcessingRegistry.SPRAYER,
 					new SprayerRecipe(
-							new ItemStack(Blocks.glass, 1, 0),
+							new ItemStack(Blocks.GLASS, 1, 0),
 							new FluidStack(fluid, amountClayAndClass),
-							new ItemStack(Blocks.stained_glass, 1, blockMeta))
+							new ItemStack(Blocks.STAINED_GLASS, 1, blockMeta))
 					);
 			// Stained Glass Panes
 			ProcessingRegistry.registerRecipe(ProcessingRegistry.SPRAYER,
 					new SprayerRecipe(
-							new ItemStack(Blocks.stained_glass_pane, 1, OreDictionary.WILDCARD_VALUE),
+							new ItemStack(Blocks.STAINED_GLASS_PANE, 1, OreDictionary.WILDCARD_VALUE),
 							new FluidStack(fluid, amountClayAndClass),
-							new ItemStack(Blocks.stained_glass_pane, 1, blockMeta))
+							new ItemStack(Blocks.STAINED_GLASS_PANE, 1, blockMeta))
 					);
 			ProcessingRegistry.registerRecipe(ProcessingRegistry.SPRAYER,
 					new SprayerRecipe(
-							new ItemStack(Blocks.glass_pane, 1, 0),
+							new ItemStack(Blocks.GLASS_PANE, 1, 0),
 							new FluidStack(fluid, amountClayAndClass),
-							new ItemStack(Blocks.stained_glass_pane, 1, blockMeta))
+							new ItemStack(Blocks.STAINED_GLASS_PANE, 1, blockMeta))
 					);
 		}
 		// Concrete Coating
@@ -432,7 +441,7 @@ public class TaamRecipes {
 //		conveyor1 (Wood)
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.blockProductionLine, 1, Taam.BLOCK_PRODUCTIONLINE_META.conveyor1.ordinal()),
 				"rRP", "wSw", "WsW",
-				'P', new ItemStack(Blocks.piston, 1, 0),
+				'P', new ItemStack(Blocks.PISTON, 1, 0),
 				'R', new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.rubber_band.ordinal()),
 				'w', new ItemStack(TaamMain.itemMaterial, 1, Taam.ITEM_MATERIAL_META.wooden_board.ordinal()),
 				'S', new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.support_frame_wood.ordinal()),
@@ -460,13 +469,13 @@ public class TaamRecipes {
 		));
 //		conveyor hopper
 		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(TaamMain.blockProductionLine, 1, Taam.BLOCK_PRODUCTIONLINE_META.hopper.ordinal()),
-				Blocks.hopper, new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.support_frame.ordinal())));
+				Blocks.HOPPER, new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.support_frame.ordinal())));
 
 //		High Speed Conveyor Hopper
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.blockProductionLine, 1, Taam.BLOCK_PRODUCTIONLINE_META.hopper_hs.ordinal()),
 				"C C"," H ", " I ",
 				'C', new ItemStack(TaamMain.blockProductionLine,1,Taam.BLOCK_PRODUCTIONLINE_META.conveyor2.ordinal()),
-				'H', Blocks.hopper,
+				'H', Blocks.HOPPER,
 				'I', new ItemStack(TaamMain.itemPart,1,Taam.ITEM_PART_META.support_frame.ordinal())
 				));
 //		Shredder
@@ -561,7 +570,7 @@ public class TaamRecipes {
 				'G', "blockGlass",
 				'p', "partPhotocell",
 				'I', "ingotIron",
-				'R', Items.redstone));
+				'R', Items.REDSTONE));
 
 		/*
 		 * Misc Items
@@ -586,7 +595,7 @@ public class TaamRecipes {
 		 */
 //		photo cell
 		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(TaamMain.itemPart, 9, Taam.ITEM_PART_META.photocell.ordinal()),
-				Blocks.daylight_detector, new ItemStack(TaamMain.itemSaw, 1, OreDictionary.WILDCARD_VALUE)));
+				Blocks.DAYLIGHT_DETECTOR, new ItemStack(TaamMain.itemSaw, 1, OreDictionary.WILDCARD_VALUE)));
 //		magnetic coil
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.magnetic_coil.ordinal()),
 				"CCC", "CIC", "CCC",
@@ -619,13 +628,13 @@ public class TaamRecipes {
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.circuit_basic.ordinal()),
 				"CCC", "RGR", "CCC",
 				'C', "ingotCopper",
-				'G', Items.gold_ingot,
-				'R', Items.redstone));
+				'G', Items.GOLD_INGOT,
+				'R', Items.REDSTONE));
 //		advanced circuit
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.circuit_advanced.ordinal()),
 				"RGR", "GCG", "RGR",
-				'R', Items.redstone,
-				'G', Items.gold_ingot,
+				'R', Items.REDSTONE,
+				'G', Items.GOLD_INGOT,
 				'C', new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.circuit_basic.ordinal())));
 //		logistics chip
 		/*GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.logistics_chip.ordinal()),
@@ -657,21 +666,21 @@ public class TaamRecipes {
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.pump.ordinal()),
 				"AAA","PMP", "AAA",
 				'M', new ItemStack(TaamMain.itemPart,1,Taam.ITEM_PART_META.motor.ordinal()),
-				'P', Blocks.piston,
+				'P', Blocks.PISTON,
 				'A', "ingotAluminum"
 				));
 //		Motor
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.motor.ordinal()),
 				"ACA", "CIC", "ACA",
 				'C', new ItemStack(TaamMain.itemPart,1,Taam.ITEM_PART_META.magnetic_coil.ordinal()),
-				'I', Items.iron_ingot,
+				'I', Items.IRON_INGOT,
 				'A', "ingotAluminum"
 				));
 //		Sieve
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.sieve.ordinal()),
 				"IBI", "BBB", "IBI",
-				'B', Blocks.iron_bars,
-				'I', Items.iron_ingot
+				'B', Blocks.IRON_BARS,
+				'I', Items.IRON_INGOT
 				));		
 		
 		/*

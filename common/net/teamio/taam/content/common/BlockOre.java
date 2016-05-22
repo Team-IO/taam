@@ -27,7 +27,7 @@ public class BlockOre extends Block {
 	});
 	
 	public BlockOre() {
-		super(Material.rock);
+		super(Material.ROCK);
 		this.setSoundType(SoundType.STONE);
 		this.setHarvestLevel("pickaxe", 1);
 		this.setResistance(3.14159265359f);

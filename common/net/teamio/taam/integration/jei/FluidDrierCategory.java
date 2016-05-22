@@ -67,7 +67,7 @@ public class FluidDrierCategory extends BlankRecipeCategory {
 	public void drawExtras(Minecraft minecraft) {
         {
             TextureManager texturemanager = minecraft.renderEngine;
-            texturemanager.bindTexture(TextureMap.locationBlocksTexture);
+            texturemanager.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
             
 			GL11.glPushMatrix();
 			

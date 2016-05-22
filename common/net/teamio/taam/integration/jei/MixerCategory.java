@@ -26,9 +26,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
 import net.teamio.taam.Taam;
 import net.teamio.taam.TaamMain;
-import net.teamio.taam.content.piping.MachineFluidDrier;
 import net.teamio.taam.content.piping.MachineMixer;
-import net.teamio.taam.recipes.FluidDrierRecipe;
 import net.teamio.taam.recipes.IProcessingRecipe;
 import net.teamio.taam.recipes.MixerRecipe;
 
@@ -70,7 +68,7 @@ public class MixerCategory extends BlankRecipeCategory {
 	public void drawExtras(Minecraft minecraft) {
         {
             TextureManager texturemanager = minecraft.renderEngine;
-            texturemanager.bindTexture(TextureMap.locationBlocksTexture);
+            texturemanager.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
             
 			GL11.glPushMatrix();
 			

@@ -68,7 +68,7 @@ public class ItemDebugTool extends Item {
 		{
 			//TODO: Clarify!
 			//if(!world.isRemote) {
-			SoundEvent soundevent = (SoundEvent)SoundEvent.soundEventRegistry.getObject(new ResourceLocation("taam", "sip_ah"));
+			SoundEvent soundevent = (SoundEvent)SoundEvent.REGISTRY.getObject(new ResourceLocation("taam", "sip_ah"));
 			worldIn.playSound(playerIn, pos, soundevent, SoundCategory.BLOCKS, 1f, 1f);
 			//}
 			return EnumActionResult.SUCCESS;

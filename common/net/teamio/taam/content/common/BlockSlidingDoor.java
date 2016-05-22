@@ -12,7 +12,7 @@ import net.teamio.taam.content.BaseBlock;
 public class BlockSlidingDoor extends BaseBlock {
 
 	public BlockSlidingDoor() {
-		super(Material.iron);
+		super(Material.IRON);
 		this.setHardness(3.5f);
 		this.setSoundType(SoundType.METAL);
 		this.setHarvestLevel("pickaxe", 1);
