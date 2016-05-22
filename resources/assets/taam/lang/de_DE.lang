@@ -173,3 +173,7 @@ death.attack.taam.ground=%1$s wurde zu Brei gemahlen
 death.attack.taam.crushed=%1$s's Knochen wurden zu Staub zermahlen
 death.attack.taam.reconfigured=%1$s wurde von %2$s schmerzhaft rekonfiguriert
 death.attack.taam.reconfigured.item=%1$s wurde von %2$s schmerzhaft mit %3$s rekonfiguriert
+
+# JEI Integration
+taam.integration.jei.categories.crusher=Zerkleinern
+taam.integration.jei.categories.grinder=Zermahlen

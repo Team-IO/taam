@@ -173,3 +173,7 @@ death.attack.taam.ground=%1$s was ground to meatballs
 death.attack.taam.crushed=%1$s's bones were crushed to dust
 death.attack.taam.reconfigured=%1$s was painfully reconfigured by %2$s
 death.attack.taam.reconfigured.item=%1$s was painfully reconfigured by %2$s using %3$s
+
+# JEI Integration
+taam.integration.jei.categories.crusher=Crushing
+taam.integration.jei.categories.grinder=Grinding
