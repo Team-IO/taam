@@ -44,6 +44,9 @@ public class ProcessingRecipeWrapper implements IRecipeWrapper {
 	public List<?> getOutputs() {
 		List<ItemStack> outputs = Lists.newArrayList();
 		ChancedOutput[] output = recipe.getOutput();
+		if(output == null || output.length == 0) {
+			return null;
+		}
 		for (ChancedOutput co : output) {
 			outputs.add(co.output);
 		}
