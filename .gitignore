@@ -4,6 +4,7 @@
 /*.ipr
 /*.iws
 /.idea
+logs
 
 #Eclipse
 /bin
