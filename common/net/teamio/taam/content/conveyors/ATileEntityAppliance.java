@@ -48,6 +48,7 @@ public abstract class ATileEntityAppliance extends BaseTileEntity implements ICo
 		if(this.direction != direction) {
 			// Only update if necessary
 			this.direction = direction;
+			// Also do a block update, in case neighboring machines need to know...
 			updateState(false, true, true);
 		}
 	}
