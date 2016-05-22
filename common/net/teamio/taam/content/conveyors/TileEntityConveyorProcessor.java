@@ -442,14 +442,20 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 		}
 		// insertItem returns item count unable to insert.
 		int inserted = stack.stackSize - InventoryUtils.insertItem(inventory, stack, false);
-		updateState(true, false, false);
+		if(inserted > 0) {
+			// Only update if necessary
+			updateState(true, false, false);
+		}
 		return inserted;
 	}
 	
 	@Override
 	public ItemStack removeItemAt(int slot) {
 		ItemStack content = getStackInSlot(slot);
-		setInventorySlotContents(slot, null);
+		if(content != null) {
+			// Only update if necessary
+			setInventorySlotContents(slot, null);
+		}
 		return content;
 	}
 
@@ -630,8 +636,11 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 
 	@Override
 	public void setFacingDirection(EnumFacing direction) {
-		this.direction = direction;
-		updateState(false, true, false);
+		if(this.direction != direction) {
+			// Only update if necessary
+			this.direction = direction;
+			updateState(false, true, false);
+		}
 	}
 	
 }

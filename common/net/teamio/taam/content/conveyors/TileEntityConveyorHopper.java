@@ -494,8 +494,11 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IInvento
 
 	@Override
 	public void setFacingDirection(EnumFacing direction) {
-		this.direction = direction;
-		updateState(false, true, false);
+		if(this.direction != direction) {
+			// Only update if necessary
+			this.direction = direction;
+			updateState(false, true, false);
+		}
 	}
 
 }

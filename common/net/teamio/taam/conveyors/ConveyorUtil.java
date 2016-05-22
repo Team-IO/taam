@@ -334,13 +334,13 @@ public class ConveyorUtil {
 		if (transferred > 0) {
 			slotObject.itemStack.stackSize -= transferred;
 			if (slotObject.itemStack.stackSize <= 0) {
-				slotObject.itemStack = null;
-
 				// Stack moved completely
-				return true;
+				slotObject.itemStack = null;
 			}
+			// Something moved
+			return true;
 		}
-		// Stack not moved at all, or has backlog
+		// Nothing moved
 		return false;
 	}
 
@@ -354,9 +354,10 @@ public class ConveyorUtil {
 
 			slotObject.itemStack = null;
 
-			// Stack moved completely
+			// Something moved
 			return true;
 		}
+		// Nothing moved
 		return false;
 	}
 
@@ -543,20 +544,21 @@ public class ConveyorUtil {
 					if (slotWrapped && (nextBlock == null || !nextBlock.isSlotAvailable(nextSlot))) {
 						// No next block, drop it.
 						dropItem(world, pos, tileEntity, slot, true);
+						needsUpdate = true;
 					} else {
-						boolean completeTransfer;
+						boolean somethingTransferred;
 						if (slotWrapped) {
-							completeTransfer = transferSlot(tileEntity, slot, nextBlock, nextSlot);
+							somethingTransferred = transferSlot(tileEntity, slot, nextBlock, nextSlot);
 						} else {
-							completeTransfer = transferSlot(tileEntity, slot, nextSlot);
+							somethingTransferred = transferSlot(tileEntity, slot, nextSlot);
 						}
-						if (!completeTransfer) {
-							// We still have some items pending here..
+						if (!somethingTransferred || wrapper.itemStack != null) {
+							// Nothing did transfer, or something is left (itemStack not null)
 							nextSlotFree = false;
 							nextSlotMovable = false;
 						}
+						needsUpdate = somethingTransferred;
 					}
-					needsUpdate = true;
 				}
 			}
 			/*

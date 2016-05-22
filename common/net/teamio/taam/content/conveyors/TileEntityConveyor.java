@@ -430,14 +430,18 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 
 	@Override
 	public void setFacingDirection(EnumFacing direction) {
+		if(this.direction == direction) {
+			// Only update if necessary
+			return;
+		}
 		this.direction = direction;
 		if(direction == EnumFacing.UP || direction == EnumFacing.DOWN) {
 			this.direction = EnumFacing.NORTH;
 		}
 		updateState(false, true, true);
+		worldObj.notifyBlockOfStateChange(pos, blockType);
 		if(blockType != null) {
-			//TODO: Update this block -> drop if it can't stay anymore
-			//blockType.onNeighborBlockChange(worldObj, pos, blockType);
+			blockType.onNeighborBlockChange(worldObj, pos, worldObj.getBlockState(pos), blockType);
 		}
 	}
 

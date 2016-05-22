@@ -36,6 +36,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.teamio.taam.Config;
 import net.teamio.taam.Taam;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.content.conveyors.TileEntityConveyorItemBag;
@@ -240,7 +241,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 			GL11.glRotatef(rotationDegrees, 0, 1, 0);
 			GL11.glTranslated(-.5f, -.5f, -.5f);
 			
-			float fillFactor = ((TileEntityConveyorTrashCan) tileEntity).fillLevel;
+			float fillFactor = ((TileEntityConveyorTrashCan) tileEntity).fillLevel / Config.pl_trashcan_maxfill;
 			
 			renderBagFilling(fillFactor);
 			
@@ -392,7 +393,9 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 	public static final ResourceLocation conveyorTextures = new ResourceLocation("Taam", "blocks/conveyor");
 	
 	public void renderBagFilling(float fillFactor) {
-
+		if(fillFactor == 0f) {
+			return;
+		}
 		/*
 		 * Prepare rendering
 		 */

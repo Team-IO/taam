@@ -45,8 +45,11 @@ public abstract class ATileEntityAppliance extends BaseTileEntity implements ICo
 
 	@Override
 	public void setFacingDirection(EnumFacing direction) {
-		this.direction = direction;
-		updateState(false, true, true);
+		if(this.direction != direction) {
+			// Only update if necessary
+			this.direction = direction;
+			updateState(false, true, true);
+		}
 	}
 
 }

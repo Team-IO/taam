@@ -171,7 +171,10 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable implements 
 	public int insertItemAt(ItemStack item, int slot) {
 		// insertItem returns item count unable to insert.
 		int inserted = item.stackSize - InventoryUtils.insertItem(inventory, item, false);
-		updateState(true, true, false);
+		if(inserted > 0) {
+			// Only update if necessary
+			updateState(true, true, false);
+		}
 		return inserted;
 	}
 	
@@ -179,7 +182,10 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable implements 
 	public ItemStack removeItemAt(int slot) {
 		ItemStack content = getStackInSlot(slot);
 		setInventorySlotContents(slot, null);
-		updateState(true, true, false);
+		if(content != null) {
+			// Only update if necessary
+			updateState(true, true, false);
+		}
 		return content;
 	}
 	

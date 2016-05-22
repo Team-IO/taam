@@ -322,6 +322,10 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 
 	@Override
 	public void setFacingDirection(EnumFacing direction) {
+		if(this.direction == direction) {
+			// Only update if necessary
+			return;
+		}
 		this.direction = direction;
 		if(direction == EnumFacing.UP || direction == EnumFacing.DOWN) {
 			this.direction = EnumFacing.NORTH;
