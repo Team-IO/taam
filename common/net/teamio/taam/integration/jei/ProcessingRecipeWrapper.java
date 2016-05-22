@@ -12,6 +12,7 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.oredict.OreDictionary;
+import net.teamio.taam.recipes.ChanceBasedRecipe;
 import net.teamio.taam.recipes.ChancedOutput;
 import net.teamio.taam.recipes.IProcessingRecipe;
 
@@ -61,7 +62,7 @@ public class ProcessingRecipeWrapper implements IRecipeWrapper {
 
 	@Override
 	public void drawInfo(Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
-		if(recipe == null) {
+		if(!(recipe instanceof ChanceBasedRecipe)) {
 			return;
 		}
 		ChancedOutput[] output = recipe.getOutput();

@@ -10,17 +10,14 @@ import net.teamio.taam.Taam;
 
 public class CrusherCategory extends ProcessingCategory {
 
-	private String localizedName = Translator.translateToLocal("taam.integration.jei.categories.crusher");
+	private final String localizedName = Translator.translateToLocal(Taam.INTEGRATION_JEI_CATNAME_CRUSHER);
 
 	@Nonnull
 	protected final IDrawable background;
-	protected final String uid;
 
 	public CrusherCategory(IGuiHelper guiHelper) {
-		super();
 		ResourceLocation bgLocation = new ResourceLocation("taam", "textures/gui/processors.png");
 		background = guiHelper.createDrawable(bgLocation, 0, 0, 162, 62);
-		uid = Taam.INTEGRATION_JEI_CAT_CRUSHER;
 	}
 
 	@Override
@@ -30,7 +27,7 @@ public class CrusherCategory extends ProcessingCategory {
 
 	@Override
 	public String getUid() {
-		return uid;
+		return Taam.INTEGRATION_JEI_CAT_CRUSHER;
 	}
 
 	@Override

@@ -20,7 +20,7 @@ public class ProcessingRecipeFluidBasedWrapper extends ProcessingRecipeWrapper {
 	public List<FluidStack> getFluidInputs() {
 		FluidStack input = recipe.getInputFluid();
 		if (input == null) {
-			return Lists.newArrayList();
+			return null;
 		} else {
 			return Lists.newArrayList(input);
 		}
@@ -30,7 +30,7 @@ public class ProcessingRecipeFluidBasedWrapper extends ProcessingRecipeWrapper {
 	public List<FluidStack> getFluidOutputs() {
 		FluidStack output = recipe.getOutputFluid();
 		if (output == null) {
-			return Lists.newArrayList();
+			return null;
 		} else {
 			return Lists.newArrayList(output);
 		}

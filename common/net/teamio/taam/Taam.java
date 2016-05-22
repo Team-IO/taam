@@ -62,6 +62,9 @@ public final class Taam {
 	
 	public static final String INTEGRATION_JEI_CAT_GRINDER = "taam.integration.jei.grinder";
 	public static final String INTEGRATION_JEI_CAT_CRUSHER = "taam.integration.jei.crusher";
+
+	public static final String INTEGRATION_JEI_CATNAME_GRINDER = "taam.integration.jei.categories.grinder";
+	public static final String INTEGRATION_JEI_CATNAME_CRUSHER = "taam.integration.jei.categories.crusher";
 	
 	public static final String BLOCK_SENSOR = "sensor";
 	public static final String BLOCK_MACHINES = "machines";

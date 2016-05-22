@@ -10,17 +10,15 @@ import net.teamio.taam.Taam;
 
 public class GrinderCategory extends ProcessingCategory {
 
-	private String localizedName = Translator.translateToLocal("taam.integration.jei.categories.grinder");
+
+	private final String localizedName = Translator.translateToLocal(Taam.INTEGRATION_JEI_CATNAME_GRINDER);
 
 	@Nonnull
 	protected final IDrawable background;
-	protected final String uid;
 
 	public GrinderCategory(IGuiHelper guiHelper) {
-		super();
 		ResourceLocation bgLocation = new ResourceLocation("taam", "textures/gui/processors.png");
-		background = guiHelper.createDrawable(bgLocation, 0, 67, 162, 62);
-		uid = Taam.INTEGRATION_JEI_CAT_GRINDER;
+		background = guiHelper.createDrawable(bgLocation, 0, 63, 162, 62);
 	}
 
 	@Override
@@ -30,7 +28,7 @@ public class GrinderCategory extends ProcessingCategory {
 
 	@Override
 	public String getUid() {
-		return uid;
+		return Taam.INTEGRATION_JEI_CAT_GRINDER;
 	}
 
 	@Override
