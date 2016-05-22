@@ -37,7 +37,7 @@ public class MachineFluidDrier implements IMachine {
 	private IProcessingRecipeFluidBased[] matchingRecipes;
 
 	private byte redstoneMode = IRedstoneControlled.MODE_ACTIVE_ON_LOW;
-	private static final int capacity = 1000;
+	public static final int capacity = 1000;
 	private int timeout;
 	
 	public boolean isShutdown;

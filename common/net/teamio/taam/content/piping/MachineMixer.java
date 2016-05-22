@@ -50,7 +50,7 @@ public class MachineMixer implements IMachine, IRotatable {
 	private int timeout;
 	private byte occludedSides;
 
-	private static final int capacity = 2000;
+	public static final int capacity = 2000;
 	
 	public static final AxisAlignedBB bounds = new AxisAlignedBB(0, MachinePipe.baseplateSize, 0, 1, 0.5f, 1);
 	

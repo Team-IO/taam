@@ -62,9 +62,15 @@ public final class Taam {
 	
 	public static final String INTEGRATION_JEI_CAT_GRINDER = "taam.integration.jei.grinder";
 	public static final String INTEGRATION_JEI_CAT_CRUSHER = "taam.integration.jei.crusher";
+	public static final String INTEGRATION_JEI_CAT_FLUIDDRIER = "taam.integration.jei.fluiddrier";
+	public static final String INTEGRATION_JEI_CAT_MIXER = "taam.integration.jei.mixer";
 
 	public static final String INTEGRATION_JEI_CATNAME_GRINDER = "taam.integration.jei.categories.grinder";
 	public static final String INTEGRATION_JEI_CATNAME_CRUSHER = "taam.integration.jei.categories.crusher";
+	public static final String INTEGRATION_JEI_CATNAME_FLUIDDRIER = "taam.integration.jei.categories.fluiddrier";
+	public static final String INTEGRATION_JEI_CATNAME_MIXER = "taam.integration.jei.categories.mixer";
+	
+	public static final String INTEGRATION_JEI_LORE_INTERNAL_CAPACITY = "taam.integration.jei.lore.internalcapacity";
 	
 	public static final String BLOCK_SENSOR = "sensor";
 	public static final String BLOCK_MACHINES = "machines";

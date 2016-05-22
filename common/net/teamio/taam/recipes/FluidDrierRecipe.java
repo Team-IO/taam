@@ -13,9 +13,11 @@ import net.minecraftforge.fluids.FluidStack;
 public class FluidDrierRecipe extends BaseProcessingRecipeFluidBased {
 
 	private ChancedOutput[] output;
+	private ItemStack outputStack;
 
 	public FluidDrierRecipe(FluidStack input, ItemStack output) {
 		this.inputFluid = input;
+		this.outputStack = output;
 		this.output = new ChancedOutput[] { new ChancedOutput(output, 1) };
 	}
 
@@ -32,6 +34,10 @@ public class FluidDrierRecipe extends BaseProcessingRecipeFluidBased {
 	@Override
 	public ChancedOutput[] getOutput() {
 		return output;
+	}
+	
+	public ItemStack getOutputStack() {
+		return outputStack;
 	}
 
 	@Override

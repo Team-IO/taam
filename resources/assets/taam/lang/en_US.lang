@@ -177,3 +177,7 @@ death.attack.taam.reconfigured.item=%1$s was painfully reconfigured by %2$s usin
 # JEI Integration
 taam.integration.jei.categories.crusher=Crushing
 taam.integration.jei.categories.grinder=Grinding
+taam.integration.jei.categories.fluiddrier=Dry Fluid
+taam.integration.jei.categories.mixer=Mixing
+
+taam.integration.jei.lore.internalcapacity=Internal Capacity: %d mB

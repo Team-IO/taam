@@ -177,3 +177,7 @@ death.attack.taam.reconfigured.item=%1$s wurde von %2$s schmerzhaft mit %3$s rek
 # JEI Integration
 taam.integration.jei.categories.crusher=Zerkleinern
 taam.integration.jei.categories.grinder=Zermahlen
+taam.integration.jei.categories.fluiddrier=Flüssigkeit Trocknen
+taam.integration.jei.categories.mixer=Vermischen
+
+taam.integration.jei.lore.internalcapacity=Fassungsvermögen: %d mB
