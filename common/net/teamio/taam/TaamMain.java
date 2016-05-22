@@ -462,7 +462,7 @@ public class TaamMain {
 
 		oreRegistration();
 		TaamRecipes.addRecipes();
-		// TaamRecipes.addSmeltingRecipes();
+		TaamRecipes.addSmeltingRecipes();
 		TaamRecipes.addOreRecipes();
 
 	}

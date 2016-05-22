@@ -6,7 +6,7 @@ import java.util.Arrays;
 import net.minecraft.item.ItemStack;
 import net.teamio.taam.util.TaamUtil;
 
-public class ChanceBasedRecipe extends BaseProcessingRecipe implements IProcessingRecipe {
+public abstract class ChanceBasedRecipe extends BaseProcessingRecipe implements IProcessingRecipe {
 
 	private ChancedOutput[] output;
 
