@@ -333,7 +333,7 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 		updateState(false, true, true);
 		worldObj.notifyBlockOfStateChange(pos, blockType);
 		if(blockType != null) {
-			blockType.onNeighborBlockChange(worldObj, pos, worldObj.getBlockState(pos), blockType);
+			blockType.onNeighborChange(worldObj, pos, pos);
 		}
 	}
 

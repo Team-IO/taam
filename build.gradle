@@ -7,7 +7,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
     }
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
@@ -39,7 +39,7 @@ if(System.env.BUILD_NUMBER)
 	version = "${config.mod_version}.b${System.env.BUILD_NUMBER}"
 
 minecraft {
-    version = "${config.mc_version}-${config.forge_version}"
+    version = "${config.mc_version}-${config.forge_version}-${config.mc_version}"
     runDir = "run"
     replace "@VERSION@", project.version
     mappings = "${config.forge_mappings}"
@@ -63,7 +63,7 @@ sourceSets {
 
 dependencies {
     //compile 'com.mod-buildcraft:buildcraft:6.0.8:dev'
-    deobfCompile "MCMultiPart:MCMultiPart:${config.mcmultipart_version}:universal"
+    deobfProvided "MCMultiPart:MCMultiPart:${config.mcmultipart_version}:universal"
     compile "mezz.jei:jei_${config.jei_mc_version}:${config.jei_version}"
 }
 

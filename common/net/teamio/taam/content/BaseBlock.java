@@ -56,10 +56,11 @@ public abstract class BaseBlock extends Block {
 	}
 
 	public abstract boolean canBlockStay(World worldIn, BlockPos pos, IBlockState state);
-
+	
 	@Override
-	public void onNeighborBlockChange(World worldIn, BlockPos pos, IBlockState state, Block neighborBlock) {
+	public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn) {
 		if (!canBlockStay(worldIn, pos, state)) {
+			
 			TaamUtil.breakBlockInWorld(worldIn, pos, state);
 			if (this != TaamMain.blockSensor) {
 				breakBlock(worldIn, pos, state);
@@ -68,9 +69,7 @@ public abstract class BaseBlock extends Block {
 		}
 		TileEntity te = worldIn.getTileEntity(pos);
 		if (te != null) {
-			// Update stuff like conveyors if something changes
-			//TODO:
-			//worldIn.markBlockForUpdate(pos);
+			TaamUtil.updateBlock(worldIn, pos);
 			((BaseTileEntity) te).blockUpdate();
 		}
 	}

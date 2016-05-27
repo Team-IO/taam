@@ -79,14 +79,14 @@ public class ItemDebugTool extends Item {
 		Block clickedOn = state.getBlock();
 
     	String text = String.format(remoteState + " RS: %b Side: %s Weak: %d Strong: %d",
-    			clickedOn.canProvidePower(state), facing.toString(), clickedOn.getWeakPower(worldIn.getBlockState(pos), worldIn, pos, facing), clickedOn.getStrongPower(worldIn.getBlockState(pos), worldIn,  pos, facing));
+    			state.canProvidePower(), facing.toString(), state.getWeakPower(worldIn, pos, facing), state.getStrongPower(worldIn, pos, facing));
 
     	playerIn.addChatMessage(new TextComponentString(text));
     	
     	EnumFacing oppSide = facing.getOpposite();
     	
     	text = String.format(remoteState + " RS: %b Opposite Side: %s Weak: %d Strong: %d",
-    			clickedOn.canProvidePower(state), facing.toString(), clickedOn.getWeakPower(worldIn.getBlockState(pos), worldIn, pos, oppSide), clickedOn.getStrongPower(worldIn.getBlockState(pos), worldIn,  pos, oppSide));
+    			state.canProvidePower(), oppSide.toString(), state.getWeakPower(worldIn, pos, oppSide), state.getStrongPower(worldIn, pos, oppSide));
     	
 
     	text = String.format(remoteState + " Indirectly Powered: %d",

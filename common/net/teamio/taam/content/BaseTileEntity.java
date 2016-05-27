@@ -94,10 +94,15 @@ public abstract class BaseTileEntity extends TileEntity {
 	}
 
 	@Override
-	public SPacketUpdateTileEntity getDescriptionPacket() {
+	public SPacketUpdateTileEntity getUpdatePacket() {
 		NBTTagCompound nbt = new NBTTagCompound();
 		writePropertiesToNBTInternal(nbt);
 		return new SPacketUpdateTileEntity(getPos(), getBlockMetadata(), nbt);
+	}
+	
+	@Override
+	public NBTTagCompound getUpdateTag() {
+		return writeToNBT(super.getUpdateTag());
 	}
 
 	/*
@@ -105,10 +110,11 @@ public abstract class BaseTileEntity extends TileEntity {
 	 */
 
 	@Override
-	public void writeToNBT(NBTTagCompound tag) {
+	public NBTTagCompound writeToNBT(NBTTagCompound tag) {
 		super.writeToNBT(tag);
 
 		writePropertiesToNBTInternal(tag);
+		return tag;
 	}
 
 	@Override
