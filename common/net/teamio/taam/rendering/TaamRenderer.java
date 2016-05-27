@@ -65,11 +65,6 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 	public static final float b_tankBorderSprayer = b_tankBorder + 4f / 16f;
 	public static final float b_basePlate = 2f / 16f;
 
-	public static final AxisAlignedBB bounds_tank = new AxisAlignedBB(
-			b_tankBorder,	b_basePlate,	b_tankBorder,
-			1-b_tankBorder,	1,				1-b_tankBorder
-	).expand(shrinkValue, shrinkValue, shrinkValue);
-
 	public static AxisAlignedBB bounds_sprayer = new AxisAlignedBB(
 			b_tankBorder,	b_basePlate,	b_tankBorder,
 			1-b_tankBorder,	1-4f/16f,		1-b_tankBorderSprayer

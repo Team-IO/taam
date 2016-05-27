@@ -36,7 +36,11 @@ public class MachineTank implements IMachine, IFluidHandler, IWorldInteractable 
 	private final PipeEndFluidHandler pipeEndDOWN;
 	private final FluidTank tank;
 
-	private TankRenderInfo tankRI = new TankRenderInfo(TaamRenderer.bounds_tank, null);
+	public static final AxisAlignedBB bounds_tank = new AxisAlignedBB(
+			TaamRenderer.b_tankBorder,	TaamRenderer.b_basePlate,	TaamRenderer.b_tankBorder,
+			1- TaamRenderer.b_tankBorder,	1,				1- TaamRenderer.b_tankBorder
+	).expand(TaamRenderer.shrinkValue, TaamRenderer.shrinkValue, TaamRenderer.shrinkValue);
+	private TankRenderInfo tankRI = new TankRenderInfo(bounds_tank, null);
 
 	//public static final List<String> visibleParts = Lists.newArrayList("BaseplateConnector_pmdl_c", "Tank_tmdl");
 	private static final float fromBorder = 1.5f/16;
