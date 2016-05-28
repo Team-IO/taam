@@ -2,7 +2,6 @@ package net.teamio.taam.content.common;
 
 import java.util.List;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
@@ -74,7 +73,6 @@ public class ItemDebugTool extends Item {
 		char remoteState = worldIn.isRemote ? 'C' : 'S';
 
 		IBlockState state = worldIn.getBlockState(pos);
-		Block clickedOn = state.getBlock();
 
 		String text = String.format(remoteState + " RS: %b Side: %s Weak: %d Strong: %d",
 				state.canProvidePower(), facing.toString(), state.getWeakPower(worldIn, pos, facing), state.getStrongPower(worldIn, pos, facing));
@@ -91,12 +89,6 @@ public class ItemDebugTool extends Item {
 				worldIn.isBlockIndirectlyGettingPowered(pos));
 
 		playerIn.addChatMessage(new TextComponentString(text));
-
-		//EnumFacing dir = EnumFacing.getOrientation(side);
-		//EnumFacing dirOpp = dir.getOpposite();
-
-		//Vector3 localHit = new Vector3(hitx, hity, hitz);
-
 
 		boolean didSomething = false;
 

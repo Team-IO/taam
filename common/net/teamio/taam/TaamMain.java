@@ -328,7 +328,7 @@ public class TaamMain {
 		 * Either Multipart or regular items
 		 */
 		if(Config.multipart_load && Config.multipart_register_items) {
-			// Mutlipart Item
+			// Multipart Item
 			itemMachine = MultipartHandler.createMultipartItem(Taam.BLOCK_MACHINE_WRAPPER, Taam.MACHINE_META.values());
 		} else {
 			// Regular item, places a wrapper block
@@ -389,14 +389,11 @@ public class TaamMain {
 
 			@Override
 			public NBTBase writeNBT(Capability<IPipe> capability, IPipe instance, EnumFacing side) {
-				//TODO: Think of a default implementation here.
-				throw new NotImplementedException("Cannot save a generic IPipe instance to NBT (yet).");
+				return null;
 			}
 
 			@Override
 			public void readNBT(Capability<IPipe> capability, IPipe instance, EnumFacing side, NBTBase nbt) {
-				//TODO: Think of a default implementation here.
-				throw new NotImplementedException("Cannot read a generic IPipe instance from NBT (yet).");
 			}
 
 		}, PipeEnd.class);
@@ -404,13 +401,11 @@ public class TaamMain {
 
 			@Override
 			public NBTBase writeNBT(Capability<TankRenderInfo[]> capability, TankRenderInfo[] instance, EnumFacing side) {
-				throw new NotImplementedException("Cannot save a generic TankRenderInfo[] instance to NBT (only used for rendering).");
+				return null;
 			}
 
 			@Override
 			public void readNBT(Capability<TankRenderInfo[]> capability, TankRenderInfo[] instance, EnumFacing side, NBTBase nbt) {
-				throw new NotImplementedException("Cannot read a generic TankRenderInfo[] instance from NBT (only usedfor rendering).");
-
 			}
 
 		}, TankRenderInfo[].class);
