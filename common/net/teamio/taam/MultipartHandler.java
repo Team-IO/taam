@@ -24,6 +24,7 @@ import net.teamio.taam.machines.MachineMultipart;
 public class MultipartHandler {
 
 	public static void registerMultipartStuff() {
+		
 		MultipartRegistry.registerPartFactory(new IAdvancedPartFactory() {
 			@Override
 			public IMultipart createPart(ResourceLocation type, NBTTagCompound tag) {

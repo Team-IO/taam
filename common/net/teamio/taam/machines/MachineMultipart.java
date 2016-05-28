@@ -229,7 +229,13 @@ public class MachineMultipart extends Multipart implements INormallyOccludingPar
 		}
 		return machine.getExtendedState(newState, world, pos);
 	}
-
+	
+	@Override
+	public IBlockState getActualState(IBlockState state) {
+		// FIXME: Hacky workaround
+		return super.getActualState(getExtendedState(state));
+	}
+	
 	@Override
 	public boolean canRenderInLayer(BlockRenderLayer layer) {
 		return layer == BlockRenderLayer.CUTOUT;
@@ -237,21 +243,15 @@ public class MachineMultipart extends Multipart implements INormallyOccludingPar
 
 	@Override
 	public BlockStateContainer createBlockState() {
-		if (machine instanceof IRotatable) {
-			return new ExtendedBlockState(MCMultiPartMod.multipart,
-					new IProperty[] { DIRECTION, VARIANT },
-					new IUnlistedProperty[] { BlockMultipartContainer.PROPERTY_MULTIPART_CONTAINER, OBJModel.OBJProperty.INSTANCE }
-					);
-		} else {
-			return new ExtendedBlockState(MCMultiPartMod.multipart,
-					new IProperty[] { DIRECTION, VARIANT },
-					new IUnlistedProperty[] { BlockMultipartContainer.PROPERTY_MULTIPART_CONTAINER, OBJModel.OBJProperty.INSTANCE }
-					);
-		}
+		return new ExtendedBlockState(MCMultiPartMod.multipart,
+				new IProperty[] { DIRECTION, VARIANT },
+				new IUnlistedProperty[] { BlockMultipartContainer.PROPERTY_MULTIPART_CONTAINER, OBJModel.OBJProperty.INSTANCE }
+				);
 	}
 
 	@Override
 	public ResourceLocation getModelPath() {
+		Log.debug(machine.getModelPath());
 		return new ResourceLocation(machine.getModelPath());
 	}
 
@@ -259,9 +259,10 @@ public class MachineMultipart extends Multipart implements INormallyOccludingPar
 	public void readFromNBT(NBTTagCompound tag) {
 		String machineID = tag.getString("machine");
 		IMachineMetaInfo meta = Taam.MACHINE_META.fromId(machineID);
-		if(meta != null) {
+		if(meta != null && meta != this.meta) {
 			this.meta = meta;
 			machine = meta.createMachine();
+			markRenderUpdate();
 		}
 		machine.readPropertiesFromNBT(tag);
 	}
@@ -270,9 +271,10 @@ public class MachineMultipart extends Multipart implements INormallyOccludingPar
 	public void readUpdatePacket(PacketBuffer buf) {
 		String machineID = buf.readStringFromBuffer(30);
 		IMachineMetaInfo meta = Taam.MACHINE_META.fromId(machineID);
-		if(meta != null) {
+		if(meta != null && meta != this.meta) {
 			this.meta = meta;
 			machine = meta.createMachine();
+			markRenderUpdate();
 		}
 		machine.readUpdatePacket(buf);
 	}
@@ -282,11 +284,12 @@ public class MachineMultipart extends Multipart implements INormallyOccludingPar
 		buf.writeString(meta.unlocalizedName());
 		machine.writeUpdatePacket(buf);
 	}
-
+	
 	@Override
-	public void writeToNBT(NBTTagCompound tag) {
+	public NBTTagCompound writeToNBT(NBTTagCompound tag) {
 		tag.setString("machine", meta.unlocalizedName());
 		machine.writePropertiesToNBT(tag);
+		return tag;
 	}
 
 	@Override
