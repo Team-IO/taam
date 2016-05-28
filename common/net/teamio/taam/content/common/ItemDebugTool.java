@@ -12,9 +12,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
@@ -25,6 +23,7 @@ import net.minecraftforge.fluids.IFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.teamio.taam.Config;
+import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.conveyors.TileEntityConveyor;
 import net.teamio.taam.conveyors.api.IConveyorApplianceHost;
 import net.teamio.taam.piping.IPipe;
@@ -63,12 +62,8 @@ public class ItemDebugTool extends Item {
 	public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 		if(!Config.debug)
 		{
-			//TODO: Clarify!
-			//if(!world.isRemote) {
-			SoundEvent soundevent = SoundEvent.REGISTRY.getObject(new ResourceLocation("taam", "sip_ah"));
-			worldIn.playSound(playerIn, pos, soundevent, SoundCategory.BLOCKS, 1f, 1f);
-			//}
-			return EnumActionResult.SUCCESS;
+			worldIn.playSound(playerIn, pos, TaamMain.soundSipAh, SoundCategory.BLOCKS, 1f, 1f);
+			// return EnumActionResult.SUCCESS;
 		}
 		char remoteState = worldIn.isRemote ? 'C' : 'S';
 

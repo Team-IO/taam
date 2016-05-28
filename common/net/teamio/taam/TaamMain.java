@@ -16,6 +16,7 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.SoundEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
@@ -124,6 +125,8 @@ public class TaamMain {
 	public static DamageSource ds_ground = new DamageSource("taam.ground").setDamageBypassesArmor();
 	public static DamageSource ds_crushed = new DamageSource("taam.crushed").setDamageBypassesArmor();
 	public static DamageSource ds_reconfigured = new DamageSource("taam.reconfigured").setDamageIsAbsolute();
+
+	public static SoundEvent soundSipAh;
 
 	private void registerBlock(Block block, ItemBlock item, String name) {
 		registerBlock(block, name);
@@ -434,6 +437,10 @@ public class TaamMain {
 
 		}, ConveyorSlotsStandard.class);
 
+		soundSipAh = new SoundEvent(Taam.SOUND_SIP_AH);
+		soundSipAh.setRegistryName(Taam.SOUND_SIP_AH);
+		GameRegistry.register(soundSipAh);
+		
 		/*
 		 * Network
 		 */

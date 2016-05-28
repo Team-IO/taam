@@ -8,6 +8,7 @@ import java.util.Map;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IStringSerializable;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.teamio.taam.content.piping.MachineFluidDrier;
@@ -72,6 +73,16 @@ public final class Taam {
 
 	public static final String INTEGRATION_JEI_LORE_INTERNAL_CAPACITY = "taam.integration.jei.lore.internalcapacity";
 
+	/*
+	 * Sounds
+	 */
+
+	public static final ResourceLocation SOUND_SIP_AH = new ResourceLocation("taam", "sip_ah");
+	
+	/*
+	 * Blocks
+	 */
+	
 	public static final String BLOCK_SENSOR = "sensor";
 	public static final String BLOCK_MACHINES = "machines";
 	public static final String BLOCK_PRODUCTIONLINE = "productionline";
