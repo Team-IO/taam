@@ -2,6 +2,7 @@ package net.teamio.taam.content.conveyors;
 
 import java.util.List;
 
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -9,8 +10,13 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.client.model.obj.OBJModel;
+import net.minecraftforge.common.property.ExtendedBlockState;
+import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.teamio.taam.Taam;
@@ -21,6 +27,7 @@ import net.teamio.taam.util.TaamUtil;
 public class BlockProductionLineAppliance extends BlockProductionLine {
 
 	public static final PropertyEnum<Taam.BLOCK_PRODUCTIONLINE_APPLIANCE_META> VARIANT = PropertyEnum.create("variant", Taam.BLOCK_PRODUCTIONLINE_APPLIANCE_META.class);
+	public static final PropertyEnum<EnumFacing> DIRECTION = PropertyEnum.create("direction", EnumFacing.class, EnumFacing.HORIZONTALS);
 	
 	public BlockProductionLineAppliance() {
 		super();
@@ -28,7 +35,8 @@ public class BlockProductionLineAppliance extends BlockProductionLine {
 	
 	@Override
 	protected BlockStateContainer createBlockState() {
-		return new BlockStateContainer(this, VARIANT);
+		return new ExtendedBlockState(this, new IProperty[] { DIRECTION, VARIANT },
+				new IUnlistedProperty[] { OBJModel.OBJProperty.INSTANCE });
 	}
 	
 	@Override
@@ -44,6 +52,21 @@ public class BlockProductionLineAppliance extends BlockProductionLine {
 
 		Taam.BLOCK_PRODUCTIONLINE_APPLIANCE_META[] values = Taam.BLOCK_PRODUCTIONLINE_APPLIANCE_META.values();
 		return getDefaultState().withProperty(VARIANT, values[meta]);
+	}
+
+	@Override
+	public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
+
+		// Let the tile entity update anything that is required for rendering
+		ATileEntityAppliance te = (ATileEntityAppliance) worldIn.getTileEntity(pos);
+		te.renderUpdate();
+		
+		// This makes the state shows up in F3. Previously it was not actually applied on the rendering, though.
+		// Rendering Transform was applied in getExtendedState
+		// Since 1.9 this seems to work, though
+		
+		// Add rotation to state
+		return state.withProperty(DIRECTION, ((IRotatable) te).getFacingDirection());
 	}
 	
 	public String getUnlocalizedName(ItemStack itemStack) {
