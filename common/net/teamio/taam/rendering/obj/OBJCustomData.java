@@ -1,4 +1,4 @@
-package net.minecraftforge.client.model.obj;
+package net.teamio.taam.rendering.obj;
 
 import java.util.Arrays;
 import java.util.EnumMap;

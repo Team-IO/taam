@@ -1,10 +1,12 @@
-package net.minecraftforge.client.model.obj;
+package net.teamio.taam.rendering.obj;
 
 import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import org.apache.logging.log4j.Level;
 
 import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourceManager;
@@ -13,8 +15,6 @@ import net.minecraftforge.client.model.ICustomModelLoader;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.fml.common.FMLLog;
-
-import org.apache.logging.log4j.Level;
 
 /*
  * Loader for OBJ models.

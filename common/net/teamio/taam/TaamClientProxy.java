@@ -32,11 +32,8 @@ import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.IPerspectiveAwareModel;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.model.SimpleModelState;
-import net.minecraftforge.client.model.obj.OBJCustomData;
-import net.minecraftforge.client.model.obj.OBJLoader;
-import net.minecraftforge.client.model.obj.OBJModel;
-import net.minecraftforge.client.model.obj.OBJModel.OBJBakedModel;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
@@ -58,6 +55,10 @@ import net.teamio.taam.content.conveyors.TileEntityConveyorTrashCan;
 import net.teamio.taam.conveyors.appliances.ApplianceSprayer;
 import net.teamio.taam.machines.MachineTileEntity;
 import net.teamio.taam.rendering.TaamRenderer;
+import net.teamio.taam.rendering.obj.OBJCustomData;
+import net.teamio.taam.rendering.obj.OBJLoader;
+import net.teamio.taam.rendering.obj.OBJModel;
+import net.teamio.taam.rendering.obj.OBJModel.OBJBakedModel;
 
 @SuppressWarnings("deprecation")
 public class TaamClientProxy extends TaamCommonProxy {
@@ -70,7 +71,8 @@ public class TaamClientProxy extends TaamCommonProxy {
 
 	@Override
 	public void registerRenderStuff() {
-		OBJLoader.INSTANCE.addDomain("taam");
+		ModelLoaderRegistry.registerLoader(OBJLoader.INSTANCE);
+		OBJLoader.INSTANCE.addDomain(Taam.MOD_ID.toLowerCase());
 
 		taamRenderer = new TaamRenderer();
 

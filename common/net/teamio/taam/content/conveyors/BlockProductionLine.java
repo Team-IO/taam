@@ -19,7 +19,6 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.client.model.obj.OBJModel;
 import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.relauncher.Side;
@@ -32,6 +31,7 @@ import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.content.MaterialMachinesTransparent;
 import net.teamio.taam.content.common.TileEntityChute;
+import net.teamio.taam.rendering.obj.OBJModel;
 import net.teamio.taam.util.inv.InventoryUtils;
 
 public class BlockProductionLine extends BaseBlock {
