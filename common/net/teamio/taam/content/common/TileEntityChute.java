@@ -1,11 +1,6 @@
 package net.teamio.taam.content.common;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.apache.commons.lang3.ArrayUtils;
-
-import com.google.common.collect.Lists;
 
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -23,7 +18,6 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 import net.teamio.taam.content.BaseTileEntity;
-import net.teamio.taam.content.IRenderable;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.conveyors.ItemWrapper;
@@ -32,12 +26,10 @@ import net.teamio.taam.util.TaamUtil;
 import net.teamio.taam.util.inv.InventoryRange;
 import net.teamio.taam.util.inv.InventoryUtils;
 
-public class TileEntityChute extends BaseTileEntity implements IInventory, ISidedInventory, IFluidHandler, IConveyorSlots, IRotatable, ITickable, IRenderable {
+public class TileEntityChute extends BaseTileEntity implements IInventory, ISidedInventory, IFluidHandler, IConveyorSlots, IRotatable, ITickable {
 
 	public boolean isConveyorVersion = false;
 	private EnumFacing direction = EnumFacing.NORTH;
-
-	public static List<String> parts_conveyor_version = Collections.unmodifiableList(Lists.newArrayList("Support_Alu_smdl_alu", "Chute_cchmdl"));
 
 	public TileEntityChute(boolean isConveyorVersion) {
 		this.isConveyorVersion = isConveyorVersion;
@@ -57,15 +49,6 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 		// Skip item insertion if there is a solid block / other chute above us
 		if(isConveyorVersion || !worldObj.isSideSolid(pos.up(), EnumFacing.DOWN, false)) {
 			ConveyorUtil.tryInsertItemsFromWorld(this, worldObj, null, false);
-		}
-	}
-
-	@Override
-	public List<String> getVisibleParts() {
-		if(isConveyorVersion) {
-			return parts_conveyor_version;
-		} else {
-			return null;
 		}
 	}
 

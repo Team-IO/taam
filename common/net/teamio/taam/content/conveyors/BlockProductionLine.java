@@ -28,14 +28,16 @@ import net.teamio.taam.Config;
 import net.teamio.taam.Log;
 import net.teamio.taam.Taam;
 import net.teamio.taam.content.BaseBlock;
+import net.teamio.taam.content.BaseTileEntity;
+import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.content.MaterialMachinesTransparent;
 import net.teamio.taam.content.common.TileEntityChute;
 import net.teamio.taam.util.inv.InventoryUtils;
 
 public class BlockProductionLine extends BaseBlock {
 
-	public static final PropertyEnum<Taam.BLOCK_PRODUCTIONLINE_META> VARIANT = PropertyEnum.create("variant",
-			Taam.BLOCK_PRODUCTIONLINE_META.class);
+	public static final PropertyEnum<Taam.BLOCK_PRODUCTIONLINE_META> VARIANT = PropertyEnum.create("variant", Taam.BLOCK_PRODUCTIONLINE_META.class);
+	public static final PropertyEnum<EnumFacing> DIRECTION = PropertyEnum.create("direction", EnumFacing.class);
 
 	public static final AxisAlignedBB BLOCK_BOUNDS = new AxisAlignedBB(0, 0, 0, 1, 0.5f, 1);
 
@@ -48,7 +50,7 @@ public class BlockProductionLine extends BaseBlock {
 
 	@Override
 	protected BlockStateContainer createBlockState() {
-		return new ExtendedBlockState(this, new IProperty[] { VARIANT },
+		return new ExtendedBlockState(this, new IProperty[] { DIRECTION, VARIANT },
 				new IUnlistedProperty[] { OBJModel.OBJProperty.instance });
 	}
 
@@ -65,6 +67,25 @@ public class BlockProductionLine extends BaseBlock {
 			return getDefaultState();
 		}
 		return getDefaultState().withProperty(VARIANT, values[meta]);
+	}
+
+	@Override
+	public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
+
+		// Let the tile entity update anything that is required for rendering
+		BaseTileEntity te = (BaseTileEntity) worldIn.getTileEntity(pos);
+		te.renderUpdate();
+
+		// This makes the state shows up in F3. Previously it was not actually applied on the rendering, though.
+		// Rendering Transform was applied in getExtendedState
+		// Since 1.9 this seems to work, though
+
+		// Add rotation to state
+		if(te instanceof IRotatable) {
+			return state.withProperty(DIRECTION, ((IRotatable)te).getFacingDirection());
+		} else {
+			return state.withProperty(DIRECTION, EnumFacing.DOWN);
+		}
 	}
 
 	public String getUnlocalizedName(ItemStack itemStack) {

@@ -2,6 +2,9 @@ package net.teamio.taam.rendering;
 
 import java.util.Random;
 
+import javax.vecmath.Vector2f;
+import javax.vecmath.Vector3f;
+
 import org.lwjgl.opengl.GL11;
 
 import com.google.common.base.Function;
@@ -192,6 +195,21 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		//			GL11.glPopMatrix();
 		//		}
 
+		if(tileEntity instanceof TileEntityConveyorSieve) {
+			GL11.glPushMatrix();
+			GL11.glTranslated(x, y, z);
+
+			float rotationDegrees = getRotationDegrees(tileEntity);
+
+			GL11.glTranslated(.5f, .5f, .5f);
+			GL11.glRotatef(rotationDegrees, 0, 1, 0);
+			GL11.glTranslated(-.5f, -.5f, -.5f);
+
+			renderSieveMesh(((TileEntityConveyorSieve) tileEntity).isShutdown);
+			
+			GL11.glPopMatrix();
+		}
+		
 		if (tileEntity instanceof ApplianceSprayer) {
 			GL11.glPushMatrix();
 			GL11.glTranslated(x, y, z);
@@ -435,6 +453,131 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		Tessellator.getInstance().draw();
 
 		tearDownDefaultGL();
+	}
+	
+	/*
+	 * Vertex infos from exported .obj file
+	 */
+	Vector3f[] sieve_vertices = new Vector3f[] {
+			new Vector3f(0.9375f, 0.49f, 0.0625f),
+			new Vector3f(0.9375f, 0.52f, 0.0625f),
+			new Vector3f(0.0625f, 0.49f, 0.0625f),
+			new Vector3f(0.5000f, 0.49f, 0.0625f),
+			new Vector3f(0.0625f, 0.52f, 0.0625f),
+			new Vector3f(0.5000f, 0.52f, 0.0625f),
+			new Vector3f(0.9375f, 0.45f, 0.9375f),
+			new Vector3f(0.9375f, 0.47f, 0.5000f),
+			new Vector3f(0.9375f, 0.50f, 0.5000f),
+			new Vector3f(0.9375f, 0.48f, 0.9375f),
+			new Vector3f(0.0625f, 0.45f, 0.9375f),
+			new Vector3f(0.0625f, 0.47f, 0.5000f),
+			new Vector3f(0.5000f, 0.45f, 0.9375f),
+			new Vector3f(0.5000f, 0.47f, 0.5000f),
+			new Vector3f(0.5000f, 0.50f, 0.5000f),
+			new Vector3f(0.0625f, 0.50f, 0.5000f),
+			new Vector3f(0.0625f, 0.48f, 0.9375f),
+			new Vector3f(0.5000f, 0.48f, 0.9375f)
+	};
+	Vector2f[] sieve_tex = new Vector2f[] {
+			new Vector2f(0.000000f, 0.359375f),
+			new Vector2f(0.058594f, 0.359375f),
+			new Vector2f(0.058594f, 0.417969f),
+			new Vector2f(0.000000f, 0.417969f),
+			new Vector2f(0.003906f, 0.355469f),
+			new Vector2f(0.003906f, 0.417969f),
+			new Vector2f(0.000000f, 0.355469f),
+			new Vector2f(0.000000f, 0.414062f),
+			new Vector2f(0.062500f, 0.414062f),
+			new Vector2f(0.062500f, 0.417969f)
+	};
+	Vector3f[] sieve_normals = new Vector3f[] {
+			new Vector3f(0.000000f, -0.99900f,  -0.0457f),
+			new Vector3f(0.000000f, 0.000000f, -1.00000f),
+			new Vector3f(0.000000f, 0.999000f, 0.045700f),
+			new Vector3f(1.000000f, 0.000000f, 0.000000f),
+			new Vector3f(-1.00000f,  0.00000f,  0.00000f),
+			new Vector3f(0.000000f, 0.000000f, 1.000000f)
+	};
+	ObjFace[] sieve_faces = new ObjFace[] {
+		new	ObjFace(new int[] {8 , 14, 4 , 1 }, new int[] {1, 2, 3 , 4}, 1),
+		new	ObjFace(new int[] {1 , 4 , 6 , 2 }, new int[] {5, 6, 4 , 7}, 2),
+		new	ObjFace(new int[] {9 , 2 , 6 , 15}, new int[] {1, 4, 3 , 2}, 3),
+		new	ObjFace(new int[] {8 , 1 , 2 , 9 }, new int[] {8, 9, 10, 4}, 4),
+		new	ObjFace(new int[] {12, 3 , 4 , 14}, new int[] {1, 4, 3 , 2}, 1),
+		new	ObjFace(new int[] {3 , 5 , 6 , 4 }, new int[] {5, 7, 4 , 6}, 2),
+		new	ObjFace(new int[] {16, 15, 6 , 5 }, new int[] {1, 2, 3 , 4}, 3),
+		new	ObjFace(new int[] {12, 16, 5 , 3 }, new int[] {8, 4, 10, 9}, 5),
+		new	ObjFace(new int[] {8 , 7 , 13, 14}, new int[] {1, 4, 3 , 2}, 1),
+		new	ObjFace(new int[] {7 , 10, 18, 13}, new int[] {5, 7, 4 , 6}, 6),
+		new	ObjFace(new int[] {9 , 15, 18, 10}, new int[] {1, 2, 3 , 4}, 3),
+		new	ObjFace(new int[] {8 , 9 , 10, 7 }, new int[] {8, 4, 10, 9}, 4),
+		new	ObjFace(new int[] {12, 14, 13, 11}, new int[] {1, 2, 3 , 4}, 1),
+		new	ObjFace(new int[] {11, 13, 18, 17}, new int[] {5, 6, 4 , 7}, 6),
+		new	ObjFace(new int[] {16, 17, 18, 15}, new int[] {1, 4, 3 , 2}, 3),
+		new	ObjFace(new int[] {12, 11, 17, 16}, new int[] {8, 9, 10, 4}, 5)
+	};
+	
+	public void renderSieveMesh(boolean shutDown) {
+		/*
+		 * Prepare rendering
+		 */
+
+		TextureAtlasSprite sprite = textureGetter.apply(conveyorTextures);
+		VertexBuffer renderer = Tessellator.getInstance().getBuffer();
+
+		renderer.begin(7, DefaultVertexFormats.POSITION_TEX_NORMAL);
+		bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+
+		if(shutDown) {
+			GL11.glTranslated(0, 0.01, 0);
+		} else {
+			GL11.glTranslated(0, 0.01 + 0.04 * rotSin, 0);
+		}
+
+		float minU = sprite.getMinU();
+		float minV = sprite.getMinV();
+		float maxU = sprite.getMaxU();
+		float maxV = sprite.getMaxV();
+
+		float V = maxV - minV;
+		float U = maxU - minU;
+		
+
+		for(ObjFace face : sieve_faces) {
+			for(int i = 0; i < 4; i++) {
+				Vector3f vertice = sieve_vertices[face.vertexIndexes[i]-1];
+				Vector2f uv = sieve_tex[face.textureIndexes[i]-1];
+				Vector3f normal = sieve_normals[face.normalIndex-1];
+				renderer
+				.pos(vertice.x, vertice.y, vertice.z)
+				.tex(minU + U*uv.x, minV + V*(1-uv.y))
+				.normal(normal.x, normal.y, normal.z)
+				.endVertex();
+			}
+		}
+
+		setupDefaultGL();
+
+		Tessellator.getInstance().draw();
+
+		tearDownDefaultGL();
+	}
+	
+	public static class ObjFace {
+		public int[] vertexIndexes;
+		public int[] textureIndexes;
+		public int normalIndex;
+		/**
+		 * @param vertexIndexes
+		 * @param textureIndexes
+		 * @param normalIndex
+		 */
+		public ObjFace(int[] vertexIndexes, int[] textureIndexes, int normalIndex) {
+			this.vertexIndexes = vertexIndexes;
+			this.textureIndexes = textureIndexes;
+			this.normalIndex = normalIndex;
+		}
+		
 	}
 
 	private void setupDefaultGL() {

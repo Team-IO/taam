@@ -1,9 +1,6 @@
 package net.teamio.taam.content.conveyors;
 
-import java.util.Collections;
 import java.util.List;
-
-import com.google.common.collect.Lists;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -24,7 +21,6 @@ import net.teamio.taam.Config;
 import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IRedstoneControlled;
-import net.teamio.taam.content.IRenderable;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.content.IWorldInteractable;
 import net.teamio.taam.conveyors.ConveyorUtil;
@@ -39,7 +35,7 @@ import net.teamio.taam.util.WorldCoord;
 import net.teamio.taam.util.inv.InventorySimple;
 import net.teamio.taam.util.inv.InventoryUtils;
 
-public class TileEntityConveyorProcessor extends BaseTileEntity implements ISidedInventory, IConveyorSlots, IHopper, IRedstoneControlled, IWorldInteractable, IRotatable, ITickable, IRenderable {
+public class TileEntityConveyorProcessor extends BaseTileEntity implements ISidedInventory, IConveyorSlots, IHopper, IRedstoneControlled, IWorldInteractable, IRotatable, ITickable {
 
 	public static final byte Shredder = 0;
 	public static final byte Grinder = 1;
@@ -54,10 +50,6 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 	private EnumFacing direction = EnumFacing.NORTH;
 
 	private int timeout;
-
-	public static List<String> parts_shredder = Collections.unmodifiableList(Lists.newArrayList("Support_Alu_smdl_alu", "ProcessorChute_chutemdl", "Processor_Walzes", "ProcessorMarker_Shredder_pmmdl_shr", "BumpsShredder"));
-	public static List<String> parts_grinder = Collections.unmodifiableList(Lists.newArrayList("Support_Alu_smdl_alu", "ProcessorChute_chutemdl", "Processor_Walzes", "ProcessorMarker_Grinder_pmmdl_gri", "BumpsGrinder"));
-	public static List<String> parts_crusher = Collections.unmodifiableList(Lists.newArrayList("Support_Alu_smdl_alu", "ProcessorChute_chutemdl", "Processor_Walzes", "ProcessorMarker_Crusher_pmmdl_cru", "BumpsCrusher"));
 
 	/**
 	 * Cached recipe, that will not change during processing of one stack
@@ -80,19 +72,6 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 			timeout = Config.pl_processor_grinder_timeout;
 		} else {
 			timeout = Config.pl_processor_crusher_timeout;
-		}
-	}
-
-	@Override
-	public List<String> getVisibleParts() {
-		if(mode == Shredder) {
-			return parts_shredder;
-		} else if(mode == Grinder) {
-			return parts_grinder;
-		} else if(mode == Crusher) {
-			return parts_crusher;
-		} else {
-			return null;
 		}
 	}
 

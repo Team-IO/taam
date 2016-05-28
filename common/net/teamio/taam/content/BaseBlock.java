@@ -215,24 +215,14 @@ public abstract class BaseBlock extends Block {
 		// Decide which parts to render, delegated to the tileEntity (if
 		// required)
 
-		EnumFacing facing = EnumFacing.NORTH;
-
-		IRotatable rotatable = null;
 		IRenderable renderable = null;
 
 		if (te instanceof IRenderable) {
 			renderable = (IRenderable) te;
 		}
 
-		if (te instanceof IRotatable) {
-			rotatable = (IRotatable) te;
-		}
-
 		if (te instanceof MachineTileEntity) {
 			MachineTileEntity mte = (MachineTileEntity) te;
-			if (mte.machine instanceof IRotatable) {
-				rotatable = (IRotatable) mte.machine;
-			}
 			if (mte.machine instanceof IRenderable) {
 				renderable = (IRenderable) mte.machine;
 			}
@@ -246,9 +236,6 @@ public abstract class BaseBlock extends Block {
 			visibleParts = ALL;
 		}
 
-		if (rotatable != null) {
-			facing = rotatable.getFacingDirection();
-		}
 		OBJModel.OBJState retState = new OBJModel.OBJState(visibleParts);
 		retState.setIgnoreHidden(true);
 		

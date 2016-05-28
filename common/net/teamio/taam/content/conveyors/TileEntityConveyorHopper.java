@@ -1,10 +1,5 @@
 package net.teamio.taam.content.conveyors;
 
-import java.util.Collections;
-import java.util.List;
-
-import com.google.common.collect.Lists;
-
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -25,7 +20,6 @@ import net.teamio.taam.Taam;
 import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IRedstoneControlled;
-import net.teamio.taam.content.IRenderable;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.conveyors.api.ConveyorSlotsInventory;
@@ -37,7 +31,7 @@ import net.teamio.taam.util.inv.InventorySimple;
 import net.teamio.taam.util.inv.InventoryUtils;
 
 
-public class TileEntityConveyorHopper extends BaseTileEntity implements IInventory, IHopper, IRedstoneControlled, IRotatable, ITickable, IRenderable {
+public class TileEntityConveyorHopper extends BaseTileEntity implements IInventory, IHopper, IRedstoneControlled, IRotatable, ITickable {
 
 	private InventorySimple inventory;
 
@@ -52,9 +46,6 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IInvento
 
 	private boolean pulseWasSent = false;
 
-	public static List<String> parts_regular = Collections.unmodifiableList(Lists.newArrayList("Support_Alu_smdl_alu", "ConveyorHopper_chmdl"));
-	public static List<String> parts_hs = Collections.unmodifiableList(Lists.newArrayList("Support_Alu_smdl_alu", "ConveyorHopperHighSpeed_chmdl_hs"));
-
 	public TileEntityConveyorHopper() {
 		this(false);
 	}
@@ -62,15 +53,6 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IInvento
 	public TileEntityConveyorHopper(boolean highSpeed) {
 		this.highSpeed = highSpeed;
 		inventory = new InventorySimple(5);
-	}
-
-	@Override
-	public List<String> getVisibleParts() {
-		if(highSpeed) {
-			return parts_hs;
-		} else {
-			return parts_regular;
-		}
 	}
 
 	@Override

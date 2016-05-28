@@ -1,10 +1,7 @@
 package net.teamio.taam.content.conveyors;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-
-import com.google.common.collect.Lists;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
@@ -154,37 +151,6 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 				ConveyorUtil.getSlots(worldObj.getTileEntity(pos.offset(EnumFacing.UP)), EnumFacing.DOWN) != null;
 	}
 
-	/*
-	 * Part lists for the inventory rendering
-	 */
-
-	public static List<String> parts_invalid = Collections.unmodifiableList(Lists.newArrayList(
-			"Support_Alu_smdl_alu",
-			"ConveyorRoundEnd_Framing_Alu_crfmdl_alu", "ConveyorRoundBegin_Framing_Alu_crfmdl_alu"
-			));
-
-	public static List<String> parts_1 = Collections.unmodifiableList(Lists.newArrayList(
-			"ConveyorRoundEnd_crmdl", "ConveyorRoundBegin_crmdl",
-			"ConveyorRoundEnd_Walz_Wood_cwalzmdl_wood", "ConveyorRoundEnd_Framing_Wood_crfmdl_wood",
-			"ConveyorRoundBegin_Walz_Wood_cwalzmdl_wood", "ConveyorRoundBegin_Framing_Wood_crfmdl_wood",
-			"Support_Wood_smdl_wood", "ConveyorDirectionMarker_Wood_cdmdl_wood"
-			));
-
-	public static List<String> parts_2 = Collections.unmodifiableList(Lists.newArrayList(
-			"ConveyorRoundEnd_crmdl", "ConveyorRoundBegin_crmdl",
-			"ConveyorRoundEnd_Walz_Alu_cwalzmdl_alu", "ConveyorRoundEnd_Framing_Alu_crfmdl_alu",
-			"ConveyorRoundBegin_Walz_Alu_cwalzmdl_alu", "ConveyorRoundBegin_Framing_Alu_crfmdl_alu",
-			"Support_Alu_smdl_alu", "ConveyorDirectionMarker_Alu_cdmdl_alu"
-			));
-
-	public static List<String> parts_3 = Collections.unmodifiableList(Lists.newArrayList(
-			"ConveyorRoundEnd_crmdl", "ConveyorRoundBegin_crmdl",
-			"ConveyorRoundEnd_Walz_Alu_cwalzmdl_alu", "ConveyorRoundEnd_Framing_Alu_crfmdl_alu",
-			"ConveyorRoundBegin_Walz_Alu_cwalzmdl_alu", "ConveyorRoundBegin_Framing_Alu_crfmdl_alu",
-			"Support_Alu_smdl_alu", "ConveyorDirectionMarker_Alu_cdmdl_alu",
-			"ConveyorHighThroughput_Framing_Alu_chtpmdl_alu"
-			));
-
 	@Override
 	public List<String> getVisibleParts() {
 		List<String> visibleParts = TileEntityConveyor.visibleParts.get();
@@ -192,46 +158,31 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 		// Visible parts list is re-used to reduce object creation
 		visibleParts.clear();
 
-		boolean isWood = speedLevel == 0;
-		boolean isHighSpeed = speedLevel > 1;
-
+		visibleParts.add(speedLevel + "_Conveyor_base");
 		if(isEnd) {
-			visibleParts.add("ConveyorRoundEnd_crmdl");
-			visibleParts.add(isWood ? "ConveyorRoundEnd_Walz_Wood_cwalzmdl_wood" : "ConveyorRoundEnd_Walz_Alu_cwalzmdl_alu");
-			visibleParts.add(isWood ? "ConveyorRoundEnd_Framing_Wood_crfmdl_wood" : "ConveyorRoundEnd_Framing_Alu_crfmdl_alu");
+			visibleParts.add(speedLevel + "_Conveyor_RoundEnd");
 		} else {
-			visibleParts.add("ConveyorStraightEnd_csmdl");
-			visibleParts.add(isWood ? "ConveyorStraightEnd_Walz_Wood_cwalzmdl_wood" : "ConveyorStraightEnd_Walz_Alu_cwalzmdl_alu");
-			visibleParts.add(isWood ? "ConveyorStraightEnd_Framing_Wood_csfmdl_wood" : "ConveyorStraightEnd_Framing_Alu_csfmdl_alu");
+			visibleParts.add(speedLevel + "_Conveyor_StraightEnd");
 		}
 		if(isBegin) {
-			visibleParts.add("ConveyorRoundBegin_crmdl");
-			visibleParts.add(isWood ? "ConveyorRoundBegin_Walz_Wood_cwalzmdl_wood" : "ConveyorRoundBegin_Walz_Alu_cwalzmdl_alu");
-			visibleParts.add(isWood ? "ConveyorRoundBegin_Framing_Wood_crfmdl_wood" : "ConveyorRoundBegin_Framing_Alu_crfmdl_alu");
+			visibleParts.add(speedLevel + "_Conveyor_RoundBegin");
 		} else {
-			visibleParts.add("ConveyorStraightBegin_csmdl");
-			visibleParts.add(isWood ? "ConveyorStraightBegin_Walz_Wood_cwalzmdl_wood" : "ConveyorStraightBegin_Walz_Alu_cwalzmdl_alu");
-			visibleParts.add(isWood ? "ConveyorStraightBegin_Framing_Wood_csfmdl_wood" : "ConveyorStraightBegin_Framing_Alu_csfmdl_alu");
+			visibleParts.add(speedLevel + "_Conveyor_StraightBegin");
 		}
-		visibleParts.add(isWood ? "Support_Wood_smdl_wood" : "Support_Alu_smdl_alu");
-		visibleParts.add(isWood ? "ConveyorDirectionMarker_Wood_cdmdl_wood" : "ConveyorDirectionMarker_Alu_cdmdl_alu");
 		if(renderAbove) {
-			visibleParts.add(isWood ? "ConveyorSupportAbove_Wood_samdl_wood" : "ConveyorSupportAbove_Alu_samdl_alu");
+			visibleParts.add(speedLevel + "_Conveyor_T_Above");
 		}
 		if(renderBegin) {
-			visibleParts.add(isWood ? "ConveyorRoundBeginCap_Wood_cecmdl_wood" : "ConveyorRoundBeginCap_Alu_cecmdl_alu");
+			visibleParts.add(speedLevel + "_Conveyor_T_Begin");
 		}
 		if(renderEnd) {
-			visibleParts.add(isWood ? "ConveyorRoundEndCap_Wood_cecmdl_wood" : "ConveyorRoundEndCap_Alu_cecmdl_alu");
+			visibleParts.add(speedLevel + "_Conveyor_T_End");
 		}
 		if(renderLeft) {
-			visibleParts.add(isWood ? "ConveyorLeftCap_Wood_cecmdl_wood" : "ConveyorLeftCap_Alu_cecmdl_alu");
+			visibleParts.add(speedLevel + "_Conveyor_T_Left");
 		}
 		if(renderRight) {
-			visibleParts.add(isWood ? "ConveyorRightCap_Wood_cecmdl_wood" : "ConveyorRightCap_Alu_cecmdl_alu");
-		}
-		if(isHighSpeed) {
-			visibleParts.add("ConveyorHighThroughput_Framing_Alu_chtpmdl_alu");
+			visibleParts.add(speedLevel + "_Conveyor_T_RIght");
 		}
 
 		return visibleParts;
