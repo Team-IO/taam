@@ -45,6 +45,9 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IInvento
 	private EnumFacing direction = EnumFacing.NORTH;
 
 	private boolean pulseWasSent = false;
+	
+	private IItemHandler itemHandler;
+	private ConveyorSlotsInventory conveyorSlots;
 
 	public TileEntityConveyorHopper() {
 		this(false);
@@ -53,6 +56,8 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IInvento
 	public TileEntityConveyorHopper(boolean highSpeed) {
 		this.highSpeed = highSpeed;
 		inventory = new InventorySimple(5);
+		itemHandler = new InvWrapper(inventory);
+		conveyorSlots = new ConveyorSlotsInventory(itemHandler);
 	}
 
 	@Override
@@ -243,9 +248,6 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IInvento
 			direction = EnumFacing.NORTH;
 		}
 	}
-
-	private IItemHandler itemHandler = new InvWrapper(inventory);
-	private ConveyorSlotsInventory conveyorSlots = new ConveyorSlotsInventory(itemHandler);
 
 	@Override
 	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
