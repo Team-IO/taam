@@ -251,7 +251,6 @@ public class MachineMultipart extends Multipart implements INormallyOccludingPar
 
 	@Override
 	public ResourceLocation getModelPath() {
-		Log.debug(machine.getModelPath());
 		return new ResourceLocation(machine.getModelPath());
 	}
 
