@@ -11,9 +11,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * Generic item class for items with metadata variants, defined in an enumeration.
- * 
+ *
  * Passes metadata validation and information texts to a delegate.
- * 
+ *
  * @author Oliver Kahrmann
  *
  * @param <P> The enumeration type.
@@ -29,17 +29,18 @@ public class ItemWithMetadata<P extends Enum<P>> extends Item {
 	private P[] metaValues;
 	protected String baseName;
 	private ItemDelegate<P> delegate;
-	
+
 	public ItemWithMetadata(String baseName, P[] metaValues, ItemDelegate<P> delegate) {
 		super();
 		this.baseName = baseName;
 		this.metaValues = metaValues;
 		this.delegate = delegate;
-		this.setMaxDamage(0);
-		this.setHasSubtypes(true);
+		setMaxDamage(0);
+		setHasSubtypes(true);
 	}
-	
+
 	@Override
+	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack stack, EntityPlayer player, List<String> lines, boolean detailedInfoSetting) {
 		if(delegate != null) {
 			delegate.addInformation(stack, player, lines, detailedInfoSetting);
@@ -49,11 +50,11 @@ public class ItemWithMetadata<P extends Enum<P>> extends Item {
 	@Override
 	public String getUnlocalizedName(ItemStack itemStack) {
 		int i = itemStack.getItemDamage();
-	
+
 		if (i < 0 || i >= metaValues.length) {
 			i = 0;
 		}
-	
+
 		return this.getUnlocalizedName() + "." + metaValues[i].name();
 	}
 
@@ -67,7 +68,7 @@ public class ItemWithMetadata<P extends Enum<P>> extends Item {
 			list.add(new ItemStack(item, 1, i));
 		}
 	}
-	
+
 	public boolean isValidMetadata(int meta) {
 		if(meta >= 0 && meta < metaValues.length) {
 			if(delegate == null) {

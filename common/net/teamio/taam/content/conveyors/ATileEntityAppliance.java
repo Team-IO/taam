@@ -20,11 +20,11 @@ public abstract class ATileEntityAppliance extends BaseTileEntity implements ICo
 	protected void readPropertiesFromNBT(NBTTagCompound tag) {
 		direction = EnumFacing.getFront(tag.getInteger("direction"));
 	}
-	
+
 	/*
 	 * IRotatable implementation
 	 */
-	
+
 	@Override
 	public EnumFacing getFacingDirection() {
 		return direction;

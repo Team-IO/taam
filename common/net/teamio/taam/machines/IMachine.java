@@ -23,10 +23,10 @@ public interface IMachine extends ICapabilityProvider {
 
 	IBlockState getExtendedState(IBlockState state, IBlockAccess worldIn, BlockPos blockPos);
 	String getModelPath();
-    
+
 	/**
 	 * Called in {@link ITickable#update()}
-	 * 
+	 *
 	 * @param world
 	 * @param pos
 	 */
@@ -36,7 +36,7 @@ public interface IMachine extends ICapabilityProvider {
 	 * Called when a neighbor block changes, or for multiparts, a part in the
 	 * same/neighboring block changes. If true is returned, the block is marked
 	 * for a render update.
-	 * 
+	 *
 	 * @param world
 	 * @param pos
 	 * @return true to mark the containing block for a render update.
@@ -46,7 +46,7 @@ public interface IMachine extends ICapabilityProvider {
 	/**
 	 * Called when a neighbor block changes, or for multiparts, a part in the
 	 * same/neighboring block changes.
-	 * 
+	 *
 	 * @param world
 	 * @param pos
 	 * @param occlusionField

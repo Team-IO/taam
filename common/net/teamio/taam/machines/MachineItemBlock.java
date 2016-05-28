@@ -27,7 +27,7 @@ public class MachineItemBlock extends ItemBlock {
 			throw new IllegalArgumentException("Specified meta values were null or empty");
 		}
 		this.values = values;
-		this.setHasSubtypes(true);
+		setHasSubtypes(true);
 	}
 
 	public IMachineMetaInfo getInfo(int meta) {

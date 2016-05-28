@@ -21,7 +21,7 @@ public final class PipeUtil {
 	private PipeUtil() {
 		// Util Class
 	}
-	
+
 	/**
 	 * Factor used when transferring fluid between pipes, tanks, etc.
 	 */
@@ -46,9 +46,9 @@ public final class PipeUtil {
 	 * Returns a pipe connected to a side of a block. Looks for a TileEntity
 	 * in the direction of side, then asks that tile for a pipe in direction of
 	 * side.getOpposite().
-	 * 
+	 *
 	 * Checks for blocked/disabled pipes. To get any pipe, regardless of blocked/disabled state, use {@link #getPipe(IBlockAccess, BlockPos, EnumFacing)}.
-	 * 
+	 *
 	 * @param world
 	 * @param pos
 	 * @param side
@@ -70,15 +70,15 @@ public final class PipeUtil {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns a pipe connected to a side of a block. Looks for a TileEntity in
 	 * the direction of side, then asks that tile for a pipe in direction of
 	 * side.getOpposite().
-	 * 
+	 *
 	 * Does not check for blocked/disabled pipes! For that, use
 	 * {@link #getConnectedPipe(IBlockAccess, BlockPos, EnumFacing)}.
-	 * 
+	 *
 	 * @param world
 	 * @param pos
 	 * @param side
@@ -99,17 +99,18 @@ public final class PipeUtil {
 	}
 
 	private static final ThreadLocal<ArrayList<IPipe>> connected = new ThreadLocal<ArrayList<IPipe>>() {
+		@Override
 		protected ArrayList<IPipe> initialValue() {
 			return new ArrayList<IPipe>(6);
 		};
 	};
-	
+
 	public static void processPipes(IPipe pipe, IBlockAccess world, BlockPos pos) {
 
 		ArrayList<IPipe> connected = PipeUtil.connected.get();
-		
+
 		connected.clear();
-		
+
 		IPipe[] internal = pipe.getInternalPipes(world, pos);
 
 		if(internal != null) {
@@ -119,7 +120,7 @@ public final class PipeUtil {
 				}
 			}
 		}
-		
+
 		for(EnumFacing side : EnumFacing.VALUES) {
 			if(pipe.isSideAvailable(side)) {
 				IPipe external = PipeUtil.getConnectedPipe(world, pos, side);
@@ -128,7 +129,7 @@ public final class PipeUtil {
 				}
 			}
 		}
-		
+
 		if (connected.isEmpty()) {
 			return;
 		}
@@ -221,7 +222,7 @@ public final class PipeUtil {
 			}
 		}
 	}
-	
+
 	/**
 	 * The default interaction for tanks, usually fills/drains a selected fluid container.
 	 * @param player
@@ -229,7 +230,7 @@ public final class PipeUtil {
 	 * @return
 	 */
 	public static boolean defaultPlayerInteraction(EntityPlayer player, IFluidTank tank) {
-		
+
 		ItemStack playerStack = player.inventory.getCurrentItem();
 		if(playerStack == null) {
 			return false;

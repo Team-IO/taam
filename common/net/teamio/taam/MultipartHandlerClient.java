@@ -19,7 +19,7 @@ public class MultipartHandlerClient {
 	 */
 	public static void registerRenderStuff() {
 		taamMultipartRenderer = new TaamMultipartRenderer(TaamClientProxy.taamRenderer);
-		
+
 		MultipartRegistryClient.bindMultipartSpecialRenderer(MachineMultipart.class, taamMultipartRenderer);
 	}
 

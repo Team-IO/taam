@@ -22,7 +22,7 @@ import net.teamio.taam.util.inv.InventoryUtils;
 
 /**
  * Generic Utility Methods, used across multiple "themes".
- * 
+ *
  * @author Oliver Kahrmann
  *
  */
@@ -48,7 +48,7 @@ public final class TaamUtil {
 		IBlockState state = world.getBlockState(pos);
 		world.notifyBlockUpdate(pos, state, state, 3);
 	}
-	
+
 	public static boolean canDropIntoWorld(IBlockAccess world, BlockPos pos) {
 		IBlockState state = world.getBlockState(pos);
 		Block block = state.getBlock();
@@ -102,7 +102,7 @@ public final class TaamUtil {
 	/**
 	 * Decides whether an attachable block can be placed somewhere. Checks for a
 	 * solid side or a TileEntity implementing {@link IConveyorSlots}.
-	 * 
+	 *
 	 * @param world
 	 * @param x
 	 *            The attachable block.

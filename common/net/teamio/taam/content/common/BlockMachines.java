@@ -35,30 +35,31 @@ public class BlockMachines extends BaseBlock {
 
 	public BlockMachines() {
 		super(Material.WOOD);
-		this.setSoundType(SoundType.METAL);
-		this.setHardness(6);
+		setSoundType(SoundType.METAL);
+		setHardness(6);
 		this.setHarvestLevel("pickaxe", 2);
 	}
 
+	@Override
 	@SideOnly(Side.CLIENT)
 	public BlockRenderLayer getBlockLayer() {
 		return BlockRenderLayer.CUTOUT;
 	}
-	
+
 	@Override
 	protected BlockStateContainer createBlockState() {
 		return new ExtendedBlockState(this,
 				new IProperty[] { VARIANT },
 				new IUnlistedProperty[] { OBJModel.OBJProperty.INSTANCE }
-		);
+				);
 	}
 
 	@Override
 	public int getMetaFromState(IBlockState state) {
-		Taam.BLOCK_MACHINES_META meta = (Taam.BLOCK_MACHINES_META)state.getValue(VARIANT);
+		Taam.BLOCK_MACHINES_META meta = state.getValue(VARIANT);
 		return meta.ordinal();
 	}
-	
+
 	@Override
 	public IBlockState getStateFromMeta(int meta) {
 		Taam.BLOCK_MACHINES_META[] values = Taam.BLOCK_MACHINES_META.values();
@@ -67,10 +68,10 @@ public class BlockMachines extends BaseBlock {
 		}
 		return getDefaultState().withProperty(VARIANT, values[meta]);
 	}
-	
+
 	@Override
 	public TileEntity createTileEntity(World world, IBlockState blockState) {
-		Taam.BLOCK_MACHINES_META variant = (Taam.BLOCK_MACHINES_META) blockState.getValue(VARIANT);
+		Taam.BLOCK_MACHINES_META variant = blockState.getValue(VARIANT);
 		switch(variant) {
 		case chute:
 			return new TileEntityChute(false);
@@ -81,7 +82,7 @@ public class BlockMachines extends BaseBlock {
 		}
 		return null;
 	}
-	
+
 	public String getUnlocalizedName(ItemStack itemStack) {
 		int i = itemStack.getItemDamage();
 		Enum<?>[] values = Taam.BLOCK_MACHINES_META.values();
@@ -92,7 +93,7 @@ public class BlockMachines extends BaseBlock {
 
 		return super.getUnlocalizedName() + "." + values[i].name();
 	}
-	
+
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void getSubBlocks(Item item, CreativeTabs creativeTab, List<ItemStack> list) {
@@ -101,14 +102,14 @@ public class BlockMachines extends BaseBlock {
 			list.add(new ItemStack(item, 1, i));
 		}
 	}
-	
+
 	@Override
 	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
 		if(state.getBlock() != this) {
 			Log.warn("Received 'setBlockBoundsBasedOnState' with invalid block in blockstate. This might not be relevant - but does not influence anything at the moment.");
 			return super.getBoundingBox(state, source, pos);
 		}
-		Taam.BLOCK_MACHINES_META variant = (Taam.BLOCK_MACHINES_META)state.getValue(VARIANT);
+		Taam.BLOCK_MACHINES_META variant = state.getValue(VARIANT);
 		switch(variant) {
 		case chute:
 			// Have chute as full model for now..
@@ -126,20 +127,20 @@ public class BlockMachines extends BaseBlock {
 			return super.getBoundingBox(state, source, pos);
 		}
 	}
-	
+
 	@Override
 	public void breakBlock(World world, BlockPos pos, IBlockState state) {
-		Taam.BLOCK_MACHINES_META variant = (Taam.BLOCK_MACHINES_META)state.getValue(VARIANT);
+		Taam.BLOCK_MACHINES_META variant = state.getValue(VARIANT);
 		if(variant == BLOCK_MACHINES_META.creativecache) {
 			// Do not drop anything for the creative cache (fake items...)
 			return;
 		}
 		super.breakBlock(world, pos, state);
 	}
-	
+
 	@Override
 	public boolean isSideSolid(IBlockState base_state, IBlockAccess world, BlockPos pos, EnumFacing side) {
-		Taam.BLOCK_MACHINES_META variant = (Taam.BLOCK_MACHINES_META)base_state.getValue(VARIANT);
+		Taam.BLOCK_MACHINES_META variant = base_state.getValue(VARIANT);
 		if(variant == BLOCK_MACHINES_META.chute) {
 			return side == EnumFacing.DOWN || side == EnumFacing.UP;
 		} else {

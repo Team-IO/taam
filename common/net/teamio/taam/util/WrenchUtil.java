@@ -33,7 +33,7 @@ public class WrenchUtil {
 		if(held == null) {
 			return false;
 		}
-			//TODO: Check other wrench types once supported
+		//TODO: Check other wrench types once supported
 		return held.getItem() == TaamMain.itemWrench;
 	}
 
@@ -42,7 +42,7 @@ public class WrenchUtil {
 		if(held == null) {
 			return false;
 		}
-			//TODO: Check other wrench types once supported
+		//TODO: Check other wrench types once supported
 		return held.getItem() == TaamMain.itemWrench;
 	}
 

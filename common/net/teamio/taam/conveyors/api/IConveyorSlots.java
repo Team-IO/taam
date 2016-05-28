@@ -5,12 +5,12 @@ import net.minecraft.util.EnumFacing;
 import net.teamio.taam.conveyors.ItemWrapper;
 
 public interface IConveyorSlots {
-	
+
 	boolean canSlotMove(int slot);
 	boolean isSlotAvailable(int slot);
 	int getMovementProgress(int slot);
 	byte getSpeedsteps();
-	
+
 	/**
 	 * Add an item to a slot.
 	 * @param item
@@ -44,5 +44,5 @@ public interface IConveyorSlots {
 	 * @return
 	 */
 	double getInsertMinY();
-	
+
 }

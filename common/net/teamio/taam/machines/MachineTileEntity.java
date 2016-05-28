@@ -18,7 +18,7 @@ public class MachineTileEntity extends BaseTileEntity implements ITickable {
 
 	public MachineTileEntity(IMachineMetaInfo meta) {
 		this.meta = meta;
-		this.machine = meta.createMachine();
+		machine = meta.createMachine();
 	}
 
 	@Override

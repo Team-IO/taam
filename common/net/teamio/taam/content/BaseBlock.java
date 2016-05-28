@@ -42,7 +42,7 @@ public abstract class BaseBlock extends Block {
 
 	public BaseBlock(Material material) {
 		super(material);
-		this.fullBlock = false;
+		fullBlock = false;
 	}
 
 	@Override
@@ -56,11 +56,11 @@ public abstract class BaseBlock extends Block {
 	}
 
 	public abstract boolean canBlockStay(World worldIn, BlockPos pos, IBlockState state);
-	
+
 	@Override
 	public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn) {
 		if (!canBlockStay(worldIn, pos, state)) {
-			
+
 			TaamUtil.breakBlockInWorld(worldIn, pos, state);
 			if (this != TaamMain.blockSensor) {
 				breakBlock(worldIn, pos, state);
@@ -115,7 +115,7 @@ public abstract class BaseBlock extends Block {
 
 	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
-				
+
 		if(WrenchUtil.wrenchBlock(worldIn, pos, playerIn, side, hitX, hitY, hitZ) == EnumActionResult.SUCCESS) {
 			return true;
 		}
@@ -204,7 +204,7 @@ public abstract class BaseBlock extends Block {
 		// Let the tile entity update anything that is required for rendering
 		BaseTileEntity te = (BaseTileEntity) worldIn.getTileEntity(pos);
 		te.renderUpdate();
-		
+
 		return state;
 	}
 
@@ -270,9 +270,9 @@ public abstract class BaseBlock extends Block {
 	/**
 	 * Updates a block and all surrounding blocks (meaning, pushes a block
 	 * update for this block and for all directly adjacent blocks)
-	 * 
+	 *
 	 * Useful when working with redstone.
-	 * 
+	 *
 	 * @param world
 	 * @param x
 	 * @param y

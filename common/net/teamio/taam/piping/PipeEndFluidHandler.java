@@ -10,7 +10,7 @@ import net.minecraftforge.fluids.IFluidHandler;
 /**
  * Pipe end, used in machines to connect to a pipe "network". This delegates any
  * addFluid or getFluids to the IFluidHandler used when creating this pipe end.
- * 
+ *
  * @author Oliver Kahrmann
  *
  */

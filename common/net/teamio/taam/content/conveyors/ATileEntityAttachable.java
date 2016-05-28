@@ -29,6 +29,7 @@ public abstract class ATileEntityAttachable extends BaseTileEntity implements IC
 		}
 	}
 
+	@Override
 	public EnumFacing getNextSlot(int slot) {
 		return null;
 	}

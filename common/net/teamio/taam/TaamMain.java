@@ -102,7 +102,7 @@ public class TaamMain {
 
 	public static MachineBlock blockMachine;
 	public static Item itemMachine;
-	
+
 	public static CreativeTabs creativeTab;
 
 	public static BlockSensor blockSensor;
@@ -129,7 +129,7 @@ public class TaamMain {
 		registerBlock(block, name);
 		registerItem(item, name);
 	}
-	
+
 	private void registerBlock(Block block, String name) {
 		block.setUnlocalizedName(Taam.MOD_ID + "." + name);
 		block.setCreativeTab(creativeTab);
@@ -146,11 +146,11 @@ public class TaamMain {
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
-		
+
 		/*
 		 * Metadata
 		 */
-		
+
 		ModMetadata meta = event.getModMetadata();
 		meta.authorList.add(Taam.MOD_AUTHOR1);
 		meta.authorList.add(Taam.MOD_AUTHOR2);
@@ -161,7 +161,7 @@ public class TaamMain {
 		/*
 		 * Some general stuff that needs to be registered
 		 */
-		
+
 		MinecraftForge.EVENT_BUS.register(new TaamCraftingHandler());
 		MinecraftForge.EVENT_BUS.register(new Config());
 		MinecraftForge.EVENT_BUS.register(proxy);
@@ -169,7 +169,7 @@ public class TaamMain {
 		/*
 		 * Read Config
 		 */
-		
+
 		Config.init(event.getSuggestedConfigurationFile());
 		creativeTab = new CreativeTabs(Taam.MOD_ID) {
 
@@ -308,14 +308,14 @@ public class TaamMain {
 		/*
 		 * Multiparts
 		 */
-		
+
 		GameRegistry.registerTileEntity(MachineTileEntity.class, Taam.TILEENTITY_MACHINE_WRAPPER);
 
-		
+
 		if(Config.multipart_load) {
 			MultipartHandler.registerMultipartStuff();
 		}
-		
+
 		/*
 		 * Wrapper block for machines if multipart is not available
 		 */
@@ -323,7 +323,7 @@ public class TaamMain {
 				blockMachine = new MachineBlock(Taam.MACHINE_META.values()),
 				Taam.BLOCK_MACHINE_WRAPPER
 				);
-		
+
 		/*
 		 * Either Multipart or regular items
 		 */
@@ -335,7 +335,7 @@ public class TaamMain {
 			itemMachine = new MachineItemBlock(blockMachine, Taam.MACHINE_META.values());
 		}
 		registerItem(itemMachine, Taam.BLOCK_MACHINE_WRAPPER);
-		
+
 		/*
 		 * Worldgen
 		 */
@@ -384,7 +384,7 @@ public class TaamMain {
 		/*
 		 * Capabilities
 		 */
-		
+
 		CapabilityManager.INSTANCE.register(IPipe.class, new Capability.IStorage<IPipe>() {
 
 			@Override
@@ -398,7 +398,7 @@ public class TaamMain {
 				//TODO: Think of a default implementation here.
 				throw new NotImplementedException("Cannot read a generic IPipe instance from NBT (yet).");
 			}
-			
+
 		}, PipeEnd.class);
 		CapabilityManager.INSTANCE.register(TankRenderInfo[].class, new Capability.IStorage<TankRenderInfo[]>() {
 
@@ -410,11 +410,11 @@ public class TaamMain {
 			@Override
 			public void readNBT(Capability<TankRenderInfo[]> capability, TankRenderInfo[] instance, EnumFacing side, NBTBase nbt) {
 				throw new NotImplementedException("Cannot read a generic TankRenderInfo[] instance from NBT (only usedfor rendering).");
-				
+
 			}
-			
+
 		}, TankRenderInfo[].class);
-		
+
 		CapabilityManager.INSTANCE.register(IConveyorSlots.class, new Capability.IStorage<IConveyorSlots>() {
 
 			@Override
@@ -434,11 +434,11 @@ public class TaamMain {
 					((ConveyorSlotsStandard) instance).readFromNBT((NBTTagCompound) nbt);
 				}
 				throw new NotImplementedException("Cannot read a generic IConveyorSlots instance from NBT. Only ConveyorSlotsStandard is supported.");
-				
+
 			}
-			
+
 		}, ConveyorSlotsStandard.class);
-		
+
 		/*
 		 * Network
 		 */
@@ -504,7 +504,7 @@ public class TaamMain {
 		OreDictionary.registerOre("partMotor", new ItemStack(itemPart, 1, Taam.ITEM_PART_META.motor.ordinal()));
 		OreDictionary.registerOre("partBasicCircuit", new ItemStack(itemPart, 1, Taam.ITEM_PART_META.circuit_basic.ordinal()));
 		OreDictionary.registerOre("partAdvancedCircuit", new ItemStack(itemPart, 1, Taam.ITEM_PART_META.circuit_advanced.ordinal()));
-		
+
 		String[] dyes = {
 				"Black",
 				"Red",
@@ -522,11 +522,11 @@ public class TaamMain {
 				"Magenta",
 				"Orange",
 				"White"
-				};
-		
+		};
+
 		int metaBlack = Taam.ITEM_MATERIAL_META.pigment_black.ordinal();
 		for(int dyeMeta = 0; dyeMeta < 16; dyeMeta++) {
-			
+
 			OreDictionary.registerOre("dye" + dyes[dyeMeta], new ItemStack(TaamMain.itemMaterial, 1, metaBlack + dyeMeta));
 		}
 	}

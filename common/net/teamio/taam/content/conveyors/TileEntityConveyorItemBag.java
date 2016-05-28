@@ -22,33 +22,33 @@ import net.teamio.taam.util.inv.InventoryUtils;
 public class TileEntityConveyorItemBag extends ATileEntityAttachable implements IConveyorSlots, IInventory {
 
 	private InventorySimple inventory;
-	
+
 	public float fillPercent;
-	
+
 	public TileEntityConveyorItemBag() {
 		inventory = new InventorySimple(5);
 	}
-	
+
 	@Override
 	public void blockUpdate() {
 		if(worldObj != null && worldObj.isRemote) {
 			/*
 			 * Fill display calculation is only needed on the client..
 			 */
-			
-			float stackFactor = 1f / this.inventory.getSizeInventory();
-			this.fillPercent = 0;
-		
-			for(int i = 0; i < this.inventory.getSizeInventory(); i++) {
-				ItemStack stack = this.inventory.getStackInSlot(i);
+
+			float stackFactor = 1f / inventory.getSizeInventory();
+			fillPercent = 0;
+
+			for(int i = 0; i < inventory.getSizeInventory(); i++) {
+				ItemStack stack = inventory.getStackInSlot(i);
 				if(stack != null && stack.getItem() != null && stack.getMaxStackSize() > 0) {
 					float singleFillFactor = stack.stackSize / (float)stack.getMaxStackSize();
-					this.fillPercent += singleFillFactor * stackFactor;
+					fillPercent += singleFillFactor * stackFactor;
 				}
 			}
 		}
 	}
-	
+
 	@Override
 	protected void writePropertiesToNBT(NBTTagCompound tag) {
 		tag.setTag("items", InventoryUtils.writeItemStacksToTag(inventory.items));
@@ -66,7 +66,7 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable implements 
 	/*
 	 * IInventory implementation
 	 */
-	
+
 	@Override
 	public int getSizeInventory() {
 		return inventory.getSizeInventory();
@@ -99,12 +99,12 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable implements 
 	public String getName() {
 		return "tile.productionline_attachable.itembag.name";
 	}
-	
+
 	@Override
 	public ITextComponent getDisplayName() {
 		return new TextComponentTranslation(getName());
 	}
-	
+
 	@Override
 	public boolean hasCustomName() {
 		return false;
@@ -166,7 +166,7 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable implements 
 	public EnumFacing getMovementDirection() {
 		return EnumFacing.DOWN;
 	}
-	
+
 	@Override
 	public int insertItemAt(ItemStack item, int slot) {
 		// insertItem returns item count unable to insert.
@@ -177,7 +177,7 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable implements 
 		}
 		return inserted;
 	}
-	
+
 	@Override
 	public ItemStack removeItemAt(int slot) {
 		ItemStack content = getStackInSlot(slot);
@@ -188,12 +188,12 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable implements 
 		}
 		return content;
 	}
-	
+
 	@Override
 	public boolean canSlotMove(int slot) {
 		return false;
 	}
-	
+
 	@Override
 	public int getMovementProgress(int slot) {
 		return 0;
@@ -219,6 +219,7 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable implements 
 		return 0.3;
 	}
 
+	@Override
 	public EnumFacing getNextSlot(int slot) {
 		return EnumFacing.DOWN;
 	}
@@ -227,5 +228,5 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable implements 
 	public float getVerticalPosition(int slot) {
 		return 0.51f;
 	}
-	
+
 }

@@ -6,10 +6,10 @@ import net.minecraft.util.EnumFacing;
 /**
  * A pipe end that is intended to have the same undelying {@link PipeInfo} in
  * multiple instance, but maintain a different pressure on each instance.
- * 
+ *
  * Useful for machines like pumps, that are technically a pipe but have
  * different pressure on each end.
- * 
+ *
  * @author Oliver Kahrmann
  *
  */
@@ -21,12 +21,14 @@ public class PipeEndSharedDistinct extends PipeEnd {
 		super(side, info, active);
 	}
 
+	@Override
 	public void writeToNBT(NBTTagCompound tag) {
 		super.writeToNBT(tag);
 		tag.setInteger("pressure", pressure);
 		tag.setInteger("suction", suction);
 	}
 
+	@Override
 	public void readFromNBT(NBTTagCompound tag) {
 		super.readFromNBT(tag);
 		pressure = tag.getInteger("pressure");

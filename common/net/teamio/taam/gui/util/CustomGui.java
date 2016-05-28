@@ -10,7 +10,7 @@ public abstract class CustomGui extends GuiContainer {
 	public CustomGui(Container container) {
 		super(container);
 	}
-	
+
 	public static String getTranslatedInventoryName(IInventory inventory) {
 		if(inventory.hasCustomName()) {
 			return inventory.getDisplayName().getFormattedText();

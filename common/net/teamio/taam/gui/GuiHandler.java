@@ -20,7 +20,7 @@ public class GuiHandler implements IGuiHandler {
 			if (tileEntity instanceof TileEntityConveyorHopper) {
 				return new ContainerConveyorSmallInventory(player.inventory, (TileEntityConveyorHopper) tileEntity);
 			}
-			
+
 			if (tileEntity instanceof IInventory) {
 				return new ContainerConveyorSmallInventory(player.inventory, (IInventory) tileEntity);
 			}
@@ -41,7 +41,7 @@ public class GuiHandler implements IGuiHandler {
 			if (tileEntity instanceof TileEntityConveyorHopper) {
 				return new GuiConveyorHopper(player.inventory, (TileEntityConveyorHopper) tileEntity);
 			}
-			
+
 			if (tileEntity instanceof IInventory) {
 				return new GuiConveyorSmallInventory(player.inventory, (IInventory) tileEntity);
 			}

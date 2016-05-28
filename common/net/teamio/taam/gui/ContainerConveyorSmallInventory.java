@@ -41,32 +41,32 @@ public class ContainerConveyorSmallInventory extends Container {
 	@Override
 	public ItemStack transferStackInSlot(EntityPlayer player, int slotID) {
 		ItemStack stack = null;
-		Slot slot = (Slot) inventorySlots.get(slotID);
+		Slot slot = inventorySlots.get(slotID);
 
 		// null checks and checks if the item can be stacked (maxStackSize > 1)
 		if (slot != null && slot.getHasStack()) {
 			ItemStack stackInSlot = slot.getStack();
 			stack = stackInSlot.copy();
-			
+
 			// merges the item into player inventory since its in the tileEntity
 			if (slotID < tileEntity.getSizeInventory()) {
-				if (!this.mergeItemStack(stackInSlot, tileEntity.getSizeInventory(), this.inventorySlots.size(), true)) {
+				if (!mergeItemStack(stackInSlot, tileEntity.getSizeInventory(), inventorySlots.size(), true)) {
 					return null;
 				}
 			}
 			// merge into tileEntity inventory, since it is in player's inventory
-			else if (!this.mergeItemStack(stackInSlot, 0, tileEntity.getSizeInventory(), false)) {
+			else if (!mergeItemStack(stackInSlot, 0, tileEntity.getSizeInventory(), false)) {
 				return null;
 			}
 
 			if (stackInSlot.stackSize == 0)
-            {
-                slot.putStack(null);
-            }
-            else
-            {
-                slot.onSlotChanged();
-            }
+			{
+				slot.putStack(null);
+			}
+			else
+			{
+				slot.onSlotChanged();
+			}
 		}
 		return stack;
 	}

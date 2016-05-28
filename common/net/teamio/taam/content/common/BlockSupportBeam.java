@@ -14,10 +14,10 @@ public class BlockSupportBeam extends Block {
 
 	public BlockSupportBeam() {
 		super(MaterialMachinesTransparent.INSTANCE);
-		this.setSoundType(SoundType.METAL);
+		setSoundType(SoundType.METAL);
 		this.setHarvestLevel("pickaxe", 1);
-		this.setResistance(3.7f);
-		this.setHardness(2);
+		setResistance(3.7f);
+		setHardness(2);
 	}
 
 	@Override

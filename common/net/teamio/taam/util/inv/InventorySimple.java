@@ -26,7 +26,7 @@ import net.minecraft.util.text.TextComponentString;
 /**
  * Simple IInventory implementation with an array of items, name and maximum
  * stack size
- * 
+ *
  * @author Chicken-Bones
  *
  *         To avoid issues with licensing, this specific file is licensed under

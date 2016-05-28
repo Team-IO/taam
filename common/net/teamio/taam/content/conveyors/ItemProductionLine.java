@@ -97,7 +97,7 @@ public class ItemProductionLine extends ItemMultiTexture implements IRenderableI
 			}
 		}
 
-		Taam.BLOCK_PRODUCTIONLINE_META variant = (Taam.BLOCK_PRODUCTIONLINE_META) newState.getValue(BlockProductionLine.VARIANT);
+		Taam.BLOCK_PRODUCTIONLINE_META variant = newState.getValue(BlockProductionLine.VARIANT);
 
 		boolean canStay;
 		if (variant == Taam.BLOCK_PRODUCTIONLINE_META.conveyor1

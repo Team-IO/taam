@@ -24,7 +24,7 @@ public final class TPMachineConfiguration implements IMessage {
 				TileEntity te = world.getTileEntity(new BlockPos(message.tileEntity.x, message.tileEntity.y, message.tileEntity.z));
 				switch(message.mode) {
 				case ChangeBoolean:
-					
+
 					if(te instanceof TileEntityConveyorHopper) {
 						switch(message.id) {
 						case 1:
@@ -41,7 +41,7 @@ public final class TPMachineConfiguration implements IMessage {
 						//TODO: Log Error
 					}
 					break;
-				case ChangeInteger: 
+				case ChangeInteger:
 					if(te instanceof IRedstoneControlled) {
 						switch(message.id) {
 						case 1:
@@ -57,13 +57,13 @@ public final class TPMachineConfiguration implements IMessage {
 		}
 
 	}
-	
-	
+
+
 	public static enum Action {
 		ChangeBoolean,
 		ChangeInteger
 	}
-	
+
 	public static TPMachineConfiguration newChangeBoolean(WorldCoord tileEntity, byte id, boolean value) {
 		TPMachineConfiguration pack = new TPMachineConfiguration();
 		pack.mode = Action.ChangeBoolean;
@@ -72,7 +72,7 @@ public final class TPMachineConfiguration implements IMessage {
 		pack.id = id;
 		return pack;
 	}
-	
+
 	public static TPMachineConfiguration newChangeInteger(WorldCoord tileEntity, byte id, int value) {
 		TPMachineConfiguration pack = new TPMachineConfiguration();
 		pack.mode = Action.ChangeInteger;
@@ -81,7 +81,7 @@ public final class TPMachineConfiguration implements IMessage {
 		pack.id = id;
 		return pack;
 	}
-	
+
 	public TPMachineConfiguration() {
 		// Serialization only.
 	}
@@ -91,7 +91,7 @@ public final class TPMachineConfiguration implements IMessage {
 	private int intValue;
 	private Action mode;
 	private byte id;
-	
+
 	@Override
 	public void fromBytes(ByteBuf buf) {
 		int modeOrd = buf.readInt();
@@ -109,7 +109,7 @@ public final class TPMachineConfiguration implements IMessage {
 			break;
 		}
 	}
-	
+
 	private WorldCoord readCoords(ByteBuf buf) {
 		int world = buf.readInt();
 		int x = buf.readInt();
@@ -117,7 +117,7 @@ public final class TPMachineConfiguration implements IMessage {
 		int z = buf.readInt();
 		return new WorldCoord(world, x, y, z);
 	}
-	
+
 	private void writeCoords(ByteBuf buf, WorldCoord coords) {
 		buf.writeInt(coords.world);
 		buf.writeInt(coords.x);

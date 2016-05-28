@@ -16,21 +16,21 @@ import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IRotatable;
 
 public class TileEntitySensor extends BaseTileEntity implements IRotatable, ITickable {
-	
+
 	private float offLength = 1.5f;
 	private float offLeft = 1.5f;
 	private float offRight = 1.5f;
 	private int blind = 1;
 	private float down = 2.5f;
-	
+
 	private boolean powering = false;
-	
+
 	public int renderingOffset = 0;
-	
+
 	private int tickOn = 0;
-	
+
 	private EnumFacing direction = EnumFacing.UP;
-	
+
 	public int getRedstoneLevel() {
 		if(powering) {
 			return 15;
@@ -38,24 +38,24 @@ public class TileEntitySensor extends BaseTileEntity implements IRotatable, ITic
 			return 0;
 		}
 	}
-	
+
 	public TileEntitySensor() {
 	}
-	
+
 	public TileEntitySensor(EnumFacing rotation) {
-		this.direction = rotation;
+		direction = rotation;
 	}
 
 	@Override
 	public EnumFacing getFacingDirection() {
 		return direction;
-		
+
 	}
-	
+
 	private void setBlockMeta() {
 		// Set block metadata according to rotation
-        IBlockState blockState = this.worldObj.getBlockState(pos);
-		EnumFacing dir = (EnumFacing)blockState.getValue(BlockSensor.DIRECTION);
+		IBlockState blockState = worldObj.getBlockState(pos);
+		EnumFacing dir = blockState.getValue(BlockSensor.DIRECTION);
 		if(dir != direction) {
 			worldObj.setBlockState(pos, blockState.withProperty(BlockSensor.DIRECTION, direction));
 			markDirty();
@@ -66,10 +66,10 @@ public class TileEntitySensor extends BaseTileEntity implements IRotatable, ITic
 	public void updateContainingBlockInfo() {
 		setBlockMeta();
 	}
-	
+
 	@Override
 	public void update() {
-		
+
 		float xMin = pos.getX() + 0.5f;
 		float yMin = pos.getY() + 0.5f;
 		float zMin = pos.getZ() + 0.5f;
@@ -120,18 +120,18 @@ public class TileEntitySensor extends BaseTileEntity implements IRotatable, ITic
 			zMin -= offLeft;
 			break;
 		}
-		
+
 		AxisAlignedBB bb = new AxisAlignedBB(xMin, yMin, zMin, xMax, yMax, zMax);
 
 		boolean found = false;
-		
+
 		if(tickOn > 0) {
 			tickOn--;
 			found = true;
 		} else {
 			for(Object obj : worldObj.loadedEntityList) {
 				Entity ent = (Entity)obj;
-				
+
 				if(isDetectedEntityType(ent) && isEntityWithinBoundingBox(bb, ent)) {
 					found = true;
 					break;
@@ -141,19 +141,19 @@ public class TileEntitySensor extends BaseTileEntity implements IRotatable, ITic
 				tickOn = Config.sensor_delay;
 			}
 		}
-		
+
 		if(found != powering) {
 			powering = found;
 			BaseBlock.updateBlocksAround(worldObj, pos);
 		}
 	}
-	
+
 	private boolean isDetectedEntityType(Entity ent) {
 		return ent instanceof EntityLivingBase
 				&& !(ent instanceof EntityIronGolem)
 				&& !(ent instanceof EntitySnowman);
 	}
-	
+
 	private boolean isEntityWithinBoundingBox(AxisAlignedBB bb, Entity ent) {
 		AxisAlignedBB entityBounds = ent.getEntityBoundingBox();
 		if(entityBounds == null) {
@@ -162,7 +162,7 @@ public class TileEntitySensor extends BaseTileEntity implements IRotatable, ITic
 			return entityBounds.intersectsWith(bb);
 		}
 	}
-	
+
 	@Override
 	protected void writePropertiesToNBT(NBTTagCompound par1nbtTagCompound) {
 		par1nbtTagCompound.setInteger("tickOn", tickOn);

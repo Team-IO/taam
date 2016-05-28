@@ -8,7 +8,7 @@ import net.teamio.taam.util.inv.InventoryUtils;
 /**
  * Wrapper for item stacks on the conveyor system. Keeps track of movement,
  * processing and blocking.
- * 
+ *
  * @author oliverkahrmann
  */
 public class ItemWrapper {
@@ -18,7 +18,7 @@ public class ItemWrapper {
 			return true;
 		}
 	};
-	
+
 	public ItemStack itemStack;
 	// TODO: Write filter to NBT
 	public IItemFilter filter;
@@ -27,7 +27,7 @@ public class ItemWrapper {
 	public ItemWrapper(ItemStack itemStack) {
 		this.itemStack = itemStack;
 	}
-	
+
 	public boolean isEmpty() {
 		return itemStack == null;
 	}
@@ -62,7 +62,7 @@ public class ItemWrapper {
 	/**
 	 * Blocks the item stack (will stay locked at zero progress) if it is not
 	 * already moving. (movement progress has to be zero!)
-	 * 
+	 *
 	 * @return true if it could be locked or was already locked.
 	 */
 	public boolean block() {
@@ -94,7 +94,7 @@ public class ItemWrapper {
 	@Override
 	public String toString() {
 		return String.format("ItemWrapper [itemStack=%s, movementProgress=%d]",
-						String.valueOf(itemStack), movementProgress);
+				String.valueOf(itemStack), movementProgress);
 	}
 
 	public NBTTagCompound writeToNBT() {
@@ -115,7 +115,7 @@ public class ItemWrapper {
 
 	/**
 	 * Executes a deep-copy of this ItemWrapper.
-	 * 
+	 *
 	 * @return An exact copy of this ItemWrapper, including an exact copy of its
 	 *         contents.
 	 */

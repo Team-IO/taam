@@ -2,8 +2,6 @@ package net.teamio.taam.content.common;
 
 import java.util.List;
 
-import com.mojang.realmsclient.gui.ChatFormatting;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.gui.GuiScreen;
@@ -20,6 +18,7 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
@@ -33,7 +32,7 @@ import net.teamio.taam.piping.IPipe;
 
 /**
  * Debug Tool, currently used for debugging conveyors.
- * 
+ *
  * @author founderio
  *
  */
@@ -41,15 +40,14 @@ public class ItemDebugTool extends Item {
 
 	public ItemDebugTool() {
 		super();
-		this.setMaxStackSize(1);
-		this.setMaxDamage(0);
+		setMaxStackSize(1);
+		setMaxDamage(0);
 	}
-	
+
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean detailInfo) {
-
-		list.add(ChatFormatting.DARK_GREEN + I18n.format("lore.taam.debugtool", new Object[0]));
+		list.add(TextFormatting.DARK_GREEN + I18n.format("lore.taam.debugtool", new Object[0]));
 		if (GuiScreen.isShiftKeyDown()) {
 			String usage = I18n.format("lore.taam.debugtool.usage", new Object[0]);
 			//Split at literal \n in the translated text. a lot of escaping here.
@@ -58,17 +56,17 @@ public class ItemDebugTool extends Item {
 				list.add(split[i]);
 			}
 		} else {
-			list.add(ChatFormatting.DARK_PURPLE + I18n.format("lore.taam.shift", new Object[0]));
+			list.add(TextFormatting.DARK_PURPLE + I18n.format("lore.taam.shift", new Object[0]));
 		}
 	}
-	
+
 	@Override
 	public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 		if(!Config.debug)
 		{
 			//TODO: Clarify!
 			//if(!world.isRemote) {
-			SoundEvent soundevent = (SoundEvent)SoundEvent.REGISTRY.getObject(new ResourceLocation("taam", "sip_ah"));
+			SoundEvent soundevent = SoundEvent.REGISTRY.getObject(new ResourceLocation("taam", "sip_ah"));
 			worldIn.playSound(playerIn, pos, soundevent, SoundCategory.BLOCKS, 1f, 1f);
 			//}
 			return EnumActionResult.SUCCESS;
@@ -78,89 +76,90 @@ public class ItemDebugTool extends Item {
 		IBlockState state = worldIn.getBlockState(pos);
 		Block clickedOn = state.getBlock();
 
-    	String text = String.format(remoteState + " RS: %b Side: %s Weak: %d Strong: %d",
-    			state.canProvidePower(), facing.toString(), state.getWeakPower(worldIn, pos, facing), state.getStrongPower(worldIn, pos, facing));
+		String text = String.format(remoteState + " RS: %b Side: %s Weak: %d Strong: %d",
+				state.canProvidePower(), facing.toString(), state.getWeakPower(worldIn, pos, facing), state.getStrongPower(worldIn, pos, facing));
 
-    	playerIn.addChatMessage(new TextComponentString(text));
-    	
-    	EnumFacing oppSide = facing.getOpposite();
-    	
-    	text = String.format(remoteState + " RS: %b Opposite Side: %s Weak: %d Strong: %d",
-    			state.canProvidePower(), oppSide.toString(), state.getWeakPower(worldIn, pos, oppSide), state.getStrongPower(worldIn, pos, oppSide));
-    	
+		playerIn.addChatMessage(new TextComponentString(text));
 
-    	text = String.format(remoteState + " Indirectly Powered: %d",
-    	    	worldIn.isBlockIndirectlyGettingPowered(pos));
-    	
-    	playerIn.addChatMessage(new TextComponentString(text));
-		
+		EnumFacing oppSide = facing.getOpposite();
+
+		text = String.format(remoteState + " RS: %b Opposite Side: %s Weak: %d Strong: %d",
+				state.canProvidePower(), oppSide.toString(), state.getWeakPower(worldIn, pos, oppSide), state.getStrongPower(worldIn, pos, oppSide));
+
+
+		text = String.format(remoteState + " Indirectly Powered: %d",
+				worldIn.isBlockIndirectlyGettingPowered(pos));
+
+		playerIn.addChatMessage(new TextComponentString(text));
+
 		//EnumFacing dir = EnumFacing.getOrientation(side);
-        //EnumFacing dirOpp = dir.getOpposite();
+		//EnumFacing dirOpp = dir.getOpposite();
 
-        //Vector3 localHit = new Vector3(hitx, hity, hitz);
-        
-		
-        boolean didSomething = false;
-        
-        TileEntity te = worldIn.getTileEntity(pos);
+		//Vector3 localHit = new Vector3(hitx, hity, hitz);
 
-    	
-        if(te instanceof TileEntityConveyor) {
-        	didSomething = true;
-        	TileEntityConveyor tec = (TileEntityConveyor) te;
-        	tec.updateContainingBlockInfo();
-        	
-        	text = String.format(remoteState + " Conveyor facing %s. isEnd: %b isBegin: %b",
-        			tec.getFacingDirection().toString(), tec.isEnd, tec.isBegin);
 
-        	playerIn.addChatMessage(new TextComponentString(text));
+		boolean didSomething = false;
 
-        }
-        
-        if(te instanceof IConveyorApplianceHost) {
-        	//IConveyorApplianceHost host = (IConveyorApplianceHost)te;
-        }
-        
-        if(te instanceof IPipe) {
-        	
-        	IPipe pipe = (IPipe)te;
-        	
-        	String content = "[";
-        	FluidStack[] fs = pipe.getFluids();
-        	for(FluidStack fluidContent : fs) {
-        		content += fluidContent.getLocalizedName() + " " + fluidContent.amount + ", ";
-        	}
-        	content += "]";
-        	
-        	text = String.format(remoteState + " %s Pipe pressure: %d suction: %d effective: %d Content: %s",
-        			pipe.getClass().getName(), pipe.getPressure(), pipe.getSuction(), pipe.getPressure() - pipe.getSuction(), content);
+		TileEntity te = worldIn.getTileEntity(pos);
 
-        	playerIn.addChatMessage(new TextComponentString(text));
-        }
-        
-        if(te instanceof IFluidHandler) {
-        	
-        	IFluidHandler fh = (IFluidHandler)te;
-        	
-        	FluidTankInfo[] ti = fh.getTankInfo(EnumFacing.UP);
-        	String content = "";
-        	if(ti.length > 0) {
-        		if(ti[0].fluid == null) {
-        			content = "Nothing 0/" + ti[0].capacity;
-        		} else {
-        			content = ti[0].fluid.getLocalizedName() + " " + ti[0].fluid.amount + "/" + ti[0].capacity;
-        		}
-        	}
-        	
-        	text = String.format(remoteState + " Content: %s",
-        			content);
 
-        	playerIn.addChatMessage(new TextComponentString(text));
-        }
-		if(didSomething)
-        return EnumActionResult.SUCCESS;
-		else if(!didSomething)
-		return EnumActionResult.PASS;
+		if(te instanceof TileEntityConveyor) {
+			didSomething = true;
+			TileEntityConveyor tec = (TileEntityConveyor) te;
+			tec.updateContainingBlockInfo();
+
+			text = String.format(remoteState + " Conveyor facing %s. isEnd: %b isBegin: %b",
+					tec.getFacingDirection().toString(), tec.isEnd, tec.isBegin);
+
+			playerIn.addChatMessage(new TextComponentString(text));
+
+		}
+
+		if(te instanceof IConveyorApplianceHost) {
+			//IConveyorApplianceHost host = (IConveyorApplianceHost)te;
+		}
+
+		if(te instanceof IPipe) {
+
+			IPipe pipe = (IPipe)te;
+
+			String content = "[";
+			FluidStack[] fs = pipe.getFluids();
+			for(FluidStack fluidContent : fs) {
+				content += fluidContent.getLocalizedName() + " " + fluidContent.amount + ", ";
+			}
+			content += "]";
+
+			text = String.format(remoteState + " %s Pipe pressure: %d suction: %d effective: %d Content: %s",
+					pipe.getClass().getName(), pipe.getPressure(), pipe.getSuction(), pipe.getPressure() - pipe.getSuction(), content);
+
+			playerIn.addChatMessage(new TextComponentString(text));
+		}
+
+		if(te instanceof IFluidHandler) {
+
+			IFluidHandler fh = (IFluidHandler)te;
+
+			FluidTankInfo[] ti = fh.getTankInfo(EnumFacing.UP);
+			String content = "";
+			if(ti.length > 0) {
+				if(ti[0].fluid == null) {
+					content = "Nothing 0/" + ti[0].capacity;
+				} else {
+					content = ti[0].fluid.getLocalizedName() + " " + ti[0].fluid.amount + "/" + ti[0].capacity;
+				}
+			}
+
+			text = String.format(remoteState + " Content: %s",
+					content);
+
+			playerIn.addChatMessage(new TextComponentString(text));
+		}
+		if(didSomething) {
+			return EnumActionResult.SUCCESS;
+		} else if(!didSomething) {
+			return EnumActionResult.PASS;
+		}
 		return EnumActionResult.PASS;
 	}
 

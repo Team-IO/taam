@@ -14,18 +14,18 @@ import net.teamio.taam.Taam;
 
 public class ModGuiConfig extends GuiConfig {
 
-	
+
 	public ModGuiConfig(GuiScreen guiScreen)
 	{
 		super(guiScreen,
-		getElements(),
-		Taam.MOD_ID,
-		false,
-		false,
-		GuiConfig.getAbridgedConfigPath(Config.config.toString()));
-		
+				getElements(),
+				Taam.MOD_ID,
+				false,
+				false,
+				GuiConfig.getAbridgedConfigPath(Config.config.toString()));
+
 	}
-	
+
 	private static List<IConfigElement> getElements() {
 		List<IConfigElement> elements = new ArrayList<IConfigElement>();
 		ConfigElement cfgEl = new ConfigElement(Config.config.getCategory(Configuration.CATEGORY_GENERAL));

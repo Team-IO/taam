@@ -31,23 +31,23 @@ import net.teamio.taam.recipes.FluidDrierRecipe;
 import net.teamio.taam.recipes.IProcessingRecipe;
 
 public class FluidDrierCategory extends BlankRecipeCategory {
-	
+
 	private final String localizedName = Translator.translateToLocal(Taam.INTEGRATION_JEI_CATNAME_FLUIDDRIER);
 
 	@Nonnull
 	protected final IDrawable background;
-	
+
 	public static final int slotInput = 0;
 	public static final int slotOutput = 1;
-	
+
 	protected final ItemStack renderStackFluidDrier;
-	
+
 	public FluidDrierCategory(IGuiHelper guiHelper) {
 		ResourceLocation bgLocation = new ResourceLocation("taam", "textures/gui/processors.png");
 		background = guiHelper.createDrawable(bgLocation, 163, 0, 93, 62);
 		renderStackFluidDrier = new ItemStack(TaamMain.itemMachine, 1, Taam.MACHINE_META.fluid_drier.metaData());
 	}
-	
+
 	@Override
 	public String getUid() {
 		return Taam.INTEGRATION_JEI_CAT_FLUIDDRIER;
@@ -62,46 +62,46 @@ public class FluidDrierCategory extends BlankRecipeCategory {
 	public IDrawable getBackground() {
 		return background;
 	}
-	
+
 	@Override
 	public void drawExtras(Minecraft minecraft) {
-        {
-            TextureManager texturemanager = minecraft.renderEngine;
-            texturemanager.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-            
+		{
+			TextureManager texturemanager = minecraft.renderEngine;
+			texturemanager.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+
 			GL11.glPushMatrix();
-			
+
 			RenderHelper.enableGUIStandardItemLighting();
 			GlStateManager.enableRescaleNormal();
-			
+
 			GL11.glTranslated(46.5, 33.2, 1);
 			GL11.glScaled(20, -20, 2);
 			GL11.glRotated(10, 1, 0, 0);
 			GL11.glRotated(45, 0, 1, 0);
-			
+
 			RenderItem ri = Minecraft.getMinecraft().getRenderItem();
 			IBakedModel model = ri.getItemModelMesher().getItemModel(renderStackFluidDrier);
 			ri.renderItem(renderStackFluidDrier, model);
-			
+
 			RenderHelper.disableStandardItemLighting();
 			GlStateManager.disableRescaleNormal();
-			
+
 			GL11.glPopMatrix();
-        }
-        {
-        	FontRenderer fontRendererObj = minecraft.fontRendererObj;
-        	
-        	GL11.glPushMatrix();
-        	
-        	GL11.glScaled(.5, .5, 1);
-    		
-        	String display = Translator.translateToLocalFormatted(Taam.INTEGRATION_JEI_LORE_INTERNAL_CAPACITY, MachineFluidDrier.capacity);
-    		fontRendererObj.drawString(display, 24*2, 3*2, 0x00555555, false);
-    		
-    		GL11.glPopMatrix();
-        }
+		}
+		{
+			FontRenderer fontRendererObj = minecraft.fontRendererObj;
+
+			GL11.glPushMatrix();
+
+			GL11.glScaled(.5, .5, 1);
+
+			String display = Translator.translateToLocalFormatted(Taam.INTEGRATION_JEI_LORE_INTERNAL_CAPACITY, MachineFluidDrier.capacity);
+			fontRendererObj.drawString(display, 24*2, 3*2, 0x00555555, false);
+
+			GL11.glPopMatrix();
+		}
 	}
-	
+
 	@Override
 	public void setRecipe(IRecipeLayout recipeLayout, IRecipeWrapper recipeWrapper) {
 		if(!(recipeWrapper instanceof ProcessingRecipeWrapper)) {
@@ -117,10 +117,10 @@ public class FluidDrierCategory extends BlankRecipeCategory {
 		FluidDrierRecipe recipe = (FluidDrierRecipe)proRec;
 		FluidStack input = recipe.getInputFluid();
 		ItemStack output = recipe.getOutputStack();
-		
+
 		IGuiFluidStackGroup guiFluidStack = recipeLayout.getFluidStacks();
 		IGuiItemStackGroup guiItemStacks = recipeLayout.getItemStacks();
-		
+
 		guiFluidStack.init(slotInput, true, 5, 3, 16, 16, input.amount/*MachineFluidDrier.capacity*/, false, null);
 		guiFluidStack.set(slotInput, input);
 

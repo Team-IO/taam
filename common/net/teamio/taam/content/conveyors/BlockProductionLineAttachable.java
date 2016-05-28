@@ -61,15 +61,16 @@ public class BlockProductionLineAttachable extends BlockProductionLine {
 		// Let the tile entity update anything that is required for rendering
 		ATileEntityAttachable te = (ATileEntityAttachable) worldIn.getTileEntity(pos);
 		te.renderUpdate();
-		
+
 		// This makes the state shows up in F3. Previously it was not actually applied on the rendering, though.
 		// Rendering Transform was applied in getExtendedState
 		// Since 1.9 this seems to work, though
-		
+
 		// Add rotation to state
 		return state.withProperty(DIRECTION, ((IRotatable) te).getFacingDirection());
 	}
 
+	@Override
 	public String getUnlocalizedName(ItemStack itemStack) {
 		int i = itemStack.getItemDamage();
 		Enum<?>[] values = Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META.values();
@@ -91,7 +92,7 @@ public class BlockProductionLineAttachable extends BlockProductionLine {
 
 	@Override
 	public TileEntity createTileEntity(World world, IBlockState state) {
-		Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META variant = (Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META) state
+		Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META variant = state
 				.getValue(VARIANT);
 		switch (variant) {
 		case itembag:

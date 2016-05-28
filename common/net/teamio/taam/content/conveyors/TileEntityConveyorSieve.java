@@ -43,25 +43,25 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 	 * Content
 	 */
 	private ItemWrapper[] items;
-	
+
 	/*
 	 * Conveyor State
 	 */
 	private byte redstoneMode = IRedstoneControlled.MODE_ACTIVE_ON_LOW;
 	private EnumFacing direction = EnumFacing.NORTH;
-	
+
 	/**
 	 * Just for rendering purposes we keep this here.
 	 */
 	public boolean isShutdown;
-	
+
 	public TileEntityConveyorSieve() {
 		items = new ItemWrapper[9];
 		for(int i = 0; i < items.length; i++) {
 			items[i] = new ItemWrapper(null);
 		}
 	}
-	
+
 	@Override
 	public byte getSpeedsteps() {
 		return Config.pl_sieve_speedsteps;
@@ -71,7 +71,7 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 	public void updateContainingBlockInfo() {
 		super.updateContainingBlockInfo();
 	}
-	
+
 	@Override
 	public List<String> getVisibleParts() {
 		return parts;
@@ -93,7 +93,7 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 			ConveyorUtil.dropItem(worldObj, pos, this, index, false);
 		}
 	}
-	
+
 	@Override
 	public void update() {
 
@@ -103,27 +103,27 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 
 		boolean needsUpdate = false;
 		boolean needsWorldUpdate = false;
-		
+
 		if(ConveyorUtil.tryInsertItemsFromWorld(this, worldObj, null, false)) {
 			needsUpdate = true;
 		}
-		
+
 		boolean redstoneHigh = worldObj.isBlockIndirectlyGettingPowered(pos) > 0;
-		
+
 		boolean newShutdown = TaamUtil.isShutdown(worldObj.rand, redstoneMode, redstoneHigh);
-		
-		
+
+
 		if(isShutdown != newShutdown) {
 			isShutdown = newShutdown;
 			needsUpdate = true;
 		}
 
 		if(!isShutdown) {
-			
+
 			// process from movement direction backward to keep slot order inside one conveyor,
 			// as we depend on the status of the next slot
 			int[] slotOrder = ConveyorUtil.getSlotOrderForDirection(direction);
-	
+
 			/*
 			 * Process sieving
 			 */
@@ -131,37 +131,37 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 				needsUpdate = true;
 				needsWorldUpdate = true;
 			}
-			
+
 			/*
 			 * Move items already on the conveyor
 			 */
-		
+
 			if(ConveyorUtil.defaultTransition(worldObj, pos, this, slotOrder)) {
 				needsUpdate = true;
 			}
 		}
-		
+
 		if(needsUpdate) {
 			updateState(needsWorldUpdate, false, false);
 		}
 	}
-	
+
 	public boolean processSieve(int[] slotOrder) {
-		
+
 		BlockPos down = pos.down();
-		
+
 		// If we are blocked below, act as a conveyor.
 		IInventory outputInventory = InventoryUtils.getInventory(worldObj, down);
 		if(outputInventory == null && !TaamUtil.canDropIntoWorld(worldObj, down)) {
 			return false;
 		}
-		
+
 		for(int index = 0; index < slotOrder.length; index++) {
-			
+
 			int slot = slotOrder[index];
-			
+
 			ItemWrapper wrapper = getSlot(slot);
-			
+
 			if(wrapper.isEmpty()) {
 				continue;
 			}
@@ -183,17 +183,17 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 			// Output to world
 			if(!worldObj.isRemote && wrapper.itemStack != null) {
 				EntityItem item = new EntityItem(worldObj, pos.getX() + 0.5, pos.getY() - 0.3, pos.getZ() + 0.5, wrapper.itemStack);
-		        item.motionX = 0;
-		        item.motionY = 0;
-		        item.motionZ = 0;
-		        worldObj.spawnEntityInWorld(item);
-		        wrapper.itemStack = null;
+				item.motionX = 0;
+				item.motionY = 0;
+				item.motionZ = 0;
+				worldObj.spawnEntityInWorld(item);
+				wrapper.itemStack = null;
 			}
-	        return true;
+			return true;
 		} else {
 			// Output to inventory
 			InventoryRange range = new InventoryRange(outputInventory, EnumFacing.UP.ordinal());
-			
+
 			if(wrapper.itemStack == null) {
 				return true;
 			}
@@ -207,12 +207,12 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 			}
 		}
 	}
-	
+
 	@Override
 	public EnumFacing getNextSlot(int slot) {
 		return direction;
 	}
-	
+
 	@Override
 	protected void writePropertiesToNBT(NBTTagCompound tag) {
 		tag.setInteger("direction", direction.ordinal());
@@ -221,7 +221,7 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 			itemsTag.appendTag(items[i].writeToNBT());
 		}
 		tag.setTag("items", itemsTag);
-//		tag.setByte("redstoneMode", redstoneMode);
+		//		tag.setByte("redstoneMode", redstoneMode);
 	}
 
 	@Override
@@ -237,9 +237,9 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 				items[i] = ItemWrapper.readFromNBT(itemsTag.getCompoundTagAt(i));
 			}
 		}
-//		redstoneMode = tag.getByte("redstoneMode");
+		//		redstoneMode = tag.getByte("redstoneMode");
 	}
-	
+
 	/*
 	 * IConveyorAwareTE implementation
 	 */
@@ -248,7 +248,7 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 	public boolean shouldRenderItemsDefault() {
 		return true;
 	}
-	
+
 	@Override
 	public int insertItemAt(ItemStack item, int slot) {
 		int count = ConveyorUtil.insertItemAt(this, item, slot, false);
@@ -257,7 +257,7 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 		}
 		return count;
 	}
-	
+
 	@Override
 	public ItemStack removeItemAt(int slot) {
 		ItemWrapper candidate = items[slot];
@@ -268,18 +268,18 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 		}
 		return removed;
 	}
-	
+
 	@Override
 	public boolean canSlotMove(int slot) {
 		ItemWrapper slotObject = items[slot];
 		return !slotObject.isBlocked();
 	};
-	
+
 	@Override
 	public boolean isSlotAvailable(int slot) {
 		return true;
 	}
-	
+
 	@Override
 	public ItemWrapper getSlot(int slot) {
 		return items[slot];
@@ -310,11 +310,11 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 	public float getVerticalPosition(int slot) {
 		return 0.51f;
 	}
-	
+
 	/*
 	 * IRotatable implementation
 	 */
-	
+
 	@Override
 	public EnumFacing getNextFacingDirection() {
 		return direction.rotateY();
@@ -345,7 +345,7 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 	/*
 	 * IInventory implementation
 	 */
-	
+
 	@Override
 	public int getSizeInventory() {
 		return 9;
@@ -380,12 +380,12 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 	public String getName() {
 		return "tile.productionline.sieve.name";
 	}
-	
+
 	@Override
 	public ITextComponent getDisplayName() {
 		return new TextComponentTranslation(getName());
 	}
-	
+
 	@Override
 	public boolean hasCustomName() {
 		return false;
@@ -431,11 +431,12 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 	@Override
 	public void clear() {
 	}
-	
+
 	/*
 	 * ISidedInventory implementation
 	 */
-	
+
+	@Override
 	public int[] getSlotsForFace(EnumFacing side) {
 		final int slot = ConveyorUtil.getSlot(side);
 		if(slot == -1) {
@@ -444,7 +445,7 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 			return new int[] { slot };
 		}
 	};
-	
+
 	@Override
 	public boolean canInsertItem(int index, ItemStack itemStackIn, EnumFacing direction) {
 		return ConveyorUtil.insertItemAt(this, itemStackIn, index, true) > 0;
@@ -458,7 +459,7 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 	/*
 	 * IWorldInteractable implementation
 	 */
-	
+
 	@Override
 	public boolean onBlockActivated(World world, EntityPlayer player, boolean hasWrench, EnumFacing side, float hitX,
 			float hitY, float hitZ) {
@@ -468,7 +469,7 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 		ConveyorUtil.defaultPlayerInteraction(player, this, hitX, hitZ);
 		return true;
 	}
-	
+
 	@Override
 	public boolean onBlockHit(World world, EntityPlayer player, boolean hasWrench) {
 		return false;
@@ -490,12 +491,12 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 
 	@Override
 	public void setRedstoneMode(byte mode) {
-		this.redstoneMode = mode;
+		redstoneMode = mode;
 		if(worldObj.isRemote) {
 			TPMachineConfiguration config = TPMachineConfiguration.newChangeInteger(new WorldCoord(this), (byte)1, redstoneMode);
 			TaamMain.network.sendToServer(config);
 		} else {
-			this.markDirty();
+			markDirty();
 		}
 	}
 }

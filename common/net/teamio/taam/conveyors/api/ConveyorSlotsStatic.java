@@ -6,7 +6,7 @@ import net.teamio.taam.conveyors.SlotMatrix;
 
 /**
  * Base class for non-conveyor-like slot sets.
- * 
+ *
  * @author Oliver Kahrmann
  *
  */

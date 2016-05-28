@@ -36,13 +36,13 @@ public class BlockProductionLine extends BaseBlock {
 
 	public static final PropertyEnum<Taam.BLOCK_PRODUCTIONLINE_META> VARIANT = PropertyEnum.create("variant",
 			Taam.BLOCK_PRODUCTIONLINE_META.class);
-	
+
 	public static final AxisAlignedBB BLOCK_BOUNDS = new AxisAlignedBB(0, 0, 0, 1, 0.5f, 1);
 
 	public BlockProductionLine() {
 		super(MaterialMachinesTransparent.INSTANCE);
-		this.setHardness(3.5f);
-		this.setSoundType(SoundType.METAL);
+		setHardness(3.5f);
+		setSoundType(SoundType.METAL);
 		this.setHarvestLevel("pickaxe", 1);
 	}
 
@@ -54,7 +54,7 @@ public class BlockProductionLine extends BaseBlock {
 
 	@Override
 	public int getMetaFromState(IBlockState state) {
-		Taam.BLOCK_PRODUCTIONLINE_META meta = (Taam.BLOCK_PRODUCTIONLINE_META) state.getValue(VARIANT);
+		Taam.BLOCK_PRODUCTIONLINE_META meta = state.getValue(VARIANT);
 		return meta.ordinal();
 	}
 
@@ -78,6 +78,7 @@ public class BlockProductionLine extends BaseBlock {
 		return super.getUnlocalizedName() + "." + values[i].name();
 	}
 
+	@Override
 	@SideOnly(Side.CLIENT)
 	public BlockRenderLayer getBlockLayer() {
 		return BlockRenderLayer.CUTOUT;
@@ -94,7 +95,7 @@ public class BlockProductionLine extends BaseBlock {
 
 	@Override
 	public TileEntity createTileEntity(World world, IBlockState state) {
-		Taam.BLOCK_PRODUCTIONLINE_META variant = (Taam.BLOCK_PRODUCTIONLINE_META) state.getValue(VARIANT);
+		Taam.BLOCK_PRODUCTIONLINE_META variant = state.getValue(VARIANT);
 		switch (variant) {
 		case conveyor1:
 			// Plain Conveyor, Tier 1
@@ -130,7 +131,7 @@ public class BlockProductionLine extends BaseBlock {
 		Log.error("Was not able to create a TileEntity for " + getClass().getName());
 		return null;
 	}
-	
+
 	@Override
 	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
 		return BLOCK_BOUNDS;

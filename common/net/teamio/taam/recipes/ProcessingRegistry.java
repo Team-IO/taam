@@ -11,15 +11,15 @@ import net.minecraftforge.fluids.FluidStack;
 
 /**
  * Registry for all processing machines. Provides indexed access to all recipes.
- * 
+ *
  * Supported recipes have to extend {@link IProcessingRecipe}, special handling
  * for {@link IProcessingRecipeFluidBased} exists.
- * 
+ *
  * For every machine there is an integer constant e.g. {@link #GRINDER}, that
  * can be used for querying. New machines can be added via
  * {@link #registerMachine(ProcessingRegistryEntry)} which returns a new integer
  * "constant".
- * 
+ *
  * @author Oliver Kahrmann
  *
  */
@@ -51,9 +51,9 @@ public final class ProcessingRegistry {
 	/**
 	 * Returns the number of registered machines. Since the machines are
 	 * numbered sequentially, this can be used to iterate over all machines.
-	 * 
+	 *
 	 * See also {@link #getRegistryEntries()}.
-	 * 
+	 *
 	 * @return The number of registered machines, also used as the next index
 	 *         for registering new machines.
 	 */
@@ -63,7 +63,7 @@ public final class ProcessingRegistry {
 
 	/**
 	 * Returns all registry entries.
-	 * 
+	 *
 	 * @return All registry entries.
 	 */
 	public static Collection<ProcessingRegistryEntry> getRegistryEntries() {
@@ -72,7 +72,7 @@ public final class ProcessingRegistry {
 
 	/**
 	 * Returns the registry entry for a machine.
-	 * 
+	 *
 	 * @param machine
 	 * @return
 	 */
@@ -82,7 +82,7 @@ public final class ProcessingRegistry {
 
 	/**
 	 * Registers a new registry entry.
-	 * 
+	 *
 	 * @param entry
 	 * @return The integer value that can be used to query the registry later.
 	 *         Alternatively, the registry entry itself can be used, as the
@@ -99,7 +99,7 @@ public final class ProcessingRegistry {
 	 * Returns the first {@link IProcessingRecipe} that has a matching input.
 	 * Searches for an exact {@link Item} match first, then the ore dictionary
 	 * entries.
-	 * 
+	 *
 	 * @param machine
 	 * @param input
 	 * @return
@@ -113,7 +113,7 @@ public final class ProcessingRegistry {
 	/**
 	 * Returns all {@link IProcessingRecipe} that have a matching input. Exact
 	 * {@link Item} matches will appear sorted before ore dictionary matches.
-	 * 
+	 *
 	 * @param machine
 	 * @param input
 	 * @return
@@ -127,7 +127,7 @@ public final class ProcessingRegistry {
 	/**
 	 * Returns the first {@link IProcessingRecipeFluidBased} that has a matching
 	 * input.
-	 * 
+	 *
 	 * @param machine
 	 * @param input
 	 * @return
@@ -141,7 +141,7 @@ public final class ProcessingRegistry {
 	/**
 	 * Returns all {@link IProcessingRecipeFluidBased} that have a matching
 	 * input.
-	 * 
+	 *
 	 * @param machine
 	 * @param input
 	 * @return
@@ -157,11 +157,11 @@ public final class ProcessingRegistry {
 	 * {@link IProcessingRecipe} are indexed for input item or ore dictionary
 	 * name. All recipes can then be searched using
 	 * {@link #getRecipe(int, ItemStack)}.
-	 * 
+	 *
 	 * Special handling: {@link IProcessingRecipeFluidBased} will be indexed for
 	 * input fluid and can be searched using {@link #getRecipe(int, FluidStack)}
 	 * .
-	 * 
+	 *
 	 * @param machine
 	 * @param recipe
 	 */
@@ -173,7 +173,7 @@ public final class ProcessingRegistry {
 
 	/**
 	 * Fetch all recipes for a machine.
-	 * 
+	 *
 	 * @param machine
 	 * @return
 	 */
