@@ -3,9 +3,10 @@ package net.teamio.taam.content.common;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
-import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
@@ -19,16 +20,16 @@ public class BlockBuilding extends Block {
 	public static final PropertyEnum<Taam.BLOCK_CONCRETE_META> VARIANT = PropertyEnum.create("variant", Taam.BLOCK_CONCRETE_META.class);
 	
 	public BlockBuilding() {
-		super(Material.rock);
-		this.setStepSound(Block.soundTypeStone);
+		super(Material.ROCK);
+		this.setSoundType(SoundType.STONE);
 		this.setHarvestLevel("pickaxe", 1);
 		this.setResistance(3.7f);
 		this.setHardness(2);
 	}
 	
 	@Override
-	protected BlockState createBlockState() {
-		return new BlockState(this, VARIANT);
+	protected BlockStateContainer createBlockState() {
+		return new BlockStateContainer(this, VARIANT);
 	}
 	
 	@Override
@@ -44,6 +45,11 @@ public class BlockBuilding extends Block {
 			return getDefaultState();
 		}
 		return getDefaultState().withProperty(VARIANT, values[meta]);
+	}
+	
+	@Override
+	public int damageDropped(IBlockState state) {
+		return state.getValue(VARIANT).ordinal();
 	}
 
 	public String getUnlocalizedName(ItemStack itemStack) {

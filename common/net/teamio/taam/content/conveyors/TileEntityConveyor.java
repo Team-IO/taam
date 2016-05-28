@@ -1,7 +1,10 @@
 package net.teamio.taam.content.conveyors;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+
+import com.google.common.collect.Lists;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
@@ -9,31 +12,25 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.util.IChatComponent;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidHandler;
 import net.teamio.taam.Config;
 import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IRenderable;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.content.IWorldInteractable;
-import net.teamio.taam.conveyors.ApplianceRegistry;
 import net.teamio.taam.conveyors.ConveyorUtil;
-import net.teamio.taam.conveyors.IConveyorAppliance;
-import net.teamio.taam.conveyors.IConveyorApplianceFactory;
 import net.teamio.taam.conveyors.ItemWrapper;
+import net.teamio.taam.conveyors.api.IConveyorAppliance;
 import net.teamio.taam.conveyors.api.IConveyorApplianceHost;
-import net.teamio.taam.conveyors.api.IConveyorAwareTE;
+import net.teamio.taam.conveyors.api.IConveyorSlots;
 
-public class TileEntityConveyor extends BaseTileEntity implements ISidedInventory, IFluidHandler, IConveyorAwareTE, IRotatable, IConveyorApplianceHost, IWorldInteractable, ITickable, IRenderable {
+public class TileEntityConveyor extends BaseTileEntity implements ISidedInventory, IConveyorSlots, IRotatable, IConveyorApplianceHost, IWorldInteractable, ITickable, IRenderable {
 
 	/*
 	 * Content
@@ -54,11 +51,21 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	public boolean renderLeft = false;
 	public boolean renderAbove = false;
 	
-	/*
-	 * Appliance state
+	/**
+	 * ThreadLocal storage for the list of visible parts (required due to some concurrency issues, See issue #194)
+	 * TODO: central location for one list? Not one per entity type.. Adjust getVisibleParts
 	 */
-	private String applianceType;
-	private IConveyorAppliance appliance;
+	private static final ThreadLocal<List<String>> visibleParts = new ThreadLocal<List<String>>() {
+		@Override
+		protected List<String> initialValue() {
+			return new ArrayList<String>(14);
+		}
+	};
+	
+	/**
+	 * Appliance cache. Updated when loading & on block update
+	 */
+	private List<IConveyorAppliance> applianceCache;
 
 
 	public TileEntityConveyor() {
@@ -83,115 +90,151 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	}
 	
 	@Override
-	public void updateRenderingInfo() {
+	public void blockUpdate() {
 		if(worldObj != null) {
-			
-			// Check in front
-			TileEntity te = worldObj.getTileEntity(pos.offset(direction));
-			if(te instanceof TileEntityConveyor) {
-				TileEntityConveyor next = (TileEntityConveyor)te;
-				renderEnd = next.speedLevel != speedLevel;
-				renderEnd = renderEnd || next.getFacingDirection() != direction;
-				isEnd = renderEnd;
-			} else {
-				isEnd = true;
-				renderEnd = te instanceof IConveyorAwareTE;
-			}
-			
-			// Check behind
-			EnumFacing inverse = direction.getOpposite();
-			te = worldObj.getTileEntity(pos.offset(inverse));
-			if(te instanceof TileEntityConveyor) {
-				TileEntityConveyor next = (TileEntityConveyor)te;
-				renderBegin = next.speedLevel != speedLevel;
-				renderBegin = renderBegin || next.getFacingDirection() != direction;
-				isBegin = renderBegin;
-			} else {
-				isBegin = true;
-				renderBegin = te instanceof IConveyorAwareTE;
-			}
-			
-			// Check right
-			inverse = direction.rotateAround(Axis.Y);
-			te = worldObj.getTileEntity(pos.offset(inverse));
-			
-			if(te instanceof TileEntityConveyor) {
-				TileEntityConveyor next = (TileEntityConveyor)te;
-				EnumFacing nextFacing = next.getFacingDirection();
-				renderRight = nextFacing != direction && nextFacing != direction.getOpposite();
-			} else {
-				renderRight = te instanceof IConveyorAwareTE;
-			}
-			
-			// Check left
-			inverse = direction.getOpposite().rotateAround(Axis.Y);
-			te = worldObj.getTileEntity(pos.offset(inverse));
-			
-			if(te instanceof TileEntityConveyor) {
-				TileEntityConveyor next = (TileEntityConveyor)te;
-				EnumFacing nextFacing = next.getFacingDirection();
-				renderLeft = nextFacing != direction && nextFacing != direction.getOpposite();
-			} else {
-				renderLeft = te instanceof IConveyorAwareTE;
-			}
-			
-			// Check above
-			renderAbove = worldObj.isSideSolid(pos.offset(EnumFacing.UP), EnumFacing.DOWN) ||
-					worldObj.getTileEntity(pos.offset(EnumFacing.UP)) instanceof IConveyorAwareTE;
-
-			worldObj.markBlockRangeForRenderUpdate(pos, pos);
+			updateApplianceCache();
 		}
 	}
 	
 	@Override
+	public void renderUpdate() {
+		// Check in front
+		TileEntity te = worldObj.getTileEntity(pos.offset(direction));
+		
+		if(te instanceof TileEntityConveyor) {
+			TileEntityConveyor next = (TileEntityConveyor)te;
+			renderEnd = next.speedLevel != speedLevel;
+			renderEnd = renderEnd || next.getFacingDirection() != direction;
+			isEnd = renderEnd;
+		} else {
+			isEnd = true;
+			renderEnd = ConveyorUtil.getSlots(te, direction.getOpposite()) != null;
+		}
+		
+		// Check behind
+		EnumFacing inverse = direction.getOpposite();
+		te = worldObj.getTileEntity(pos.offset(inverse));
+		if(te instanceof TileEntityConveyor) {
+			TileEntityConveyor next = (TileEntityConveyor)te;
+			renderBegin = next.speedLevel != speedLevel;
+			renderBegin = renderBegin || next.getFacingDirection() != direction;
+			isBegin = renderBegin;
+		} else {
+			isBegin = true;
+			renderBegin = ConveyorUtil.getSlots(te, direction) != null;
+		}
+		
+		// Check right
+		inverse = direction.rotateY();
+		te = worldObj.getTileEntity(pos.offset(inverse));
+		
+		if(te instanceof TileEntityConveyor) {
+			TileEntityConveyor next = (TileEntityConveyor)te;
+			EnumFacing nextFacing = next.getFacingDirection();
+			renderRight = nextFacing.getAxis() != direction.getAxis();
+		} else {
+			renderRight = ConveyorUtil.getSlots(te, inverse.getOpposite()) != null;
+		}
+		
+		// Check left
+		inverse = direction.rotateYCCW();
+		te = worldObj.getTileEntity(pos.offset(inverse));
+		
+		if(te instanceof TileEntityConveyor) {
+			TileEntityConveyor next = (TileEntityConveyor)te;
+			EnumFacing nextFacing = next.getFacingDirection();
+			renderLeft = nextFacing.getAxis() != direction.getAxis();
+		} else {
+			renderLeft = ConveyorUtil.getSlots(te, inverse.getOpposite()) != null;
+		}
+		
+		// Check above
+		// Render supports if above face is solid or there is a conveyor machine there.
+		renderAbove = worldObj.isSideSolid(pos.offset(EnumFacing.UP), EnumFacing.DOWN) ||
+				ConveyorUtil.getSlots(worldObj.getTileEntity(pos.offset(EnumFacing.UP)), EnumFacing.DOWN) != null;
+	}
+	
+	/*
+	 * Part lists for the inventory rendering
+	 */
+
+	public static List<String> parts_invalid = Collections.unmodifiableList(Lists.newArrayList(
+			"Support_Alu_smdl_alu",
+			"ConveyorRoundEnd_Framing_Alu_crfmdl_alu", "ConveyorRoundBegin_Framing_Alu_crfmdl_alu"
+			));
+	
+	public static List<String> parts_1 = Collections.unmodifiableList(Lists.newArrayList(
+			"ConveyorRoundEnd_crmdl", "ConveyorRoundBegin_crmdl",
+			"ConveyorRoundEnd_Walz_Wood_cwalzmdl_wood", "ConveyorRoundEnd_Framing_Wood_crfmdl_wood",
+			"ConveyorRoundBegin_Walz_Wood_cwalzmdl_wood", "ConveyorRoundBegin_Framing_Wood_crfmdl_wood",
+			"Support_Wood_smdl_wood", "ConveyorDirectionMarker_Wood_cdmdl_wood"
+			));
+
+	public static List<String> parts_2 = Collections.unmodifiableList(Lists.newArrayList(
+			"ConveyorRoundEnd_crmdl", "ConveyorRoundBegin_crmdl",
+			"ConveyorRoundEnd_Walz_Alu_cwalzmdl_alu", "ConveyorRoundEnd_Framing_Alu_crfmdl_alu",
+			"ConveyorRoundBegin_Walz_Alu_cwalzmdl_alu", "ConveyorRoundBegin_Framing_Alu_crfmdl_alu",
+			"Support_Alu_smdl_alu", "ConveyorDirectionMarker_Alu_cdmdl_alu"
+			));
+
+	public static List<String> parts_3 = Collections.unmodifiableList(Lists.newArrayList(
+			"ConveyorRoundEnd_crmdl", "ConveyorRoundBegin_crmdl",
+			"ConveyorRoundEnd_Walz_Alu_cwalzmdl_alu", "ConveyorRoundEnd_Framing_Alu_crfmdl_alu",
+			"ConveyorRoundBegin_Walz_Alu_cwalzmdl_alu", "ConveyorRoundBegin_Framing_Alu_crfmdl_alu",
+			"Support_Alu_smdl_alu", "ConveyorDirectionMarker_Alu_cdmdl_alu",
+			"ConveyorHighThroughput_Framing_Alu_chtpmdl_alu"
+			));
+	
+	@Override
 	public List<String> getVisibleParts() {
-		List<String> visible = new LinkedList<String>();
+		List<String> visibleParts = TileEntityConveyor.visibleParts.get();
+		
+		// Visible parts list is re-used to reduce object creation
+		visibleParts.clear();
+		
 		boolean isWood = speedLevel == 0;
 		boolean isHighSpeed = speedLevel > 1;
 		
 		if(isEnd) {
-			visible.add("ConveyorRoundEnd_crmdl");
-			visible.add(isWood ? "ConveyorRoundEnd_Walz_Wood_cwalzmdl_wood" : "ConveyorRoundEnd_Walz_Alu_cwalzmdl_alu");
-			visible.add(isWood ? "ConveyorRoundEnd_Framing_Wood_crfmdl_wood" : "ConveyorRoundEnd_Framing_Alu_crfmdl_alu");
+			visibleParts.add("ConveyorRoundEnd_crmdl");
+			visibleParts.add(isWood ? "ConveyorRoundEnd_Walz_Wood_cwalzmdl_wood" : "ConveyorRoundEnd_Walz_Alu_cwalzmdl_alu");
+			visibleParts.add(isWood ? "ConveyorRoundEnd_Framing_Wood_crfmdl_wood" : "ConveyorRoundEnd_Framing_Alu_crfmdl_alu");
 		} else {
-			visible.add("ConveyorStraightEnd_csmdl");
-			visible.add(isWood ? "ConveyorStraightEnd_Walz_Wood_cwalzmdl_wood" : "ConveyorStraightEnd_Walz_Alu_cwalzmdl_alu");
-			visible.add(isWood ? "ConveyorStraightEnd_Framing_Wood_csfmdl_wood" : "ConveyorStraightEnd_Framing_Alu_csfmdl_alu");
+			visibleParts.add("ConveyorStraightEnd_csmdl");
+			visibleParts.add(isWood ? "ConveyorStraightEnd_Walz_Wood_cwalzmdl_wood" : "ConveyorStraightEnd_Walz_Alu_cwalzmdl_alu");
+			visibleParts.add(isWood ? "ConveyorStraightEnd_Framing_Wood_csfmdl_wood" : "ConveyorStraightEnd_Framing_Alu_csfmdl_alu");
 		}
 		if(isBegin) {
-			visible.add("ConveyorRoundBegin_crmdl");
-			visible.add(isWood ? "ConveyorRoundBegin_Walz_Wood_cwalzmdl_wood" : "ConveyorRoundBegin_Walz_Alu_cwalzmdl_alu");
-			visible.add(isWood ? "ConveyorRoundBegin_Framing_Wood_crfmdl_wood" : "ConveyorRoundBegin_Framing_Alu_crfmdl_alu");
+			visibleParts.add("ConveyorRoundBegin_crmdl");
+			visibleParts.add(isWood ? "ConveyorRoundBegin_Walz_Wood_cwalzmdl_wood" : "ConveyorRoundBegin_Walz_Alu_cwalzmdl_alu");
+			visibleParts.add(isWood ? "ConveyorRoundBegin_Framing_Wood_crfmdl_wood" : "ConveyorRoundBegin_Framing_Alu_crfmdl_alu");
 		} else {
-			visible.add("ConveyorStraightBegin_csmdl");
-			visible.add(isWood ? "ConveyorStraightBegin_Walz_Wood_cwalzmdl_wood" : "ConveyorStraightBegin_Walz_Alu_cwalzmdl_alu");
-			visible.add(isWood ? "ConveyorStraightBegin_Framing_Wood_csfmdl_wood" : "ConveyorStraightBegin_Framing_Alu_csfmdl_alu");
+			visibleParts.add("ConveyorStraightBegin_csmdl");
+			visibleParts.add(isWood ? "ConveyorStraightBegin_Walz_Wood_cwalzmdl_wood" : "ConveyorStraightBegin_Walz_Alu_cwalzmdl_alu");
+			visibleParts.add(isWood ? "ConveyorStraightBegin_Framing_Wood_csfmdl_wood" : "ConveyorStraightBegin_Framing_Alu_csfmdl_alu");
 		}
-		visible.add(isWood ? "Support_Wood_smdl_wood" : "Support_Alu_smdl_alu");
-		visible.add(isWood ? "ConveyorDirectionMarker_Wood_cdmdl_wood" : "ConveyorDirectionMarker_Alu_cdmdl_alu");
+		visibleParts.add(isWood ? "Support_Wood_smdl_wood" : "Support_Alu_smdl_alu");
+		visibleParts.add(isWood ? "ConveyorDirectionMarker_Wood_cdmdl_wood" : "ConveyorDirectionMarker_Alu_cdmdl_alu");
 		if(renderAbove) {
-			visible.add(isWood ? "ConveyorSupportAbove_Wood_samdl_wood" : "ConveyorSupportAbove_Alu_samdl_alu");
+			visibleParts.add(isWood ? "ConveyorSupportAbove_Wood_samdl_wood" : "ConveyorSupportAbove_Alu_samdl_alu");
 		}
 		if(renderBegin) {
-			visible.add(isWood ? "ConveyorRoundBeginCap_Wood_cecmdl_wood" : "ConveyorRoundBeginCap_Alu_cecmdl_alu");
+			visibleParts.add(isWood ? "ConveyorRoundBeginCap_Wood_cecmdl_wood" : "ConveyorRoundBeginCap_Alu_cecmdl_alu");
 		}
 		if(renderEnd) {
-			visible.add(isWood ? "ConveyorRoundEndCap_Wood_cecmdl_wood" : "ConveyorRoundEndCap_Alu_cecmdl_alu");
+			visibleParts.add(isWood ? "ConveyorRoundEndCap_Wood_cecmdl_wood" : "ConveyorRoundEndCap_Alu_cecmdl_alu");
 		}
 		if(renderLeft) {
-			visible.add(isWood ? "ConveyorLeftCap_Wood_cecmdl_wood" : "ConveyorLeftCap_Alu_cecmdl_alu");
+			visibleParts.add(isWood ? "ConveyorLeftCap_Wood_cecmdl_wood" : "ConveyorLeftCap_Alu_cecmdl_alu");
 		}
 		if(renderRight) {
-			visible.add(isWood ? "ConveyorRightCap_Wood_cecmdl_wood" : "ConveyorRight Cap_Alu_cecmdl_alu");
+			visibleParts.add(isWood ? "ConveyorRightCap_Wood_cecmdl_wood" : "ConveyorRightCap_Alu_cecmdl_alu");
 		}
 		if(isHighSpeed) {
-			visible.add("ConveyorHighThroughput_Framing_Alu_chtpmdl_alu");
+			visibleParts.add("ConveyorHighThroughput_Framing_Alu_chtpmdl_alu");
 		}
 		
-		//TODO: Adjust blender model to have all "end" vertices
-		//TODO: Fix Walz Models (sides don't render completely)
-		
-		return visible;
+		return visibleParts;
 	}
 
 	/**
@@ -207,20 +250,22 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	 */
 	public void dropItems() {
 		for (int index = 0; index < items.length; index++) {
-			ConveyorUtil.dropItem(worldObj, this, index, false);
+			ConveyorUtil.dropItem(worldObj, pos, this, index, false);
 		}
 	}
 	
 	@Override
 	public void update() {
 
+		// Call this method to initialize the appliance cache if needed.
+		getAppliances();
+		
 		/*
 		 * Find items laying on the conveyor.
 		 */
-		boolean needsUpdate = false;
 		
 		if(ConveyorUtil.tryInsertItemsFromWorld(this, worldObj, null, false)) {
-			needsUpdate = true;
+			updateState(false, false, false);
 		}
 
 		/*
@@ -230,11 +275,8 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 		// process from movement direction backward to keep slot order inside one conveyor,
 		// as we depend on the status of the next slot
 		int[] slotOrder = ConveyorUtil.getSlotOrderForDirection(direction);
-		if(ConveyorUtil.defaultTransition(worldObj, this, slotOrder)) {
-			needsUpdate = true;
-		}
-		if(needsUpdate) {
-			updateState();
+		if(ConveyorUtil.defaultTransition(worldObj, pos, this, slotOrder)) {
+			updateState(false, false, false);
 		}
 	}
 
@@ -251,14 +293,6 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	protected void writePropertiesToNBT(NBTTagCompound tag) {
 		tag.setInteger("direction", direction.ordinal());
 		tag.setInteger("speedLevel", speedLevel);
-		if(applianceType != null) {
-			tag.setString("applianceType", applianceType);
-		}
-		if(appliance != null) {
-			NBTTagCompound applianceData = new NBTTagCompound();
-			appliance.writeToNBT(applianceData);
-			tag.setTag("appliance", applianceData);
-		}
 		NBTTagList itemsTag = new NBTTagList();
 		for(int i = 0; i < items.length; i++) {
 			itemsTag.appendTag(items[i].writeToNBT());
@@ -304,14 +338,6 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 				items[i] = ItemWrapper.readFromNBT(itemsTag.getCompoundTagAt(i));
 			}
 		}
-		String newApplianceType = tag.getString("applianceType");
-		setAppliance(newApplianceType);
-		if(appliance != null) {
-			NBTTagCompound applianceData = tag.getCompoundTag("appliance");
-			if(applianceData != null) {
-				appliance.readFromNBT(applianceData);
-			}
-		}
 		int flags = tag.getInteger("flags");
 		isEnd = (flags & 1) != 0;
 		isBegin = (flags & 2) != 0;
@@ -335,9 +361,20 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	public int insertItemAt(ItemStack item, int slot) {
 		int count = ConveyorUtil.insertItemAt(this, item, slot, false);
 		if(count > 0) {
-			updateState();
+			updateState(true, false, false);
 		}
 		return count;
+	}
+	
+	@Override
+	public ItemStack removeItemAt(int slot) {
+		ItemWrapper candidate = items[slot];
+		ItemStack removed = candidate.itemStack;
+		if(removed != null) {
+			candidate.itemStack = null;
+			updateState(true, false, false);
+		}
+		return removed;
 	}
 	
 	@Override
@@ -376,6 +413,11 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	public double getInsertMinY() {
 		return 0.3;
 	}
+
+	@Override
+	public float getVerticalPosition(int slot) {
+		return 0.51f;
+	}
 	
 	/*
 	 * IRotatable implementation
@@ -388,16 +430,18 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 
 	@Override
 	public void setFacingDirection(EnumFacing direction) {
+		if(this.direction == direction) {
+			// Only update if necessary
+			return;
+		}
 		this.direction = direction;
 		if(direction == EnumFacing.UP || direction == EnumFacing.DOWN) {
 			this.direction = EnumFacing.NORTH;
 		}
-		updateRenderingInfo();
-		updateState();
-		worldObj.notifyNeighborsOfStateChange(pos, blockType);
+		updateState(false, true, true);
+		worldObj.notifyBlockOfStateChange(pos, blockType);
 		if(blockType != null) {
-			//TODO: Update this block -> drop if it can't stay anymore
-			//blockType.onNeighborBlockChange(worldObj, pos, blockType);
+			blockType.onNeighborChange(worldObj, pos, pos);
 		}
 	}
 
@@ -417,211 +461,115 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	}
 	
 	@Override
-	public boolean initAppliance(String name) {
-		if(hasAppliance()) {
-			return false;
+	public List<IConveyorAppliance> getAppliances() {
+		if(applianceCache == null) {
+			updateApplianceCache();
 		}
-		boolean result = setAppliance(name);
-		updateState();
-		updateContainingBlockInfo();
-		return result;
+		return applianceCache;
 	}
 	
-	private boolean setAppliance(String type) {
-		if(type == null) {
-			appliance = null;
-			applianceType = null;
-			return true;
-		}
-		if(!canAcceptAppliance(type)) {
-			return false;
-		}
-		if(type.equals(applianceType)) {
-			return false;
-		}
-		IConveyorApplianceFactory factory = ApplianceRegistry.getFactory(type);
-		if(factory == null) {
-			appliance = null;
-			applianceType = null;
+	public void updateApplianceCache() {
+		if(speedLevel == 1) {
+			applianceCache = ConveyorUtil.getTouchingAppliances(this, worldObj, pos);
 		} else {
-			appliance = factory.setUpApplianceInventory(type, this);
-			applianceType = type;
+			applianceCache = null;
 		}
-		return true;
 	}
 	
-	@Override
-	public boolean hasAppliance() {
-		return appliance != null;
-	}
-
-	@Override
-	public boolean hasApplianceWithType(String type) {
-		return hasAppliance() && applianceType.equals(type);
-	}
-
-	@Override
-	public String getApplianceType() {
-		return applianceType;
-	}
-
-	@Override
-	public IConveyorAppliance getAppliance() {
-		return appliance;
-	}
-
-	@Override
-	public boolean removeAppliance() {
-		boolean hadAppliance = hasAppliance();
-		appliance = null;
-		applianceType = null;
-		updateState();
-		return hadAppliance;
-	}
-
 	/*
 	 * IInventory implementation
 	 */
 	
 	@Override
 	public int getSizeInventory() {
-		if(appliance == null) {
-			return 9;
-		} else {
-			return appliance.getSizeInventory();
-		}
+		return 9;
 	}
 
 	@Override
 	public ItemStack getStackInSlot(int slot) {
-		if(appliance == null) {
-			return getSlot(slot).itemStack;
-		} else {
-			return appliance.getStackInSlot(slot);
-		}
+		return getSlot(slot).itemStack;
 	}
 
 	@Override
 	public ItemStack decrStackSize(int slot, int amount) {
-		if(appliance == null) {
-			return null;
-		} else {
-			return appliance.decrStackSize(slot, amount);
-		}
+		return null;
 	}
 
 	@Override
 	public ItemStack removeStackFromSlot(int slot) {
-		if(appliance == null) {
-			return null;
-		} else {
-			return appliance.removeStackFromSlot(slot);
-		}
+		return null;
 	}
 
 	@Override
 	public void setInventorySlotContents(int slot, ItemStack itemStack) {
-		if(appliance == null) {
-			if(itemStack == null) {
-				items[slot].itemStack = null;
-				updateState();
-			} else {
-				insertItemAt(itemStack, slot);
-			}
+		if(itemStack == null) {
+			removeItemAt(slot);
 		} else {
-			appliance.setInventorySlotContents(slot, itemStack);
+			insertItemAt(itemStack, slot);
 		}
 	}
 
 	@Override
-	public IChatComponent getDisplayName() {
-		if(appliance == null) {
-			return new ChatComponentTranslation("tile.taam.productionline.conveyor.name");
-		} else {
-			return appliance.getDisplayName();
-		}
+	public ITextComponent getDisplayName() {
+		return new TextComponentTranslation(getName());
 	}
 
 	@Override
 	public String getName() {
-		return "tile.taam.productionline.conveyor.name";
+		return "tile.productionline.conveyor.name";
 	}
 
 	@Override
 	public boolean hasCustomName() {
-		if(appliance == null) {
-			return false;
-		} else {
-			return appliance.hasCustomName();
-		}
+		return false;
 	}
 
 	@Override
 	public int getInventoryStackLimit() {
-		if(appliance == null) {
-			return 64;
-		} else {
-			return appliance.getInventoryStackLimit();
-		}
+		return 64;
 	}
 
 	@Override
 	public boolean isUseableByPlayer(EntityPlayer player) {
-		if(appliance == null) {
-			return true;
-		} else {
-			return appliance.isUseableByPlayer(player);
-		}
+		return true;
 	}
 
 	@Override
 	public void openInventory(EntityPlayer player) {
-		if(appliance != null) {
-			appliance.openInventory(player);
-		}
+		// Nothing to do.
 	}
 
 	@Override
 	public void closeInventory(EntityPlayer player) {
-		if(appliance != null) {
-			appliance.closeInventory(player);
-		}
+		// Nothing to do.
 	}
 
 	@Override
 	public boolean isItemValidForSlot(int slot, ItemStack itemStack) {
-		if(appliance == null) {
-			return true;
-		} else {
-			return appliance.isItemValidForSlot(slot, itemStack);
-		}
+		return true;
 	}
 
 
 	@Override
 	public int getField(int id) {
-		// TODO Auto-generated method stub
+		// Whatever..
 		return 0;
 	}
 
 	@Override
 	public void setField(int id, int value) {
-		// TODO Auto-generated method stub
-		
+		// Whatever..
 	}
 
 	@Override
 	public int getFieldCount() {
-		// TODO Auto-generated method stub
+		// Whatever..
 		return 0;
 	}
 
 	@Override
 	public void clear() {
-		if(appliance == null) {
-		} else {
-			appliance.clear();
-		}
+		// Nothing to do.
 	}
 	
 	/*
@@ -630,93 +578,22 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	
 	@Override
 	public int[] getSlotsForFace(EnumFacing side) {
-		if(appliance == null) {
-			final int slot = ConveyorUtil.getSlot(side);
-			if(slot == -1) {
-				return new int[0];
-			} else {
-				return new int[] { slot };
-			}
+		final int slot = ConveyorUtil.getSlot(side);
+		if(slot == -1) {
+			return new int[0];
 		} else {
-			return appliance.getSlotsForFace(side);
+			return new int[] { slot };
 		}
 	}
 	
 	@Override
 	public boolean canInsertItem(int slot, ItemStack itemStack, EnumFacing side) {
-		if(appliance == null) {
-			return ConveyorUtil.insertItemAt(this, itemStack, slot, true) > 0;
-		} else {
-			return appliance.canInsertItem(slot, itemStack, side);
-		}
+		return ConveyorUtil.insertItemAt(this, itemStack, slot, true) > 0;
 	}
 
 	@Override
 	public boolean canExtractItem(int slot, ItemStack itemStack, EnumFacing side) {
-		if(appliance == null) {
-			return false;
-		} else {
-			return appliance.canExtractItem(slot, itemStack, side);
-		}
-	}
-
-	/*
-	 * IFluidHandler implementation
-	 */
-	
-	@Override
-	public int fill(EnumFacing from, FluidStack resource, boolean doFill) {
-		if(appliance == null) {
-			return 0;
-		} else {
-			return appliance.fill(from, resource, doFill);
-		}
-	}
-
-	@Override
-	public FluidStack drain(EnumFacing from, FluidStack resource,
-			boolean doDrain) {
-		if(appliance == null) {
-			return null;
-		} else {
-			return appliance.drain(from, resource, doDrain);
-		}
-	}
-
-	@Override
-	public FluidStack drain(EnumFacing from, int maxDrain, boolean doDrain) {
-		if(appliance == null) {
-			return null;
-		} else {
-			return appliance.drain(from, maxDrain, doDrain);
-		}
-	}
-
-	@Override
-	public boolean canFill(EnumFacing from, Fluid fluid) {
-		if(appliance == null) {
-			return false;
-		} else {
-			return appliance.canFill(from, fluid);
-		}
-	}
-
-	@Override
-	public boolean canDrain(EnumFacing from, Fluid fluid) {
-		if(appliance == null) {
-			return false;
-		} else {
-			return appliance.canDrain(from, fluid);
-		}
-	}
-
-	@Override
-	public FluidTankInfo[] getTankInfo(EnumFacing from) {
-		if(appliance == null) {
-			return new FluidTankInfo[0];
-		} else {
-			return appliance.getTankInfo(from);
-		}
+		return false;
 	}
 
 	/*

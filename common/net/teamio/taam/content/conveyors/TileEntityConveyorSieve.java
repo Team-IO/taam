@@ -13,11 +13,11 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.IChatComponent;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.teamio.taam.Config;
@@ -29,16 +29,16 @@ import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.content.IWorldInteractable;
 import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.conveyors.ItemWrapper;
-import net.teamio.taam.conveyors.api.IConveyorAwareTE;
+import net.teamio.taam.conveyors.api.IConveyorSlots;
 import net.teamio.taam.network.TPMachineConfiguration;
 import net.teamio.taam.util.TaamUtil;
 import net.teamio.taam.util.WorldCoord;
 import net.teamio.taam.util.inv.InventoryRange;
 import net.teamio.taam.util.inv.InventoryUtils;
 
-public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInventory, IConveyorAwareTE, IRotatable, IWorldInteractable, IRedstoneControlled, ITickable, IRenderable {
+public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInventory, IConveyorSlots, IRotatable, IWorldInteractable, IRedstoneControlled, ITickable, IRenderable {
 
-	private static List<String> parts = Collections.unmodifiableList(Lists.newArrayList("Support_Alu_smdl_alu", "SieveChute_cscmdl", "Sieve_csvmdl"));
+	public static List<String> parts = Collections.unmodifiableList(Lists.newArrayList("Support_Alu_smdl_alu", "SieveChute_cscmdl", "Sieve_csvmdl"));
 	/*
 	 * Content
 	 */
@@ -90,7 +90,7 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 	 */
 	public void dropItems() {
 		for (int index = 0; index < items.length; index++) {
-			ConveyorUtil.dropItem(worldObj, this, index, false);
+			ConveyorUtil.dropItem(worldObj, pos, this, index, false);
 		}
 	}
 	
@@ -102,6 +102,7 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 		 */
 
 		boolean needsUpdate = false;
+		boolean needsWorldUpdate = false;
 		
 		if(ConveyorUtil.tryInsertItemsFromWorld(this, worldObj, null, false)) {
 			needsUpdate = true;
@@ -128,19 +129,20 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 			 */
 			if(processSieve(slotOrder)) {
 				needsUpdate = true;
+				needsWorldUpdate = true;
 			}
 			
 			/*
 			 * Move items already on the conveyor
 			 */
 		
-			if(ConveyorUtil.defaultTransition(worldObj, this, slotOrder)) {
+			if(ConveyorUtil.defaultTransition(worldObj, pos, this, slotOrder)) {
 				needsUpdate = true;
 			}
 		}
 		
 		if(needsUpdate) {
-			updateState();
+			updateState(needsWorldUpdate, false, false);
 		}
 	}
 	
@@ -251,9 +253,20 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 	public int insertItemAt(ItemStack item, int slot) {
 		int count = ConveyorUtil.insertItemAt(this, item, slot, false);
 		if(count > 0) {
-			updateState();
+			updateState(true, false, false);
 		}
 		return count;
+	}
+	
+	@Override
+	public ItemStack removeItemAt(int slot) {
+		ItemWrapper candidate = items[slot];
+		ItemStack removed = candidate.itemStack;
+		if(removed != null) {
+			candidate.itemStack = null;
+			updateState(true, false, false);
+		}
+		return removed;
 	}
 	
 	@Override
@@ -292,6 +305,11 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 	public double getInsertMinY() {
 		return 0.3;
 	}
+
+	@Override
+	public float getVerticalPosition(int slot) {
+		return 0.51f;
+	}
 	
 	/*
 	 * IRotatable implementation
@@ -304,14 +322,18 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 
 	@Override
 	public void setFacingDirection(EnumFacing direction) {
+		if(this.direction == direction) {
+			// Only update if necessary
+			return;
+		}
 		this.direction = direction;
 		if(direction == EnumFacing.UP || direction == EnumFacing.DOWN) {
 			this.direction = EnumFacing.NORTH;
 		}
-		updateState();
+		updateState(false, true, true);
 		worldObj.notifyBlockOfStateChange(pos, blockType);
 		if(blockType != null) {
-			blockType.onNeighborBlockChange(worldObj, pos, worldObj.getBlockState(pos), blockType);
+			blockType.onNeighborChange(worldObj, pos, pos);
 		}
 	}
 
@@ -348,7 +370,7 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 	public void setInventorySlotContents(int slot, ItemStack itemStack) {
 		if(itemStack == null) {
 			items[slot].itemStack = null;
-			updateState();
+			updateState(true, false, false);
 		} else {
 			insertItemAt(itemStack, slot);
 		}
@@ -356,12 +378,12 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 
 	@Override
 	public String getName() {
-		return "tile.taam.productionline.sieve.name";
+		return "tile.productionline.sieve.name";
 	}
 	
 	@Override
-	public IChatComponent getDisplayName() {
-		return new ChatComponentTranslation(getName());
+	public ITextComponent getDisplayName() {
+		return new TextComponentTranslation(getName());
 	}
 	
 	@Override

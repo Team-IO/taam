@@ -6,21 +6,18 @@ import java.util.List;
 import com.google.common.collect.Lists;
 
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.IHopper;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.IChatComponent;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.teamio.taam.Config;
@@ -32,17 +29,17 @@ import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.content.IWorldInteractable;
 import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.conveyors.ItemWrapper;
-import net.teamio.taam.conveyors.api.IConveyorAwareTE;
-import net.teamio.taam.conveyors.api.IProcessingRecipe;
-import net.teamio.taam.conveyors.api.ProcessingRegistry;
+import net.teamio.taam.conveyors.OutputChuteBacklog;
+import net.teamio.taam.conveyors.api.IConveyorSlots;
 import net.teamio.taam.network.TPMachineConfiguration;
+import net.teamio.taam.recipes.IProcessingRecipe;
+import net.teamio.taam.recipes.ProcessingRegistry;
 import net.teamio.taam.util.TaamUtil;
 import net.teamio.taam.util.WorldCoord;
-import net.teamio.taam.util.inv.InventoryRange;
 import net.teamio.taam.util.inv.InventorySimple;
 import net.teamio.taam.util.inv.InventoryUtils;
 
-public class TileEntityConveyorProcessor extends BaseTileEntity implements ISidedInventory, IConveyorAwareTE, IHopper, IRedstoneControlled, IWorldInteractable, IRotatable, ITickable, IRenderable {
+public class TileEntityConveyorProcessor extends BaseTileEntity implements ISidedInventory, IConveyorSlots, IHopper, IRedstoneControlled, IWorldInteractable, IRotatable, ITickable, IRenderable {
 
 	public static final byte Shredder = 0;
 	public static final byte Grinder = 1;
@@ -50,16 +47,17 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 
 	private InventorySimple inventory;
 	private byte mode;
+	
+	private OutputChuteBacklog chute = new OutputChuteBacklog();
 
 	private byte redstoneMode = IRedstoneControlled.MODE_ACTIVE_ON_LOW;
 	private EnumFacing direction = EnumFacing.NORTH;
 	
-	private byte progress;
 	private int timeout;
 	
-	private static List<String> parts_shredder = Collections.unmodifiableList(Lists.newArrayList("Support_Alu_smdl_alu", "ProcessorChute_chutemdl", "Processor_Walzes", "ProcessorMarker_Shredder_pmmdl_shr", "BumpsShredder"));
-	private static List<String> parts_grinder = Collections.unmodifiableList(Lists.newArrayList("Support_Alu_smdl_alu", "ProcessorChute_chutemdl", "Processor_Walzes", "ProcessorMarker_Grinder_pmmdl_gri", "BumpsGrinder"));
-	private static List<String> parts_crusher = Collections.unmodifiableList(Lists.newArrayList("Support_Alu_smdl_alu", "ProcessorChute_chutemdl", "Processor_Walzes", "ProcessorMarker_Crusher_pmmdl_cru", "BumpsCrusher"));
+	public static List<String> parts_shredder = Collections.unmodifiableList(Lists.newArrayList("Support_Alu_smdl_alu", "ProcessorChute_chutemdl", "Processor_Walzes", "ProcessorMarker_Shredder_pmmdl_shr", "BumpsShredder"));
+	public static List<String> parts_grinder = Collections.unmodifiableList(Lists.newArrayList("Support_Alu_smdl_alu", "ProcessorChute_chutemdl", "Processor_Walzes", "ProcessorMarker_Grinder_pmmdl_gri", "BumpsGrinder"));
+	public static List<String> parts_crusher = Collections.unmodifiableList(Lists.newArrayList("Support_Alu_smdl_alu", "ProcessorChute_chutemdl", "Processor_Walzes", "ProcessorMarker_Crusher_pmmdl_cru", "BumpsCrusher"));
 	
 	/**
 	 * Cached recipe, that will not change during processing of one stack
@@ -78,6 +76,11 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 	public TileEntityConveyorProcessor(byte mode) {
 		inventory = new InventorySimple(1, getName());
 		this.mode = mode;
+		if(mode == Grinder) {
+			timeout = Config.pl_processor_grinder_timeout;
+		} else {
+			timeout = Config.pl_processor_crusher_timeout;
+		}
 	}
 	
 	@Override
@@ -97,7 +100,6 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 		return timeout > 0;
 	}
 	
-	private ItemStack[] holdback;
 	
 	@Override
 	public void update() {
@@ -143,7 +145,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 		}
 		
 		if(needsUpdate) {
-			updateState();
+			updateState(true, false, false);
 		}
 		
 	}
@@ -152,7 +154,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 		int x = pos.getX();
 		int y = pos.getY();
 		int z = pos.getZ();
-		List<EntityLivingBase> entitites = worldObj.getEntitiesWithinAABB(EntityLivingBase.class, AxisAlignedBB.fromBounds(x, y, z, x + 1, y + 1, z + 1));
+		List<EntityLivingBase> entitites = worldObj.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(x, y, z, x + 1, y + 1, z + 1));
 		for(EntityLivingBase living : entitites) {
 			hurtEntity(living);
 		}
@@ -177,94 +179,52 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 	private boolean processOther() {
 		BlockPos down = pos.down();
 		
-		IInventory outputInventory = InventoryUtils.getInventory(worldObj, down);
-		if(outputInventory == null && !TaamUtil.canDropIntoWorld(worldObj, down)) {
+		/*
+		 * Check blocked & fetch output inventory
+		 */
+		chute.refreshOutputInventory(worldObj, down);
+		if(!chute.isOperable()) {
 			return false;
 		}
-
-		ItemStack[] outputQueue = holdback;
-		boolean decrease = false;
 		
+		/*
+		 * Output Backlog
+		 */
+		// Output the backlog. Returns true if there were items transferred or there are still items left.
+		if(chute.output(worldObj, down)) {
+			return true;
+		}
+
 		// If output finished, continue processing.
-		// else, the holdback queue will be processed below.
-		
-		if(outputQueue == null) {
-			
-			if(isCoolingDown()) {
-				timeout--;
-				return false;
-			}
-			
-			ItemStack input = getStackInSlot(0);
-			
-			if(input == null) {
-				recipe = null;
-				return false;
-			}
-			
-			if(recipe == null) {
-				recipe = getRecipe(input);
-			}
-			
-			if(recipe != null) {
-				decrease = true;
-				
-				outputQueue = recipe.getOutput(input, worldObj.rand);
-				
-				if(mode == Grinder) {
-					timeout += Config.pl_processor_grinder_timeout;
-				} else {
-					timeout += Config.pl_processor_crusher_timeout;
-				}
-			}
-		}
-		
-		// No output, we can skip.
-		
-		if(outputQueue == null) {
+		if(isCoolingDown()) {
+			timeout--;
 			return false;
 		}
 		
-		if(outputInventory == null) {
-			// Output to world
-			for(ItemStack itemStack : outputQueue) {
-				if(itemStack == null) {
-					continue;
-				}
-				EntityItem item = new EntityItem(worldObj, pos.getX() + 0.5, pos.getY()- 0.3, pos.getZ() + 0.5, itemStack);
-		        item.motionX = 0;
-		        item.motionY = 0;
-		        item.motionZ = 0;
-		        worldObj.spawnEntityInWorld(item);
-			}
-
-			holdback = null;
-		} else {
-			// Output to inventory
-			boolean hasOutputLeft = false;
-			InventoryRange range = new InventoryRange(outputInventory, EnumFacing.UP.ordinal());
-			
-			for(int i = 0; i < outputQueue.length; i++) {
-				ItemStack itemStack = outputQueue[i];
-				if(itemStack == null) {
-					continue;
-				}
-				int unable = InventoryUtils.insertItem(range, itemStack, false);
-				if(unable > 0) {
-					itemStack.stackSize = unable;
-					hasOutputLeft = true;
-				} else {
-					outputQueue[i] = null;
-				}
-			}
-			if(hasOutputLeft) {
-				holdback = outputQueue;
-			} else {
-				holdback = null;
-			}
+		ItemStack input = getStackInSlot(0);
+		
+		if(input == null) {
+			recipe = null;
+			return false;
 		}
 		
-		return decrease;
+		if(recipe == null) {
+			recipe = getRecipe(input);
+		}
+		
+		if(recipe != null) {
+			chute.backlog = recipe.getOutput(input);
+			
+			if(mode == Grinder) {
+				timeout += Config.pl_processor_grinder_timeout;
+			} else {
+				timeout += Config.pl_processor_crusher_timeout;
+			}
+			// Consume input
+			return true;
+		}
+		
+		return false;
 	}
 	
 	private boolean processShredder() {
@@ -304,16 +264,17 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 		IProcessingRecipe recipe = ProcessingRegistry.getRecipe(machine, input);
 		return recipe;
 	}
-	
+
 	@Override
 	protected void writePropertiesToNBT(NBTTagCompound tag) {
 		tag.setTag("items", InventoryUtils.writeItemStacksToTag(inventory.items));
-		if(holdback != null) {
-			tag.setTag("holdback", InventoryUtils.writeItemStacksToTag(holdback));
-		}
+		
+		NBTTagCompound tagChute = new NBTTagCompound();
+		chute.writeToNBT(tagChute);
+		tag.setTag("chute", tagChute);
+		
 		tag.setByte("mode", mode);
-//		tag.setByte("redstoneMode", redstoneMode);
-		tag.setByte("progress", progress);
+		// tag.setByte("redstoneMode", redstoneMode);
 		tag.setInteger("timeout", timeout);
 		tag.setBoolean("isShutdown", isShutdown);
 		tag.setInteger("direction", direction.ordinal());
@@ -323,22 +284,15 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 	protected void readPropertiesFromNBT(NBTTagCompound tag) {
 		inventory.items = new ItemStack[inventory.getSizeInventory()];
 		InventoryUtils.readItemStacksFromTag(inventory.items, tag.getTagList("items", NBT.TAG_COMPOUND));
-		
-		NBTTagList holdbackList = tag.getTagList("holdback", NBT.TAG_COMPOUND);
-		if(holdbackList == null) {
-			holdback = null;
-		} else {
-			holdback = new ItemStack[holdbackList.tagCount()];
-			InventoryUtils.readItemStacksFromTag(holdback, holdbackList);
-		}
+
+		chute.readFromNBT(tag.getCompoundTag("chute"));
 
 		mode = tag.getByte("mode");
-//		redstoneMode = tag.getByte("redstoneMode");
-		progress = tag.getByte("progress");
+		// redstoneMode = tag.getByte("redstoneMode");
 		timeout = tag.getInteger("timeout");
 		isShutdown = tag.getBoolean("isShutdown");
 		direction = EnumFacing.getFront(tag.getInteger("direction"));
-		if(direction == EnumFacing.UP || direction == EnumFacing.DOWN) {
+		if (direction == EnumFacing.UP || direction == EnumFacing.DOWN) {
 			direction = EnumFacing.NORTH;
 		}
 	}
@@ -367,7 +321,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 	public ItemStack decrStackSize(int slot, int amount) {
 		ItemStack retVal = inventory.decrStackSize(slot, amount);
 		checkRecipe();
-		updateState();
+		updateState(true, false, false);
 		return retVal;
 	}
 
@@ -380,26 +334,26 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 	public void setInventorySlotContents(int slot, ItemStack stack) {
 		inventory.setInventorySlotContents(slot, stack);
 		recipe = null;
-		updateState();
+		updateState(true, false, false);
 	}
 
 	@Override
 	public String getName() {
 		switch(mode) {
 		case Shredder:
-			return "tile.taam.productionline.shredder.name";
+			return "tile.productionline.shredder.name";
 		case Grinder:
-			return "tile.taam.productionline.grinder.name";
+			return "tile.productionline.grinder.name";
 		case Crusher:
-			return "tile.taam.productionline.crusher.name";
+			return "tile.productionline.crusher.name";
 		default:
-			return "tile.taam.productionline.invalid.name";
+			return "tile.productionline.invalid.name";
 		}
 	}
 	
 	@Override
-	public IChatComponent getDisplayName() {
-		return new ChatComponentTranslation(getName());
+	public ITextComponent getDisplayName() {
+		return new TextComponentTranslation(getName());
 	}
 	
 	@Override
@@ -432,6 +386,24 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 		return true;
 		// Removed this check for performance reasons... Clog will happen at processor, not at conveyor.
 //		return mode == Shredder || getRecipe(itemStack) != null;
+	}
+	
+	@Override
+	public int getField(int id) {
+		return 0;
+	}
+
+	@Override
+	public void setField(int id, int value) {
+	}
+
+	@Override
+	public int getFieldCount() {
+		return 0;
+	}
+
+	@Override
+	public void clear() {
 	}
 
 	/*
@@ -470,8 +442,21 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 		}
 		// insertItem returns item count unable to insert.
 		int inserted = stack.stackSize - InventoryUtils.insertItem(inventory, stack, false);
-		updateState();
+		if(inserted > 0) {
+			// Only update if necessary
+			updateState(true, false, false);
+		}
 		return inserted;
+	}
+	
+	@Override
+	public ItemStack removeItemAt(int slot) {
+		ItemStack content = getStackInSlot(slot);
+		if(content != null) {
+			// Only update if necessary
+			setInventorySlotContents(slot, null);
+		}
+		return content;
 	}
 
 	@Override
@@ -494,26 +479,14 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 		return 0.3;
 	}
 
+	@Override
 	public EnumFacing getNextSlot(int slot) {
 		return EnumFacing.DOWN;
 	}
 
 	@Override
-	public int getField(int id) {
-		return 0;
-	}
-
-	@Override
-	public void setField(int id, int value) {
-	}
-
-	@Override
-	public int getFieldCount() {
-		return 0;
-	}
-
-	@Override
-	public void clear() {
+	public float getVerticalPosition(int slot) {
+		return 0.51f;
 	}
 	
 	/*
@@ -663,8 +636,11 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 
 	@Override
 	public void setFacingDirection(EnumFacing direction) {
-		this.direction = direction;
-		updateState();
+		if(this.direction != direction) {
+			// Only update if necessary
+			this.direction = direction;
+			updateState(false, true, false);
+		}
 	}
 	
 }

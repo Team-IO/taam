@@ -22,7 +22,6 @@ public class ItemWrapper {
 	public ItemStack itemStack;
 	// TODO: Write filter to NBT
 	public IItemFilter filter;
-	public int processing;
 	public byte movementProgress;
 
 	public ItemWrapper(ItemStack itemStack) {
@@ -94,14 +93,12 @@ public class ItemWrapper {
 
 	@Override
 	public String toString() {
-		return String
-				.format("ItemWrapper [itemStack=%s, processing=%d, movementProgress=%d]",
-						String.valueOf(itemStack), processing, movementProgress);
+		return String.format("ItemWrapper [itemStack=%s, movementProgress=%d]",
+						String.valueOf(itemStack), movementProgress);
 	}
 
 	public NBTTagCompound writeToNBT() {
 		NBTTagCompound tag = new NBTTagCompound();
-		tag.setInteger("proc", processing);
 		tag.setByte("move", movementProgress);
 		if (itemStack != null) {
 			itemStack.writeToNBT(tag);
@@ -112,7 +109,6 @@ public class ItemWrapper {
 	public static ItemWrapper readFromNBT(NBTTagCompound tag) {
 		ItemStack itemStack = ItemStack.loadItemStackFromNBT(tag);
 		ItemWrapper wrapper = new ItemWrapper(itemStack);
-		wrapper.processing = tag.getInteger("proc");
 		wrapper.movementProgress = tag.getByte("move");
 		return wrapper;
 	}
@@ -126,7 +122,6 @@ public class ItemWrapper {
 	public ItemWrapper copy() {
 		ItemWrapper clone = new ItemWrapper(
 				InventoryUtils.copyStack(itemStack, getStackSize()));
-		clone.processing = processing;
 		clone.movementProgress = movementProgress;
 		return clone;
 	}

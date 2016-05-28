@@ -1,24 +1,29 @@
 package net.teamio.taam.util;
 
+import java.util.List;
 import java.util.Random;
+
+import org.apache.commons.lang3.ArrayUtils;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.oredict.OreDictionary;
 import net.teamio.taam.content.IRedstoneControlled;
-import net.teamio.taam.conveyors.api.IConveyorAwareTE;
+import net.teamio.taam.conveyors.api.IConveyorApplianceHost;
+import net.teamio.taam.conveyors.api.IConveyorSlots;
 import net.teamio.taam.util.inv.InventoryUtils;
 
 /**
  * Generic Utility Methods, used across multiple "themes".
- * @author oliver
+ * 
+ * @author Oliver Kahrmann
  *
  */
 public final class TaamUtil {
@@ -26,8 +31,28 @@ public final class TaamUtil {
 		// Util class
 	}
 
+	/**
+	 * Global random instance for things that can't access the world's random..
+	 */
+	public static final Random RANDOM = new Random();
+
+	/**
+	 * Updates a block on server-side so that an update packet is sent to the player.
+	 * @param world
+	 * @param pos
+	 */
+	public static void updateBlock(World world, BlockPos pos) {
+		if(world.isRemote) {
+			return;
+		}
+		IBlockState state = world.getBlockState(pos);
+		world.notifyBlockUpdate(pos, state, state, 3);
+	}
+	
 	public static boolean canDropIntoWorld(IBlockAccess world, BlockPos pos) {
-		return world.isAirBlock(pos) || world.getBlockState(pos).getBlock().getMaterial().isLiquid();
+		IBlockState state = world.getBlockState(pos);
+		Block block = state.getBlock();
+		return block.isAir(state, world, pos) || state.getMaterial().isLiquid();
 	}
 
 	public static void breakBlockInWorld(World world, BlockPos pos) {
@@ -40,61 +65,91 @@ public final class TaamUtil {
 		block.dropBlockAsItem(world, pos, blockState, 0);
 		world.setBlockToAir(pos);
 	}
-	
+
 	public static void breakBlockToInventory(EntityPlayer player, World world, BlockPos pos) {
 		IBlockState blockState = world.getBlockState(pos);
 		breakBlockToInventory(player, world, pos, blockState);
 	}
 
 	public static void breakBlockToInventory(EntityPlayer player, World world, BlockPos pos, IBlockState blockState) {
-		ItemStack toDrop = getItemStackFromWorld(world, pos, blockState);
-		if(toDrop != null) {
-			InventoryUtils.tryDropToInventory(player, toDrop, pos);
+		List<ItemStack> toDrop = getDropsFromWorld(world, pos, blockState);
+		if (toDrop != null) {
+			for (ItemStack stack : toDrop) {
+				InventoryUtils.tryDropToInventory(player, stack, pos);
+			}
 		}
 		world.setBlockToAir(pos);
 	}
-	
-	public static ItemStack getItemStackFromWorld(World world, BlockPos pos, IBlockState blockState) {
+
+	public static List<ItemStack> getDropsFromWorld(World world, BlockPos pos, IBlockState blockState) {
 		Block block = blockState.getBlock();
-        Item item = Item.getItemFromBlock(block);
-        if (item == null) {
-        	return null;
-        } else {
-        	int damage = block.damageDropped(blockState);
-        	return new ItemStack(block, 1, damage);
-        }
+		return block.getDrops(world, pos, blockState, 0);
 	}
 
 	public static boolean isShutdown(Random rand, int redstoneMode, boolean redstoneHigh) {
 		boolean newShutdown = false;
 		// Redstone. Other criteria?
-		if(redstoneMode == IRedstoneControlled.MODE_ACTIVE_ON_HIGH && !redstoneHigh) {
+		if (redstoneMode == IRedstoneControlled.MODE_ACTIVE_ON_HIGH && !redstoneHigh) {
 			newShutdown = true;
-		} else if(redstoneMode == IRedstoneControlled.MODE_ACTIVE_ON_LOW && redstoneHigh) {
+		} else if (redstoneMode == IRedstoneControlled.MODE_ACTIVE_ON_LOW && redstoneHigh) {
 			newShutdown = true;
-		} else if(redstoneMode > 4 || redstoneMode < 0) {
+		} else if (redstoneMode > 4 || redstoneMode < 0) {
 			newShutdown = rand.nextBoolean();
 		}
 		return newShutdown;
 	}
 
 	/**
-	 * Decides whether an attachable block can be placed somewhere.
-	 * Checks for a solid side or a TileEntity implementing {@link IConveyorAwareTE}.
+	 * Decides whether an attachable block can be placed somewhere. Checks for a
+	 * solid side or a TileEntity implementing {@link IConveyorSlots}.
+	 * 
 	 * @param world
-	 * @param x The attachable block.
-	 * @param y The attachable block.
-	 * @param z The attachable block.
-	 * @param dir The direction in which to check. Checks the block at the offset coordinates.
+	 * @param x
+	 *            The attachable block.
+	 * @param y
+	 *            The attachable block.
+	 * @param z
+	 *            The attachable block.
+	 * @param dir
+	 *            The direction in which to check. Checks the block at the
+	 *            offset coordinates.
 	 * @return
 	 */
 	public static boolean canAttach(IBlockAccess world, BlockPos pos, EnumFacing dir) {
-		if(world.isSideSolid(pos.offset(dir), dir.getOpposite(), false)) {
+		if (world.isSideSolid(pos.offset(dir), dir.getOpposite(), false)) {
 			return true;
 		}
 		TileEntity ent = world.getTileEntity(pos.offset(dir));
-		return ent instanceof IConveyorAwareTE;
+		return ent instanceof IConveyorSlots;
 	}
-	
-	
+
+	public static boolean canAttachAppliance(IBlockAccess world, BlockPos pos, EnumFacing dir) {
+		TileEntity ent = world.getTileEntity(pos.offset(dir));
+		return ent instanceof IConveyorApplianceHost;
+	}
+
+	/**
+	 * Checks if actualInput is the same item as inputDefinition (respecting
+	 * OreDictionary) or, if inputDefinition is null, if actualInput is
+	 * registered with the ore dictionary matching inoutOreDictName.
+	 *
+	 * @param inputDefinition
+	 * @param inputOreDictName
+	 * @param actualInput
+	 * @return
+	 */
+	public static boolean isInputMatching(ItemStack inputDefinition, String inputOreDictName, ItemStack actualInput) {
+		if (actualInput == null) {
+			return inputDefinition != null && inputOreDictName != null;
+		} else {
+			if (inputDefinition == null) {
+				int[] oreIDs = OreDictionary.getOreIDs(actualInput);
+				int myID = OreDictionary.getOreID(inputOreDictName);
+				return ArrayUtils.contains(oreIDs, myID);
+			} else {
+				return inputDefinition.isItemEqual(actualInput)
+						|| OreDictionary.itemMatches(inputDefinition, actualInput, false);
+			}
+		}
+	}
 }

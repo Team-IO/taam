@@ -1,0 +1,28 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "textures": {},
+        "model": "taam:conveyor.obj",
+        "custom": {
+            "flip-v": true
+        },
+        "transform": "forge:default-block"
+     },
+    "variants": {
+        "normal": [{}],
+        "inventory": [{
+            "transform": "forge:default-block"
+        }],
+        "direction": {
+        	"up": {},
+        	"down": {},
+        	"south": {},
+        	"north": {"y": 180},
+        	"west": {"y": 90},
+        	"east": {"y": 270}
+        },
+        "variant": {
+        	"sprayer":		{ "model": "taam:sprayer.obj" }
+        }
+    }
+}

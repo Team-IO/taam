@@ -4,9 +4,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IWorldInteractable;
@@ -55,6 +55,7 @@ public class TileEntityCreativeCache extends BaseTileEntity implements IInventor
 		} else {
 			template = stack.copy();
 		}
+		updateState(true, false, true);
 		return true;
 	}
 
@@ -136,8 +137,8 @@ public class TileEntityCreativeCache extends BaseTileEntity implements IInventor
 	}
 
 	@Override
-	public IChatComponent getDisplayName() {
-		return new ChatComponentTranslation("tile.taam.machines.creativecache.name");
+	public ITextComponent getDisplayName() {
+		return new TextComponentTranslation("tile.taam.machines.creativecache.name");
 	}
 
 	@Override

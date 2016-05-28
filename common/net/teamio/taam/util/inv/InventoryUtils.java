@@ -19,6 +19,7 @@ package net.teamio.taam.util.inv;
 
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryLargeChest;
 import net.minecraft.item.Item;
@@ -28,11 +29,12 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Plane;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.items.IItemHandler;
 
 /**
  * Utilities for working with inventories. Mostly code is based on by
@@ -71,6 +73,8 @@ public final class InventoryUtils {
 			if (!player.worldObj.isRemote) {
 				dropItem(stack, player.worldObj, x, y, z);
 			}
+		} else if (player instanceof EntityPlayerMP) {
+			((EntityPlayerMP) player).sendContainerToPlayer(player.inventoryContainer);
 		}
 	}
 
@@ -264,6 +268,29 @@ public final class InventoryUtils {
 	public static int insertItem(IInventory inv, ItemStack stack, boolean simulate) {
 		return insertItem(new InventoryRange(inv), stack, simulate);
 	}
+	
+	/**
+	 * 
+	 * @param inv
+	 * @param stack
+	 * @param simulate
+	 *            If set to true, no items will actually be inserted
+	 * @return The number of items unable to be inserted
+	 * 
+	 * @author Oliver Kahrmann
+	 */
+	public static int insertItem(IItemHandler inv, ItemStack stack, boolean simulate) {
+		int invSlots = inv.getSlots();
+		ItemStack toInsert = stack;
+		for(int i = 0; i < invSlots; i++) {
+			// insertItem returns item stack unable to insert, or null
+			toInsert = inv.insertItem(i, toInsert, false);
+			if(toInsert == null) {
+				return 0;
+			}
+		}
+		return toInsert.stackSize;
+	}
 
 	public static int fitStackInSlot(InventoryRange inv, int slot, ItemStack stack) {
 		ItemStack base = inv.inv.getStackInSlot(slot);
@@ -402,11 +429,66 @@ public final class InventoryUtils {
 		}
 		return tagList;
 	}
+	
+	/**
+	 * NBT item saving function
+	 * 
+	 * Writes the itemStacks without adding the slot ID.
+	 * Useful for internal lists.
+	 * 
+	 * @author Oliver Kahrmann, based on {@link #writeItemStacksToTag(ItemStack[])}
+	 */
+	public static NBTTagList writeItemStacksToTagSequential(ItemStack[] items) {
+		return writeItemStacksToTagSequential(items, 64);
+	}
+	
+	/**
+	 * NBT item saving function with support for stack sizes > 32K
+	 * 
+	 * Writes the itemStacks without adding the slot ID.
+	 * Useful for internal lists.
+	 * 
+	 * @author Oliver Kahrmann, based on {@link #writeItemStacksToTag(ItemStack[], int)}
+	 */
+	public static NBTTagList writeItemStacksToTagSequential(ItemStack[] items, int maxQuantity) {
+		NBTTagList tagList = new NBTTagList();
+		for (int i = 0; i < items.length; i++) {
+			if (items[i] != null) {
+				NBTTagCompound tag = new NBTTagCompound();
+				items[i].writeToNBT(tag);
+
+				if (maxQuantity > Short.MAX_VALUE)
+					tag.setInteger("Quantity", items[i].stackSize);
+				else if (maxQuantity > Byte.MAX_VALUE)
+					tag.setShort("Quantity", (short) items[i].stackSize);
+
+				tagList.appendTag(tag);
+			}
+		}
+		return tagList;
+	}
 
 	/**
 	 * NBT item loading function with support for stack sizes > 32K
 	 */
 	public static void readItemStacksFromTag(ItemStack[] items, NBTTagList tagList) {
+		for (int i = 0; i < tagList.tagCount(); i++) {
+			NBTTagCompound tag = tagList.getCompoundTagAt(i);
+			int b = tag.getShort("Slot");
+			items[b] = ItemStack.loadItemStackFromNBT(tag);
+			if (tag.hasKey("Quantity"))
+				items[b].stackSize = ((NBTBase.NBTPrimitive) tag.getTag("Quantity")).getInt();
+		}
+	}
+
+	/**
+	 * NBT item loading function with support for stack sizes > 32K
+	 * Reads the itemStacks without checking the slot ID.
+	 * Useful for internal lists.
+	 * 
+	 * @author Oliver Kahrmann, based on {@link #readItemStacksFromTag(ItemStack[], NBTTagList)}
+	 */
+	public static void readItemStacksFromTagSequential(ItemStack[] items, NBTTagList tagList) {
 		for (int i = 0; i < tagList.tagCount(); i++) {
 			NBTTagCompound tag = tagList.getCompoundTagAt(i);
 			int b = tag.getShort("Slot");

@@ -1,38 +1,31 @@
 package net.teamio.taam.content.conveyors;
 
-import java.util.Collections;
-import java.util.List;
-
-import com.google.common.collect.Lists;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.world.World;
 import net.teamio.taam.Config;
-import net.teamio.taam.content.IRenderable;
-import net.teamio.taam.content.IRotatable;
+import net.teamio.taam.content.IWorldInteractable;
 import net.teamio.taam.conveyors.ItemWrapper;
-import net.teamio.taam.conveyors.api.IConveyorAwareTE;
+import net.teamio.taam.conveyors.api.IConveyorSlots;
 
 /**
  * Conveyor Trash Can.
  * Non-Ticking TE
- * @author founderio
+ * @author Oliver Kahrmann
  *
  */
-public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements IConveyorAwareTE, IInventory, IRotatable, IRenderable {
+public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements IConveyorSlots, IInventory, IWorldInteractable {
 
 	public float fillLevel;
-	private static final List<String> parts = Collections.unmodifiableList(Lists.newArrayList("BagTrash_btmdl"));
-	private static final List<String> parts_filled = Collections.unmodifiableList(Lists.newArrayList("BagTrash_btmdl", "BagFilling_bfmdl"));
-	
+
 	public TileEntityConveyorTrashCan() {
 	}
-	
+
 	@Override
 	protected void writePropertiesToNBT(NBTTagCompound tag) {
 		tag.setFloat("fillLevel", fillLevel);
@@ -47,24 +40,28 @@ public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements
 
 	public void clearOut() {
 		fillLevel = 0;
-		updateState();
+		updateState(true, true, false);
 	}
 
+	/*
+	 * IWorldInteractable implementation
+	 */
 
 	@Override
-	public List<String> getVisibleParts() {
-		if(fillLevel > 0) {
-			return parts_filled;
-		} else {
-			return parts;
-		}
+	public boolean onBlockActivated(World world, EntityPlayer player, boolean hasWrench, EnumFacing side, float hitX, float hitY, float hitZ) {
+		clearOut();
+		return true;
 	}
-	
-	
+
+	@Override
+	public boolean onBlockHit(World world, EntityPlayer player, boolean hasWrench) {
+		return false;
+	}
+
 	/*
 	 * IInventory implementation
 	 */
-	
+
 	@Override
 	public int getSizeInventory() {
 		return 1;
@@ -90,20 +87,20 @@ public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements
 		float added = stack.stackSize / (float)stack.getMaxStackSize();
 		if(fillLevel + added < Config.pl_trashcan_maxfill) {
 			fillLevel += added;
-			updateState();
+			updateState(true, true, false);
 		}
 	}
 
 	@Override
 	public String getName() {
-		return "tile.taam.productionline_attachable.trashcan.name";
+		return "tile.productionline_attachable.trashcan.name";
 	}
-	
+
 	@Override
-	public IChatComponent getDisplayName() {
-		return new ChatComponentTranslation(getName());
+	public ITextComponent getDisplayName() {
+		return new TextComponentTranslation(getName());
 	}
-	
+
 	@Override
 	public boolean hasCustomName() {
 		return false;
@@ -167,24 +164,29 @@ public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements
 	public EnumFacing getMovementDirection() {
 		return EnumFacing.DOWN;
 	}
-	
+
 	@Override
 	public int insertItemAt(ItemStack item, int slot) {
 		// insertItem returns item count unable to insert.
 		float added = item.stackSize / (float)item.getMaxStackSize();
 		if(fillLevel + added < Config.pl_trashcan_maxfill) {
 			fillLevel += added;
-			updateState();
+			updateState(true, true, false);
 			return item.stackSize;
 		}
 		return 0;
 	}
-	
+
+	@Override
+	public ItemStack removeItemAt(int slot) {
+		return null;
+	}
+
 	@Override
 	public boolean canSlotMove(int slot) {
 		return false;
 	}
-	
+
 	@Override
 	public int getMovementProgress(int slot) {
 		return 0;
@@ -214,6 +216,8 @@ public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements
 		return EnumFacing.DOWN;
 	}
 
-
-	
+	@Override
+	public float getVerticalPosition(int slot) {
+		return 0.51f;
+	}
 }

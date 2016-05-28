@@ -1,0 +1,25 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "textures": {},
+        "model": "taam:creative_cache.obj",
+        "custom": {
+            "flip-v": true
+        }
+     },
+    "variants": {
+        "normal": [{}],
+        "inventory": [{
+            "transform": "forge:default-block"
+        }],
+        "variant=creativecache": [{
+       	    "model": "taam:creative_cache.obj"
+        }],
+        "variant=creativewell": [{
+        	"model": "taam:creative_well.obj"
+        }],
+        "variant=chute": [{
+           "model": "taam:chute.obj"
+        }]
+    }
+}

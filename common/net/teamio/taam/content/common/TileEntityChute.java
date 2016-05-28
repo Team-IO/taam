@@ -14,10 +14,10 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.IChatComponent;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
@@ -27,17 +27,17 @@ import net.teamio.taam.content.IRenderable;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.conveyors.ItemWrapper;
-import net.teamio.taam.conveyors.api.IConveyorAwareTE;
+import net.teamio.taam.conveyors.api.IConveyorSlots;
 import net.teamio.taam.util.TaamUtil;
 import net.teamio.taam.util.inv.InventoryRange;
 import net.teamio.taam.util.inv.InventoryUtils;
 
-public class TileEntityChute extends BaseTileEntity implements IInventory, ISidedInventory, IFluidHandler, IConveyorAwareTE, IRotatable, ITickable, IRenderable {
+public class TileEntityChute extends BaseTileEntity implements IInventory, ISidedInventory, IFluidHandler, IConveyorSlots, IRotatable, ITickable, IRenderable {
 
 	public boolean isConveyorVersion = false;
 	private EnumFacing direction = EnumFacing.NORTH;
 	
-	private static List<String> parts_conveyor_version = Collections.unmodifiableList(Lists.newArrayList("Support_Alu_smdl_alu", "Chute_cchmdl"));
+	public static List<String> parts_conveyor_version = Collections.unmodifiableList(Lists.newArrayList("Support_Alu_smdl_alu", "Chute_cchmdl"));
 	
 	public TileEntityChute(boolean isConveyorVersion) {
 		this.isConveyorVersion = isConveyorVersion;
@@ -138,12 +138,6 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 
 	@Override
 	public ItemStack getStackInSlot(int slot) {
-		/*InventoryRange target = getTargetRange();
-		if(target == null) {
-			return null;
-		} else {
-			return InventoryUtils.getExtractableStack(target, target.slots[slot]);
-		}*/
 		return null;
 	}
 
@@ -174,10 +168,10 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 	}
 
 	@Override
-	public IChatComponent getDisplayName() {
+	public ITextComponent getDisplayName() {
 		IInventory target = getTargetInventory();
 		if(target == null) {
-			return new ChatComponentTranslation("tile.taam.chute.name");
+			return new TextComponentTranslation("tile.taam.chute.name");
 		} else {
 			return target.getDisplayName();
 		}
@@ -419,6 +413,11 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 			return stack.stackSize - InventoryUtils.insertItem(target, stack, false);
 		}
 	}
+	
+	@Override
+	public ItemStack removeItemAt(int slot) {
+		return null;
+	}
 
 	@Override
 	public EnumFacing getMovementDirection() {
@@ -451,6 +450,12 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 			return 0.9;
 		}
 	}
+
+	@Override
+	public float getVerticalPosition(int slot) {
+		return 0.51f;
+	}
+	
 	/*
 	 * IRotatable Implementation
 	 */
@@ -472,8 +477,7 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 			if(!ArrayUtils.contains(EnumFacing.HORIZONTALS, direction)) {
 				this.direction = EnumFacing.NORTH;
 			}
-			updateState();
-			updateRenderingInfo();
+			updateState(false, true, false);
 		}
 	}
 

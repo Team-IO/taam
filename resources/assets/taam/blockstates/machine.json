@@ -1,0 +1,33 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "textures": {},
+        "model": "taam:creative_cache.obj",
+        "custom": {
+            "flip-v": true
+        }
+     },
+    "variants": {
+        "normal": [{}],
+        "inventory": [{
+            "transform": "forge:default-block"
+        }],
+        
+        "direction": {
+        	"up": {},
+        	"down": {},
+        	"south": {},
+        	"north": {"y": 180},
+        	"west": {"y": 90},
+        	"east": {"y": 270}
+        },
+        "variant": {
+        	"pump":			{ "model": "taam:pump.obj" },
+      		"fluid_drier":	{ "model": "taam:fluid_drier.obj" },
+      		"mixer":		{ "model": "taam:mixer.obj" },
+      		"pipe":			{ "model": "taam:pipes.obj" },
+      		"tank":			{ "model": "taam:tank.obj" },
+      		"fluid_drier":	{ "model": "taam:fluid_drier.obj" }
+        }
+    }
+}

@@ -1,18 +1,11 @@
 package net.teamio.taam.conveyors.api;
 
-import net.teamio.taam.conveyors.IConveyorAppliance;
+import java.util.List;
 
-public interface IConveyorApplianceHost {
+public interface IConveyorApplianceHost extends IConveyorSlots {
 
 	public boolean canAcceptAppliance(String type);
-	
-	public boolean initAppliance(String type);
-	public boolean removeAppliance();
-	
-	public boolean hasAppliance();
-	public boolean hasApplianceWithType(String type);
 
-	public String getApplianceType();
-	public IConveyorAppliance getAppliance();
-
+	public List<IConveyorAppliance> getAppliances();
+	
 }

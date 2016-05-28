@@ -1,0 +1,23 @@
+{
+    "variants": {
+        "variant=copper": { "model": "taam:ore.copper" },
+        "variant=tin": { "model": "taam:ore.tin" },
+        "variant=aluminum": { "model": "taam:ore.aluminum" },
+        "variant=bauxite": { "model": "taam:ore.bauxite" },
+        "variant=kaolinite": { "model": "taam:ore.kaolinite" },
+        "variant=reserved1": { "model": "taam:ore.impossible" },
+        "variant=reserved2": { "model": "taam:ore.impossible" },
+        "variant=reserved3": { "model": "taam:ore.impossible" },
+        "variant=reserved4": { "model": "taam:ore.impossible" },
+        "variant=reserved5": { "model": "taam:ore.impossible" },
+        "variant=reserved6": { "model": "taam:ore.impossible" },
+        "variant=reserved7": { "model": "taam:ore.impossible" },
+        "variant=reserved8": { "model": "taam:ore.impossible" },
+        "variant=reserved9": { "model": "taam:ore.impossible" },
+        "variant=reserved10": { "model": "taam:ore.impossible" },
+        "variant=reserved11": { "model": "taam:ore.impossible" },
+        "variant=gold": { "model": "taam:ore.impossible" },
+        "variant=iron": { "model": "taam:ore.impossible" },
+        "variant=coal": { "model": "taam:ore.impossible" }
+    }
+}

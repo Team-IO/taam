@@ -9,6 +9,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+/**
+ * Generic item class for items with metadata variants, defined in an enumeration.
+ * 
+ * Passes metadata validation and information texts to a delegate.
+ * 
+ * @author Oliver Kahrmann
+ *
+ * @param <P> The enumeration type.
+ */
 public class ItemWithMetadata<P extends Enum<P>> extends Item {
 
 	public abstract static class ItemDelegate<T extends Enum<T>> {

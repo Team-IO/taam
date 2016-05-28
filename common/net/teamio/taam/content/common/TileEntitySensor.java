@@ -6,9 +6,9 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntityIronGolem;
 import net.minecraft.entity.monster.EntitySnowman;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.teamio.taam.Config;
 import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.BaseBlock;
@@ -121,7 +121,7 @@ public class TileEntitySensor extends BaseTileEntity implements IRotatable, ITic
 			break;
 		}
 		
-		AxisAlignedBB bb = AxisAlignedBB.fromBounds(xMin, yMin, zMin, xMax, yMax, zMax);
+		AxisAlignedBB bb = new AxisAlignedBB(xMin, yMin, zMin, xMax, yMax, zMax);
 
 		boolean found = false;
 		
@@ -187,5 +187,6 @@ public class TileEntitySensor extends BaseTileEntity implements IRotatable, ITic
 	public void setFacingDirection(EnumFacing direction) {
 		this.direction = direction;
 		setBlockMeta();
+		blockUpdate();
 	}
 }
