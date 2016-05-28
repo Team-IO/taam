@@ -6,11 +6,13 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+import net.teamio.taam.Taam;
 import net.teamio.taam.content.IWorldInteractable;
 import net.teamio.taam.content.conveyors.ATileEntityAppliance;
 import net.teamio.taam.conveyors.ConveyorUtil;
@@ -25,16 +27,16 @@ public class ApplianceSprayer extends ATileEntityAppliance implements IFluidHand
 
 	private static final int capacity = 2000;
 
-	public ApplianceSprayer() {
-		tank = new FluidTank(capacity);
-		pipeEnd = new PipeEndFluidHandler(this, direction.getOpposite(), false);
-	}
-
 	private FluidTank tank;
 	private PipeEndFluidHandler pipeEnd;
 
 	private FluidStack lastInputFluid;
 	private IProcessingRecipeFluidBased[] matchingRecipes;
+
+	public ApplianceSprayer() {
+		tank = new FluidTank(capacity);
+		pipeEnd = new PipeEndFluidHandler(this, direction.getOpposite(), false);
+	}
 
 	/**
 	 * Checks if there is a recipe for the current input fluid and the provided
@@ -212,18 +214,22 @@ public class ApplianceSprayer extends ATileEntityAppliance implements IFluidHand
 		return false;
 	}
 
-	/*
-	 * IPipeTE
-	 */
+	@Override
+	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+		if(capability == Taam.CAPABILITY_PIPE) {
+			return facing == pipeEnd.getSide();
+		}
+		return false;
+	}
 
-	//	@Override
-	//	public IPipe[] getPipesForSide(EnumFacing side) {
-	//		if (side == direction.getOpposite()) {
-	//			return pipeEnd.asPipeArray();
-	//		} else {
-	//			return null;
-	//		}
-	//	}
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+		if(capability == Taam.CAPABILITY_PIPE && facing == pipeEnd.getSide()) {
+			return (T) pipeEnd;
+		}
+		return null;
+	}
 
 	/*
 	 * IFluidHandler implementation
@@ -234,7 +240,11 @@ public class ApplianceSprayer extends ATileEntityAppliance implements IFluidHand
 		if (from != direction.getOpposite()) {
 			return 0;
 		}
-		return tank.fill(resource, doFill);
+		int amount = tank.fill(resource, doFill);
+		if(amount > 0) {
+			updateState(true, false, false);
+		}
+		return amount;
 	}
 
 	@Override
@@ -252,31 +262,36 @@ public class ApplianceSprayer extends ATileEntityAppliance implements IFluidHand
 		if (tank.getFluidAmount() == 0) {
 			tank.setFluid(null);
 		}
+		if(drained != null && drained.amount > 0) {
+			updateState(true, false, false);
+		}
 		return drained;
 	}
 
 	@Override
 	public FluidStack drain(EnumFacing from, int maxDrain, boolean doDrain) {
-		if (from != direction.getOpposite()) {
+		if (from != pipeEnd.getSide()) {
 			return null;
 		}
 		FluidStack drained = tank.drain(maxDrain, doDrain);
 		if (tank.getFluidAmount() == 0) {
 			tank.setFluid(null);
 		}
+		if(drained != null && drained.amount > 0) {
+			updateState(true, false, false);
+		}
 		return drained;
 	}
 
 	@Override
 	public boolean canFill(EnumFacing from, Fluid fluid) {
-		if (from != direction.getOpposite()) {
+		if (from != pipeEnd.getSide()) {
 			return false;
 		}
 		if (fluid == null) {
 			return false;
 		}
 		if (tank.getFluid() == null) {
-			// TODO: Check recipes?
 			return true;
 		} else {
 			return tank.getFluid().getFluid() == fluid;
@@ -285,7 +300,7 @@ public class ApplianceSprayer extends ATileEntityAppliance implements IFluidHand
 
 	@Override
 	public boolean canDrain(EnumFacing from, Fluid fluid) {
-		if (from != direction.getOpposite()) {
+		if (from != pipeEnd.getSide()) {
 			return false;
 		}
 		return true;
