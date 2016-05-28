@@ -16,9 +16,9 @@ import net.teamio.taam.content.BaseBlock;
 import net.teamio.taam.content.MaterialMachinesTransparent;
 
 public class BlockSensor extends BaseBlock {
-	
-	public static PropertyEnum<EnumFacing> DIRECTION = PropertyEnum.create("direction", EnumFacing.class, EnumFacing.VALUES); 
-	
+
+	public static PropertyEnum<EnumFacing> DIRECTION = PropertyEnum.create("direction", EnumFacing.class, EnumFacing.VALUES);
+
 	/**
 	 * Hitbox "offset" depth (attaching side -> sensor front)
 	 */
@@ -31,16 +31,16 @@ public class BlockSensor extends BaseBlock {
 	 * Hitbox "offset" depth (block bottom/top -> sensor base)
 	 */
 	private static final float height = 0.43f;
-	
+
 	public static final String[] metaList = new String[] {
-		Taam.BLOCK_SENSOR_MOTION,
-		Taam.BLOCK_SENSOR_MINECT
+			Taam.BLOCK_SENSOR_MOTION,
+			Taam.BLOCK_SENSOR_MINECT
 	};
-	
+
 	public BlockSensor() {
 		super(MaterialMachinesTransparent.INSTANCE);
-		this.setHardness(3.5f);
-		this.setSoundType(SoundType.METAL);
+		setHardness(3.5f);
+		setSoundType(SoundType.METAL);
 		this.setHarvestLevel("pickaxe", 1);
 	}
 
@@ -51,7 +51,7 @@ public class BlockSensor extends BaseBlock {
 
 	@Override
 	public int getMetaFromState(IBlockState state) {
-		EnumFacing meta = (EnumFacing) state.getValue(DIRECTION);
+		EnumFacing meta = state.getValue(DIRECTION);
 		return meta.ordinal();
 	}
 
@@ -59,22 +59,22 @@ public class BlockSensor extends BaseBlock {
 	public IBlockState getStateFromMeta(int meta) {
 		return getDefaultState().withProperty(DIRECTION, EnumFacing.getFront(meta));
 	}
-	
+
 	@Override
 	public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, World worldIn, BlockPos pos) {
 		return null;
 	}
-	
+
 	@Override
 	public TileEntity createTileEntity(World world, IBlockState state) {
-		return new TileEntitySensor((EnumFacing)state.getValue(DIRECTION));
-		
+		return new TileEntitySensor(state.getValue(DIRECTION));
+
 	}
 	@Override
 	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
 		// Type is determined by the tile entity, we just need the rotation here
-		
-		EnumFacing dir = (EnumFacing)state.getValue(DIRECTION);
+
+		EnumFacing dir = state.getValue(DIRECTION);
 		float minX, minY, minZ, maxX, maxY, maxZ;
 		switch (dir) {
 		case DOWN:
@@ -145,23 +145,23 @@ public class BlockSensor extends BaseBlock {
 	public int getWeakPower(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
 		return getRedstoneLevel(blockAccess, pos);
 	}
-	
+
 	@Override
 	public int getStrongPower(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
-		EnumFacing dir = (EnumFacing)blockState.getValue(DIRECTION);
+		EnumFacing dir = blockState.getValue(DIRECTION);
 		if(dir == side) {
 			return getRedstoneLevel(blockAccess, pos);
 		} else {
 			return 0;
 		}
 	}
-	
+
 	public int getRedstoneLevel(IBlockAccess world, BlockPos pos) {
-		TileEntitySensor te = ((TileEntitySensor) world.getTileEntity(pos));
+		TileEntitySensor te = (TileEntitySensor) world.getTileEntity(pos);
 		return te == null ? 0 : te.getRedstoneLevel();
 	}
 
-	
+
 	@Override
 	public boolean isBlockSolid(IBlockAccess worldIn, BlockPos pos, EnumFacing side) {
 		return false;
@@ -171,19 +171,19 @@ public class BlockSensor extends BaseBlock {
 	public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state) {
 		worldIn.notifyNeighborsOfStateChange(pos, this);
 	}
-	
+
 	@Override
 	public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ,
 			int meta, EntityLivingBase placer) {
 		return getDefaultState().withProperty(DIRECTION, facing);
 	}
-	
+
 	@Override
 	public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
 		BaseBlock.updateBlocksAround(worldIn, pos);
 		super.breakBlock(worldIn, pos, state);
 	}
-	
+
 	@Override
 	public boolean canPlaceBlockAt(World worldIn, BlockPos pos) {
 		IBlockState blockState = worldIn.getBlockState(pos);
@@ -192,16 +192,16 @@ public class BlockSensor extends BaseBlock {
 
 	@Override
 	public boolean canBlockStay(World worldIn, BlockPos pos, IBlockState state) {
-		EnumFacing dir = (EnumFacing)state.getValue(DIRECTION);
+		EnumFacing dir = state.getValue(DIRECTION);
 		EnumFacing side = dir.getOpposite();
 
 		return worldIn.isSideSolid(pos.offset(side), dir);
 	}
-	
+
 	@Override
 	public boolean canPlaceBlockOnSide(World worldIn, BlockPos pos, EnumFacing side) {
 		//return worldIn.isSideSolid(pos.offset(side), side);
 		return true;
 	}
-	
+
 }

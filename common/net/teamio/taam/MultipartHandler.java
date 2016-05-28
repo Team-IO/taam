@@ -22,8 +22,9 @@ import net.teamio.taam.machines.MachineItemMultipart;
 import net.teamio.taam.machines.MachineMultipart;
 
 public class MultipartHandler {
-	
+
 	public static void registerMultipartStuff() {
+		
 		MultipartRegistry.registerPartFactory(new IAdvancedPartFactory() {
 			@Override
 			public IMultipart createPart(ResourceLocation type, NBTTagCompound tag) {
@@ -41,15 +42,15 @@ public class MultipartHandler {
 				return multipart;
 			}
 		}, Taam.MACHINE_META.valuesAsString());
-		
+
 		//MultipartRegistry.registerPart(MachineMultipart.class, "taam.machine");
 	}
-	
+
 	public static Item createMultipartItem(String unlocalizedName, IMachineMetaInfo[] meta) {
 		MachineItemMultipart item = new MachineItemMultipart(meta);
 		return item;
 	}
-	
+
 	public static <T> T getCapabilityForCenter(Capability<T> capability, IBlockAccess world, BlockPos pos, EnumFacing facing) {
 		IMultipartContainer container = MultipartHelper.getPartContainer(world, pos);
 		if(container == null) {

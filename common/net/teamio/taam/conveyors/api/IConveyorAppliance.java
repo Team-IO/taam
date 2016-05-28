@@ -7,7 +7,7 @@ public interface IConveyorAppliance extends IRotatable {
 
 	/**
 	 * Asks the appliance to process one slot on the host.
-	 * 
+	 *
 	 * @param host
 	 *            The machine hosting the appliance.
 	 * @param slot
@@ -21,5 +21,5 @@ public interface IConveyorAppliance extends IRotatable {
 	 */
 	public boolean processItem(IConveyorApplianceHost host, int slot, ItemWrapper wrapper);
 
-	
+
 }

@@ -12,9 +12,9 @@ public abstract class ProcessingCategory extends BlankRecipeCategory {
 
 	public static final int slotInput = 0;
 	public static final int slotOutput = 1;
-	
+
 	public static final int MAX_ROWS = 3;
-	
+
 	public ProcessingCategory() {
 	}
 
@@ -24,17 +24,17 @@ public abstract class ProcessingCategory extends BlankRecipeCategory {
 			Log.error("RecipeWrapper type unknown: {}", recipeWrapper);
 			return;
 		}
-		
+
 		ProcessingRecipeWrapper processingWrapper = (ProcessingRecipeWrapper)recipeWrapper;
 		IProcessingRecipe recipe = processingWrapper.recipe;
-		
+
 		IGuiItemStackGroup guiItemStacks = recipeLayout.getItemStacks();
-		
+
 		guiItemStacks.init(slotInput, true, 4, 2);
 		guiItemStacks.setFromRecipe(slotInput, recipeWrapper.getInputs());
-		
+
 		ChancedOutput[] co = recipe.getOutput();
-		
+
 		for(int i = 0; i < co.length; i++) {
 			int r = i % MAX_ROWS;
 			int c = i / MAX_ROWS;

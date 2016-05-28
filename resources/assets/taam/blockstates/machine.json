@@ -25,7 +25,20 @@
         	"pump":			{ "model": "taam:pump.obj" },
       		"fluid_drier":	{ "model": "taam:fluid_drier.obj" },
       		"mixer":		{ "model": "taam:mixer.obj" },
-      		"pipe":			{ "model": "taam:pipes.obj" },
+      		"pipe":			{
+      			"model": "taam:pipes.obj",
+	        	"custom": {
+					"groupConfigs": {
+						"Pipe_Center": {"show": ["Center_pcmdl"], "hide": [], "flags": ["alwaysActive"]},
+						"Pipe_West": {"show": ["FlangeMX_pfmdl"]},
+						"Pipe_East": {"show": ["FlangePX_pfmdl"]},
+						"Pipe_South": {"show": ["FlangeMY_pfmdl"]},
+						"Pipe_North": {"show": ["FlangePY_pfmdl"]},
+						"Pipe_Down": {"show": ["FlangeMZ_pfmdl"]},
+						"Pipe_Up": {"show": ["FlangePZ_pfmdl"]}
+					}
+				}
+			},
       		"tank":			{ "model": "taam:tank.obj" },
       		"fluid_drier":	{ "model": "taam:fluid_drier.obj" }
         }

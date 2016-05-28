@@ -1,9 +1,6 @@
 package net.teamio.taam.content.conveyors;
 
-import java.util.Collections;
 import java.util.List;
-
-import com.google.common.collect.Lists;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -24,7 +21,6 @@ import net.teamio.taam.Config;
 import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IRedstoneControlled;
-import net.teamio.taam.content.IRenderable;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.content.IWorldInteractable;
 import net.teamio.taam.conveyors.ConveyorUtil;
@@ -39,7 +35,7 @@ import net.teamio.taam.util.WorldCoord;
 import net.teamio.taam.util.inv.InventorySimple;
 import net.teamio.taam.util.inv.InventoryUtils;
 
-public class TileEntityConveyorProcessor extends BaseTileEntity implements ISidedInventory, IConveyorSlots, IHopper, IRedstoneControlled, IWorldInteractable, IRotatable, ITickable, IRenderable {
+public class TileEntityConveyorProcessor extends BaseTileEntity implements ISidedInventory, IConveyorSlots, IHopper, IRedstoneControlled, IWorldInteractable, IRotatable, ITickable {
 
 	public static final byte Shredder = 0;
 	public static final byte Grinder = 1;
@@ -47,23 +43,19 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 
 	private InventorySimple inventory;
 	private byte mode;
-	
+
 	private OutputChuteBacklog chute = new OutputChuteBacklog();
 
 	private byte redstoneMode = IRedstoneControlled.MODE_ACTIVE_ON_LOW;
 	private EnumFacing direction = EnumFacing.NORTH;
-	
+
 	private int timeout;
-	
-	public static List<String> parts_shredder = Collections.unmodifiableList(Lists.newArrayList("Support_Alu_smdl_alu", "ProcessorChute_chutemdl", "Processor_Walzes", "ProcessorMarker_Shredder_pmmdl_shr", "BumpsShredder"));
-	public static List<String> parts_grinder = Collections.unmodifiableList(Lists.newArrayList("Support_Alu_smdl_alu", "ProcessorChute_chutemdl", "Processor_Walzes", "ProcessorMarker_Grinder_pmmdl_gri", "BumpsGrinder"));
-	public static List<String> parts_crusher = Collections.unmodifiableList(Lists.newArrayList("Support_Alu_smdl_alu", "ProcessorChute_chutemdl", "Processor_Walzes", "ProcessorMarker_Crusher_pmmdl_cru", "BumpsCrusher"));
-	
+
 	/**
 	 * Cached recipe, that will not change during processing of one stack
 	 */
 	private IProcessingRecipe recipe;
-	
+
 	/**
 	 * Just for rendering purposes we keep this here.
 	 */
@@ -72,7 +64,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 	public TileEntityConveyorProcessor() {
 		this(Shredder);
 	}
-	
+
 	public TileEntityConveyorProcessor(byte mode) {
 		inventory = new InventorySimple(1, getName());
 		this.mode = mode;
@@ -82,25 +74,12 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 			timeout = Config.pl_processor_crusher_timeout;
 		}
 	}
-	
-	@Override
-	public List<String> getVisibleParts() {
-		if(mode == Shredder) {
-			return parts_shredder;
-		} else if(mode == Grinder) {
-			return parts_grinder;
-		} else if(mode == Crusher) {
-			return parts_crusher;
-		} else {
-			return null;
-		}
-	}
-	
+
 	public boolean isCoolingDown() {
 		return timeout > 0;
 	}
-	
-	
+
+
 	@Override
 	public void update() {
 		if(worldObj.isRemote) {
@@ -113,41 +92,41 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 				ConveyorUtil.tryInsertItemsFromWorld(this, worldObj, null, false);
 			}
 		}
-		
+
 		boolean redstoneHigh = worldObj.isBlockIndirectlyGettingPowered(pos) > 0;
-		
+
 		boolean newShutdown = TaamUtil.isShutdown(worldObj.rand, redstoneMode, redstoneHigh);
-		
+
 		boolean needsUpdate = false;
-		
+
 		if(isShutdown != newShutdown) {
 			isShutdown = newShutdown;
 			needsUpdate = true;
 		}
-		
+
 		if(!isShutdown) {
 			boolean decrease = false;
-			
+
 			if(mode == Shredder) {
 				decrease = processShredder();
 			} else {
 				decrease = processOther();
 			}
-			
+
 			if(decrease) {
 				decrStackSize(0, 1);
 				needsUpdate = false; // decrStackSize already updates
 			}
-			
+
 			if(worldObj.rand.nextFloat() < Config.pl_processor_hurt_chance) {
 				hurtEntities();
 			}
 		}
-		
+
 		if(needsUpdate) {
 			updateState(true, false, false);
 		}
-		
+
 	}
 
 	private void hurtEntities() {
@@ -159,7 +138,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 			hurtEntity(living);
 		}
 	}
-	
+
 	private void hurtEntity(EntityLivingBase living) {
 		DamageSource ds = TaamMain.ds_processed;
 		switch(mode) {
@@ -175,10 +154,10 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 		}
 		living.attackEntityFrom(ds, 5);
 	}
-	
+
 	private boolean processOther() {
 		BlockPos down = pos.down();
-		
+
 		/*
 		 * Check blocked & fetch output inventory
 		 */
@@ -186,7 +165,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 		if(!chute.isOperable()) {
 			return false;
 		}
-		
+
 		/*
 		 * Output Backlog
 		 */
@@ -200,21 +179,21 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 			timeout--;
 			return false;
 		}
-		
+
 		ItemStack input = getStackInSlot(0);
-		
+
 		if(input == null) {
 			recipe = null;
 			return false;
 		}
-		
+
 		if(recipe == null) {
 			recipe = getRecipe(input);
 		}
-		
+
 		if(recipe != null) {
 			chute.backlog = recipe.getOutput(input);
-			
+
 			if(mode == Grinder) {
 				timeout += Config.pl_processor_grinder_timeout;
 			} else {
@@ -223,24 +202,24 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 			// Consume input
 			return true;
 		}
-		
+
 		return false;
 	}
-	
+
 	private boolean processShredder() {
 
 		if(isCoolingDown()) {
 			timeout--;
 			return false;
 		}
-		
+
 		ItemStack input = getStackInSlot(0);
-		
+
 		if(input == null) {
 			return false;
 		}
 		timeout += Config.pl_processor_shredder_timeout;
-		
+
 		return true;
 	}
 
@@ -260,7 +239,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 		default:
 			return null;
 		}
-		
+
 		IProcessingRecipe recipe = ProcessingRegistry.getRecipe(machine, input);
 		return recipe;
 	}
@@ -268,11 +247,11 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 	@Override
 	protected void writePropertiesToNBT(NBTTagCompound tag) {
 		tag.setTag("items", InventoryUtils.writeItemStacksToTag(inventory.items));
-		
+
 		NBTTagCompound tagChute = new NBTTagCompound();
 		chute.writeToNBT(tagChute);
 		tag.setTag("chute", tagChute);
-		
+
 		tag.setByte("mode", mode);
 		// tag.setByte("redstoneMode", redstoneMode);
 		tag.setInteger("timeout", timeout);
@@ -302,11 +281,11 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 			recipe = null;
 		}
 	}
-	
+
 	/*
 	 * IInventory implementation
 	 */
-	
+
 	@Override
 	public int getSizeInventory() {
 		return inventory.getSizeInventory();
@@ -350,12 +329,12 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 			return "tile.productionline.invalid.name";
 		}
 	}
-	
+
 	@Override
 	public ITextComponent getDisplayName() {
 		return new TextComponentTranslation(getName());
 	}
-	
+
 	@Override
 	public boolean hasCustomName() {
 		return false;
@@ -385,9 +364,9 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 	public boolean isItemValidForSlot(int slot, ItemStack itemStack) {
 		return true;
 		// Removed this check for performance reasons... Clog will happen at processor, not at conveyor.
-//		return mode == Shredder || getRecipe(itemStack) != null;
+		//		return mode == Shredder || getRecipe(itemStack) != null;
 	}
-	
+
 	@Override
 	public int getField(int id) {
 		return 0;
@@ -414,12 +393,12 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 	public boolean shouldRenderItemsDefault() {
 		return false;
 	}
-	
+
 	@Override
 	public boolean canSlotMove(int slot) {
 		return false;
 	}
-	
+
 	@Override
 	public boolean isSlotAvailable(int slot) {
 		return true;
@@ -448,7 +427,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 		}
 		return inserted;
 	}
-	
+
 	@Override
 	public ItemStack removeItemAt(int slot) {
 		ItemStack content = getStackInSlot(slot);
@@ -488,7 +467,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 	public float getVerticalPosition(int slot) {
 		return 0.51f;
 	}
-	
+
 	/*
 	 * ISidedInventory implementation
 	 */
@@ -501,7 +480,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 			return new int[0];
 		}
 	}
-	
+
 	@Override
 	public boolean canInsertItem(int index, ItemStack itemStackIn, EnumFacing direction) {
 		if(direction == EnumFacing.UP) {
@@ -513,16 +492,16 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 			return false;
 		}
 	}
-	
+
 	@Override
 	public boolean canExtractItem(int index, ItemStack stack, EnumFacing direction) {
 		return direction == EnumFacing.UP;
 	}
-	
+
 	/*
 	 * IHopper implementation
 	 */
-	
+
 	@Override
 	public double getXPos() {
 		return pos.getX();
@@ -537,7 +516,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 	public double getZPos() {
 		return pos.getZ();
 	}
-	
+
 
 	/*
 	 * IRedstoneControlled implementation
@@ -555,19 +534,19 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 
 	@Override
 	public void setRedstoneMode(byte mode) {
-		this.redstoneMode = mode;
+		redstoneMode = mode;
 		if(worldObj.isRemote) {
 			TPMachineConfiguration config = TPMachineConfiguration.newChangeInteger(new WorldCoord(this), (byte)1, redstoneMode);
 			TaamMain.network.sendToServer(config);
 		} else {
-			this.markDirty();
+			markDirty();
 		}
 	}
 
 	/*
 	 * IWorldInteractable implementation
 	 */
-	
+
 	@Override
 	public boolean onBlockActivated(World world, EntityPlayer player, boolean hasWrench, EnumFacing side, float hitX,
 			float hitY, float hitZ) {
@@ -602,12 +581,12 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 		}
 		return true;
 	}
-	
+
 	@Override
 	public boolean onBlockHit(World world, EntityPlayer player, boolean hasWrench) {
-//		if(side != EnumFacing.UP.ordinal()) {
-//			return false;
-//		}
+		//		if(side != EnumFacing.UP.ordinal()) {
+		//			return false;
+		//		}
 		if(hasWrench) {
 			ItemStack taken = getStackInSlot(0);
 			if(taken != null) {
@@ -623,7 +602,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 	/*
 	 * IRotatable Implementation
 	 */
-	
+
 	@Override
 	public EnumFacing getFacingDirection() {
 		return direction;
@@ -642,5 +621,5 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 			updateState(false, true, false);
 		}
 	}
-	
+
 }

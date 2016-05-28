@@ -1,11 +1,6 @@
 package net.teamio.taam.content.common;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.apache.commons.lang3.ArrayUtils;
-
-import com.google.common.collect.Lists;
 
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -23,7 +18,6 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 import net.teamio.taam.content.BaseTileEntity;
-import net.teamio.taam.content.IRenderable;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.conveyors.ItemWrapper;
@@ -32,17 +26,15 @@ import net.teamio.taam.util.TaamUtil;
 import net.teamio.taam.util.inv.InventoryRange;
 import net.teamio.taam.util.inv.InventoryUtils;
 
-public class TileEntityChute extends BaseTileEntity implements IInventory, ISidedInventory, IFluidHandler, IConveyorSlots, IRotatable, ITickable, IRenderable {
+public class TileEntityChute extends BaseTileEntity implements IInventory, ISidedInventory, IFluidHandler, IConveyorSlots, IRotatable, ITickable {
 
 	public boolean isConveyorVersion = false;
 	private EnumFacing direction = EnumFacing.NORTH;
-	
-	public static List<String> parts_conveyor_version = Collections.unmodifiableList(Lists.newArrayList("Support_Alu_smdl_alu", "Chute_cchmdl"));
-	
+
 	public TileEntityChute(boolean isConveyorVersion) {
 		this.isConveyorVersion = isConveyorVersion;
 	}
-	
+
 	public TileEntityChute() {
 		this(false);
 	}
@@ -51,7 +43,7 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 		// TODO Auto-generated method stub
 		super.validate();
 	}
-	
+
 	@Override
 	public void update() {
 		// Skip item insertion if there is a solid block / other chute above us
@@ -59,16 +51,7 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 			ConveyorUtil.tryInsertItemsFromWorld(this, worldObj, null, false);
 		}
 	}
-	
-	@Override
-	public List<String> getVisibleParts() {
-		if(isConveyorVersion) {
-			return parts_conveyor_version;
-		} else {
-			return null;
-		}
-	}
-	
+
 	@Override
 	protected void writePropertiesToNBT(NBTTagCompound tag) {
 		tag.setBoolean("isConveyorVersion", isConveyorVersion);
@@ -87,11 +70,11 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 			}
 		}
 	}
-	
+
 	private TileEntity getTarget() {
 		return worldObj.getTileEntity(pos.down());
 	}
-	
+
 	private InventoryRange getTargetRange() {
 		IInventory inventory = getTargetInventory();
 		if(inventory == null) {
@@ -100,11 +83,11 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 			return new InventoryRange(inventory, EnumFacing.UP.ordinal());
 		}
 	}
-	
+
 	private IInventory getTargetInventory() {
 		return InventoryUtils.getInventory(worldObj, pos.down());
 	}
-	
+
 	private IFluidHandler getTargetFluidHandler() {
 		TileEntity target = getTarget();
 		if(target instanceof IFluidHandler) {
@@ -113,7 +96,7 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 			return null;
 		}
 	}
-	
+
 	private boolean canDrop() {
 		return TaamUtil.canDropIntoWorld(worldObj, pos.down());
 	}
@@ -121,7 +104,7 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 	/*
 	 * IInventory implementation
 	 */
-	
+
 	@Override
 	public int getSizeInventory() {
 		InventoryRange target = getTargetRange();
@@ -157,10 +140,10 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 		if(target == null) {
 			if(!worldObj.isRemote && canDrop()) {
 				EntityItem item = new EntityItem(worldObj, pos.getX() + 0.5, pos.getY() - 0.3, pos.getZ() + 0.5, stack);
-		        item.motionX = 0;
-		        item.motionY = 0;
-		        item.motionZ = 0;
-		        worldObj.spawnEntityInWorld(item);
+				item.motionX = 0;
+				item.motionY = 0;
+				item.motionZ = 0;
+				worldObj.spawnEntityInWorld(item);
 			}
 		} else {
 			target.inv.setInventorySlotContents(target.slots[slot], stack);
@@ -201,7 +184,7 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 	@Override
 	public void setField(int id, int value) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -234,7 +217,7 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 			return target.isUseableByPlayer(player);
 		}
 	}
-	
+
 	@Override
 	public void openInventory(EntityPlayer player) {
 		IInventory target = getTargetInventory();
@@ -264,7 +247,7 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 	/*
 	 * ISidedInventory implementation
 	 */
-	
+
 	@Override
 	public int[] getSlotsForFace(EnumFacing side) {
 		if(side != EnumFacing.UP) {
@@ -310,7 +293,7 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 	/*
 	 * IFluidHandler implementation
 	 */
-	
+
 	@Override
 	public int fill(EnumFacing from, FluidStack resource, boolean doFill) {
 		if(from != EnumFacing.UP) {
@@ -370,7 +353,7 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 	/*
 	 * IConveyorAwareTE implementation
 	 */
-	
+
 	@Override
 	public boolean canSlotMove(int slot) {
 		return false;
@@ -402,18 +385,18 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 		if(target == null) {
 			if(!worldObj.isRemote && canDrop()) {
 				EntityItem item = new EntityItem(worldObj, pos.getX() + 0.5, pos.getY() - 0.3, pos.getZ() + 0.5, stack);
-		        item.motionX = 0;
-		        item.motionY = 0;
-		        item.motionZ = 0;
-		        worldObj.spawnEntityInWorld(item);
-		        return stack.stackSize;
+				item.motionX = 0;
+				item.motionY = 0;
+				item.motionZ = 0;
+				worldObj.spawnEntityInWorld(item);
+				return stack.stackSize;
 			}
 			return 0;
 		} else {
 			return stack.stackSize - InventoryUtils.insertItem(target, stack, false);
 		}
 	}
-	
+
 	@Override
 	public ItemStack removeItemAt(int slot) {
 		return null;
@@ -424,6 +407,7 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 		return EnumFacing.DOWN;
 	}
 
+	@Override
 	public EnumFacing getNextSlot(int slot) {
 		return null;
 	}
@@ -455,11 +439,11 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 	public float getVerticalPosition(int slot) {
 		return 0.51f;
 	}
-	
+
 	/*
 	 * IRotatable Implementation
 	 */
-	
+
 	@Override
 	public EnumFacing getFacingDirection() {
 		return direction;

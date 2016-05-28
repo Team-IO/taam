@@ -16,7 +16,7 @@ import net.teamio.taam.Log;
 
 /**
  * Dummy machine used instead of thousands of null-checks
- * 
+ *
  * @author Oliver Kahrmann
  *
  */

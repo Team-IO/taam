@@ -1,10 +1,5 @@
 package net.teamio.taam.content.conveyors;
 
-import java.util.Collections;
-import java.util.List;
-
-import com.google.common.collect.Lists;
-
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -25,7 +20,6 @@ import net.teamio.taam.Taam;
 import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IRedstoneControlled;
-import net.teamio.taam.content.IRenderable;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.conveyors.api.ConveyorSlotsInventory;
@@ -37,62 +31,55 @@ import net.teamio.taam.util.inv.InventorySimple;
 import net.teamio.taam.util.inv.InventoryUtils;
 
 
-public class TileEntityConveyorHopper extends BaseTileEntity implements IInventory, IHopper, IRedstoneControlled, IRotatable, ITickable, IRenderable {
+public class TileEntityConveyorHopper extends BaseTileEntity implements IInventory, IHopper, IRedstoneControlled, IRotatable, ITickable {
 
 	private InventorySimple inventory;
-	
+
 	private boolean highSpeed;
 	private int timeout;
 	private boolean eject;
 	private boolean stackMode;
 	private boolean linearMode;
 	private byte redstoneMode;
-	
+
 	private EnumFacing direction = EnumFacing.NORTH;
-	
+
 	private boolean pulseWasSent = false;
 	
-	public static List<String> parts_regular = Collections.unmodifiableList(Lists.newArrayList("Support_Alu_smdl_alu", "ConveyorHopper_chmdl"));
-	public static List<String> parts_hs = Collections.unmodifiableList(Lists.newArrayList("Support_Alu_smdl_alu", "ConveyorHopperHighSpeed_chmdl_hs"));
-	
+	private IItemHandler itemHandler;
+	private ConveyorSlotsInventory conveyorSlots;
+
 	public TileEntityConveyorHopper() {
 		this(false);
 	}
-	
+
 	public TileEntityConveyorHopper(boolean highSpeed) {
 		this.highSpeed = highSpeed;
 		inventory = new InventorySimple(5);
+		itemHandler = new InvWrapper(inventory);
+		conveyorSlots = new ConveyorSlotsInventory(itemHandler);
 	}
-	
-	@Override
-	public List<String> getVisibleParts() {
-		if(highSpeed) {
-			return parts_hs;
-		} else {
-			return parts_regular;
-		}
-	}
-	
+
 	@Override
 	public void update() {
 		if(worldObj.isRemote) {
 			return;
 		}
-		
+
 		/*
 		 * Find items laying on the conveyor.
 		 */
-		
+
 		ConveyorUtil.tryInsertItemsFromWorld(this, worldObj, null, true);
-		
-		
-		
+
+
+
 		boolean isShutdown = false;
-		
-		
+
+
 		boolean redstoneHigh = worldObj.isBlockIndirectlyGettingPowered(pos) > 0;
 		boolean isPulsing = false;
-		
+
 		// Redstone. Other criteria?
 		if(redstoneMode == IRedstoneControlled.MODE_ACTIVE_ON_HIGH && !redstoneHigh) {
 			isShutdown = true;
@@ -109,32 +96,32 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IInvento
 		} else if(redstoneMode > 4 || redstoneMode < 0) {
 			isShutdown = worldObj.rand.nextBoolean();
 		}
-		
+
 		pulseWasSent = redstoneHigh;
-		
+
 		if(isShutdown) {
 			return;
 		}
-		
+
 		if(isPulsing) {
 			timeout = 0;
 		} else if(isCoolingDown()) {
 			timeout--;
 			return;
 		}
-		
+
 		int slotToDecrease = 0;
 		int amountToDecrease = 0;
-		
+
 		if(eject) {
 			if(!TaamUtil.canDropIntoWorld(worldObj, pos.down())) {
 				return;
 			}
-			for(int i = 0; i < this.inventory.getSizeInventory(); i++) {
-				if(InventoryUtils.stackSize(this.inventory, i) > 0) {
-					ItemStack stack = this.inventory.getStackInSlot(i);
+			for(int i = 0; i < inventory.getSizeInventory(); i++) {
+				if(InventoryUtils.stackSize(inventory, i) > 0) {
+					ItemStack stack = inventory.getStackInSlot(i);
 					ItemStack ejectStack;
-					
+
 					if(highSpeed && stackMode) {
 						// Eject whole stack
 						ejectStack = InventoryUtils.copyStack(stack, stack.stackSize);
@@ -142,19 +129,19 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IInvento
 						// Eject ONE item
 						ejectStack = InventoryUtils.copyStack(stack, 1);
 					}
-					
+
 					/*
 					 * -----------
 					 */
-					
+
 					EntityItem item = new EntityItem(worldObj, pos.getX() + 0.5, pos.getY() - 0.3, pos.getZ() + 0.5, ejectStack);
-			        item.motionX = 0;
-			        item.motionY = 0;
-			        item.motionZ = 0;
-			        worldObj.spawnEntityInWorld(item);
-					
-			        slotToDecrease = i;
-			        amountToDecrease = ejectStack.stackSize;
+					item.motionX = 0;
+					item.motionY = 0;
+					item.motionZ = 0;
+					worldObj.spawnEntityInWorld(item);
+
+					slotToDecrease = i;
+					amountToDecrease = ejectStack.stackSize;
 					break;
 				}
 			}
@@ -165,12 +152,12 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IInvento
 				return;
 			}
 			InventoryRange range = new InventoryRange(inventory, EnumFacing.UP.ordinal());
-			
+
 			for(int i = 0; i < this.inventory.getSizeInventory(); i++) {
 				if(InventoryUtils.stackSize(this.inventory, i) > 0) {
 					ItemStack stack = this.inventory.getStackInSlot(i);
 					ItemStack ejectStack;
-					
+
 					if(highSpeed && stackMode) {
 						// Eject whole stack
 						ejectStack = InventoryUtils.copyStack(stack, stack.stackSize);
@@ -178,13 +165,13 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IInvento
 						// Eject ONE item
 						ejectStack = InventoryUtils.copyStack(stack, 1);
 					}
-					
+
 					/*
 					 * -----------
 					 */
-					
+
 					int unableToInsert = InventoryUtils.insertItem(range, ejectStack, false);
-					
+
 					// If we fit anything, decrease inventory accordingly
 					if(unableToInsert < ejectStack.stackSize) {
 						slotToDecrease = i;
@@ -195,14 +182,14 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IInvento
 					if(linearMode) {
 						break;
 					}
-					
+
 				}
 			}
 		}
 		boolean changed = false;
-		
+
 		if(amountToDecrease > 0) {
-			InventoryUtils.decrStackSize(this.inventory, slotToDecrease, amountToDecrease);
+			InventoryUtils.decrStackSize(inventory, slotToDecrease, amountToDecrease);
 			if(highSpeed && !(stackMode && Config.pl_hopper_stackmode_normal_speed)) {
 				timeout += Config.pl_hopper_highspeed_delay;
 			} else {
@@ -213,10 +200,10 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IInvento
 
 		// Move Items to the front in linear mode
 		if(linearMode) {
-			for(int i = 0; i < this.inventory.getSizeInventory() - 1; i++) {
-				if(this.inventory.getStackInSlot(i) == null) {
-					this.inventory.setInventorySlotContents(i, this.inventory.getStackInSlot(i + 1));
-					this.inventory.setInventorySlotContents(i + 1, null);
+			for(int i = 0; i < inventory.getSizeInventory() - 1; i++) {
+				if(inventory.getStackInSlot(i) == null) {
+					inventory.setInventorySlotContents(i, inventory.getStackInSlot(i + 1));
+					inventory.setInventorySlotContents(i + 1, null);
 					changed = true;
 				}
 			}
@@ -225,11 +212,11 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IInvento
 			updateState(false, false, false);
 		}
 	}
-	
+
 	public boolean isCoolingDown() {
 		return timeout > 0;
 	}
-	
+
 	@Override
 	protected void writePropertiesToNBT(NBTTagCompound tag) {
 		tag.setTag("items", InventoryUtils.writeItemStacksToTag(inventory.items));
@@ -239,7 +226,7 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IInvento
 		tag.setBoolean("linearMode", linearMode);
 		tag.setBoolean("stackMode", stackMode);
 		tag.setByte("redstoneMode", redstoneMode);
-		
+
 		tag.setBoolean("pulseWasSent", pulseWasSent);
 		tag.setInteger("direction", direction.ordinal());
 	}
@@ -261,10 +248,7 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IInvento
 			direction = EnumFacing.NORTH;
 		}
 	}
-	
-	private IItemHandler itemHandler = new InvWrapper(inventory);
-	private ConveyorSlotsInventory conveyorSlots = new ConveyorSlotsInventory(itemHandler);
-	
+
 	@Override
 	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
 		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
@@ -275,7 +259,7 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IInvento
 		}
 		return false;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
@@ -291,7 +275,7 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IInvento
 	/*
 	 * IInventory implementation
 	 */
-	
+
 	@Override
 	public int getSizeInventory() {
 		return inventory.getSizeInventory();
@@ -325,12 +309,12 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IInvento
 			return "tile.productionline.hopper.name";
 		}
 	}
-	
+
 	@Override
 	public ITextComponent getDisplayName() {
 		return new TextComponentTranslation(getName());
 	}
-	
+
 	@Override
 	public boolean hasCustomName() {
 		return false;
@@ -378,7 +362,7 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IInvento
 	@Override
 	public void clear() {
 	}
-	
+
 	/*
 	 * Accessors
 	 */
@@ -401,25 +385,25 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IInvento
 			TPMachineConfiguration config = TPMachineConfiguration.newChangeBoolean(new WorldCoord(this), (byte)1, eject);
 			TaamMain.network.sendToServer(config);
 		} else {
-			this.markDirty();
+			markDirty();
 		}
 	}
 
 	public boolean isStackMode() {
 		return stackMode;
 	}
-	
+
 	public void setStackMode(boolean stackMode) {
 		this.stackMode = stackMode;
 		if(worldObj.isRemote) {
 			TPMachineConfiguration config = TPMachineConfiguration.newChangeBoolean(new WorldCoord(this), (byte)2, stackMode);
 			TaamMain.network.sendToServer(config);
 		} else {
-			this.markDirty();
+			markDirty();
 		}
 	}
 
-	
+
 	public boolean isLinearMode() {
 		return linearMode;
 	}
@@ -430,10 +414,10 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IInvento
 			TPMachineConfiguration config = TPMachineConfiguration.newChangeBoolean(new WorldCoord(this), (byte)3, linearMode);
 			TaamMain.network.sendToServer(config);
 		} else {
-			this.markDirty();
+			markDirty();
 		}
 	}
-	
+
 	/*
 	 * IHopper implementation
 	 */
@@ -452,7 +436,7 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IInvento
 	public double getZPos() {
 		return pos.getZ();
 	}
-	
+
 	/*
 	 * IRedstoneControlled implementation
 	 */
@@ -469,19 +453,19 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IInvento
 
 	@Override
 	public void setRedstoneMode(byte mode) {
-		this.redstoneMode = mode;
+		redstoneMode = mode;
 		if(worldObj.isRemote) {
 			TPMachineConfiguration config = TPMachineConfiguration.newChangeInteger(new WorldCoord(this), (byte)1, redstoneMode);
 			TaamMain.network.sendToServer(config);
 		} else {
-			this.markDirty();
+			markDirty();
 		}
 	}
 
 	/*
 	 * IRotatable Implementation
 	 */
-	
+
 	@Override
 	public EnumFacing getFacingDirection() {
 		return direction;

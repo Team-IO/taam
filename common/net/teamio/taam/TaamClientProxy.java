@@ -1,6 +1,5 @@
 package net.teamio.taam;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,14 +32,11 @@ import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.IPerspectiveAwareModel;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.model.SimpleModelState;
-import net.minecraftforge.client.model.obj.OBJLoader;
-import net.minecraftforge.client.model.obj.OBJModel;
-import net.minecraftforge.client.model.obj.OBJModel.OBJBakedModel;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
-import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -59,6 +55,10 @@ import net.teamio.taam.content.conveyors.TileEntityConveyorTrashCan;
 import net.teamio.taam.conveyors.appliances.ApplianceSprayer;
 import net.teamio.taam.machines.MachineTileEntity;
 import net.teamio.taam.rendering.TaamRenderer;
+import net.teamio.taam.rendering.obj.OBJCustomData;
+import net.teamio.taam.rendering.obj.OBJLoader;
+import net.teamio.taam.rendering.obj.OBJModel;
+import net.teamio.taam.rendering.obj.OBJModel.OBJBakedModel;
 
 @SuppressWarnings("deprecation")
 public class TaamClientProxy extends TaamCommonProxy {
@@ -71,7 +71,8 @@ public class TaamClientProxy extends TaamCommonProxy {
 
 	@Override
 	public void registerRenderStuff() {
-		OBJLoader.INSTANCE.addDomain("taam");
+		ModelLoaderRegistry.registerLoader(OBJLoader.INSTANCE);
+		OBJLoader.INSTANCE.addDomain(Taam.MOD_ID.toLowerCase());
 
 		taamRenderer = new TaamRenderer();
 
@@ -87,14 +88,14 @@ public class TaamClientProxy extends TaamCommonProxy {
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityConveyorTrashCan.class, taamRenderer);
 
 		ClientRegistry.bindTileEntitySpecialRenderer(ApplianceSprayer.class, taamRenderer);
-		
+
 		ClientRegistry.bindTileEntitySpecialRenderer(MachineTileEntity.class, taamRenderer);
-		
+
 		// If we load multipart, register multipart things, too
 		if(Config.multipart_load) {
 			MultipartHandlerClient.registerRenderStuff();
 		}
-		
+
 		// Receive event for Client Ticks
 		MinecraftForge.EVENT_BUS.register(taamRenderer);
 
@@ -199,7 +200,7 @@ public class TaamClientProxy extends TaamCommonProxy {
 		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_MACHINES, Taam.BLOCK_MACHINES_META.chute.ordinal(), "chute.obj");
 		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_MACHINES, Taam.BLOCK_MACHINES_META.creativecache.ordinal(), "creative_cache.obj");
 		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_MACHINES, Taam.BLOCK_MACHINES_META.creativewell.ordinal(), "creative_well.obj");
-		
+
 		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_PRODUCTIONLINE_APPLIANCE, Taam.BLOCK_PRODUCTIONLINE_APPLIANCE_META.sprayer.ordinal(), "sprayer.obj");
 
 		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_MACHINE_WRAPPER, Taam.MACHINE_META.pipe.ordinal(), "pipes.obj");
@@ -210,8 +211,19 @@ public class TaamClientProxy extends TaamCommonProxy {
 
 		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE, Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META.itembag.ordinal(), "itembag.obj");
 		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE, Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META.trashcan.ordinal(), "trashcan.obj");
-		
-		registerItemOBJ(modelMesher, Taam.BLOCK_PRODUCTIONLINE, Taam.BLOCK_PRODUCTIONLINE_META.values().length, "conveyor.obj");
+
+
+		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_PRODUCTIONLINE, Taam.BLOCK_PRODUCTIONLINE_META.conveyor1.ordinal(), "conveyor_wood.obj");
+		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_PRODUCTIONLINE, Taam.BLOCK_PRODUCTIONLINE_META.conveyor2.ordinal(), "conveyor_alu.obj");
+		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_PRODUCTIONLINE, Taam.BLOCK_PRODUCTIONLINE_META.conveyor3.ordinal(), "conveyor_hs.obj");
+
+		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_PRODUCTIONLINE, Taam.BLOCK_PRODUCTIONLINE_META.chute.ordinal(), "conveyor_chute.obj");
+		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_PRODUCTIONLINE, Taam.BLOCK_PRODUCTIONLINE_META.crusher.ordinal(), "conveyor_processor_crusher.obj");
+		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_PRODUCTIONLINE, Taam.BLOCK_PRODUCTIONLINE_META.grinder.ordinal(), "conveyor_processor_grinder.obj");
+		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_PRODUCTIONLINE, Taam.BLOCK_PRODUCTIONLINE_META.shredder.ordinal(), "conveyor_processor_shredder.obj");
+		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_PRODUCTIONLINE, Taam.BLOCK_PRODUCTIONLINE_META.hopper.ordinal(), "conveyor_hopper.obj");
+		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_PRODUCTIONLINE, Taam.BLOCK_PRODUCTIONLINE_META.hopper_hs.ordinal(), "conveyor_hopper_hs.obj");
+		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_PRODUCTIONLINE, Taam.BLOCK_PRODUCTIONLINE_META.sieve.ordinal(), "conveyor_sieve.obj");
 	}
 
 	/**
@@ -322,25 +334,26 @@ public class TaamClientProxy extends TaamCommonProxy {
 		 * We need to set the "flip-v" flag.. As the inventory-variant is
 		 * "generated" above, MC will ignore what we have in the blockstates
 		 * json & render the textures flipped in the inventory...
-		 * 
+		 *
 		 * Doing it via reflection, as we'd need to redefine the original
 		 * OBJModel somewhere (OBJModel.process() will do that) but I have no
 		 * idea WHERE!
 		 */
 
-		Field customDataField = null;
-		Field customDataFlipVField = null;
-		try {
-			customDataField = OBJModel.class.getDeclaredField("customData");
-			customDataField.setAccessible(true);
-			Class<?> customDataType = customDataField.getType();
-			customDataFlipVField = customDataType.getDeclaredField("flipV");
-			customDataFlipVField.setAccessible(true);
-		} catch (Exception e) {
-			Log.error(
-					"Failed to make OBJModel.customData accessible or access other reflection stuff. Inventory items will have wrong textures.",
-					e);
-		}
+		// Currently not required due to custom replacement of OBJModel (Hacky workaround replaces Hacky Workaround)
+//		Field customDataField = null;
+//		Field customDataFlipVField = null;
+//		try {
+//			customDataField = OBJModel.class.getDeclaredField("customData");
+//			customDataField.setAccessible(true);
+//			Class<?> customDataType = customDataField.getType();
+//			customDataFlipVField = customDataType.getDeclaredField("flipV");
+//			customDataFlipVField.setAccessible(true);
+//		} catch (Exception e) {
+//			Log.error(
+//					"Failed to make OBJModel.customData accessible or access other reflection stuff. Inventory items will have wrong textures.",
+//					e);
+//		}
 
 		/*
 		 * Go through all registered locations from above & replace the baked
@@ -359,13 +372,14 @@ public class TaamClientProxy extends TaamCommonProxy {
 				/*
 				 * Set flip-v flag
 				 */
-
-				try {
-					Object customData = customDataField.get(obj);
-					customDataFlipVField.set(customData, true);
-				} catch (Exception e) {
-					Log.error("Failed to adjust custom data. Inventory items will have wrong textures.", e);
-				}
+				obj.customData.processUVData.put(OBJCustomData.Keys.FLIP_UVS, Pair.of(false, true));
+				obj.customData.hasProcessed = true;
+//				try {
+//					Object customData = customDataField.get(obj);
+//					customDataFlipVField.set(customData, true);
+//				} catch (Exception e) {
+//					Log.error("Failed to adjust custom data. Inventory items will have wrong textures.", e);
+//				}
 
 				/*
 				 * Create custom baked model as replacement
@@ -375,10 +389,10 @@ public class TaamClientProxy extends TaamCommonProxy {
 				modelRegistry.putObject(resourceLocation, bakedModel);
 			}
 		}
-		
-//		if(Config.multipart_load) {
-//			MultipartHandlerClient.onModelBakeEvent(event);
-//		}
+
+		//		if(Config.multipart_load) {
+		//			MultipartHandlerClient.onModelBakeEvent(event);
+		//		}
 
 		Log.debug("Completed onModelBakeEvent");
 	}
@@ -394,63 +408,63 @@ public class TaamClientProxy extends TaamCommonProxy {
 	 * @param s
 	 * @return
 	 */
-	 public static TRSRTransformation get(float tx, float ty, float tz, float ax, float ay, float az, float s)
-     {
-         return TRSRTransformation.blockCenterToCorner(new TRSRTransformation(
-             new Vector3f(tx / 16, ty / 16, tz / 16),
-             TRSRTransformation.quatFromXYZDegrees(new Vector3f(ax, ay, az)),
-             new Vector3f(s, s, s),
-             null));
-     }
-	 
-	 /**
-	  * Original: {@link net.minecraftforge.client.model.ForgeBlockStateV1.Variant.Deserializer.flipX}
-	  */
-	 public static final TRSRTransformation flipX = new TRSRTransformation(null, null, new Vector3f(-1, 1, 1), null);
+	public static TRSRTransformation get(float tx, float ty, float tz, float ax, float ay, float az, float s)
+	{
+		return TRSRTransformation.blockCenterToCorner(new TRSRTransformation(
+				new Vector3f(tx / 16, ty / 16, tz / 16),
+				TRSRTransformation.quatFromXYZDegrees(new Vector3f(ax, ay, az)),
+				new Vector3f(s, s, s),
+				null));
+	}
 
-	 /**
-	  * Original: {@link net.minecraftforge.client.model.ForgeBlockStateV1.Variant.Deserializer.leftify(TRSRTransformation)}
-	  * @param transform
-	  * @return
-	  */
-     public static TRSRTransformation leftify(TRSRTransformation transform)
-     {
-         return TRSRTransformation.blockCenterToCorner(flipX.compose(TRSRTransformation.blockCornerToCenter(transform)).compose(flipX));
-     }
-	
+	/**
+	 * Original: {@link net.minecraftforge.client.model.ForgeBlockStateV1.Variant.Deserializer.flipX}
+	 */
+	public static final TRSRTransformation flipX = new TRSRTransformation(null, null, new Vector3f(-1, 1, 1), null);
+
+	/**
+	 * Original: {@link net.minecraftforge.client.model.ForgeBlockStateV1.Variant.Deserializer.leftify(TRSRTransformation)}
+	 * @param transform
+	 * @return
+	 */
+	public static TRSRTransformation leftify(TRSRTransformation transform)
+	{
+		return TRSRTransformation.blockCenterToCorner(flipX.compose(TRSRTransformation.blockCornerToCenter(transform)).compose(flipX));
+	}
+
 	/**
 	 * Baked model implementation that checks with the item type for a list of
 	 * parts to render using an OBJBakedModel as parent.
-	 * 
+	 *
 	 * Customized: item rendering. The rest of the implementation just relays to
 	 * the parent model.
-	 * 
+	 *
 	 * @author Oliver Kahrmann
 	 *
 	 */
 	public static class ItemAwareOBJBakedModel implements IPerspectiveAwareModel {
 
 		public static final IModelState defaultBlockTransform;
-		
+
 		/**
 		 * Original: {@link net.minecraftforge.client.model.ForgeBlockStateV1.Variant.Deserializer.deserialize(JsonElement, Type, JsonDeserializationContext)}
-		 * 
+		 *
 		 * Load the default transform for block models to rotate the models in GUI & Co accordingly.
 		 * These are the same transforms that are applied by forge when loaded from the blockstates using "forge:default-block".
 		 */
 		static {
-            TRSRTransformation thirdperson = get(0, 2.5f, 0, 75, 45, 0, 0.375f);
-            ImmutableMap.Builder<TransformType, TRSRTransformation> builder = ImmutableMap.builder();
-            builder.put(TransformType.GUI,                     get(0, 0, 0, 30, 225, 0, 0.625f));
-            builder.put(TransformType.GROUND,                  get(0, 3, 0, 0, 0, 0, 0.25f));
-            builder.put(TransformType.FIXED,                   get(0, 0, 0, 0, 0, 0, 0.5f));
-            builder.put(TransformType.THIRD_PERSON_RIGHT_HAND, thirdperson);
-            builder.put(TransformType.THIRD_PERSON_LEFT_HAND,  leftify(thirdperson));
-            builder.put(TransformType.FIRST_PERSON_RIGHT_HAND, get(0, 0, 0, 0, 45, 0, 0.4f));
-            builder.put(TransformType.FIRST_PERSON_LEFT_HAND,  get(0, 0, 0, 0, 225, 0, 0.4f));
-            defaultBlockTransform = new SimpleModelState(builder.build());
+			TRSRTransformation thirdperson = get(0, 2.5f, 0, 75, 45, 0, 0.375f);
+			ImmutableMap.Builder<TransformType, TRSRTransformation> builder = ImmutableMap.builder();
+			builder.put(TransformType.GUI,                     get(0, 0, 0, 30, 225, 0, 0.625f));
+			builder.put(TransformType.GROUND,                  get(0, 3, 0, 0, 0, 0, 0.25f));
+			builder.put(TransformType.FIXED,                   get(0, 0, 0, 0, 0, 0, 0.5f));
+			builder.put(TransformType.THIRD_PERSON_RIGHT_HAND, thirdperson);
+			builder.put(TransformType.THIRD_PERSON_LEFT_HAND,  leftify(thirdperson));
+			builder.put(TransformType.FIRST_PERSON_RIGHT_HAND, get(0, 0, 0, 0, 45, 0, 0.4f));
+			builder.put(TransformType.FIRST_PERSON_LEFT_HAND,  get(0, 0, 0, 0, 225, 0, 0.4f));
+			defaultBlockTransform = new SimpleModelState(builder.build());
 		}
-		
+
 		private OBJBakedModel original;
 
 		public ItemAwareOBJBakedModel(OBJBakedModel original) {
@@ -460,7 +474,7 @@ public class TaamClientProxy extends TaamCommonProxy {
 		/*
 		 * IPerspectiveAwareModel
 		 */
-		
+
 		@Override
 		public Pair<? extends IBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType) {
 			// Use forge default block transform
@@ -473,10 +487,6 @@ public class TaamClientProxy extends TaamCommonProxy {
 
 		@Override
 		public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand) {
-			if(state instanceof IExtendedBlockState) {
-				
-			}
-//			System.out.println(original.getState());
 			return original.getQuads(state, side, rand);
 		}
 

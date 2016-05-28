@@ -75,7 +75,7 @@ public class ProcessingRecipeWrapper implements IRecipeWrapper {
 		GL11.glPushMatrix();
 		GL11.glScaled(0.5, 0.5, 1);
 		FontRenderer fontRendererObj = minecraft.fontRendererObj;
-		
+
 		for(int i = 0; i < output.length; i++) {
 			int r = i % ProcessingCategory.MAX_ROWS;
 			int c = i / ProcessingCategory.MAX_ROWS;

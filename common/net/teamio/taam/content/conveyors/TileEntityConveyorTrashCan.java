@@ -212,6 +212,7 @@ public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements
 		return 0.3;
 	}
 
+	@Override
 	public EnumFacing getNextSlot(int slot) {
 		return EnumFacing.DOWN;
 	}

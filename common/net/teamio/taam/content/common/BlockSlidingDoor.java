@@ -13,8 +13,8 @@ public class BlockSlidingDoor extends BaseBlock {
 
 	public BlockSlidingDoor() {
 		super(Material.IRON);
-		this.setHardness(3.5f);
-		this.setSoundType(SoundType.METAL);
+		setHardness(3.5f);
+		setSoundType(SoundType.METAL);
 		this.setHarvestLevel("pickaxe", 1);
 	}
 
@@ -27,7 +27,7 @@ public class BlockSlidingDoor extends BaseBlock {
 	public boolean isNormalCube(IBlockState state, IBlockAccess world, BlockPos pos) {
 		return false;
 	}
-	
+
 	@Override
 	public boolean canBlockStay(World worldIn, BlockPos pos, IBlockState state) {
 		// TODO Auto-generated method stub

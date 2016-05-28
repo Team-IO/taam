@@ -115,22 +115,22 @@ public class MachinePipe implements IMachine, IPipe, IRenderable {
 
 		// Visible parts list is re-used to reduce object creation
 		visibleParts.clear();
-		visibleParts.add("Center_pcmdl");
+		visibleParts.add("Pipe_Center");
 		if (isSideConnected(EnumFacing.EAST))
-			visibleParts.add("FlangeMX_pfmdl");
+			visibleParts.add("Pipe_East");
 
 		if (isSideConnected(EnumFacing.WEST))
-			visibleParts.add("FlangePX_pfmdl");
+			visibleParts.add("Pipe_West");
 
 		if (isSideConnected(EnumFacing.NORTH))
-			visibleParts.add("FlangeMY_pfmdl");
+			visibleParts.add("Pipe_North");
 		if (isSideConnected(EnumFacing.SOUTH))
-			visibleParts.add("FlangePY_pfmdl");
+			visibleParts.add("Pipe_South");
 
 		if (isSideConnected(EnumFacing.DOWN))
-			visibleParts.add("FlangeMZ_pfmdl");
+			visibleParts.add("Pipe_Down");
 		if (isSideConnected(EnumFacing.UP))
-			visibleParts.add("FlangePZ_pfmdl");
+			visibleParts.add("Pipe_Up");
 		return visibleParts;
 	}
 

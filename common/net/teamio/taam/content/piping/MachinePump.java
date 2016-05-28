@@ -44,17 +44,17 @@ public class MachinePump implements IMachine, IRotatable {
 	private static final float fromBorder = 2f / 16;
 	public static final AxisAlignedBB boundsPump = new AxisAlignedBB(fromBorder, 0, fromBorder, 1 - fromBorder,
 			1 - 4 / 16f, 1 - fromBorder);
-	
+
 
 	private static final float tankBottom = 5 / 16f;
 	private static final float tankHeight = 5 / 16f;
 	private static final float tankTop = tankBottom + tankHeight;
-	
+
 	private static final float tankLeft = 3 / 16f;
 	private static final float tankWidth = 2 / 16f;
-	
+
 	private static final float tankBack = 6 / 16f;
-	
+
 	public static final AxisAlignedBB[] boundsPumpTank = new AxisAlignedBB[] {
 			new AxisAlignedBB(1-tankLeft,	tankBottom, tankBack,	1-tankLeft-tankWidth,	tankTop,	tankBack+tankWidth).expand(TaamRenderer.shrinkValue, TaamRenderer.shrinkValue, TaamRenderer.shrinkValue),//S
 			new AxisAlignedBB(1-tankBack,	tankBottom,	1-tankLeft, 1-tankBack-tankWidth,	tankTop,	1-tankLeft-tankWidth).expand(TaamRenderer.shrinkValue, TaamRenderer.shrinkValue, TaamRenderer.shrinkValue),//W
@@ -81,7 +81,7 @@ public class MachinePump implements IMachine, IRotatable {
 	private void updateOcclusion() {
 		pipeEndOut.occluded = FaceBitmap.isSideBitSet(occludedSides, pipeEndOut.getSide());
 		pipeEndIn.occluded = FaceBitmap.isSideBitSet(occludedSides, pipeEndIn.getSide());
-		
+
 		tankRI.bounds = boundsPumpTank[direction.getHorizontalIndex()];
 	}
 
@@ -109,6 +109,7 @@ public class MachinePump implements IMachine, IRotatable {
 		updateOcclusion();
 	}
 
+	@Override
 	public void writeUpdatePacket(PacketBuffer buf) {
 		NBTTagCompound tag = new NBTTagCompound();
 		writePropertiesToNBT(tag);
@@ -116,6 +117,7 @@ public class MachinePump implements IMachine, IRotatable {
 		buf.writeByte(occludedSides);
 	}
 
+	@Override
 	public void readUpdatePacket(PacketBuffer buf) {
 		try {
 			NBTTagCompound tag = buf.readNBTTagCompoundFromBuffer();

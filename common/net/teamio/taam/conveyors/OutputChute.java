@@ -26,7 +26,7 @@ public abstract class OutputChute {
 
 	/**
 	 * Output the chute content.
-	 * 
+	 *
 	 * @param world
 	 * @param pos
 	 * @return Returns true if there were items transferred or there are still
@@ -37,11 +37,11 @@ public abstract class OutputChute {
 	public void output(ItemStack stack) {
 
 	}
-	
-	
+
+
 	/**
 	 * Tries to output into the outputInventory, or drop down into the world
-	 * 
+	 *
 	 * @param world
 	 * @param oututPosition
 	 *            Position to output to, usually one block below the chute.
@@ -59,7 +59,7 @@ public abstract class OutputChute {
 		if(backlog == null) {
 			return false;
 		}
-		
+
 		//TODO: implement maxOutput!
 		boolean wasAble = false;
 		boolean hasOutputLeft = false;
@@ -67,7 +67,7 @@ public abstract class OutputChute {
 			double entX = oututPosition.getX() + 0.5;
 			double entY = oututPosition.getY() + 0.7;
 			double entZ = oututPosition.getZ() + 0.5;
-			
+
 			// Output to world
 			for(int i = 0; i < backlog.length; i++) {
 				ItemStack itemStack = backlog[i];
@@ -75,10 +75,10 @@ public abstract class OutputChute {
 					continue;
 				}
 				EntityItem item = new EntityItem(world, entX, entY, entZ, itemStack);
-		        item.motionX = 0;
-		        item.motionY = 0;
-		        item.motionZ = 0;
-		        world.spawnEntityInWorld(item);
+				item.motionX = 0;
+				item.motionY = 0;
+				item.motionZ = 0;
+				world.spawnEntityInWorld(item);
 				wasAble = true;
 				backlog[i] = null;
 			}
@@ -87,7 +87,7 @@ public abstract class OutputChute {
 		} else {
 			// Output to inventory
 			InventoryRange range = new InventoryRange(outputInventory, EnumFacing.UP.ordinal());
-			
+
 			for(int i = 0; i < backlog.length; i++) {
 				ItemStack itemStack = backlog[i];
 				if(itemStack == null) {
@@ -106,5 +106,5 @@ public abstract class OutputChute {
 		}
 		return wasAble || hasOutputLeft;
 	}
-	
+
 }

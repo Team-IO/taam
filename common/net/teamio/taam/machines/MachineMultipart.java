@@ -37,9 +37,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.client.model.obj.OBJModel;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
@@ -50,6 +48,7 @@ import net.teamio.taam.content.BaseBlock;
 import net.teamio.taam.content.IRenderable;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.content.piping.MachinePipe;
+import net.teamio.taam.rendering.obj.OBJModel;
 import net.teamio.taam.util.FaceBitmap;
 import net.teamio.taam.util.WrenchUtil;
 import net.teamio.taam.util.inv.InventoryUtils;
@@ -63,26 +62,27 @@ public class MachineMultipart extends Multipart implements INormallyOccludingPar
 
 	public MachineMultipart() {
 	}
-	
+
 	public MachineMultipart(IMachineMetaInfo meta) {
 		this.meta = meta;
-		this.machine = meta.createMachine();
+		machine = meta.createMachine();
 	}
 
 	@Override
 	public boolean isToolEffective(String type, int level) {
 		return "pickaxe".equals(type) && level >= 1;
 	}
-	
+
+	@Override
 	public float getHardness(PartMOP hit) {
 		return 3.5f;
 	};
-	
+
 	@Override
 	public ResourceLocation getType() {
 		return new ResourceLocation(Taam.MOD_ID, meta.unlocalizedName());
 	}
-	
+
 	@Override
 	public void addCollisionBoxes(AxisAlignedBB mask, List<AxisAlignedBB> list, Entity collidingEntity) {
 		machine.addCollisionBoxes(mask, list, collidingEntity);
@@ -97,41 +97,41 @@ public class MachineMultipart extends Multipart implements INormallyOccludingPar
 	public void addOcclusionBoxes(List<AxisAlignedBB> list) {
 		machine.addOcclusionBoxes(list);
 	}
-	
+
 	@Override
 	public void onPartChanged(IMultipart part) {
 		doBlockUpdate();
 	}
-	
+
 	@Override
 	public void onNeighborBlockChange(Block block) {
 		doBlockUpdate();
 	}
-	
+
 	@Override
 	public void onNeighborTileChange(EnumFacing facing) {
 		doBlockUpdate();
 	}
-	
+
 	@Override
 	public List<ItemStack> getDrops() {
 		System.out.println("Getting drops: " + new ItemStack(TaamMain.itemMachine, 1, meta.metaData()));
 		return Arrays.asList(new ItemStack(TaamMain.itemMachine, 1, meta.metaData()));
 	}
-	
+
 	@Override
 	public ItemStack getPickBlock(EntityPlayer player, PartMOP hit) {
 		System.out.println("Getting pickblock: " + new ItemStack(TaamMain.itemMachine, 1, meta.metaData()));
 		return new ItemStack(TaamMain.itemMachine, 1, meta.metaData());
 	}
-	
+
 	private void doBlockUpdate() {
 		byte occlusionField = 0;
-		Collection<? extends IMultipart> parts = this.getContainer().getParts();
+		Collection<? extends IMultipart> parts = getContainer().getParts();
 		Predicate<IMultipart> predicateThis = Predicates.equalTo((IMultipart)this);
 		for(EnumFacing side : EnumFacing.VALUES) {
 			PartSlot slot = PartSlot.getFaceSlot(side);
-			
+
 			/*
 			 * Physical occlusion
 			 */
@@ -151,9 +151,9 @@ public class MachineMultipart extends Multipart implements INormallyOccludingPar
 					occlusionField = FaceBitmap.setSideBit(occlusionField, side);
 				}
 				continue;
-			/*
-			 * Last resort: slotted occluding parts
-			 */
+				/*
+				 * Last resort: slotted occluding parts
+				 */
 			} else if(OcclusionHelper.isSlotOccluded(parts, slot, predicateThis)) {
 				occlusionField = FaceBitmap.setSideBit(occlusionField, side);
 			}
@@ -178,9 +178,9 @@ public class MachineMultipart extends Multipart implements INormallyOccludingPar
 		Log.debug("Wrenching multipart. Player is sneaking: {}", playerIsSneaking);
 
 		if (playerIsSneaking) {
-			ItemStack dropStack = this.getPickBlock(player, hit);
+			ItemStack dropStack = getPickBlock(player, hit);
 			InventoryUtils.tryDropToInventory(player, dropStack, getPos());
-			this.getContainer().removePart(this);
+			getContainer().removePart(this);
 			return true;
 		} else {
 			rotatePart(hit.sideHit);
@@ -200,13 +200,13 @@ public class MachineMultipart extends Multipart implements INormallyOccludingPar
 		}
 		return false;
 	}
-	
+
 	@Override
 	public IBlockState getExtendedState(IBlockState state) {
 		World world = getWorld();
 		BlockPos pos = getPos();
 		machine.renderUpdate(world, pos);
-		
+
 		IBlockState newState = state;
 		List<String> visibleParts = null;
 		if(machine instanceof IRenderable) {
@@ -215,12 +215,13 @@ public class MachineMultipart extends Multipart implements INormallyOccludingPar
 			if(visibleParts == null) {
 				visibleParts = BaseBlock.ALL;
 			}
-			OBJModel.OBJState retState = new OBJModel.OBJState(visibleParts, true, new TRSRTransformation(EnumFacing.SOUTH));
+			OBJModel.OBJState retState = new OBJModel.OBJState(visibleParts);
+			retState.setIgnoreHidden(true);
 
 			IExtendedBlockState extendedState = (IExtendedBlockState)state;
-			newState = extendedState.withProperty(OBJModel.OBJProperty.INSTANCE, retState);
+			newState = extendedState.withProperty(OBJModel.OBJProperty.instance, retState);
 		}
-		
+
 		if(machine instanceof IRotatable) {
 			newState = newState.withProperty(DIRECTION, ((IRotatable)machine).getFacingDirection()).withProperty(VARIANT, (Taam.MACHINE_META)meta);
 		} else {
@@ -230,52 +231,53 @@ public class MachineMultipart extends Multipart implements INormallyOccludingPar
 	}
 	
 	@Override
-	public boolean canRenderInLayer(BlockRenderLayer layer) {
-		return layer == BlockRenderLayer.CUTOUT;
+	public IBlockState getActualState(IBlockState state) {
+		// FIXME: Hacky workaround
+		return super.getActualState(getExtendedState(state));
 	}
 	
 	@Override
+	public boolean canRenderInLayer(BlockRenderLayer layer) {
+		return layer == BlockRenderLayer.CUTOUT;
+	}
+
+	@Override
 	public BlockStateContainer createBlockState() {
-		if (machine instanceof IRotatable) {
-			return new ExtendedBlockState(MCMultiPartMod.multipart,
-					new IProperty[] { DIRECTION, VARIANT },
-					new IUnlistedProperty[] { BlockMultipartContainer.PROPERTY_MULTIPART_CONTAINER, OBJModel.OBJProperty.INSTANCE }
-			);
-		} else {
-			return new ExtendedBlockState(MCMultiPartMod.multipart,
-					new IProperty[] { DIRECTION, VARIANT },
-					new IUnlistedProperty[] { BlockMultipartContainer.PROPERTY_MULTIPART_CONTAINER, OBJModel.OBJProperty.INSTANCE }
-			);
-		}
+		return new ExtendedBlockState(MCMultiPartMod.multipart,
+				new IProperty[] { DIRECTION, VARIANT },
+				new IUnlistedProperty[] { BlockMultipartContainer.PROPERTY_MULTIPART_CONTAINER, OBJModel.OBJProperty.instance }
+				);
 	}
 
 	@Override
 	public ResourceLocation getModelPath() {
 		return new ResourceLocation(machine.getModelPath());
 	}
-	
+
 	@Override
 	public void readFromNBT(NBTTagCompound tag) {
 		String machineID = tag.getString("machine");
 		IMachineMetaInfo meta = Taam.MACHINE_META.fromId(machineID);
-		if(meta != null) {
+		if(meta != null && meta != this.meta) {
 			this.meta = meta;
 			machine = meta.createMachine();
+			markRenderUpdate();
 		}
 		machine.readPropertiesFromNBT(tag);
 	}
-	
+
 	@Override
 	public void readUpdatePacket(PacketBuffer buf) {
 		String machineID = buf.readStringFromBuffer(30);
 		IMachineMetaInfo meta = Taam.MACHINE_META.fromId(machineID);
-		if(meta != null) {
+		if(meta != null && meta != this.meta) {
 			this.meta = meta;
 			machine = meta.createMachine();
+			markRenderUpdate();
 		}
 		machine.readUpdatePacket(buf);
 	}
-	
+
 	@Override
 	public void writeUpdatePacket(PacketBuffer buf) {
 		buf.writeString(meta.unlocalizedName());
@@ -283,26 +285,27 @@ public class MachineMultipart extends Multipart implements INormallyOccludingPar
 	}
 	
 	@Override
-	public void writeToNBT(NBTTagCompound tag) {
+	public NBTTagCompound writeToNBT(NBTTagCompound tag) {
 		tag.setString("machine", meta.unlocalizedName());
 		machine.writePropertiesToNBT(tag);
+		return tag;
 	}
 
 	@Override
 	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
 		return machine.hasCapability(capability, facing);
 	}
-	
+
 	@Override
 	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
 		return machine.getCapability(capability, facing);
 	}
-	
-	
+
+
 	/*
 	 * ITickable implementation
 	 */
-	
+
 	@Override
 	public void update() {
 		machine.update(getWorld(), getPos());
@@ -311,7 +314,7 @@ public class MachineMultipart extends Multipart implements INormallyOccludingPar
 	/*
 	 * ISlottedCapabilityProvider
 	 */
-	
+
 	@Override
 	public boolean hasCapability(Capability<?> capability, PartSlot slot, EnumFacing facing) {
 		return machine.hasCapability(capability, facing);
@@ -325,9 +328,9 @@ public class MachineMultipart extends Multipart implements INormallyOccludingPar
 	/*
 	 * ISlottedPart implementation
 	 */
-	
+
 	private static final EnumSet<PartSlot> slotSet = EnumSet.of(PartSlot.CENTER);
-	
+
 	@Override
 	public EnumSet<PartSlot> getSlotMask() {
 		return slotSet;

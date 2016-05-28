@@ -6,11 +6,13 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+import net.teamio.taam.Taam;
 import net.teamio.taam.content.IWorldInteractable;
 import net.teamio.taam.content.conveyors.ATileEntityAppliance;
 import net.teamio.taam.conveyors.ConveyorUtil;
@@ -24,22 +26,22 @@ import net.teamio.taam.recipes.ProcessingRegistry;
 public class ApplianceSprayer extends ATileEntityAppliance implements IFluidHandler, ITickable, IWorldInteractable {
 
 	private static final int capacity = 2000;
-	
-	public ApplianceSprayer() {
-		tank = new FluidTank(capacity);
-		pipeEnd = new PipeEndFluidHandler(this, direction.getOpposite(), false);
-	}
-	
+
 	private FluidTank tank;
 	private PipeEndFluidHandler pipeEnd;
 
 	private FluidStack lastInputFluid;
 	private IProcessingRecipeFluidBased[] matchingRecipes;
-	
+
+	public ApplianceSprayer() {
+		tank = new FluidTank(capacity);
+		pipeEnd = new PipeEndFluidHandler(this, direction.getOpposite(), false);
+	}
+
 	/**
 	 * Checks if there is a recipe for the current input fluid and the provided
 	 * item stack.
-	 * 
+	 *
 	 * @param stack
 	 * @return true if there is a recipe available, false if not. Also returns
 	 *         false if there is no input fluid. Does not check for the amount
@@ -47,14 +49,14 @@ public class ApplianceSprayer extends ATileEntityAppliance implements IFluidHand
 	 */
 	private IProcessingRecipeFluidBased getRecipe(ItemStack stack) {
 		FluidStack inside = tank.getFluid();
-		
+
 		// If we have no remembered fluid, or a new fluid (empty tank is considered "same"), fetch new fluid
 		if(inside != null) {
 			if(lastInputFluid == null || !lastInputFluid.isFluidEqual(inside)) {
 				lastInputFluid = inside;
 			}
 		}
-		
+
 		if(lastInputFluid == null) {
 			return null;
 		}
@@ -70,11 +72,11 @@ public class ApplianceSprayer extends ATileEntityAppliance implements IFluidHand
 		}
 		return null;
 	}
-	
+
 	public FluidTank getTank() {
 		return tank;
 	}
-	
+
 	@Override
 	public void update() {
 		PipeUtil.processPipes(pipeEnd, worldObj, pos);
@@ -92,6 +94,7 @@ public class ApplianceSprayer extends ATileEntityAppliance implements IFluidHand
 		}
 	}
 
+	@Override
 	protected void writePropertiesToNBT(NBTTagCompound tag) {
 		super.writePropertiesToNBT(tag);
 
@@ -103,7 +106,7 @@ public class ApplianceSprayer extends ATileEntityAppliance implements IFluidHand
 	/*
 	 * IConveyorAppliance
 	 */
-	
+
 	@Override
 	public boolean processItem(IConveyorApplianceHost conveyor, int slot, ItemWrapper wrapper) {
 		if (wrapper.itemStack == null) {
@@ -122,66 +125,66 @@ public class ApplianceSprayer extends ATileEntityAppliance implements IFluidHand
 		/*
 		 * Fetch Recipe
 		 */
-		
+
 		IProcessingRecipeFluidBased recipe = getRecipe(wrapper.itemStack);
-		
+
 		if(recipe == null) {
 			wrapper.unblock();
 			return true;
 		}
-		
+
 		/*
 		 * Fetch Output
 		 */
-		
+
 		ItemStack result = recipe.getOutput(wrapper.itemStack)[0];
 		result.stackSize = wrapper.itemStack.stackSize;
-		
+
 		// Fix for re-coloring to the same color (Output == Input)
 		if(result.isItemEqual(wrapper.itemStack)) {
 			wrapper.unblock();
 			return true;
 		}
-		
+
 		/*
 		 * Check fluid requirements
 		 */
-		
+
 		int requiredAmount = wrapper.itemStack.stackSize * recipe.getInputFluid().amount;
-		
+
 		FluidStack inTank = tank.getFluid();
-		
+
 		if(inTank == null || inTank.amount < requiredAmount) {
 			wrapper.block();
 			return true;
 		}
-		
+
 		/*
 		 * Consume fluid
 		 */
-		
+
 		inTank.amount -= requiredAmount;
 		if(inTank.amount == 0) {
 			tank.setFluid(null);
 		}
-		
+
 		/*
 		 * Replace input stack with output
 		 */
-		
+
 		wrapper.itemStack = result;
 		wrapper.unblock();
-		
+
 		updateState(false, false, false);
 		//TODO: Particles
-		
+
 		return true;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * @see net.teamio.taam.content.conveyors.ATileEntityAppliance#setFacingDirection(net.minecraft.util.EnumFacing)
-	 * 
+	 *
 	 * Overridden because of the pipeEnd.
 	 */
 	@Override
@@ -194,35 +197,39 @@ public class ApplianceSprayer extends ATileEntityAppliance implements IFluidHand
 	/*
 	 * IWorldInteractable implementation
 	 */
-	
+
 	@Override
 	public boolean onBlockActivated(World world, EntityPlayer player, boolean hasWrench, EnumFacing side, float hitX,
 			float hitY, float hitZ) {
 		boolean didSomething = PipeUtil.defaultPlayerInteraction(player, getTank());
-		
+
 		if(didSomething) {
 			updateState(true, false, false);
 		}
 		return didSomething;
 	}
-	
+
 	@Override
 	public boolean onBlockHit(World world, EntityPlayer player, boolean hasWrench) {
 		return false;
 	}
 
-	/*
-	 * IPipeTE
-	 */
+	@Override
+	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+		if(capability == Taam.CAPABILITY_PIPE) {
+			return facing == pipeEnd.getSide();
+		}
+		return false;
+	}
 
-//	@Override
-//	public IPipe[] getPipesForSide(EnumFacing side) {
-//		if (side == direction.getOpposite()) {
-//			return pipeEnd.asPipeArray();
-//		} else {
-//			return null;
-//		}
-//	}
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+		if(capability == Taam.CAPABILITY_PIPE && facing == pipeEnd.getSide()) {
+			return (T) pipeEnd;
+		}
+		return null;
+	}
 
 	/*
 	 * IFluidHandler implementation
@@ -233,7 +240,11 @@ public class ApplianceSprayer extends ATileEntityAppliance implements IFluidHand
 		if (from != direction.getOpposite()) {
 			return 0;
 		}
-		return tank.fill(resource, doFill);
+		int amount = tank.fill(resource, doFill);
+		if(amount > 0) {
+			updateState(true, false, false);
+		}
+		return amount;
 	}
 
 	@Override
@@ -251,31 +262,36 @@ public class ApplianceSprayer extends ATileEntityAppliance implements IFluidHand
 		if (tank.getFluidAmount() == 0) {
 			tank.setFluid(null);
 		}
+		if(drained != null && drained.amount > 0) {
+			updateState(true, false, false);
+		}
 		return drained;
 	}
 
 	@Override
 	public FluidStack drain(EnumFacing from, int maxDrain, boolean doDrain) {
-		if (from != direction.getOpposite()) {
+		if (from != pipeEnd.getSide()) {
 			return null;
 		}
 		FluidStack drained = tank.drain(maxDrain, doDrain);
 		if (tank.getFluidAmount() == 0) {
 			tank.setFluid(null);
 		}
+		if(drained != null && drained.amount > 0) {
+			updateState(true, false, false);
+		}
 		return drained;
 	}
 
 	@Override
 	public boolean canFill(EnumFacing from, Fluid fluid) {
-		if (from != direction.getOpposite()) {
+		if (from != pipeEnd.getSide()) {
 			return false;
 		}
 		if (fluid == null) {
 			return false;
 		}
 		if (tank.getFluid() == null) {
-			// TODO: Check recipes?
 			return true;
 		} else {
 			return tank.getFluid().getFluid() == fluid;
@@ -284,7 +300,7 @@ public class ApplianceSprayer extends ATileEntityAppliance implements IFluidHand
 
 	@Override
 	public boolean canDrain(EnumFacing from, Fluid fluid) {
-		if (from != direction.getOpposite()) {
+		if (from != pipeEnd.getSide()) {
 			return false;
 		}
 		return true;

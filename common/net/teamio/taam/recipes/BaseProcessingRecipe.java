@@ -5,7 +5,7 @@ import net.teamio.taam.util.TaamUtil;
 
 /**
  * Base class for processing recipes providing matching for input items.
- * 
+ *
  * @author Oliver Kahrmann
  *
  */

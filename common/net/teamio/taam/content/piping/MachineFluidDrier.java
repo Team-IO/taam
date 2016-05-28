@@ -30,7 +30,7 @@ import net.teamio.taam.util.TaamUtil;
 public class MachineFluidDrier implements IMachine {
 
 	private PipeEndRestricted pipeEndIn;
-	
+
 	private OutputChuteBacklog chute = new OutputChuteBacklog();
 
 	private FluidStack lastInputFluid;
@@ -39,40 +39,40 @@ public class MachineFluidDrier implements IMachine {
 	private byte redstoneMode = IRedstoneControlled.MODE_ACTIVE_ON_LOW;
 	public static final int capacity = 1000;
 	private int timeout;
-	
+
 	public boolean isShutdown;
 	private byte occludedSides;
-	
+
 	private static final float fromBorderOcclusion = 2f/16;
 	public static final AxisAlignedBB bbCollision = new AxisAlignedBB(0, 0, 0, 1, 1-3/16f, 1);
 	public static final AxisAlignedBB bbCoolusion = new AxisAlignedBB(fromBorderOcclusion, fromBorderOcclusion, fromBorderOcclusion, 1-fromBorderOcclusion, 1-fromBorderOcclusion, 1-fromBorderOcclusion);
-	
+
 	public MachineFluidDrier() {
 		pipeEndIn = new PipeEndRestricted(EnumFacing.UP, capacity, false);
 		resetTimeout();
 	}
-	
+
 	private void updateOcclusion() {
 		pipeEndIn.occluded = FaceBitmap.isSideBitSet(occludedSides, EnumFacing.UP);
 	}
-	
+
 	private void resetTimeout() {
 		timeout = Config.pl_processor_fluid_drier_timeout;
 	}
-	
+
 	@Override
 	public void writePropertiesToNBT(NBTTagCompound tag) {
 		tag.setBoolean("isShutdown", isShutdown);
 		tag.setInteger("timeout", timeout);
-		
+
 		NBTTagCompound tagChute = new NBTTagCompound();
 		chute.writeToNBT(tagChute);
 		tag.setTag("chute", tagChute);
-		
+
 		NBTTagCompound tagIn = new NBTTagCompound();
 		pipeEndIn.writeToNBT(tagIn);
 		tag.setTag("pipeEndIn", tagIn);
-		
+
 		tag.setByte("occludedSides", occludedSides);
 	}
 
@@ -92,12 +92,14 @@ public class MachineFluidDrier implements IMachine {
 		updateOcclusion();
 	}
 
+	@Override
 	public void writeUpdatePacket(PacketBuffer buf) {
 		NBTTagCompound tag = new NBTTagCompound();
 		writePropertiesToNBT(tag);
 		buf.writeNBTTagCompoundToBuffer(tag);
 	}
 
+	@Override
 	public void readUpdatePacket(PacketBuffer buf) {
 		try {
 			NBTTagCompound tag = buf.readNBTTagCompoundFromBuffer();
@@ -125,7 +127,7 @@ public class MachineFluidDrier implements IMachine {
 		if(world.isRemote) {
 			return;
 		}
-		
+
 		if(process(world, pos)) {
 			//TODO: updateState(false, false, false);
 		}
@@ -141,24 +143,24 @@ public class MachineFluidDrier implements IMachine {
 		occludedSides = occlusionField;
 		updateOcclusion();
 	}
-	
+
 	private boolean process(World world, BlockPos pos) {
 		BlockPos down = pos.down();
-		
+
 		/*
 		 * Check redstone level
 		 */
-		
+
 		boolean redstoneHigh = world.isBlockIndirectlyGettingPowered(pos) > 0;
-		
+
 		isShutdown = TaamUtil.isShutdown(world.rand, redstoneMode, redstoneHigh);
-		
+
 		if(isShutdown) {
 			resetTimeout();
 			return true;
 		}
 
-		
+
 		/*
 		 * Check blocked & fetch output inventory
 		 */
@@ -167,7 +169,7 @@ public class MachineFluidDrier implements IMachine {
 			resetTimeout();
 			return false;
 		}
-		
+
 		/*
 		 * Output Backlog
 		 */
@@ -177,63 +179,63 @@ public class MachineFluidDrier implements IMachine {
 			resetTimeout();
 			return true;
 		}
-		
+
 		/*
 		 * Check Recipe
 		 */
-		
+
 		IProcessingRecipeFluidBased recipe = getRecipe();
-		
+
 		if(recipe == null) {
 			resetTimeout();
 			return false;
 		}
-		
+
 		/*
 		 * Check fluid requirements
 		 */
-		
+
 		int requiredAmount = recipe.getInputFluid().amount;
-		
+
 		FluidStack inTank = pipeEndIn.getFluid();
-		
+
 		if(inTank == null || inTank.amount < requiredAmount) {
 			resetTimeout();
 			return false;
 		}
-		
+
 		/*
 		 * Check timeout, only if we actually can process.
 		 */
-		
+
 		if(timeout > 0) {
 			timeout--;
 			return true;
 		}
-		
+
 		/*
 		 * Consume fluid
 		 */
-		
+
 		int consumed = pipeEndIn.removeFluid(recipe.getInputFluid());
 		if(consumed != requiredAmount) {
 			// This should not happen.
 			Log.error("Detected inconsistency in {}. Expected fluid amount to be consumed: {} Actually consumed: {}. Fluid might have been duplicated or lost.",
 					getClass().getName(), requiredAmount, consumed);
 		}
-		
+
 		/*
 		 * Set Output Backlog
 		 */
-		
+
 		chute.backlog = recipe.getOutput(null);
 		resetTimeout();
 		return true;
 	}
-	
+
 	/**
 	 * Checks if there is a recipe for the current input fluid & returns it.
-	 * 
+	 *
 	 * @param stack
 	 */
 	private IProcessingRecipeFluidBased getRecipe() {
@@ -275,7 +277,7 @@ public class MachineFluidDrier implements IMachine {
 	public void addOcclusionBoxes(List<AxisAlignedBB> list) {
 		list.add(bbCoolusion);
 	}
-	
+
 	@Override
 	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
 		if(capability == Taam.CAPABILITY_PIPE) {

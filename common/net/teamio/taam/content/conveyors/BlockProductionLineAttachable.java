@@ -15,13 +15,13 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.client.model.obj.OBJModel;
 import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.teamio.taam.Taam;
 import net.teamio.taam.content.IRotatable;
+import net.teamio.taam.rendering.obj.OBJModel;
 import net.teamio.taam.util.TaamUtil;
 
 public class BlockProductionLineAttachable extends BlockProductionLine {
@@ -36,7 +36,7 @@ public class BlockProductionLineAttachable extends BlockProductionLine {
 	@Override
 	protected BlockStateContainer createBlockState() {
 		return new ExtendedBlockState(this, new IProperty[] { DIRECTION, VARIANT },
-				new IUnlistedProperty[] { OBJModel.OBJProperty.INSTANCE });
+				new IUnlistedProperty[] { OBJModel.OBJProperty.instance });
 	}
 
 	@Override
@@ -61,15 +61,16 @@ public class BlockProductionLineAttachable extends BlockProductionLine {
 		// Let the tile entity update anything that is required for rendering
 		ATileEntityAttachable te = (ATileEntityAttachable) worldIn.getTileEntity(pos);
 		te.renderUpdate();
-		
+
 		// This makes the state shows up in F3. Previously it was not actually applied on the rendering, though.
 		// Rendering Transform was applied in getExtendedState
 		// Since 1.9 this seems to work, though
-		
+
 		// Add rotation to state
 		return state.withProperty(DIRECTION, ((IRotatable) te).getFacingDirection());
 	}
 
+	@Override
 	public String getUnlocalizedName(ItemStack itemStack) {
 		int i = itemStack.getItemDamage();
 		Enum<?>[] values = Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META.values();
@@ -91,7 +92,7 @@ public class BlockProductionLineAttachable extends BlockProductionLine {
 
 	@Override
 	public TileEntity createTileEntity(World world, IBlockState state) {
-		Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META variant = (Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META) state
+		Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META variant = state
 				.getValue(VARIANT);
 		switch (variant) {
 		case itembag:

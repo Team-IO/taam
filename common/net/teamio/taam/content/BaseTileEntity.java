@@ -42,7 +42,7 @@ public abstract class BaseTileEntity extends TileEntity {
 	/**
 	 * Updates block info & marks the containing block for update when on the
 	 * server.
-	 * 
+	 *
 	 * @param worldUpdate
 	 *            Send update to client (notify block change / send via network)
 	 * @param renderUpdate
@@ -99,7 +99,7 @@ public abstract class BaseTileEntity extends TileEntity {
 		writePropertiesToNBTInternal(nbt);
 		return new SPacketUpdateTileEntity(getPos(), getBlockMetadata(), nbt);
 	}
-	
+
 	@Override
 	public NBTTagCompound getUpdateTag() {
 		return writeToNBT(super.getUpdateTag());

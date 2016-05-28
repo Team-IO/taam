@@ -50,15 +50,15 @@ public class ConveyorUtil {
 					slot >= 0 && slot < 9 &&
 					relativeY > conveyorTE.getInsertMinY()&&
 					relativeY < conveyorTE.getInsertMaxY()
-			) {
+					) {
 				added = conveyorTE.insertItemAt(entityItemStack, slot);
 			}
 		} else if (tileEntity instanceof IInventory) {
 			if (
-				relativeX >= 0 && relativeX < 1 &&
-				relativeY >= 0.9 && relativeY < 1.2 &&
-				relativeZ >= 0 && relativeZ < 1
-			) {
+					relativeX >= 0 && relativeX < 1 &&
+					relativeY >= 0.9 && relativeY < 1.2 &&
+					relativeZ >= 0 && relativeZ < 1
+					) {
 				IInventory inventory = (IInventory) tileEntity;
 				InventoryRange range = new InventoryRange(inventory, EnumFacing.UP.ordinal());
 				added = previousStackSize - InventoryUtils.insertItem(range, entityItemStack, false);
@@ -80,7 +80,7 @@ public class ConveyorUtil {
 	/**
 	 * Tries to insert item entities from the world into an entity. Respects the
 	 * conveyor system.
-	 * 
+	 *
 	 * @param tileEntity
 	 * @param world
 	 * @param bounds
@@ -89,7 +89,7 @@ public class ConveyorUtil {
 	 *            respected.
 	 * @param stopAtFirstMatch
 	 *            Stop processing items after the first one was added?
-	 * 
+	 *
 	 */
 	public static boolean tryInsertItemsFromWorld(TileEntity tileEntity, World world, AxisAlignedBB bounds, boolean stopAtFirstMatch) {
 		if (world.isRemote) {
@@ -198,7 +198,7 @@ public class ConveyorUtil {
 	}
 
 	public static double getItemPositionZ(int slot) {
-		double z = (slot % 3) + 0.5;
+		double z = slot % 3 + 0.5;
 		return z * oneThird;
 	}
 
@@ -270,7 +270,7 @@ public class ConveyorUtil {
 	/**
 	 * Returns the ideal order to process slots on a conveyor. (Always from
 	 * front to back, but lanes are not in a guaranteed order!)
-	 * 
+	 *
 	 * @param dir
 	 * @return
 	 */
@@ -288,7 +288,7 @@ public class ConveyorUtil {
 
 	/**
 	 * Drops the item in the passed slot, exactly where it is rendered now.
-	 * 
+	 *
 	 * @param slot
 	 *            The slot to be dropped.
 	 */
@@ -403,10 +403,10 @@ public class ConveyorUtil {
 
 	/**
 	 * Runs the default transition logic for the items on a conveyor entity.
-	 * 
+	 *
 	 * Respects the supplied slot order, processes items if tileEntity
 	 * instanceof {@link IConveyorApplianceHost}.
-	 * 
+	 *
 	 * @param world
 	 * @param pos
 	 * @param tileEntity
@@ -526,7 +526,7 @@ public class ConveyorUtil {
 						if (nextSpeedSteps == 0) {
 							nextSlotProgress = 0;
 						} else {
-							nextSlotProgress = Math.round((nextSlotProgress / (float) nextSpeedSteps) * speedsteps);
+							nextSlotProgress = Math.round(nextSlotProgress / (float) nextSpeedSteps * speedsteps);
 						}
 					}
 
@@ -566,7 +566,7 @@ public class ConveyorUtil {
 			 * forward
 			 */
 			if (nextSlotFree
-					|| (nextSlotMovable && wrappedIsSameDirection && wrapper.movementProgress < nextSlotProgress)) {
+					|| nextSlotMovable && wrappedIsSameDirection && wrapper.movementProgress < nextSlotProgress) {
 				wrapper.movementProgress++;
 				if (wrapper.movementProgress > speedsteps) {
 					wrapper.movementProgress = 0;

@@ -7,7 +7,7 @@ import net.minecraft.world.World;
 public interface IWorldInteractable {
 	/**
 	 * Called when the containing block is activated (Right Clicked).
-	 * 
+	 *
 	 * @param world
 	 * @param x
 	 * @param y
@@ -26,7 +26,7 @@ public interface IWorldInteractable {
 
 	/**
 	 * Called when the containing block is hit (Left Clicked).
-	 * 
+	 *
 	 * @param world
 	 * @param x
 	 * @param y

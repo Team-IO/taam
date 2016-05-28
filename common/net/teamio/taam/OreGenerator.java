@@ -33,13 +33,13 @@ public class OreGenerator implements IWorldGenerator {
 			this.maxDepositCount = maxDepositCount;
 		}
 	}
-	
+
 	List<GenerationInfo> gens;
-	
+
 	public OreGenerator() {
 		reloadGenerationInfo();
 	}
-	
+
 
 	@SubscribeEvent
 	public void onConfigChangedEvent(ConfigChangedEvent.OnConfigChangedEvent event)
@@ -50,11 +50,11 @@ public class OreGenerator implements IWorldGenerator {
 			reloadGenerationInfo();
 		}
 	}
-	
+
 	public void reloadGenerationInfo() {
 		gens = new ArrayList<GenerationInfo>();
 		Predicate<IBlockState> stone = new Predicate<IBlockState>() {
-			
+
 			@Override
 			public boolean apply(IBlockState input){
 				return input != null && input.getBlock() == Blocks.STONE;
@@ -76,11 +76,11 @@ public class OreGenerator implements IWorldGenerator {
 			gens.add(new GenerationInfo(new WorldGenMinable(getOre(Taam.BLOCK_ORE_META.kaolinite), Config.oreSize[4], stone), Config.oreAbove[4], Config.oreBelow[4], Config.oreDepositCount[4]));
 		}
 	}
-	
+
 	private IBlockState getOre(Taam.BLOCK_ORE_META ore) {
 		return TaamMain.blockOre.getDefaultState().withProperty(BlockOre.VARIANT, Taam.BLOCK_ORE_META.copper);
 	}
-	
+
 	@Override
 	public void generate(Random random, int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator, IChunkProvider chunkProvider) {
 		switch (world.provider.getDimension()) {

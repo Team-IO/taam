@@ -34,7 +34,7 @@ public final class ProcessingRegistryEntry {
 	 * Returns the first {@link IProcessingRecipe} that has a matching input.
 	 * Searches for an exact {@link Item} match first, then the ore dictionary
 	 * entries.
-	 * 
+	 *
 	 * @param input
 	 * @return
 	 */
@@ -78,7 +78,7 @@ public final class ProcessingRegistryEntry {
 	/**
 	 * Returns all {@link IProcessingRecipe} that have a matching input. Exact
 	 * {@link Item} matches will appear sorted before ore dictionary matches.
-	 * 
+	 *
 	 * @param input
 	 * @return
 	 */
@@ -123,7 +123,7 @@ public final class ProcessingRegistryEntry {
 	/**
 	 * Returns the first {@link IProcessingRecipeFluidBased} that has a matching
 	 * input.
-	 * 
+	 *
 	 * @param input
 	 * @return
 	 */
@@ -146,7 +146,7 @@ public final class ProcessingRegistryEntry {
 	/**
 	 * Returns all {@link IProcessingRecipeFluidBased} that have a matching
 	 * input.
-	 * 
+	 *
 	 * @param input
 	 * @return
 	 */
@@ -179,10 +179,10 @@ public final class ProcessingRegistryEntry {
 	 * {@link IProcessingRecipe} are indexed for input item or ore dictionary
 	 * name. All recipes can then be searched using
 	 * {@link #getRecipe(ItemStack)}.
-	 * 
+	 *
 	 * Special handling: {@link IProcessingRecipeFluidBased} will be indexed for
 	 * input fluid and can be searched using {@link #getRecipe(FluidStack)}.
-	 * 
+	 *
 	 * @param recipe
 	 */
 	public void registerRecipe(IProcessingRecipe recipe) {
@@ -219,7 +219,7 @@ public final class ProcessingRegistryEntry {
 
 	/**
 	 * Registers an {@link IProcessingRecipe} for search via {@link ItemStack}.
-	 * 
+	 *
 	 * @param recipe
 	 */
 	private void registerRecipeItemBased(IProcessingRecipe recipe) {
@@ -232,7 +232,7 @@ public final class ProcessingRegistryEntry {
 		}
 		String keyOreDict = recipe.getInputOreDict();
 
-		Log.debug("Registering recipe for machine %d: %s->%s", machineName, (key == null ? keyOreDict : key), recipe);
+		Log.debug("Registering recipe for machine %d: %s->%s", machineName, key == null ? keyOreDict : key, recipe);
 
 		IProcessingRecipe[] matches;
 
@@ -263,7 +263,7 @@ public final class ProcessingRegistryEntry {
 	/**
 	 * Registers an {@link IProcessingRecipeFluidBased} for search via
 	 * {@link FluidStack}.
-	 * 
+	 *
 	 * @param recipe
 	 */
 	private void registerRecipeFluidBased(IProcessingRecipeFluidBased recipe) {
@@ -289,7 +289,7 @@ public final class ProcessingRegistryEntry {
 		matches[matches.length - 1] = recipe;
 		recipesFluid.put(key, matches);
 	}
-	
+
 	public List<IProcessingRecipe> getAllRecipes() {
 		Set<IProcessingRecipe> recipes = new HashSet<IProcessingRecipe>();
 		for(IProcessingRecipe[] list : this.recipes.values()) {
@@ -297,12 +297,12 @@ public final class ProcessingRegistryEntry {
 				recipes.add(recipe);
 			}
 		}
-		for(IProcessingRecipe[] list : this.recipesFluid.values()) {
+		for(IProcessingRecipe[] list : recipesFluid.values()) {
 			for(IProcessingRecipe recipe : list) {
 				recipes.add(recipe);
 			}
 		}
-		for(IProcessingRecipe[] list : this.recipesOreDict.values()) {
+		for(IProcessingRecipe[] list : recipesOreDict.values()) {
 			for(IProcessingRecipe recipe : list) {
 				recipes.add(recipe);
 			}

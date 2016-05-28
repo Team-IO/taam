@@ -39,7 +39,7 @@ public class TaamJEIPlugin extends BlankModPlugin {
 		registry.addRecipeCategoryCraftingItem(
 				new ItemStack(TaamMain.itemMachine, 1, Taam.MACHINE_META.mixer.metaData()),
 				Taam.INTEGRATION_JEI_CAT_MIXER);
-		
+
 		registry.addRecipeHandlers(
 				new GrinderRecipeHander(),
 				new CrusherRecipeHandler(),

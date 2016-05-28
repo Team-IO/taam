@@ -19,7 +19,6 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.client.model.obj.OBJModel;
 import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.relauncher.Side;
@@ -28,33 +27,36 @@ import net.teamio.taam.Config;
 import net.teamio.taam.Log;
 import net.teamio.taam.Taam;
 import net.teamio.taam.content.BaseBlock;
+import net.teamio.taam.content.BaseTileEntity;
+import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.content.MaterialMachinesTransparent;
 import net.teamio.taam.content.common.TileEntityChute;
+import net.teamio.taam.rendering.obj.OBJModel;
 import net.teamio.taam.util.inv.InventoryUtils;
 
 public class BlockProductionLine extends BaseBlock {
 
-	public static final PropertyEnum<Taam.BLOCK_PRODUCTIONLINE_META> VARIANT = PropertyEnum.create("variant",
-			Taam.BLOCK_PRODUCTIONLINE_META.class);
-	
+	public static final PropertyEnum<Taam.BLOCK_PRODUCTIONLINE_META> VARIANT = PropertyEnum.create("variant", Taam.BLOCK_PRODUCTIONLINE_META.class);
+	public static final PropertyEnum<EnumFacing> DIRECTION = PropertyEnum.create("direction", EnumFacing.class);
+
 	public static final AxisAlignedBB BLOCK_BOUNDS = new AxisAlignedBB(0, 0, 0, 1, 0.5f, 1);
 
 	public BlockProductionLine() {
 		super(MaterialMachinesTransparent.INSTANCE);
-		this.setHardness(3.5f);
-		this.setSoundType(SoundType.METAL);
+		setHardness(3.5f);
+		setSoundType(SoundType.METAL);
 		this.setHarvestLevel("pickaxe", 1);
 	}
 
 	@Override
 	protected BlockStateContainer createBlockState() {
-		return new ExtendedBlockState(this, new IProperty[] { VARIANT },
-				new IUnlistedProperty[] { OBJModel.OBJProperty.INSTANCE });
+		return new ExtendedBlockState(this, new IProperty[] { DIRECTION, VARIANT },
+				new IUnlistedProperty[] { OBJModel.OBJProperty.instance });
 	}
 
 	@Override
 	public int getMetaFromState(IBlockState state) {
-		Taam.BLOCK_PRODUCTIONLINE_META meta = (Taam.BLOCK_PRODUCTIONLINE_META) state.getValue(VARIANT);
+		Taam.BLOCK_PRODUCTIONLINE_META meta = state.getValue(VARIANT);
 		return meta.ordinal();
 	}
 
@@ -65,6 +67,25 @@ public class BlockProductionLine extends BaseBlock {
 			return getDefaultState();
 		}
 		return getDefaultState().withProperty(VARIANT, values[meta]);
+	}
+
+	@Override
+	public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
+
+		// Let the tile entity update anything that is required for rendering
+		BaseTileEntity te = (BaseTileEntity) worldIn.getTileEntity(pos);
+		te.renderUpdate();
+
+		// This makes the state shows up in F3. Previously it was not actually applied on the rendering, though.
+		// Rendering Transform was applied in getExtendedState
+		// Since 1.9 this seems to work, though
+
+		// Add rotation to state
+		if(te instanceof IRotatable) {
+			return state.withProperty(DIRECTION, ((IRotatable)te).getFacingDirection());
+		} else {
+			return state.withProperty(DIRECTION, EnumFacing.DOWN);
+		}
 	}
 
 	public String getUnlocalizedName(ItemStack itemStack) {
@@ -78,6 +99,7 @@ public class BlockProductionLine extends BaseBlock {
 		return super.getUnlocalizedName() + "." + values[i].name();
 	}
 
+	@Override
 	@SideOnly(Side.CLIENT)
 	public BlockRenderLayer getBlockLayer() {
 		return BlockRenderLayer.CUTOUT;
@@ -94,7 +116,7 @@ public class BlockProductionLine extends BaseBlock {
 
 	@Override
 	public TileEntity createTileEntity(World world, IBlockState state) {
-		Taam.BLOCK_PRODUCTIONLINE_META variant = (Taam.BLOCK_PRODUCTIONLINE_META) state.getValue(VARIANT);
+		Taam.BLOCK_PRODUCTIONLINE_META variant = state.getValue(VARIANT);
 		switch (variant) {
 		case conveyor1:
 			// Plain Conveyor, Tier 1
@@ -130,7 +152,7 @@ public class BlockProductionLine extends BaseBlock {
 		Log.error("Was not able to create a TileEntity for " + getClass().getName());
 		return null;
 	}
-	
+
 	@Override
 	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
 		return BLOCK_BOUNDS;

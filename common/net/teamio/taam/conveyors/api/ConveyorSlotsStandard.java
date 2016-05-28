@@ -12,23 +12,23 @@ import net.teamio.taam.conveyors.ItemWrapper;
  * does not reference any other inventory. This implementation will allow
  * insertion & removal & returns the slot if it is marked available by the slot
  * matrix.
- * 
+ *
  * This implementation does not mark the slots as moving.
- * 
+ *
  * @author Oliver Kahrmann
  *
  */
 public class ConveyorSlotsStandard extends ConveyorSlotsStatic {
 
 	private final ItemWrapper[] slots;
-	
+
 	public ConveyorSlotsStandard() {
 		slots = new ItemWrapper[9];
 		for(int i = 0; i < 9; i++) {
 			slots[i] = new ItemWrapper(null);
 		}
 	}
-	
+
 	@Override
 	public int insertItemAt(ItemStack item, int slot) {
 		if(!isSlotAvailable(slot)) {
@@ -48,7 +48,7 @@ public class ConveyorSlotsStandard extends ConveyorSlotsStatic {
 		candidate.itemStack = null;
 		return removed;
 	}
-	
+
 	@Override
 	public ItemWrapper getSlot(int slot) {
 		if(isSlotAvailable(slot)) {
@@ -57,7 +57,7 @@ public class ConveyorSlotsStandard extends ConveyorSlotsStatic {
 			return ItemWrapper.EMPTY;
 		}
 	}
-	
+
 	public void writeToNBT(NBTTagCompound tag) {
 		NBTTagList itemsTag = new NBTTagList();
 		for(int i = 0; i < slots.length; i++) {
@@ -65,7 +65,7 @@ public class ConveyorSlotsStandard extends ConveyorSlotsStatic {
 		}
 		tag.setTag("items", itemsTag);
 	}
-	
+
 	public void readFromNBT(NBTTagCompound tag) {
 		NBTTagList itemsTag = tag.getTagList("items", NBT.TAG_COMPOUND);
 		if(itemsTag != null) {

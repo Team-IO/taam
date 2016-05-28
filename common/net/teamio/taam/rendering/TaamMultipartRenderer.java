@@ -14,6 +14,7 @@ public class TaamMultipartRenderer extends MultipartSpecialRenderer<MachineMulti
 		this.renderer = renderer;
 	}
 
+	@Override
 	public void renderMultipartAt(MachineMultipart part, double x, double y, double z, float partialTicks, int destroyStage) {
 
 		TankRenderInfo[] tankRI = part.getCapability(Taam.CAPABILITY_RENDER_TANK, null);

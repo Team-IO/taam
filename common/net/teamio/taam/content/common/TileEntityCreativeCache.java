@@ -12,7 +12,7 @@ import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IWorldInteractable;
 
 public class TileEntityCreativeCache extends BaseTileEntity implements IInventory, IWorldInteractable {
-	
+
 	private ItemStack template = null;
 
 	public void setTemplate(ItemStack stack) {
@@ -22,11 +22,11 @@ public class TileEntityCreativeCache extends BaseTileEntity implements IInventor
 			template = stack.copy();
 		}
 	}
-	
+
 	public ItemStack getTemplate() {
 		return template;
 	}
-	
+
 	@Override
 	protected void writePropertiesToNBT(NBTTagCompound tag) {
 		if(template != null) {
@@ -63,11 +63,11 @@ public class TileEntityCreativeCache extends BaseTileEntity implements IInventor
 	public boolean onBlockHit(World world, EntityPlayer player, boolean hasWrench) {
 		return false;
 	}
-	
+
 	/*
 	 * IInventory implementation
 	 */
-	
+
 	@Override
 	public int getSizeInventory() {
 		return 1;
@@ -98,7 +98,7 @@ public class TileEntityCreativeCache extends BaseTileEntity implements IInventor
 		}
 		return template.copy();
 	}
-	
+
 	@Override
 	public void setInventorySlotContents(int slot, ItemStack stack) {
 	}

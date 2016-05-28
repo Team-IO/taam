@@ -8,7 +8,7 @@ public class MaterialMachinesTransparent extends Material {
 
 	public MaterialMachinesTransparent(MapColor color) {
 		super(color);
-		this.setRequiresTool();
+		setRequiresTool();
 	}
 
 	@Override

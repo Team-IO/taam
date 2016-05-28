@@ -6,7 +6,7 @@ import net.minecraftforge.fluids.FluidStack;
 /**
  * Recipe class for the
  * {@link net.teamio.taam.content.piping.TileEntityFluidDrier}.
- * 
+ *
  * @author Oliver Kahrmann
  *
  */
@@ -16,8 +16,8 @@ public class FluidDrierRecipe extends BaseProcessingRecipeFluidBased {
 	private ItemStack outputStack;
 
 	public FluidDrierRecipe(FluidStack input, ItemStack output) {
-		this.inputFluid = input;
-		this.outputStack = output;
+		inputFluid = input;
+		outputStack = output;
 		this.output = new ChancedOutput[] { new ChancedOutput(output, 1) };
 	}
 
@@ -35,7 +35,7 @@ public class FluidDrierRecipe extends BaseProcessingRecipeFluidBased {
 	public ChancedOutput[] getOutput() {
 		return output;
 	}
-	
+
 	public ItemStack getOutputStack() {
 		return outputStack;
 	}

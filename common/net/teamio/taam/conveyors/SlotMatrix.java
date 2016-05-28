@@ -6,7 +6,7 @@ import net.minecraft.util.math.MathHelper;
 
 /**
  * Helper to get slot availability, with automatic calculation of rotations.
- * 
+ *
  * @author Oliver Kahrmann
  *
  */
@@ -22,7 +22,7 @@ public class SlotMatrix {
 				true, true, true,
 				true, true, true,
 				true, true, true
-				};
+		};
 	}
 
 	public SlotMatrix(boolean one, boolean two, boolean three, boolean four, boolean five, boolean six, boolean seven,
@@ -33,7 +33,7 @@ public class SlotMatrix {
 	/**
 	 * Checks the unrotated state of this matrix. By convention this means
 	 * facing North.
-	 * 
+	 *
 	 * @param slot
 	 * @return
 	 */
@@ -46,7 +46,7 @@ public class SlotMatrix {
 	/**
 	 * Checks a rotated state of this matrix. Vertical Axis is ignored &
 	 * considered unrotated.
-	 * 
+	 *
 	 * @param slot
 	 * @param rotation
 	 * @return

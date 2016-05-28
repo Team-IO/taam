@@ -39,7 +39,7 @@ public class MachineTank implements IMachine, IFluidHandler, IWorldInteractable 
 	public static final AxisAlignedBB bounds_tank = new AxisAlignedBB(
 			TaamRenderer.b_tankBorder,	TaamRenderer.b_basePlate,	TaamRenderer.b_tankBorder,
 			1- TaamRenderer.b_tankBorder,	1,				1- TaamRenderer.b_tankBorder
-	).expand(TaamRenderer.shrinkValue, TaamRenderer.shrinkValue, TaamRenderer.shrinkValue);
+			).expand(TaamRenderer.shrinkValue, TaamRenderer.shrinkValue, TaamRenderer.shrinkValue);
 	private TankRenderInfo tankRI = new TankRenderInfo(bounds_tank, null);
 
 	//public static final List<String> visibleParts = Lists.newArrayList("BaseplateConnector_pmdl_c", "Tank_tmdl");
@@ -76,6 +76,7 @@ public class MachineTank implements IMachine, IFluidHandler, IWorldInteractable 
 		updateOcclusion();
 	}
 
+	@Override
 	public void writeUpdatePacket(PacketBuffer buf) {
 		NBTTagCompound tag = new NBTTagCompound();
 		tank.writeToNBT(tag);
@@ -83,6 +84,7 @@ public class MachineTank implements IMachine, IFluidHandler, IWorldInteractable 
 		buf.writeByte(occludedSides);
 	}
 
+	@Override
 	public void readUpdatePacket(PacketBuffer buf) {
 		try {
 			NBTTagCompound tag = buf.readNBTTagCompoundFromBuffer();

@@ -49,13 +49,13 @@ public class MachineItemMultipart extends ItemMultiPart {
 			boolean defaultPlacement = true;
 
 			EnumFacing placeDir = EnumFacing.NORTH;
-			
+
 			//TODO: Determination of special placement
 			/*
 		 	EnumFacing dir = side.getOpposite();
 			EnumFacing placeDir = EnumFacing.NORTH;
 			boolean defaultPlacement = false;
-	
+
 			if (dir == EnumFacing.UP || dir == EnumFacing.DOWN) {
 				defaultPlacement = true;
 			} else {

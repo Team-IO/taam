@@ -11,7 +11,7 @@ public class FluidMaterial extends Fluid {
 		setViscosity(fluidInfo.viscosity);
 		setDensity(fluidInfo.density);
 	}
-	
+
 	private static ResourceLocation getResLoc(String fluidName) {
 		return new ResourceLocation("taam", "blocks/" + fluidName);
 	}

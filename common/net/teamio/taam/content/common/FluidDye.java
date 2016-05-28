@@ -10,7 +10,7 @@ public class FluidDye extends Fluid {
 		setViscosity(400);
 		setDensity(1300);
 	}
-	
+
 	private static ResourceLocation getResLoc(String fluidName) {
 		return new ResourceLocation("taam", "blocks/" + fluidName);
 	}

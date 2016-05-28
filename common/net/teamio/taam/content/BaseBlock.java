@@ -14,13 +14,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.client.model.obj.OBJModel;
-import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -29,6 +26,7 @@ import net.teamio.taam.content.conveyors.TileEntityConveyor;
 import net.teamio.taam.content.conveyors.TileEntityConveyorHopper;
 import net.teamio.taam.content.conveyors.TileEntityConveyorItemBag;
 import net.teamio.taam.machines.MachineTileEntity;
+import net.teamio.taam.rendering.obj.OBJModel;
 import net.teamio.taam.util.TaamUtil;
 import net.teamio.taam.util.WrenchUtil;
 import net.teamio.taam.util.inv.InventoryUtils;
@@ -42,7 +40,7 @@ public abstract class BaseBlock extends Block {
 
 	public BaseBlock(Material material) {
 		super(material);
-		this.fullBlock = false;
+		fullBlock = false;
 	}
 
 	@Override
@@ -56,11 +54,11 @@ public abstract class BaseBlock extends Block {
 	}
 
 	public abstract boolean canBlockStay(World worldIn, BlockPos pos, IBlockState state);
-	
+
 	@Override
 	public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn) {
 		if (!canBlockStay(worldIn, pos, state)) {
-			
+
 			TaamUtil.breakBlockInWorld(worldIn, pos, state);
 			if (this != TaamMain.blockSensor) {
 				breakBlock(worldIn, pos, state);
@@ -115,7 +113,7 @@ public abstract class BaseBlock extends Block {
 
 	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
-				
+
 		if(WrenchUtil.wrenchBlock(worldIn, pos, playerIn, side, hitX, hitY, hitZ) == EnumActionResult.SUCCESS) {
 			return true;
 		}
@@ -204,7 +202,7 @@ public abstract class BaseBlock extends Block {
 		// Let the tile entity update anything that is required for rendering
 		BaseTileEntity te = (BaseTileEntity) worldIn.getTileEntity(pos);
 		te.renderUpdate();
-		
+
 		return state;
 	}
 
@@ -217,24 +215,14 @@ public abstract class BaseBlock extends Block {
 		// Decide which parts to render, delegated to the tileEntity (if
 		// required)
 
-		EnumFacing facing = EnumFacing.NORTH;
-
-		IRotatable rotatable = null;
 		IRenderable renderable = null;
 
 		if (te instanceof IRenderable) {
 			renderable = (IRenderable) te;
 		}
 
-		if (te instanceof IRotatable) {
-			rotatable = (IRotatable) te;
-		}
-
 		if (te instanceof MachineTileEntity) {
 			MachineTileEntity mte = (MachineTileEntity) te;
-			if (mte.machine instanceof IRotatable) {
-				rotatable = (IRotatable) mte.machine;
-			}
 			if (mte.machine instanceof IRenderable) {
 				renderable = (IRenderable) mte.machine;
 			}
@@ -248,31 +236,20 @@ public abstract class BaseBlock extends Block {
 			visibleParts = ALL;
 		}
 
-		if (rotatable != null) {
-			facing = rotatable.getFacingDirection();
-		}
-		OBJModel.OBJState retState = new OBJModel.OBJState(visibleParts, true,
-				new TRSRTransformation(rotateRenderDirection(facing)));
-
+		OBJModel.OBJState retState = new OBJModel.OBJState(visibleParts);
+		retState.setIgnoreHidden(true);
+		
 		IExtendedBlockState extendedState = (IExtendedBlockState) state;
 
-		return extendedState.withProperty(OBJModel.OBJProperty.INSTANCE, retState);
-	}
-
-	private EnumFacing rotateRenderDirection(EnumFacing facing) {
-		if (facing.getAxis() == Axis.Y) {
-			return facing.getOpposite();
-		} else {
-			return facing.rotateY().rotateY();
-		}
+		return extendedState.withProperty(OBJModel.OBJProperty.instance, retState);
 	}
 
 	/**
 	 * Updates a block and all surrounding blocks (meaning, pushes a block
 	 * update for this block and for all directly adjacent blocks)
-	 * 
+	 *
 	 * Useful when working with redstone.
-	 * 
+	 *
 	 * @param world
 	 * @param x
 	 * @param y

@@ -8,7 +8,7 @@ import net.teamio.taam.util.inv.InventoryUtils;
 /**
  * A {@link IConveyorSlots} implementation that inputs into an inventory. No
  * extraction possible.
- * 
+ *
  * @author Oliver Kahrmann
  *
  */
@@ -19,7 +19,7 @@ public class ConveyorSlotsInventory extends ConveyorSlotsStatic {
 	/**
 	 * Creates a new {@link ConveyorSlotsInventory} instance for an
 	 * {@link IItemHandler} with all slots available.
-	 * 
+	 *
 	 * @param pos
 	 * @param inventory
 	 */
@@ -28,10 +28,10 @@ public class ConveyorSlotsInventory extends ConveyorSlotsStatic {
 	}
 
 	/**
-	 * 
+	 *
 	 * Creates a new {@link ConveyorSlotsInventory} instance for an
 	 * {@link IItemHandler} with a custom slot availability matrix.
-	 * 
+	 *
 	 * @param inventory
 	 * @param slotMatrix
 	 */

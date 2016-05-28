@@ -24,9 +24,9 @@ public class TileEntityCreativeWell extends BaseTileEntity implements IFluidHand
 	private final PipeEnd[] pipeEnds;
 
 	private FluidStack fluid;
-	
-	private static final int capacity = Integer.MAX_VALUE; 
-	
+
+	private static final int capacity = Integer.MAX_VALUE;
+
 	public TileEntityCreativeWell() {
 		pipeEnds = new PipeEnd[6];
 		for (EnumFacing side : EnumFacing.VALUES) {
@@ -66,7 +66,7 @@ public class TileEntityCreativeWell extends BaseTileEntity implements IFluidHand
 			fluid = FluidStack.loadFluidStackFromNBT(fluidTag);
 		}
 	}
-	
+
 	@Override
 	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
 		if(capability == Taam.CAPABILITY_PIPE) {
@@ -74,7 +74,7 @@ public class TileEntityCreativeWell extends BaseTileEntity implements IFluidHand
 		}
 		return false;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
@@ -84,11 +84,11 @@ public class TileEntityCreativeWell extends BaseTileEntity implements IFluidHand
 		}
 		return null;
 	}
-	
+
 	/*
 	 * IFluidHandler implementation
 	 */
-	
+
 	@Override
 	public int fill(EnumFacing from, FluidStack resource, boolean doFill) {
 		return 0;
@@ -126,11 +126,11 @@ public class TileEntityCreativeWell extends BaseTileEntity implements IFluidHand
 	public FluidTankInfo[] getTankInfo(EnumFacing from) {
 		return new FluidTankInfo[] { new FluidTankInfo(fluid, capacity) };
 	}
-	
+
 	/*
 	 * IWorldInteractable implementation
 	 */
-	
+
 	@Override
 	public boolean onBlockActivated(World world, EntityPlayer player, boolean hasWrench, EnumFacing side, float hitX,
 			float hitY, float hitZ) {
@@ -152,7 +152,7 @@ public class TileEntityCreativeWell extends BaseTileEntity implements IFluidHand
 		updateState(true, false, true);
 		return true;
 	}
-	
+
 	@Override
 	public boolean onBlockHit(World world, EntityPlayer player, boolean hasWrench) {
 		return false;
