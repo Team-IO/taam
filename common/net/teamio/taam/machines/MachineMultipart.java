@@ -39,7 +39,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.obj.OBJModel;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
@@ -216,10 +215,11 @@ public class MachineMultipart extends Multipart implements INormallyOccludingPar
 			if(visibleParts == null) {
 				visibleParts = BaseBlock.ALL;
 			}
-			OBJModel.OBJState retState = new OBJModel.OBJState(visibleParts, true, new TRSRTransformation(EnumFacing.SOUTH));
+			OBJModel.OBJState retState = new OBJModel.OBJState(visibleParts);
+			retState.setIgnoreHidden(true);
 
 			IExtendedBlockState extendedState = (IExtendedBlockState)state;
-			newState = extendedState.withProperty(OBJModel.OBJProperty.INSTANCE, retState);
+			newState = extendedState.withProperty(OBJModel.OBJProperty.instance, retState);
 		}
 
 		if(machine instanceof IRotatable) {
@@ -245,7 +245,7 @@ public class MachineMultipart extends Multipart implements INormallyOccludingPar
 	public BlockStateContainer createBlockState() {
 		return new ExtendedBlockState(MCMultiPartMod.multipart,
 				new IProperty[] { DIRECTION, VARIANT },
-				new IUnlistedProperty[] { BlockMultipartContainer.PROPERTY_MULTIPART_CONTAINER, OBJModel.OBJProperty.INSTANCE }
+				new IUnlistedProperty[] { BlockMultipartContainer.PROPERTY_MULTIPART_CONTAINER, OBJModel.OBJProperty.instance }
 				);
 	}
 

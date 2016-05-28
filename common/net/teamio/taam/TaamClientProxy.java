@@ -1,6 +1,5 @@
 package net.teamio.taam;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +33,7 @@ import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.IPerspectiveAwareModel;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.SimpleModelState;
+import net.minecraftforge.client.model.obj.OBJCustomData;
 import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.client.model.obj.OBJModel;
 import net.minecraftforge.client.model.obj.OBJModel.OBJBakedModel;
@@ -328,19 +328,20 @@ public class TaamClientProxy extends TaamCommonProxy {
 		 * idea WHERE!
 		 */
 
-		Field customDataField = null;
-		Field customDataFlipVField = null;
-		try {
-			customDataField = OBJModel.class.getDeclaredField("customData");
-			customDataField.setAccessible(true);
-			Class<?> customDataType = customDataField.getType();
-			customDataFlipVField = customDataType.getDeclaredField("flipV");
-			customDataFlipVField.setAccessible(true);
-		} catch (Exception e) {
-			Log.error(
-					"Failed to make OBJModel.customData accessible or access other reflection stuff. Inventory items will have wrong textures.",
-					e);
-		}
+		// Currently not required due to custom replacement of OBJModel (Hacky workaround replaces Hacky Workaround)
+//		Field customDataField = null;
+//		Field customDataFlipVField = null;
+//		try {
+//			customDataField = OBJModel.class.getDeclaredField("customData");
+//			customDataField.setAccessible(true);
+//			Class<?> customDataType = customDataField.getType();
+//			customDataFlipVField = customDataType.getDeclaredField("flipV");
+//			customDataFlipVField.setAccessible(true);
+//		} catch (Exception e) {
+//			Log.error(
+//					"Failed to make OBJModel.customData accessible or access other reflection stuff. Inventory items will have wrong textures.",
+//					e);
+//		}
 
 		/*
 		 * Go through all registered locations from above & replace the baked
@@ -359,13 +360,14 @@ public class TaamClientProxy extends TaamCommonProxy {
 				/*
 				 * Set flip-v flag
 				 */
-
-				try {
-					Object customData = customDataField.get(obj);
-					customDataFlipVField.set(customData, true);
-				} catch (Exception e) {
-					Log.error("Failed to adjust custom data. Inventory items will have wrong textures.", e);
-				}
+				obj.customData.processUVData.put(OBJCustomData.Keys.FLIP_UVS, Pair.of(false, true));
+				obj.customData.hasProcessed = true;
+//				try {
+//					Object customData = customDataField.get(obj);
+//					customDataFlipVField.set(customData, true);
+//				} catch (Exception e) {
+//					Log.error("Failed to adjust custom data. Inventory items will have wrong textures.", e);
+//				}
 
 				/*
 				 * Create custom baked model as replacement

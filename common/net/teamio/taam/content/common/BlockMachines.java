@@ -50,7 +50,7 @@ public class BlockMachines extends BaseBlock {
 	protected BlockStateContainer createBlockState() {
 		return new ExtendedBlockState(this,
 				new IProperty[] { VARIANT },
-				new IUnlistedProperty[] { OBJModel.OBJProperty.INSTANCE }
+				new IUnlistedProperty[] { OBJModel.OBJProperty.instance }
 				);
 	}
 

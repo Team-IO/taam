@@ -4,7 +4,16 @@
         "textures": {},
         "model": "taam:creative_cache.obj",
         "custom": {
-            "flip-v": true
+            "flip-v": true,
+			"groupConfigs": {
+				"Pipe_Center": {"show": ["Center_pcmdl"], "hide": [], "flags": ["alwaysActive"]},
+				"Pipe_West": {"show": ["FlangeMX_pfmdl"]},
+				"Pipe_East": {"show": ["FlangePX_pfmdl"]},
+				"Pipe_South": {"show": ["FlangeMY_pfmdl"]},
+				"Pipe_North": {"show": ["FlangePY_pfmdl"]},
+				"Pipe_Down": {"show": ["FlangeMZ_pfmdl"]},
+				"Pipe_Up": {"show": ["FlangePZ_pfmdl"]}
+			}
         }
      },
     "variants": {

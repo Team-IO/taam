@@ -72,7 +72,7 @@ public class MachineBlock extends BaseBlock implements ITileEntityProvider {
 
 	@Override
 	protected BlockStateContainer createBlockState() {
-		return new ExtendedBlockState(this, new IProperty[] { DIRECTION, VARIANT }, new IUnlistedProperty[]{ OBJModel.OBJProperty.INSTANCE });
+		return new ExtendedBlockState(this, new IProperty[] { DIRECTION, VARIANT }, new IUnlistedProperty[]{ OBJModel.OBJProperty.instance });
 	};
 
 	@Override

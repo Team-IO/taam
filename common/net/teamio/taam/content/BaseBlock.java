@@ -14,13 +14,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.obj.OBJModel;
-import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -251,20 +249,12 @@ public abstract class BaseBlock extends Block {
 		if (rotatable != null) {
 			facing = rotatable.getFacingDirection();
 		}
-		OBJModel.OBJState retState = new OBJModel.OBJState(visibleParts, true,
-				new TRSRTransformation(rotateRenderDirection(facing)));
-
+		OBJModel.OBJState retState = new OBJModel.OBJState(visibleParts);
+		retState.setIgnoreHidden(true);
+		
 		IExtendedBlockState extendedState = (IExtendedBlockState) state;
 
-		return extendedState.withProperty(OBJModel.OBJProperty.INSTANCE, retState);
-	}
-
-	private EnumFacing rotateRenderDirection(EnumFacing facing) {
-		if (facing.getAxis() == Axis.Y) {
-			return facing.getOpposite();
-		} else {
-			return facing.rotateY().rotateY();
-		}
+		return extendedState.withProperty(OBJModel.OBJProperty.instance, retState);
 	}
 
 	/**

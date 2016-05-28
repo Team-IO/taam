@@ -36,7 +36,7 @@ public class BlockProductionLineAppliance extends BlockProductionLine {
 	@Override
 	protected BlockStateContainer createBlockState() {
 		return new ExtendedBlockState(this, new IProperty[] { DIRECTION, VARIANT },
-				new IUnlistedProperty[] { OBJModel.OBJProperty.INSTANCE });
+				new IUnlistedProperty[] { OBJModel.OBJProperty.instance });
 	}
 
 	@Override
