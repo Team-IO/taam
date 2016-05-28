@@ -46,13 +46,13 @@ public final class TaamUtil {
 			return;
 		}
 		IBlockState state = world.getBlockState(pos);
-		world.notifyBlockUpdate(pos, state, state, 0);
+		world.notifyBlockUpdate(pos, state, state, 3);
 	}
 	
 	public static boolean canDropIntoWorld(IBlockAccess world, BlockPos pos) {
 		IBlockState state = world.getBlockState(pos);
 		Block block = state.getBlock();
-		return block.isAir(state, world, pos) || block.getMaterial(state).isLiquid();
+		return block.isAir(state, world, pos) || state.getMaterial().isLiquid();
 	}
 
 	public static void breakBlockInWorld(World world, BlockPos pos) {

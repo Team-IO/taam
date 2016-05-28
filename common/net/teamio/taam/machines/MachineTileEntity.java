@@ -38,9 +38,12 @@ public class MachineTileEntity extends BaseTileEntity implements ITickable {
 	protected void readPropertiesFromNBT(NBTTagCompound tag) {
 		String machineID = tag.getString("machine");
 		IMachineMetaInfo meta = Taam.MACHINE_META.fromId(machineID);
-		if (meta != null) {
+		if (this.meta != meta) {
 			this.meta = meta;
-			machine = meta.createMachine();
+			if(meta != null) {
+				machine = meta.createMachine();
+			}
+			updateState(false, true, false);
 		}
 		machine.readPropertiesFromNBT(tag);
 	}
