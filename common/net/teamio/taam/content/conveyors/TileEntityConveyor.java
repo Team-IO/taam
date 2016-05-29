@@ -40,6 +40,9 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	private EnumFacing direction = EnumFacing.NORTH;
 	private int speedLevel = 0;
 
+	private boolean redirectorLeft = false;
+	private boolean redirectorRight = false;
+
 	public boolean isEnd = false;
 	public boolean isBegin = false;
 	public boolean renderEnd = false;
@@ -85,6 +88,24 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	public int getSpeedLevel() {
 		return speedLevel;
 	}
+	
+	public boolean isRedirectorLeft() {
+		return redirectorLeft;
+	}
+
+	public void setRedirectorLeft(boolean redirectorLeft) {
+		this.redirectorLeft = redirectorLeft;
+		updateState(true, true, true);
+	}
+	
+	public boolean isRedirectorRight() {
+		return redirectorRight;
+	}
+
+	public void setRedirectorRight(boolean redirectorRight) {
+		this.redirectorRight = redirectorRight;
+		updateState(true, true, true);
+	}
 
 	@Override
 	public void blockUpdate() {
@@ -95,6 +116,10 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 
 	@Override
 	public void renderUpdate() {
+		//FIXME: For debugging, remove later!
+//		setRedirectorLeft(speedLevel == 1);
+//		setRedirectorRight(speedLevel == 1);
+		
 		// Check in front
 		TileEntity te = worldObj.getTileEntity(pos.offset(direction));
 
@@ -122,27 +147,39 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 		}
 
 		// Check right
-		inverse = direction.rotateY();
-		te = worldObj.getTileEntity(pos.offset(inverse));
-
-		if(te instanceof TileEntityConveyor) {
-			TileEntityConveyor next = (TileEntityConveyor)te;
-			EnumFacing nextFacing = next.getFacingDirection();
-			renderRight = nextFacing.getAxis() != direction.getAxis();
+		if(redirectorRight) {
+			renderRight = true;
 		} else {
-			renderRight = ConveyorUtil.getSlots(te, inverse.getOpposite()) != null;
+			inverse = direction.rotateY();
+			te = worldObj.getTileEntity(pos.offset(inverse));
+	
+			if(te instanceof TileEntityConveyor) {
+				TileEntityConveyor next = (TileEntityConveyor)te;
+				EnumFacing nextFacing = next.getFacingDirection();
+				renderRight = nextFacing.getAxis() != direction.getAxis() ||
+						(next.redirectorRight && nextFacing.rotateYCCW() == inverse) ||
+						(next.redirectorLeft && nextFacing.rotateY() == inverse);
+			} else {
+				renderRight = ConveyorUtil.getSlots(te, inverse.getOpposite()) != null;
+			}
 		}
 
 		// Check left
-		inverse = direction.rotateYCCW();
-		te = worldObj.getTileEntity(pos.offset(inverse));
-
-		if(te instanceof TileEntityConveyor) {
-			TileEntityConveyor next = (TileEntityConveyor)te;
-			EnumFacing nextFacing = next.getFacingDirection();
-			renderLeft = nextFacing.getAxis() != direction.getAxis();
+		if(redirectorLeft) {
+			renderLeft = true;
 		} else {
-			renderLeft = ConveyorUtil.getSlots(te, inverse.getOpposite()) != null;
+			inverse = direction.rotateYCCW();
+			te = worldObj.getTileEntity(pos.offset(inverse));
+
+			if(te instanceof TileEntityConveyor) {
+				TileEntityConveyor next = (TileEntityConveyor)te;
+				EnumFacing nextFacing = next.getFacingDirection();
+				renderLeft = nextFacing.getAxis() != direction.getAxis() ||
+						(next.redirectorRight && nextFacing.rotateYCCW() == inverse) ||
+						(next.redirectorLeft && nextFacing.rotateY() == inverse);
+			} else {
+				renderLeft = ConveyorUtil.getSlots(te, inverse.getOpposite()) != null;
+			}
 		}
 
 		// Check above
@@ -182,7 +219,13 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 			visibleParts.add(speedLevel + "_Conveyor_T_Left");
 		}
 		if(renderRight) {
-			visibleParts.add(speedLevel + "_Conveyor_T_RIght");
+			visibleParts.add(speedLevel + "_Conveyor_T_Right");
+		}
+		if(redirectorLeft) {
+			visibleParts.add(speedLevel + "_Conveyor_R_Left");
+		}
+		if(redirectorRight) {
+			visibleParts.add(speedLevel + "_Conveyor_R_Right");
 		}
 
 		return visibleParts;
@@ -244,6 +287,8 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	protected void writePropertiesToNBT(NBTTagCompound tag) {
 		tag.setInteger("direction", direction.ordinal());
 		tag.setInteger("speedLevel", speedLevel);
+		tag.setBoolean("redirectorLeft", redirectorLeft);
+		tag.setBoolean("redirectorRight", redirectorRight);
 		NBTTagList itemsTag = new NBTTagList();
 		for(int i = 0; i < items.length; i++) {
 			itemsTag.appendTag(items[i].writeToNBT());
@@ -282,6 +327,8 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 			direction = EnumFacing.NORTH;
 		}
 		speedLevel = tag.getInteger("speedLevel");
+		redirectorLeft = tag.getBoolean("redirectorLeft");
+		redirectorRight = tag.getBoolean("redirectorRight");
 		NBTTagList itemsTag = tag.getTagList("items", NBT.TAG_COMPOUND);
 		if(itemsTag != null) {
 			int count = Math.min(itemsTag.tagCount(), items.length);
