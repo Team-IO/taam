@@ -36,7 +36,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.teamio.taam.Config;
@@ -49,31 +48,43 @@ import net.teamio.taam.content.conveyors.TileEntityConveyorTrashCan;
 import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.conveyors.ItemWrapper;
 import net.teamio.taam.conveyors.api.IConveyorSlots;
-import net.teamio.taam.conveyors.appliances.ApplianceSprayer;
 import net.teamio.taam.piping.IPipe;
 import net.teamio.taam.util.WrenchUtil;
 
 public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 
+	/**
+	 * Item Renderer for the conveyors. Cached from the minecraft instance for
+	 * easy access.
+	 */
 	private RenderItem ri;
+
+	/**
+	 * Rotation counter, currently only used for calculating
+	 * {@link TaamRenderer#rotSin}.
+	 */
 	private float rot = 0;
+	/**
+	 * Rotation counter, currently unused, was used for blinking the motion
+	 * sensor light.
+	 */
 	private float rot_sensor = 0;
+	/**
+	 * sin(rot), used for animating the conveyor sieve.
+	 */
 	public static double rotSin = 0;
 
+	/**
+	 * Value used for expanding the rendered selection boxes below. Value is
+	 * from Vanilla source.
+	 */
 	public static final double boundingBoxExpand = 0.0020000000949949026D;
+	
+	public static final ResourceLocation conveyorTextures = new ResourceLocation("Taam", "blocks/conveyor");
 
-	public static final float shrinkValue = -0.001f;
-
-	public static final float b_tankBorder = 1.5f / 16f;
-	public static final float b_tankBorderSprayer = b_tankBorder + 4f / 16f;
-	public static final float b_basePlate = 2f / 16f;
-
-	public static AxisAlignedBB bounds_sprayer = new AxisAlignedBB(
-			b_tankBorder,	b_basePlate,	b_tankBorder,
-			1-b_tankBorder,	1-4f/16f,		1-b_tankBorderSprayer
-			).expand(shrinkValue, shrinkValue, shrinkValue);
-
-
+	/**
+	 * Function for fetching texture sprites.
+	 */
 	Function<ResourceLocation, TextureAtlasSprite> textureGetter = new Function<ResourceLocation, TextureAtlasSprite>() {
 		@Override
 		public TextureAtlasSprite apply(ResourceLocation location) {
@@ -85,6 +96,12 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		ri = Minecraft.getMinecraft().getRenderItem();
 	}
 
+	/**
+	 * Executed each client tick to update the animated values. Client tick,
+	 * because that is fixed timing, so not framerate dependent.
+	 * 
+	 * @param event
+	 */
 	@SubscribeEvent
 	public void onClientTick(TickEvent.ClientTickEvent event) {
 		if (event.phase == TickEvent.Phase.END) {
@@ -97,6 +114,14 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		}
 	}
 
+	/**
+	 * Draw custom highlight boxes on conveyor machines with default movement.
+	 * (e.g. conveyors themselves or the conveyor sieve)
+	 * 
+	 * The hightlight box will be drawn around the slot aimed at.
+	 * 
+	 * @param event
+	 */
 	@SubscribeEvent
 	public void onDrawBlockHighlight(DrawBlockHighlightEvent event) {
 		RayTraceResult target = event.getTarget();
@@ -136,8 +161,17 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		}
 	}
 
-
+	/**
+	 * Draw a single selection box at the given bounding box.
+	 * 
+	 * @param player
+	 * @param partialTicks
+	 * @param box
+	 */
 	public void drawSelectionBoundingBox(EntityPlayer player, float partialTicks, AxisAlignedBB box) {
+		GlStateManager.pushMatrix();
+		GlStateManager.pushAttrib();
+
 		GlStateManager.enableBlend();
 		GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
 		GlStateManager.color(0.0F, 0.0F, 0.0F, 0.4F);
@@ -149,11 +183,16 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		double d1 = player.lastTickPosY + (player.posY - player.lastTickPosY) * partialTicks;
 		double d2 = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * partialTicks;
 
-		RenderGlobal.drawSelectionBoundingBox(box.offset(-d0, -d1, -d2).expand(boundingBoxExpand, boundingBoxExpand, boundingBoxExpand));
+		GL11.glTranslated(-d0, -d1, -d2);
+
+		RenderGlobal.drawSelectionBoundingBox(box.expand(boundingBoxExpand, boundingBoxExpand, boundingBoxExpand));
 
 		GlStateManager.depthMask(true);
 		GlStateManager.enableTexture2D();
 		GlStateManager.disableBlend();
+
+		GlStateManager.popAttrib();
+		GlStateManager.popMatrix();
 	}
 
 	@Override
@@ -181,20 +220,6 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 			renderConveyorItems((IConveyorSlots) tileEntity, x, y, z);
 		}
 
-		//TODO: replace with capability!
-
-		//		if (tileEntity instanceof TileEntityTank) {
-		//			GL11.glPushMatrix();
-		//			GL11.glTranslated(x, y, z);
-		//
-		//			FluidTank tank = ((TileEntityTank) tileEntity).getTank();
-		//			FluidStack stack = tank.getFluid();
-		//
-		//			renderTankContent(stack, tank.getCapacity(), bounds_tank);
-		//
-		//			GL11.glPopMatrix();
-		//		}
-
 		if(tileEntity instanceof TileEntityConveyorSieve) {
 			GL11.glPushMatrix();
 			GL11.glTranslated(x, y, z);
@@ -207,24 +232,6 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 
 			renderSieveMesh(((TileEntityConveyorSieve) tileEntity).isShutdown);
 			
-			GL11.glPopMatrix();
-		}
-		
-		if (tileEntity instanceof ApplianceSprayer) {
-			GL11.glPushMatrix();
-			GL11.glTranslated(x, y, z);
-
-			float rotationDegrees = getRotationDegrees(tileEntity);
-
-			GL11.glTranslated(.5f, .5f, .5f);
-			GL11.glRotatef(rotationDegrees, 0, 1, 0);
-			GL11.glTranslated(-.5f, -.5f, -.5f);
-
-			FluidTank tank = ((ApplianceSprayer) tileEntity).getTank();
-			FluidStack stack = tank.getFluid();
-
-			renderTankContent(stack, tank.getCapacity(), bounds_sprayer);
-
 			GL11.glPopMatrix();
 		}
 
@@ -274,43 +281,41 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 			int fillLevel = 0;
 
 			//TODO: Pipe Fill Level
-			//			if(pipe instanceof TileEntityPipe) {
-			//				fillLevel = ((TileEntityPipe) pipe).getFillLevel();
-			//			}
+			//if(pipe instanceof TileEntityPipe) {
+			//	fillLevel = ((TileEntityPipe) pipe).getFillLevel();
+			//}
 
-			String info0 = String.format("%03d/%d",
-					fillLevel, pipe.getCapacity());;
-					String info1 = String.format("%d-%d",
-							pipe.getPressure(), pipe.getSuction());
-					String info2 = "E: " + (pipe.getPressure() == 0 ? -pipe.getSuction() : pipe.getPressure());
+			String info0 = String.format("%03d/%d", fillLevel, pipe.getCapacity());
+			String info1 = String.format("%d-%d", pipe.getPressure(), pipe.getSuction());
+			String info2 = "E: " + (pipe.getPressure() == 0 ? -pipe.getSuction() : pipe.getPressure());
 
-					GL11.glPushMatrix();
-					{
-						GL11.glTranslated(x, y, z);
+			GL11.glPushMatrix();
+			{
+				GL11.glTranslated(x, y, z);
 
-						GL11.glTranslated(.5f, .5f, .5f);
+				GL11.glTranslated(.5f, .5f, .5f);
 
-						float playerRot = player.getRotationYawHead();
-						float pitch = player.rotationPitch;
+				float playerRot = player.getRotationYawHead();
+				float pitch = player.rotationPitch;
 
-						GL11.glRotatef(180, 0, 0, 1);
-						GL11.glRotatef(playerRot, 0, 1, 0);
-						GL11.glRotatef(-pitch, 1, 0, 0);
-						GL11.glTranslated(-.5f, -.5f, -.5f);
+				GL11.glRotatef(180, 0, 0, 1);
+				GL11.glRotatef(playerRot, 0, 1, 0);
+				GL11.glRotatef(-pitch, 1, 0, 0);
+				GL11.glTranslated(-.5f, -.5f, -.5f);
 
-						GL11.glPushMatrix();
-						{
-							GL11.glTranslated(0.25f, 0.25f, 0.15f);
+				GL11.glPushMatrix();
+				{
+					GL11.glTranslated(0.25f, 0.25f, 0.15f);
 
-							GL11.glScalef(.02f, .02f, .02f);
+					GL11.glScalef(.02f, .02f, .02f);
 
-							fontRendererObj.drawString(info0, 0, 0, 0x00FFFF);
-							fontRendererObj.drawString(info1, 0, 8, 0xFFFFFF);
-							fontRendererObj.drawString(info2, 0, 16, 0xFFFF00);
-						}
-						GL11.glPopMatrix();
-					}
-					GL11.glPopMatrix();
+					fontRendererObj.drawString(info0, 0, 0, 0x00FFFF);
+					fontRendererObj.drawString(info1, 0, 8, 0xFFFFFF);
+					fontRendererObj.drawString(info2, 0, 16, 0xFFFF00);
+				}
+				GL11.glPopMatrix();
+			}
+			GL11.glPopMatrix();
 		}
 	}
 
@@ -403,8 +408,6 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 
 		tearDownDefaultGL();
 	}
-
-	public static final ResourceLocation conveyorTextures = new ResourceLocation("Taam", "blocks/conveyor");
 
 	public void renderBagFilling(float fillFactor) {
 		if(fillFactor == 0f) {
@@ -580,7 +583,14 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		
 	}
 
+	/**
+	 * Set up default GL flags for rendering.
+	 * 
+	 * Remember to use {@link #tearDownDefaultGL()} after rendering.
+	 */
 	private void setupDefaultGL() {
+		GlStateManager.pushAttrib();
+		
 		RenderHelper.enableStandardItemLighting();
 		GlStateManager.enableRescaleNormal();
 		GlStateManager.enableBlend();
@@ -589,11 +599,19 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		GlStateManager.color(1, 1, 1, 1);
 	}
 
+	/**
+	 * Restore previous GL flags, to not disturb other renderers.
+	 * 
+	 * Remember to use {@link #setupDefaultGL()} before rendering.
+	 */
 	private void tearDownDefaultGL() {
+		// Just paranoid:
 		GlStateManager.disableRescaleNormal();
 		GlStateManager.disableBlend();
 		GlStateManager.enableAlpha();
 		RenderHelper.disableStandardItemLighting();
+		
+		GlStateManager.popAttrib();
 	}
 
 	public static EnumFacing getDirection(Object tileEntity) {

@@ -43,11 +43,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.teamio.taam.content.common.TileEntityChute;
-import net.teamio.taam.content.common.TileEntityCreativeCache;
-import net.teamio.taam.content.common.TileEntitySensor;
 import net.teamio.taam.content.conveyors.TileEntityConveyor;
-import net.teamio.taam.content.conveyors.TileEntityConveyorHopper;
 import net.teamio.taam.content.conveyors.TileEntityConveyorItemBag;
 import net.teamio.taam.content.conveyors.TileEntityConveyorProcessor;
 import net.teamio.taam.content.conveyors.TileEntityConveyorSieve;
@@ -77,11 +73,7 @@ public class TaamClientProxy extends TaamCommonProxy {
 		taamRenderer = new TaamRenderer();
 
 		// Tile Entity Rendering
-		ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySensor.class, taamRenderer);
-		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityChute.class, taamRenderer);
-		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCreativeCache.class, taamRenderer);
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityConveyor.class, taamRenderer);
-		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityConveyorHopper.class, taamRenderer);
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityConveyorProcessor.class, taamRenderer);
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityConveyorSieve.class, taamRenderer);
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityConveyorItemBag.class, taamRenderer);

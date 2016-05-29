@@ -17,6 +17,12 @@ public class TankRenderInfo {
 	public AxisAlignedBB bounds;
 	public FluidTankInfo tankInfo;
 
+	/**
+	 * Value used to shrink the bounding boxes for rendering tank content, to
+	 * avoid z-fighting.
+	 */
+	public static final float shrinkValue = -0.001f;
+
 	public TankRenderInfo(AxisAlignedBB bounds, FluidTankInfo tankInfo) {
 		this.bounds = bounds;
 		this.tankInfo = tankInfo;

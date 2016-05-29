@@ -110,8 +110,8 @@
                         "1_Conveyor_T_End": {"show": ["ConveyorRoundEndCap_Alu_cecmdl_alu"]},
                         "1_Conveyor_T_Left": {"show": ["ConveyorLeftCap_Alu_cecmdl_alu"]},
                         "1_Conveyor_T_Right": {"show": ["ConveyorRightCap_Alu_cecmdl_alu"]},
-                        "1_Conveyor_R_Right": {"show": ["RedirectorRight_crdrmdl"]},
-                        "1_Conveyor_R_Left": {"show": ["RedirectorLeft_crdrmdl"]}
+                        "1_Conveyor_R_Right": {"show": ["RedirectorRight_crdrmdl_r"]},
+                        "1_Conveyor_R_Left": {"show": ["RedirectorLeft_crdrmdl_l"]}
                     }
                 }
             },

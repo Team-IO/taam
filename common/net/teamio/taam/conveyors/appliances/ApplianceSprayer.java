@@ -5,6 +5,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.Fluid;
@@ -22,13 +23,24 @@ import net.teamio.taam.piping.PipeEndFluidHandler;
 import net.teamio.taam.piping.PipeUtil;
 import net.teamio.taam.recipes.IProcessingRecipeFluidBased;
 import net.teamio.taam.recipes.ProcessingRegistry;
+import net.teamio.taam.rendering.TankRenderInfo;
 
 public class ApplianceSprayer extends ATileEntityAppliance implements IFluidHandler, ITickable, IWorldInteractable {
 
-	private static final int capacity = 2000;
+	public static final int capacity = 2000;
 
-	private FluidTank tank;
-	private PipeEndFluidHandler pipeEnd;
+	public static final float b_tankBorder = 1.5f / 16f;
+	public static final float b_tankBorderSprayer = b_tankBorder + 4f / 16f;
+	public static final float b_basePlate = 2f / 16f;
+	
+	public static final AxisAlignedBB bounds_sprayer_tank = new AxisAlignedBB(
+			b_tankBorder,	b_basePlate,	b_tankBorder,
+			1-b_tankBorder,	1-4f/16,		1-b_tankBorderSprayer
+			).expand(TankRenderInfo.shrinkValue, TankRenderInfo.shrinkValue, TankRenderInfo.shrinkValue);
+	
+	private final FluidTank tank;
+	private final PipeEndFluidHandler pipeEnd;
+	private final TankRenderInfo tankRI = new TankRenderInfo(bounds_sprayer_tank, null);
 
 	private FluidStack lastInputFluid;
 	private IProcessingRecipeFluidBased[] matchingRecipes;
@@ -219,6 +231,9 @@ public class ApplianceSprayer extends ATileEntityAppliance implements IFluidHand
 		if(capability == Taam.CAPABILITY_PIPE) {
 			return facing == pipeEnd.getSide();
 		}
+		if (capability == Taam.CAPABILITY_RENDER_TANK) {
+			return true;
+		}
 		return false;
 	}
 
@@ -227,6 +242,10 @@ public class ApplianceSprayer extends ATileEntityAppliance implements IFluidHand
 	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
 		if(capability == Taam.CAPABILITY_PIPE && facing == pipeEnd.getSide()) {
 			return (T) pipeEnd;
+		}
+		if (capability == Taam.CAPABILITY_RENDER_TANK) {
+			tankRI.tankInfo = tank.getInfo();
+			return (T) tankRI.asArray();
 		}
 		return null;
 	}

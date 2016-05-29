@@ -26,28 +26,28 @@ import net.teamio.taam.content.IWorldInteractable;
 import net.teamio.taam.machines.IMachine;
 import net.teamio.taam.piping.PipeEndFluidHandler;
 import net.teamio.taam.piping.PipeUtil;
-import net.teamio.taam.rendering.TaamRenderer;
 import net.teamio.taam.rendering.TankRenderInfo;
 import net.teamio.taam.util.FaceBitmap;
 
 public class MachineTank implements IMachine, IFluidHandler, IWorldInteractable {
 
+	public static final float b_basePlate = 2f / 16;
+	public static final float b_border = 1.5f / 16;
+	public static final float b_occlusion = 2f / 16;
+	
+	public static final AxisAlignedBB bbTankContent = new AxisAlignedBB(
+			b_border,   b_basePlate, b_border,
+			1-b_border, 1,		   1-b_border
+			).expand(TankRenderInfo.shrinkValue, TankRenderInfo.shrinkValue, TankRenderInfo.shrinkValue);
+	public static final AxisAlignedBB bbTank = new AxisAlignedBB(b_border, 0, b_border, 1-b_border, 1, 1-b_border);
+	public static final AxisAlignedBB bbCoolusion = new AxisAlignedBB(b_occlusion, b_occlusion, b_occlusion, 1-b_occlusion, 1-b_occlusion, 1-b_occlusion);
+
 	private final PipeEndFluidHandler pipeEndUP;
 	private final PipeEndFluidHandler pipeEndDOWN;
 	private final FluidTank tank;
-
-	public static final AxisAlignedBB bounds_tank = new AxisAlignedBB(
-			TaamRenderer.b_tankBorder,	TaamRenderer.b_basePlate,	TaamRenderer.b_tankBorder,
-			1- TaamRenderer.b_tankBorder,	1,				1- TaamRenderer.b_tankBorder
-			).expand(TaamRenderer.shrinkValue, TaamRenderer.shrinkValue, TaamRenderer.shrinkValue);
-	private TankRenderInfo tankRI = new TankRenderInfo(bounds_tank, null);
-
-	//public static final List<String> visibleParts = Lists.newArrayList("BaseplateConnector_pmdl_c", "Tank_tmdl");
-	private static final float fromBorder = 1.5f/16;
-	private static final float fromBorderOcclusion = 2f/16;
-	public static final AxisAlignedBB bbTank = new AxisAlignedBB(fromBorder, 0, fromBorder, 1-fromBorder, 1, 1-fromBorder);
-	public static final AxisAlignedBB bbCoolusion = new AxisAlignedBB(fromBorderOcclusion, fromBorderOcclusion, fromBorderOcclusion, 1-fromBorderOcclusion, 1-fromBorderOcclusion, 1-fromBorderOcclusion);
-
+	
+	private final TankRenderInfo tankRI = new TankRenderInfo(bbTankContent, null);
+	
 	private byte occludedSides;
 
 	public MachineTank() {
@@ -149,6 +149,9 @@ public class MachineTank implements IMachine, IFluidHandler, IWorldInteractable 
 	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
 		if (capability == Taam.CAPABILITY_PIPE) {
 			return facing.getAxis() == Axis.Y;
+		}
+		if (capability == Taam.CAPABILITY_RENDER_TANK) {
+			return true;
 		}
 		return false;
 	}
