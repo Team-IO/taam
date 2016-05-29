@@ -6,6 +6,7 @@ import org.apache.commons.lang3.NotImplementedException;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -37,6 +38,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
+import net.teamio.taam.Taam.ITEM_PART_META;
 import net.teamio.taam.content.ItemWithMetadata;
 import net.teamio.taam.content.ItemWithMetadata.ItemDelegate;
 import net.teamio.taam.content.common.BlockBuilding;
@@ -262,7 +264,25 @@ public class TaamMain {
 		registerItem(itemSaw = new ItemTool(Taam.ITEM_TOOL_META.saw), Taam.ITEM_TOOL + "." + Taam.ITEM_TOOL_META.saw.name());
 
 		registerItem(itemMaterial = new ItemWithMetadata<Taam.ITEM_MATERIAL_META>("material", Taam.ITEM_MATERIAL_META.values(), null), Taam.ITEM_MATERIAL);
-		registerItem(itemPart = new ItemWithMetadata<Taam.ITEM_PART_META>("part", Taam.ITEM_PART_META.values(), null), Taam.ITEM_PART);
+		registerItem(itemPart = new ItemWithMetadata<Taam.ITEM_PART_META>("part", Taam.ITEM_PART_META.values(),
+				new ItemDelegate<Taam.ITEM_PART_META>() {
+					@Override
+					public void addInformation(ItemStack stack, EntityPlayer player, List<String> lines,
+							boolean detailedInfoSetting) {
+						if(stack.getMetadata() == Taam.ITEM_PART_META.redirector.ordinal()) {
+							String usage = I18n.format("lore.taam.redirector.usage", new Object[0]);
+							// Split at literal \n in the translated text. a lot of escaping here.
+							String[] split = usage.split("\\\\n");
+							for (int i = 0; i < split.length; i++) {
+								lines.add(split[i]);
+							}
+						}
+					}
+					@Override
+					public boolean isValidMetadata(ITEM_PART_META meta) {
+						return true;
+					}
+				}), Taam.ITEM_PART);
 		registerItem(itemIngot = new ItemWithMetadata<Taam.BLOCK_ORE_META>("ingot", Taam.BLOCK_ORE_META.values(),
 				new ItemDelegate<Taam.BLOCK_ORE_META>() {
 					@Override

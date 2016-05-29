@@ -2,6 +2,7 @@ package net.teamio.taam.conveyors.appliances;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 import net.teamio.taam.content.IWorldInteractable;
 import net.teamio.taam.content.conveyors.ATileEntityAppliance;
@@ -24,8 +25,8 @@ public class ApplianceReordering extends ATileEntityAppliance implements IWorldI
 	 */
 
 	@Override
-	public boolean onBlockActivated(World world, EntityPlayer player, boolean hasWrench, EnumFacing side, float hitX,
-			float hitY, float hitZ) {
+	public boolean onBlockActivated(World world, EntityPlayer player, EnumHand hand, boolean hasWrench, EnumFacing side,
+			float hitX, float hitY, float hitZ) {
 		// TODO Auto-generated method stub
 		return false;
 	}

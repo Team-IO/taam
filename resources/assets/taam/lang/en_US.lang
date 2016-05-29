@@ -37,6 +37,7 @@ item.taam.part.iron_frame.name=Iron Frame
 item.taam.part.metal_bearing.name=Metal Bearing
 item.taam.part.copper_wire.name=Copper Wire
 item.taam.part.sieve.name=Sieve
+item.taam.part.redirector.name=Redirector
 # Materials
 item.taam.material.plastic_sheet.name=Plastic Sheet
 item.taam.material.plastic_bar.name=Plastic Bar
@@ -165,6 +166,7 @@ lore.taam.debugtool=Debug Tool
 lore.taam.debugtool.usage=This item can't be obtained in Survival.\nIt prints debug information\ninto chat or console.
 lore.taam.wrench=An engineers utility
 lore.taam.wrench.usage=Use this wrench to rotate\nand manage productionline machines.
+lore.taam.redirector.usage=Attach this part to a conveyor to redirect\ntransported goods to the left or right.\nCan be detached with a wrench.
 
 # Death causes
 death.attack.taam.processed=%1$s was processed (painfully)

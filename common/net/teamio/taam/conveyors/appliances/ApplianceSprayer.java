@@ -4,6 +4,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.World;
@@ -211,8 +212,8 @@ public class ApplianceSprayer extends ATileEntityAppliance implements IFluidHand
 	 */
 
 	@Override
-	public boolean onBlockActivated(World world, EntityPlayer player, boolean hasWrench, EnumFacing side, float hitX,
-			float hitY, float hitZ) {
+	public boolean onBlockActivated(World world, EntityPlayer player, EnumHand hand, boolean hasWrench, EnumFacing side,
+			float hitX, float hitY, float hitZ) {
 		boolean didSomething = PipeUtil.defaultPlayerInteraction(player, getTank());
 
 		if(didSomething) {

@@ -299,7 +299,7 @@ public class ConveyorUtil {
 
 		if (!world.isRemote) {
 			float speedsteps = tileEntity.getSpeedsteps();
-			EnumFacing direction = tileEntity.getMovementDirection();
+			EnumFacing direction = tileEntity.getNextSlot(slot);
 			float progress = slotObject.movementProgress / speedsteps;
 
 			double posX = pos.getX() + getItemPositionX(slot, progress, direction);
@@ -505,7 +505,7 @@ public class ConveyorUtil {
 			// Check the condition of the next slot
 			if (slotWrapped) {
 				// Next block, potentially a conveyor-aware block.
-				BlockPos nextBlockPos = pos.offset(direction);
+				BlockPos nextBlockPos = pos.offset(nextSlotDir);
 
 				TileEntity te = world.getTileEntity(nextBlockPos);
 

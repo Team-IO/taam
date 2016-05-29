@@ -10,6 +10,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.IHopper;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -548,8 +549,8 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 	 */
 
 	@Override
-	public boolean onBlockActivated(World world, EntityPlayer player, boolean hasWrench, EnumFacing side, float hitX,
-			float hitY, float hitZ) {
+	public boolean onBlockActivated(World world, EntityPlayer player, EnumHand hand, boolean hasWrench, EnumFacing side,
+			float hitX, float hitY, float hitZ) {
 		if(side != EnumFacing.UP) {
 			return false;
 		}

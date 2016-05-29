@@ -5,6 +5,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
@@ -47,8 +48,8 @@ public class TileEntityCreativeCache extends BaseTileEntity implements IInventor
 	}
 
 	@Override
-	public boolean onBlockActivated(World world, EntityPlayer player, boolean hasWrench, EnumFacing side, float hitX,
-			float hitY, float hitZ) {
+	public boolean onBlockActivated(World world, EntityPlayer player, EnumHand hand, boolean hasWrench, EnumFacing side,
+			float hitX, float hitY, float hitZ) {
 		ItemStack stack = player.inventory.getStackInSlot(player.inventory.currentItem);
 		if(stack == null) {
 			template = null;

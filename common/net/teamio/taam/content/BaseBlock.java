@@ -114,19 +114,21 @@ public abstract class BaseBlock extends Block {
 	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
 
-		if(WrenchUtil.wrenchBlock(worldIn, pos, playerIn, side, hitX, hitY, hitZ) == EnumActionResult.SUCCESS) {
+		//TODO: clean this up.
+		
+		if(WrenchUtil.wrenchBlock(worldIn, pos, playerIn, hand, side, hitX, hitY, hitZ) == EnumActionResult.SUCCESS) {
 			return true;
 		}
 
-		if (playerIn.isSneaking()) {
+		if (playerIn.isSneaking() && hand == EnumHand.MAIN_HAND) {
 			return false;
 		}
 
 		TileEntity te = worldIn.getTileEntity(pos);
-		if (worldIn.isRemote) {
-			return te instanceof IWorldInteractable || te instanceof TileEntityConveyorHopper
-					|| te instanceof TileEntityConveyorItemBag;
-		} else {
+//		if (worldIn.isRemote) {
+//			return te instanceof IWorldInteractable || te instanceof TileEntityConveyorHopper
+//					|| te instanceof TileEntityConveyorItemBag;
+//		} else {
 
 			IWorldInteractable interactable = null;
 			if (te instanceof IWorldInteractable) {
@@ -140,15 +142,15 @@ public abstract class BaseBlock extends Block {
 			if(interactable != null) {
 				// All world interaction (perform action, open gui, etc.) is
 				// handled within the entity
-				boolean playerHasWrench = WrenchUtil.playerHasWrenchInMainhand(playerIn);
-				boolean intercepted = interactable.onBlockActivated(worldIn, playerIn, playerHasWrench, side, hitX, hitY, hitZ);
+				boolean playerHasWrench = WrenchUtil.playerHasWrenchInHand(playerIn, hand);
+				boolean intercepted = interactable.onBlockActivated(worldIn, playerIn, hand, playerHasWrench, side, hitX, hitY, hitZ);
 				return intercepted;
 			} else if (te instanceof TileEntityConveyorHopper || te instanceof TileEntityConveyorItemBag) {
 				playerIn.openGui(TaamMain.instance, 0, worldIn, pos.getX(), pos.getY(), pos.getZ());
 				return true;
 			}
 			return false;
-		}
+//		}
 	}
 
 	@Override
@@ -168,7 +170,7 @@ public abstract class BaseBlock extends Block {
 			if(interactable != null) {
 				// All world interaction (perform action, open gui, etc.) is
 				// handled within the entity
-				boolean playerHasWrench = WrenchUtil.playerHasWrenchInMainhand(playerIn);
+				boolean playerHasWrench = WrenchUtil.playerHasWrenchInHand(playerIn, EnumHand.MAIN_HAND);
 				interactable.onBlockHit(worldIn, playerIn, playerHasWrench);
 			}
 		}

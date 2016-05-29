@@ -56,6 +56,7 @@ public abstract class BaseTileEntity extends TileEntity {
 		}
 		markDirty();
 		if (worldUpdate) {
+			Log.debug("worldUpdate: {} {}", pos, worldObj);
 			TaamUtil.updateBlock(worldObj, pos);
 		}
 		if (renderUpdate) {
@@ -102,7 +103,12 @@ public abstract class BaseTileEntity extends TileEntity {
 
 	@Override
 	public NBTTagCompound getUpdateTag() {
-		return writeToNBT(super.getUpdateTag());
+		return writeToNBT(new NBTTagCompound());
+	}
+	
+	@Override
+	public void handleUpdateTag(NBTTagCompound tag) {
+		readFromNBT(tag);
 	}
 
 	/*

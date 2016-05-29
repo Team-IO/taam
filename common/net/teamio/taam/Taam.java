@@ -397,7 +397,8 @@ public final class Taam {
 		iron_frame,
 		metal_bearing,
 		copper_wire,
-		sieve
+		sieve,
+		redirector
 		;
 		public static String[] valuesAsString() {
 			Enum<?>[] valuesAsEnum = values();

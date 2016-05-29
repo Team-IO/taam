@@ -37,6 +37,7 @@ item.taam.part.iron_frame.name=Eisenrahmen
 item.taam.part.metal_bearing.name=Metallenes Lager
 item.taam.part.copper_wire.name=Kupferdraht
 item.taam.part.sieve.name=Sieb
+item.taam.part.redirector.name=Umlenkplatte
 # Materials
 item.taam.material.plastic_sheet.name=Plastik-Platte
 item.taam.material.plastic_bar.name=Plastik-Barren
@@ -165,6 +166,7 @@ lore.taam.debugtool=Debug Tool
 lore.taam.debugtool.usage=Dieses Item kann nicht hergestellt werden.\nGibt Debug-Informationen in Chat oder Log aus.
 lore.taam.wrench=Das Werkzeug eines Ingenieurs
 lore.taam.wrench.usage=Benutze diese Schraubzwinge zum rotieren\nund konfigurieren der Teile einer Produktionskette.
+lore.taam.redirector.usage=Befestige dieses Teil an einem Conveyor,\num Transportgut nach links oder rechts umzulenken.\nAbnehmbar mit dem Engländer.
 
 # Death causes
 death.attack.taam.processed=%1$s wurde verarbeitet (schmerzhaft)
