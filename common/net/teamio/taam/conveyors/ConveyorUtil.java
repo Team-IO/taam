@@ -12,6 +12,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.teamio.taam.Config;
@@ -185,6 +186,64 @@ public class ConveyorUtil {
 			return getNextSlot(4, dir);
 		}
 	}
+	
+	public static class RotatedDefinition {
+		private int[][] rotated;
+
+		public RotatedDefinition(int one, int two, int three, int four, int five, int six, int seven,
+				int eight, int nine) {
+			int[] unrotated = new int[] { one, two, three, four, five, six, seven, eight, nine };
+			calculateRotations(unrotated);
+		}
+		
+		private void calculateRotations(int[] unrotated) {
+			rotated = new int[4][];
+			// North
+			rotated[2] = unrotated;
+			// East
+			rotated[3] = rotate(unrotated);
+			// South
+			rotated[0] = rotate(rotated[3]);
+			// West
+			rotated[1] = rotate(rotated[0]);
+		}
+		
+		public int get(int slot, EnumFacing rotation) {
+			// Horizontal Index: S-W-N-E
+			int[] slots = rotated[rotation.getHorizontalIndex()];
+
+			slot = MathHelper.clamp_int(slot, 0, 8);
+
+			return slots[slot];
+		}
+	}
+
+	/**
+	 * Rotate a specification of slot-related data.
+	 * @param source
+	 * @return
+	 */
+	public static int[] rotate(int[] source) {
+		return new int[] {
+				source[6], source[3], source[0],
+				source[7], source[4], source[1],
+				source[8], source[5], source[2]
+		};
+	}
+	
+	public static RotatedDefinition LANES = new RotatedDefinition(
+			// Remember, this definition is inverted being left-to-right not top-down order, so NORTH is left!
+			3, 3, 3,
+			2, 2, 2,
+			1, 1, 1
+			);
+	public static RotatedDefinition ROWS = new RotatedDefinition(
+			// Remember, this definition is inverted being left-to-right not top-down order, so NORTH is left!
+			1, 2, 3,
+			1, 2, 3,
+			1, 2, 3
+			);
+	
 
 	public static double getItemPositionX(int slot) {
 		double x = Math.floor(slot / 3) + 0.5;

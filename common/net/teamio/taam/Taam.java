@@ -274,6 +274,7 @@ public final class Taam {
 
 	public static enum BLOCK_PRODUCTIONLINE_APPLIANCE_META implements IStringSerializable {
 		sprayer,
+		aligner,
 		;
 		public static String[] valuesAsString() {
 			Enum<?>[] valuesAsEnum = values();
@@ -427,6 +428,7 @@ public final class Taam {
 	public static final String TILEENTITY_CREATIVEWELL = "taam.creativewell";
 
 	public static final String TILEENTITY_APPLIANCE_SPRAYER = "taam.appliance.sprayer";
+	public static final String TILEENTITY_APPLIANCE_ALIGNER = "taam.appliance.aligner";
 
 	public static final String TILEENTITY_MACHINE_WRAPPER = "taam.machine_wrapper";
 

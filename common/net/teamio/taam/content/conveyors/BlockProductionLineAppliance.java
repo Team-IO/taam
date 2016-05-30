@@ -20,6 +20,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.teamio.taam.Taam;
 import net.teamio.taam.content.IRotatable;
+import net.teamio.taam.conveyors.appliances.ApplianceAligner;
 import net.teamio.taam.conveyors.appliances.ApplianceSprayer;
 import net.teamio.taam.rendering.obj.OBJModel;
 import net.teamio.taam.util.TaamUtil;
@@ -94,8 +95,9 @@ public class BlockProductionLineAppliance extends BlockProductionLine {
 		Taam.BLOCK_PRODUCTIONLINE_APPLIANCE_META variant = state.getValue(VARIANT);
 		switch(variant) {
 		case sprayer:
-			// Sprayer
 			return new ApplianceSprayer();
+		case aligner:
+			return new ApplianceAligner();
 		}
 		return null;
 	}

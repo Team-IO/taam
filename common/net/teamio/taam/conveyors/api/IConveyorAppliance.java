@@ -1,5 +1,6 @@
 package net.teamio.taam.conveyors.api;
 
+import net.minecraft.util.EnumFacing;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.conveyors.ItemWrapper;
 
@@ -21,5 +22,20 @@ public interface IConveyorAppliance extends IRotatable {
 	 */
 	public boolean processItem(IConveyorApplianceHost host, int slot, ItemWrapper wrapper);
 
-
+	/**
+	 * Allows the appliance to override the direction a slot travels next.
+	 * 
+	 * Don't call {@link IConveyorApplianceHost#getNextSlot(int)} on
+	 * {@code host} inside this method!
+	 * 
+	 * Never return null!
+	 * 
+	 * @param host
+	 * @param slot
+	 * @param wrapper
+	 * @param beforeOverride
+	 * @return either the direction passed in to {@code beforeOverride} or a
+	 *         changed direction. Never return null!
+	 */
+	public EnumFacing overrideNextSlot(IConveyorApplianceHost host, int slot, ItemWrapper wrapper, EnumFacing beforeOverride);
 }

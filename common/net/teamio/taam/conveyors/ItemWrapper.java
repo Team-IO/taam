@@ -2,7 +2,6 @@ package net.teamio.taam.conveyors;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.teamio.taam.conveyors.api.IItemFilter;
 import net.teamio.taam.util.inv.InventoryUtils;
 
 /**
@@ -12,7 +11,7 @@ import net.teamio.taam.util.inv.InventoryUtils;
  * @author oliverkahrmann
  */
 public class ItemWrapper {
-	public static ItemWrapper EMPTY = new ItemWrapper(null) {
+	public static final ItemWrapper EMPTY = new ItemWrapper(null) {
 		@Override
 		public boolean isEmpty() {
 			return true;
@@ -20,8 +19,6 @@ public class ItemWrapper {
 	};
 
 	public ItemStack itemStack;
-	// TODO: Write filter to NBT
-	public IItemFilter filter;
 	public byte movementProgress;
 
 	public ItemWrapper(ItemStack itemStack) {

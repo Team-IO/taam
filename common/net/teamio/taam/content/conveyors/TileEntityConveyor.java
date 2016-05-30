@@ -124,10 +124,6 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 
 	@Override
 	public void renderUpdate() {
-		// FIXME: For debugging, remove later!
-		// setRedirectorLeft(speedLevel == 1);
-		// setRedirectorRight(speedLevel == 1);
-
 		// Check in front
 		TileEntity te = worldObj.getTileEntity(pos.offset(direction));
 
@@ -195,6 +191,8 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 		// there.
 		renderAbove = worldObj.isSideSolid(pos.offset(EnumFacing.UP), EnumFacing.DOWN)
 				|| ConveyorUtil.getSlots(worldObj.getTileEntity(pos.offset(EnumFacing.UP)), EnumFacing.DOWN) != null;
+		
+		updateApplianceCache();
 	}
 
 	@Override
@@ -369,7 +367,21 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 					return left;
 				}
 			}
-			return direction;
+
+			EnumFacing nextSlot = direction;
+			/*
+			 * Let the appliances process the current slot.
+			 */
+			List<IConveyorAppliance> appliances = getAppliances();
+			if (appliances != null) {
+				ItemWrapper wrapper = getSlot(slot);
+				// Let each appliance have the chance to override the next slot
+				for (IConveyorAppliance appliance : appliances) {
+					nextSlot = appliance.overrideNextSlot(this, slot, wrapper, nextSlot);
+				}
+			}
+			
+			return nextSlot;
 		}
 	}
 

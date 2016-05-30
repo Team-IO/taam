@@ -193,6 +193,12 @@ public class ApplianceSprayer extends ATileEntityAppliance implements IFluidHand
 
 		return true;
 	}
+	
+	@Override
+	public EnumFacing overrideNextSlot(IConveyorApplianceHost host, int slot, ItemWrapper wrapper,
+			EnumFacing beforeOverride) {
+		return beforeOverride;
+	}
 
 	/*
 	 * (non-Javadoc)

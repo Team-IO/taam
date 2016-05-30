@@ -70,6 +70,7 @@ import net.teamio.taam.content.conveyors.TileEntityConveyorTrashCan;
 import net.teamio.taam.content.piping.TileEntityCreativeWell;
 import net.teamio.taam.conveyors.api.ConveyorSlotsStandard;
 import net.teamio.taam.conveyors.api.IConveyorSlots;
+import net.teamio.taam.conveyors.appliances.ApplianceAligner;
 import net.teamio.taam.conveyors.appliances.ApplianceSprayer;
 import net.teamio.taam.gui.GuiHandler;
 import net.teamio.taam.machines.MachineBlock;
@@ -325,6 +326,7 @@ public class TaamMain {
 		GameRegistry.registerTileEntity(TileEntityConveyorSieve.class, Taam.TILEENTITY_CONVEYOR_SIEVE);
 
 		GameRegistry.registerTileEntity(ApplianceSprayer.class, Taam.TILEENTITY_APPLIANCE_SPRAYER);
+		GameRegistry.registerTileEntity(ApplianceAligner.class, Taam.TILEENTITY_APPLIANCE_ALIGNER);
 
 		GameRegistry.registerTileEntity(TileEntityCreativeWell.class, Taam.TILEENTITY_CREATIVEWELL);
 

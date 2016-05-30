@@ -48,6 +48,7 @@ import net.teamio.taam.content.conveyors.TileEntityConveyorItemBag;
 import net.teamio.taam.content.conveyors.TileEntityConveyorProcessor;
 import net.teamio.taam.content.conveyors.TileEntityConveyorSieve;
 import net.teamio.taam.content.conveyors.TileEntityConveyorTrashCan;
+import net.teamio.taam.conveyors.appliances.ApplianceAligner;
 import net.teamio.taam.conveyors.appliances.ApplianceSprayer;
 import net.teamio.taam.machines.MachineTileEntity;
 import net.teamio.taam.rendering.TaamRenderer;
@@ -80,6 +81,7 @@ public class TaamClientProxy extends TaamCommonProxy {
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityConveyorTrashCan.class, taamRenderer);
 
 		ClientRegistry.bindTileEntitySpecialRenderer(ApplianceSprayer.class, taamRenderer);
+		ClientRegistry.bindTileEntitySpecialRenderer(ApplianceAligner.class, taamRenderer);
 
 		ClientRegistry.bindTileEntitySpecialRenderer(MachineTileEntity.class, taamRenderer);
 

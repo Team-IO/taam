@@ -48,6 +48,7 @@ import net.teamio.taam.content.conveyors.TileEntityConveyorTrashCan;
 import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.conveyors.ItemWrapper;
 import net.teamio.taam.conveyors.api.IConveyorSlots;
+import net.teamio.taam.conveyors.appliances.ApplianceAligner;
 import net.teamio.taam.piping.IPipe;
 import net.teamio.taam.util.WrenchUtil;
 
@@ -267,6 +268,108 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 			renderBagFilling(fillFactor);
 
 			GL11.glPopMatrix();
+		}
+		
+		if(tileEntity instanceof ApplianceAligner) {
+
+			
+			ApplianceAligner aligner = (ApplianceAligner) tileEntity;
+			
+			EnumFacing direction = aligner.getFacingDirection();
+			EnumFacing conveyorDirection = aligner.conveyorDirection.getOpposite();
+			
+			if(direction.getAxis() != conveyorDirection.getAxis()) {
+				float rotationDegrees = getRotationDegrees(tileEntity);
+	
+				byte conveyorSpeedsteps = aligner.conveyorSpeedsteps;
+
+				if(conveyorSpeedsteps < 2) {
+					// Prevent div/0
+					conveyorSpeedsteps = 2;
+				}
+				
+				double offset = 0.36/3;
+				double size = 0.01;
+				
+				int animFrames = 5;
+				
+				GlStateManager.pushMatrix();
+				setupDefaultGL();
+				
+				GL11.glTranslated(x, y, z);
+				
+				GL11.glTranslated(direction.getFrontOffsetX(), direction.getFrontOffsetY() + 0.06, direction.getFrontOffsetZ());
+	
+				GL11.glTranslated(.5f, .5f, .5f);
+				GL11.glRotatef(rotationDegrees, 0, 1, 0);
+				
+				// Offset to the correct position in conveyor direction
+				GL11.glTranslated(-conveyorDirection.getFrontOffsetX() * offset - size/2, 0, -conveyorDirection.getFrontOffsetZ() * offset - size/2);
+				
+				for(int i = 0; i < 4; i++) {
+					ItemWrapper wrapper = aligner.down[i];
+					int rotateDown = 0;
+					if(wrapper == null) {
+						continue;
+					} else {
+						if(wrapper.movementProgress >= conveyorSpeedsteps) {
+							aligner.down[i] = null;
+							continue;
+						} else {
+							rotateDown = wrapper.movementProgress;
+						}
+					}
+					if(rotateDown > conveyorSpeedsteps / 2) {
+						rotateDown = conveyorSpeedsteps-rotateDown;
+					}
+					int rotateSide = rotateDown;
+					if(rotateSide > animFrames * 3) {
+						rotateSide = (int)(animFrames * 3);
+					}
+					if(rotateDown > animFrames) {
+						rotateDown = animFrames;
+					}
+	
+					
+					boolean rotateTwice = i % 2 == 0;
+					double forwardBackward = (i > 1 ? -offset : offset);
+					
+					rotateSide -= animFrames * 2;
+					
+					if(!rotateTwice) {
+						rotateSide = -rotateSide;
+					}
+					
+
+					GlStateManager.pushMatrix();
+					
+					// Offset to the correct position in aligner direction, left/right to conveyor
+					GL11.glTranslated(direction.getFrontOffsetX() * forwardBackward, 0, direction.getFrontOffsetZ() * forwardBackward);
+	
+					// Rotate correctly
+					GL11.glTranslated(size/2, 0, size/2);
+					if(rotateTwice) {
+						GL11.glRotated(45, 0, 1, 0);
+					} else {
+						GL11.glRotated(135, 0, 1, 0);
+					}
+					GL11.glTranslated(-size/2, 0, -size/2);
+					
+					// Flip down
+					GL11.glRotated((15/animFrames)*rotateSide, 0, 1, 0);
+					GL11.glRotated(-(90/animFrames)*rotateDown, 1, 0, 0);
+					GlStateManager.disableLighting();
+			        GlStateManager.disableTexture2D();
+			        
+					// Render bit
+					RenderGlobal.drawOutlinedBoundingBox(new AxisAlignedBB(0, 0, 0, size, 0.8/3, size), 30, 80, 80, 255);
+					
+					GlStateManager.popMatrix();
+				}
+	
+				tearDownDefaultGL();
+				GlStateManager.popMatrix();
+			}
 		}
 
 		EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
