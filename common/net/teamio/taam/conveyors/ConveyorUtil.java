@@ -6,23 +6,25 @@ import java.util.List;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemHandlerHelper;
 import net.teamio.taam.Config;
 import net.teamio.taam.MultipartHandler;
 import net.teamio.taam.Taam;
 import net.teamio.taam.conveyors.api.IConveyorAppliance;
 import net.teamio.taam.conveyors.api.IConveyorApplianceHost;
 import net.teamio.taam.conveyors.api.IConveyorSlots;
-import net.teamio.taam.util.inv.InventoryRange;
-import net.teamio.taam.util.inv.InventoryUtils;
+import net.teamio.taam.conveyors.api.RedirectorSide;
 
 public class ConveyorUtil {
 
@@ -30,52 +32,66 @@ public class ConveyorUtil {
 
 	private static boolean tryInsert(TileEntity tileEntity, EntityItem ei) {
 		ItemStack entityItemStack = ei.getEntityItem();
-		if (entityItemStack == null || entityItemStack.getItem() == null) {
+		if (entityItemStack == null || entityItemStack.stackSize == 0 || entityItemStack.getItem() == null) {
+			// We are tidy. Clean up "empty" item entities
+			ei.setDead();
 			return false;
 		}
-
-		int previousStackSize = entityItemStack.stackSize;
-		int added = 0;
 
 		BlockPos pos = tileEntity.getPos();
 		double relativeX = ei.posX - pos.getX();
 		double relativeY = ei.posY - pos.getY();
 		double relativeZ = ei.posZ - pos.getZ();
 
-		if (tileEntity instanceof IConveyorSlots) {
-			IConveyorSlots conveyorTE = (IConveyorSlots) tileEntity;
-
+		IConveyorSlots conveyorTE = tileEntity.getCapability(Taam.CAPABILITY_CONVEYOR, EnumFacing.UP);
+		if (conveyorTE != null) {
 			int slot = getSlotForRelativeCoordinates(relativeX, relativeZ);
 
-			if (
-					slot >= 0 && slot < 9 &&
-					relativeY > conveyorTE.getInsertMinY()&&
-					relativeY < conveyorTE.getInsertMaxY()
-					) {
-				added = conveyorTE.insertItemAt(entityItemStack, slot);
-			}
-		} else if (tileEntity instanceof IInventory) {
-			if (
-					relativeX >= 0 && relativeX < 1 &&
-					relativeY >= 0.9 && relativeY < 1.2 &&
-					relativeZ >= 0 && relativeZ < 1
-					) {
-				IInventory inventory = (IInventory) tileEntity;
-				InventoryRange range = new InventoryRange(inventory, EnumFacing.UP.ordinal());
-				added = previousStackSize - InventoryUtils.insertItem(range, entityItemStack, false);
-			}
-		}
-		if (added == previousStackSize) {
-			ei.setDead();
-			return true;
-		} else if (added > 0) {
-			entityItemStack.stackSize = previousStackSize - added;
-			ei.setEntityItemStack(entityItemStack);
-			return true;
-		} else {
-			return false;
-		}
+			if (slot >= 0 && slot < 9 // wrapped slot == outside x / z
+			// Then check vertical position
+					&& relativeY > conveyorTE.getInsertMinY() && relativeY < conveyorTE.getInsertMaxY()) {
 
+				int previousStackSize = entityItemStack.stackSize;
+
+				// Insert into conveyor at the determined slot
+				int added = conveyorTE.insertItemAt(entityItemStack, slot, false);
+
+				// Update item entity
+				if (added == previousStackSize) {
+					ei.setDead();
+					return true;
+				} else if (added > 0) {
+					entityItemStack.stackSize = previousStackSize - added;
+					ei.setEntityItemStack(entityItemStack);
+					return true;
+				}
+			}
+		} else {
+			// Check if the item is directly on top of the block, with some extra room & buffer
+			if (relativeX >= 0 && relativeX < 1 && relativeY >= 0.9 && relativeY < 1.2 && relativeZ >= 0 && relativeZ < 1) {
+				// Get item handler
+				IItemHandler itemHandler = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
+				if (itemHandler != null) {
+					// Insert item into item handler
+					ItemStack notInserted = ItemHandlerHelper.insertItemStacked(itemHandler, entityItemStack, false);
+
+					// Update item entity
+					if (notInserted == null) {
+						ei.setDead();
+						return true;
+					}
+
+					// If the instance is still the same, it was not changed by
+					// the itemHandler > nothing inserted.
+					if (notInserted != entityItemStack) {
+						ei.setEntityItemStack(notInserted);
+						return true;
+					}
+				}
+			}
+		}
+		// Finally, nothing was added if we arrive here
+		return false;
 	}
 
 	/**
@@ -345,20 +361,25 @@ public class ConveyorUtil {
 		}
 	}
 
+
+	public static void dropItems(World world, BlockPos pos, IConveyorSlots slots, boolean withVelocity) {
+		for (int index = 0; index < 9; index++) {
+			ConveyorUtil.dropItem(world, pos, slots, index, withVelocity);
+		}
+	}
+	
 	/**
 	 * Drops the item in the passed slot, exactly where it is rendered now.
 	 *
 	 * @param slot
 	 *            The slot to be dropped.
 	 */
-	public static void dropItem(World world, BlockPos pos, IConveyorSlots tileEntity, int slot, boolean withVelocity) {
-		ItemWrapper slotObject = tileEntity.getSlot(slot);
-		// System.out.println("Dropping slot " + slot + " >>" +
-		// slotObject.itemStack);
+	public static void dropItem(World world, BlockPos pos, IConveyorSlots slots, int slot, boolean withVelocity) {
+		ItemWrapper slotObject = slots.getSlot(slot);
 
 		if (!world.isRemote) {
-			float speedsteps = tileEntity.getSpeedsteps();
-			EnumFacing direction = tileEntity.getNextSlot(slot);
+			float speedsteps = slots.getSpeedsteps();
+			EnumFacing direction = slots.getNextSlot(slot);
 			float progress = slotObject.movementProgress / speedsteps;
 
 			double posX = pos.getX() + getItemPositionX(slot, progress, direction);
@@ -389,7 +410,7 @@ public class ConveyorUtil {
 
 		ItemWrapper slotObject = tileEntity.getSlot(slot);
 
-		int transferred = nextBlock.insertItemAt(slotObject.itemStack.copy(), nextSlot);
+		int transferred = nextBlock.insertItemAt(slotObject.itemStack.copy(), nextSlot, false);
 		if (transferred > 0) {
 			slotObject.itemStack.stackSize -= transferred;
 			if (slotObject.itemStack.stackSize <= 0) {
@@ -650,11 +671,11 @@ public class ConveyorUtil {
 		ItemStack playerStack = player.inventory.getCurrentItem();
 		if (playerStack == null) {
 			// Take from Conveyor
-			ItemStack removed = tileEntity.removeItemAt(clickedSlot);
+			ItemStack removed = tileEntity.removeItemAt(clickedSlot, player.inventory.getInventoryStackLimit(), false);
 			player.inventory.setInventorySlotContents(playerSlot, removed);
 		} else {
 			// Put on conveyor
-			int inserted = tileEntity.insertItemAt(playerStack, clickedSlot);
+			int inserted = tileEntity.insertItemAt(playerStack, clickedSlot, false);
 			if (inserted == playerStack.stackSize) {
 				player.inventory.setInventorySlotContents(playerSlot, null);
 			} else {
@@ -678,5 +699,30 @@ public class ConveyorUtil {
 		}
 
 		return appliances;
+	}
+
+	public static RedirectorSide getRedirectorSide(EnumFacing direction, EnumFacing hitSide, float hitX, float hitY,
+			float hitZ, boolean topOnly) {
+		EnumFacing sideToConsider = hitSide;
+	
+		if (hitSide == EnumFacing.UP) {
+			if (direction.getAxis() == Axis.Z) {
+				// We look in Z direction, need to check X
+				sideToConsider = hitX > 0.5 ? EnumFacing.EAST : EnumFacing.WEST;
+			} else {
+				// We look in X direction, need to check Z
+				sideToConsider = hitZ > 0.5 ? EnumFacing.SOUTH : EnumFacing.NORTH;
+			}
+		} else if (topOnly) {
+			return RedirectorSide.None;
+		}
+	
+		if (sideToConsider == direction.rotateY()) {
+			return topOnly ? RedirectorSide.None : RedirectorSide.Right;
+		} else if (sideToConsider == direction.rotateYCCW()) {
+			return topOnly ? RedirectorSide.None : RedirectorSide.Left;
+		} else {
+			return RedirectorSide.None;
+		}
 	}
 }

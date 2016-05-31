@@ -36,6 +36,11 @@ public class TileEntityCreativeWell extends BaseTileEntity implements IFluidHand
 			pipeEnds[index].setPressure(20);
 		}
 	}
+	
+	@Override
+	public String getName() {
+		return "tile.taam.machines.creativewell.name";
+	}
 
 	@Override
 	public void update() {

@@ -12,5 +12,10 @@ public class TileEntitySlidingDoor extends BaseTileEntity {
 	@Override
 	protected void readPropertiesFromNBT(NBTTagCompound tag) {
 	}
+	
+	@Override
+	public String getName() {
+		return "tile.taam.sliding_door.name";
+	}
 
 }

@@ -80,6 +80,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 	 * from Vanilla source.
 	 */
 	public static final double boundingBoxExpand = 0.0020000000949949026D;
+	public static final float itemScaleFactor = 0.3f;
 	
 	public static final ResourceLocation conveyorTextures = new ResourceLocation("Taam", "blocks/conveyor");
 
@@ -153,6 +154,9 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 					
 					if(wrapper.isRenderingInterpolated()) {
 						progress += event.getPartialTicks();
+					} else {
+						// Interpolation since last frame already advanced to almost 1, so we prevent stutter by "skipping ahead"
+						progress += 1;
 					}
 					
 					progress *= ConveyorUtil.oneThird / speedsteps;
@@ -226,8 +230,64 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 			GL11.glPopMatrix();
 		}
 
-		if (tileEntity instanceof IConveyorSlots) {
-			renderConveyorItems((IConveyorSlots) tileEntity, x, y, z, partialTicks);
+		IConveyorSlots conveyorSlots = tileEntity.getCapability(Taam.CAPABILITY_CONVEYOR, EnumFacing.UP);
+		if (conveyorSlots != null) {
+			boolean oscillate = false;
+
+			if (tileEntity instanceof TileEntityConveyorSieve) {
+				oscillate =!((TileEntityConveyorSieve) tileEntity).isShutdown;
+			}
+			
+			renderConveyorItems(conveyorSlots, x, y, z, partialTicks, oscillate);
+		}
+		
+		if(tileEntity instanceof TileEntityConveyorProcessor) {
+			TileEntityConveyorProcessor processor = (TileEntityConveyorProcessor) tileEntity;
+			ItemStack processingStack = processor.getRenderStack();
+			
+			if(processingStack != null && processingStack.stackSize > 0 && processingStack.getItem() != null) {
+				IBakedModel model = ri.getItemModelMesher().getItemModel(processingStack);
+			
+				GL11.glPushMatrix();
+				GL11.glTranslated(x, y, z);
+	
+				setupDefaultGL();
+	
+	
+				bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+				
+				/*
+				 * Get Rotation
+				 */
+	
+				float rotationDegrees = getRotationDegrees(tileEntity);
+	
+				GL11.glTranslatef(0.5f, 0.4f, 0.5f);
+
+				/*
+				 * Rotate the items
+				 */
+
+				GL11.glRotatef(rotationDegrees, 0, 1, 0);
+
+				/*
+				 * Shaking inside the processor
+				 */
+				if (!processor.isShutdown) {
+					Random rand = processor.getWorld().rand;
+					GL11.glTranslatef(
+							0.015f * (1-rand.nextFloat()),
+							0.025f * (1-rand.nextFloat()),
+							0.015f * (1-rand.nextFloat()));
+				}
+				GL11.glScalef(itemScaleFactor, itemScaleFactor, itemScaleFactor);
+
+				ri.renderItem(processingStack, model);
+	
+				tearDownDefaultGL();
+	
+				GL11.glPopMatrix();
+			}
 		}
 
 		if(tileEntity instanceof TileEntityConveyorSieve) {
@@ -749,110 +809,66 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		return rotationDegrees;
 	}
 
-	public void renderConveyorItems(IConveyorSlots tileEntity, double x, double y, double z, float partialTicks) {
+	public void renderConveyorItems(IConveyorSlots tileEntity, double x, double y, double z, float partialTicks, boolean oscillate) {
 
-		final float itemScaleFactor = 0.3f;
-		
-		GL11.glPushMatrix();
-		GL11.glTranslated(x, y, z);
 
-		setupDefaultGL();
+		/*
+		 * Check if the block actually wants rendering
+		 */
+		if (tileEntity.shouldRenderItemsDefault()) {
 
-		if (tileEntity != null) {
+			GL11.glPushMatrix();
+			GL11.glTranslated(x, y, z);
 
+			setupDefaultGL();
+			
 			bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-			if (tileEntity instanceof TileEntityConveyorProcessor) {
-
-				/*
-				 * Get Rotation
-				 */
-
-				float rotationDegrees = getRotationDegrees(tileEntity);
-
-				TileEntityConveyorProcessor processor = (TileEntityConveyorProcessor) tileEntity;
-				ItemStack processingStack = processor.getStackInSlot(0);
-				if (processingStack != null) {
-					GL11.glPushMatrix();
-					Random rand = processor.getWorld().rand;
-					GL11.glTranslatef(0.5f, 0.4f, 0.5f);
-
-					/*
-					 * Rotate the items
-					 */
-
-					GL11.glRotatef(rotationDegrees, 0, 1, 0);
-
-					/*
-					 * Shaking inside the processor
-					 */
-					if (!processor.isShutdown) {
-						GL11.glTranslatef(
-								0.015f * (1-rand.nextFloat()),
-								0.025f * (1-rand.nextFloat()),
-								0.015f * (1-rand.nextFloat()));
-					}
-					GL11.glScalef(itemScaleFactor, itemScaleFactor, itemScaleFactor);
-
-					IBakedModel model = ri.getItemModelMesher().getItemModel(processingStack);
-					ri.renderItem(processingStack, model);
-
-					GL11.glPopMatrix();
-				}
+			float posYOffset = 0.15f;
+			if(oscillate) {
+				posYOffset += (float) (rotSin * 0.04);
 			}
-			/*
-			 * Regular rendering, meaning conveyors & similar
-			 */
-			if (tileEntity.shouldRenderItemsDefault()) {
-				float posYOffset = 0.15f;
-				if (tileEntity instanceof TileEntityConveyorSieve) {
-					// TODO extract into separate method getItemRenderPosY() in
-					// IConveyorAwareTE
-					if (((TileEntityConveyorSieve) tileEntity).isShutdown) {
-						// posY = 0;
-					} else {
-						posYOffset += (float) (rotSin * 0.04);
-					}
+			float speedsteps = tileEntity.getSpeedsteps();
+			
+			for (int slot = 0; slot < 9; slot++) {
+				ItemWrapper wrapper = tileEntity.getSlot(slot);
+
+				ItemStack itemStack;
+				if (wrapper == null || wrapper.isEmpty() || (itemStack = wrapper.itemStack) == null) {
+					continue;
 				}
-				float speedsteps = tileEntity.getSpeedsteps();
-				float partialSpeedsteps = partialTicks / speedsteps;
+
+				int movementProgress = wrapper.movementProgress;
+				if (movementProgress < 0) {
+					movementProgress = 0;
+				}
+
+				EnumFacing renderDirection = tileEntity.getNextSlot(slot);
+
+				float progress = movementProgress;
+				if (wrapper.isRenderingInterpolated()) {
+					progress += partialTicks;
+				} else {
+					// Interpolation since last frame already advanced to almost 1, so we prevent stutter by "skipping ahead"
+					progress += 1;
+				}
+				progress /= speedsteps;
+				float posX = (float) ConveyorUtil.getItemPositionX(slot, progress, renderDirection);
+				float posZ = (float) ConveyorUtil.getItemPositionZ(slot, progress, renderDirection);
+				float posY = tileEntity.getVerticalPosition(slot);
 				
-				for (int slot = 0; slot < 9; slot++) {
-					ItemWrapper wrapper = tileEntity.getSlot(slot);
+				GL11.glPushMatrix();
+				GL11.glTranslatef(posX, posYOffset + posY, posZ);
+				GL11.glScalef(itemScaleFactor, itemScaleFactor, itemScaleFactor);
 
-					ItemStack itemStack;
-					if (wrapper == null || wrapper.isEmpty() || (itemStack = wrapper.itemStack) == null) {
-						continue;
-					}
+				IBakedModel model = ri.getItemModelMesher().getItemModel(itemStack);
+				ri.renderItem(itemStack, model);
 
-					int movementProgress = wrapper.movementProgress;
-					if (movementProgress < 0) {
-						movementProgress = 0;
-					}
-
-					EnumFacing renderDirection = tileEntity.getNextSlot(slot);
-
-					float progress = movementProgress / speedsteps;
-					if (wrapper.isRenderingInterpolated()) {
-						progress += partialSpeedsteps;
-					}
-					float posX = (float) ConveyorUtil.getItemPositionX(slot, progress, renderDirection);
-					float posZ = (float) ConveyorUtil.getItemPositionZ(slot, progress, renderDirection);
-					float posY = tileEntity.getVerticalPosition(slot);
-					
-					GL11.glPushMatrix();
-					GL11.glTranslatef(posX, posYOffset + posY, posZ);
-					GL11.glScalef(itemScaleFactor, itemScaleFactor, itemScaleFactor);
-
-					IBakedModel model = ri.getItemModelMesher().getItemModel(itemStack);
-					ri.renderItem(itemStack, model);
-
-					GL11.glPopMatrix();
-				}
+				GL11.glPopMatrix();
 			}
+			tearDownDefaultGL();
+
+			GL11.glPopMatrix();
 		}
 
-		tearDownDefaultGL();
-
-		GL11.glPopMatrix();
 	}
 }

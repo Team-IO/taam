@@ -9,7 +9,6 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumActionResult;
@@ -21,10 +20,14 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
+import net.teamio.taam.Taam;
 import net.teamio.taam.TaamMain;
-import net.teamio.taam.content.conveyors.TileEntityConveyor;
 import net.teamio.taam.content.conveyors.TileEntityConveyorHopper;
 import net.teamio.taam.content.conveyors.TileEntityConveyorItemBag;
+import net.teamio.taam.conveyors.ConveyorUtil;
+import net.teamio.taam.conveyors.api.IConveyorSlots;
 import net.teamio.taam.machines.MachineTileEntity;
 import net.teamio.taam.rendering.obj.OBJModel;
 import net.teamio.taam.util.TaamUtil;
@@ -85,19 +88,21 @@ public abstract class BaseBlock extends Block {
 
 		TileEntity te = worldIn.getTileEntity(pos);
 
-		if (te instanceof TileEntityConveyor) {
-			((TileEntityConveyor) te).dropItems();
-		}
-
 		/*
 		 * Drop Items
 		 */
-		if (te instanceof IInventory) {
-			IInventory inventory = (IInventory) te;
-			for (int index = 0; index < inventory.getSizeInventory(); index++) {
-				ItemStack itemstack = inventory.getStackInSlot(index);
+		
+		IConveyorSlots conveyorSlots = te.getCapability(Taam.CAPABILITY_CONVEYOR, EnumFacing.UP);
+		if (conveyorSlots != null) {
+			ConveyorUtil.dropItems(worldIn, pos, conveyorSlots, false);
+		}
 
-				if (itemstack != null && itemstack.getItem() != null) {
+		IItemHandler itemHandler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
+		if (itemHandler != null) {
+			for (int index = 0; index < itemHandler.getSlots(); index++) {
+				ItemStack itemstack = itemHandler.getStackInSlot(index);
+
+				if (itemstack != null && itemstack.stackSize > 0 && itemstack.getItem() != null) {
 					InventoryUtils.dropItem(itemstack, worldIn, pos);
 				}
 			}

@@ -1,9 +1,8 @@
 package net.teamio.taam.conveyors.api;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraftforge.common.util.INBTSerializable;
 import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.conveyors.ItemWrapper;
 
@@ -18,9 +17,9 @@ import net.teamio.taam.conveyors.ItemWrapper;
  * @author Oliver Kahrmann
  *
  */
-public class ConveyorSlotsStandard extends ConveyorSlotsStatic {
+public class ConveyorSlotsStandard extends ConveyorSlotsBase implements INBTSerializable<NBTTagList> {
 
-	private final ItemWrapper[] slots;
+	protected final ItemWrapper[] slots;
 
 	public ConveyorSlotsStandard() {
 		slots = new ItemWrapper[9];
@@ -30,23 +29,43 @@ public class ConveyorSlotsStandard extends ConveyorSlotsStatic {
 	}
 
 	@Override
-	public int insertItemAt(ItemStack item, int slot) {
+	public int insertItemAt(ItemStack item, int slot, boolean simulate) {
 		if(!isSlotAvailable(slot)) {
 			return 0;
 		}
-		int count = ConveyorUtil.insertItemAt(this, item, slot, false);
+		int count = ConveyorUtil.insertItemAt(this, item, slot, simulate);
+		if(count > 0) {
+			onChangeHook();
+		}
 		return count;
 	}
 
 	@Override
-	public ItemStack removeItemAt(int slot) {
+	public ItemStack removeItemAt(int slot, int amount, boolean simulate) {
 		if(!isSlotAvailable(slot)) {
 			return null;
 		}
-		ItemWrapper candidate = slots[slot];
-		ItemStack removed = candidate.itemStack;
-		candidate.itemStack = null;
-		return removed;
+		ItemWrapper wrapper = slots[slot];
+		ItemStack removed = wrapper.itemStack;
+		if(removed == null) {
+			return null;
+		} else if(amount >= removed.stackSize) {
+			if(simulate) {
+				removed = removed.copy();
+			} else {
+				wrapper.itemStack = null;
+				onChangeHook();;
+			}
+			return removed;
+		} else {
+			removed = removed.copy();
+			removed.stackSize = amount;
+			if(!simulate && amount > 0) {
+				wrapper.itemStack.stackSize -= amount;
+				onChangeHook();
+			}
+			return removed;
+		}
 	}
 
 	@Override
@@ -58,20 +77,25 @@ public class ConveyorSlotsStandard extends ConveyorSlotsStatic {
 		}
 	}
 
-	public void writeToNBT(NBTTagCompound tag) {
+	/*
+	 * INBTSerializable implementation
+	 */
+	
+	@Override
+	public NBTTagList serializeNBT() {
 		NBTTagList itemsTag = new NBTTagList();
-		for(int i = 0; i < slots.length; i++) {
+		for (int i = 0; i < slots.length; i++) {
 			itemsTag.appendTag(slots[i].serializeNBT());
 		}
-		tag.setTag("items", itemsTag);
+		return itemsTag;
 	}
 
-	public void readFromNBT(NBTTagCompound tag) {
-		NBTTagList itemsTag = tag.getTagList("items", NBT.TAG_COMPOUND);
-		if(itemsTag != null) {
-			int count = Math.min(itemsTag.tagCount(), slots.length);
-			for(int i = 0; i < count; i++) {
-				slots[i] = ItemWrapper.readFromNBT(itemsTag.getCompoundTagAt(i));
+	@Override
+	public void deserializeNBT(NBTTagList nbt) {
+		if (nbt != null) {
+			int count = Math.min(nbt.tagCount(), slots.length);
+			for (int i = 0; i < count; i++) {
+				slots[i] = ItemWrapper.readFromNBT(nbt.getCompoundTagAt(i));
 			}
 		}
 	}

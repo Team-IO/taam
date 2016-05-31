@@ -18,6 +18,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 import net.teamio.taam.Taam;
+import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IRenderable;
 import net.teamio.taam.machines.IMachine;
 import net.teamio.taam.piping.IPipe;
@@ -93,17 +94,6 @@ public class MachinePipe implements IMachine, IPipe, IRenderable {
 	private byte occludedSides;
 
 	private PipeEndFluidHandler[] adjacentFluidHandlers;
-	/**
-	 * ThreadLocal storage for the list of visible parts (required due to some
-	 * concurrency issues, See issue #194) TODO: central location for one list?
-	 * Not one per entity type.. Adjust getVisibleParts
-	 */
-	private static final ThreadLocal<List<String>> visibleParts = new ThreadLocal<List<String>>() {
-		@Override
-		protected List<String> initialValue() {
-			return new ArrayList<String>(7);
-		}
-	};
 
 	public MachinePipe() {
 		info = new PipeInfo(500);
@@ -111,7 +101,7 @@ public class MachinePipe implements IMachine, IPipe, IRenderable {
 
 	@Override
 	public List<String> getVisibleParts() {
-		List<String> visibleParts = MachinePipe.visibleParts.get();
+		List<String> visibleParts = BaseTileEntity.visibleParts.get();
 
 		// Visible parts list is re-used to reduce object creation
 		visibleParts.clear();

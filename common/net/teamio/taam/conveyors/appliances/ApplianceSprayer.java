@@ -50,6 +50,11 @@ public class ApplianceSprayer extends ATileEntityAppliance implements IFluidHand
 		tank = new FluidTank(capacity);
 		pipeEnd = new PipeEndFluidHandler(this, direction.getOpposite(), false);
 	}
+	
+	@Override
+	public String getName() {
+		return "tile.taam.productionline_appliance.sprayer.name";
+	}
 
 	/**
 	 * Checks if there is a recipe for the current input fluid and the provided

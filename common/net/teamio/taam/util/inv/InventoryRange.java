@@ -28,7 +28,10 @@ import net.minecraft.util.EnumFacing;
  * @author Chicken-Bones
  *
  * To avoid issues with licensing, this specific file is licensed under the LGPL.
+ * 
+ * @deprecated TODO replace with IItemHandler
  */
+@Deprecated
 public class InventoryRange {
 	public IInventory inv;
     public EnumFacing face;

@@ -13,6 +13,7 @@ import net.teamio.taam.content.conveyors.ATileEntityAppliance;
 import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.conveyors.ItemWrapper;
 import net.teamio.taam.conveyors.api.IConveyorApplianceHost;
+import net.teamio.taam.conveyors.api.IConveyorSlots;
 
 public class ApplianceAligner extends ATileEntityAppliance implements IWorldInteractable {
 
@@ -34,12 +35,18 @@ public class ApplianceAligner extends ATileEntityAppliance implements IWorldInte
 	}
 	
 	@Override
+	public String getName() {
+		return "tile.taam.productionline_appliance.aligner.name";
+	}
+	
+	@Override
 	public void renderUpdate() {
 		TileEntity te = worldObj.getTileEntity(pos.offset(direction));
 		if(te instanceof IConveyorApplianceHost) {
 			IConveyorApplianceHost host = (IConveyorApplianceHost) te;
-			conveyorDirection = host.getMovementDirection();
-			conveyorSpeedsteps = host.getSpeedsteps();
+			IConveyorSlots slots = host.getSlots();
+			conveyorDirection = slots.getMovementDirection();
+			conveyorSpeedsteps = slots.getSpeedsteps();
 		}
 	}
 
@@ -72,8 +79,7 @@ public class ApplianceAligner extends ATileEntityAppliance implements IWorldInte
 	@Override
 	public EnumFacing overrideNextSlot(IConveyorApplianceHost host, int slot, ItemWrapper wrapper,
 			EnumFacing beforeOverride) {
-		EnumFacing direction = host.getMovementDirection();
-		
+		EnumFacing direction = host.getSlots().getMovementDirection();
 		
 		// We can only align when it passes left/right
 		if(direction.getAxis() == this.direction.getAxis()) {

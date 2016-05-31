@@ -14,7 +14,7 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemMultiTexture;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.SoundEvent;
@@ -439,10 +439,8 @@ public class TaamMain {
 
 			@Override
 			public NBTBase writeNBT(Capability<IConveyorSlots> capability, IConveyorSlots instance, EnumFacing side) {
-				NBTTagCompound tag = new NBTTagCompound();
 				if(instance instanceof ConveyorSlotsStandard) {
-					((ConveyorSlotsStandard) instance).writeToNBT(tag);
-					return tag;
+					return ((ConveyorSlotsStandard) instance).serializeNBT();
 				}
 				throw new NotImplementedException("Cannot save a generic IConveyorSlots instance to NBT. Only ConveyorSlotsStandard is supported.");
 			}
@@ -451,7 +449,7 @@ public class TaamMain {
 			public void readNBT(Capability<IConveyorSlots> capability, IConveyorSlots instance, EnumFacing side,
 					NBTBase nbt) {
 				if(instance instanceof ConveyorSlotsStandard) {
-					((ConveyorSlotsStandard) instance).readFromNBT((NBTTagCompound) nbt);
+					((ConveyorSlotsStandard) instance).deserializeNBT((NBTTagList) nbt);
 				}
 				throw new NotImplementedException("Cannot read a generic IConveyorSlots instance from NBT. Only ConveyorSlotsStandard is supported.");
 

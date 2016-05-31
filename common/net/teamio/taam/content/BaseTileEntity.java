@@ -1,5 +1,7 @@
 package net.teamio.taam.content;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import org.apache.logging.log4j.Level;
@@ -9,6 +11,11 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.world.IWorldNameable;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.teamio.taam.Log;
 import net.teamio.taam.util.TaamUtil;
 
@@ -19,9 +26,20 @@ import net.teamio.taam.util.TaamUtil;
  * @author oliverkahrmann
  *
  */
-public abstract class BaseTileEntity extends TileEntity {
+public abstract class BaseTileEntity extends TileEntity implements IWorldNameable {
 
 	private UUID owner = null;
+	/**
+	 * ThreadLocal storage for the list of visible parts (required due to some
+	 * concurrency issues, See issue #194)
+	 */
+	@SideOnly(Side.CLIENT)
+	public static final ThreadLocal<List<String>> visibleParts = new ThreadLocal<List<String>>() {
+		@Override
+		protected List<String> initialValue() {
+			return new ArrayList<String>(14);
+		}
+	};
 
 	public void setOwner(EntityPlayer player) {
 		if (player == null) {
@@ -37,6 +55,16 @@ public abstract class BaseTileEntity extends TileEntity {
 
 	public UUID getOwner() {
 		return owner;
+	}
+	
+	@Override
+	public boolean hasCustomName() {
+		return false;
+	}
+	
+	@Override
+	public ITextComponent getDisplayName() {
+		return new TextComponentTranslation(getName());
 	}
 
 	/**
@@ -56,7 +84,6 @@ public abstract class BaseTileEntity extends TileEntity {
 		}
 		markDirty();
 		if (worldUpdate) {
-			Log.debug("worldUpdate: {} {}", pos, worldObj);
 			TaamUtil.updateBlock(worldObj, pos);
 		}
 		if (renderUpdate) {

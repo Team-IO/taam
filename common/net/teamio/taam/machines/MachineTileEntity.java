@@ -22,6 +22,11 @@ public class MachineTileEntity extends BaseTileEntity implements ITickable {
 	}
 
 	@Override
+	public String getName() {
+		return "tile.taam.machine." + meta.getName() + ".name";
+	}
+
+	@Override
 	public void update() {
 		machine.update(worldObj, pos);
 	}

@@ -22,7 +22,7 @@ public class GuiConveyorHopper extends CustomGui {
 	private GuiCheckBox cbLinearMode;
 
 	public GuiConveyorHopper(InventoryPlayer inventoryPlayer, TileEntityConveyorHopper tileEntity) {
-		super(new ContainerConveyorSmallInventory(inventoryPlayer, tileEntity));
+		super(new ContainerConveyorSmallInventory(inventoryPlayer, tileEntity, null));
 		this.tileEntity = tileEntity;
 		this.inventoryPlayer = inventoryPlayer;
 		ySize = 133;
@@ -30,8 +30,8 @@ public class GuiConveyorHopper extends CustomGui {
 
 	@Override
 	protected void drawGuiContainerForegroundLayer(int param1, int param2) {
-		fontRendererObj.drawString(getTranslatedInventoryName(tileEntity), 8, 6, 0x404040);
-		fontRendererObj.drawString(getTranslatedInventoryName(inventoryPlayer), 8, ySize - 96 + 2, 0x404040);
+		fontRendererObj.drawString(getTranslatedName(tileEntity), 8, 6, 0x404040);
+		fontRendererObj.drawString(getTranslatedName(inventoryPlayer), 8, ySize - 96 + 2, 0x404040);
 	}
 
 	@Override

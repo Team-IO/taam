@@ -22,7 +22,7 @@ import net.teamio.taam.Taam;
 import net.teamio.taam.content.IRedstoneControlled;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.conveyors.SlotMatrix;
-import net.teamio.taam.conveyors.api.ConveyorSlotsStatic;
+import net.teamio.taam.conveyors.api.ConveyorSlotsBase;
 import net.teamio.taam.machines.IMachine;
 import net.teamio.taam.piping.PipeEnd;
 import net.teamio.taam.piping.PipeEndRestricted;
@@ -73,7 +73,7 @@ public class MachineMixer implements IMachine, IRotatable {
 	/**
 	 * Conveyor Slot set for input on the sides
 	 */
-	private ConveyorSlotsStatic conveyorSlots = new ConveyorSlotsStatic() {
+	private ConveyorSlotsBase conveyorSlots = new ConveyorSlotsBase() {
 
 		{
 			slotMatrix = new SlotMatrix(true, true, true, false, false, false, true, true, true);
@@ -82,14 +82,15 @@ public class MachineMixer implements IMachine, IRotatable {
 		}
 
 		@Override
-		public ItemStack removeItemAt(int slot) {
+		public ItemStack removeItemAt(int slot, int amount, boolean simulate) {
 			return null;
 		}
 
 		@Override
-		public int insertItemAt(ItemStack item, int slot) {
+		public int insertItemAt(ItemStack item, int slot, boolean simulate) {
 			if (isSlotAvailable(slot)) {
-				return process(item);
+				//TODO: Move to cache inventory for processing
+				return process(item, simulate);
 			}
 			return 0;
 		}
@@ -308,7 +309,7 @@ public class MachineMixer implements IMachine, IRotatable {
 	 * @param stack
 	 * @return the amount of items consumed.
 	 */
-	private int process(ItemStack stack) {
+	private int process(ItemStack stack, boolean simulate) {
 
 		/*
 		 * When there is backlog, we cannot process more
@@ -328,7 +329,7 @@ public class MachineMixer implements IMachine, IRotatable {
 		isShutdown = TaamUtil.isShutdown(TaamUtil.RANDOM, redstoneMode, redstoneHigh);
 
 		if(isShutdown) {
-			resetTimeout();
+			if(!simulate) resetTimeout();
 			return 0;
 		}
 
@@ -340,7 +341,7 @@ public class MachineMixer implements IMachine, IRotatable {
 		IProcessingRecipeFluidBased recipe = getRecipe(stack);
 
 		if (recipe == null) {
-			resetTimeout();
+			if(!simulate) resetTimeout();
 			return 0;
 		}
 
@@ -351,7 +352,7 @@ public class MachineMixer implements IMachine, IRotatable {
 		FluidStack inputFluid = recipe.getInputFluid();
 		int amount = pipeEndIn.getFluidAmount(inputFluid);
 		if (amount < inputFluid.amount) {
-			resetTimeout();
+			if(!simulate) resetTimeout();
 			return 0;
 		}
 
@@ -360,7 +361,7 @@ public class MachineMixer implements IMachine, IRotatable {
 		 */
 
 		if(timeout > 0) {
-			timeout--;
+			if(!simulate) timeout--;
 			return 0;
 		}
 
@@ -368,15 +369,17 @@ public class MachineMixer implements IMachine, IRotatable {
 		 * Consume fluid
 		 */
 
-		amount = pipeEndIn.removeFluid(inputFluid);
+		amount = simulate ? pipeEndIn.getFluidAmount(inputFluid) : pipeEndIn.removeFluid(inputFluid);
 		if (amount != inputFluid.amount) {
 			// Not enough, back into the pipe.
-			int reinserted = pipeEndIn.addFluid(new FluidStack(inputFluid, amount));
-			if (reinserted != amount) {
-				// This should not happen!
-				Log.error(
-						"Unexpected discrepance between getFluidAmound and removeFluid could not be resolved. Fluid was potentially lost. Asked for {}, got {}, reinserted {}. This is an issue. Report it with the developers of Taam!",
-						inputFluid.amount, amount, reinserted);
+			if(!simulate) {
+				int reinserted = pipeEndIn.addFluid(new FluidStack(inputFluid, amount));
+				if (reinserted != amount) {
+					// This should not happen!
+					Log.error(
+							"Unexpected discrepance between getFluidAmound and removeFluid could not be resolved. Fluid was potentially lost. Asked for {}, got {}, reinserted {}. This is an issue. Report it with the developers of Taam!",
+							inputFluid.amount, amount, reinserted);
+				}
 			}
 			return 0;
 		}
@@ -386,7 +389,7 @@ public class MachineMixer implements IMachine, IRotatable {
 		 */
 		FluidStack outputFluid = recipe.getOutputFluid(stack, inputFluid);
 
-		backlog = outputFluid.copy();
+		if(!simulate) backlog = outputFluid.copy();
 
 		return recipe.getInput().stackSize;
 	}

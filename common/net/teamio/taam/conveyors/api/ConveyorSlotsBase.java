@@ -10,12 +10,22 @@ import net.teamio.taam.conveyors.SlotMatrix;
  * @author Oliver Kahrmann
  *
  */
-public abstract class ConveyorSlotsStatic implements IConveyorSlots {
+public abstract class ConveyorSlotsBase implements IConveyorSlots {
 
 	protected SlotMatrix slotMatrix = SlotMatrix.ALL;
 	public EnumFacing rotation = EnumFacing.NORTH;
 	public double insertMaxY = 0.9;
 	public double insertMinY = 0.3;
+	public float verticalPosition = 0.51f;
+
+	/**
+	 * This method should be called by implementations when content changes,
+	 * that needs to be saved / updated.
+	 * 
+	 * Implementations further down can then call their own logic in here.
+	 */
+	public void onChangeHook() {
+	}
 
 	@Override
 	public boolean canSlotMove(int slot) {
@@ -64,7 +74,7 @@ public abstract class ConveyorSlotsStatic implements IConveyorSlots {
 
 	@Override
 	public float getVerticalPosition(int slot) {
-		return 0.51f;
+		return verticalPosition;
 	}
 
 }

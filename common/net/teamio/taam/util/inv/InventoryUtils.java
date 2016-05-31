@@ -22,7 +22,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryLargeChest;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -32,9 +31,7 @@ import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Plane;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.items.IItemHandler;
 
 /**
  * Utilities for working with inventories. Mostly code is based on by
@@ -111,7 +108,7 @@ public final class InventoryUtils {
 	public static EntityItem dropItem(ItemStack stack, World world, double x, double y, double z) {
 		return dropItem(stack, world, x, y, z, true);
 	}
-	
+
 	/**
 	 * Drop an item into the world, using random motion.
 	 * 
@@ -127,7 +124,7 @@ public final class InventoryUtils {
 	public static EntityItem dropItem(ItemStack stack, World world, BlockPos pos) {
 		return dropItem(stack, world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, true);
 	}
-	
+
 	/**
 	 * Drop an item into the world, optionally using random motion.
 	 * 
@@ -173,49 +170,6 @@ public final class InventoryUtils {
 	}
 
 	/**
-	 * Gets an IInventory from a coordinate with support for double chests
-	 * 
-	 * @param world
-	 * @param pos
-	 * @return
-	 */
-	public static IInventory getInventory(IBlockAccess world, BlockPos pos) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/**
-	 * Consumes one item from slot in inventory with support for containers.
-	 * 
-	 * !! Stackable items with container item will cause issues!
-	 * 
-	 * @param inventory
-	 * @param slot
-	 */
-	public static void consumeItem(IInventory inventory, int slot) {
-		ItemStack stack = inventory.getStackInSlot(slot);
-		Item item = stack.getItem();
-		if (item.hasContainerItem(stack)) {
-			ItemStack container = item.getContainerItem(stack);
-			inventory.setInventorySlotContents(slot, container);
-		} else {
-			inventory.decrStackSize(slot, 1);
-		}
-	}
-
-	/**
-	 * Gets the size of the stack in a slot. Returns 0 on null stacks
-	 * 
-	 * @param inv
-	 * @param slot
-	 * @return
-	 */
-	public static int stackSize(IInventory inv, int slot) {
-		ItemStack stack = inv.getStackInSlot(slot);
-		return stack == null ? 0 : stack.stackSize;
-	}
-
-	/**
 	 * Copies an itemstack with a new quantity
 	 * 
 	 * @param stack
@@ -235,7 +189,9 @@ public final class InventoryUtils {
 	 * @param simulate
 	 *            If set to true, no items will actually be inserted
 	 * @return The number of items unable to be inserted
+	 * @deprecated TODO replace with IItemHandler
 	 */
+	@Deprecated
 	public static int insertItem(InventoryRange inv, ItemStack stack, boolean simulate) {
 		stack = stack.copy();
 		for (int pass = 0; pass < 2; pass++) {
@@ -264,34 +220,11 @@ public final class InventoryUtils {
 		}
 		return stack.stackSize;
 	}
-
-	public static int insertItem(IInventory inv, ItemStack stack, boolean simulate) {
-		return insertItem(new InventoryRange(inv), stack, simulate);
-	}
-	
 	/**
 	 * 
-	 * @param inv
-	 * @param stack
-	 * @param simulate
-	 *            If set to true, no items will actually be inserted
-	 * @return The number of items unable to be inserted
-	 * 
-	 * @author Oliver Kahrmann
+	@deprecated TODO replace with IItemHandler
 	 */
-	public static int insertItem(IItemHandler inv, ItemStack stack, boolean simulate) {
-		int invSlots = inv.getSlots();
-		ItemStack toInsert = stack;
-		for(int i = 0; i < invSlots; i++) {
-			// insertItem returns item stack unable to insert, or null
-			toInsert = inv.insertItem(i, toInsert, false);
-			if(toInsert == null) {
-				return 0;
-			}
-		}
-		return toInsert.stackSize;
-	}
-
+	@Deprecated
 	public static int fitStackInSlot(InventoryRange inv, int slot, ItemStack stack) {
 		ItemStack base = inv.inv.getStackInSlot(slot);
 		if (!canStack(base, stack) || !inv.canInsertItem(slot, stack))
@@ -300,40 +233,6 @@ public final class InventoryUtils {
 		int fit = base != null ? incrStackSize(base, inv.inv.getInventoryStackLimit() - base.stackSize)
 				: inv.inv.getInventoryStackLimit();
 		return Math.min(fit, stack.stackSize);
-	}
-
-	/**
-	 * Static default implementation for IInventory method
-	 */
-	public static ItemStack decrStackSize(IInventory inv, int slot, int size) {
-		ItemStack item = inv.getStackInSlot(slot);
-
-		if (item != null) {
-			if (item.stackSize <= size) {
-				inv.setInventorySlotContents(slot, null);
-				inv.markDirty();
-				return item;
-			}
-			ItemStack itemstack1 = item.splitStack(size);
-			if (item.stackSize == 0)
-				inv.setInventorySlotContents(slot, null);
-			else
-				inv.setInventorySlotContents(slot, item);
-
-			inv.markDirty();
-			return itemstack1;
-		}
-		return null;
-	}
-
-	/**
-	 * @return The quantity of items from addition that can be added to base
-	 */
-	public static int incrStackSize(ItemStack base, ItemStack addition) {
-		if (canStack(base, addition))
-			return incrStackSize(base, addition.stackSize);
-
-		return 0;
 	}
 
 	public static boolean canStack(ItemStack stack1, ItemStack stack2) {
@@ -345,7 +244,9 @@ public final class InventoryUtils {
 
 	/**
 	 * @return The quantity of items from addition that can be added to base
+	 *@deprecated TODO replace with IItemHandler
 	 */
+	@Deprecated
 	public static int incrStackSize(ItemStack base, int addition) {
 		int totalSize = base.stackSize + addition;
 
@@ -358,21 +259,14 @@ public final class InventoryUtils {
 	}
 
 	/**
-	 * Static default implementation for IInventory method
-	 */
-	public static ItemStack removeStackFromSlot(IInventory inv, int slot) {
-		ItemStack stack = inv.getStackInSlot(slot);
-		inv.setInventorySlotContents(slot, null);
-		return stack;
-	}
-
-	/**
 	 * Gets an IInventory from a coordinate with support for double chests
 	 * 
 	 * @param world
 	 * @param pos
 	 * @return
+	 *@deprecated TODO replace with IItemHandler
 	 */
+	@Deprecated
 	public static IInventory getInventory(World world, BlockPos pos) {
 		TileEntity tile = world.getTileEntity(pos);
 		if (!(tile instanceof IInventory))
@@ -391,7 +285,9 @@ public final class InventoryUtils {
 	 * @param chest
 	 *            The chest TileEntity to check for double chest.
 	 * @return
+	 *@deprecated TODO replace with IItemHandler
 	 */
+	@Deprecated
 	public static IInventory getChest(TileEntityChest chest) {
 		for (EnumFacing fside : Plane.HORIZONTAL) {
 			if (chest.getWorld().getBlockState(chest.getPos().offset(fside)).getBlock() == chest.getBlockType())
@@ -403,14 +299,18 @@ public final class InventoryUtils {
 
 	/**
 	 * NBT item saving function
+	 *@deprecated TODO replace with IItemHandler
 	 */
+	@Deprecated
 	public static NBTTagList writeItemStacksToTag(ItemStack[] items) {
 		return writeItemStacksToTag(items, 64);
 	}
 
 	/**
 	 * NBT item saving function with support for stack sizes > 32K
+	 *@deprecated TODO replace with IItemHandler
 	 */
+	@Deprecated
 	public static NBTTagList writeItemStacksToTag(ItemStack[] items, int maxQuantity) {
 		NBTTagList tagList = new NBTTagList();
 		for (int i = 0; i < items.length; i++) {
@@ -429,27 +329,33 @@ public final class InventoryUtils {
 		}
 		return tagList;
 	}
-	
+
 	/**
 	 * NBT item saving function
 	 * 
-	 * Writes the itemStacks without adding the slot ID.
-	 * Useful for internal lists.
+	 * Writes the itemStacks without adding the slot ID. Useful for internal
+	 * lists.
 	 * 
-	 * @author Oliver Kahrmann, based on {@link #writeItemStacksToTag(ItemStack[])}
+	 * @author Oliver Kahrmann, based on
+	 *         {@link #writeItemStacksToTag(ItemStack[])}
+	 *@deprecated TODO replace with IItemHandler
 	 */
+	@Deprecated
 	public static NBTTagList writeItemStacksToTagSequential(ItemStack[] items) {
 		return writeItemStacksToTagSequential(items, 64);
 	}
-	
+
 	/**
 	 * NBT item saving function with support for stack sizes > 32K
 	 * 
-	 * Writes the itemStacks without adding the slot ID.
-	 * Useful for internal lists.
+	 * Writes the itemStacks without adding the slot ID. Useful for internal
+	 * lists.
 	 * 
-	 * @author Oliver Kahrmann, based on {@link #writeItemStacksToTag(ItemStack[], int)}
+	 * @author Oliver Kahrmann, based on
+	 *         {@link #writeItemStacksToTag(ItemStack[], int)}
+	 *@deprecated TODO replace with IItemHandler
 	 */
+	@Deprecated
 	public static NBTTagList writeItemStacksToTagSequential(ItemStack[] items, int maxQuantity) {
 		NBTTagList tagList = new NBTTagList();
 		for (int i = 0; i < items.length; i++) {
@@ -470,7 +376,9 @@ public final class InventoryUtils {
 
 	/**
 	 * NBT item loading function with support for stack sizes > 32K
+	 *@deprecated TODO replace with IItemHandler
 	 */
+	@Deprecated
 	public static void readItemStacksFromTag(ItemStack[] items, NBTTagList tagList) {
 		for (int i = 0; i < tagList.tagCount(); i++) {
 			NBTTagCompound tag = tagList.getCompoundTagAt(i);
@@ -482,12 +390,14 @@ public final class InventoryUtils {
 	}
 
 	/**
-	 * NBT item loading function with support for stack sizes > 32K
-	 * Reads the itemStacks without checking the slot ID.
-	 * Useful for internal lists.
+	 * NBT item loading function with support for stack sizes > 32K Reads the
+	 * itemStacks without checking the slot ID. Useful for internal lists.
 	 * 
-	 * @author Oliver Kahrmann, based on {@link #readItemStacksFromTag(ItemStack[], NBTTagList)}
+	 * @author Oliver Kahrmann, based on
+	 *         {@link #readItemStacksFromTag(ItemStack[], NBTTagList)}
+	 *@deprecated TODO replace with IItemHandler
 	 */
+	@Deprecated
 	public static void readItemStacksFromTagSequential(ItemStack[] items, NBTTagList tagList) {
 		for (int i = 0; i < tagList.tagCount(); i++) {
 			NBTTagCompound tag = tagList.getCompoundTagAt(i);

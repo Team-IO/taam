@@ -1,20 +1,16 @@
 package net.teamio.taam.content.conveyors;
 
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.IHopper;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.wrapper.InvWrapper;
+import net.minecraftforge.items.ItemHandlerHelper;
+import net.minecraftforge.items.ItemStackHandler;
 import net.teamio.taam.Config;
 import net.teamio.taam.Taam;
 import net.teamio.taam.TaamMain;
@@ -26,14 +22,9 @@ import net.teamio.taam.conveyors.api.ConveyorSlotsInventory;
 import net.teamio.taam.network.TPMachineConfiguration;
 import net.teamio.taam.util.TaamUtil;
 import net.teamio.taam.util.WorldCoord;
-import net.teamio.taam.util.inv.InventoryRange;
-import net.teamio.taam.util.inv.InventorySimple;
-import net.teamio.taam.util.inv.InventoryUtils;
 
 
-public class TileEntityConveyorHopper extends BaseTileEntity implements IInventory, IHopper, IRedstoneControlled, IRotatable, ITickable {
-
-	private InventorySimple inventory;
+public class TileEntityConveyorHopper extends BaseTileEntity implements IRedstoneControlled, IRotatable, ITickable {
 
 	private boolean highSpeed;
 	private int timeout;
@@ -45,8 +36,8 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IInvento
 	private EnumFacing direction = EnumFacing.NORTH;
 
 	private boolean pulseWasSent = false;
-	
-	private IItemHandler itemHandler;
+
+	private ItemStackHandler itemHandler;
 	private ConveyorSlotsInventory conveyorSlots;
 
 	public TileEntityConveyorHopper() {
@@ -55,14 +46,27 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IInvento
 
 	public TileEntityConveyorHopper(boolean highSpeed) {
 		this.highSpeed = highSpeed;
-		inventory = new InventorySimple(5);
-		itemHandler = new InvWrapper(inventory);
-		conveyorSlots = new ConveyorSlotsInventory(itemHandler);
+		itemHandler = new ItemStackHandler(5);
+		conveyorSlots = new ConveyorSlotsInventory(itemHandler) {
+			@Override
+			public void onChangeHook() {
+				updateState(true, false, false);
+			};
+		};
+	}
+
+	@Override
+	public String getName() {
+		if (highSpeed) {
+			return "tile.taam.productionline.hopper_hs.name";
+		} else {
+			return "tile.taam.productionline.hopper.name";
+		}
 	}
 
 	@Override
 	public void update() {
-		if(worldObj.isRemote) {
+		if (worldObj.isRemote) {
 			return;
 		}
 
@@ -110,72 +114,60 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IInvento
 			return;
 		}
 
-		int slotToDecrease = 0;
-		int amountToDecrease = 0;
+		boolean somethingEjected = false;
+		boolean wholeStack = highSpeed && stackMode;
 
 		if(eject) {
 			if(!TaamUtil.canDropIntoWorld(worldObj, pos.down())) {
 				return;
 			}
-			for(int i = 0; i < inventory.getSizeInventory(); i++) {
-				if(InventoryUtils.stackSize(inventory, i) > 0) {
-					ItemStack stack = inventory.getStackInSlot(i);
-					ItemStack ejectStack;
-
-					if(highSpeed && stackMode) {
-						// Eject whole stack
-						ejectStack = InventoryUtils.copyStack(stack, stack.stackSize);
-					} else {
-						// Eject ONE item
-						ejectStack = InventoryUtils.copyStack(stack, 1);
-					}
-
-					/*
-					 * -----------
-					 */
-
-					EntityItem item = new EntityItem(worldObj, pos.getX() + 0.5, pos.getY() - 0.3, pos.getZ() + 0.5, ejectStack);
-					item.motionX = 0;
-					item.motionY = 0;
-					item.motionZ = 0;
-					worldObj.spawnEntityInWorld(item);
-
-					slotToDecrease = i;
-					amountToDecrease = ejectStack.stackSize;
-					break;
+			for(int i = 0; i < itemHandler.getSlots(); i++) {
+				ItemStack stack = itemHandler.extractItem(i, wholeStack ? 1 : 64, false);
+				if(stack == null || stack.stackSize == 0) {
+					continue;
 				}
+
+				/*
+				 * -----------
+				 */
+
+				EntityItem item = new EntityItem(worldObj, pos.getX() + 0.5, pos.getY() - 0.3, pos.getZ() + 0.5, stack);
+				item.motionX = 0;
+				item.motionY = 0;
+				item.motionZ = 0;
+				worldObj.spawnEntityInWorld(item);
+
+				somethingEjected = true;
+				break;
 			}
 		} else {
 
-			IInventory inventory = InventoryUtils.getInventory(worldObj, pos.down());
-			if(inventory == null) {
+			TileEntity ent = worldObj.getTileEntity(pos.down());
+			if(ent == null) {
 				return;
 			}
-			InventoryRange range = new InventoryRange(inventory, EnumFacing.UP.ordinal());
+			IItemHandler targetHandler = ent.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
+			if(targetHandler == null) {
+				return;
+			}
 
-			for(int i = 0; i < this.inventory.getSizeInventory(); i++) {
-				if(InventoryUtils.stackSize(this.inventory, i) > 0) {
-					ItemStack stack = this.inventory.getStackInSlot(i);
-					ItemStack ejectStack;
-
-					if(highSpeed && stackMode) {
-						// Eject whole stack
-						ejectStack = InventoryUtils.copyStack(stack, stack.stackSize);
-					} else {
-						// Eject ONE item
-						ejectStack = InventoryUtils.copyStack(stack, 1);
-					}
-
+			for(int i = 0; i < itemHandler.getSlots(); i++) {
+				// Simulate extracting first to see if there is anything in there
+				ItemStack stack = itemHandler.extractItem(i,  wholeStack ? 1 : 64, true);
+				if(stack != null && stack.stackSize == 0) {
 					/*
 					 * -----------
 					 */
+					ItemStack unableToInsert = ItemHandlerHelper.insertItemStacked(targetHandler, stack, false);
 
-					int unableToInsert = InventoryUtils.insertItem(range, ejectStack, false);
-
+					int amount = stack.stackSize;
+					if(unableToInsert != null) {
+						amount -= unableToInsert.stackSize;
+					}
 					// If we fit anything, decrease inventory accordingly
-					if(unableToInsert < ejectStack.stackSize) {
-						slotToDecrease = i;
-						amountToDecrease = ejectStack.stackSize - unableToInsert;
+					if(amount > 0) {
+						itemHandler.extractItem(i,  wholeStack ? 1 : 64, false);
+						somethingEjected = true;
 						break;
 					}
 					// In linear mode, we only look at the front most stack that has items
@@ -188,8 +180,7 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IInvento
 		}
 		boolean changed = false;
 
-		if(amountToDecrease > 0) {
-			InventoryUtils.decrStackSize(inventory, slotToDecrease, amountToDecrease);
+		if(somethingEjected) {
 			if(highSpeed && !(stackMode && Config.pl_hopper_stackmode_normal_speed)) {
 				timeout += Config.pl_hopper_highspeed_delay;
 			} else {
@@ -200,10 +191,10 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IInvento
 
 		// Move Items to the front in linear mode
 		if(linearMode) {
-			for(int i = 0; i < inventory.getSizeInventory() - 1; i++) {
-				if(inventory.getStackInSlot(i) == null) {
-					inventory.setInventorySlotContents(i, inventory.getStackInSlot(i + 1));
-					inventory.setInventorySlotContents(i + 1, null);
+			for(int i = 0; i < itemHandler.getSlots() - 1; i++) {
+				if(itemHandler.getStackInSlot(i) == null) {
+					itemHandler.setStackInSlot(i, itemHandler.getStackInSlot(i + 1));
+					itemHandler.setStackInSlot(i + 1, null);
 					changed = true;
 				}
 			}
@@ -219,7 +210,7 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IInvento
 
 	@Override
 	protected void writePropertiesToNBT(NBTTagCompound tag) {
-		tag.setTag("items", InventoryUtils.writeItemStacksToTag(inventory.items));
+		tag.setTag("items", itemHandler.serializeNBT());
 		tag.setBoolean("highSpeed", highSpeed);
 		tag.setInteger("timeout", timeout);
 		tag.setBoolean("eject", eject);
@@ -233,8 +224,10 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IInvento
 
 	@Override
 	protected void readPropertiesFromNBT(NBTTagCompound tag) {
-		inventory.items = new ItemStack[inventory.getSizeInventory()];
-		InventoryUtils.readItemStacksFromTag(inventory.items, tag.getTagList("items", NBT.TAG_COMPOUND));
+		NBTTagCompound itemTag = tag.getCompoundTag("items");
+		if(itemTag != null) {
+			itemHandler.deserializeNBT(itemTag);
+		}
 		highSpeed = tag.getBoolean("highSpeed");
 		timeout = tag.getInteger("timeout");
 		eject = tag.getBoolean("eject");
@@ -257,7 +250,7 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IInvento
 		if(capability == Taam.CAPABILITY_CONVEYOR) {
 			return true;
 		}
-		return false;
+		return super.hasCapability(capability, facing);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -269,98 +262,7 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IInvento
 		if(capability == Taam.CAPABILITY_CONVEYOR) {
 			return (T) conveyorSlots;
 		}
-		return null;
-	}
-
-	/*
-	 * IInventory implementation
-	 */
-
-	@Override
-	public int getSizeInventory() {
-		return inventory.getSizeInventory();
-	}
-
-	@Override
-	public ItemStack getStackInSlot(int slot) {
-		return inventory.getStackInSlot(slot);
-	}
-
-	@Override
-	public ItemStack decrStackSize(int slot, int amount) {
-		return inventory.decrStackSize(slot, amount);
-	}
-
-	@Override
-	public ItemStack removeStackFromSlot(int slot) {
-		return inventory.removeStackFromSlot(slot);
-	}
-
-	@Override
-	public void setInventorySlotContents(int slot, ItemStack stack) {
-		inventory.setInventorySlotContents(slot, stack);
-	}
-
-	@Override
-	public String getName() {
-		if(highSpeed) {
-			return "tile.productionline.hopper_hs.name";
-		} else {
-			return "tile.productionline.hopper.name";
-		}
-	}
-
-	@Override
-	public ITextComponent getDisplayName() {
-		return new TextComponentTranslation(getName());
-	}
-
-	@Override
-	public boolean hasCustomName() {
-		return false;
-	}
-
-	@Override
-	public int getInventoryStackLimit() {
-		return inventory.getInventoryStackLimit();
-	}
-
-	@Override
-	public boolean isUseableByPlayer(EntityPlayer p_70300_1_) {
-		return true;
-	}
-
-	@Override
-	public void openInventory(EntityPlayer player) {
-		// Nothing to do.
-	}
-
-	@Override
-	public void closeInventory(EntityPlayer player) {
-		// Nothing to do.
-	}
-
-	@Override
-	public boolean isItemValidForSlot(int slot, ItemStack stack) {
-		return inventory.isItemValidForSlot(slot, stack);
-	}
-
-	@Override
-	public int getField(int id) {
-		return 0;
-	}
-
-	@Override
-	public void setField(int id, int value) {
-	}
-
-	@Override
-	public int getFieldCount() {
-		return 0;
-	}
-
-	@Override
-	public void clear() {
+		return super.getCapability(capability, facing);
 	}
 
 	/*
@@ -416,25 +318,6 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IInvento
 		} else {
 			markDirty();
 		}
-	}
-
-	/*
-	 * IHopper implementation
-	 */
-
-	@Override
-	public double getXPos() {
-		return pos.getX();
-	}
-
-	@Override
-	public double getYPos() {
-		return pos.getY();
-	}
-
-	@Override
-	public double getZPos() {
-		return pos.getZ();
 	}
 
 	/*
