@@ -291,7 +291,7 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 		tag.setBoolean("redirectorRight", redirectorRight);
 		NBTTagList itemsTag = new NBTTagList();
 		for (int i = 0; i < items.length; i++) {
-			itemsTag.appendTag(items[i].writeToNBT());
+			itemsTag.appendTag(items[i].serializeNBT());
 		}
 		tag.setTag("items", itemsTag);
 
@@ -429,12 +429,6 @@ public class TileEntityConveyor extends BaseTileEntity implements ISidedInventor
 	@Override
 	public EnumFacing getMovementDirection() {
 		return direction;
-	}
-
-	@Override
-	public int getMovementProgress(int slot) {
-		ItemWrapper slotObject = items[slot];
-		return slotObject.movementProgress;
 	}
 
 	@Override

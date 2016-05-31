@@ -576,10 +576,11 @@ public class ConveyorUtil {
 					nextSlotMovable = true;
 				} else {
 					// Move it to next block
-					nextSlotFree = nextBlock.getSlot(nextSlot).isEmpty();
-					wrappedIsSameDirection = nextBlock.getMovementDirection() == direction;
+					ItemWrapper nextWrapper = nextBlock.getSlot(nextSlot);
+					nextSlotFree = nextWrapper.isEmpty();
+					wrappedIsSameDirection = nextBlock.getNextSlot(nextSlot) == nextSlotDir;
 					nextSlotMovable = nextBlock.canSlotMove(nextSlot) && wrappedIsSameDirection;
-					nextSlotProgress = nextBlock.getMovementProgress(nextSlot);
+					nextSlotProgress = nextWrapper.movementProgress;
 					byte nextSpeedSteps = nextBlock.getSpeedsteps();
 					if (nextSpeedSteps != speedsteps) {
 						if (nextSpeedSteps == 0) {
@@ -588,13 +589,13 @@ public class ConveyorUtil {
 							nextSlotProgress = Math.round(nextSlotProgress / (float) nextSpeedSteps * speedsteps);
 						}
 					}
-
 				}
 			} else {
 				ItemWrapper nextWrapper = tileEntity.getSlot(nextSlot);
 				nextSlotFree = nextWrapper.itemStack == null;
 				nextSlotMovable = !nextWrapper.isBlocked();
 				nextSlotProgress = nextWrapper.movementProgress;
+				wrappedIsSameDirection = tileEntity.getNextSlot(nextSlot) == nextSlotDir;
 			}
 
 			// Check transition to next slot
@@ -629,6 +630,13 @@ public class ConveyorUtil {
 				wrapper.movementProgress++;
 				if (wrapper.movementProgress > speedsteps) {
 					wrapper.movementProgress = 0;
+				}
+				if(world.isRemote) {
+					wrapper.setStuck(false);
+				}
+			} else {
+				if(world.isRemote) {
+					wrapper.setStuck(true);
 				}
 			}
 		}

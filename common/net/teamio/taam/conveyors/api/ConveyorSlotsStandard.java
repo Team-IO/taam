@@ -61,7 +61,7 @@ public class ConveyorSlotsStandard extends ConveyorSlotsStatic {
 	public void writeToNBT(NBTTagCompound tag) {
 		NBTTagList itemsTag = new NBTTagList();
 		for(int i = 0; i < slots.length; i++) {
-			itemsTag.appendTag(slots[i].writeToNBT());
+			itemsTag.appendTag(slots[i].serializeNBT());
 		}
 		tag.setTag("items", itemsTag);
 	}

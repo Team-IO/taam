@@ -146,13 +146,22 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 
 					EnumFacing dir = cte.getNextSlot(slot);
 					float speedsteps = cte.getSpeedsteps();
-					float progress = cte.getMovementProgress(slot) / speedsteps;
 
+					ItemWrapper wrapper = cte.getSlot(slot);
+					
+					float progress = wrapper.movementProgress;
+					
+					if(wrapper.isRenderingInterpolated()) {
+						progress += event.getPartialTicks();
+					}
+					
+					progress *= ConveyorUtil.oneThird / speedsteps;
+					
 					double x = pos.getX() + Math.floor(slot / 3) * ConveyorUtil.oneThird // General Position
-							+ dir.getFrontOffsetX() * progress * ConveyorUtil.oneThird; // Apply Slot Movement
+							+ dir.getFrontOffsetX() * progress; // Apply Slot Movement
 					double y = pos.getY() + cte.getVerticalPosition(slot);
 					double z = pos.getZ() + slot % 3 * ConveyorUtil.oneThird // General Position
-							+ dir.getFrontOffsetZ() * progress * ConveyorUtil.oneThird; // Apply Slot Movement
+							+ dir.getFrontOffsetZ() * progress; // Apply Slot Movement
 
 
 					drawSelectionBoundingBox(player, event.getPartialTicks(), new AxisAlignedBB(x, y, z,
@@ -218,7 +227,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		}
 
 		if (tileEntity instanceof IConveyorSlots) {
-			renderConveyorItems((IConveyorSlots) tileEntity, x, y, z);
+			renderConveyorItems((IConveyorSlots) tileEntity, x, y, z, partialTicks);
 		}
 
 		if(tileEntity instanceof TileEntityConveyorSieve) {
@@ -740,8 +749,10 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		return rotationDegrees;
 	}
 
-	public void renderConveyorItems(IConveyorSlots tileEntity, double x, double y, double z) {
+	public void renderConveyorItems(IConveyorSlots tileEntity, double x, double y, double z, float partialTicks) {
 
+		final float itemScaleFactor = 0.3f;
+		
 		GL11.glPushMatrix();
 		GL11.glTranslated(x, y, z);
 
@@ -780,7 +791,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 								0.025f * (1-rand.nextFloat()),
 								0.015f * (1-rand.nextFloat()));
 					}
-					GL11.glScalef(0.4f, 0.4f, 0.4f);
+					GL11.glScalef(itemScaleFactor, itemScaleFactor, itemScaleFactor);
 
 					IBakedModel model = ri.getItemModelMesher().getItemModel(processingStack);
 					ri.renderItem(processingStack, model);
@@ -792,16 +803,19 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 			 * Regular rendering, meaning conveyors & similar
 			 */
 			if (tileEntity.shouldRenderItemsDefault()) {
-				float posY = 0.1f;
+				float posYOffset = 0.15f;
 				if (tileEntity instanceof TileEntityConveyorSieve) {
 					// TODO extract into separate method getItemRenderPosY() in
 					// IConveyorAwareTE
 					if (((TileEntityConveyorSieve) tileEntity).isShutdown) {
 						// posY = 0;
 					} else {
-						posY += (float) (rotSin * 0.04);
+						posYOffset += (float) (rotSin * 0.04);
 					}
 				}
+				float speedsteps = tileEntity.getSpeedsteps();
+				float partialSpeedsteps = partialTicks / speedsteps;
+				
 				for (int slot = 0; slot < 9; slot++) {
 					ItemWrapper wrapper = tileEntity.getSlot(slot);
 
@@ -810,20 +824,24 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 						continue;
 					}
 
-					int movementProgress = tileEntity.getMovementProgress(slot);
+					int movementProgress = wrapper.movementProgress;
 					if (movementProgress < 0) {
 						movementProgress = 0;
 					}
-					float speedsteps = tileEntity.getSpeedsteps();
 
 					EnumFacing renderDirection = tileEntity.getNextSlot(slot);
 
-					float posX = (float) ConveyorUtil.getItemPositionX(slot, movementProgress / speedsteps, renderDirection);
-					float posZ = (float) ConveyorUtil.getItemPositionZ(slot, movementProgress / speedsteps, renderDirection);
-
+					float progress = movementProgress / speedsteps;
+					if (wrapper.isRenderingInterpolated()) {
+						progress += partialSpeedsteps;
+					}
+					float posX = (float) ConveyorUtil.getItemPositionX(slot, progress, renderDirection);
+					float posZ = (float) ConveyorUtil.getItemPositionZ(slot, progress, renderDirection);
+					float posY = tileEntity.getVerticalPosition(slot);
+					
 					GL11.glPushMatrix();
-					GL11.glTranslatef(posX, posY + 0.51f, posZ);
-					GL11.glScalef(0.4f, 0.4f, 0.4f);
+					GL11.glTranslatef(posX, posYOffset + posY, posZ);
+					GL11.glScalef(itemScaleFactor, itemScaleFactor, itemScaleFactor);
 
 					IBakedModel model = ri.getItemModelMesher().getItemModel(itemStack);
 					ri.renderItem(itemStack, model);

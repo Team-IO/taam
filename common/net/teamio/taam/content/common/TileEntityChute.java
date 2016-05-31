@@ -365,11 +365,6 @@ public class TileEntityChute extends BaseTileEntity implements IInventory, ISide
 	}
 
 	@Override
-	public int getMovementProgress(int slot) {
-		return 0;
-	}
-
-	@Override
 	public byte getSpeedsteps() {
 		return 0;
 	}

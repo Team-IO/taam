@@ -8,7 +8,6 @@ public interface IConveyorSlots {
 
 	boolean canSlotMove(int slot);
 	boolean isSlotAvailable(int slot);
-	int getMovementProgress(int slot);
 	byte getSpeedsteps();
 
 	/**

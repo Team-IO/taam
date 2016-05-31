@@ -189,11 +189,6 @@ public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements
 	}
 
 	@Override
-	public int getMovementProgress(int slot) {
-		return 0;
-	}
-
-	@Override
 	public byte getSpeedsteps() {
 		return 1;
 	}

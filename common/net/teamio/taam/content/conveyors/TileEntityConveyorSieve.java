@@ -219,7 +219,7 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 		tag.setInteger("direction", direction.ordinal());
 		NBTTagList itemsTag = new NBTTagList();
 		for(int i = 0; i < items.length; i++) {
-			itemsTag.appendTag(items[i].writeToNBT());
+			itemsTag.appendTag(items[i].serializeNBT());
 		}
 		tag.setTag("items", itemsTag);
 		//		tag.setByte("redstoneMode", redstoneMode);
@@ -289,12 +289,6 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 	@Override
 	public EnumFacing getMovementDirection() {
 		return direction;
-	}
-
-	@Override
-	public int getMovementProgress(int slot) {
-		ItemWrapper slotObject = items[slot];
-		return slotObject.movementProgress;
 	}
 
 	@Override

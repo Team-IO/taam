@@ -28,11 +28,6 @@ public abstract class ConveyorSlotsStatic implements IConveyorSlots {
 	}
 
 	@Override
-	public int getMovementProgress(int slot) {
-		return 0;
-	}
-
-	@Override
 	public byte getSpeedsteps() {
 		return 1;
 	}

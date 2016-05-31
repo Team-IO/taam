@@ -406,11 +406,6 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements ISide
 	}
 
 	@Override
-	public int getMovementProgress(int slot) {
-		return 0;
-	}
-
-	@Override
 	public byte getSpeedsteps() {
 		return 1;
 	}
