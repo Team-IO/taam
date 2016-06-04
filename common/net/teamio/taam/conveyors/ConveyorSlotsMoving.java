@@ -1,7 +1,6 @@
-package net.teamio.taam.conveyors.api;
+package net.teamio.taam.conveyors;
 
 import net.minecraft.util.EnumFacing;
-import net.teamio.taam.conveyors.ItemWrapper;
 
 /**
  * Abstract class for implementing inside a conveyor-like machine, as the

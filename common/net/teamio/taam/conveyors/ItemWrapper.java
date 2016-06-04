@@ -5,7 +5,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.teamio.taam.util.inv.InventoryUtils;
+import net.teamio.taam.util.InventoryUtils;
 
 /**
  * Wrapper for item stacks on the conveyor system. Keeps track of movement,

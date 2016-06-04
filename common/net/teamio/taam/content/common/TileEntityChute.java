@@ -20,8 +20,8 @@ import net.minecraftforge.items.ItemHandlerHelper;
 import net.teamio.taam.Taam;
 import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IRotatable;
+import net.teamio.taam.conveyors.ConveyorSlotsBase;
 import net.teamio.taam.conveyors.ConveyorUtil;
-import net.teamio.taam.conveyors.api.ConveyorSlotsBase;
 import net.teamio.taam.util.TaamUtil;
 
 public class TileEntityChute extends BaseTileEntity implements IFluidHandler, IRotatable, ITickable {

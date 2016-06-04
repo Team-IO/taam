@@ -3,7 +3,7 @@ package net.teamio.taam.integration.jei;
 import mezz.jei.api.recipe.IRecipeHandler;
 import mezz.jei.api.recipe.IRecipeWrapper;
 import net.teamio.taam.Taam;
-import net.teamio.taam.recipes.CrusherRecipe;
+import net.teamio.taam.recipes.impl.CrusherRecipe;
 
 public class CrusherRecipeHandler implements IRecipeHandler<CrusherRecipe> {
 

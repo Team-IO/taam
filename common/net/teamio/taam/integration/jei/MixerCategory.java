@@ -28,7 +28,7 @@ import net.teamio.taam.Taam;
 import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.piping.MachineMixer;
 import net.teamio.taam.recipes.IProcessingRecipe;
-import net.teamio.taam.recipes.MixerRecipe;
+import net.teamio.taam.recipes.impl.MixerRecipe;
 
 public class MixerCategory extends BlankRecipeCategory {
 

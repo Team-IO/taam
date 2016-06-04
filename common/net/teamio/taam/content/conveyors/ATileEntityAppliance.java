@@ -4,8 +4,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.teamio.taam.content.BaseTileEntity;
-import net.teamio.taam.conveyors.api.IConveyorAppliance;
-import net.teamio.taam.conveyors.api.IConveyorApplianceHost;
+import net.teamio.taam.conveyors.IConveyorAppliance;
+import net.teamio.taam.conveyors.IConveyorApplianceHost;
 
 public abstract class ATileEntityAppliance extends BaseTileEntity implements IConveyorAppliance {
 

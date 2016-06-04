@@ -12,12 +12,12 @@ import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 import net.teamio.taam.Taam.BLOCK_ORE_META;
 import net.teamio.taam.recipes.ChancedOutput;
-import net.teamio.taam.recipes.CrusherRecipe;
-import net.teamio.taam.recipes.FluidDrierRecipe;
-import net.teamio.taam.recipes.GrinderRecipe;
-import net.teamio.taam.recipes.MixerRecipe;
 import net.teamio.taam.recipes.ProcessingRegistry;
-import net.teamio.taam.recipes.SprayerRecipe;
+import net.teamio.taam.recipes.impl.CrusherRecipe;
+import net.teamio.taam.recipes.impl.FluidDrierRecipe;
+import net.teamio.taam.recipes.impl.GrinderRecipe;
+import net.teamio.taam.recipes.impl.MixerRecipe;
+import net.teamio.taam.recipes.impl.SprayerRecipe;
 
 public class TaamRecipes {
 

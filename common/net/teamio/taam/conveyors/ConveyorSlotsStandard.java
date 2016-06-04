@@ -1,10 +1,8 @@
-package net.teamio.taam.conveyors.api;
+package net.teamio.taam.conveyors;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.INBTSerializable;
-import net.teamio.taam.conveyors.ConveyorUtil;
-import net.teamio.taam.conveyors.ItemWrapper;
 
 /**
  * Standard implementation of a slot set that has actual items in its slots and

@@ -7,7 +7,6 @@ import com.google.common.collect.Lists;
 
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -18,6 +17,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemHandlerHelper;
 import net.teamio.taam.Config;
 import net.teamio.taam.Taam;
 import net.teamio.taam.TaamMain;
@@ -26,15 +27,14 @@ import net.teamio.taam.content.IRedstoneControlled;
 import net.teamio.taam.content.IRenderable;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.content.IWorldInteractable;
+import net.teamio.taam.conveyors.ConveyorSlotsItemHandler;
+import net.teamio.taam.conveyors.ConveyorSlotsMoving;
 import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.conveyors.ItemWrapper;
-import net.teamio.taam.conveyors.api.ConveyorSlotsItemHandler;
-import net.teamio.taam.conveyors.api.ConveyorSlotsMoving;
 import net.teamio.taam.network.TPMachineConfiguration;
+import net.teamio.taam.util.InventoryUtils;
 import net.teamio.taam.util.TaamUtil;
 import net.teamio.taam.util.WorldCoord;
-import net.teamio.taam.util.inv.InventoryRange;
-import net.teamio.taam.util.inv.InventoryUtils;
 
 public class TileEntityConveyorSieve extends BaseTileEntity implements IRotatable, IWorldInteractable, IRedstoneControlled, ITickable, IRenderable {
 
@@ -143,7 +143,7 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements IRotatabl
 		BlockPos down = pos.down();
 
 		// If we are blocked below, act as a conveyor.
-		IInventory outputInventory = InventoryUtils.getInventory(worldObj, down);
+		IItemHandler outputInventory = InventoryUtils.getInventory(worldObj, down, EnumFacing.UP);
 		if(outputInventory == null && !TaamUtil.canDropIntoWorld(worldObj, down)) {
 			return false;
 		}
@@ -170,7 +170,7 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements IRotatabl
 		return true;
 	}
 
-	private boolean tryOutput(ItemWrapper wrapper, IInventory outputInventory) {
+	private boolean tryOutput(ItemWrapper wrapper, IItemHandler outputInventory) {
 		if(outputInventory == null) {
 			// Output to world
 			if(!worldObj.isRemote && wrapper.itemStack != null) {
@@ -184,19 +184,11 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements IRotatabl
 			return true;
 		} else {
 			// Output to inventory
-			InventoryRange range = new InventoryRange(outputInventory, EnumFacing.UP.ordinal());
-
 			if(wrapper.itemStack == null) {
 				return true;
 			}
-			int unable = InventoryUtils.insertItem(range, wrapper.itemStack, false);
-			if(unable > 0) {
-				wrapper.itemStack.stackSize = unable;
-				return false;
-			} else {
-				wrapper.itemStack = null;
-				return true;
-			}
+			wrapper.itemStack = ItemHandlerHelper.insertItemStacked(outputInventory, wrapper.itemStack, false);
+			return wrapper.itemStack == null;
 		}
 	}
 

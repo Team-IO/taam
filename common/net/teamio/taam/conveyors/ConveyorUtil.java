@@ -21,10 +21,6 @@ import net.minecraftforge.items.ItemHandlerHelper;
 import net.teamio.taam.Config;
 import net.teamio.taam.MultipartHandler;
 import net.teamio.taam.Taam;
-import net.teamio.taam.conveyors.api.IConveyorAppliance;
-import net.teamio.taam.conveyors.api.IConveyorApplianceHost;
-import net.teamio.taam.conveyors.api.IConveyorSlots;
-import net.teamio.taam.conveyors.api.RedirectorSide;
 
 public class ConveyorUtil {
 

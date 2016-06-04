@@ -27,8 +27,8 @@ import net.minecraftforge.fluids.FluidStack;
 import net.teamio.taam.Taam;
 import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.piping.MachineFluidDrier;
-import net.teamio.taam.recipes.FluidDrierRecipe;
 import net.teamio.taam.recipes.IProcessingRecipe;
+import net.teamio.taam.recipes.impl.FluidDrierRecipe;
 
 public class FluidDrierCategory extends BlankRecipeCategory {
 

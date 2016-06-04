@@ -222,43 +222,6 @@ public class TaamClientProxy extends TaamCommonProxy {
 
 	/**
 	 * Registers & remembers a model location for inventory rendering for the
-	 * given item, for every meta value from 0 to metaCount-1.
-	 *
-	 * Specific for items using OBJ models.
-	 *
-	 * @param modelMesher
-	 * @param itemId
-	 * @param metaCount
-	 * @param modelFile
-	 *            Expects the model file to be a something.obj
-	 */
-	private void registerItemOBJ(ItemModelMesher modelMesher, String itemId, int metaCount, String modelFile) {
-
-		// Find item to register
-		Item item = GameRegistry.findItem(Taam.MOD_ID, itemId);
-
-		// Create & remember model location
-		final ModelResourceLocation resourceLocation = new ModelResourceLocation(Taam.MOD_ID + ":" + modelFile, "inventory");
-		locationsToReplace.add(resourceLocation);
-
-		ItemMeshDefinition meshDef = new ItemMeshDefinition() {
-
-			@Override
-			public ModelResourceLocation getModelLocation(ItemStack stack) {
-				return resourceLocation;
-			}
-		};
-
-		// Register the variants
-		modelMesher.register(item, meshDef);
-		// Register the model location
-		for (int meta = 0; meta < metaCount; meta++) {
-			ModelLoader.setCustomModelResourceLocation(item, meta, resourceLocation);
-		}
-	}
-
-	/**
-	 * Registers & remembers a model location for inventory rendering for the
 	 * given item, for a single meta value.
 	 *
 	 * Specific for items using OBJ models.

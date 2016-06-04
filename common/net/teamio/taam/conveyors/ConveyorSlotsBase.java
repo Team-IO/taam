@@ -1,8 +1,6 @@
-package net.teamio.taam.conveyors.api;
+package net.teamio.taam.conveyors;
 
 import net.minecraft.util.EnumFacing;
-import net.teamio.taam.conveyors.ItemWrapper;
-import net.teamio.taam.conveyors.SlotMatrix;
 
 /**
  * Base class for non-conveyor-like slot sets.

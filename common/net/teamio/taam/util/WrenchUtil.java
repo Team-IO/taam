@@ -16,9 +16,9 @@ import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.content.common.TileEntityCreativeCache;
 import net.teamio.taam.content.common.TileEntitySensor;
 import net.teamio.taam.content.conveyors.TileEntityConveyor;
-import net.teamio.taam.conveyors.api.IConveyorAppliance;
-import net.teamio.taam.conveyors.api.IConveyorApplianceHost;
-import net.teamio.taam.conveyors.api.IConveyorSlots;
+import net.teamio.taam.conveyors.IConveyorAppliance;
+import net.teamio.taam.conveyors.IConveyorApplianceHost;
+import net.teamio.taam.conveyors.IConveyorSlots;
 import net.teamio.taam.machines.MachineTileEntity;
 
 public class WrenchUtil {

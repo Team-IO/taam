@@ -16,7 +16,7 @@ import net.teamio.taam.content.piping.MachineMixer;
 import net.teamio.taam.content.piping.MachinePipe;
 import net.teamio.taam.content.piping.MachinePump;
 import net.teamio.taam.content.piping.MachineTank;
-import net.teamio.taam.conveyors.api.IConveyorSlots;
+import net.teamio.taam.conveyors.IConveyorSlots;
 import net.teamio.taam.machines.IMachine;
 import net.teamio.taam.machines.IMachineMetaInfo;
 import net.teamio.taam.piping.IPipe;

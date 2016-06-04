@@ -12,7 +12,7 @@ import net.minecraftforge.items.IItemHandler;
 import net.teamio.taam.Config;
 import net.teamio.taam.Taam;
 import net.teamio.taam.content.IWorldInteractable;
-import net.teamio.taam.conveyors.api.ConveyorSlotsBase;
+import net.teamio.taam.conveyors.ConveyorSlotsBase;
 
 /**
  * Conveyor Trash Can.

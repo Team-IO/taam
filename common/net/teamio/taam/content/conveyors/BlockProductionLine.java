@@ -9,7 +9,6 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.inventory.Container;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -32,7 +31,6 @@ import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.content.MaterialMachinesTransparent;
 import net.teamio.taam.content.common.TileEntityChute;
 import net.teamio.taam.rendering.obj.OBJModel;
-import net.teamio.taam.util.inv.InventoryUtils;
 
 public class BlockProductionLine extends BaseBlock {
 
@@ -170,12 +168,8 @@ public class BlockProductionLine extends BaseBlock {
 
 	@Override
 	public int getComparatorInputOverride(IBlockState blockState, World worldIn, BlockPos pos) {
-		IInventory inventory = InventoryUtils.getInventory(worldIn, pos);
-		if(inventory == null) {
-			return 0;
-		} else {
-			return Container.calcRedstoneFromInventory(inventory);
-		}
+		TileEntity te = worldIn.getTileEntity(pos);
+		return Container.calcRedstone(te);
 	}
 
 	@Override

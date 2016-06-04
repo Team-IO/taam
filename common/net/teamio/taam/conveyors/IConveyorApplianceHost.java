@@ -1,4 +1,4 @@
-package net.teamio.taam.conveyors.api;
+package net.teamio.taam.conveyors;
 
 import java.util.List;
 

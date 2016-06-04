@@ -11,9 +11,9 @@ import net.teamio.taam.Log;
 import net.teamio.taam.content.IWorldInteractable;
 import net.teamio.taam.content.conveyors.ATileEntityAppliance;
 import net.teamio.taam.conveyors.ConveyorUtil;
+import net.teamio.taam.conveyors.IConveyorApplianceHost;
+import net.teamio.taam.conveyors.IConveyorSlots;
 import net.teamio.taam.conveyors.ItemWrapper;
-import net.teamio.taam.conveyors.api.IConveyorApplianceHost;
-import net.teamio.taam.conveyors.api.IConveyorSlots;
 
 public class ApplianceAligner extends ATileEntityAppliance implements IWorldInteractable {
 

@@ -58,6 +58,8 @@ public class Config {
 	public static int sensor_delay = 30;
 	public static int sensor_placement_mode = 1;
 
+	public static boolean use_iinventory_compat = true;
+	
 	public static float pl_trashcan_maxfill = 64f;
 
 	public static int pl_conveyor_supportrange = 2;
@@ -126,8 +128,10 @@ public class Config {
 					"Number of " + name + " ore veins per chunk");
 		}
 
-		debug = config.getBoolean("debug_output", Configuration.CATEGORY_GENERAL, false, "Should the Debug mode form Taam be activated");
+		debug = config.getBoolean("debug_output", Configuration.CATEGORY_GENERAL, false, "Should the Debug mode of Taam be activated");
 
+		use_iinventory_compat = config.getBoolean("use_iinventory_compat", Configuration.CATEGORY_GENERAL, true, "Enable or disable compatibility for IInventory. If enabled, IInventory will be wrapped in IItemHandler etc.");
+		
 		sensor_delay = config.getInt("sensor_delay", "multitronix", 30, 10, 100, "Sensor [Motion, Minect] delay (minimum activation time) in game ticks, minimum 10");
 		sensor_placement_mode = config.getInt("sensor_placement_mode", "multitronix", 1, 1, 2, "Sensor [Motion, Minect] placement mode when side by side. 1 = move together, 2 = merge into one");
 

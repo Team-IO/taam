@@ -27,12 +27,12 @@ import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.conveyors.TileEntityConveyorHopper;
 import net.teamio.taam.content.conveyors.TileEntityConveyorItemBag;
 import net.teamio.taam.conveyors.ConveyorUtil;
-import net.teamio.taam.conveyors.api.IConveyorSlots;
+import net.teamio.taam.conveyors.IConveyorSlots;
 import net.teamio.taam.machines.MachineTileEntity;
 import net.teamio.taam.rendering.obj.OBJModel;
+import net.teamio.taam.util.InventoryUtils;
 import net.teamio.taam.util.TaamUtil;
 import net.teamio.taam.util.WrenchUtil;
-import net.teamio.taam.util.inv.InventoryUtils;
 
 public abstract class BaseBlock extends Block {
 

@@ -24,17 +24,17 @@ import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IRenderable;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.content.IWorldInteractable;
+import net.teamio.taam.conveyors.ConveyorSlotsItemHandler;
+import net.teamio.taam.conveyors.ConveyorSlotsMoving;
 import net.teamio.taam.conveyors.ConveyorUtil;
+import net.teamio.taam.conveyors.IConveyorAppliance;
+import net.teamio.taam.conveyors.IConveyorApplianceHost;
+import net.teamio.taam.conveyors.IConveyorSlots;
 import net.teamio.taam.conveyors.ItemWrapper;
-import net.teamio.taam.conveyors.api.ConveyorSlotsItemHandler;
-import net.teamio.taam.conveyors.api.ConveyorSlotsMoving;
-import net.teamio.taam.conveyors.api.IConveyorAppliance;
-import net.teamio.taam.conveyors.api.IConveyorApplianceHost;
-import net.teamio.taam.conveyors.api.IConveyorSlots;
-import net.teamio.taam.conveyors.api.RedirectorSide;
+import net.teamio.taam.conveyors.RedirectorSide;
+import net.teamio.taam.util.InventoryUtils;
 import net.teamio.taam.util.TaamUtil;
 import net.teamio.taam.util.WrenchUtil;
-import net.teamio.taam.util.inv.InventoryUtils;
 
 public class TileEntityConveyor extends BaseTileEntity implements IRotatable, IConveyorApplianceHost, IWorldInteractable, ITickable, IRenderable {
 

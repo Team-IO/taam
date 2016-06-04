@@ -1,9 +1,8 @@
-package net.teamio.taam.conveyors.api;
+package net.teamio.taam.conveyors;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
-import net.teamio.taam.conveyors.SlotMatrix;
 
 /**
  * A {@link IConveyorSlots} implementation that inputs into an inventory. No

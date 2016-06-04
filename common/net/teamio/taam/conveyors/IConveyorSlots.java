@@ -1,8 +1,7 @@
-package net.teamio.taam.conveyors.api;
+package net.teamio.taam.conveyors;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
-import net.teamio.taam.conveyors.ItemWrapper;
 
 public interface IConveyorSlots {
 

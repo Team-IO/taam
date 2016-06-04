@@ -25,16 +25,16 @@ import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IRedstoneControlled;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.content.IWorldInteractable;
+import net.teamio.taam.conveyors.ConveyorSlotsInventory;
 import net.teamio.taam.conveyors.ConveyorUtil;
+import net.teamio.taam.conveyors.IConveyorSlots;
 import net.teamio.taam.conveyors.OutputChuteBacklog;
-import net.teamio.taam.conveyors.api.ConveyorSlotsInventory;
-import net.teamio.taam.conveyors.api.IConveyorSlots;
 import net.teamio.taam.network.TPMachineConfiguration;
 import net.teamio.taam.recipes.IProcessingRecipe;
 import net.teamio.taam.recipes.ProcessingRegistry;
+import net.teamio.taam.util.InventoryUtils;
 import net.teamio.taam.util.TaamUtil;
 import net.teamio.taam.util.WorldCoord;
-import net.teamio.taam.util.inv.InventoryUtils;
 
 public class TileEntityConveyorProcessor extends BaseTileEntity implements IRedstoneControlled, IWorldInteractable, IRotatable, ITickable {
 

@@ -50,8 +50,8 @@ import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.content.piping.MachinePipe;
 import net.teamio.taam.rendering.obj.OBJModel;
 import net.teamio.taam.util.FaceBitmap;
+import net.teamio.taam.util.InventoryUtils;
 import net.teamio.taam.util.WrenchUtil;
-import net.teamio.taam.util.inv.InventoryUtils;
 
 public class MachineMultipart extends Multipart implements INormallyOccludingPart, ITickable, ISlottedPart, ISlottedCapabilityProvider {
 	public IMachine machine;

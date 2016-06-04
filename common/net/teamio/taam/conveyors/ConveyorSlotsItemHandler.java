@@ -1,9 +1,8 @@
-package net.teamio.taam.conveyors.api;
+package net.teamio.taam.conveyors;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import net.teamio.taam.conveyors.ConveyorUtil;
 
 public class ConveyorSlotsItemHandler implements IItemHandlerModifiable {
 

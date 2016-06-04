@@ -7,7 +7,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import net.teamio.taam.Taam;
-import net.teamio.taam.conveyors.api.ConveyorSlotsInventory;
+import net.teamio.taam.conveyors.ConveyorSlotsInventory;
 
 /**
  * Conveyor Item Bag.
