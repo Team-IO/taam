@@ -11,6 +11,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -229,5 +230,38 @@ public final class TaamUtil {
 						|| OreDictionary.itemMatches(inputDefinition, actualInput, false);
 			}
 		}
+	}
+
+	/**
+	 * Compares if the two given itemstacks have a common ore dictionary name.
+	 * 
+	 * @param stack
+	 * @param stack2
+	 * @return
+	 */
+	public static boolean isOreDictMatch(ItemStack stack1, ItemStack stack2) {
+		int[] ids1 = OreDictionary.getOreIDs(stack1);
+		int[] ids2 = OreDictionary.getOreIDs(stack2);
+
+		for (int oreID : ids1) {
+			if (ArrayUtils.contains(ids2, oreID)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Compares if the two given itemstacks are from the same mod. (a.k.a.
+	 * sharing the same domain)
+	 * 
+	 * @param stack1
+	 * @param stack2
+	 * @return
+	 */
+	public static boolean isModMatch(ItemStack stack1, ItemStack stack2) {
+		ResourceLocation regName1 = stack1.getItem().getRegistryName();
+		ResourceLocation regName2 = stack2.getItem().getRegistryName();
+		return regName1.getResourceDomain().equals(regName2.getResourceDomain());
 	}
 }

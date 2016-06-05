@@ -183,3 +183,5 @@ taam.integration.jei.categories.fluiddrier=Flüssigkeit Trocknen
 taam.integration.jei.categories.mixer=Vermischen
 
 taam.integration.jei.lore.internalcapacity=Fassungsvermögen: %d mB
+taam.integration.jei.lore.internalcapacity_in=Fassungsvermögen (Rein): %d mB
+taam.integration.jei.lore.internalcapacity_out=Fassungsvermögen (Raus): %d mB

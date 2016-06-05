@@ -60,7 +60,7 @@ public class ItemDebugTool extends Item {
 
 	@Override
 	public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-		if(!Config.debug)
+		if(!Config.debug_output)
 		{
 			worldIn.playSound(playerIn, pos, TaamMain.soundSipAh, SoundCategory.BLOCKS, 1f, 1f);
 			// return EnumActionResult.SUCCESS;

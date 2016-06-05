@@ -21,6 +21,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+import net.teamio.taam.Config;
 import net.teamio.taam.Log;
 import net.teamio.taam.Taam;
 import net.teamio.taam.content.IWorldInteractable;
@@ -54,9 +55,10 @@ public class MachineTank implements IMachine, IFluidHandler, IWorldInteractable 
 	public MachineTank() {
 		pipeEndUP = new PipeEndFluidHandler(this, EnumFacing.UP, true);
 		pipeEndDOWN = new PipeEndFluidHandler(this, EnumFacing.DOWN, true);
-		pipeEndUP.setSuction(10);
-		pipeEndDOWN.setSuction(9);
-		tank = new FluidTank(8000);
+		pipeEndUP.setSuction(Config.pl_tank_suction);
+		// Suction on lower end of the tank is always 1 lower than on the top, so stacked tanks always transfer down.
+		pipeEndDOWN.setSuction(Config.pl_tank_suction - 1);
+		tank = new FluidTank(Config.pl_tank_capacity);
 	}
 
 	private void updateOcclusion() {

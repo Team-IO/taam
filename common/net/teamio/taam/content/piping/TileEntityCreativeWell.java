@@ -13,6 +13,7 @@ import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+import net.teamio.taam.Config;
 import net.teamio.taam.Log;
 import net.teamio.taam.Taam;
 import net.teamio.taam.content.BaseTileEntity;
@@ -33,7 +34,7 @@ public class TileEntityCreativeWell extends BaseTileEntity implements IFluidHand
 		for (EnumFacing side : EnumFacing.VALUES) {
 			int index = side.ordinal();
 			pipeEnds[index] = new PipeEnd(side, capacity, true);
-			pipeEnds[index].setPressure(20);
+			pipeEnds[index].setPressure(Config.pl_creativewell_pressure);
 		}
 	}
 	

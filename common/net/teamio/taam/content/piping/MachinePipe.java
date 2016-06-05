@@ -17,6 +17,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+import net.teamio.taam.Config;
 import net.teamio.taam.Taam;
 import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IRenderable;
@@ -96,7 +97,7 @@ public class MachinePipe implements IMachine, IPipe, IRenderable {
 	private PipeEndFluidHandler[] adjacentFluidHandlers;
 
 	public MachinePipe() {
-		info = new PipeInfo(500);
+		info = new PipeInfo(Config.pl_pipe_capacity);
 	}
 
 	@Override
@@ -153,9 +154,11 @@ public class MachinePipe implements IMachine, IPipe, IRenderable {
 				adjacentPipes = FaceBitmap.setSideBit(adjacentPipes, side);
 				continue;
 			}
-			TileEntity te = world.getTileEntity(pos.offset(side));
-			if (getFluidHandler(te, side) != null) {
-				adjacentPipes = FaceBitmap.setSideBit(adjacentPipes, side);
+			if(Config.pl_pipe_wrap_ifluidhandler) {
+				TileEntity te = world.getTileEntity(pos.offset(side));
+				if (getFluidHandler(te, side) != null) {
+					adjacentPipes = FaceBitmap.setSideBit(adjacentPipes, side);
+				}
 			}
 		}
 		return old != adjacentPipes;
@@ -167,36 +170,38 @@ public class MachinePipe implements IMachine, IPipe, IRenderable {
 		// Check surrounding blocks for IFluidHandler implementations that don't use the pipe system
 		// and create wrappers accordingly
 		boolean wrappersRequired = false;
-		for (EnumFacing side : EnumFacing.VALUES) {
-			// Side occluded? Skip.
-			if(FaceBitmap.isSideBitSet(occludedSides, side)) {
-				continue;
-			}
-			// Check for pipes
-			int sideIdx = side.ordinal();
-			IPipe pipeOnSide = PipeUtil.getConnectedPipe(world, pos, side);
-			// if there is no pipe, check for an IFluidHandler to wrap
-			if (pipeOnSide == null) {
-				TileEntity te = world.getTileEntity(pos.offset(side));
-				IFluidHandler fh = getFluidHandler(te, side);
-				if (fh != null) {
-					wrappersRequired = true;
-					// Fluid handler here, we need a wrapper.
-					if (adjacentFluidHandlers == null) {
-						adjacentFluidHandlers = new PipeEndFluidHandler[6];
-						adjacentFluidHandlers[sideIdx] = new PipeEndFluidHandler(fh, side.getOpposite(), false);
-					} else {
-						// Not yet known or a different TileEntity, we need a new wrapper.
-						if (adjacentFluidHandlers[sideIdx] == null
-								|| adjacentFluidHandlers[sideIdx].getOwner() != te) {
+		if(Config.pl_pipe_wrap_ifluidhandler) {
+			for (EnumFacing side : EnumFacing.VALUES) {
+				// Side occluded? Skip.
+				if(FaceBitmap.isSideBitSet(occludedSides, side)) {
+					continue;
+				}
+				// Check for pipes
+				int sideIdx = side.ordinal();
+				IPipe pipeOnSide = PipeUtil.getConnectedPipe(world, pos, side);
+				// if there is no pipe, check for an IFluidHandler to wrap
+				if (pipeOnSide == null) {
+					TileEntity te = world.getTileEntity(pos.offset(side));
+					IFluidHandler fh = getFluidHandler(te, side);
+					if (fh != null) {
+						wrappersRequired = true;
+						// Fluid handler here, we need a wrapper.
+						if (adjacentFluidHandlers == null) {
+							adjacentFluidHandlers = new PipeEndFluidHandler[6];
 							adjacentFluidHandlers[sideIdx] = new PipeEndFluidHandler(fh, side.getOpposite(), false);
+						} else {
+							// Not yet known or a different TileEntity, we need a new wrapper.
+							if (adjacentFluidHandlers[sideIdx] == null
+									|| adjacentFluidHandlers[sideIdx].getOwner() != te) {
+								adjacentFluidHandlers[sideIdx] = new PipeEndFluidHandler(fh, side.getOpposite(), false);
+							}
 						}
 					}
-				}
-			} else {
-				// We have a regular pipe there, no need for a wrapper
-				if (adjacentFluidHandlers != null) {
-					adjacentFluidHandlers[sideIdx] = null;
+				} else {
+					// We have a regular pipe there, no need for a wrapper
+					if (adjacentFluidHandlers != null) {
+						adjacentFluidHandlers[sideIdx] = null;
+					}
 				}
 			}
 		}
@@ -211,7 +216,7 @@ public class MachinePipe implements IMachine, IPipe, IRenderable {
 		// Process "this"
 		PipeUtil.processPipes(this, world, pos);
 		// Process the fluid handlers for adjecent non-pipe-machines (implementing IFluidHandler)
-		if (adjacentFluidHandlers != null) {
+		if (Config.pl_pipe_wrap_ifluidhandler && adjacentFluidHandlers != null) {
 			for (EnumFacing side : EnumFacing.VALUES) {
 				PipeEndFluidHandler handler = adjacentFluidHandlers[side.ordinal()];
 				if (handler != null) {
@@ -355,15 +360,17 @@ public class MachinePipe implements IMachine, IPipe, IRenderable {
 	@Override
 	public IPipe[] getInternalPipes(IBlockAccess world, BlockPos pos) {
 		List<IPipe> pipes = new ArrayList<IPipe>(6);
-		for (EnumFacing side : EnumFacing.values()) {
-			if(isSideAvailable(side)) {
-				// If there is no "regular" pipe on that side
-				IPipe pipeOnSide = PipeUtil.getConnectedPipe(world, pos, side);
-				if (pipeOnSide == null) {
-					// Check for fluid handler wrappers
-					int sideIdx = side.ordinal();
-					if(adjacentFluidHandlers != null && adjacentFluidHandlers[sideIdx] != null) {
-						pipes.add(adjacentFluidHandlers[sideIdx]);
+		if(Config.pl_pipe_wrap_ifluidhandler && adjacentFluidHandlers != null) {
+			for (EnumFacing side : EnumFacing.values()) {
+				if(isSideAvailable(side)) {
+					// If there is no "regular" pipe on that side
+					IPipe pipeOnSide = PipeUtil.getConnectedPipe(world, pos, side);
+					if (pipeOnSide == null) {
+						// Check for fluid handler wrappers
+						int sideIdx = side.ordinal();
+						if(adjacentFluidHandlers[sideIdx] != null) {
+							pipes.add(adjacentFluidHandlers[sideIdx]);
+						}
 					}
 				}
 			}

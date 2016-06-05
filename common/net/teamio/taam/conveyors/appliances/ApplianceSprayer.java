@@ -14,6 +14,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+import net.teamio.taam.Config;
 import net.teamio.taam.Taam;
 import net.teamio.taam.content.IWorldInteractable;
 import net.teamio.taam.content.conveyors.ATileEntityAppliance;
@@ -27,8 +28,6 @@ import net.teamio.taam.recipes.ProcessingRegistry;
 import net.teamio.taam.rendering.TankRenderInfo;
 
 public class ApplianceSprayer extends ATileEntityAppliance implements IFluidHandler, ITickable, IWorldInteractable {
-
-	public static final int capacity = 2000;
 
 	public static final float b_tankBorder = 1.5f / 16f;
 	public static final float b_tankBorderSprayer = b_tankBorder + 4f / 16f;
@@ -47,7 +46,7 @@ public class ApplianceSprayer extends ATileEntityAppliance implements IFluidHand
 	private IProcessingRecipeFluidBased[] matchingRecipes;
 
 	public ApplianceSprayer() {
-		tank = new FluidTank(capacity);
+		tank = new FluidTank(Config.pl_sprayer_capacity);
 		pipeEnd = new PipeEndFluidHandler(this, direction.getOpposite(), false);
 	}
 	

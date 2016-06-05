@@ -15,6 +15,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidTankInfo;
+import net.teamio.taam.Config;
 import net.teamio.taam.Log;
 import net.teamio.taam.Taam;
 import net.teamio.taam.content.IRotatable;
@@ -32,9 +33,6 @@ public class MachinePump implements IMachine, IRotatable {
 
 	private EnumFacing direction = EnumFacing.NORTH;
 	private final PipeInfo info;
-
-	private static final int capacity = 125;
-	private static final int pressure = 50;
 
 	private static final float fromBorder = 2f / 16;
 	public static final AxisAlignedBB boundsPump = new AxisAlignedBB(fromBorder, 0, fromBorder, 1 - fromBorder,
@@ -66,11 +64,11 @@ public class MachinePump implements IMachine, IRotatable {
 	private byte occludedSides;
 
 	public MachinePump() {
-		info = new PipeInfo(capacity);
+		info = new PipeInfo(Config.pl_pump_capacity);
 		pipeEndOut = new PipeEndSharedDistinct(direction, info, true);
 		pipeEndIn = new PipeEndSharedDistinct(direction.getOpposite(), info, true);
-		pipeEndOut.setPressure(pressure);
-		pipeEndIn.setSuction(pressure);
+		pipeEndOut.setPressure(Config.pl_pump_pressure);
+		pipeEndIn.setSuction(Config.pl_pump_suction);
 	}
 
 	private void updateOcclusion() {

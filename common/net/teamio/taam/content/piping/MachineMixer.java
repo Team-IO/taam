@@ -50,8 +50,6 @@ public class MachineMixer implements IMachine, IRotatable {
 	private int timeout;
 	private byte occludedSides;
 
-	public static final int capacity = 2000;
-
 	public static final AxisAlignedBB bounds = new AxisAlignedBB(0, MachinePipe.baseplateSize, 0, 1, 0.5f, 1);
 
 	public static final AxisAlignedBB boundsPipeX = new AxisAlignedBB(
@@ -97,8 +95,8 @@ public class MachineMixer implements IMachine, IRotatable {
 	};
 
 	public MachineMixer() {
-		pipeEndOut = new PipeEnd(direction, capacity, false);
-		pipeEndIn = new PipeEndRestricted(direction.getOpposite(), capacity, false);
+		pipeEndOut = new PipeEnd(direction, Config.pl_mixer_capacity_output, false);
+		pipeEndIn = new PipeEndRestricted(direction.getOpposite(), Config.pl_mixer_capacity_input, false);
 
 		updateOcclusion();
 		resetTimeout();
@@ -112,7 +110,7 @@ public class MachineMixer implements IMachine, IRotatable {
 	}
 
 	private void resetTimeout() {
-		timeout = Config.pl_processor_fluid_drier_timeout;
+		timeout = Config.pl_mixer_timeout;
 	}
 
 	@Override

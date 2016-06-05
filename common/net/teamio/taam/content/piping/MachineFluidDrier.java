@@ -37,7 +37,6 @@ public class MachineFluidDrier implements IMachine {
 	private IProcessingRecipeFluidBased[] matchingRecipes;
 
 	private byte redstoneMode = IRedstoneControlled.MODE_ACTIVE_ON_LOW;
-	public static final int capacity = 1000;
 	private int timeout;
 
 	public boolean isShutdown;
@@ -48,7 +47,7 @@ public class MachineFluidDrier implements IMachine {
 	public static final AxisAlignedBB bbCoolusion = new AxisAlignedBB(fromBorderOcclusion, fromBorderOcclusion, fromBorderOcclusion, 1-fromBorderOcclusion, 1-fromBorderOcclusion, 1-fromBorderOcclusion);
 
 	public MachineFluidDrier() {
-		pipeEndIn = new PipeEndRestricted(EnumFacing.UP, capacity, false);
+		pipeEndIn = new PipeEndRestricted(EnumFacing.UP, Config.pl_fluid_drier_capacity, false);
 		resetTimeout();
 	}
 
@@ -57,7 +56,7 @@ public class MachineFluidDrier implements IMachine {
 	}
 
 	private void resetTimeout() {
-		timeout = Config.pl_processor_fluid_drier_timeout;
+		timeout = Config.pl_fluid_drier_timeout;
 	}
 
 	@Override

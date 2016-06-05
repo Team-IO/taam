@@ -212,22 +212,24 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 	@Override
 	public void renderTileEntityAt(TileEntity tileEntity, double x, double y, double z, float partialTicks, int destroyStage) {
 
-		TankRenderInfo[] tankRI = tileEntity.getCapability(Taam.CAPABILITY_RENDER_TANK, null);
+		if(Config.render_tank_content) {
+			TankRenderInfo[] tankRI = tileEntity.getCapability(Taam.CAPABILITY_RENDER_TANK, null);
 
-		if(tankRI != null) {
-			GL11.glPushMatrix();
-			GL11.glTranslated(x, y, z);
+			if(tankRI != null) {
+				GL11.glPushMatrix();
+				GL11.glTranslated(x, y, z);
 
-			float rotationDegrees = getRotationDegrees(tileEntity);
+				float rotationDegrees = getRotationDegrees(tileEntity);
 
-			GL11.glTranslated(.5f, .5f, .5f);
-			GL11.glRotatef(rotationDegrees, 0, 1, 0);
-			GL11.glTranslated(-.5f, -.5f, -.5f);
+				GL11.glTranslated(.5f, .5f, .5f);
+				GL11.glRotatef(rotationDegrees, 0, 1, 0);
+				GL11.glTranslated(-.5f, -.5f, -.5f);
 
-			for(TankRenderInfo renderInfo : tankRI) {
-				renderTankContent(renderInfo.tankInfo.fluid, renderInfo.tankInfo.capacity, renderInfo.bounds);
+				for(TankRenderInfo renderInfo : tankRI) {
+					renderTankContent(renderInfo.tankInfo.fluid, renderInfo.tankInfo.capacity, renderInfo.bounds);
+				}
+				GL11.glPopMatrix();
 			}
-			GL11.glPopMatrix();
 		}
 
 		IConveyorSlots conveyorSlots = tileEntity.getCapability(Taam.CAPABILITY_CONVEYOR, EnumFacing.UP);
@@ -238,10 +240,12 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 				oscillate =!((TileEntityConveyorSieve) tileEntity).isShutdown;
 			}
 			
-			renderConveyorItems(conveyorSlots, x, y, z, partialTicks, oscillate);
+			if(Config.render_items) {
+				renderConveyorItems(conveyorSlots, x, y, z, partialTicks, oscillate);
+			}
 		}
 		
-		if(tileEntity instanceof TileEntityConveyorProcessor) {
+		if(Config.render_items && tileEntity instanceof TileEntityConveyorProcessor) {
 			TileEntityConveyorProcessor processor = (TileEntityConveyorProcessor) tileEntity;
 			ItemStack processingStack = processor.getRenderStack();
 			

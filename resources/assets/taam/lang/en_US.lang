@@ -183,3 +183,8 @@ taam.integration.jei.categories.fluiddrier=Dry Fluid
 taam.integration.jei.categories.mixer=Mixing
 
 taam.integration.jei.lore.internalcapacity=Internal Capacity: %d mB
+taam.integration.jei.lore.internalcapacity_in=Input Capacity: %d mB
+taam.integration.jei.lore.internalcapacity_out=Output Capacity: %d mB
+
+# Config options, incomplete
+taam.config.integration.multipart.load_multiparts=Load Multipart Items

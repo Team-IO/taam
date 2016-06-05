@@ -74,6 +74,8 @@ public final class Taam {
 	public static final String INTEGRATION_JEI_CATNAME_MIXER = "taam.integration.jei.categories.mixer";
 
 	public static final String INTEGRATION_JEI_LORE_INTERNAL_CAPACITY = "taam.integration.jei.lore.internalcapacity";
+	public static final String INTEGRATION_JEI_LORE_INTERNAL_CAPACITY_IN = "taam.integration.jei.lore.internalcapacity_in";
+	public static final String INTEGRATION_JEI_LORE_INTERNAL_CAPACITY_OUT = "taam.integration.jei.lore.internalcapacity_out";
 
 	/*
 	 * Sounds
