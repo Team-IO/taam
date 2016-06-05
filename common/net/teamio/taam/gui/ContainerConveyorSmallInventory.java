@@ -15,7 +15,7 @@ public class ContainerConveyorSmallInventory extends Container {
 	protected IItemHandler tileEntity;
 
 	public ContainerConveyorSmallInventory(InventoryPlayer inventoryPlayer, ICapabilityProvider te, EnumFacing side) {
-		tileEntity = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side);
+		this(inventoryPlayer, te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side));
 	}
 	
 	public ContainerConveyorSmallInventory(InventoryPlayer inventoryPlayer, IItemHandler te) {
