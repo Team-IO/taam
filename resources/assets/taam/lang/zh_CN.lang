@@ -1,0 +1,191 @@
+#Item localization
+item.taam.debugger.name=咖啡
+item.taam.wrench.name=可调扳手
+# Ingots
+item.taam.ingot.tin.name=锡锭
+item.taam.ingot.copper.name=铜锭
+item.taam.ingot.aluminum.name=铝锭
+item.taam.ingot.bauxite.name=（不可能的）铝土锭
+item.taam.ingot.kaolinite.name=（不可能的）高岭石锭
+item.taam.ingot.gold.name=作弊金锭
+item.taam.ingot.iron.name=作弊铁锭
+item.taam.ingot.coal.name=作弊煤锭
+# Dusts
+item.taam.dust.tin.name=锡粉
+item.taam.dust.copper.name=铜粉
+item.taam.dust.aluminum.name=铝粉
+item.taam.dust.bauxite.name=铝土粉
+item.taam.dust.kaolinite.name=高岭石粉
+item.taam.dust.gold.name=金粉
+item.taam.dust.iron.name=铁粉
+item.taam.dust.coal.name=煤粉
+item.taam.dust.stone.name=石粉
+# Parts (Crafting Items)
+item.taam.part.photocell.name=光敏电阻
+item.taam.part.motor.name=马达
+item.taam.part.support_frame_wood.name=木质框架
+item.taam.part.support_frame.name=框架
+item.taam.part.circuit_basic.name=基础电路
+item.taam.part.circuit_advanced.name=高级电路
+item.taam.part.logistics_chip.name=物流芯片
+item.taam.part.rubber_band.name=橡皮筋
+item.taam.part.tank.name=水箱
+item.taam.part.pump.name=泵
+item.taam.part.nozzle.name=喷嘴
+item.taam.part.magnetic_coil.name=电磁线圈
+item.taam.part.iron_frame.name=铁架
+item.taam.part.metal_bearing.name=金属轴承
+item.taam.part.copper_wire.name=铜线
+item.taam.part.sieve.name=滤网
+item.taam.part.redirector.name=转向器
+# Materials
+item.taam.material.plastic_sheet.name=塑料片
+item.taam.material.plastic_bar.name=塑料棒
+item.taam.material.rubber_bar.name=橡胶棒
+item.taam.material.rubber_sheet.name=橡胶片
+item.taam.material.graphite.name=石墨棒
+item.taam.material.silicon_wafer.name=硅晶圆
+item.taam.material.iron_nugget.name=铁粒
+item.taam.material.wooden_board.name=木片
+item.taam.material.aluminum_plate.name=铝板
+item.taam.material.resin.name=树脂
+item.taam.material.cement.name=水泥
+item.taam.material.cementRough.name=粗水泥
+
+item.taam.material.pigment_black.name=黑色色素颗粒
+item.taam.material.pigment_red.name=红色色素颗粒
+item.taam.material.pigment_green.name=绿色色素颗粒
+item.taam.material.pigment_brown.name=棕色色素颗粒
+item.taam.material.pigment_blue.name=蓝色色素颗粒
+item.taam.material.pigment_purple.name=紫色色素颗粒
+item.taam.material.pigment_cyan.name=靛蓝色色素颗粒
+item.taam.material.pigment_lightGray.name=浅灰色色素颗粒
+item.taam.material.pigment_gray.name=灰色色素颗粒
+item.taam.material.pigment_pink.name=粉色色素颗粒
+item.taam.material.pigment_lime.name=浅绿色色素颗粒
+item.taam.material.pigment_yellow.name=黄色色素颗粒
+item.taam.material.pigment_lightBlue.name=浅蓝色素颗粒
+item.taam.material.pigment_magenta.name=洋红色色素颗粒
+item.taam.material.pigment_orange.name=橙色色素颗粒
+item.taam.material.pigment_white.name=白色色素颗粒
+
+# Tools
+item.taam.tool.saw.name=锯子
+
+#Creative Tab localization
+itemGroup.taam=Taam
+
+# Block localization
+tile.taam.sensor.name=移动传感器
+tile.taam.slidingdoor.name=滑门
+tile.taam.support_beam.name=支持架
+# Concrete
+tile.taam.concrete.name=混凝土
+tile.taam.concrete.rough.name=粗混凝土
+tile.taam.concrete.rough_chiseled.name=錾制粗混凝土
+tile.taam.concrete.fine.name=优质混凝土
+tile.taam.concrete.fine_chiseled.name=錾制优质混凝土
+tile.taam.concrete.coated.name=树脂涂层混凝土
+tile.taam.concrete.coated_chiseled.name=錾制树脂涂层混凝土
+tile.taam.concrete.black.name=黑色树脂涂层混凝土
+tile.taam.concrete.black_chiseled.name=錾制黑色树脂涂层混凝土
+tile.taam.concrete.warn1.name=混凝土 (黄色警告涂装)
+tile.taam.concrete.warn2.name=混凝土 (红色警告涂装)
+#Ores
+tile.taam.ore.copper.name=铜矿
+tile.taam.ore.tin.name=锡矿
+tile.taam.ore.aluminum.name=天然铝矿
+tile.taam.ore.bauxite.name=铝土矿
+tile.taam.ore.kaolinite.name=高岭石
+# Machine Blocks
+
+tile.taam.machines.chute.name=滑槽
+tile.taam.machines.creativecache.name=创造物品源
+tile.taam.machines.creativewell.name=创造液体源
+
+tile.taam.productionline.conveyor1.name=木质传送带
+tile.taam.productionline.conveyor2.name=传送带
+tile.taam.productionline.conveyor3.name=高效传送带
+tile.taam.productionline.hopper.name=漏斗
+tile.taam.productionline.hopper_hs.name=高效漏斗
+tile.taam.productionline.sieve.name=过滤器
+tile.taam.productionline.shredder.name=切碎机
+tile.taam.productionline.grinder.name=研磨机
+tile.taam.productionline.crusher.name=粉碎机
+tile.taam.productionline.chute.name=滑槽
+
+tile.taam.productionline_attachable.itembag.name=物品包
+tile.taam.productionline_attachable.trashcan.name=垃圾箱
+tile.taam.productionline_attachable.lamp.name=照明灯
+
+tile.taam.productionline_appliance.sprayer.name=喷雾器
+
+#Machines
+tile.taam.machine.pipe.name=管道
+tile.taam.machine.tank.name=水箱
+tile.taam.machine.pump.name=泵
+tile.taam.machine.mixer.name=搅拌机
+tile.taam.machine.fluid_drier.name=烘干机
+
+item.taam.machine.pipe.name=管道
+item.taam.machine.tank.name=水箱
+item.taam.machine.pump.name=泵
+item.taam.machine.mixer.name=搅拌机
+item.taam.machine.fluid_drier.name=烘干机
+
+# Fluids
+fluid.dye_black=液体黑色染料
+fluid.dye_blue=液体蓝色染料
+fluid.dye_brown=液体棕色染料
+fluid.dye_cyan=液体靛蓝色染料
+fluid.dye_gray=液体灰色染料
+fluid.dye_green=液体绿色染料
+fluid.dye_lightBlue=液体浅蓝色染料
+fluid.dye_lightGray=液体浅灰色染料
+fluid.dye_lime=液体浅绿色染料
+fluid.dye_magenta=液体洋红染料
+fluid.dye_orange=液体橙色染料
+fluid.dye_pink=液体粉色染料
+fluid.dye_purple=液体紫色染料
+fluid.dye_red=液体红色染料
+fluid.dye_white=液体白色染料
+fluid.dye_yellow=液体黄色染料
+
+fluid.concreteRough=粗混凝土
+fluid.concreteFine=优质混凝土
+fluid.coating=树脂涂料
+
+# Lore localization
+lore.taam.shift=按住Shift
+lore.taam.conveyor_appliance=传送带附件
+lore.taam.conveyor_appliance.usage=可以被放在传送带或\n等效设备上
+lore.taam.productionline=生产线部件
+lore.taam.productionline.usage=可以喝其他生产线部件组合构成一个集成处理与传输系统。
+lore.taam.productionline.isappliancehost=可以挂载附件
+lore.taam.debugtool=调试工具
+lore.taam.debugtool.usage=创造专属\n可以向聊天或控制台打印调试信息。
+lore.taam.wrench=工程工具
+lore.taam.wrench.usage=用这个扳手来调整生产线和机器的放置
+lore.taam.redirector.usage=将这个连接到传送带可以将运输的货物转向到左边或右边\n可以通过扳手移除。
+
+# Death causes
+death.attack.taam.processed=%1$s被（痛苦地）处理掉了
+death.attack.taam.shredded=%1$s被缓慢地磨成碎片
+death.attack.taam.ground=%1$s被磨成肉粒
+death.attack.taam.crushed=%1$s被挫骨扬灰
+death.attack.taam.reconfigured=%1$s被%2$s重置了
+death.attack.taam.reconfigured.item=%1$s被%2$s用%3$s重置了
+
+# JEI Integration
+taam.integration.jei.categories.crusher=粉碎
+taam.integration.jei.categories.grinder=磨碎
+taam.integration.jei.categories.fluiddrier=蒸干
+taam.integration.jei.categories.mixer=搅拌
+
+taam.integration.jei.lore.internalcapacity=储存容量: %d mB
+taam.integration.jei.lore.internalcapacity_in=输入阀值: %d mB
+taam.integration.jei.lore.internalcapacity_out=输出阀值: %d mB
+
+# Config options, incomplete
+taam.config.integration.multipart.load_multiparts=启动Multipart兼容
+
