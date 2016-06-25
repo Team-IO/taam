@@ -38,6 +38,8 @@ public class ContainerAdvancedMachine extends Container {
 	public final List<App> registeredApps = Collections.unmodifiableList(apps);
 	
 	private int nextAppId = 0;
+	public static final int panelHeight = 160;
+	public static final int panelWidth = 340;
 	
 	public ContainerAdvancedMachine(EntityPlayer player, IAdvancedMachineGUI machine) {
 		if(player == null) {
@@ -71,8 +73,8 @@ public class ContainerAdvancedMachine extends Container {
 	}
 
 	protected void bindPlayerInventory(InventoryPlayer inventoryPlayer) {
-		final int xOff = 91;
-		final int yOff = 185;
+		final int xOff = panelWidth / 2 - 176 / 2 + 8;//91;
+		final int yOff = panelHeight + 5;
 		final int yOffHotbar = yOff + 58;
 
 		for (int i = 0; i < 3; i++) {

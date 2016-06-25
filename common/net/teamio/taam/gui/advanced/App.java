@@ -35,8 +35,13 @@ public abstract class App implements IWorldNameable {
 
 	public abstract void setupSlots();
 
-	public abstract void onShow();
-	public abstract void onHide();
+
+	@SideOnly(Side.CLIENT)
+	public abstract void initGui(GuiAdvancedMachine gui);
+	@SideOnly(Side.CLIENT)
+	public abstract void onShow(GuiAdvancedMachine gui);
+	@SideOnly(Side.CLIENT)
+	public abstract void onHide(GuiAdvancedMachine gui);
 	
 	@SideOnly(Side.CLIENT)
 	public abstract void drawBackground(GuiAdvancedMachine gui, float partialTicks, int mouseX, int mouseY);

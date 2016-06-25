@@ -21,7 +21,23 @@ public class RedstoneMode extends App {
 	}
 
 	@Override
+	public String getName() {
+		return "taam.app.common.redstone";
+	}
+
+	@Override
 	public void setupSlots() {
+	}
+
+	@Override
+	public void onPacket(NBTTagCompound tag) {
+
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public ResourceLocation getIcon() {
+		return icon;
 	}
 
 	@Override
@@ -36,27 +52,19 @@ public class RedstoneMode extends App {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public ResourceLocation getIcon() {
-		return icon;
-	}
-
-	@Override
-	public String getName() {
-		return "taam.app.common.redstone";
-	}
-
-	@Override
-	public void onPacket(NBTTagCompound tag) {
+	public void onShow(GuiAdvancedMachine gui) {
 
 	}
 
 	@Override
-	public void onShow() {
-		
+	@SideOnly(Side.CLIENT)
+	public void onHide(GuiAdvancedMachine gui) {
+
 	}
 
 	@Override
-	public void onHide() {
-		
+	@SideOnly(Side.CLIENT)
+	public void initGui(GuiAdvancedMachine gui) {
+
 	}
 }

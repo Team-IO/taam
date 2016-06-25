@@ -18,9 +18,6 @@ public class GuiAdvancedMachine extends GuiContainer {
 
 	protected final ContainerAdvancedMachine machineContainer;
 
-	public static final int panelWidth = 342;
-	public static final int panelHeight = 267;
-
 	private final List<AppButton> appButtons = new ArrayList<AppButton>();
 	private AppButton homeButton;
 
@@ -29,36 +26,72 @@ public class GuiAdvancedMachine extends GuiContainer {
 		machineContainer = inventorySlotsIn;
 	}
 
+	/**
+	 * Allow adding buttons externally, namely from
+	 * {@link App#initGui(GuiAdvancedMachine)}.
+	 * 
+	 * @param customButton
+	 */
+	public void addButton(CustomButton customButton) {
+		this.buttonList.add(customButton);
+	}
+
+	@Override
 	public void initGui() {
 
-		this.xSize = panelWidth;
-		this.ySize = panelHeight;
+		this.xSize = ContainerAdvancedMachine.panelWidth;
+		this.ySize = ContainerAdvancedMachine.panelHeight + 87;
 
 		super.initGui();
 
 		this.guiLeft /= 2;
 		this.guiTop /= 2;
 
-		System.out.println("Init: guiLeft " + guiLeft);
+		
+		int buttonSpace = 40;
+		int buttonSize = 40;
+		int buttonsPerRow = 4;
 
-		int leftOff = xSize / 4;
 
+		int leftOff = xSize / 2 - (buttonsPerRow / 2) * buttonSpace;
+		
+		/*
+		 * Init home screen buttons
+		 */
 		for (int i = 0; i < machineContainer.registeredApps.size(); i++) {
 
-			int appX = leftOff + i * 40;
-			int appY = 40;
+			int appX = leftOff + (i % buttonsPerRow) * buttonSpace;
+			int appY = 40 + (i / buttonsPerRow) * buttonSpace;
 
 			App app = machineContainer.registeredApps.get(i);
-			AppButton button = new AppButton(app, guiLeft + appX, guiTop + appY, 40, 40, app.getName());
+			AppButton button = new AppButton(app, guiLeft + appX, guiTop + appY, buttonSize, buttonSize, app.getName());
 			buttonList.add(button);
 			appButtons.add(button);
+
 		}
-		homeButton = new AppButton(null, guiLeft + xSize / 2 - 10, guiTop + 160, 20, 20, "Home");
+		homeButton = new AppButton(null, guiLeft + xSize / 2 - 10, guiTop + ContainerAdvancedMachine.panelHeight - 20, 20, 20, "Home");
 		buttonList.add(homeButton);
 
+		/*
+		 * App-specific gui stuff
+		 */
+
+		for (App app : machineContainer.registeredApps) {
+			app.initGui(this);
+		}
+
+		/*
+		 * Initialize with no app loaded (starts with the home screen)
+		 */
 		switchApp(null);
 	};
 
+	/**
+	 * Switches to the given app. Updates the GUI & relays the switch to the
+	 * container below.
+	 * 
+	 * @param app
+	 */
 	public void switchApp(App app) {
 		if (app == null) {
 			homeButton.visible = false;
@@ -71,7 +104,13 @@ public class GuiAdvancedMachine extends GuiContainer {
 				appButton.visible = false;
 			}
 		}
+		if (machineContainer.activeApp != null) {
+			machineContainer.activeApp.onHide(this);
+		}
 		machineContainer.switchApp(app);
+		if (machineContainer.activeApp != null) {
+			machineContainer.activeApp.onShow(this);
+		}
 	}
 
 	@Override
@@ -83,7 +122,7 @@ public class GuiAdvancedMachine extends GuiContainer {
 			CustomButton cButton = (CustomButton) button;
 			cButton.eventHandler.apply(cButton);
 		} else {
-			//TODO: do we even handle non-custom buttons?
+			// TODO: do we even handle non-custom buttons?
 		}
 	}
 
@@ -95,12 +134,12 @@ public class GuiAdvancedMachine extends GuiContainer {
 		Minecraft.getMinecraft().getTextureManager().bindTexture(guiTexture);
 
 		int offset = Config.dark_theme ? 0 : 44;
-		
-		GuiUtils.drawContinuousTexturedBox(guiLeft, guiTop, offset, 0, panelWidth, 180, 44, 44, 20, 0);
-		
+
+		GuiUtils.drawContinuousTexturedBox(guiLeft, guiTop, offset, 0, ContainerAdvancedMachine.panelWidth, ContainerAdvancedMachine.panelHeight, 44, 44, 20, 0);
+
 		offset = Config.dark_theme ? 134 : 44;
-		
-		drawTexturedModalRect(guiLeft + 83, guiTop + 177, 0, offset, 176, 90);
+
+		drawTexturedModalRect(guiLeft + ContainerAdvancedMachine.panelWidth / 2 - 176 / 2, guiTop + ContainerAdvancedMachine.panelHeight - 3, 0, offset, 176, 90);
 
 		/*
 		 * Draw app background
@@ -119,6 +158,12 @@ public class GuiAdvancedMachine extends GuiContainer {
 		}
 	}
 
+	/**
+	 * Draws the app buttons for the home screen.
+	 * 
+	 * @param mouseX
+	 * @param mouseY
+	 */
 	private void drawHomescreen(int mouseX, int mouseY) {
 
 		int halfWidth = xSize / 2;
@@ -126,10 +171,16 @@ public class GuiAdvancedMachine extends GuiContainer {
 		String name = machineContainer.machine.getDisplayName().getFormattedText();
 		drawCenteredString(fontRendererObj, name, halfWidth, 10, 0xFFFFFF);
 
+		int buttonSpace = 40;
+		int buttonsPerRow = 4;
+
+
+		int leftOff = halfWidth - (buttonsPerRow / 2) * buttonSpace;
+		
 		for (int i = 0; i < machineContainer.registeredApps.size(); i++) {
 
-			int appX = halfWidth / 2 + i * 40;
-			int appY = 40;
+			int appX = leftOff + (i % buttonsPerRow) * buttonSpace;
+			int appY = 40 + (i / buttonsPerRow) * buttonSpace;
 
 			App app = machineContainer.registeredApps.get(i);
 
