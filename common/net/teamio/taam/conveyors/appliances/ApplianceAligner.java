@@ -1,19 +1,29 @@
 package net.teamio.taam.conveyors.appliances;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.teamio.taam.Log;
+import net.teamio.taam.Taam;
+import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.IWorldInteractable;
 import net.teamio.taam.content.conveyors.ATileEntityAppliance;
 import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.conveyors.IConveyorApplianceHost;
 import net.teamio.taam.conveyors.IConveyorSlots;
 import net.teamio.taam.conveyors.ItemWrapper;
+import net.teamio.taam.conveyors.filters.ItemFilterCustomizable;
+import net.teamio.taam.gui.advanced.ContainerAdvancedMachine;
+import net.teamio.taam.gui.advanced.IAdvancedMachineGUI;
+import net.teamio.taam.gui.advanced.apps.AlignerSettings;
+import net.teamio.taam.gui.advanced.apps.RedstoneMode;
 
 public class ApplianceAligner extends ATileEntityAppliance implements IWorldInteractable {
 
@@ -31,7 +41,13 @@ public class ApplianceAligner extends ATileEntityAppliance implements IWorldInte
 	@SideOnly(Side.CLIENT)
 	public byte conveyorSpeedsteps = 10;
 	
+	public final ItemFilterCustomizable[] filters;
+	
 	public ApplianceAligner() {
+		filters = new ItemFilterCustomizable[3];
+		for(int i = 0; i < 3; i++) {
+			filters[i] = new ItemFilterCustomizable(3);
+		}
 	}
 	
 	@Override
@@ -49,6 +65,71 @@ public class ApplianceAligner extends ATileEntityAppliance implements IWorldInte
 			conveyorSpeedsteps = slots.getSpeedsteps();
 		}
 	}
+	
+	public final IAdvancedMachineGUI gui = new IAdvancedMachineGUI() {
+		
+		@Override
+		public boolean hasCustomName() {
+			return ApplianceAligner.this.hasCustomName();
+		}
+		
+		@Override
+		public String getName() {
+			return ApplianceAligner.this.getName();
+		}
+		
+		@Override
+		public ITextComponent getDisplayName() {
+			return ApplianceAligner.this.getDisplayName();
+		}
+		
+		@Override
+		public void setup(ContainerAdvancedMachine container) {
+			new RedstoneMode(container, null);//TODO: Other apps, not redstone controlled.
+			new AlignerSettings(container, ApplianceAligner.this);
+		}
+		
+		public void markDirty() {
+			ApplianceAligner.this.markDirty();
+		};
+	};
+	
+	@Override
+	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+		if(capability == Taam.CAPABILITY_ADVANCED_GUI) {
+			return true;
+		}
+		return super.hasCapability(capability, facing);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+		if(capability == Taam.CAPABILITY_ADVANCED_GUI) {
+			return (T) gui;
+		}
+		return super.getCapability(capability, facing);
+	}
+	
+	@Override
+	protected void writePropertiesToNBT(NBTTagCompound tag) {
+		super.writePropertiesToNBT(tag);
+		for (int i = 0; i < filters.length; i++) {
+			ItemFilterCustomizable itemFilterCustomizable = filters[i];
+			NBTTagCompound filterTag = itemFilterCustomizable.serializeNBT();
+			tag.setTag("filter" + i, filterTag);
+		}
+	}
+	
+	@Override
+	protected void readPropertiesFromNBT(NBTTagCompound tag) {
+		super.readPropertiesFromNBT(tag);
+		for (int i = 0; i < filters.length; i++) {
+			NBTTagCompound filterTag = tag.getCompoundTag("filter" + i);
+			ItemFilterCustomizable itemFilterCustomizable = filters[i];
+			itemFilterCustomizable.deserializeNBT(filterTag);
+		}
+	}
 
 	/*
 	 * IWorldInteractable implementation
@@ -57,8 +138,8 @@ public class ApplianceAligner extends ATileEntityAppliance implements IWorldInte
 	@Override
 	public boolean onBlockActivated(World world, EntityPlayer player, EnumHand hand, boolean hasWrench, EnumFacing side,
 			float hitX, float hitY, float hitZ) {
-		// TODO Open inventory
-		return false;
+		player.openGui(TaamMain.instance, 2, world, pos.getX(), pos.getY(), pos.getZ());
+		return true;
 	}
 
 	@Override

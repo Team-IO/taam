@@ -73,6 +73,7 @@ import net.teamio.taam.conveyors.IConveyorSlots;
 import net.teamio.taam.conveyors.appliances.ApplianceAligner;
 import net.teamio.taam.conveyors.appliances.ApplianceSprayer;
 import net.teamio.taam.gui.GuiHandler;
+import net.teamio.taam.gui.advanced.IAdvancedMachineGUI;
 import net.teamio.taam.machines.MachineBlock;
 import net.teamio.taam.machines.MachineItemBlock;
 import net.teamio.taam.machines.MachineTileEntity;
@@ -458,6 +459,18 @@ public class TaamMain {
 			}
 
 		}, ConveyorSlotsStandard.class);
+		
+		CapabilityManager.INSTANCE.register(IAdvancedMachineGUI.class, new Capability.IStorage<IAdvancedMachineGUI>() {
+
+			@Override
+			public NBTBase writeNBT(Capability<IAdvancedMachineGUI> capability, IAdvancedMachineGUI instance, EnumFacing side) {
+				return null;
+			}
+
+			@Override
+			public void readNBT(Capability<IAdvancedMachineGUI> capability, IAdvancedMachineGUI instance, EnumFacing side, NBTBase nbt) {
+			}
+		}, IAdvancedMachineGUI.class);
 
 		soundSipAh = new SoundEvent(Taam.SOUND_SIP_AH);
 		soundSipAh.setRegistryName(Taam.SOUND_SIP_AH);

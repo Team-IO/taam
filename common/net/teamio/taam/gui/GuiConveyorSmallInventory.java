@@ -2,14 +2,15 @@ package net.teamio.taam.gui;
 
 import org.lwjgl.opengl.GL11;
 
+import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.IWorldNameable;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.teamio.taam.gui.util.CustomGui;
+import net.teamio.taam.util.TaamUtil;
 
-public class GuiConveyorSmallInventory<T extends ICapabilityProvider & IWorldNameable> extends CustomGui {
+public class GuiConveyorSmallInventory<T extends ICapabilityProvider & IWorldNameable> extends GuiContainer {
 	ResourceLocation bg = new ResourceLocation("textures/gui/container/hopper.png");
 
 	private T tileEntity;
@@ -24,8 +25,8 @@ public class GuiConveyorSmallInventory<T extends ICapabilityProvider & IWorldNam
 
 	@Override
 	protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-		fontRendererObj.drawString(getTranslatedName(tileEntity), 8, 6, 0x404040);
-		fontRendererObj.drawString(getTranslatedName(inventoryPlayer), 8, ySize - 96 + 2, 0x404040);
+		fontRendererObj.drawString(TaamUtil.getTranslatedName(tileEntity), 8, 6, 0x404040);
+		fontRendererObj.drawString(TaamUtil.getTranslatedName(inventoryPlayer), 8, ySize - 96 + 2, 0x404040);
 	}
 
 	@Override

@@ -58,7 +58,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 	 * Item Renderer for the conveyors. Cached from the minecraft instance for
 	 * easy access.
 	 */
-	private RenderItem ri;
+	public static final RenderItem ri = Minecraft.getMinecraft().getRenderItem();
 
 	/**
 	 * Rotation counter, currently only used for calculating
@@ -87,16 +87,12 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 	/**
 	 * Function for fetching texture sprites.
 	 */
-	Function<ResourceLocation, TextureAtlasSprite> textureGetter = new Function<ResourceLocation, TextureAtlasSprite>() {
+	public static final Function<ResourceLocation, TextureAtlasSprite> textureGetter = new Function<ResourceLocation, TextureAtlasSprite>() {
 		@Override
 		public TextureAtlasSprite apply(ResourceLocation location) {
 			return Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString());
 		}
 	};
-
-	public TaamRenderer() {
-		ri = Minecraft.getMinecraft().getRenderItem();
-	}
 
 	/**
 	 * Executed each client tick to update the animated values. Client tick,

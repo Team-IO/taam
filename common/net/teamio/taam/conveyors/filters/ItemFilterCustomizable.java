@@ -49,12 +49,22 @@ public class ItemFilterCustomizable implements IItemFilter {
 	public NBTTagCompound serializeNBT() {
 		NBTTagCompound nbt = new NBTTagCompound();
 		nbt.setBoolean("excluding", excluding);
+		for (int i = 0; i < entries.length; i++) {
+			FilterEntry entry = entries[i];
+			NBTTagCompound entryTag = entry.serializeNBT();
+			nbt.setTag("entry" + i, entryTag);
+		}
 		return nbt;
 	}
 
 	@Override
 	public void deserializeNBT(NBTTagCompound nbt) {
 		excluding = nbt.getBoolean("excluding");
+		for (int i = 0; i < entries.length; i++) {
+			NBTTagCompound entryTag = nbt.getCompoundTag("entry" + i);
+			FilterEntry entry = entries[i];
+			entry.deserializeNBT(entryTag);
+		}
 	}
 
 }

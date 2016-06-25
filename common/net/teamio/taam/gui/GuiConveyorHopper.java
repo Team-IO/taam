@@ -3,14 +3,15 @@ package net.teamio.taam.gui;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.config.GuiButtonExt;
 import net.minecraftforge.fml.client.config.GuiCheckBox;
 import net.teamio.taam.content.conveyors.TileEntityConveyorHopper;
-import net.teamio.taam.gui.util.CustomGui;
+import net.teamio.taam.util.TaamUtil;
 
-public class GuiConveyorHopper extends CustomGui {
+public class GuiConveyorHopper extends GuiContainer {
 	ResourceLocation bg = new ResourceLocation("textures/gui/container/hopper.png");
 
 	private TileEntityConveyorHopper tileEntity;
@@ -30,8 +31,8 @@ public class GuiConveyorHopper extends CustomGui {
 
 	@Override
 	protected void drawGuiContainerForegroundLayer(int param1, int param2) {
-		fontRendererObj.drawString(getTranslatedName(tileEntity), 8, 6, 0x404040);
-		fontRendererObj.drawString(getTranslatedName(inventoryPlayer), 8, ySize - 96 + 2, 0x404040);
+		fontRendererObj.drawString(TaamUtil.getTranslatedName(tileEntity), 8, 6, 0x404040);
+		fontRendererObj.drawString(TaamUtil.getTranslatedName(inventoryPlayer), 8, ySize - 96 + 2, 0x404040);
 	}
 
 	@Override

@@ -17,6 +17,7 @@ import net.teamio.taam.content.piping.MachinePipe;
 import net.teamio.taam.content.piping.MachinePump;
 import net.teamio.taam.content.piping.MachineTank;
 import net.teamio.taam.conveyors.IConveyorSlots;
+import net.teamio.taam.gui.advanced.IAdvancedMachineGUI;
 import net.teamio.taam.machines.IMachine;
 import net.teamio.taam.machines.IMachineMetaInfo;
 import net.teamio.taam.piping.IPipe;
@@ -40,6 +41,8 @@ public final class Taam {
 	public static Capability<TankRenderInfo[]> CAPABILITY_RENDER_TANK;
 	@CapabilityInject(IConveyorSlots.class)
 	public static Capability<IConveyorSlots> CAPABILITY_CONVEYOR;
+	@CapabilityInject(IAdvancedMachineGUI.class)
+	public static Capability<IAdvancedMachineGUI> CAPABILITY_ADVANCED_GUI;
 
 	public static final String MOD_ID = "taam";
 	public static final String MOD_NAME = "Taam";

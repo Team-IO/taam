@@ -38,6 +38,7 @@ import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -49,6 +50,7 @@ import net.teamio.taam.content.conveyors.TileEntityConveyorTrashCan;
 import net.teamio.taam.conveyors.appliances.ApplianceAligner;
 import net.teamio.taam.conveyors.appliances.ApplianceSprayer;
 import net.teamio.taam.machines.MachineTileEntity;
+import net.teamio.taam.network.TPAdvancedGuiAppData;
 import net.teamio.taam.rendering.TaamRenderer;
 import net.teamio.taam.rendering.obj.OBJCustomData;
 import net.teamio.taam.rendering.obj.OBJLoader;
@@ -64,6 +66,13 @@ public class TaamClientProxy extends TaamCommonProxy {
 
 	private final List<ModelResourceLocation> locationsToReplace = new ArrayList<ModelResourceLocation>();
 
+	@Override
+	public void registerPackets(SimpleNetworkWrapper network) {
+		super.registerPackets(network);
+
+		network.registerMessage(TPAdvancedGuiAppData.Handler.class, TPAdvancedGuiAppData.class, 2, Side.CLIENT);
+	}
+	
 	@Override
 	public void registerRenderStuff() {
 		ModelLoaderRegistry.registerLoader(OBJLoader.INSTANCE);

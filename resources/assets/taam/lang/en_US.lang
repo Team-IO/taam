@@ -119,6 +119,7 @@ tile.taam.productionline_attachable.trashcan.name=Conveyor Trash Can
 tile.taam.productionline_attachable.lamp.name=Conveyor Lamp
 
 tile.taam.productionline_appliance.sprayer.name=Sprayer
+tile.taam.productionline_appliance.aligner.name=Aligner
 
 #Machines
 tile.taam.machine.pipe.name=Pipe

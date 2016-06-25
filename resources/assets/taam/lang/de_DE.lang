@@ -119,6 +119,7 @@ tile.taam.productionline_attachable.trashcan.name=Förderband-Mülleimer
 tile.taam.productionline_attachable.lamp.name=Förderband-Lampe
 
 tile.taam.productionline_appliance.sprayer.name=Sprühmaschine
+tile.taam.productionline_appliance.aligner.name=Ausrichter
 
 #Machines
 tile.taam.machine.pipe.name=Rohrleitung

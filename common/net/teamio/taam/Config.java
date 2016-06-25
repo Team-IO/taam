@@ -22,6 +22,7 @@ public class Config {
 	public static boolean use_iinventory_compat;
 	public static boolean render_tank_content;
 	public static boolean render_items;
+	public static boolean dark_theme;
 
 	public static int sensor_delay;
 	public static int sensor_placement_mode;
@@ -173,6 +174,8 @@ public class Config {
 		use_iinventory_compat = getBoolean("use_iinventory_compat", Configuration.CATEGORY_GENERAL, true, "Enable or disable compatibility for IInventory. If enabled, IInventory will be wrapped in IItemHandler etc.");
 		render_tank_content = getBoolean("render_tank_content", Configuration.CATEGORY_GENERAL, true, "Enable or disable rendering of tank content. Troubleshooting only; should remain enabled, else tanks et. al. will always look empty.");
 		render_items = getBoolean("render_items", Configuration.CATEGORY_GENERAL, true, "Enable or disable rendering of items on machines. Troubleshooting only; should remain enabled, else conveyors et. al. will always look empty.");
+		
+		dark_theme = getBoolean("dark_theme", Configuration.CATEGORY_GENERAL, true, "Enable dark theme for some of the GUIs.");
 		
 		sensor_delay = getInt("sdelay", SECTION_MULTITRONIX_SENSOR, 30, 10, 100, "Sensor [Motion, Minect] delay (minimum activation time) in game ticks, minimum 10");
 		sensor_placement_mode = getInt("placement_mode", SECTION_MULTITRONIX_SENSOR, 1, 1, 2, "Sensor [Motion, Minect] placement mode when side by side. 1 = move together, 2 = merge into one");

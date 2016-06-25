@@ -20,19 +20,19 @@ public class FilterEntry implements INBTSerializable<NBTTagCompound> {
 	 * Reference item stack. Can be null, then the filter entry will never
 	 * match.
 	 */
-	private ItemStack stack;
+	public ItemStack stack;
 	/**
 	 * Check NBT? Applies only in {@link FilterMode#Exact}.
 	 */
-	private boolean checkNBT;
+	public boolean checkNBT;
 	/**
 	 * Check metadata? Applies only in {@link FilterMode#Exact}.
 	 */
-	private boolean checkMeta;
+	public boolean checkMeta;
 	/**
 	 * The filter mode to be applied.
 	 */
-	private FilterMode mode = FilterMode.Exact;
+	public FilterMode mode = FilterMode.Exact;
 
 	public static enum FilterMode {
 		Exact, OreDict, Mod
@@ -83,8 +83,10 @@ public class FilterEntry implements INBTSerializable<NBTTagCompound> {
 		if (stack == null) {
 			nbt.setBoolean("nullStack", true);
 		} else {
+			nbt.setBoolean("nullStack", false);
 			stack.writeToNBT(nbt);
 		}
+		System.out.println("Serializing stack: " + stack);
 		return nbt;
 	}
 

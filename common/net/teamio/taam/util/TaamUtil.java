@@ -7,6 +7,7 @@ import org.apache.commons.lang3.ArrayUtils;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -14,6 +15,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.IWorldNameable;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.OreDictionary;
 import net.teamio.taam.Taam;
@@ -263,5 +265,13 @@ public final class TaamUtil {
 		ResourceLocation regName1 = stack1.getItem().getRegistryName();
 		ResourceLocation regName2 = stack2.getItem().getRegistryName();
 		return regName1.getResourceDomain().equals(regName2.getResourceDomain());
+	}
+
+	public static String getTranslatedName(IWorldNameable inventory) {
+		if (inventory.hasCustomName()) {
+			return inventory.getDisplayName().getFormattedText();
+		} else {
+			return I18n.format(inventory.getDisplayName().getFormattedText(), new Object[0]);
+		}
 	}
 }
