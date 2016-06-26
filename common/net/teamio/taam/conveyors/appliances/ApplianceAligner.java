@@ -160,6 +160,10 @@ public class ApplianceAligner extends ATileEntityAppliance implements IWorldInte
 	@Override
 	public EnumFacing overrideNextSlot(IConveyorApplianceHost host, int slot, ItemWrapper wrapper,
 			EnumFacing beforeOverride) {
+		if(wrapper.itemStack == null) {
+			return beforeOverride;
+		}
+		
 		EnumFacing direction = host.getSlots().getMovementDirection();
 		
 		// We can only align when it passes left/right
@@ -179,13 +183,56 @@ public class ApplianceAligner extends ATileEntityAppliance implements IWorldInte
 		EnumFacing right = direction.rotateY();
 		EnumFacing afterOverride = beforeOverride;
 		
+		ItemFilterCustomizable filterLane1;
+		ItemFilterCustomizable filterLane2;
+		ItemFilterCustomizable filterLane3;
+		
+		if(direction == right) {
+			filterLane1 = filters[0];
+			filterLane2 = filters[1];
+			filterLane3 = filters[2];
+		} else {
+			// To match the setup in the GUI, reverse the order of the filters
+			filterLane1 = filters[2];
+			filterLane2 = filters[1];
+			filterLane3 = filters[0];
+		}
+		
+		boolean canContinueLane1 = filterLane1.isItemStackMatching(wrapper.itemStack) != filterLane1.isExcluding();
+		boolean canContinueLane2 = filterLane2.isItemStackMatching(wrapper.itemStack) != filterLane2.isExcluding();
+		boolean canContinueLane3 = filterLane3.isItemStackMatching(wrapper.itemStack) != filterLane3.isExcluding();
+		
 		// FIXME Debug-Mode, move all to center
 		if(lane == 1) {
-			afterOverride = right;
+			// Item can continue on lane if filter matches & is include or does not match & is exclude
+			if(!canContinueLane1) {
+				// If it can continue on one of the other lanes, move right. Else block.
+				if(canContinueLane2 || canContinueLane3) {
+					afterOverride = right;
+				} else {
+					wrapper.blockForce();
+				}
+			}
 		} else if(lane == 3) {
-			afterOverride = left;
+			if(!canContinueLane3) {
+				// If it can continue on one of the other lanes, move left. Else block.
+				if(canContinueLane1 || canContinueLane2) {
+					afterOverride = left;
+				} else {
+					wrapper.blockForce();
+				}
+			}
 		} else {
-//			afterOverride = right;
+			if(!canContinueLane2) {
+				// If it can continue on one of the other lanes, move left/right. Else block.
+				if(canContinueLane1) {
+					afterOverride = left;
+				} else if(canContinueLane3) {
+					afterOverride = right;
+				} else {
+					wrapper.blockForce();
+				}
+			}
 		}
 		
 		// On the client, update the rendering information

@@ -24,11 +24,11 @@ public class FilterEntry implements INBTSerializable<NBTTagCompound> {
 	/**
 	 * Check NBT? Applies only in {@link FilterMode#Exact}.
 	 */
-	public boolean checkNBT;
+	public boolean checkNBT = true;
 	/**
 	 * Check metadata? Applies only in {@link FilterMode#Exact}.
 	 */
-	public boolean checkMeta;
+	public boolean checkMeta = true;
 	/**
 	 * The filter mode to be applied.
 	 */
@@ -86,7 +86,6 @@ public class FilterEntry implements INBTSerializable<NBTTagCompound> {
 			nbt.setBoolean("nullStack", false);
 			stack.writeToNBT(nbt);
 		}
-		System.out.println("Serializing stack: " + stack);
 		return nbt;
 	}
 
