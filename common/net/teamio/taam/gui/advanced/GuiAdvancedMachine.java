@@ -8,6 +8,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.client.config.GuiCheckBox;
 import net.minecraftforge.fml.client.config.GuiUtils;
 import net.teamio.taam.Config;
 import net.teamio.taam.gui.util.CustomButton;
@@ -125,7 +126,15 @@ public class GuiAdvancedMachine extends GuiContainer {
 			// TODO: do we even handle non-custom buttons?
 		}
 	}
+	
+	public int getGuiLeft() {
+		return guiLeft;
+	}
 
+	public int getGuiTop() {
+		return guiTop;
+	}
+	
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
 		/*
@@ -190,6 +199,10 @@ public class GuiAdvancedMachine extends GuiContainer {
 			// Texture size 16, scale by 2
 			drawModalRectWithCustomSizedTexture(appX + 3, appY + 3, 0, 0, 32, 32, 32, 32);
 		}
+	}
+
+	public void addCheckbox(GuiCheckBox guiCheckBox) {
+		this.buttonList.add(guiCheckBox);
 	}
 
 }

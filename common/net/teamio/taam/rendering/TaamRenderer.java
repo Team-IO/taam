@@ -798,6 +798,10 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 
 	public static float getRotationDegrees(Object tileEntity) {
 		EnumFacing direction = getDirection(tileEntity);
+		return getRotationDegrees(direction);
+	}
+
+	public static float getRotationDegrees(EnumFacing direction) {
 		float rotationDegrees = 0;
 		if (direction == EnumFacing.WEST) {
 			rotationDegrees = 270;
