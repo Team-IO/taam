@@ -153,8 +153,8 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IRedston
 
 			for(int i = 0; i < itemHandler.getSlots(); i++) {
 				// Simulate extracting first to see if there is anything in there
-				ItemStack stack = itemHandler.extractItem(i,  wholeStack ? 1 : 64, true);
-				if(stack != null && stack.stackSize == 0) {
+				ItemStack stack = itemHandler.extractItem(i,  wholeStack ? 64 : 1, true);
+				if(stack != null && stack.stackSize != 0) {
 					/*
 					 * -----------
 					 */
@@ -166,7 +166,7 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IRedston
 					}
 					// If we fit anything, decrease inventory accordingly
 					if(amount > 0) {
-						itemHandler.extractItem(i,  wholeStack ? 1 : 64, false);
+						itemHandler.extractItem(i,  wholeStack ? 64 : 1, false);
 						somethingEjected = true;
 						break;
 					}
