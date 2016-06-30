@@ -656,7 +656,7 @@ public class TaamRecipes {
 		//		tank
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.tank.ordinal()),
 				" I ", "I I", "III",
-				'I', "ingotIron"));
+				'I', "ingotAluminum"));
 		//		nozzle
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1 ,Taam.ITEM_PART_META.nozzle.ordinal()),
 				" I ", "I I", " I ",
