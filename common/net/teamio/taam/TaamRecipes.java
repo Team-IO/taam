@@ -646,7 +646,7 @@ public class TaamRecipes {
 				'C', new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.circuit_advanced.ordinal())));*/
 		//		iron frame
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.iron_frame.ordinal()),
-				"III", "I I", "I I",
+				" I ", "I I", "I I",
 				'I', "ingotIron"));
 
 		//		rubber band
@@ -656,7 +656,7 @@ public class TaamRecipes {
 		//		tank
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.tank.ordinal()),
 				" I ", "I I", "III",
-				'I', "ingotAluminum"));
+				'I', "ingotIron"));
 		//		nozzle
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1 ,Taam.ITEM_PART_META.nozzle.ordinal()),
 				" I ", "I I", " I ",
