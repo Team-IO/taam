@@ -127,32 +127,15 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 						int slot = ConveyorUtil.getSlotForRelativeCoordinates(hitVec.xCoord - pos.getX(),
 								hitVec.zCoord - pos.getZ());
 
-					EnumFacing dir = cte.getNextSlot(slot);
-					float speedsteps = cte.getSpeedsteps();
-					float progress = cte.getMovementProgress(slot) / speedsteps;
-
-					double x = pos.getX() + Math.floor(slot / 3) * ConveyorUtil.oneThird // General Position
-							+ dir.getFrontOffsetX() * progress * ConveyorUtil.oneThird; // Apply Slot Movement
-					double y = pos.getY() + cte.getVerticalPosition(slot);
-					double z = pos.getZ() + slot % 3 * ConveyorUtil.oneThird // General Position
-							+ dir.getFrontOffsetZ() * progress * ConveyorUtil.oneThird; // Apply Slot Movement
-
-						float progress = wrapper.movementProgress;
-
-						if (wrapper.isRenderingInterpolated()) {
-							progress += event.getPartialTicks();
-						} else {
-							// Interpolation since last frame already advanced to almost 1, so we prevent stutter by "skipping ahead"
-							progress += 1;
-						}
-
-						progress *= ConveyorUtil.oneThird / speedsteps;
-
+						EnumFacing dir = cte.getNextSlot(slot);
+						float speedsteps = cte.getSpeedsteps();
+						float progress = cte.getMovementProgress(slot) / speedsteps;
+	
 						double x = pos.getX() + Math.floor(slot / 3) * ConveyorUtil.oneThird // General Position
-								+ dir.getFrontOffsetX() * progress; // Apply Slot Movement
+								+ dir.getFrontOffsetX() * progress * ConveyorUtil.oneThird; // Apply Slot Movement
 						double y = pos.getY() + cte.getVerticalPosition(slot);
 						double z = pos.getZ() + slot % 3 * ConveyorUtil.oneThird // General Position
-								+ dir.getFrontOffsetZ() * progress; // Apply Slot Movement
+								+ dir.getFrontOffsetZ() * progress * ConveyorUtil.oneThird; // Apply Slot Movement
 
 						drawSelectionBoundingBox(player, event.getPartialTicks(), new AxisAlignedBB(x, y, z,
 								x + ConveyorUtil.oneThird, y + ConveyorUtil.oneThird, z + ConveyorUtil.oneThird));

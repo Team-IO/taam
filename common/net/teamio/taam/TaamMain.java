@@ -449,9 +449,6 @@ public class TaamMain {
 		if(Taam.CAPABILITY_CONVEYOR == null) {
 			throw new RuntimeException("Registering a capability failed (Taam.CAPABILITY_CONVEYOR - IConveyorSlots) - field was null after registry.");
 		}
-		if(Taam.CAPABILITY_ADVANCED_GUI == null) {
-			throw new RuntimeException("Registering a capability failed (Taam.CAPABILITY_ADVANCED_GUI - IAdvancedMachineGUI) - field was null after registry.");
-		}
 		
 		soundSipAh = new SoundEvent(Taam.SOUND_SIP_AH);
 		soundSipAh.setRegistryName(Taam.SOUND_SIP_AH);
