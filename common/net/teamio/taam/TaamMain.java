@@ -472,6 +472,22 @@ public class TaamMain {
 			}
 		}, IAdvancedMachineGUI.class);
 
+		/*
+		 * Check if registry of capabilities was successful
+		 */
+		if(Taam.CAPABILITY_PIPE == null) {
+			throw new RuntimeException("Registering a capability failed (Taam.CAPABILITY_PIPE - IPipe) - field was null after registry.");
+		}
+		if(Taam.CAPABILITY_RENDER_TANK == null) {
+			throw new RuntimeException("Registering a capability failed (Taam.CAPABILITY_RENDER_TANK - TankRenderInfo[]) - field was null after registry.");
+		}
+		if(Taam.CAPABILITY_CONVEYOR == null) {
+			throw new RuntimeException("Registering a capability failed (Taam.CAPABILITY_CONVEYOR - IConveyorSlots) - field was null after registry.");
+		}
+		if(Taam.CAPABILITY_ADVANCED_GUI == null) {
+			throw new RuntimeException("Registering a capability failed (Taam.CAPABILITY_ADVANCED_GUI - IAdvancedMachineGUI) - field was null after registry.");
+		}
+		
 		soundSipAh = new SoundEvent(Taam.SOUND_SIP_AH);
 		soundSipAh.setRegistryName(Taam.SOUND_SIP_AH);
 		GameRegistry.register(soundSipAh);
