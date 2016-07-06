@@ -32,10 +32,12 @@ public class AlignerSettings extends App {
 	public static final ResourceLocation tex_machine_config = new ResourceLocation("taam", "textures/gui/machine_config.png");
 
 	private final ApplianceAligner aligner;
-
+	private final GuiCheckBox[] cbExcluding;
+	
 	public AlignerSettings(ContainerAdvancedMachine container, ApplianceAligner aligner) {
 		super(container);
 		this.aligner = aligner;
+		cbExcluding = new GuiCheckBox[aligner.filters.length];
 	}
 
 	@Override
@@ -76,12 +78,10 @@ public class AlignerSettings extends App {
 		
 		int verticalOffset = topOff - aligner.filters.length / 2 * ySpace - 9;
 		
-		GuiCheckBox[] cbExcluding = new GuiCheckBox[aligner.filters.length];
-
 		for (int i = 0; i < aligner.filters.length; i++) {
 			ItemFilterCustomizable itemFilterCustomizable = aligner.filters[i];
 			cbExcluding[i] = new GuiCheckBox(i, leftOff + xSpace * 3, verticalOffset + i * ySpace + 1, "Excluding", itemFilterCustomizable.isExcluding());
-			gui.addCheckbox(cbExcluding[i]);
+			gui.addButton(cbExcluding[i]);
 		}
 	}
 
@@ -181,12 +181,16 @@ public class AlignerSettings extends App {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void onShow(GuiAdvancedMachine gui) {
-
+		for (int i = 0; i < cbExcluding.length; i++) {
+			cbExcluding[i].visible = true;
+		}
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void onHide(GuiAdvancedMachine gui) {
-
+		for (int i = 0; i < cbExcluding.length; i++) {
+			cbExcluding[i].visible = false;
+		}
 	}
 }

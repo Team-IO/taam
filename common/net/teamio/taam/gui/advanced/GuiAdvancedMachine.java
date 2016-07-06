@@ -8,7 +8,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.client.config.GuiCheckBox;
 import net.minecraftforge.fml.client.config.GuiUtils;
 import net.teamio.taam.Config;
 import net.teamio.taam.gui.util.CustomButton;
@@ -28,13 +27,13 @@ public class GuiAdvancedMachine extends GuiContainer {
 	}
 
 	/**
-	 * Allow adding buttons externally, namely from
+	 * Allow adding buttons or checkboxes externally, namely from
 	 * {@link App#initGui(GuiAdvancedMachine)}.
 	 * 
-	 * @param customButton
+	 * @param button
 	 */
-	public void addButton(CustomButton customButton) {
-		this.buttonList.add(customButton);
+	public void addButton(GuiButton button) {
+		this.buttonList.add(button);
 	}
 
 	@Override
@@ -79,6 +78,7 @@ public class GuiAdvancedMachine extends GuiContainer {
 
 		for (App app : machineContainer.registeredApps) {
 			app.initGui(this);
+			app.onHide(this);
 		}
 
 		/*
@@ -200,9 +200,4 @@ public class GuiAdvancedMachine extends GuiContainer {
 			drawModalRectWithCustomSizedTexture(appX + 3, appY + 3, 0, 0, 32, 32, 32, 32);
 		}
 	}
-
-	public void addCheckbox(GuiCheckBox guiCheckBox) {
-		this.buttonList.add(guiCheckBox);
-	}
-
 }

@@ -39,6 +39,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.teamio.taam.Config;
+import net.teamio.taam.Log;
 import net.teamio.taam.Taam;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.content.conveyors.TileEntityConveyorItemBag;
@@ -84,6 +85,19 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 	
 	public static final ResourceLocation conveyorTextures = new ResourceLocation("Taam", "blocks/conveyor");
 
+	public static boolean failureFreeBlockHightlight = true;
+	
+	public static final float shrinkValue = -0.001f;
+
+	public static final float b_tankBorder = 1.5f / 16f;
+	public static final float b_tankBorderSprayer = b_tankBorder + 4f / 16f;
+	public static final float b_basePlate = 2f / 16f;
+
+	public static AxisAlignedBB bounds_sprayer = new AxisAlignedBB(
+			b_tankBorder,	b_basePlate,	b_tankBorder,
+			1-b_tankBorder,	1-4f/16f,		1-b_tankBorderSprayer
+			).expand(shrinkValue, shrinkValue, shrinkValue);
+
 	/**
 	 * Function for fetching texture sprites.
 	 */
@@ -122,50 +136,59 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 	 */
 	@SubscribeEvent
 	public void onDrawBlockHighlight(DrawBlockHighlightEvent event) {
+		// If we crash, turn of Block Highlight drawing to prevent getting locked out of a world
+		if(!failureFreeBlockHightlight) {
+			return;
+		}
 		RayTraceResult target = event.getTarget();
-		if(target.sideHit == EnumFacing.UP) {
+		if(target != null && target.sideHit == EnumFacing.UP) {
 			BlockPos pos = target.getBlockPos();
 			TileEntity te;
 			if(pos != null) {
 				EntityPlayer player = event.getPlayer();
 				World world = player.worldObj;
 				te = world.getTileEntity(pos);
-				IConveyorSlots cte = ConveyorUtil.getSlots(te, null);
-				if(cte != null) {
+				try {
+					IConveyorSlots cte = ConveyorUtil.getSlots(te, null);
+					if (cte != null) {
 
-					// Only render for TEs that actually have the items there
-					if(!cte.shouldRenderItemsDefault()) {
-						return;
-					}
+						// Only render for TEs that actually have the items there
+						if (!cte.shouldRenderItemsDefault()) {
+							return;
+						}
 
-					Vec3d hitVec = target.hitVec;
-					int slot = ConveyorUtil.getSlotForRelativeCoordinates(hitVec.xCoord - pos.getX(), hitVec.zCoord - pos.getZ());
+						Vec3d hitVec = target.hitVec;
+						int slot = ConveyorUtil.getSlotForRelativeCoordinates(hitVec.xCoord - pos.getX(),
+								hitVec.zCoord - pos.getZ());
 
-					EnumFacing dir = cte.getNextSlot(slot);
-					float speedsteps = cte.getSpeedsteps();
-
-					ItemWrapper wrapper = cte.getSlot(slot);
+						EnumFacing dir = cte.getNextSlot(slot);
+						float speedsteps = cte.getSpeedsteps();
+	
+						ItemWrapper wrapper = cte.getSlot(slot);
 					
-					float progress = wrapper.movementProgress;
-					
-					if(wrapper.isRenderingInterpolated()) {
-						progress += event.getPartialTicks();
-					} else {
-						// Interpolation since last frame already advanced to almost 1, so we prevent stutter by "skipping ahead"
-						progress += 1;
-					}
-					
-					progress *= ConveyorUtil.oneThird / speedsteps;
-					
-					double x = pos.getX() + Math.floor(slot / 3) * ConveyorUtil.oneThird // General Position
-							+ dir.getFrontOffsetX() * progress; // Apply Slot Movement
-					double y = pos.getY() + cte.getVerticalPosition(slot);
-					double z = pos.getZ() + slot % 3 * ConveyorUtil.oneThird // General Position
-							+ dir.getFrontOffsetZ() * progress; // Apply Slot Movement
+						float progress = wrapper.movementProgress;
 
+						if (wrapper.isRenderingInterpolated()) {
+							progress += event.getPartialTicks();
+						} else {
+							// Interpolation since last frame already advanced to almost 1, so we prevent stutter by "skipping ahead"
+							progress += 1;
+						}
 
-					drawSelectionBoundingBox(player, event.getPartialTicks(), new AxisAlignedBB(x, y, z,
-							x + ConveyorUtil.oneThird, y + ConveyorUtil.oneThird, z + ConveyorUtil.oneThird));
+						progress *= ConveyorUtil.oneThird / speedsteps;
+
+						double x = pos.getX() + Math.floor(slot / 3) * ConveyorUtil.oneThird // General Position
+								+ dir.getFrontOffsetX() * progress * ConveyorUtil.oneThird; // Apply Slot Movement
+						double y = pos.getY() + cte.getVerticalPosition(slot);
+						double z = pos.getZ() + slot % 3 * ConveyorUtil.oneThird // General Position
+								+ dir.getFrontOffsetZ() * progress * ConveyorUtil.oneThird; // Apply Slot Movement
+
+						drawSelectionBoundingBox(player, event.getPartialTicks(), new AxisAlignedBB(x, y, z,
+								x + ConveyorUtil.oneThird, y + ConveyorUtil.oneThird, z + ConveyorUtil.oneThird));
+					} 
+				} catch (Exception e) {
+					Log.error("Error drawing block highlight for a tile entity. Disabling block highlight drawing to prevent you from crashing - This is an error, please report!", e);
+					failureFreeBlockHightlight = false;
 				}
 			}
 		}
