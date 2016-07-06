@@ -23,7 +23,27 @@ public class CustomButton extends GuiButton {
 	static final int baseTextureV = 0;
 	boolean mouseDown = false;
 	public Function<CustomButton, Boolean> eventHandler;
-
+	
+	public Drawable image;
+	public int textPadding = 2;
+	public boolean trimText = true;
+	/**
+	 * 0: Above
+	 * 1: At Top
+	 * 2: Center
+	 * 3: At Bottom
+	 * 4: Below
+	 */
+	public int textVerticalAlignment = 2;
+	/**
+	 * 0: Beside, Left
+	 * 1: Left
+	 * 2: Center
+	 * 3: Right
+	 * 4: Beside, Right
+	 */
+	public int textHorizontalAlignment = 2;
+	
 	@Override
 	public boolean mousePressed(Minecraft mc, int mouseX, int mouseY) {
 		boolean inside = super.mousePressed(mc, mouseX, mouseY);
@@ -53,30 +73,84 @@ public class CustomButton extends GuiButton {
 					width, height,//width height
 					baseTextureHeight, baseTextureHeight, // texture width height
 					3, zLevel);
-			int color = 0xE0E0E0;
 
-			if (packedFGColour != 0)
-			{
-				color = packedFGColour;
-			}
-			else if (!enabled)
-			{
-				color = 0xA0A0A0;
-			}
-			else if (hovered)
-			{
-				color = 0xFFFFA0;
-			}
+			int pressOffset = hoverState == 3 ? 1 : 0;
+			
+			if (displayString != null) {
 
-			String buttonText = displayString;
-			int strWidth = mc.fontRendererObj.getStringWidth(buttonText);
-			int ellipsisWidth = mc.fontRendererObj.getStringWidth("...");
+				int color = 0xE0E0E0;
 
-			if (strWidth > width - 6 && strWidth > ellipsisWidth) {
-				buttonText = mc.fontRendererObj.trimStringToWidth(buttonText, width - 6 - ellipsisWidth).trim() + "...";
+				if (packedFGColour != 0) {
+					color = packedFGColour;
+				} else if (!enabled) {
+					color = 0xA0A0A0;
+				} else if (hovered) {
+					color = 0xFFFFA0;
+				}
+
+				String buttonText = displayString;
+				int strWidth = mc.fontRendererObj.getStringWidth(buttonText);
+				
+				boolean doEllipsis = trimText && textHorizontalAlignment > 0 && textHorizontalAlignment < 4;
+				
+				if(doEllipsis) {
+					int ellipsisWidth = mc.fontRendererObj.getStringWidth("...");
+
+					if (strWidth > width - textPadding && strWidth > ellipsisWidth) {
+						strWidth = width - textPadding - ellipsisWidth;
+						buttonText = mc.fontRendererObj.trimStringToWidth(buttonText, strWidth).trim() + "...";
+					}
+				}
+				
+				int textHeight = 8;
+				
+				int leftOffset;
+				int topOffset;
+				
+				switch(textHorizontalAlignment) {
+				case 0:
+					leftOffset = -strWidth - textPadding;
+					break;
+				case 1:
+					leftOffset = textPadding;
+					break;
+				default:
+				case 2:
+					leftOffset = (width - strWidth) / 2;
+					break;
+				case 3:
+					leftOffset = width - strWidth - textPadding;
+					break;
+				case 4:
+					leftOffset = width + textPadding;
+					break;
+				}
+
+				switch(textVerticalAlignment) {
+				case 0:
+					topOffset = -textHeight - textPadding;
+					break;
+				case 1:
+					topOffset = textPadding;
+					break;
+				default:
+				case 2:
+					topOffset = (height - textHeight) / 2;
+					break;
+				case 3:
+					topOffset = height - textHeight - textPadding;
+					break;
+				case 4:
+					topOffset = height + textPadding;
+					break;
+				}
+
+				drawString(mc.fontRendererObj, buttonText, xPosition + pressOffset + leftOffset, yPosition + pressOffset + topOffset, color);
 			}
-
-			drawCenteredString(mc.fontRendererObj, buttonText, xPosition + width / 2, yPosition + (height - 8) / 2, color);
+			
+			if(image != null) {
+				image.drawCentered(this, xPosition + width / 2 + pressOffset, yPosition + height / 2 + pressOffset);
+			}
 		}
 	}
 

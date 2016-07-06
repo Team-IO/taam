@@ -17,35 +17,32 @@ public class FilterSlot extends HidableSlot {
 		this.index = index;
 	}
 	
-	public FilterEntry getFilterEntry() {
-		return filter.getEntries()[index];
-	}
-	
 	@Override
 	public ItemStack decrStackSize(int amount) {
-		getFilterEntry().stack = null;
+		filter.getEntries()[index] = null;
 		this.onSlotChanged();
 		return null;
 	}
 	
 	@Override
 	public boolean getHasStack() {
-		return getFilterEntry().stack != null;
+		return filter.getEntries()[index] != null;
 	}
 	
 	@Override
 	public ItemStack getStack() {
-		return getFilterEntry().stack;
+		return filter.getEntries()[index];
 	}
 	
 	@Override
 	public void putStack(ItemStack stack) {
-		FilterEntry filterEntry = getFilterEntry();
+		ItemStack filterEntry;
 		if(stack == null) {
-			filterEntry.stack = null;
+			filterEntry = null;
 		} else {
-			filterEntry.stack = InventoryUtils.copyStack(stack, 1);
+			filterEntry = InventoryUtils.copyStack(stack, 1);
 		}
+		filter.getEntries()[index] = filterEntry;
 		this.onSlotChanged();
 	}
 	

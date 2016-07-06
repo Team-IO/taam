@@ -10,7 +10,9 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.config.GuiUtils;
 import net.teamio.taam.Config;
+import net.teamio.taam.Log;
 import net.teamio.taam.gui.util.CustomButton;
+import net.teamio.taam.gui.util.Drawable;
 
 public class GuiAdvancedMachine extends GuiContainer {
 
@@ -20,6 +22,21 @@ public class GuiAdvancedMachine extends GuiContainer {
 
 	private final List<AppButton> appButtons = new ArrayList<AppButton>();
 	private AppButton homeButton;
+
+	public static final Drawable iconCheckbox = new Drawable(guiTexture, 144, 0, 10, 10);
+	
+	public static final Drawable iconHome = new Drawable(guiTexture, 194, 0, 11, 11);
+	
+	public static final Drawable iconEdit = new Drawable(guiTexture, 166, 0, 10, 10);
+	
+	public static final Drawable iconMatchExact = new Drawable(guiTexture, 166, 10, 10, 10);
+	public static final Drawable iconMatchMod = new Drawable(guiTexture, 166, 20, 10, 10);
+	public static final Drawable iconMatchOredict = new Drawable(guiTexture, 166, 30, 10, 10);
+
+	public static final Drawable iconCheckMeta = new Drawable(guiTexture, 155, 0, 10, 10);
+	public static final Drawable iconCheckNBT = new Drawable(guiTexture, 155, 10, 10, 10);
+	public static final Drawable iconDontCheckMeta = new Drawable(guiTexture, 155, 20, 10, 10);
+	public static final Drawable iconDontCheckNBT = new Drawable(guiTexture, 155, 30, 10, 10);
 
 	public GuiAdvancedMachine(ContainerAdvancedMachine inventorySlotsIn) {
 		super(inventorySlotsIn);
@@ -59,17 +76,18 @@ public class GuiAdvancedMachine extends GuiContainer {
 		 * Init home screen buttons
 		 */
 		for (int i = 0; i < machineContainer.registeredApps.size(); i++) {
-
 			int appX = leftOff + (i % buttonsPerRow) * buttonSpace;
 			int appY = 40 + (i / buttonsPerRow) * buttonSpace;
 
 			App app = machineContainer.registeredApps.get(i);
 			AppButton button = new AppButton(app, guiLeft + appX, guiTop + appY, buttonSize, buttonSize, app.getName());
+			button.textVerticalAlignment = 4;
 			buttonList.add(button);
 			appButtons.add(button);
-
 		}
-		homeButton = new AppButton(null, guiLeft + xSize / 2 - 10, guiTop + ContainerAdvancedMachine.panelHeight - 20, 20, 20, "Home");
+		homeButton = new AppButton(null, guiLeft + xSize / 2 - 10, guiTop + ContainerAdvancedMachine.panelHeight - 20, 20, 20, null);
+		homeButton.textVerticalAlignment = 4;
+		homeButton.image = iconHome;
 		buttonList.add(homeButton);
 
 		/*
@@ -121,7 +139,11 @@ public class GuiAdvancedMachine extends GuiContainer {
 			switchApp(app);
 		} else if (button instanceof CustomButton) {
 			CustomButton cButton = (CustomButton) button;
-			cButton.eventHandler.apply(cButton);
+			if(cButton.eventHandler == null) {
+				Log.warn("Skipping button handler, as it is null.");
+			} else {
+				cButton.eventHandler.apply(cButton);
+			}
 		} else {
 			// TODO: do we even handle non-custom buttons?
 		}
