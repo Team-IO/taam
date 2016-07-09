@@ -16,7 +16,8 @@ import net.teamio.taam.content.piping.MachineMixer;
 import net.teamio.taam.content.piping.MachinePipe;
 import net.teamio.taam.content.piping.MachinePump;
 import net.teamio.taam.content.piping.MachineTank;
-import net.teamio.taam.conveyors.api.IConveyorSlots;
+import net.teamio.taam.conveyors.IConveyorSlots;
+import net.teamio.taam.gui.advanced.IAdvancedMachineGUI;
 import net.teamio.taam.machines.IMachine;
 import net.teamio.taam.machines.IMachineMetaInfo;
 import net.teamio.taam.piping.IPipe;
@@ -40,15 +41,19 @@ public final class Taam {
 	public static Capability<TankRenderInfo[]> CAPABILITY_RENDER_TANK;
 	@CapabilityInject(IConveyorSlots.class)
 	public static Capability<IConveyorSlots> CAPABILITY_CONVEYOR;
+	@CapabilityInject(IAdvancedMachineGUI.class)
+	public static Capability<IAdvancedMachineGUI> CAPABILITY_ADVANCED_GUI;
 
 	public static final String MOD_ID = "taam";
 	public static final String MOD_NAME = "Taam";
 	public static final String MOD_VERSION = "@VERSION@";
 	public static final String MOD_AUTHOR1 = "founderio";
 	public static final String MOD_AUTHOR2 = "Xander112";
-	public static final String MOD_DESCRIPTION = "Tech and Acessories Mod";
-	public static final String MOD_CREDITS = "";
-	public static final String MOD_LOGO_PATH = "";
+	public static final String MOD_DESCRIPTION = "Taam: Tech and Acessories Mod\nTaam is open source, puplished under the MIT license. Feel free to poke around the source code! Any support is appreciated, so check out our Patreon page and our website and report any issues on GitHub!";
+	public static final String MOD_CREDITS = "Taam is a mod by Team I/O";
+	public static final String MOD_URL = "https://team-io.net/taam.php";
+	public static final String MOD_UPDATE_URL = "https://team-io.net/taam-updates.php";
+	public static final String MOD_LOGO_PATH = "/assets/taam/logo_80dpi_blue.png";
 
 	/**
 	 * Network channel name
@@ -72,6 +77,8 @@ public final class Taam {
 	public static final String INTEGRATION_JEI_CATNAME_MIXER = "taam.integration.jei.categories.mixer";
 
 	public static final String INTEGRATION_JEI_LORE_INTERNAL_CAPACITY = "taam.integration.jei.lore.internalcapacity";
+	public static final String INTEGRATION_JEI_LORE_INTERNAL_CAPACITY_IN = "taam.integration.jei.lore.internalcapacity_in";
+	public static final String INTEGRATION_JEI_LORE_INTERNAL_CAPACITY_OUT = "taam.integration.jei.lore.internalcapacity_out";
 
 	/*
 	 * Sounds
@@ -274,6 +281,7 @@ public final class Taam {
 
 	public static enum BLOCK_PRODUCTIONLINE_APPLIANCE_META implements IStringSerializable {
 		sprayer,
+		aligner,
 		;
 		public static String[] valuesAsString() {
 			Enum<?>[] valuesAsEnum = values();
@@ -397,7 +405,8 @@ public final class Taam {
 		iron_frame,
 		metal_bearing,
 		copper_wire,
-		sieve
+		sieve,
+		redirector
 		;
 		public static String[] valuesAsString() {
 			Enum<?>[] valuesAsEnum = values();
@@ -426,6 +435,7 @@ public final class Taam {
 	public static final String TILEENTITY_CREATIVEWELL = "taam.creativewell";
 
 	public static final String TILEENTITY_APPLIANCE_SPRAYER = "taam.appliance.sprayer";
+	public static final String TILEENTITY_APPLIANCE_ALIGNER = "taam.appliance.aligner";
 
 	public static final String TILEENTITY_MACHINE_WRAPPER = "taam.machine_wrapper";
 

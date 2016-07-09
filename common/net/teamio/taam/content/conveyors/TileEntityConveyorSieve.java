@@ -7,46 +7,43 @@ import com.google.common.collect.Lists;
 
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemHandlerHelper;
 import net.teamio.taam.Config;
+import net.teamio.taam.Taam;
 import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IRedstoneControlled;
 import net.teamio.taam.content.IRenderable;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.content.IWorldInteractable;
+import net.teamio.taam.conveyors.ConveyorSlotsItemHandler;
+import net.teamio.taam.conveyors.ConveyorSlotsMoving;
 import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.conveyors.ItemWrapper;
-import net.teamio.taam.conveyors.api.IConveyorSlots;
 import net.teamio.taam.network.TPMachineConfiguration;
+import net.teamio.taam.util.InventoryUtils;
 import net.teamio.taam.util.TaamUtil;
 import net.teamio.taam.util.WorldCoord;
-import net.teamio.taam.util.inv.InventoryRange;
-import net.teamio.taam.util.inv.InventoryUtils;
 
-public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInventory, IConveyorSlots, IRotatable, IWorldInteractable, IRedstoneControlled, ITickable, IRenderable {
+public class TileEntityConveyorSieve extends BaseTileEntity implements IRotatable, IWorldInteractable, IRedstoneControlled, ITickable, IRenderable {
 
-	public static List<String> parts = Collections.unmodifiableList(Lists.newArrayList("Sieve_Base"));
-	/*
-	 * Content
-	 */
-	private ItemWrapper[] items;
+	public static final List<String> parts = Collections.unmodifiableList(Lists.newArrayList("Sieve_Base"));
 
 	/*
 	 * Conveyor State
 	 */
+	private final ConveyorSlotsMoving conveyorSlots;
 	private byte redstoneMode = IRedstoneControlled.MODE_ACTIVE_ON_LOW;
 	private EnumFacing direction = EnumFacing.NORTH;
 
@@ -56,15 +53,27 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 	public boolean isShutdown;
 
 	public TileEntityConveyorSieve() {
-		items = new ItemWrapper[9];
-		for(int i = 0; i < items.length; i++) {
-			items[i] = new ItemWrapper(null);
-		}
+		conveyorSlots = new ConveyorSlotsMoving() {
+			@Override
+			public byte getSpeedsteps() {
+				return Config.pl_sieve_speedsteps;
+			}
+			
+			@Override
+			public EnumFacing getNextSlot(int slot) {
+				return direction;
+			}
+			@Override
+			public void onChangeHook() {
+				updateState(true, false, false);
+			};
+		};
+		conveyorSlots.rotation = direction;
 	}
-
+	
 	@Override
-	public byte getSpeedsteps() {
-		return Config.pl_sieve_speedsteps;
+	public String getName() {
+		return "tile.taam.productionline.sieve.name";
 	}
 
 	@Override
@@ -75,23 +84,6 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 	@Override
 	public List<String> getVisibleParts() {
 		return parts;
-	}
-
-	/**
-	 * Get all items. Danger! Returns the array directly!
-	 * @return
-	 */
-	public ItemWrapper[] getItems() {
-		return items;
-	}
-
-	/**
-	 * Drops all contained items, exactly where they are rendered now.
-	 */
-	public void dropItems() {
-		for (int index = 0; index < items.length; index++) {
-			ConveyorUtil.dropItem(worldObj, pos, this, index, false);
-		}
 	}
 
 	@Override
@@ -136,7 +128,7 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 			 * Move items already on the conveyor
 			 */
 
-			if(ConveyorUtil.defaultTransition(worldObj, pos, this, slotOrder)) {
+			if(ConveyorUtil.defaultTransition(worldObj, pos, conveyorSlots, slotOrder)) {
 				needsUpdate = true;
 			}
 		}
@@ -151,7 +143,7 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 		BlockPos down = pos.down();
 
 		// If we are blocked below, act as a conveyor.
-		IInventory outputInventory = InventoryUtils.getInventory(worldObj, down);
+		IItemHandler outputInventory = InventoryUtils.getInventory(worldObj, down, EnumFacing.UP);
 		if(outputInventory == null && !TaamUtil.canDropIntoWorld(worldObj, down)) {
 			return false;
 		}
@@ -160,7 +152,7 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 
 			int slot = slotOrder[index];
 
-			ItemWrapper wrapper = getSlot(slot);
+			ItemWrapper wrapper = conveyorSlots.getSlot(slot);
 
 			if(wrapper.isEmpty()) {
 				continue;
@@ -178,7 +170,7 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 		return true;
 	}
 
-	private boolean tryOutput(ItemWrapper wrapper, IInventory outputInventory) {
+	private boolean tryOutput(ItemWrapper wrapper, IItemHandler outputInventory) {
 		if(outputInventory == null) {
 			// Output to world
 			if(!worldObj.isRemote && wrapper.itemStack != null) {
@@ -192,36 +184,18 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 			return true;
 		} else {
 			// Output to inventory
-			InventoryRange range = new InventoryRange(outputInventory, EnumFacing.UP.ordinal());
-
 			if(wrapper.itemStack == null) {
 				return true;
 			}
-			int unable = InventoryUtils.insertItem(range, wrapper.itemStack, false);
-			if(unable > 0) {
-				wrapper.itemStack.stackSize = unable;
-				return false;
-			} else {
-				wrapper.itemStack = null;
-				return true;
-			}
+			wrapper.itemStack = ItemHandlerHelper.insertItemStacked(outputInventory, wrapper.itemStack, false);
+			return wrapper.itemStack == null;
 		}
-	}
-
-	@Override
-	public EnumFacing getNextSlot(int slot) {
-		return direction;
 	}
 
 	@Override
 	protected void writePropertiesToNBT(NBTTagCompound tag) {
 		tag.setInteger("direction", direction.ordinal());
-		NBTTagList itemsTag = new NBTTagList();
-		for(int i = 0; i < items.length; i++) {
-			itemsTag.appendTag(items[i].writeToNBT());
-		}
-		tag.setTag("items", itemsTag);
-		//		tag.setByte("redstoneMode", redstoneMode);
+		tag.setTag("items", conveyorSlots.serializeNBT());
 	}
 
 	@Override
@@ -230,85 +204,31 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 		if(direction == EnumFacing.UP || direction == EnumFacing.DOWN) {
 			direction = EnumFacing.NORTH;
 		}
-		NBTTagList itemsTag = tag.getTagList("items", NBT.TAG_COMPOUND);
-		if(itemsTag != null) {
-			int count = Math.min(itemsTag.tagCount(), items.length);
-			for(int i = 0; i < count; i++) {
-				items[i] = ItemWrapper.readFromNBT(itemsTag.getCompoundTagAt(i));
-			}
+		conveyorSlots.rotation = direction;
+		conveyorSlots.deserializeNBT(tag.getTagList("items", NBT.TAG_COMPOUND));
+	}
+	
+	@Override
+	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+		if(capability == Taam.CAPABILITY_CONVEYOR) {
+			return true;
 		}
-		//		redstoneMode = tag.getByte("redstoneMode");
-	}
-
-	/*
-	 * IConveyorAwareTE implementation
-	 */
-
-	@Override
-	public boolean shouldRenderItemsDefault() {
-		return true;
-	}
-
-	@Override
-	public int insertItemAt(ItemStack item, int slot) {
-		int count = ConveyorUtil.insertItemAt(this, item, slot, false);
-		if(count > 0) {
-			updateState(true, false, false);
+		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+			return true;
 		}
-		return count;
+		return super.hasCapability(capability, facing);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public ItemStack removeItemAt(int slot) {
-		ItemWrapper candidate = items[slot];
-		ItemStack removed = candidate.itemStack;
-		if(removed != null) {
-			candidate.itemStack = null;
-			updateState(true, false, false);
+	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+		if(capability == Taam.CAPABILITY_CONVEYOR) {
+			return (T) conveyorSlots;
 		}
-		return removed;
-	}
-
-	@Override
-	public boolean canSlotMove(int slot) {
-		ItemWrapper slotObject = items[slot];
-		return !slotObject.isBlocked();
-	};
-
-	@Override
-	public boolean isSlotAvailable(int slot) {
-		return true;
-	}
-
-	@Override
-	public ItemWrapper getSlot(int slot) {
-		return items[slot];
-	};
-
-	@Override
-	public EnumFacing getMovementDirection() {
-		return direction;
-	}
-
-	@Override
-	public int getMovementProgress(int slot) {
-		ItemWrapper slotObject = items[slot];
-		return slotObject.movementProgress;
-	}
-
-	@Override
-	public double getInsertMaxY() {
-		return 0.9;
-	}
-
-	@Override
-	public double getInsertMinY() {
-		return 0.3;
-	}
-
-	@Override
-	public float getVerticalPosition(int slot) {
-		return 0.51f;
+		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+			return (T) new ConveyorSlotsItemHandler(conveyorSlots, facing);
+		}
+		return super.getCapability(capability, facing);
 	}
 
 	/*
@@ -330,6 +250,7 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 		if(direction == EnumFacing.UP || direction == EnumFacing.DOWN) {
 			this.direction = EnumFacing.NORTH;
 		}
+		conveyorSlots.rotation = direction;
 		updateState(false, true, true);
 		worldObj.notifyBlockOfStateChange(pos, blockType);
 		if(blockType != null) {
@@ -343,130 +264,16 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements ISidedInv
 	}
 
 	/*
-	 * IInventory implementation
-	 */
-
-	@Override
-	public int getSizeInventory() {
-		return 9;
-	}
-
-	@Override
-	public ItemStack getStackInSlot(int slot) {
-		return getSlot(slot).itemStack;
-	}
-
-	@Override
-	public ItemStack decrStackSize(int slot, int amount) {
-		return null;
-	}
-
-	@Override
-	public ItemStack removeStackFromSlot(int slot) {
-		return null;
-	}
-
-	@Override
-	public void setInventorySlotContents(int slot, ItemStack itemStack) {
-		if(itemStack == null) {
-			items[slot].itemStack = null;
-			updateState(true, false, false);
-		} else {
-			insertItemAt(itemStack, slot);
-		}
-	}
-
-	@Override
-	public String getName() {
-		return "tile.productionline.sieve.name";
-	}
-
-	@Override
-	public ITextComponent getDisplayName() {
-		return new TextComponentTranslation(getName());
-	}
-
-	@Override
-	public boolean hasCustomName() {
-		return false;
-	}
-
-	@Override
-	public int getInventoryStackLimit() {
-		return 64;
-	}
-
-	@Override
-	public boolean isUseableByPlayer(EntityPlayer player) {
-		return true;
-	}
-
-	@Override
-	public void openInventory(EntityPlayer player) {
-	}
-
-	@Override
-	public void closeInventory(EntityPlayer player) {
-	}
-
-	@Override
-	public boolean isItemValidForSlot(int slot, ItemStack itemStack) {
-		return true;
-	}
-
-	@Override
-	public int getField(int id) {
-		return 0;
-	}
-
-	@Override
-	public void setField(int id, int value) {
-	}
-
-	@Override
-	public int getFieldCount() {
-		return 0;
-	}
-
-	@Override
-	public void clear() {
-	}
-
-	/*
-	 * ISidedInventory implementation
-	 */
-
-	@Override
-	public int[] getSlotsForFace(EnumFacing side) {
-		final int slot = ConveyorUtil.getSlot(side);
-		if(slot == -1) {
-			return new int[0];
-		} else {
-			return new int[] { slot };
-		}
-	};
-
-	@Override
-	public boolean canInsertItem(int index, ItemStack itemStackIn, EnumFacing direction) {
-		return ConveyorUtil.insertItemAt(this, itemStackIn, index, true) > 0;
-	}
-
-	@Override
-	public boolean canExtractItem(int index, ItemStack stack, EnumFacing direction) {
-		return false;
-	}
-
-	/*
 	 * IWorldInteractable implementation
 	 */
 
 	@Override
-	public boolean onBlockActivated(World world, EntityPlayer player, boolean hasWrench, EnumFacing side, float hitX,
-			float hitY, float hitZ) {
+	public boolean onBlockActivated(World world, EntityPlayer player, EnumHand hand, boolean hasWrench, EnumFacing side,
+			float hitX, float hitY, float hitZ) {
 		if(side != EnumFacing.UP) {
 			return false;
 		}
-		ConveyorUtil.defaultPlayerInteraction(player, this, hitX, hitZ);
+		ConveyorUtil.defaultPlayerInteraction(player, conveyorSlots, hitX, hitZ);
 		return true;
 	}
 

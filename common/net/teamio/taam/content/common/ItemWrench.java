@@ -15,6 +15,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -66,7 +67,7 @@ public class ItemWrench extends Item {
 	//	}
 
 	@Override
-	public boolean doesSneakBypassUse(ItemStack stack, net.minecraft.world.IBlockAccess world, BlockPos pos, EntityPlayer player) {
+	public boolean doesSneakBypassUse(ItemStack stack, IBlockAccess world, BlockPos pos, EntityPlayer player) {
 		// Required for disassembling, as we need shift click on the target block
 		return true;
 	}
@@ -77,6 +78,6 @@ public class ItemWrench extends Item {
 		// TODO: how to bypass the clicked tileentity?
 		// The productionline blocks do not use this call here, they are handled in the corresponding block class itself.
 		// This is done, so that wrenches from other mods can be supported eventually.
-		return WrenchUtil.wrenchBlock(worldIn, pos, playerIn, facing, hitX, hitY, hitZ);
+		return WrenchUtil.wrenchBlock(worldIn, pos, playerIn, hand, facing, hitX, hitY, hitZ);
 	}
 }

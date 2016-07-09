@@ -24,11 +24,11 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
+import net.teamio.taam.Config;
 import net.teamio.taam.Taam;
 import net.teamio.taam.TaamMain;
-import net.teamio.taam.content.piping.MachineMixer;
 import net.teamio.taam.recipes.IProcessingRecipe;
-import net.teamio.taam.recipes.MixerRecipe;
+import net.teamio.taam.recipes.impl.MixerRecipe;
 
 public class MixerCategory extends BlankRecipeCategory {
 
@@ -66,7 +66,7 @@ public class MixerCategory extends BlankRecipeCategory {
 
 	@Override
 	public void drawExtras(Minecraft minecraft) {
-		{
+		if(Config.jei_render_machines_into_gui) {
 			TextureManager texturemanager = minecraft.renderEngine;
 			texturemanager.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 
@@ -96,8 +96,10 @@ public class MixerCategory extends BlankRecipeCategory {
 
 			GL11.glScaled(.5, .5, 1);
 
-			String display = Translator.translateToLocalFormatted(Taam.INTEGRATION_JEI_LORE_INTERNAL_CAPACITY, MachineMixer.capacity);
+			String display = Translator.translateToLocalFormatted(Taam.INTEGRATION_JEI_LORE_INTERNAL_CAPACITY_IN, Config.pl_mixer_capacity_input);
 			fontRendererObj.drawString(display, 4*2, 47*2, 0x00555555, false);
+			display = Translator.translateToLocalFormatted(Taam.INTEGRATION_JEI_LORE_INTERNAL_CAPACITY_OUT, Config.pl_mixer_capacity_output);
+			fontRendererObj.drawString(display, 6*2, 47*2, 0x00555555, false);
 
 			GL11.glPopMatrix();
 		}

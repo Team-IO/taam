@@ -1,29 +1,30 @@
-package net.teamio.taam.conveyors.api;
+package net.teamio.taam.conveyors;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
-import net.teamio.taam.conveyors.ItemWrapper;
 
 public interface IConveyorSlots {
 
 	boolean canSlotMove(int slot);
 	boolean isSlotAvailable(int slot);
-	int getMovementProgress(int slot);
 	byte getSpeedsteps();
 
 	/**
 	 * Add an item to a slot.
 	 * @param item
 	 * @param slot
+	 * @param simulate
 	 * @return The actual amount of items added
 	 */
-	int insertItemAt(ItemStack item, int slot);
+	int insertItemAt(ItemStack item, int slot, boolean simulate);
 	/**
 	 * Remove an item from a slot.
 	 * @param slot
+	 * @param amount
+	 * @param simulate
 	 * @return The itemStack that was in that slot before
 	 */
-	ItemStack removeItemAt(int slot);
+	ItemStack removeItemAt(int slot, int amount, boolean simulate);
 	EnumFacing getMovementDirection();
 	ItemWrapper getSlot(int slot);
 	EnumFacing getNextSlot(int slot);

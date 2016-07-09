@@ -4,7 +4,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.Fluid;
@@ -12,30 +14,45 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+import net.teamio.taam.Config;
 import net.teamio.taam.Taam;
 import net.teamio.taam.content.IWorldInteractable;
 import net.teamio.taam.content.conveyors.ATileEntityAppliance;
 import net.teamio.taam.conveyors.ConveyorUtil;
+import net.teamio.taam.conveyors.IConveyorApplianceHost;
 import net.teamio.taam.conveyors.ItemWrapper;
-import net.teamio.taam.conveyors.api.IConveyorApplianceHost;
 import net.teamio.taam.piping.PipeEndFluidHandler;
 import net.teamio.taam.piping.PipeUtil;
 import net.teamio.taam.recipes.IProcessingRecipeFluidBased;
 import net.teamio.taam.recipes.ProcessingRegistry;
+import net.teamio.taam.rendering.TankRenderInfo;
 
 public class ApplianceSprayer extends ATileEntityAppliance implements IFluidHandler, ITickable, IWorldInteractable {
 
-	private static final int capacity = 2000;
-
-	private FluidTank tank;
-	private PipeEndFluidHandler pipeEnd;
+	public static final float b_tankBorder = 1.5f / 16f;
+	public static final float b_tankBorderSprayer = b_tankBorder + 4f / 16f;
+	public static final float b_basePlate = 2f / 16f;
+	
+	public static final AxisAlignedBB bounds_sprayer_tank = new AxisAlignedBB(
+			b_tankBorder,	b_basePlate,	b_tankBorder,
+			1-b_tankBorder,	1-4f/16,		1-b_tankBorderSprayer
+			).expand(TankRenderInfo.shrinkValue, TankRenderInfo.shrinkValue, TankRenderInfo.shrinkValue);
+	
+	private final FluidTank tank;
+	private final PipeEndFluidHandler pipeEnd;
+	private final TankRenderInfo tankRI = new TankRenderInfo(bounds_sprayer_tank, null);
 
 	private FluidStack lastInputFluid;
 	private IProcessingRecipeFluidBased[] matchingRecipes;
 
 	public ApplianceSprayer() {
-		tank = new FluidTank(capacity);
+		tank = new FluidTank(Config.pl_sprayer_capacity);
 		pipeEnd = new PipeEndFluidHandler(this, direction.getOpposite(), false);
+	}
+	
+	@Override
+	public String getName() {
+		return "tile.taam.productionline_appliance.sprayer.name";
 	}
 
 	/**
@@ -180,6 +197,12 @@ public class ApplianceSprayer extends ATileEntityAppliance implements IFluidHand
 
 		return true;
 	}
+	
+	@Override
+	public EnumFacing overrideNextSlot(IConveyorApplianceHost host, int slot, ItemWrapper wrapper,
+			EnumFacing beforeOverride) {
+		return beforeOverride;
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -199,8 +222,8 @@ public class ApplianceSprayer extends ATileEntityAppliance implements IFluidHand
 	 */
 
 	@Override
-	public boolean onBlockActivated(World world, EntityPlayer player, boolean hasWrench, EnumFacing side, float hitX,
-			float hitY, float hitZ) {
+	public boolean onBlockActivated(World world, EntityPlayer player, EnumHand hand, boolean hasWrench, EnumFacing side,
+			float hitX, float hitY, float hitZ) {
 		boolean didSomething = PipeUtil.defaultPlayerInteraction(player, getTank());
 
 		if(didSomething) {
@@ -219,6 +242,9 @@ public class ApplianceSprayer extends ATileEntityAppliance implements IFluidHand
 		if(capability == Taam.CAPABILITY_PIPE) {
 			return facing == pipeEnd.getSide();
 		}
+		if (capability == Taam.CAPABILITY_RENDER_TANK) {
+			return true;
+		}
 		return false;
 	}
 
@@ -227,6 +253,10 @@ public class ApplianceSprayer extends ATileEntityAppliance implements IFluidHand
 	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
 		if(capability == Taam.CAPABILITY_PIPE && facing == pipeEnd.getSide()) {
 			return (T) pipeEnd;
+		}
+		if (capability == Taam.CAPABILITY_RENDER_TANK) {
+			tankRI.tankInfo = tank.getInfo();
+			return (T) tankRI.asArray();
 		}
 		return null;
 	}

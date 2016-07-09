@@ -1,6 +1,8 @@
-package net.teamio.taam.recipes;
+package net.teamio.taam.recipes.impl;
 
 import net.minecraft.item.ItemStack;
+import net.teamio.taam.recipes.ChanceBasedRecipe;
+import net.teamio.taam.recipes.ChancedOutput;
 
 public class GrinderRecipe extends ChanceBasedRecipe {
 

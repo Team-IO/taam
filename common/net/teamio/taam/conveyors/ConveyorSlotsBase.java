@@ -1,8 +1,6 @@
-package net.teamio.taam.conveyors.api;
+package net.teamio.taam.conveyors;
 
 import net.minecraft.util.EnumFacing;
-import net.teamio.taam.conveyors.ItemWrapper;
-import net.teamio.taam.conveyors.SlotMatrix;
 
 /**
  * Base class for non-conveyor-like slot sets.
@@ -10,12 +8,22 @@ import net.teamio.taam.conveyors.SlotMatrix;
  * @author Oliver Kahrmann
  *
  */
-public abstract class ConveyorSlotsStatic implements IConveyorSlots {
+public abstract class ConveyorSlotsBase implements IConveyorSlots {
 
 	protected SlotMatrix slotMatrix = SlotMatrix.ALL;
 	public EnumFacing rotation = EnumFacing.NORTH;
 	public double insertMaxY = 0.9;
 	public double insertMinY = 0.3;
+	public float verticalPosition = 0.51f;
+
+	/**
+	 * This method should be called by implementations when content changes,
+	 * that needs to be saved / updated.
+	 * 
+	 * Implementations further down can then call their own logic in here.
+	 */
+	public void onChangeHook() {
+	}
 
 	@Override
 	public boolean canSlotMove(int slot) {
@@ -25,11 +33,6 @@ public abstract class ConveyorSlotsStatic implements IConveyorSlots {
 	@Override
 	public boolean isSlotAvailable(int slot) {
 		return slotMatrix.isSlotAvailable(slot, rotation);
-	}
-
-	@Override
-	public int getMovementProgress(int slot) {
-		return 0;
 	}
 
 	@Override
@@ -69,7 +72,7 @@ public abstract class ConveyorSlotsStatic implements IConveyorSlots {
 
 	@Override
 	public float getVerticalPosition(int slot) {
-		return 0.51f;
+		return verticalPosition;
 	}
 
 }

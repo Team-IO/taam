@@ -45,6 +45,11 @@ public class TileEntitySensor extends BaseTileEntity implements IRotatable, ITic
 	public TileEntitySensor(EnumFacing rotation) {
 		direction = rotation;
 	}
+	
+	@Override
+	public String getName() {
+		return "tile.taam.sensor.name";
+	}
 
 	@Override
 	public EnumFacing getFacingDirection() {

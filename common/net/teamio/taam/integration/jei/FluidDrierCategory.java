@@ -24,11 +24,11 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
+import net.teamio.taam.Config;
 import net.teamio.taam.Taam;
 import net.teamio.taam.TaamMain;
-import net.teamio.taam.content.piping.MachineFluidDrier;
-import net.teamio.taam.recipes.FluidDrierRecipe;
 import net.teamio.taam.recipes.IProcessingRecipe;
+import net.teamio.taam.recipes.impl.FluidDrierRecipe;
 
 public class FluidDrierCategory extends BlankRecipeCategory {
 
@@ -65,7 +65,7 @@ public class FluidDrierCategory extends BlankRecipeCategory {
 
 	@Override
 	public void drawExtras(Minecraft minecraft) {
-		{
+		if(Config.jei_render_machines_into_gui) {
 			TextureManager texturemanager = minecraft.renderEngine;
 			texturemanager.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 
@@ -95,7 +95,7 @@ public class FluidDrierCategory extends BlankRecipeCategory {
 
 			GL11.glScaled(.5, .5, 1);
 
-			String display = Translator.translateToLocalFormatted(Taam.INTEGRATION_JEI_LORE_INTERNAL_CAPACITY, MachineFluidDrier.capacity);
+			String display = Translator.translateToLocalFormatted(Taam.INTEGRATION_JEI_LORE_INTERNAL_CAPACITY, Config.pl_fluid_drier_capacity);
 			fontRendererObj.drawString(display, 24*2, 3*2, 0x00555555, false);
 
 			GL11.glPopMatrix();

@@ -10,6 +10,13 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
+/**
+ * Coordinates for a block inside a world. Includes the dimension ID. Used for
+ * routing over the network.
+ * 
+ * @author Oliver Kahrmann
+ *
+ */
 public class WorldCoord {
 	public int world;
 	public int x;
@@ -68,7 +75,7 @@ public class WorldCoord {
 
 	public WorldClient getWorldClient() {
 		WorldClient worldClient = Minecraft.getMinecraft().theWorld;
-		if(worldClient.provider.getDimension() == world) {
+		if (worldClient.provider.getDimension() == world) {
 			return worldClient;
 		} else {
 			return null;
@@ -76,7 +83,8 @@ public class WorldCoord {
 	}
 
 	public WorldCoord getDirectionalOffset(EnumFacing direction) {
-		return new WorldCoord(world, x + direction.getFrontOffsetX(), y + direction.getFrontOffsetY(), z + direction.getFrontOffsetZ());
+		return new WorldCoord(world, x + direction.getFrontOffsetX(), y + direction.getFrontOffsetY(),
+				z + direction.getFrontOffsetZ());
 	}
 
 	public boolean isDirectionalOffset(EnumFacing direction, WorldCoord other) {

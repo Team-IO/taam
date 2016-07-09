@@ -2,8 +2,10 @@ package net.teamio.taam.conveyors;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.teamio.taam.conveyors.api.IItemFilter;
-import net.teamio.taam.util.inv.InventoryUtils;
+import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import net.teamio.taam.util.InventoryUtils;
 
 /**
  * Wrapper for item stacks on the conveyor system. Keeps track of movement,
@@ -11,8 +13,8 @@ import net.teamio.taam.util.inv.InventoryUtils;
  *
  * @author oliverkahrmann
  */
-public class ItemWrapper {
-	public static ItemWrapper EMPTY = new ItemWrapper(null) {
+public class ItemWrapper implements INBTSerializable<NBTTagCompound>{
+	public static final ItemWrapper EMPTY = new ItemWrapper(null) {
 		@Override
 		public boolean isEmpty() {
 			return true;
@@ -20,10 +22,14 @@ public class ItemWrapper {
 	};
 
 	public ItemStack itemStack;
-	// TODO: Write filter to NBT
-	public IItemFilter filter;
 	public byte movementProgress;
+	
+	@SideOnly(Side.CLIENT)
+	private boolean stuck;
 
+	public ItemWrapper() {
+	}
+	
 	public ItemWrapper(ItemStack itemStack) {
 		this.itemStack = itemStack;
 	}
@@ -90,6 +96,42 @@ public class ItemWrapper {
 			movementProgress = 0;
 		}
 	}
+	
+	/**
+	 * Sets a client-side flag used for rendering. Stuck wrappers are not
+	 * interpolated in between game ticks to prevent stuttering.
+	 * 
+	 * @param value
+	 */
+	@SideOnly(Side.CLIENT)
+	public void setStuck(boolean value) {
+		stuck = value;
+	}
+
+	/**
+	 * Gets a client-side flag used for rendering. Stuck wrappers are not
+	 * interpolated in between game ticks to prevent stuttering.
+	 * 
+	 * @return
+	 */
+	@SideOnly(Side.CLIENT)
+	public boolean isStuck() {
+		return stuck;
+	}
+
+	/**
+	 * Checks whether the client-side rendering shall be interpolated in between
+	 * game ticks.
+	 * 
+	 * Checks if the wrapper is neither stuck (client-side flag), blocked nor
+	 * empty. (Last one especially for highlight box rendering)
+	 * 
+	 * @return
+	 */
+	@SideOnly(Side.CLIENT)
+	public boolean isRenderingInterpolated() {
+		return !isStuck() && !isBlocked() && !isEmpty();
+	}
 
 	@Override
 	public String toString() {
@@ -97,7 +139,8 @@ public class ItemWrapper {
 				String.valueOf(itemStack), movementProgress);
 	}
 
-	public NBTTagCompound writeToNBT() {
+	@Override
+	public NBTTagCompound serializeNBT() {
 		NBTTagCompound tag = new NBTTagCompound();
 		tag.setByte("move", movementProgress);
 		if (itemStack != null) {
@@ -106,10 +149,15 @@ public class ItemWrapper {
 		return tag;
 	}
 
-	public static ItemWrapper readFromNBT(NBTTagCompound tag) {
-		ItemStack itemStack = ItemStack.loadItemStackFromNBT(tag);
-		ItemWrapper wrapper = new ItemWrapper(itemStack);
-		wrapper.movementProgress = tag.getByte("move");
+	@Override
+	public void deserializeNBT(NBTTagCompound nbt) {
+		itemStack = ItemStack.loadItemStackFromNBT(nbt);
+		movementProgress = nbt.getByte("move");
+	}
+
+	public static ItemWrapper readFromNBT(NBTTagCompound nbt) {
+		ItemWrapper wrapper = new ItemWrapper();
+		wrapper.deserializeNBT(nbt);
 		return wrapper;
 	}
 

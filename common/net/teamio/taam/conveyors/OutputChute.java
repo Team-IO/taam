@@ -1,22 +1,22 @@
 package net.teamio.taam.conveyors;
 
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemHandlerHelper;
+import net.teamio.taam.util.InventoryUtils;
 import net.teamio.taam.util.TaamUtil;
-import net.teamio.taam.util.inv.InventoryRange;
-import net.teamio.taam.util.inv.InventoryUtils;
 
 public abstract class OutputChute {
 
-	IInventory outputInventory;
+	IItemHandler outputInventory;
 	boolean canDrop;
 
 	public void refreshOutputInventory(World world, BlockPos pos) {
-		outputInventory = InventoryUtils.getInventory(world, pos);
+		outputInventory = InventoryUtils.getInventory(world, pos, EnumFacing.UP);
 		canDrop = TaamUtil.canDropIntoWorld(world, pos);
 	}
 
@@ -34,11 +34,6 @@ public abstract class OutputChute {
 	 */
 	public abstract boolean output(World world, BlockPos pos);
 
-	public void output(ItemStack stack) {
-
-	}
-
-
 	/**
 	 * Tries to output into the outputInventory, or drop down into the world
 	 *
@@ -55,7 +50,7 @@ public abstract class OutputChute {
 	 * @return true if it was able to output items, or unable but still has
 	 *         items left.
 	 */
-	public static boolean chuteMechanicsOutput(World world, BlockPos oututPosition, IInventory outputInventory, ItemStack[] backlog, int maxOutput) {
+	public static boolean chuteMechanicsOutput(World world, BlockPos oututPosition, IItemHandler outputInventory, ItemStack[] backlog, int maxOutput) {
 		if(backlog == null) {
 			return false;
 		}
@@ -86,21 +81,17 @@ public abstract class OutputChute {
 			hasOutputLeft = false;
 		} else {
 			// Output to inventory
-			InventoryRange range = new InventoryRange(outputInventory, EnumFacing.UP.ordinal());
-
 			for(int i = 0; i < backlog.length; i++) {
 				ItemStack itemStack = backlog[i];
 				if(itemStack == null) {
 					continue;
 				}
-				int unable = InventoryUtils.insertItem(range, itemStack, false);
-				if(unable > 0) {
-					hasOutputLeft = true;
-					wasAble = unable != itemStack.stackSize;
-					itemStack.stackSize = unable;
-				} else {
+				backlog[i] = ItemHandlerHelper.insertItemStacked(outputInventory, itemStack, false);
+				if(backlog[i] == null) {
 					wasAble = true;
-					backlog[i] = null;
+				} else {
+					hasOutputLeft = true;
+					wasAble = backlog[i] != itemStack;
 				}
 			}
 		}

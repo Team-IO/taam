@@ -37,6 +37,7 @@ item.taam.part.iron_frame.name=Iron Frame
 item.taam.part.metal_bearing.name=Metal Bearing
 item.taam.part.copper_wire.name=Copper Wire
 item.taam.part.sieve.name=Sieve
+item.taam.part.redirector.name=Redirector
 # Materials
 item.taam.material.plastic_sheet.name=Plastic Sheet
 item.taam.material.plastic_bar.name=Plastic Bar
@@ -118,6 +119,7 @@ tile.taam.productionline_attachable.trashcan.name=Conveyor Trash Can
 tile.taam.productionline_attachable.lamp.name=Conveyor Lamp
 
 tile.taam.productionline_appliance.sprayer.name=Sprayer
+tile.taam.productionline_appliance.aligner.name=Aligner
 
 #Machines
 tile.taam.machine.pipe.name=Pipe
@@ -154,6 +156,10 @@ fluid.concreteRough=Rough Concrete
 fluid.concreteFine=Fine Concrete
 fluid.coating=Resin-Based Coating
 
+# Apps
+taam.app.common.redstone=Redstone
+taam.app.settings.aligner=Filter Setup
+
 # Lore localization
 lore.taam.shift=Hold Shift
 lore.taam.conveyor_appliance=Conveyor Appliance
@@ -165,6 +171,7 @@ lore.taam.debugtool=Debug Tool
 lore.taam.debugtool.usage=This item can't be obtained in Survival.\nIt prints debug information\ninto chat or console.
 lore.taam.wrench=An engineers utility
 lore.taam.wrench.usage=Use this wrench to rotate\nand manage productionline machines.
+lore.taam.redirector.usage=Attach this part to a conveyor to redirect\ntransported goods to the left or right.\nCan be detached with a wrench.
 
 # Death causes
 death.attack.taam.processed=%1$s was processed (painfully)
@@ -181,3 +188,8 @@ taam.integration.jei.categories.fluiddrier=Dry Fluid
 taam.integration.jei.categories.mixer=Mixing
 
 taam.integration.jei.lore.internalcapacity=Internal Capacity: %d mB
+taam.integration.jei.lore.internalcapacity_in=Input Capacity: %d mB
+taam.integration.jei.lore.internalcapacity_out=Output Capacity: %d mB
+
+# Config options, incomplete
+taam.config.integration.multipart.load_multiparts=Load Multipart Items

@@ -11,7 +11,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.teamio.taam.Taam;
 import net.teamio.taam.content.IRotatable;
-import net.teamio.taam.conveyors.api.IConveyorSlots;
+import net.teamio.taam.conveyors.IConveyorSlots;
 
 public class ItemProductionLine extends ItemMultiTexture {
 

@@ -1,11 +1,13 @@
-package net.teamio.taam.recipes;
+package net.teamio.taam.recipes.impl;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
+import net.teamio.taam.content.piping.MachineFluidDrier;
+import net.teamio.taam.recipes.BaseProcessingRecipeFluidBased;
+import net.teamio.taam.recipes.ChancedOutput;
 
 /**
- * Recipe class for the
- * {@link net.teamio.taam.content.piping.TileEntityFluidDrier}.
+ * Recipe class for the {@link MachineFluidDrier}.
  *
  * @author Oliver Kahrmann
  *

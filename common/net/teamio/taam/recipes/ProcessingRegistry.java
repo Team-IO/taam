@@ -8,6 +8,11 @@ import java.util.Map;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
+import net.teamio.taam.recipes.impl.CrusherRecipe;
+import net.teamio.taam.recipes.impl.FluidDrierRecipe;
+import net.teamio.taam.recipes.impl.GrinderRecipe;
+import net.teamio.taam.recipes.impl.MixerRecipe;
+import net.teamio.taam.recipes.impl.SprayerRecipe;
 
 /**
  * Registry for all processing machines. Provides indexed access to all recipes.
@@ -41,8 +46,8 @@ public final class ProcessingRegistry {
 	static {
 		entries = new HashMap<Integer, ProcessingRegistryEntry>();
 
-		GRINDER = registerMachine(new ProcessingRegistryEntry(IProcessingRecipe.class, "Grinder"));
-		CRUSHER = registerMachine(new ProcessingRegistryEntry(IProcessingRecipe.class, "Crusher"));
+		GRINDER = registerMachine(new ProcessingRegistryEntry(GrinderRecipe.class, "Grinder"));
+		CRUSHER = registerMachine(new ProcessingRegistryEntry(CrusherRecipe.class, "Crusher"));
 		SPRAYER = registerMachine(new ProcessingRegistryEntry(SprayerRecipe.class, "Sprayer"));
 		MIXER = registerMachine(new ProcessingRegistryEntry(MixerRecipe.class, "Mixer"));
 		FLUIDDRIER = registerMachine(new ProcessingRegistryEntry(FluidDrierRecipe.class, "Fluid Drier"));

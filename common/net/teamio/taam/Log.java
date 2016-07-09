@@ -36,7 +36,7 @@ public final class Log {
 	}
 
 	public static void debug(String msg){
-		if(Config.debug) {
+		if(Config.debug_output) {
 			LOGGER.info(msg);
 		} else {
 			LOGGER.debug(msg);
@@ -44,7 +44,7 @@ public final class Log {
 	}
 
 	public static void debug(String msg, Object... params){
-		if(Config.debug) {
+		if(Config.debug_output) {
 			LOGGER.info(msg, params);
 		} else {
 			LOGGER.debug(msg, params);

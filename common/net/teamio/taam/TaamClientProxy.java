@@ -12,7 +12,6 @@ import com.google.common.collect.ImmutableMap;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.ItemModelMesher;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -24,7 +23,6 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.IRegistry;
@@ -40,20 +38,19 @@ import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.teamio.taam.content.common.TileEntityChute;
-import net.teamio.taam.content.common.TileEntityCreativeCache;
-import net.teamio.taam.content.common.TileEntitySensor;
 import net.teamio.taam.content.conveyors.TileEntityConveyor;
-import net.teamio.taam.content.conveyors.TileEntityConveyorHopper;
 import net.teamio.taam.content.conveyors.TileEntityConveyorItemBag;
 import net.teamio.taam.content.conveyors.TileEntityConveyorProcessor;
 import net.teamio.taam.content.conveyors.TileEntityConveyorSieve;
 import net.teamio.taam.content.conveyors.TileEntityConveyorTrashCan;
+import net.teamio.taam.conveyors.appliances.ApplianceAligner;
 import net.teamio.taam.conveyors.appliances.ApplianceSprayer;
 import net.teamio.taam.machines.MachineTileEntity;
+import net.teamio.taam.network.TPAdvancedGuiAppData;
 import net.teamio.taam.rendering.TaamRenderer;
 import net.teamio.taam.rendering.obj.OBJCustomData;
 import net.teamio.taam.rendering.obj.OBJLoader;
@@ -70,6 +67,13 @@ public class TaamClientProxy extends TaamCommonProxy {
 	private final List<ModelResourceLocation> locationsToReplace = new ArrayList<ModelResourceLocation>();
 
 	@Override
+	public void registerPackets(SimpleNetworkWrapper network) {
+		super.registerPackets(network);
+
+		network.registerMessage(TPAdvancedGuiAppData.Handler.class, TPAdvancedGuiAppData.class, 2, Side.CLIENT);
+	}
+	
+	@Override
 	public void registerRenderStuff() {
 		ModelLoaderRegistry.registerLoader(OBJLoader.INSTANCE);
 		OBJLoader.INSTANCE.addDomain(Taam.MOD_ID.toLowerCase());
@@ -77,17 +81,14 @@ public class TaamClientProxy extends TaamCommonProxy {
 		taamRenderer = new TaamRenderer();
 
 		// Tile Entity Rendering
-		ClientRegistry.bindTileEntitySpecialRenderer(TileEntitySensor.class, taamRenderer);
-		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityChute.class, taamRenderer);
-		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCreativeCache.class, taamRenderer);
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityConveyor.class, taamRenderer);
-		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityConveyorHopper.class, taamRenderer);
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityConveyorProcessor.class, taamRenderer);
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityConveyorSieve.class, taamRenderer);
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityConveyorItemBag.class, taamRenderer);
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityConveyorTrashCan.class, taamRenderer);
 
 		ClientRegistry.bindTileEntitySpecialRenderer(ApplianceSprayer.class, taamRenderer);
+		ClientRegistry.bindTileEntitySpecialRenderer(ApplianceAligner.class, taamRenderer);
 
 		ClientRegistry.bindTileEntitySpecialRenderer(MachineTileEntity.class, taamRenderer);
 
@@ -224,43 +225,6 @@ public class TaamClientProxy extends TaamCommonProxy {
 		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_PRODUCTIONLINE, Taam.BLOCK_PRODUCTIONLINE_META.hopper.ordinal(), "conveyor_hopper.obj");
 		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_PRODUCTIONLINE, Taam.BLOCK_PRODUCTIONLINE_META.hopper_hs.ordinal(), "conveyor_hopper_hs.obj");
 		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_PRODUCTIONLINE, Taam.BLOCK_PRODUCTIONLINE_META.sieve.ordinal(), "conveyor_sieve.obj");
-	}
-
-	/**
-	 * Registers & remembers a model location for inventory rendering for the
-	 * given item, for every meta value from 0 to metaCount-1.
-	 *
-	 * Specific for items using OBJ models.
-	 *
-	 * @param modelMesher
-	 * @param itemId
-	 * @param metaCount
-	 * @param modelFile
-	 *            Expects the model file to be a something.obj
-	 */
-	private void registerItemOBJ(ItemModelMesher modelMesher, String itemId, int metaCount, String modelFile) {
-
-		// Find item to register
-		Item item = GameRegistry.findItem(Taam.MOD_ID, itemId);
-
-		// Create & remember model location
-		final ModelResourceLocation resourceLocation = new ModelResourceLocation(Taam.MOD_ID + ":" + modelFile, "inventory");
-		locationsToReplace.add(resourceLocation);
-
-		ItemMeshDefinition meshDef = new ItemMeshDefinition() {
-
-			@Override
-			public ModelResourceLocation getModelLocation(ItemStack stack) {
-				return resourceLocation;
-			}
-		};
-
-		// Register the variants
-		modelMesher.register(item, meshDef);
-		// Register the model location
-		for (int meta = 0; meta < metaCount; meta++) {
-			ModelLoader.setCustomModelResourceLocation(item, meta, resourceLocation);
-		}
 	}
 
 	/**

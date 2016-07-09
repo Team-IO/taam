@@ -1,7 +1,10 @@
-package net.teamio.taam.recipes;
+package net.teamio.taam.recipes.impl;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
+import net.teamio.taam.recipes.BaseProcessingRecipeFluidBased;
+import net.teamio.taam.recipes.ChancedOutput;
+import net.teamio.taam.recipes.IProcessingRecipeFluidBased;
 
 public class MixerRecipe extends BaseProcessingRecipeFluidBased implements IProcessingRecipeFluidBased {
 

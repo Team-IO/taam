@@ -22,7 +22,8 @@
         	"east": {"y": 270}
         },
         "variant": {
-        	"sprayer":		{ "model": "taam:sprayer.obj" }
+        	"sprayer":		{ "model": "taam:sprayer.obj" },
+        	"aligner":		{ "model": "taam:appliance_aligner.obj" }
         }
     }
 }

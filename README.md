@@ -1,4 +1,4 @@
-taam [![Build Status](https://travis-ci.org/Team-IO/taam.svg?branch=master)](https://travis-ci.org/Team-IO/taam)
+taam [![Build Status](https://travis-ci.org/Team-IO/taam.svg?branch=1.9)](https://travis-ci.org/Team-IO/taam)
 ====
 Tech and Accessory Mod
 

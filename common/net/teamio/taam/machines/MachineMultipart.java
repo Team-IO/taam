@@ -50,8 +50,8 @@ import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.content.piping.MachinePipe;
 import net.teamio.taam.rendering.obj.OBJModel;
 import net.teamio.taam.util.FaceBitmap;
+import net.teamio.taam.util.InventoryUtils;
 import net.teamio.taam.util.WrenchUtil;
-import net.teamio.taam.util.inv.InventoryUtils;
 
 public class MachineMultipart extends Multipart implements INormallyOccludingPart, ITickable, ISlottedPart, ISlottedCapabilityProvider {
 	public IMachine machine;
@@ -168,7 +168,7 @@ public class MachineMultipart extends Multipart implements INormallyOccludingPar
 
 	@Override
 	public boolean onActivated(EntityPlayer player, EnumHand hand, ItemStack heldItem, PartMOP hit) {
-		boolean playerHasWrench = WrenchUtil.playerHasWrenchInMainhand(player);
+		boolean playerHasWrench = WrenchUtil.playerHasWrenchInHand(player, hand);
 
 		if (!playerHasWrench) {
 			return false;
@@ -176,6 +176,11 @@ public class MachineMultipart extends Multipart implements INormallyOccludingPar
 
 		boolean playerIsSneaking = player.isSneaking();
 		Log.debug("Wrenching multipart. Player is sneaking: {}", playerIsSneaking);
+
+		if(playerIsSneaking && hand == EnumHand.OFF_HAND) {
+			Log.debug("Wrench in offhand, NOT disassembling!");
+			playerIsSneaking = false;
+		}
 
 		if (playerIsSneaking) {
 			ItemStack dropStack = getPickBlock(player, hit);

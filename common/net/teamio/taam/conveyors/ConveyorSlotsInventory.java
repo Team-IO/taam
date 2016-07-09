@@ -1,9 +1,8 @@
-package net.teamio.taam.conveyors.api;
+package net.teamio.taam.conveyors;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
-import net.teamio.taam.conveyors.SlotMatrix;
-import net.teamio.taam.util.inv.InventoryUtils;
+import net.minecraftforge.items.ItemHandlerHelper;
 
 /**
  * A {@link IConveyorSlots} implementation that inputs into an inventory. No
@@ -12,7 +11,7 @@ import net.teamio.taam.util.inv.InventoryUtils;
  * @author Oliver Kahrmann
  *
  */
-public class ConveyorSlotsInventory extends ConveyorSlotsStatic {
+public class ConveyorSlotsInventory extends ConveyorSlotsBase {
 
 	private IItemHandler inventory;
 
@@ -41,17 +40,19 @@ public class ConveyorSlotsInventory extends ConveyorSlotsStatic {
 	}
 
 	@Override
-	public int insertItemAt(ItemStack item, int slot) {
+	public int insertItemAt(ItemStack item, int slot, boolean simulate) {
 		if (item == null || item.stackSize == 0) {
 			return 0;
 		}
-		int inserted = item.stackSize - InventoryUtils.insertItem(inventory, item, false);
-		// TODO: updateState(false, false, false);
-		return inserted;
+		ItemStack notAdded = ItemHandlerHelper.insertItemStacked(inventory, item, simulate);
+		int added = item.stackSize;
+		if(notAdded != null)
+			added -= notAdded.stackSize;
+		return added;
 	}
 
 	@Override
-	public ItemStack removeItemAt(int slot) {
+	public ItemStack removeItemAt(int slot, int amount, boolean simulate) {
 		return null;
 	}
 

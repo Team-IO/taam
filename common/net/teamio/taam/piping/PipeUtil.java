@@ -15,7 +15,7 @@ import net.teamio.taam.Config;
 import net.teamio.taam.Log;
 import net.teamio.taam.MultipartHandler;
 import net.teamio.taam.Taam;
-import net.teamio.taam.util.inv.InventoryUtils;
+import net.teamio.taam.util.InventoryUtils;
 
 public final class PipeUtil {
 	private PipeUtil() {

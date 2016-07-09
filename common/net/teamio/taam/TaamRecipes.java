@@ -12,12 +12,12 @@ import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 import net.teamio.taam.Taam.BLOCK_ORE_META;
 import net.teamio.taam.recipes.ChancedOutput;
-import net.teamio.taam.recipes.CrusherRecipe;
-import net.teamio.taam.recipes.FluidDrierRecipe;
-import net.teamio.taam.recipes.GrinderRecipe;
-import net.teamio.taam.recipes.MixerRecipe;
 import net.teamio.taam.recipes.ProcessingRegistry;
-import net.teamio.taam.recipes.SprayerRecipe;
+import net.teamio.taam.recipes.impl.CrusherRecipe;
+import net.teamio.taam.recipes.impl.FluidDrierRecipe;
+import net.teamio.taam.recipes.impl.GrinderRecipe;
+import net.teamio.taam.recipes.impl.MixerRecipe;
+import net.teamio.taam.recipes.impl.SprayerRecipe;
 
 public class TaamRecipes {
 
@@ -646,7 +646,7 @@ public class TaamRecipes {
 				'C', new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.circuit_advanced.ordinal())));*/
 		//		iron frame
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.iron_frame.ordinal()),
-				"III", "I I", "I I",
+				" I ", "I I", "I I",
 				'I', "ingotIron"));
 
 		//		rubber band
