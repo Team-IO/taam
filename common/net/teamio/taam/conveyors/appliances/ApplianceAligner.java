@@ -173,7 +173,7 @@ public class ApplianceAligner extends ATileEntityAppliance implements IWorldInte
 
 		int row = ConveyorUtil.ROWS.get(slot, direction);
 		int lane = ConveyorUtil.LANES.get(slot, direction);
-		Log.debug("SLOT: {} ROW: {} LANE: {}", slot, row, lane);
+
 		// Only process the front-most row
 		if(row != 1) {
 			return beforeOverride;
