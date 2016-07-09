@@ -14,8 +14,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.IWorldNameable;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import net.teamio.taam.Log;
 import net.teamio.taam.util.TaamUtil;
 
@@ -33,7 +31,6 @@ public abstract class BaseTileEntity extends TileEntity implements IWorldNameabl
 	 * ThreadLocal storage for the list of visible parts (required due to some
 	 * concurrency issues, See issue #194)
 	 */
-	@SideOnly(Side.CLIENT)
 	public static final ThreadLocal<List<String>> visibleParts = new ThreadLocal<List<String>>() {
 		@Override
 		protected List<String> initialValue() {

@@ -51,15 +51,15 @@ public class TileEntityConveyor extends BaseTileEntity implements IRotatable, IC
 	public boolean isEnd = false;
 	public boolean isBegin = false;
 	@SideOnly(Side.CLIENT)
-	public boolean renderEnd = false;
+	public boolean renderEnd;
 	@SideOnly(Side.CLIENT)
-	public boolean renderBegin = false;
+	public boolean renderBegin;
 	@SideOnly(Side.CLIENT)
-	public boolean renderRight = false;
+	public boolean renderRight;
 	@SideOnly(Side.CLIENT)
-	public boolean renderLeft = false;
+	public boolean renderLeft;
 	@SideOnly(Side.CLIENT)
-	public boolean renderAbove = false;
+	public boolean renderAbove;
 
 	/**
 	 * Appliance cache. Updated when loading & on block update
