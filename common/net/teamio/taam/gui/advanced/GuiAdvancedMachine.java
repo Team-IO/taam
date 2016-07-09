@@ -7,6 +7,7 @@ import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.config.GuiUtils;
 import net.teamio.taam.Config;
@@ -37,6 +38,11 @@ public class GuiAdvancedMachine extends GuiContainer {
 	public static final Drawable iconCheckNBT = new Drawable(guiTexture, 155, 10, 10, 10);
 	public static final Drawable iconDontCheckMeta = new Drawable(guiTexture, 155, 20, 10, 10);
 	public static final Drawable iconDontCheckNBT = new Drawable(guiTexture, 155, 30, 10, 10);
+	
+
+	int buttonSpace = 60;
+	int buttonSize = 40;
+	int buttonsPerRow = 4;
 
 	public GuiAdvancedMachine(ContainerAdvancedMachine inventorySlotsIn) {
 		super(inventorySlotsIn);
@@ -65,12 +71,14 @@ public class GuiAdvancedMachine extends GuiContainer {
 		this.guiTop /= 2;
 
 		
-		int buttonSpace = 40;
-		int buttonSize = 40;
-		int buttonsPerRow = 4;
-
+		int buttonsPerRow = this.buttonsPerRow;
+		if(buttonsPerRow > machineContainer.registeredApps.size()) {
+			buttonsPerRow = machineContainer.registeredApps.size();
+		}
+		
 
 		int leftOff = xSize / 2 - (buttonsPerRow / 2) * buttonSpace;
+		int buttonHalfSize = buttonSpace / 2 - buttonSize / 2;
 		
 		/*
 		 * Init home screen buttons
@@ -80,8 +88,10 @@ public class GuiAdvancedMachine extends GuiContainer {
 			int appY = 40 + (i / buttonsPerRow) * buttonSpace;
 
 			App app = machineContainer.registeredApps.get(i);
-			AppButton button = new AppButton(app, guiLeft + appX, guiTop + appY, buttonSize, buttonSize, app.getName());
+			String appNameTranslated = I18n.format(app.getName());
+			AppButton button = new AppButton(app, guiLeft + appX + buttonHalfSize, guiTop + appY, buttonSize, buttonSize, appNameTranslated);
 			button.textVerticalAlignment = 4;
+			button.trimText = false;
 			buttonList.add(button);
 			appButtons.add(button);
 		}
@@ -202,15 +212,18 @@ public class GuiAdvancedMachine extends GuiContainer {
 		String name = machineContainer.machine.getDisplayName().getFormattedText();
 		drawCenteredString(fontRendererObj, name, halfWidth, 10, 0xFFFFFF);
 
-		int buttonSpace = 40;
-		int buttonsPerRow = 4;
 
-
+		int buttonsPerRow = this.buttonsPerRow;
+		if(buttonsPerRow > machineContainer.registeredApps.size()) {
+			buttonsPerRow = machineContainer.registeredApps.size();
+		}
+		
 		int leftOff = halfWidth - (buttonsPerRow / 2) * buttonSpace;
+		int buttonHalfSize = buttonSpace / 2 - buttonSize / 2;
 		
 		for (int i = 0; i < machineContainer.registeredApps.size(); i++) {
 
-			int appX = leftOff + (i % buttonsPerRow) * buttonSpace;
+			int appX = leftOff + (i % buttonsPerRow) * buttonSpace + buttonHalfSize;
 			int appY = 40 + (i / buttonsPerRow) * buttonSpace;
 
 			App app = machineContainer.registeredApps.get(i);

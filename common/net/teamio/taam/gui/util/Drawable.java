@@ -1,5 +1,6 @@
 package net.teamio.taam.gui.util;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
@@ -29,6 +30,7 @@ public class Drawable {
 	}
 	
 	public void draw(Gui gui, int x, int y) {
+		Minecraft.getMinecraft().getTextureManager().bindTexture(texture);
 		gui.drawTexturedModalRect(x, y, u, v, width, height);
 	}
 	

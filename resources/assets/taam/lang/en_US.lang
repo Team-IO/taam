@@ -156,6 +156,10 @@ fluid.concreteRough=Rough Concrete
 fluid.concreteFine=Fine Concrete
 fluid.coating=Resin-Based Coating
 
+# Apps
+taam.app.common.redstone=Redstone
+taam.app.settings.aligner=Filter Setup
+
 # Lore localization
 lore.taam.shift=Hold Shift
 lore.taam.conveyor_appliance=Conveyor Appliance

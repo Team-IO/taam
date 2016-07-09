@@ -85,7 +85,7 @@ public class ApplianceAligner extends ATileEntityAppliance implements IWorldInte
 		
 		@Override
 		public void setup(ContainerAdvancedMachine container) {
-			new RedstoneMode(container, null);//TODO: Other apps, not redstone controlled.
+			new RedstoneMode(container, null);
 			new AlignerSettings(container, ApplianceAligner.this);
 		}
 		
