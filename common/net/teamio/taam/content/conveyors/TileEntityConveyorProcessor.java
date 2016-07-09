@@ -127,18 +127,19 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements IReds
 		}
 
 		if(!isShutdown) {
-			boolean decrease = false;
 
 			if(mode == Shredder) {
-				decrease = processShredder();
+				if(processShredder()) {
+					itemHandler.setStackInSlot(0, null);
+					needsUpdate = true;
+				}
 			} else {
-				decrease = processOther();
+				if(processOther()) {
+					itemHandler.extractItem(0, 1, false);
+					needsUpdate = true;
+				}
 			}
 
-			if(decrease) {
-				itemHandler.extractItem(0, 1, false);
-				needsUpdate = true;
-			}
 
 			if(worldObj.rand.nextFloat() < Config.pl_processor_hurt_chance) {
 				hurtEntities();
