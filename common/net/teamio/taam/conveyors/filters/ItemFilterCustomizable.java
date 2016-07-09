@@ -4,7 +4,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.MathHelper;
 import net.teamio.taam.Log;
-import net.teamio.taam.conveyors.filters.ItemFilterCustomizable.FilterMode;
 import net.teamio.taam.util.TaamUtil;
 
 public class ItemFilterCustomizable implements IItemFilter {
@@ -67,7 +66,9 @@ public class ItemFilterCustomizable implements IItemFilter {
 	public boolean isItemStackMatching(ItemStack stack) {
 		for (int i = 0; i < entries.length; i++) {
 			ItemStack filterEntry = entries[i];
-			isItemStackMatching(filterEntry, stack);
+			if(isItemStackMatching(filterEntry, stack)) {
+				return true;
+			}
 		}
 		return false;
 	}

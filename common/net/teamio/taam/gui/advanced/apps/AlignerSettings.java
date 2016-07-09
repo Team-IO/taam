@@ -90,6 +90,9 @@ public class AlignerSettings extends App {
 		int buttonOffset = leftOff + xSpace * 3;
 
 		for (int i = 0; i < aligner.filters.length; i++) {
+			/*
+			 * Excluding Checkbox
+			 */
 			cbExcluding[i] = new CustomButton(i, leftOff, verticalOffset + i * ySpace + 19, 10, 10, "Excluding");
 			cbExcluding[i].image = GuiAdvancedMachine.iconCheckbox;
 			cbExcluding[i].textHorizontalAlignment = 4;
@@ -99,13 +102,15 @@ public class AlignerSettings extends App {
 				public Boolean apply(CustomButton input) {
 					ItemFilterCustomizable filter = aligner.filters[input.id];
 					filter.setExcluding(!filter.isExcluding());
-					//TODO: Network
-					onShow(null);
+					onSettingsChange();
 					return true;
 				}
 			};
 			gui.addButton(cbExcluding[i]);
 			
+			/*
+			 * Filter Mode
+			 */
 			cbMode[i] = new CustomButton(i, buttonOffset, verticalOffset + i * ySpace + 2, 14, 14, null);
 			cbMode[i].image = GuiAdvancedMachine.iconMatchExact;
 			cbMode[i].eventHandler = new Function<CustomButton, Boolean>() {
@@ -114,13 +119,15 @@ public class AlignerSettings extends App {
 				public Boolean apply(CustomButton input) {
 					ItemFilterCustomizable filter = aligner.filters[input.id];
 					filter.mode = FilterMode.getNext(filter.mode);
-					//TODO: Network
-					onShow(null);
+					onSettingsChange();
 					return true;
 				}
 			};
 			gui.addButton(cbMode[i]);
 
+			/*
+			 * Check Metadata
+			 */
 			cbCheckMeta[i] = new CustomButton(i, buttonOffset + 14, verticalOffset + i * ySpace - 3, 12, 12, null);
 			cbCheckMeta[i].image = GuiAdvancedMachine.iconCheckMeta;
 			cbCheckMeta[i].eventHandler = new Function<CustomButton, Boolean>() {
@@ -129,13 +136,15 @@ public class AlignerSettings extends App {
 				public Boolean apply(CustomButton input) {
 					ItemFilterCustomizable filter = aligner.filters[input.id];
 					filter.checkMeta = !filter.checkMeta;
-					//TODO: Network
-					onShow(null);
+					onSettingsChange();
 					return true;
 				}
 			};
 			gui.addButton(cbCheckMeta[i]);
 
+			/*
+			 * Check NBT
+			 */
 			cbCheckNBT[i] = new CustomButton(i, buttonOffset + 14, verticalOffset + i * ySpace - 3 + 12, 12, 12, null);
 			cbCheckNBT[i].image = GuiAdvancedMachine.iconDontCheckNBT;
 			cbCheckNBT[i].eventHandler = new Function<CustomButton, Boolean>() {
@@ -144,8 +153,7 @@ public class AlignerSettings extends App {
 				public Boolean apply(CustomButton input) {
 					ItemFilterCustomizable filter = aligner.filters[input.id];
 					filter.checkNBT = !filter.checkNBT;
-					//TODO: Network
-					onShow(null);
+					onSettingsChange();
 					return true;
 				}
 			};
@@ -153,10 +161,30 @@ public class AlignerSettings extends App {
 		}
 	}
 
+	private void onSettingsChange() {
+		// Save filter settings to NBT
+		NBTTagCompound tag = new NBTTagCompound();
+		for (int i = 0; i < aligner.filters.length; i++) {
+			ItemFilterCustomizable itemFilterCustomizable = aligner.filters[i];
+			NBTTagCompound filterTag = itemFilterCustomizable.serializeNBT();
+			tag.setTag("filter" + i, filterTag);
+		}
+		// Send to server
+		sendPacket(tag);
+		// Update Buttons
+		onShow(null);
+	}
 
 	@Override
 	public void onPacket(NBTTagCompound tag) {
-
+		// Load filter settings from client
+		for (int i = 0; i < aligner.filters.length; i++) {
+			NBTTagCompound filterTag = tag.getCompoundTag("filter" + i);
+			ItemFilterCustomizable itemFilterCustomizable = aligner.filters[i];
+			itemFilterCustomizable.deserializeNBT(filterTag);
+		}
+		// Make sure it is saved
+		aligner.markDirty();
 	}
 
 	@Override
