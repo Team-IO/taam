@@ -160,32 +160,47 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 						Vec3d hitVec = target.hitVec;
 						int slot = ConveyorUtil.getSlotForRelativeCoordinates(hitVec.xCoord - pos.getX(),
 								hitVec.zCoord - pos.getZ());
+						
 
-						EnumFacing dir = cte.getNextSlot(slot);
-						float speedsteps = cte.getSpeedsteps();
-	
 						ItemWrapper wrapper = cte.getSlot(slot);
-					
-						float progress = wrapper.movementProgress;
+						
+						EnumFacing dir = cte.getNextSlot(slot);
 
-						if (wrapper.isRenderingInterpolated()) {
-							progress += event.getPartialTicks();
+						// General Position of the slot
+						double x = pos.getX() + Math.floor(slot / 3) * ConveyorUtil.oneThird; 
+						double y = pos.getY() + cte.getVerticalPosition(slot);
+						double z = pos.getZ() + slot % 3 * ConveyorUtil.oneThird;
+						
+
+						if(wrapper.itemStack == null && player.getHeldItemMainhand() != null) {
+							drawSelectionBoundingBox(player, event.getPartialTicks(), 4, 1, 1, 1, 1, new AxisAlignedBB(x, y, z,
+									x + ConveyorUtil.oneThird, y + 0.1d, z + ConveyorUtil.oneThird));
 						} else {
-							// Interpolation since last frame already advanced to almost 1, so we prevent stutter by "skipping ahead"
-							progress += 1;
+							drawSelectionBoundingBox(player, event.getPartialTicks(), 2, 1, 1, 1, 1, new AxisAlignedBB(x, y, z,
+									x + ConveyorUtil.oneThird, y + 0.1d, z + ConveyorUtil.oneThird));
 						}
 
-						progress *= ConveyorUtil.oneThird / speedsteps;
+						if(wrapper.itemStack != null) {
+							float progress = wrapper.movementProgress;
 
-						double x = pos.getX() + Math.floor(slot / 3) * ConveyorUtil.oneThird // General Position
-								+ dir.getFrontOffsetX() * progress * ConveyorUtil.oneThird; // Apply Slot Movement
-						double y = pos.getY() + cte.getVerticalPosition(slot);
-						double z = pos.getZ() + slot % 3 * ConveyorUtil.oneThird // General Position
-								+ dir.getFrontOffsetZ() * progress * ConveyorUtil.oneThird; // Apply Slot Movement
+							if (wrapper.isRenderingInterpolated()) {
+								progress += event.getPartialTicks();
+							} else {
+								// Interpolation since last frame already advanced to almost 1, so we prevent stutter by "skipping ahead"
+								progress += 1;
+							}
 
-						drawSelectionBoundingBox(player, event.getPartialTicks(), new AxisAlignedBB(x, y, z,
-								x + ConveyorUtil.oneThird, y + ConveyorUtil.oneThird, z + ConveyorUtil.oneThird));
-					} 
+							progress *= ConveyorUtil.oneThird / cte.getSpeedsteps();
+							
+							// Apply movement of the item
+							x += dir.getFrontOffsetX() * progress;
+							z += dir.getFrontOffsetZ() * progress;
+
+							drawSelectionBoundingBox(player, event.getPartialTicks(), 4, 1, 1, 1, 1, new AxisAlignedBB(x, y, z,
+									x + ConveyorUtil.oneThird, y + ConveyorUtil.oneThird, z + ConveyorUtil.oneThird));
+						}
+						
+					}
 				} catch (Exception e) {
 					Log.error("Error drawing block highlight for a tile entity. Disabling block highlight drawing to prevent you from crashing - This is an error, please report!", e);
 					failureFreeBlockHightlight = false;
@@ -202,13 +217,43 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 	 * @param box
 	 */
 	public void drawSelectionBoundingBox(EntityPlayer player, float partialTicks, AxisAlignedBB box) {
+		drawSelectionBoundingBox(player, partialTicks, 2.0f, 0, 0, 0, 0.4f, box);
+	}
+	
+	/**
+	 * Draw a single selection box at the given bounding box.
+	 * 
+	 * @param player
+	 * @param partialTicks
+	 * @param lineWidth
+	 * @param box
+	 */
+	public void drawSelectionBoundingBox(EntityPlayer player, float partialTicks, float lineWidth, AxisAlignedBB box) {
+		drawSelectionBoundingBox(player, partialTicks, lineWidth, 0, 0, 0, 0.4f, box);
+	}
+	
+	/**
+	 * Draw a single selection box at the given bounding box.
+	 * 
+	 * @param player
+	 * @param partialTicks
+	 * @param lineWidth
+	 * @param colorR
+	 * @param colorG
+	 * @param colorB
+	 * @param colorA
+	 * @param box
+	 */
+	public void drawSelectionBoundingBox(EntityPlayer player, float partialTicks, float lineWidth, float colorR, float colorG, float colorB, float colorA, AxisAlignedBB box) {
 		GlStateManager.pushMatrix();
 		GlStateManager.pushAttrib();
 
 		GlStateManager.enableBlend();
-		GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
-		GlStateManager.color(0.0F, 0.0F, 0.0F, 0.4F);
-		GL11.glLineWidth(2.0F);
+		GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+		GlStateManager.color(colorR, colorG, colorB, colorA);
+		GL11.glLineWidth(lineWidth);
+		// For whatever reason, we need to enable, THEN disable. Otherwise color gets somewhat garbled..
+		GlStateManager.enableTexture2D();
 		GlStateManager.disableTexture2D();
 		GlStateManager.depthMask(false);
 
