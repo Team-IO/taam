@@ -2,6 +2,7 @@ package net.teamio.taam.conveyors;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.util.INBTSerializable;
 
 /**
@@ -28,6 +29,7 @@ public class ConveyorSlotsStandard extends ConveyorSlotsBase implements INBTSeri
 
 	@Override
 	public int insertItemAt(ItemStack item, int slot, boolean simulate) {
+		slot = MathHelper.clamp_int(slot, 0, 8);
 		if(!isSlotAvailable(slot)) {
 			return 0;
 		}
@@ -40,6 +42,7 @@ public class ConveyorSlotsStandard extends ConveyorSlotsBase implements INBTSeri
 
 	@Override
 	public ItemStack removeItemAt(int slot, int amount, boolean simulate) {
+		slot = MathHelper.clamp_int(slot, 0, 8);
 		if(!isSlotAvailable(slot)) {
 			return null;
 		}
@@ -68,6 +71,7 @@ public class ConveyorSlotsStandard extends ConveyorSlotsBase implements INBTSeri
 
 	@Override
 	public ItemWrapper getSlot(int slot) {
+		slot = MathHelper.clamp_int(slot, 0, 8);
 		if(isSlotAvailable(slot)) {
 			return slots[slot];
 		} else {
