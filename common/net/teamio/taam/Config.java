@@ -162,10 +162,10 @@ public class Config {
 			String name = oreMeta[i].config_name;
 			String sectionName = SECTION_WORLDGEN + "." + name;
 			genOre[i] = getBoolean("generate", sectionName, true, "Should Taam generate " + name + " ore in the world?");
-			oreSize[0] = getInt("oreSize", sectionName, oreMeta[i].gen_default_size, 0, Integer.MAX_VALUE, "Size of " + name + " ore veins");
-			oreAbove[0] = getInt("oreAbove", sectionName, oreMeta[i].gen_default_above, 0, 255, name + " ore veins spawn above this y-level");
-			oreBelow[0] = getInt("oreBelow", sectionName, oreMeta[i].gen_default_below, 0, 255, name + " ore veins spawn below this y-level");
-			oreDepositCount[0] = getInt("oreDepositCount", sectionName, oreMeta[i].gen_default_count, 0, Integer.MAX_VALUE, "Number of " + name + " ore veins per chunk");
+			oreSize[i] = getInt("oreSize", sectionName, oreMeta[i].gen_default_size, 0, Integer.MAX_VALUE, "Size of " + name + " ore veins");
+			oreAbove[i] = getInt("oreAbove", sectionName, oreMeta[i].gen_default_above, 0, 255, name + " ore veins spawn above this y-level");
+			oreBelow[i] = getInt("oreBelow", sectionName, oreMeta[i].gen_default_below, 0, 255, name + " ore veins spawn below this y-level");
+			oreDepositCount[i] = getInt("oreDepositCount", sectionName, oreMeta[i].gen_default_count, 0, Integer.MAX_VALUE, "Number of " + name + " ore veins per chunk");
 		}
 
 		config.getCategory(SECTION_INTEGRATION_MULTIPART).setRequiresMcRestart(true);
