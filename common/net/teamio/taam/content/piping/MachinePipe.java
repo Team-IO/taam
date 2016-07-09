@@ -51,7 +51,6 @@ public class MachinePipe implements IMachine, IPipe, IRenderable {
 			1-fromBorderBaseplate, baseplateSize, 1-fromBorderBaseplate);
 
 	static {
-		System.out.println(fromBorder);
 		bbFaces[EnumFacing.EAST.ordinal()]	= new AxisAlignedBB(1-fromBorder,	fromBorder,		fromBorder,
 																1,				1-fromBorder,	1-fromBorder);
 		bbFaces[EnumFacing.WEST.ordinal()]	= new AxisAlignedBB(0,				fromBorder,		fromBorder,

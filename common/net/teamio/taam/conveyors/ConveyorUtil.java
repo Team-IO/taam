@@ -402,8 +402,6 @@ public class ConveyorUtil {
 	}
 
 	public static boolean transferSlot(IConveyorSlots tileEntity, int slot, IConveyorSlots nextBlock, int nextSlot) {
-		// System.out.println("Transfer external " + slot + " to " + nextSlot);
-
 		ItemWrapper slotObject = tileEntity.getSlot(slot);
 
 		int transferred = nextBlock.insertItemAt(slotObject.itemStack.copy(), nextSlot, false);
@@ -421,7 +419,6 @@ public class ConveyorUtil {
 	}
 
 	public static boolean transferSlot(IConveyorSlots tileEntity, int slot, int nextSlot) {
-		// System.out.println("Transfer internal " + slot + " to " + nextSlot);
 
 		ItemWrapper slotObject = tileEntity.getSlot(slot);
 		ItemWrapper nextSlotObject = tileEntity.getSlot(nextSlot);

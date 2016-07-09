@@ -115,13 +115,11 @@ public class MachineMultipart extends Multipart implements INormallyOccludingPar
 
 	@Override
 	public List<ItemStack> getDrops() {
-		System.out.println("Getting drops: " + new ItemStack(TaamMain.itemMachine, 1, meta.metaData()));
 		return Arrays.asList(new ItemStack(TaamMain.itemMachine, 1, meta.metaData()));
 	}
 
 	@Override
 	public ItemStack getPickBlock(EntityPlayer player, PartMOP hit) {
-		System.out.println("Getting pickblock: " + new ItemStack(TaamMain.itemMachine, 1, meta.metaData()));
 		return new ItemStack(TaamMain.itemMachine, 1, meta.metaData());
 	}
 
