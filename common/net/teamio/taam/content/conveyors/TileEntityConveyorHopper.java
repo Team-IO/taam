@@ -20,6 +20,7 @@ import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.conveyors.ConveyorSlotsInventory;
 import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.network.TPMachineConfiguration;
+import net.teamio.taam.util.InventoryUtils;
 import net.teamio.taam.util.TaamUtil;
 import net.teamio.taam.util.WorldCoord;
 
@@ -143,10 +144,7 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IRedston
 		} else {
 
 			TileEntity ent = worldObj.getTileEntity(pos.down());
-			if(ent == null) {
-				return;
-			}
-			IItemHandler targetHandler = ent.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
+			IItemHandler targetHandler = InventoryUtils.getInventory(ent, EnumFacing.UP);
 			if(targetHandler == null) {
 				return;
 			}
