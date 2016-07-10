@@ -1,6 +1,7 @@
 package net.teamio.taam.content.common;
 
 import net.minecraft.block.SoundType;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -11,9 +12,12 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.property.ExtendedBlockState;
+import net.minecraftforge.common.property.IUnlistedProperty;
 import net.teamio.taam.Taam;
 import net.teamio.taam.content.BaseBlock;
 import net.teamio.taam.content.MaterialMachinesTransparent;
+import net.teamio.taam.rendering.obj.OBJModel;
 
 public class BlockSensor extends BaseBlock {
 
@@ -46,7 +50,8 @@ public class BlockSensor extends BaseBlock {
 
 	@Override
 	protected BlockStateContainer createBlockState() {
-		return new BlockStateContainer(this, DIRECTION);
+		return new ExtendedBlockState(this, new IProperty[] { DIRECTION },
+				new IUnlistedProperty[] { OBJModel.OBJProperty.instance });
 	}
 
 	@Override

@@ -13,11 +13,13 @@
         "inventory": [{
             "transform": "forge:default-block"
         }],
-        "direction=north": [{}],
-        "direction=south": [{}],
-        "direction=east": [{}],
-        "direction=west": [{}],
-        "direction=up": [{}],
-        "direction=down": [{}]
+        "direction": {
+        	"up": {"x": 90},
+        	"down": {"x": -90},
+        	"south": {},
+        	"north": {"y": 180},
+        	"west": {"y": 90},
+        	"east": {"y": 270}
+        }
     }
 }
