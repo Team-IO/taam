@@ -123,7 +123,7 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IRedston
 				return;
 			}
 			for(int i = 0; i < itemHandler.getSlots(); i++) {
-				ItemStack stack = itemHandler.extractItem(i, wholeStack ? 1 : 64, false);
+				ItemStack stack = itemHandler.extractItem(i, wholeStack ? 64 : 1, false);
 				if(stack == null || stack.stackSize == 0) {
 					continue;
 				}
