@@ -161,6 +161,11 @@ public class ConveyorUtil {
 				slot += frontOffsetZ;
 			}
 		}
+		int frontOffsetY = dir.getFrontOffsetY();
+		if(frontOffsetY != 0) {
+			// Offset by 9 is the same slot, but marks it as wrapped
+			slot += 9 * frontOffsetY;
+		}
 		return slot;
 	}
 
@@ -545,7 +550,6 @@ public class ConveyorUtil {
 			 * Move the contents to the next slot
 			 */
 
-			EnumFacing direction = tileEntity.getMovementDirection();
 			byte speedsteps = tileEntity.getSpeedsteps();
 
 			boolean slotWrapped = false;
@@ -582,7 +586,7 @@ public class ConveyorUtil {
 
 				TileEntity te = world.getTileEntity(nextBlockPos);
 
-				nextBlock = getSlots(te, direction.getOpposite());
+				nextBlock = getSlots(te, nextSlotDir.getOpposite());
 
 				if (nextBlock == null) {
 					// Drop it

@@ -244,6 +244,7 @@ public final class Taam {
 		grinder,
 		crusher,
 		chute,
+		elevator,
 		;
 		public static String[] valuesAsString() {
 			Enum<?>[] valuesAsEnum = values();
@@ -431,6 +432,7 @@ public final class Taam {
 	public static final String TILEENTITY_CONVEYOR_ITEMBAG = "taam.itembag";
 	public static final String TILEENTITY_CONVEYOR_TRASHCAN = "taam.trashcan";
 	public static final String TILEENTITY_CONVEYOR_SIEVE = "taam.sieve";
+	public static final String TILEENTITY_CONVEYOR_ELEVATOR = "taam.elevator";
 
 	public static final String TILEENTITY_CREATIVEWELL = "taam.creativewell";
 

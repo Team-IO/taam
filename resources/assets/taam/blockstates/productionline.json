@@ -188,6 +188,9 @@
             },
             "chute": {
                 "model": "taam:conveyor_chute.obj"
+            },
+            "elevator": {
+                "model": "taam:conveyor_elevator.obj"
             }
         }
     }

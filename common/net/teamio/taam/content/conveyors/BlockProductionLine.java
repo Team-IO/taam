@@ -8,12 +8,14 @@ import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -25,11 +27,14 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.teamio.taam.Config;
 import net.teamio.taam.Log;
 import net.teamio.taam.Taam;
+import net.teamio.taam.Taam.BLOCK_PRODUCTIONLINE_META;
+import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.BaseBlock;
 import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.content.MaterialMachinesTransparent;
 import net.teamio.taam.content.common.TileEntityChute;
+import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.rendering.obj.OBJModel;
 
 public class BlockProductionLine extends BaseBlock {
@@ -37,7 +42,9 @@ public class BlockProductionLine extends BaseBlock {
 	public static final PropertyEnum<Taam.BLOCK_PRODUCTIONLINE_META> VARIANT = PropertyEnum.create("variant", Taam.BLOCK_PRODUCTIONLINE_META.class);
 	public static final PropertyEnum<EnumFacing> DIRECTION = PropertyEnum.create("direction", EnumFacing.class);
 
-	public static final AxisAlignedBB BLOCK_BOUNDS = new AxisAlignedBB(0, 0, 0, 1, 0.5f, 1);
+	public static final AxisAlignedBB BOUNDS_CONVEYORS = new AxisAlignedBB(0, 0, 0, 1, 0.5f, 1);
+	public static final AxisAlignedBB BOUNDS_ELEVATOR_X = new AxisAlignedBB(ConveyorUtil.oneThird, 0, 0, 1 - ConveyorUtil.oneThird, 1, 1);
+	public static final AxisAlignedBB BOUNDS_ELEVATOR_Z = new AxisAlignedBB(0, 0, ConveyorUtil.oneThird, 1, 1, 1 - ConveyorUtil.oneThird);
 
 	public BlockProductionLine() {
 		super(MaterialMachinesTransparent.INSTANCE);
@@ -144,8 +151,11 @@ public class BlockProductionLine extends BaseBlock {
 			// Crusher
 			return new TileEntityConveyorProcessor(TileEntityConveyorProcessor.Crusher);
 		case chute:
-			// Chute
+			// Conveyor Chute
 			return new TileEntityChute(true);
+		case elevator:
+			// Elevator
+			return new TileEntityConveyorElevator();
 		}
 		Log.error("Was not able to create a TileEntity for " + getClass().getName());
 		return null;
@@ -153,14 +163,48 @@ public class BlockProductionLine extends BaseBlock {
 
 	@Override
 	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-		return BLOCK_BOUNDS;
+		if(state.getBlock() != TaamMain.blockProductionLine) {
+			// Can only work for actual production line, else we crash with wrong variant
+			return BOUNDS_CONVEYORS;
+		}
+		if(state.getValue(VARIANT) == BLOCK_PRODUCTIONLINE_META.elevator) {
+			TileEntityConveyorElevator te = (TileEntityConveyorElevator) source.getTileEntity(pos);
+			if(te != null && te.getFacingDirection().getAxis() == Axis.X) {
+				return BOUNDS_ELEVATOR_X;
+			} else {
+				return BOUNDS_ELEVATOR_Z;
+			}
+		} else {
+			return BOUNDS_CONVEYORS;
+		}
 	}
 
+	public boolean isLadder(IBlockState state, IBlockAccess world, BlockPos pos, EntityLivingBase entity) {
+		return state.getValue(VARIANT) == BLOCK_PRODUCTIONLINE_META.elevator;
+	};
+	
 	@Override
 	public boolean isBlockSolid(IBlockAccess world, BlockPos pos, EnumFacing side) {
 		return false;
 	}
 
+	public boolean isSideSolid(IBlockState base_state, IBlockAccess world, BlockPos pos, EnumFacing side) {
+		if(base_state.getBlock() != TaamMain.blockProductionLine) {
+			// Can only work for actual production line, else we crash with wrong variant
+			return false;
+		}
+		BLOCK_PRODUCTIONLINE_META variant = base_state.getValue(VARIANT);
+		if(variant == BLOCK_PRODUCTIONLINE_META.elevator) {
+			return side == EnumFacing.UP;
+		}
+		if(variant == BLOCK_PRODUCTIONLINE_META.conveyor1 ||
+				variant == BLOCK_PRODUCTIONLINE_META.conveyor2 ||
+				variant == BLOCK_PRODUCTIONLINE_META.conveyor3) {
+			return side == EnumFacing.DOWN;
+		}
+		return false;
+	};
+	
 	@Override
 	public boolean hasComparatorInputOverride(IBlockState state) {
 		return true;

@@ -195,6 +195,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 							// Apply movement of the item
 							x += dir.getFrontOffsetX() * progress;
 							z += dir.getFrontOffsetZ() * progress;
+							y += dir.getFrontOffsetY() * progress * 3;
 
 							drawSelectionBoundingBox(player, event.getPartialTicks(), 4, 1, 1, 1, 1, new AxisAlignedBB(x, y, z,
 									x + ConveyorUtil.oneThird, y + ConveyorUtil.oneThird, z + ConveyorUtil.oneThird));
@@ -926,7 +927,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 				progress /= speedsteps;
 				float posX = (float) ConveyorUtil.getItemPositionX(slot, progress, renderDirection);
 				float posZ = (float) ConveyorUtil.getItemPositionZ(slot, progress, renderDirection);
-				float posY = tileEntity.getVerticalPosition(slot);
+				float posY = tileEntity.getVerticalPosition(slot) + renderDirection.getFrontOffsetY() * progress;
 				
 				GL11.glPushMatrix();
 				GL11.glTranslatef(posX, posYOffset + posY, posZ);

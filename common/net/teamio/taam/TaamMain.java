@@ -67,6 +67,7 @@ import net.teamio.taam.content.conveyors.ItemAppliance;
 import net.teamio.taam.content.conveyors.ItemAttachable;
 import net.teamio.taam.content.conveyors.ItemProductionLine;
 import net.teamio.taam.content.conveyors.TileEntityConveyor;
+import net.teamio.taam.content.conveyors.TileEntityConveyorElevator;
 import net.teamio.taam.content.conveyors.TileEntityConveyorHopper;
 import net.teamio.taam.content.conveyors.TileEntityConveyorItemBag;
 import net.teamio.taam.content.conveyors.TileEntityConveyorProcessor;
@@ -333,6 +334,7 @@ public class TaamMain {
 		GameRegistry.registerTileEntity(TileEntityConveyorItemBag.class, Taam.TILEENTITY_CONVEYOR_ITEMBAG);
 		GameRegistry.registerTileEntity(TileEntityConveyorTrashCan.class, Taam.TILEENTITY_CONVEYOR_TRASHCAN);
 		GameRegistry.registerTileEntity(TileEntityConveyorSieve.class, Taam.TILEENTITY_CONVEYOR_SIEVE);
+		GameRegistry.registerTileEntity(TileEntityConveyorElevator.class, Taam.TILEENTITY_CONVEYOR_ELEVATOR);
 
 		GameRegistry.registerTileEntity(ApplianceSprayer.class, Taam.TILEENTITY_APPLIANCE_SPRAYER);
 		GameRegistry.registerTileEntity(ApplianceAligner.class, Taam.TILEENTITY_APPLIANCE_ALIGNER);
