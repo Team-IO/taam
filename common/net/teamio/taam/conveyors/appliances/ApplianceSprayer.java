@@ -9,11 +9,9 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
-import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.teamio.taam.Config;
 import net.teamio.taam.Taam;
 import net.teamio.taam.content.IWorldInteractable;
@@ -27,7 +25,7 @@ import net.teamio.taam.recipes.IProcessingRecipeFluidBased;
 import net.teamio.taam.recipes.ProcessingRegistry;
 import net.teamio.taam.rendering.TankRenderInfo;
 
-public class ApplianceSprayer extends ATileEntityAppliance implements IFluidHandler, ITickable, IWorldInteractable {
+public class ApplianceSprayer extends ATileEntityAppliance implements ITickable, IWorldInteractable {
 
 	public static final float b_tankBorder = 1.5f / 16f;
 	public static final float b_tankBorderSprayer = b_tankBorder + 4f / 16f;
@@ -46,8 +44,13 @@ public class ApplianceSprayer extends ATileEntityAppliance implements IFluidHand
 	private IProcessingRecipeFluidBased[] matchingRecipes;
 
 	public ApplianceSprayer() {
-		tank = new FluidTank(Config.pl_sprayer_capacity);
-		pipeEnd = new PipeEndFluidHandler(this, direction.getOpposite(), false);
+		tank = new FluidTank(Config.pl_sprayer_capacity) {
+			@Override
+			protected void onContentsChanged() {
+				updateState(true, false, false);
+			}
+		};
+		pipeEnd = new PipeEndFluidHandler(tank, direction.getOpposite(), false);
 	}
 	
 	@Override
@@ -242,6 +245,9 @@ public class ApplianceSprayer extends ATileEntityAppliance implements IFluidHand
 		if(capability == Taam.CAPABILITY_PIPE) {
 			return facing == pipeEnd.getSide();
 		}
+		if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+			return facing == direction.getOpposite();
+		}
 		if (capability == Taam.CAPABILITY_RENDER_TANK) {
 			return true;
 		}
@@ -254,90 +260,13 @@ public class ApplianceSprayer extends ATileEntityAppliance implements IFluidHand
 		if(capability == Taam.CAPABILITY_PIPE && facing == pipeEnd.getSide()) {
 			return (T) pipeEnd;
 		}
+		if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing == direction.getOpposite()) {
+			return (T) tank;
+		}
 		if (capability == Taam.CAPABILITY_RENDER_TANK) {
 			tankRI.tankInfo = tank.getInfo();
 			return (T) tankRI.asArray();
 		}
 		return null;
-	}
-
-	/*
-	 * IFluidHandler implementation
-	 */
-
-	@Override
-	public int fill(EnumFacing from, FluidStack resource, boolean doFill) {
-		if (from != direction.getOpposite()) {
-			return 0;
-		}
-		int amount = tank.fill(resource, doFill);
-		if(amount > 0) {
-			updateState(true, false, false);
-		}
-		return amount;
-	}
-
-	@Override
-	public FluidStack drain(EnumFacing from, FluidStack resource, boolean doDrain) {
-		if (from != direction.getOpposite()) {
-			return null;
-		}
-		if (tank.getFluid() == null || resource == null) {
-			return null;
-		}
-		if (!tank.getFluid().isFluidEqual(resource)) {
-			return null;
-		}
-		FluidStack drained = tank.drain(resource.amount, doDrain);
-		if (tank.getFluidAmount() == 0) {
-			tank.setFluid(null);
-		}
-		if(drained != null && drained.amount > 0) {
-			updateState(true, false, false);
-		}
-		return drained;
-	}
-
-	@Override
-	public FluidStack drain(EnumFacing from, int maxDrain, boolean doDrain) {
-		if (from != pipeEnd.getSide()) {
-			return null;
-		}
-		FluidStack drained = tank.drain(maxDrain, doDrain);
-		if (tank.getFluidAmount() == 0) {
-			tank.setFluid(null);
-		}
-		if(drained != null && drained.amount > 0) {
-			updateState(true, false, false);
-		}
-		return drained;
-	}
-
-	@Override
-	public boolean canFill(EnumFacing from, Fluid fluid) {
-		if (from != pipeEnd.getSide()) {
-			return false;
-		}
-		if (fluid == null) {
-			return false;
-		}
-		if (tank.getFluid() == null) {
-			return true;
-		} else {
-			return tank.getFluid().getFluid() == fluid;
-		}
-	}
-
-	@Override
-	public boolean canDrain(EnumFacing from, Fluid fluid) {
-		if (from != pipeEnd.getSide()) {
-			return false;
-		}
-		return true;
-	}
-
-	@Override
-	public FluidTankInfo[] getTankInfo(EnumFacing from) {
-		return new FluidTankInfo[] { tank.getInfo() };
 	}
 }

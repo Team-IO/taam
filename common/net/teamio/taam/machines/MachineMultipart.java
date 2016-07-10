@@ -47,6 +47,7 @@ import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.BaseBlock;
 import net.teamio.taam.content.IRenderable;
 import net.teamio.taam.content.IRotatable;
+import net.teamio.taam.content.IWorldInteractable;
 import net.teamio.taam.content.piping.MachinePipe;
 import net.teamio.taam.rendering.obj.OBJModel;
 import net.teamio.taam.util.FaceBitmap;
@@ -169,6 +170,9 @@ public class MachineMultipart extends Multipart implements INormallyOccludingPar
 		boolean playerHasWrench = WrenchUtil.playerHasWrenchInHand(player, hand);
 
 		if (!playerHasWrench) {
+			if(machine instanceof IWorldInteractable) {
+				return ((IWorldInteractable) machine).onBlockActivated(getWorld(), player, hand, false, hit.sideHit, (float)hit.hitVec.xCoord, (float)hit.hitVec.yCoord, (float)hit.hitVec.zCoord);
+			}
 			return false;
 		}
 

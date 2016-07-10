@@ -18,8 +18,8 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.teamio.taam.Config;
@@ -27,6 +27,7 @@ import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.conveyors.TileEntityConveyor;
 import net.teamio.taam.conveyors.IConveyorApplianceHost;
 import net.teamio.taam.piping.IPipe;
+import net.teamio.taam.util.FluidUtils;
 
 /**
  * Debug Tool, currently used for debugging conveyors.
@@ -123,29 +124,30 @@ public class ItemDebugTool extends Item {
 			playerIn.addChatMessage(new TextComponentString(text));
 		}
 
-		if(te instanceof IFluidHandler) {
+		IFluidHandler fh = FluidUtils.getFluidHandler(te, facing);
 
-			IFluidHandler fh = (IFluidHandler)te;
+		if (fh != null) {
 
-			FluidTankInfo[] ti = fh.getTankInfo(EnumFacing.UP);
+			IFluidTankProperties[] ti = fh.getTankProperties();
 			String content = "";
-			if(ti.length > 0) {
-				if(ti[0].fluid == null) {
-					content = "Nothing 0/" + ti[0].capacity;
+			if (ti.length > 0) {
+				int capacity = ti[0].getCapacity();
+				FluidStack contents = ti[0].getContents();
+				if (contents == null) {
+					content = "Nothing 0/" + capacity;
 				} else {
-					content = ti[0].fluid.getLocalizedName() + " " + ti[0].fluid.amount + "/" + ti[0].capacity;
+					content = contents.getLocalizedName() + " " + contents.amount + "/" + capacity;
 				}
 			}
 
-			text = String.format(remoteState + " Content: %s",
-					content);
+			text = String.format(remoteState + " Content: %s", content);
 
 			playerIn.addChatMessage(new TextComponentString(text));
+			
+			didSomething = true;
 		}
-		if(didSomething) {
+		if (didSomething) {
 			return EnumActionResult.SUCCESS;
-		} else if(!didSomething) {
-			return EnumActionResult.PASS;
 		}
 		return EnumActionResult.PASS;
 	}

@@ -10,10 +10,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.ITickable;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -23,12 +21,16 @@ import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.conveyors.ConveyorSlotsBase;
 import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.util.InventoryUtils;
+import net.teamio.taam.util.FluidHandlerOutputOnly;
+import net.teamio.taam.util.FluidUtils;
 import net.teamio.taam.util.TaamUtil;
 
-public class TileEntityChute extends BaseTileEntity implements IFluidHandler, IRotatable, ITickable {
+public class TileEntityChute extends BaseTileEntity implements IRotatable, ITickable {
 
 	public boolean isConveyorVersion = false;
 	private EnumFacing direction = EnumFacing.NORTH;
+	private final FluidHandlerOutputOnly wrappedHandler = new FluidHandlerOutputOnly();
+	
 	private ConveyorSlotsBase conveyorSlots = new ConveyorSlotsBase() {
 		
 		@Override
@@ -115,6 +117,9 @@ public class TileEntityChute extends BaseTileEntity implements IFluidHandler, IR
 		if (capability == Taam.CAPABILITY_CONVEYOR) {
 			return true;
 		}
+		if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+			return true;
+		}
 		if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
 			return true;
 		}
@@ -126,6 +131,9 @@ public class TileEntityChute extends BaseTileEntity implements IFluidHandler, IR
 	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
 		if(capability == Taam.CAPABILITY_CONVEYOR) {
 			return (T) conveyorSlots;
+		}
+		if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+			return (T) getTargetFluidHandlerWrapped();
 		}
 		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
 			return (T) getTargetItemHandler();
@@ -185,76 +193,26 @@ public class TileEntityChute extends BaseTileEntity implements IFluidHandler, IR
 			return handler;
 		}
 	}
+	
 
 	private IFluidHandler getTargetFluidHandler() {
 		TileEntity target = getTarget();
-		if(target instanceof IFluidHandler) {
-			return (IFluidHandler) target;
-		} else {
+		return FluidUtils.getFluidHandler(target, EnumFacing.UP);
+	}
+
+	private IFluidHandler getTargetFluidHandlerWrapped() {
+		IFluidHandler handler = getTargetFluidHandler();
+		if(handler == null) {
+			wrappedHandler.origin = null;
 			return null;
+		} else {
+			wrappedHandler.origin = handler;
+			return wrappedHandler;
 		}
 	}
 
 	private boolean canDrop() {
 		return TaamUtil.canDropIntoWorld(worldObj, pos.down());
-	}
-
-	/*
-	 * IFluidHandler implementation
-	 */
-
-	@Override
-	public int fill(EnumFacing from, FluidStack resource, boolean doFill) {
-		if(from != EnumFacing.UP) {
-			return 0;
-		}
-		IFluidHandler target = getTargetFluidHandler();
-		if(target != null ) {
-			return target.fill(from, resource, doFill);
-		} else {
-			return 0;
-		}
-	}
-
-	@Override
-	public FluidStack drain(EnumFacing from, FluidStack resource, boolean doDrain) {
-		return null;
-	}
-
-	@Override
-	public FluidStack drain(EnumFacing from, int maxDrain, boolean doDrain) {
-		return null;
-	}
-
-	@Override
-	public boolean canFill(EnumFacing from, Fluid fluid) {
-		if(from != EnumFacing.UP) {
-			return false;
-		}
-		IFluidHandler target = getTargetFluidHandler();
-		if(target != null ) {
-			return target.canFill(from, fluid);
-		} else {
-			return false;
-		}
-	}
-
-	@Override
-	public boolean canDrain(EnumFacing from, Fluid fluid) {
-		return false;
-	}
-
-	@Override
-	public FluidTankInfo[] getTankInfo(EnumFacing from) {
-		if(from != EnumFacing.UP) {
-			return new FluidTankInfo[0];
-		}
-		IFluidHandler target = getTargetFluidHandler();
-		if(target != null ) {
-			return target.getTankInfo(from);
-		} else {
-			return new FluidTankInfo[0];
-		}
 	}
 
 	/*
