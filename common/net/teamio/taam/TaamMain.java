@@ -6,6 +6,7 @@ import org.apache.commons.lang3.NotImplementedException;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -18,10 +19,13 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.fluids.BlockFluidClassic;
+import net.minecraftforge.fluids.BlockFluidFinite;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
@@ -38,6 +42,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
+import net.teamio.taam.Taam.FLUID_MATERIAL_META;
 import net.teamio.taam.Taam.ITEM_PART_META;
 import net.teamio.taam.content.ItemWithMetadata;
 import net.teamio.taam.content.ItemWithMetadata.ItemDelegate;
@@ -123,6 +128,7 @@ public class TaamMain {
 	public static FluidDye[] fluidsDye;
 	public static BlockFluidClassic[] blocksFluidDye;
 	public static FluidMaterial[] fluidsMaterial;
+	public static BlockFluidFinite[] blocksFluidMaterial;
 
 	public static DamageSource ds_processed = new DamageSource("taam.processed").setDamageBypassesArmor();
 	public static DamageSource ds_shredded = new DamageSource("taam.shredded").setDamageBypassesArmor();
@@ -377,7 +383,7 @@ public class TaamMain {
 		 * Fluids
 		 */
 
-		boolean registerFluidBlocks = false;
+		boolean registerFluidBlocks = true;
 
 		Taam.FLUID_DYE_META[] fluidsDyeValues = Taam.FLUID_DYE_META.values();
 		fluidsDye = new FluidDye[fluidsDyeValues.length];
@@ -389,7 +395,17 @@ public class TaamMain {
 			FluidRegistry.addBucketForFluid(fluidsDye[i]);
 
 			if (registerFluidBlocks) {
-				BlockFluidClassic fluidBlock = new BlockFluidClassic(fluidsDye[i], Material.WATER);
+				BlockFluidClassic fluidBlock = new BlockFluidClassic(fluidsDye[i], Material.WATER) {
+					public boolean shouldSideBeRendered(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
+						IBlockState neighbor = world.getBlockState(pos.offset(side));
+						// Force rendering if there is a different block adjacent, not only a different material
+						if (neighbor.getBlock() != this)
+				        {
+				            return true;
+				        }
+				        return super.shouldSideBeRendered(state, world, pos, side);
+					};
+				};
 				String blockName = "fluid.dye." + fluidsDyeValues[i].name();
 				registerBlock(
 						fluidBlock,
@@ -402,11 +418,37 @@ public class TaamMain {
 
 		Taam.FLUID_MATERIAL_META[] fluidsMaterialValues = Taam.FLUID_MATERIAL_META.values();
 		fluidsMaterial = new FluidMaterial[fluidsMaterialValues.length];
+		blocksFluidMaterial = new BlockFluidFinite[fluidsMaterialValues.length];
 
 		for(int i = 0; i < fluidsMaterialValues.length; i++) {
 			fluidsMaterial[i] = new FluidMaterial(fluidsMaterialValues[i]);
 			FluidRegistry.registerFluid(fluidsMaterial[i]);
 			FluidRegistry.addBucketForFluid(fluidsMaterial[i]);
+			
+			if (registerFluidBlocks) {
+				BlockFluidFinite fluidBlock = new BlockFluidFinite(fluidsMaterial[i], Material.WATER) {
+					public boolean shouldSideBeRendered(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
+						IBlockState neighbor = world.getBlockState(pos.offset(side));
+						// Force rendering if there is a different block adjacent, not only a different material
+				        if (neighbor.getBlock() != this)
+				        {
+				            return true;
+				        }
+				        return super.shouldSideBeRendered(state, world, pos, side);
+					};
+				};
+				if(fluidsMaterialValues[i] == FLUID_MATERIAL_META.coating) {
+					fluidBlock.setQuantaPerBlock(2);
+				} else {
+					fluidBlock.setQuantaPerBlock(1);
+				}
+				String blockName = "fluid.material." + fluidsMaterialValues[i].name();
+				registerBlock(
+						fluidBlock,
+						new ItemBlock(fluidBlock),
+						blockName);
+				blocksFluidMaterial[i] = fluidBlock;
+			}
 		}
 
 		/*

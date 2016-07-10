@@ -3,7 +3,7 @@
     "defaults": {
         "model": "forge:fluid",
         "transform": "forge:default-item",
-        "custom": { "fluid": "dye_orange" }
+        "custom": { "fluid": "concretefine" }
     },
     "variants": {
         "level": {
