@@ -439,7 +439,7 @@ public class TaamRecipes {
 		 */
 
 		//		conveyor1 (Wood)
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.blockProductionLine, 1, Taam.BLOCK_PRODUCTIONLINE_META.conveyor1.ordinal()),
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.blockProductionLine, 8, Taam.BLOCK_PRODUCTIONLINE_META.conveyor1.ordinal()),
 				"rRP", "wSw", "WsW",
 				'P', new ItemStack(Blocks.PISTON, 1, 0),
 				'R', new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.rubber_band.ordinal()),
@@ -450,7 +450,7 @@ public class TaamRecipes {
 				'r', "dustRedstone"
 				));
 		//		conveyor2 (Aluminum)
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.blockProductionLine, 1, Taam.BLOCK_PRODUCTIONLINE_META.conveyor2.ordinal()),
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.blockProductionLine, 8, Taam.BLOCK_PRODUCTIONLINE_META.conveyor2.ordinal()),
 				"MRM", "CSC", "ABA",
 				'M', new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.motor.ordinal()),
 				'R', new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.rubber_band.ordinal()),
