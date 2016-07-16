@@ -10,7 +10,7 @@ import net.teamio.taam.gui.util.Drawable;
 public class RedstoneModeGui extends AppGui {
 
 	public static final Drawable icon = new Drawable(
-			new ResourceLocation("minecraft", "textures/items/redstone_dust.png"), 0, 0, 16, 16, 40, 40, 16, 16);
+			new ResourceLocation("minecraft", "textures/items/redstone_dust.png"), 0, 0, 16, 16, 32, 32, 16, 16);
 
 	private final RedstoneMode app;
 	

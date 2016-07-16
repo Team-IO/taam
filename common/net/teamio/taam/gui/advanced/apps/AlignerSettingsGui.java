@@ -27,7 +27,7 @@ import net.teamio.taam.rendering.TaamRenderer;
 
 public class AlignerSettingsGui extends AppGui {
 	
-	public static final Drawable icon = new Drawable(new ResourceLocation("minecraft", "textures/items/stick.png"), 0, 0, 16, 16, 16, 16);
+	public static final Drawable icon = new Drawable(new ResourceLocation("minecraft", "textures/items/stick.png"), 0, 0, 16, 16, 32, 32, 16, 16);
 	public static final ResourceLocation tex_machine_config = new ResourceLocation("taam", "textures/gui/machine_config.png");
 
 	private final CustomButton[] cbExcluding;

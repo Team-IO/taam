@@ -64,7 +64,7 @@ public class Drawable {
 	}
 	
 	public void drawCentered(Gui gui, int x, int y) {
-		draw(gui, x - uWidth / 2, y - uHeight / 2);
+		draw(gui, x - drawWidth / 2, y - drawHeight / 2);
 	}
 	
 }
