@@ -60,7 +60,9 @@ public class BlockProductionLineAppliance extends BlockProductionLine {
 
 		// Let the tile entity update anything that is required for rendering
 		ATileEntityAppliance te = (ATileEntityAppliance) worldIn.getTileEntity(pos);
-		te.renderUpdate();
+		if(te.getWorld().isRemote) {
+			te.renderUpdate();
+		}
 
 		// This makes the state shows up in F3. Previously it was not actually applied on the rendering, though.
 		// Rendering Transform was applied in getExtendedState

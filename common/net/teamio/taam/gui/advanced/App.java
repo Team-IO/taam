@@ -2,7 +2,6 @@ package net.teamio.taam.gui.advanced;
 
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.IWorldNameable;
@@ -27,7 +26,12 @@ public abstract class App implements IWorldNameable {
 	 * that can be disabled. Set after {@link #setupSlots()}
 	 */
 	public int slotCount;
+	
+	protected String name;
 
+	@SideOnly(Side.CLIENT)
+	public AppGui gui;
+	
 	public App(ContainerAdvancedMachine container) {
 		this.container = container;
 		appContainerId = container.register(this);
@@ -35,24 +39,10 @@ public abstract class App implements IWorldNameable {
 
 	public abstract void setupSlots();
 
+	@SideOnly(Side.CLIENT)
+	protected abstract AppGui createGui();
 
-	@SideOnly(Side.CLIENT)
-	public abstract void initGui(GuiAdvancedMachine gui);
-	@SideOnly(Side.CLIENT)
-	public abstract void onShow(GuiAdvancedMachine gui);
-	@SideOnly(Side.CLIENT)
-	public abstract void onHide(GuiAdvancedMachine gui);
-	
-	@SideOnly(Side.CLIENT)
-	public abstract void drawBackground(GuiAdvancedMachine gui, float partialTicks, int mouseX, int mouseY);
-
-	@SideOnly(Side.CLIENT)
-	public abstract void drawForeground(GuiAdvancedMachine gui, int mouseX, int mouseY);
-
-	@SideOnly(Side.CLIENT)
-	public abstract ResourceLocation getIcon();
-
-	protected void sendPacket(NBTTagCompound tag) {
+	public void sendPacket(NBTTagCompound tag) {
 		TPAdvancedGuiAppData message = new TPAdvancedGuiAppData(tag, appContainerId);
 		if (container.isRemote) {
 			TaamMain.network.sendToServer(message);
@@ -66,6 +56,12 @@ public abstract class App implements IWorldNameable {
 	/*
 	 * IWorldNameable implementation
 	 */
+
+
+	@Override
+	public String getName() {
+		return name;
+	}
 	
 	@Override
 	public boolean hasCustomName() {

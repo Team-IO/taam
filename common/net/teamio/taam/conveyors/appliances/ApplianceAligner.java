@@ -32,13 +32,13 @@ public class ApplianceAligner extends ATileEntityAppliance implements IWorldInte
 	 * These ItemWrappers will be set to null by the renderer once complete.
 	 */
 	@SideOnly(Side.CLIENT)
-	public final ItemWrapper[] down = new ItemWrapper[4];
+	public ItemWrapper[] clientRenderCache;
 	
 	@SideOnly(Side.CLIENT)
-	public EnumFacing conveyorDirection = EnumFacing.NORTH;
+	public EnumFacing conveyorDirection;
 	
 	@SideOnly(Side.CLIENT)
-	public byte conveyorSpeedsteps = 10;
+	public byte conveyorSpeedsteps;
 	
 	public final ItemFilterCustomizable[] filters;
 	
@@ -236,18 +236,21 @@ public class ApplianceAligner extends ATileEntityAppliance implements IWorldInte
 		
 		// On the client, update the rendering information
 		if(worldObj.isRemote) {
+			if(clientRenderCache == null) {
+				clientRenderCache = new ItemWrapper[4];
+			}
 			if(afterOverride == right) {
 				if(lane == 1) {
-					down[0] = wrapper;
+					clientRenderCache[0] = wrapper;
 				} else if(lane == 2) {
-					down[2] = wrapper;
+					clientRenderCache[2] = wrapper;
 				}
 			}
 			if(afterOverride == left) {
 				if(lane == 2) {
-					down[1] = wrapper;
+					clientRenderCache[1] = wrapper;
 				} else if(lane == 3) {
-					down[3] = wrapper;
+					clientRenderCache[3] = wrapper;
 				}
 			}
 		}

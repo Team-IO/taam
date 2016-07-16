@@ -79,7 +79,9 @@ public class BlockProductionLine extends BaseBlock {
 
 		// Let the tile entity update anything that is required for rendering
 		BaseTileEntity te = (BaseTileEntity) worldIn.getTileEntity(pos);
-		te.renderUpdate();
+		if(te.getWorld().isRemote) {
+			te.renderUpdate();
+		}
 
 		// This makes the state shows up in F3. Previously it was not actually applied on the rendering, though.
 		// Rendering Transform was applied in getExtendedState
@@ -180,6 +182,10 @@ public class BlockProductionLine extends BaseBlock {
 	}
 
 	public boolean isLadder(IBlockState state, IBlockAccess world, BlockPos pos, EntityLivingBase entity) {
+		if(state.getBlock() != TaamMain.blockProductionLine) {
+			// Can only work for actual production line, else we crash with wrong variant
+			return false;
+		}
 		return state.getValue(VARIANT) == BLOCK_PRODUCTIONLINE_META.elevator;
 	};
 	

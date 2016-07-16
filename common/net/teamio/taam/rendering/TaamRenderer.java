@@ -414,9 +414,9 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 			ApplianceAligner aligner = (ApplianceAligner) tileEntity;
 			
 			EnumFacing direction = aligner.getFacingDirection();
-			EnumFacing conveyorDirection = aligner.conveyorDirection.getOpposite();
+			EnumFacing conveyorDirection = aligner.conveyorDirection;
 			
-			if(direction.getAxis() != conveyorDirection.getAxis()) {
+			if(aligner.clientRenderCache != null && conveyorDirection != null && direction.getAxis() != conveyorDirection.getAxis()) {
 				float rotationDegrees = getRotationDegrees(tileEntity);
 	
 				byte conveyorSpeedsteps = aligner.conveyorSpeedsteps;
@@ -442,16 +442,16 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 				GL11.glRotatef(rotationDegrees, 0, 1, 0);
 				
 				// Offset to the correct position in conveyor direction
-				GL11.glTranslated(-conveyorDirection.getFrontOffsetX() * offset - size/2, 0, -conveyorDirection.getFrontOffsetZ() * offset - size/2);
+				GL11.glTranslated(conveyorDirection.getFrontOffsetX() * offset - size/2, 0, conveyorDirection.getFrontOffsetZ() * offset - size/2);
 				
 				for(int i = 0; i < 4; i++) {
-					ItemWrapper wrapper = aligner.down[i];
+					ItemWrapper wrapper = aligner.clientRenderCache[i];
 					int rotateDown = 0;
 					if(wrapper == null) {
 						continue;
 					} else {
 						if(wrapper.movementProgress >= conveyorSpeedsteps) {
-							aligner.down[i] = null;
+							aligner.clientRenderCache[i] = null;
 							continue;
 						} else {
 							rotateDown = wrapper.movementProgress;

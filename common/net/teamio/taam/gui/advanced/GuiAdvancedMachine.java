@@ -81,17 +81,20 @@ public class GuiAdvancedMachine extends GuiContainer {
 		int buttonHalfSize = buttonSpace / 2 - buttonSize / 2;
 		
 		/*
-		 * Init home screen buttons
+		 * Init home screen buttons & Create App GUIs
 		 */
 		for (int i = 0; i < machineContainer.registeredApps.size(); i++) {
 			int appX = leftOff + (i % buttonsPerRow) * buttonSpace;
 			int appY = 40 + (i / buttonsPerRow) * buttonSpace;
 
 			App app = machineContainer.registeredApps.get(i);
+			app.gui = app.createGui();
+			
 			String appNameTranslated = I18n.format(app.getName());
 			AppButton button = new AppButton(app, guiLeft + appX + buttonHalfSize, guiTop + appY, buttonSize, buttonSize, appNameTranslated);
 			button.textVerticalAlignment = 4;
 			button.trimText = false;
+			button.image = app.gui.getIcon();
 			buttonList.add(button);
 			appButtons.add(button);
 		}
@@ -105,8 +108,8 @@ public class GuiAdvancedMachine extends GuiContainer {
 		 */
 
 		for (App app : machineContainer.registeredApps) {
-			app.initGui(this);
-			app.onHide(this);
+			app.gui.initGui(this);
+			app.gui.onHide(this);
 		}
 
 		/*
@@ -134,11 +137,11 @@ public class GuiAdvancedMachine extends GuiContainer {
 			}
 		}
 		if (machineContainer.activeApp != null) {
-			machineContainer.activeApp.onHide(this);
+			machineContainer.activeApp.gui.onHide(this);
 		}
 		machineContainer.switchApp(app);
 		if (machineContainer.activeApp != null) {
-			machineContainer.activeApp.onShow(this);
+			machineContainer.activeApp.gui.onShow(this);
 		}
 	}
 
@@ -186,53 +189,20 @@ public class GuiAdvancedMachine extends GuiContainer {
 		 * Draw app background
 		 */
 		if (machineContainer.activeApp != null) {
-			machineContainer.activeApp.drawBackground(this, partialTicks, mouseX, mouseY);
+			machineContainer.activeApp.gui.drawBackground(this, partialTicks, mouseX, mouseY);
 		}
 	}
 
 	@Override
 	protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
 		if (machineContainer.activeApp == null) {
-			drawHomescreen(mouseX, mouseY);
+			int halfWidth = xSize / 2;
+
+			String name = machineContainer.machine.getDisplayName().getFormattedText();
+			drawCenteredString(fontRendererObj, name, halfWidth, 10, 0xFFFFFF);
 		} else {
-			machineContainer.activeApp.drawForeground(this, mouseX, mouseY);
+			machineContainer.activeApp.gui.drawForeground(this, mouseX, mouseY);
 		}
 	}
 
-	/**
-	 * Draws the app buttons for the home screen.
-	 * 
-	 * @param mouseX
-	 * @param mouseY
-	 */
-	private void drawHomescreen(int mouseX, int mouseY) {
-
-		int halfWidth = xSize / 2;
-
-		String name = machineContainer.machine.getDisplayName().getFormattedText();
-		drawCenteredString(fontRendererObj, name, halfWidth, 10, 0xFFFFFF);
-
-
-		int buttonsPerRow = this.buttonsPerRow;
-		if(buttonsPerRow > machineContainer.registeredApps.size()) {
-			buttonsPerRow = machineContainer.registeredApps.size();
-		}
-		
-		int leftOff = halfWidth - (buttonsPerRow / 2) * buttonSpace;
-		int buttonHalfSize = buttonSpace / 2 - buttonSize / 2;
-		
-		for (int i = 0; i < machineContainer.registeredApps.size(); i++) {
-
-			int appX = leftOff + (i % buttonsPerRow) * buttonSpace + buttonHalfSize;
-			int appY = 40 + (i / buttonsPerRow) * buttonSpace;
-
-			App app = machineContainer.registeredApps.get(i);
-
-			ResourceLocation icon = app.getIcon();
-
-			Minecraft.getMinecraft().getTextureManager().bindTexture(icon);
-			// Texture size 16, scale by 2
-			drawModalRectWithCustomSizedTexture(appX + 3, appY + 3, 0, 0, 32, 32, 32, 32);
-		}
-	}
 }
