@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.commons.lang3.NotImplementedException;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockLadder;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
@@ -47,6 +48,7 @@ import net.teamio.taam.Taam.ITEM_PART_META;
 import net.teamio.taam.content.ItemWithMetadata;
 import net.teamio.taam.content.ItemWithMetadata.ItemDelegate;
 import net.teamio.taam.content.common.BlockBuilding;
+import net.teamio.taam.content.common.BlockLamp;
 import net.teamio.taam.content.common.BlockMachines;
 import net.teamio.taam.content.common.BlockOre;
 import net.teamio.taam.content.common.BlockSensor;
@@ -116,6 +118,7 @@ public class TaamMain {
 
 	public static CreativeTabs creativeTab;
 
+	public static BlockLamp blockLamp;
 	public static BlockSensor blockSensor;
 	public static BlockMachines blockMachines;
 	public static BlockProductionLine blockProductionLine;
@@ -222,6 +225,11 @@ public class TaamMain {
 		 * Register Stuff
 		 */
 
+		registerBlock(
+				blockLamp = new BlockLamp(),
+				new ItemBlock(blockLamp),
+				Taam.BLOCK_LAMP
+				);
 		registerBlock(
 				blockSensor = new BlockSensor(),
 				new ItemBlock(blockSensor),

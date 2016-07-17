@@ -1,0 +1,29 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "textures": {},
+        "model": "taam:industrial_lamp.obj",
+        "custom": {
+            "flip-v": true
+        },
+        "transform": "forge:default-block"
+     },
+    "variants": {
+        "normal": [{}],
+        "inventory": [{
+            "transform": "forge:default-block"
+        }],
+        "powered": {
+        	"true": {},
+        	"false": {}
+        },
+        "direction": {
+        	"up": {"x": 90},
+        	"down": {"x": -90},
+        	"south": {},
+        	"north": {"y": 180},
+        	"west": {"y": 90},
+        	"east": {"y": 270}
+        }
+    }
+}
