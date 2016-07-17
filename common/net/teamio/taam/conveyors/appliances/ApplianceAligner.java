@@ -10,6 +10,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.teamio.taam.Log;
 import net.teamio.taam.Taam;
 import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.IWorldInteractable;
@@ -186,7 +187,9 @@ public class ApplianceAligner extends ATileEntityAppliance implements IWorldInte
 		ItemFilterCustomizable filterLane2;
 		ItemFilterCustomizable filterLane3;
 		
-		if(direction == right) {
+		Log.debug("Dir: {} Left: {} Right: {} IsRight: {}", direction, left, right, direction == this.direction.rotateY());
+		
+		if(direction == this.direction.rotateY()) {
 			filterLane1 = filters[0];
 			filterLane2 = filters[1];
 			filterLane3 = filters[2];
@@ -196,14 +199,15 @@ public class ApplianceAligner extends ATileEntityAppliance implements IWorldInte
 			filterLane2 = filters[1];
 			filterLane3 = filters[0];
 		}
-		
+
+
+		// Item can continue on lane if filter matches & is include or does not match & is exclude
 		boolean canContinueLane1 = filterLane1.isItemStackMatching(wrapper.itemStack) != filterLane1.isExcluding();
 		boolean canContinueLane2 = filterLane2.isItemStackMatching(wrapper.itemStack) != filterLane2.isExcluding();
 		boolean canContinueLane3 = filterLane3.isItemStackMatching(wrapper.itemStack) != filterLane3.isExcluding();
 		
 		// FIXME Debug-Mode, move all to center
 		if(lane == 1) {
-			// Item can continue on lane if filter matches & is include or does not match & is exclude
 			if(!canContinueLane1) {
 				// If it can continue on one of the other lanes, move right. Else block.
 				if(canContinueLane2 || canContinueLane3) {
@@ -214,7 +218,6 @@ public class ApplianceAligner extends ATileEntityAppliance implements IWorldInte
 			}
 		} else if(lane == 3) {
 			if(!canContinueLane3) {
-				// If it can continue on one of the other lanes, move left. Else block.
 				if(canContinueLane1 || canContinueLane2) {
 					afterOverride = left;
 				} else {
@@ -223,7 +226,6 @@ public class ApplianceAligner extends ATileEntityAppliance implements IWorldInte
 			}
 		} else {
 			if(!canContinueLane2) {
-				// If it can continue on one of the other lanes, move left/right. Else block.
 				if(canContinueLane1) {
 					afterOverride = left;
 				} else if(canContinueLane3) {

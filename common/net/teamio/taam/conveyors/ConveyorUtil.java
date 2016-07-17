@@ -217,12 +217,12 @@ public class ConveyorUtil {
 			rotated = new int[4][];
 			// North
 			rotated[2] = unrotated;
-			// East
-			rotated[3] = rotate(unrotated);
-			// South
-			rotated[0] = rotate(rotated[3]);
 			// West
-			rotated[1] = rotate(rotated[0]);
+			rotated[1] = rotate(unrotated);
+			// South
+			rotated[0] = rotate(rotated[1]);
+			// East
+			rotated[3] = rotate(rotated[0]);
 		}
 		
 		public int get(int slot, EnumFacing rotation) {
@@ -250,15 +250,15 @@ public class ConveyorUtil {
 	
 	public static RotatedDefinition LANES = new RotatedDefinition(
 			// Remember, this definition is inverted being left-to-right not top-down order, so NORTH is left!
-			3, 3, 3,
+			1, 1, 1,
 			2, 2, 2,
-			1, 1, 1
+			3, 3, 3
 			);
 	public static RotatedDefinition ROWS = new RotatedDefinition(
 			// Remember, this definition is inverted being left-to-right not top-down order, so NORTH is left!
-			1, 2, 3,
-			1, 2, 3,
-			1, 2, 3
+			3, 2, 1,
+			3, 2, 1,
+			3, 2, 1
 			);
 	
 

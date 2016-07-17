@@ -147,6 +147,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 			if(pos != null) {
 				EntityPlayer player = event.getPlayer();
 				World world = player.worldObj;
+				boolean playerHasDebugTool = WrenchUtil.playerHasDebugTool(player);
 				te = world.getTileEntity(pos);
 				try {
 					IConveyorSlots cte = ConveyorUtil.getSlots(te, null);
@@ -179,6 +180,10 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 							drawSelectionBoundingBox(player, event.getPartialTicks(), 2, 1, 1, 1, 1, new AxisAlignedBB(x, y, z,
 									x + ConveyorUtil.oneThird, y + 0.1d, z + ConveyorUtil.oneThird));
 						}
+						
+						if(playerHasDebugTool) {
+							drawSlotInfo(player, x, y, z, slot, cte.getMovementDirection(), event.getPartialTicks());
+						}
 
 						if(wrapper.itemStack != null) {
 							float progress = wrapper.movementProgress;
@@ -208,6 +213,50 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 				}
 			}
 		}
+	}
+	
+	private void drawSlotInfo(EntityPlayer player, double x, double y, double z, int slot, EnumFacing direction, float partialTicks) {
+		int lane = ConveyorUtil.LANES.get(slot, direction);
+		int row = ConveyorUtil.ROWS.get(slot, direction);
+		String text1 = String.format("Slot: %d %s", slot, direction.toString());
+		String text2 = String.format("Row: %d", row);
+		String text3 = String.format("Lane: %d", lane);
+		GlStateManager.pushMatrix();
+		GlStateManager.pushAttrib();
+
+
+		double d0 = player.lastTickPosX + (player.posX - player.lastTickPosX) * partialTicks;
+		double d1 = player.lastTickPosY + (player.posY - player.lastTickPosY) * partialTicks;
+		double d2 = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * partialTicks;
+
+		GL11.glTranslated(-d0, -d1, -d2);
+		
+		GlStateManager.translate(x + 1/6f, y + 1/3f, z + 1/6f);
+
+		GlStateManager.rotate(180, 0, 1, 0);
+		
+
+		
+		
+		float rotation = player.rotationYaw - 45;
+		rotation -= rotation % 90;
+		
+		GlStateManager.rotate(-rotation, 0, 1, 0);
+
+		GlStateManager.translate(-1/6f, 0, 0);
+
+		GlStateManager.rotate(90, 1, 0, 0);
+		
+		GlStateManager.scale(0.01, 0.01, 0.01);
+		// Edge case: sometimes highlighting kicks in before this is filled, it seems
+		if(this.getFontRenderer() != null) {
+			this.getFontRenderer().drawString(text1, 0, -10, 0xFFFF00);
+			this.getFontRenderer().drawString(text2, 0, 0, 0xFFFF00);
+			this.getFontRenderer().drawString(text3, 0, 10, 0xFFFF00);
+		}
+
+		GlStateManager.popAttrib();
+		GlStateManager.popMatrix();
 	}
 
 	/**
