@@ -52,17 +52,13 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IRedston
 			@Override
 			public void onChangeHook() {
 				updateState(true, false, false);
-			};
+			}
 		};
 	}
 
 	@Override
 	public String getName() {
-		if (highSpeed) {
-			return "tile.taam.productionline.hopper_hs.name";
-		} else {
-			return "tile.taam.productionline.hopper.name";
-		}
+		return highSpeed ? "tile.taam.productionline.hopper_hs.name" : "tile.taam.productionline.hopper.name";
 	}
 
 	@Override

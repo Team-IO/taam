@@ -103,7 +103,7 @@ public final class PipeUtil {
 		@Override
 		protected ArrayList<IPipe> initialValue() {
 			return new ArrayList<IPipe>(6);
-		};
+		}
 	};
 
 	public static void processPipes(IPipe pipe, IBlockAccess world, BlockPos pos) {
@@ -243,11 +243,11 @@ public final class PipeUtil {
 			isPartialStack = true;
 			handlingStack = InventoryUtils.copyStack(handlingStack, 1);
 		}
-		
+
 		IFluidHandler itemFH = FluidUtils.getFluidHandlerForItem(handlingStack);
-		
+
 		boolean success = false;
-		
+
 		if(itemFH != null) {
 			FluidStack inTank = tank.getFluid();
 			if(inTank != null) {
@@ -304,7 +304,7 @@ public final class PipeUtil {
 				}
 			}
 		}
-		
+
 		if(success && isPartialStack) {
 			playerStack.stackSize--;
 			InventoryUtils.tryDropToInventory(player, handlingStack, player.getPosition());

@@ -77,7 +77,7 @@ public class MachineMultipart extends Multipart implements INormallyOccludingPar
 	@Override
 	public float getHardness(PartMOP hit) {
 		return 3.5f;
-	};
+	}
 
 	@Override
 	public ResourceLocation getType() {
@@ -189,10 +189,9 @@ public class MachineMultipart extends Multipart implements INormallyOccludingPar
 			InventoryUtils.tryDropToInventory(player, dropStack, getPos());
 			getContainer().removePart(this);
 			return true;
-		} else {
-			rotatePart(hit.sideHit);
-			return true;
 		}
+		rotatePart(hit.sideHit);
+		return true;
 	}
 
 	@Override
@@ -236,13 +235,13 @@ public class MachineMultipart extends Multipart implements INormallyOccludingPar
 		}
 		return machine.getExtendedState(newState, world, pos);
 	}
-	
+
 	@Override
 	public IBlockState getActualState(IBlockState state) {
 		// FIXME: Hacky workaround
 		return super.getActualState(getExtendedState(state));
 	}
-	
+
 	@Override
 	public boolean canRenderInLayer(BlockRenderLayer layer) {
 		return layer == BlockRenderLayer.CUTOUT;
@@ -290,7 +289,7 @@ public class MachineMultipart extends Multipart implements INormallyOccludingPar
 		buf.writeString(meta.unlocalizedName());
 		machine.writeUpdatePacket(buf);
 	}
-	
+
 	@Override
 	public NBTTagCompound writeToNBT(NBTTagCompound tag) {
 		tag.setString("machine", meta.unlocalizedName());

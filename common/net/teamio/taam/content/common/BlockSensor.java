@@ -156,12 +156,11 @@ public class BlockSensor extends BaseBlock {
 		EnumFacing dir = blockState.getValue(DIRECTION);
 		if(dir == side) {
 			return getRedstoneLevel(blockAccess, pos);
-		} else {
-			return 0;
 		}
+		return 0;
 	}
 
-	public int getRedstoneLevel(IBlockAccess world, BlockPos pos) {
+	public static int getRedstoneLevel(IBlockAccess world, BlockPos pos) {
 		TileEntitySensor te = (TileEntitySensor) world.getTileEntity(pos);
 		return te == null ? 0 : te.getRedstoneLevel();
 	}

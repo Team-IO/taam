@@ -10,8 +10,7 @@ import net.minecraft.util.EnumFacing;
  *
  */
 public abstract class ConveyorSlotsMoving extends ConveyorSlotsStandard {
-	
-	
+
 	public ConveyorSlotsMoving() {
 		super();
 	}
@@ -25,13 +24,14 @@ public abstract class ConveyorSlotsMoving extends ConveyorSlotsStandard {
 	public boolean canSlotMove(int slot) {
 		ItemWrapper slotObject = slots[slot];
 		return !slotObject.isBlocked();
-	};
-	
+	}
+
 	@Override
 	public EnumFacing getMovementDirection() {
 		return rotation;
 	}
-	
+
+	@Override
 	public abstract EnumFacing getNextSlot(int slot);
 
 }

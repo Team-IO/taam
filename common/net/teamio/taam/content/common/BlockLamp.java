@@ -133,9 +133,10 @@ public class BlockLamp extends Block {
 		return new AxisAlignedBB(minX,minY,minZ, maxX, maxY,maxZ);
 	}
 	
+	@Override
 	public int getLightValue(IBlockState state) {
 		return 15;
-	};
+	}
 
 	@Override
 	public boolean isBlockSolid(IBlockAccess worldIn, BlockPos pos, EnumFacing side) {
@@ -154,7 +155,7 @@ public class BlockLamp extends Block {
 		return canBlockStay(worldIn, pos, blockState);
 	}
 
-	public boolean canBlockStay(World worldIn, BlockPos pos, IBlockState state) {
+	public static boolean canBlockStay(World worldIn, BlockPos pos, IBlockState state) {
 		EnumFacing dir = state.getValue(DIRECTION);
 		EnumFacing side = dir.getOpposite();
 
@@ -167,7 +168,8 @@ public class BlockLamp extends Block {
 		return true;
 	}
 
+	@Override
 	public int damageDropped(IBlockState state) {
 		return 0;
-	};
+	}
 }

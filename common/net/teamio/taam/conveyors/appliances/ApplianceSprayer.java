@@ -30,12 +30,12 @@ public class ApplianceSprayer extends ATileEntityAppliance implements ITickable,
 	public static final float b_tankBorder = 1.5f / 16f;
 	public static final float b_tankBorderSprayer = b_tankBorder + 4f / 16f;
 	public static final float b_basePlate = 2f / 16f;
-	
+
 	public static final AxisAlignedBB bounds_sprayer_tank = new AxisAlignedBB(
 			b_tankBorder,	b_basePlate,	b_tankBorder,
 			1-b_tankBorder,	1-4f/16,		1-b_tankBorderSprayer
 			).expand(TankRenderInfo.shrinkValue, TankRenderInfo.shrinkValue, TankRenderInfo.shrinkValue);
-	
+
 	private final FluidTank tank;
 	private final PipeEndFluidHandler pipeEnd;
 	private final TankRenderInfo tankRI = new TankRenderInfo(bounds_sprayer_tank, null);
@@ -52,7 +52,7 @@ public class ApplianceSprayer extends ATileEntityAppliance implements ITickable,
 		};
 		pipeEnd = new PipeEndFluidHandler(tank, direction.getOpposite(), false);
 	}
-	
+
 	@Override
 	public String getName() {
 		return "tile.taam.productionline_appliance.sprayer.name";
@@ -121,7 +121,7 @@ public class ApplianceSprayer extends ATileEntityAppliance implements ITickable,
 		NBTTagCompound tagTank = new NBTTagCompound();
 		tank.writeToNBT(tagTank);
 		tag.setTag("tank", tagTank);
-	};
+	}
 
 	/*
 	 * IConveyorAppliance
@@ -200,7 +200,7 @@ public class ApplianceSprayer extends ATileEntityAppliance implements ITickable,
 
 		return true;
 	}
-	
+
 	@Override
 	public EnumFacing overrideNextSlot(IConveyorApplianceHost host, int slot, ItemWrapper wrapper,
 			EnumFacing beforeOverride) {

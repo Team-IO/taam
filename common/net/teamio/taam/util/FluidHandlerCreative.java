@@ -62,9 +62,8 @@ public class FluidHandlerCreative implements IFluidHandler {
 	public FluidStack drain(FluidStack resource, boolean doDrain) {
 		if (template != null && template.isFluidEqual(resource)) {
 			return resource;
-		} else {
-			return null;
 		}
+		return null;
 	}
 
 	@Override

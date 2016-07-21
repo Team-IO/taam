@@ -3,8 +3,8 @@ package net.teamio.taam.content.conveyors;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ITickable;
 import net.minecraft.util.EnumFacing.Axis;
+import net.minecraft.util.ITickable;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.relauncher.Side;
@@ -40,7 +40,7 @@ public class TileEntityConveyorElevator extends BaseTileEntity implements ITicka
 			@Override
 			public void onChangeHook() {
 				updateState(true, false, false);
-			};
+			}
 		};
 		conveyorSlots.rotation = EnumFacing.UP;
 	}
@@ -55,18 +55,15 @@ public class TileEntityConveyorElevator extends BaseTileEntity implements ITicka
 			if(direction.getAxis() == Axis.X) {
 				if(ConveyorUtil.ROWS.get(slot, EnumFacing.EAST) == 1) {
 					return EnumFacing.WEST;
-				} else {
-					return EnumFacing.EAST;
 				}
-			} else {
-				if(ConveyorUtil.ROWS.get(slot, EnumFacing.SOUTH) == 1) {
-					return EnumFacing.SOUTH;
-				} else {
-					return EnumFacing.NORTH;
-				}
+				return EnumFacing.EAST;
 			}
+			if(ConveyorUtil.ROWS.get(slot, EnumFacing.SOUTH) == 1) {
+				return EnumFacing.SOUTH;
+			}
+			return EnumFacing.NORTH;
 		}
-		
+
 		// TODO: Handle up/down settings, exit points
 		return EnumFacing.UP;
 	}
@@ -76,12 +73,12 @@ public class TileEntityConveyorElevator extends BaseTileEntity implements ITicka
 	public void renderUpdate() {
 		updateAdjecents();
 	}
-	
+
 	@Override
 	public void blockUpdate() {
 		updateAdjecents();
 	}
-	
+
 	private void updateAdjecents() {
 		// Check UP
 		TileEntity te = worldObj.getTileEntity(pos.offset(EnumFacing.UP));
@@ -144,7 +141,7 @@ public class TileEntityConveyorElevator extends BaseTileEntity implements ITicka
 		}
 		return super.getCapability(capability, facing);
 	}
-	
+
 	/*
 	 * IRotatable implementation
 	 */

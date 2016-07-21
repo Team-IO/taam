@@ -22,12 +22,8 @@ public class GuiHandler implements IGuiHandler {
 		default:
 		case 0:// TileEntity
 			TileEntity tileEntity = world.getTileEntity(new BlockPos(x, y, z));
-			if (tileEntity instanceof TileEntityConveyorHopper) {
-				return new ContainerConveyorSmallInventory(player.inventory, (TileEntityConveyorHopper) tileEntity, EnumFacing.UP);
-			}
-
 			if (tileEntity instanceof BaseTileEntity) {
-				return new ContainerConveyorSmallInventory(player.inventory, (BaseTileEntity) tileEntity, EnumFacing.UP);
+				return new ContainerConveyorSmallInventory(player.inventory, tileEntity, EnumFacing.UP);
 			}
 			break;
 		case 1:// Entity

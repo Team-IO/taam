@@ -220,18 +220,16 @@ public final class TaamUtil {
 			// Only accept null input if both stack and ore dictionary key are
 			// null
 			return inputDefinition != null && inputOreDictName != null;
-		} else {
-			if (inputDefinition == null) {
-				// Ore dictionary match
-				int[] oreIDs = OreDictionary.getOreIDs(actualInput);
-				int myID = OreDictionary.getOreID(inputOreDictName);
-				return ArrayUtils.contains(oreIDs, myID);
-			} else {
-				// Item stack match, respecting wildcards
-				return inputDefinition.isItemEqual(actualInput)
-						|| OreDictionary.itemMatches(inputDefinition, actualInput, false);
-			}
 		}
+		if (inputDefinition == null) {
+			// Ore dictionary match
+			int[] oreIDs = OreDictionary.getOreIDs(actualInput);
+			int myID = OreDictionary.getOreID(inputOreDictName);
+			return ArrayUtils.contains(oreIDs, myID);
+		}
+		// Item stack match, respecting wildcards
+		return inputDefinition.isItemEqual(actualInput)
+				|| OreDictionary.itemMatches(inputDefinition, actualInput, false);
 	}
 
 	/**
@@ -270,8 +268,7 @@ public final class TaamUtil {
 	public static String getTranslatedName(IWorldNameable inventory) {
 		if (inventory.hasCustomName()) {
 			return inventory.getDisplayName().getFormattedText();
-		} else {
-			return I18n.format(inventory.getDisplayName().getFormattedText(), new Object[0]);
 		}
+		return I18n.format(inventory.getDisplayName().getFormattedText(), new Object[0]);
 	}
 }

@@ -90,9 +90,8 @@ public class BlockProductionLine extends BaseBlock {
 		// Add rotation to state
 		if(te instanceof IRotatable) {
 			return state.withProperty(DIRECTION, ((IRotatable)te).getFacingDirection());
-		} else {
-			return state.withProperty(DIRECTION, EnumFacing.DOWN);
 		}
+		return state.withProperty(DIRECTION, EnumFacing.DOWN);
 	}
 
 	public String getUnlocalizedName(ItemStack itemStack) {
@@ -158,9 +157,10 @@ public class BlockProductionLine extends BaseBlock {
 		case elevator:
 			// Elevator
 			return new TileEntityConveyorElevator();
+		default:
+			Log.error("Was not able to create a TileEntity for " + getClass().getName());
+			return null;
 		}
-		Log.error("Was not able to create a TileEntity for " + getClass().getName());
-		return null;
 	}
 
 	@Override
@@ -173,27 +173,27 @@ public class BlockProductionLine extends BaseBlock {
 			TileEntityConveyorElevator te = (TileEntityConveyorElevator) source.getTileEntity(pos);
 			if(te != null && te.getFacingDirection().getAxis() == Axis.X) {
 				return BOUNDS_ELEVATOR_X;
-			} else {
-				return BOUNDS_ELEVATOR_Z;
 			}
-		} else {
-			return BOUNDS_CONVEYORS;
+			return BOUNDS_ELEVATOR_Z;
 		}
+		return BOUNDS_CONVEYORS;
 	}
 
+	@Override
 	public boolean isLadder(IBlockState state, IBlockAccess world, BlockPos pos, EntityLivingBase entity) {
 		if(state.getBlock() != TaamMain.blockProductionLine) {
 			// Can only work for actual production line, else we crash with wrong variant
 			return false;
 		}
 		return state.getValue(VARIANT) == BLOCK_PRODUCTIONLINE_META.elevator;
-	};
+	}
 	
 	@Override
 	public boolean isBlockSolid(IBlockAccess world, BlockPos pos, EnumFacing side) {
 		return false;
 	}
 
+	@Override
 	public boolean isSideSolid(IBlockState base_state, IBlockAccess world, BlockPos pos, EnumFacing side) {
 		if(base_state.getBlock() != TaamMain.blockProductionLine) {
 			// Can only work for actual production line, else we crash with wrong variant
@@ -209,7 +209,7 @@ public class BlockProductionLine extends BaseBlock {
 			return side == EnumFacing.DOWN;
 		}
 		return false;
-	};
+	}
 	
 	@Override
 	public boolean hasComparatorInputOverride(IBlockState state) {
@@ -253,46 +253,43 @@ public class BlockProductionLine extends BaseBlock {
 
 		if (checkDirectSupport(world, pos)) {
 			return true;
-		} else {
-			TileEntity ent = world.getTileEntity(pos.offset(side));
-			if (ent instanceof TileEntityConveyor) {
+		}
+		TileEntity ent = world.getTileEntity(pos.offset(side));
+		if (ent instanceof TileEntityConveyor) {
 
-				boolean checkFurther = false;
+			boolean checkFurther = false;
 
-				// The other is a conveyor and we are not a conveyor (no myDir)
-				if (myDir == null && !conveyorOnly) {
-					switch (side) {
-					case UP:
-					default:
-						// Up is usually not connected
-						return false;
-					case NORTH:
-					case EAST:
-					case SOUTH:
-					case WEST:
-					case DOWN:
-						// Attach to the side of or above a conveyor
-						return true;
-					}
-				} else {
-					if (side == EnumFacing.UP || side == EnumFacing.DOWN) {
-						// Up and Down are connected by the supports
-						checkFurther = true;
-					} else {
-						// Only connect conveyors directly working with each
-						// other (no sidealongs)
-						otherDir = ((TileEntityConveyor) ent).getFacingDirection();
-						checkFurther = myDir == otherDir && (myDir == side || myDir == side.getOpposite());
-					}
+			// The other is a conveyor and we are not a conveyor (no myDir)
+			if (myDir == null && !conveyorOnly) {
+				switch (side) {
+				case UP:
+				default:
+					// Up is usually not connected
+					return false;
+				case NORTH:
+				case EAST:
+				case SOUTH:
+				case WEST:
+				case DOWN:
+					// Attach to the side of or above a conveyor
+					return true;
 				}
-				if (checkFurther && supportCount > 0) {
-					if (checkDirectSupport(world, pos.offset(side))) {
-						return true;
-					} else {
-						if (checkSupport(world, pos.offset(side), side, myDir, supportCount - 1, conveyorOnly)) {
-							return true;
-						}
-					}
+			}
+			if (side == EnumFacing.UP || side == EnumFacing.DOWN) {
+				// Up and Down are connected by the supports
+				checkFurther = true;
+			} else {
+				// Only connect conveyors directly working with each
+				// other (no sidealongs)
+				otherDir = ((TileEntityConveyor) ent).getFacingDirection();
+				checkFurther = myDir == otherDir && (myDir == side || myDir == side.getOpposite());
+			}
+			if (checkFurther && supportCount > 0) {
+				if (checkDirectSupport(world, pos.offset(side))) {
+					return true;
+				}
+				if (checkSupport(world, pos.offset(side), side, myDir, supportCount - 1, conveyorOnly)) {
+					return true;
 				}
 			}
 		}

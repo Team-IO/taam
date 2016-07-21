@@ -38,9 +38,8 @@ public class PipeEndRestricted extends PipeEnd {
 		}
 		if(inside == null || inside.isFluidEqual(stack)) {
 			return info.addFluid(stack);
-		} else {
-			return 0;
 		}
+		return 0;
 	}
 
 	public FluidStack getFluid() {

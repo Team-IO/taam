@@ -74,7 +74,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements IReds
 			@Override
 			public void onChangeHook() {
 				updateState(true, false, false);
-			};
+			}
 		};
 		this.mode = mode;
 		if(mode == Grinder) {
@@ -165,6 +165,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements IReds
 	private void hurtEntity(EntityLivingBase living) {
 		DamageSource ds = TaamMain.ds_processed;
 		switch(mode) {
+		default:
 		case Shredder:
 			ds = TaamMain.ds_shredded;
 			break;
@@ -329,7 +330,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements IReds
 		}
 		return super.getCapability(capability, facing);
 	}
-	
+
 	/*
 	 * IRedstoneControlled implementation
 	 */

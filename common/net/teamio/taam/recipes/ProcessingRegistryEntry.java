@@ -160,14 +160,12 @@ public final class ProcessingRegistryEntry {
 		IProcessingRecipeFluidBased[] actualMatches = new IProcessingRecipeFluidBased[matches.length];
 		int idx = 0;
 
-		if (matches != null) {
-			Log.debug("Fetching fluid recipes for machine {}, {}: {} matches.", machineName, input, matches.length);
-			for (IProcessingRecipeFluidBased recipe : matches) {
-				if (recipe != null && recipe.inputFluidMatches(input)) {
-					Log.debug("Matching recipe {}", recipe);
-					actualMatches[idx] = recipe;
-					idx++;
-				}
+		Log.debug("Fetching fluid recipes for machine {}, {}: {} matches.", machineName, input, matches.length);
+		for (IProcessingRecipeFluidBased recipe : matches) {
+			if (recipe != null && recipe.inputFluidMatches(input)) {
+				Log.debug("Matching recipe {}", recipe);
+				actualMatches[idx] = recipe;
+				idx++;
 			}
 		}
 

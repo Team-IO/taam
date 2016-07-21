@@ -31,7 +31,7 @@ public class MachinePipe implements IMachine, IPipe, IRenderable {
 
 	public static final float pipeWidth = 4/16f;
 	public static final float fromBorder = (1f - pipeWidth) / 2;
-	
+
 	public static final float flangeWidth = 7.25f/16f;
 	public static final float flangeSize = 2/16f;
 	public static final float fromBorderFlange = (1f - flangeWidth) / 2;
@@ -39,7 +39,7 @@ public class MachinePipe implements IMachine, IPipe, IRenderable {
 	public static final float baseplateWidth = 15/16f;
 	public static final float baseplateSize = 2/16f;
 	public static final float fromBorderBaseplate = (1f - baseplateWidth) / 2;
-	
+
 	public static AxisAlignedBB bbCenter = new AxisAlignedBB(
 			fromBorder, fromBorder, fromBorder,
 			1-fromBorder, 1-fromBorder, 1-fromBorder);
@@ -62,7 +62,7 @@ public class MachinePipe implements IMachine, IPipe, IRenderable {
 																1-fromBorder,	1,				1-fromBorder);
 		bbFaces[EnumFacing.DOWN.ordinal()]	= new AxisAlignedBB(fromBorder,		0,				fromBorder,
 																1-fromBorder,	fromBorder,		1-fromBorder);
-		
+
 		bbFlanges[EnumFacing.EAST.ordinal()]	= new AxisAlignedBB(1-flangeSize,		fromBorderFlange,	fromBorderFlange,
 																	1,					1-fromBorderFlange,	1-fromBorderFlange);
 		bbFlanges[EnumFacing.WEST.ordinal()]	= new AxisAlignedBB(0,					fromBorderFlange,	fromBorderFlange,
@@ -76,7 +76,7 @@ public class MachinePipe implements IMachine, IPipe, IRenderable {
 		bbFlanges[EnumFacing.DOWN.ordinal()]	= new AxisAlignedBB(fromBorderFlange,	0,					fromBorderFlange,
 																	1-fromBorderFlange,	flangeSize,			1-fromBorderFlange);
 	}
-	
+
 	private final PipeInfo info;
 	/**
 	 * Bitmap containing the surrounding pipes Runtime-only, required for
@@ -148,7 +148,7 @@ public class MachinePipe implements IMachine, IPipe, IRenderable {
 			}
 		}
 		return old != adjacentPipes;
-	};
+	}
 
 	@Override
 	public void blockUpdate(World world, BlockPos pos, byte occlusionField) {
@@ -209,7 +209,7 @@ public class MachinePipe implements IMachine, IPipe, IRenderable {
 				}
 			}
 		}
-		
+
 		//TODO: updateState(false, false, false);
 	}
 
@@ -372,7 +372,7 @@ public class MachinePipe implements IMachine, IPipe, IRenderable {
 	public int getFluidAmount(FluidStack like) {
 		return info.getFluidAmount(like);
 	}
-	
+
 	@Override
 	public boolean isSideAvailable(EnumFacing side) {
 		return !FaceBitmap.isSideBitSet(occludedSides, side);

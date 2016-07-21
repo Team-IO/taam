@@ -55,7 +55,7 @@ public class ConveyorSlotsStandard extends ConveyorSlotsBase implements INBTSeri
 				removed = removed.copy();
 			} else {
 				wrapper.itemStack = null;
-				onChangeHook();;
+				onChangeHook();
 			}
 			return removed;
 		} else {
@@ -74,9 +74,8 @@ public class ConveyorSlotsStandard extends ConveyorSlotsBase implements INBTSeri
 		slot = MathHelper.clamp_int(slot, 0, 8);
 		if(isSlotAvailable(slot)) {
 			return slots[slot];
-		} else {
-			return ItemWrapper.EMPTY;
 		}
+		return ItemWrapper.EMPTY;
 	}
 
 	/*

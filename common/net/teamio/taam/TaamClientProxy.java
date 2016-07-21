@@ -73,7 +73,7 @@ public class TaamClientProxy extends TaamCommonProxy {
 
 		network.registerMessage(TPAdvancedGuiAppData.Handler.class, TPAdvancedGuiAppData.class, 2, Side.CLIENT);
 	}
-	
+
 	@Override
 	public void registerRenderStuff() {
 		ModelLoaderRegistry.registerLoader(OBJLoader.INSTANCE);
@@ -266,7 +266,7 @@ public class TaamClientProxy extends TaamCommonProxy {
 	 * @param meta
 	 * @param name
 	 */
-	private void registerItemDefault(ItemModelMesher modelMesher, Item item, int meta, String name) {
+	private static void registerItemDefault(ItemModelMesher modelMesher, Item item, int meta, String name) {
 		modelMesher.register(item, meta, new ModelResourceLocation(name, "inventory"));
 	}
 
@@ -281,7 +281,7 @@ public class TaamClientProxy extends TaamCommonProxy {
 		}
 	}
 
-	private void textureStitchPre(Fluid fluid, TextureStitchEvent.Pre event) {
+	private static void textureStitchPre(Fluid fluid, TextureStitchEvent.Pre event) {
 		TextureMap map = event.getMap();
 		TextureAtlasSprite still = map.getTextureExtry(fluid.getStill().toString());
 		if (still == null) {

@@ -5,12 +5,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
+import net.teamio.taam.content.common.BlockOre;
 import net.teamio.taam.content.piping.MachineFluidDrier;
 import net.teamio.taam.content.piping.MachineMixer;
 import net.teamio.taam.content.piping.MachinePipe;
@@ -90,7 +92,7 @@ public final class Taam {
 	 */
 
 	public static final ResourceLocation SOUND_SIP_AH = new ResourceLocation("taam", "sip_ah");
-	
+
 	/*
 	 * Blocks
 	 */
@@ -112,7 +114,7 @@ public final class Taam {
 
 	/**
 	 * Wrapper for multipart-based machines, if multipart is not found or disabled via config.
-	 * 
+	 *
 	 * See {@link MACHINE_META} for the single meta values (not actually block metadata.)
 	 */
 	public static final String BLOCK_MACHINE_WRAPPER = "machine";
@@ -194,7 +196,11 @@ public final class Taam {
 		public String getName() {
 			return name();
 		}
-	};
+
+		public static IBlockState getOre(Taam.BLOCK_ORE_META ore) {
+			return TaamMain.blockOre.getDefaultState().withProperty(BlockOre.VARIANT, ore);
+		}
+	}
 
 	public static enum BLOCK_CONCRETE_META implements IStringSerializable {
 		rough,
@@ -222,11 +228,11 @@ public final class Taam {
 		public String getName() {
 			return name();
 		}
-	};
+	}
 
 	/**
 	 * Non-Multipart machines that are not part of the conveyor-system.
-	 * 
+	 *
 	 * @author Oliver Kahrmann
 	 *
 	 */
@@ -248,11 +254,11 @@ public final class Taam {
 		public String getName() {
 			return name();
 		}
-	};
+	}
 
 	/**
 	 * Productionline-Machines, i.e. part of the conveyor system.
-	 * 
+	 *
 	 * @author Oliver Kahrmann
 	 *
 	 */
@@ -282,7 +288,7 @@ public final class Taam {
 		public String getName() {
 			return name();
 		}
-	};
+	}
 
 	public static enum BLOCK_PRODUCTIONLINE_ATTACHABLE_META implements IStringSerializable {
 		itembag,
@@ -301,7 +307,7 @@ public final class Taam {
 		public String getName() {
 			return name();
 		}
-	};
+	}
 
 	public static enum BLOCK_PRODUCTIONLINE_APPLIANCE_META implements IStringSerializable {
 		sprayer,
@@ -320,7 +326,7 @@ public final class Taam {
 		public String getName() {
 			return name();
 		}
-	};
+	}
 
 	public static enum BLOCK_LOGISTICS_META {
 		logistics_manager,
@@ -334,7 +340,7 @@ public final class Taam {
 			}
 			return valuesAsString;
 		}
-	};
+	}
 
 	public static final String MULTIPART_MULTINET_CABLE = "multinet.cable";
 	public static final String MULTIPART_MULTINET_MULTITRONIX = "multinet.multitronix";
@@ -361,7 +367,7 @@ public final class Taam {
 			}
 			return valuesAsString;
 		}
-	};
+	}
 
 	public static enum ITEM_TOOL_META {
 		saw
@@ -374,7 +380,7 @@ public final class Taam {
 			}
 			return valuesAsString;
 		}
-	};
+	}
 
 	public static enum ITEM_MATERIAL_META {
 		plastic_sheet,
@@ -412,7 +418,7 @@ public final class Taam {
 			}
 			return valuesAsString;
 		}
-	};
+	}
 	public static enum ITEM_PART_META {
 		photocell,
 		motor,
@@ -440,7 +446,7 @@ public final class Taam {
 			}
 			return valuesAsString;
 		}
-	};
+	}
 
 	public static final String TILEENTITY_SENSOR = "taam.sensor";
 	public static final String TILEENTITY_CHUTE = "taam.chute";
@@ -492,7 +498,7 @@ public final class Taam {
 			}
 			return valuesAsString;
 		}
-	};
+	}
 
 	public static final String FLUID_DYE = "dye_";
 
@@ -520,18 +526,18 @@ public final class Taam {
 			}
 			return valuesAsString;
 		}
-	};
+	}
 
 	/**
 	 * Meta info for all multipart-based machines. Used for items, the wrapper block & multipart registry.
-	 * 
+	 *
 	 * {@link MachineBlock} + {@link MachineTileEntity} -> Wrapper block & TE if multipart is not available.
-	 * 
+	 *
 	 * {@link MachineItemBlock} -> Item for the wrapper block, mutually exclusive with {@link MachineItemMultipart}.
 	 * Only one of them is used, depending on availability of multipart.
-	 * 
+	 *
 	 * {@link MachineMultipart} -> Multipart wrapper for all these machines.
-	 * 
+	 *
 	 * @author Oliver Kahrmann
 	 *
 	 */

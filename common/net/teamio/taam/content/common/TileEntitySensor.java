@@ -32,11 +32,7 @@ public class TileEntitySensor extends BaseTileEntity implements IRotatable, ITic
 	private EnumFacing direction = EnumFacing.UP;
 
 	public int getRedstoneLevel() {
-		if(powering) {
-			return 15;
-		} else {
-			return 0;
-		}
+		return powering ? 15 : 0;
 	}
 
 	public TileEntitySensor() {
@@ -83,6 +79,7 @@ public class TileEntitySensor extends BaseTileEntity implements IRotatable, ITic
 		float zMax = pos.getZ() + 0.5f;
 
 		switch(direction) {
+		default:
 		case DOWN:
 			yMax -= blind;
 			yMin -= down;
@@ -153,19 +150,18 @@ public class TileEntitySensor extends BaseTileEntity implements IRotatable, ITic
 		}
 	}
 
-	private boolean isDetectedEntityType(Entity ent) {
+	private static boolean isDetectedEntityType(Entity ent) {
 		return ent instanceof EntityLivingBase
 				&& !(ent instanceof EntityIronGolem)
 				&& !(ent instanceof EntitySnowman);
 	}
 
-	private boolean isEntityWithinBoundingBox(AxisAlignedBB bb, Entity ent) {
+	private static boolean isEntityWithinBoundingBox(AxisAlignedBB bb, Entity ent) {
 		AxisAlignedBB entityBounds = ent.getEntityBoundingBox();
 		if(entityBounds == null) {
 			return bb.isVecInside(ent.getPositionVector());
-		} else {
-			return entityBounds.intersectsWith(bb);
 		}
+		return entityBounds.intersectsWith(bb);
 	}
 
 	@Override

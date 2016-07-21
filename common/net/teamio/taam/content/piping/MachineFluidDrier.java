@@ -288,12 +288,8 @@ public class MachineFluidDrier implements IMachine {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-		if (capability == Taam.CAPABILITY_PIPE) {
-			if (facing == EnumFacing.UP) {
-				return (T) pipeEndIn;
-			} else {
-				return null;
-			}
+		if (capability == Taam.CAPABILITY_PIPE && facing == EnumFacing.UP) {
+			return (T) pipeEndIn;
 		}
 		return null;
 	}

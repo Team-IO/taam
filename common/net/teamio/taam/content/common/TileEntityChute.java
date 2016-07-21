@@ -20,9 +20,9 @@ import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.conveyors.ConveyorSlotsBase;
 import net.teamio.taam.conveyors.ConveyorUtil;
-import net.teamio.taam.util.InventoryUtils;
 import net.teamio.taam.util.FluidHandlerOutputOnly;
 import net.teamio.taam.util.FluidUtils;
+import net.teamio.taam.util.InventoryUtils;
 import net.teamio.taam.util.TaamUtil;
 
 public class TileEntityChute extends BaseTileEntity implements IRotatable, ITickable {
@@ -51,20 +51,12 @@ public class TileEntityChute extends BaseTileEntity implements IRotatable, ITick
 		
 		@Override
 		public double getInsertMaxY() {
-			if(isConveyorVersion) {
-				return 0.9;
-			} else {
-				return 1.3;
-			}
+			return isConveyorVersion ? 0.9 : 1.3;
 		}
 
 		@Override
 		public double getInsertMinY() {
-			if(isConveyorVersion) {
-				return 0.3;
-			} else {
-				return 0.9;
-			}
+			return isConveyorVersion ? 0.3 : 0.9;
 		}
 	};
 
@@ -78,11 +70,7 @@ public class TileEntityChute extends BaseTileEntity implements IRotatable, ITick
 
 	@Override
 	public String getName() {
-		if (isConveyorVersion) {
-			return "tile.taam.productionline.chute.name";
-		} else {
-			return "tile.taam.machines.chute.name";
-		}
+		return isConveyorVersion ? "tile.taam.productionline.chute.name" : "tile.taam.machines.chute.name";
 	}
 
 	@Override
@@ -159,9 +147,8 @@ public class TileEntityChute extends BaseTileEntity implements IRotatable, ITick
 						worldObj.spawnEntityInWorld(item);
 					}
 					return null;
-				} else {
-					return stack;
 				}
+				return stack;
 			}
 			
 			@Override
@@ -186,12 +173,11 @@ public class TileEntityChute extends BaseTileEntity implements IRotatable, ITick
 		if(target == null) {
 			return getDropItemHandler();
 		}
-		IItemHandler handler = InventoryUtils.getInventory(target, EnumFacing.UP);;
+		IItemHandler handler = InventoryUtils.getInventory(target, EnumFacing.UP);
 		if(handler == null) {
 			return getDropItemHandler();
-		} else {
-			return handler;
 		}
+		return handler;
 	}
 	
 
@@ -205,10 +191,9 @@ public class TileEntityChute extends BaseTileEntity implements IRotatable, ITick
 		if(handler == null) {
 			wrappedHandler.origin = null;
 			return null;
-		} else {
-			wrappedHandler.origin = handler;
-			return wrappedHandler;
 		}
+		wrappedHandler.origin = handler;
+		return wrappedHandler;
 	}
 
 	private boolean canDrop() {

@@ -32,7 +32,7 @@ public class Drawable {
 		this.textureWidth = 256;
 		this.textureHeight = 256;
 	}
-	
+
 	public Drawable(ResourceLocation texture, int u, int v, int uWidth, int wHeight, int drawWidth, int drawHeight) {
 		this.texture = texture;
 		this.u = u;
@@ -44,7 +44,7 @@ public class Drawable {
 		this.textureWidth = 256;
 		this.textureHeight = 256;
 	}
-	
+
 	public Drawable(ResourceLocation texture, int u, int v, int uWidth, int wHeight, int drawWidth, int drawHeight, int textureWidth, int textureHeight) {
 		this.texture = texture;
 		this.u = u;
@@ -56,15 +56,14 @@ public class Drawable {
 		this.textureWidth = textureWidth;
 		this.textureHeight = textureHeight;
 	}
-	
-	public void draw(Gui gui, int x, int y) {
+
+	public void draw(int x, int y) {
 		Minecraft.getMinecraft().getTextureManager().bindTexture(texture);
-//		Gui.drawModalRectWithCustomSizedTexture(x, y, u, v, width, height, drawWidth, drawHeight);
 		Gui.drawScaledCustomSizeModalRect(x, y, u, v, uWidth, uHeight, drawWidth, drawHeight, textureWidth, textureHeight);
 	}
-	
-	public void drawCentered(Gui gui, int x, int y) {
-		draw(gui, x - drawWidth / 2, y - drawHeight / 2);
+
+	public void drawCentered(int x, int y) {
+		draw(x - drawWidth / 2, y - drawHeight / 2);
 	}
-	
+
 }

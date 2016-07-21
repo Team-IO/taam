@@ -456,9 +456,8 @@ public class ConveyorUtil {
 					slotObject.itemStack.stackSize += availableSpace;
 				}
 				return availableSpace;
-			} else {
-				return 0;
 			}
+			return 0;
 		} else {
 			return 0;
 		}
@@ -470,13 +469,12 @@ public class ConveyorUtil {
 		}
 		if (tileEntity instanceof IConveyorSlots) {
 			return (IConveyorSlots) tileEntity;
-		} else {
-			IConveyorSlots candidate = tileEntity.getCapability(Taam.CAPABILITY_CONVEYOR, side);
-			if (candidate == null && Config.multipart_present) {
-				candidate = MultipartHandler.getCapabilityForCenter(Taam.CAPABILITY_CONVEYOR, tileEntity.getWorld(), tileEntity.getPos(), side);
-			}
-			return candidate;
 		}
+		IConveyorSlots candidate = tileEntity.getCapability(Taam.CAPABILITY_CONVEYOR, side);
+		if (candidate == null && Config.multipart_present) {
+			candidate = MultipartHandler.getCapabilityForCenter(Taam.CAPABILITY_CONVEYOR, tileEntity.getWorld(), tileEntity.getPos(), side);
+		}
+		return candidate;
 	}
 
 	/**
@@ -698,8 +696,8 @@ public class ConveyorUtil {
 		return appliances;
 	}
 
-	public static RedirectorSide getRedirectorSide(EnumFacing direction, EnumFacing hitSide, float hitX, float hitY,
-			float hitZ, boolean topOnly) {
+	public static RedirectorSide getRedirectorSide(EnumFacing direction, EnumFacing hitSide,
+			float hitX, float hitY, float hitZ, boolean topOnly) {
 		EnumFacing sideToConsider = hitSide;
 	
 		if (hitSide == EnumFacing.UP) {

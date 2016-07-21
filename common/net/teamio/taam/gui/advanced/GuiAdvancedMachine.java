@@ -25,11 +25,11 @@ public class GuiAdvancedMachine extends GuiContainer {
 	private AppButton homeButton;
 
 	public static final Drawable iconCheckbox = new Drawable(guiTexture, 144, 0, 10, 10);
-	
+
 	public static final Drawable iconHome = new Drawable(guiTexture, 194, 0, 11, 11);
-	
+
 	public static final Drawable iconEdit = new Drawable(guiTexture, 166, 0, 10, 10);
-	
+
 	public static final Drawable iconMatchExact = new Drawable(guiTexture, 166, 10, 10, 10);
 	public static final Drawable iconMatchMod = new Drawable(guiTexture, 166, 20, 10, 10);
 	public static final Drawable iconMatchOredict = new Drawable(guiTexture, 166, 30, 10, 10);
@@ -38,7 +38,7 @@ public class GuiAdvancedMachine extends GuiContainer {
 	public static final Drawable iconCheckNBT = new Drawable(guiTexture, 155, 10, 10, 10);
 	public static final Drawable iconDontCheckMeta = new Drawable(guiTexture, 155, 20, 10, 10);
 	public static final Drawable iconDontCheckNBT = new Drawable(guiTexture, 155, 30, 10, 10);
-	
+
 
 	int buttonSpace = 60;
 	int buttonSize = 40;
@@ -52,7 +52,7 @@ public class GuiAdvancedMachine extends GuiContainer {
 	/**
 	 * Allow adding buttons or checkboxes externally, namely from
 	 * {@link App#initGui(GuiAdvancedMachine)}.
-	 * 
+	 *
 	 * @param button
 	 */
 	public void addButton(GuiButton button) {
@@ -70,16 +70,16 @@ public class GuiAdvancedMachine extends GuiContainer {
 		this.guiLeft /= 2;
 		this.guiTop /= 2;
 
-		
+
 		int buttonsPerRow = this.buttonsPerRow;
 		if(buttonsPerRow > machineContainer.registeredApps.size()) {
 			buttonsPerRow = machineContainer.registeredApps.size();
 		}
-		
+
 
 		int leftOff = xSize / 2 - (buttonsPerRow / 2) * buttonSpace;
 		int buttonHalfSize = buttonSpace / 2 - buttonSize / 2;
-		
+
 		/*
 		 * Init home screen buttons & Create App GUIs
 		 */
@@ -89,7 +89,7 @@ public class GuiAdvancedMachine extends GuiContainer {
 
 			App app = machineContainer.registeredApps.get(i);
 			app.gui = app.createGui();
-			
+
 			String appNameTranslated = I18n.format(app.getName());
 			AppButton button = new AppButton(app, guiLeft + appX + buttonHalfSize, guiTop + appY, buttonSize, buttonSize, appNameTranslated);
 			button.textVerticalAlignment = 4;
@@ -116,12 +116,12 @@ public class GuiAdvancedMachine extends GuiContainer {
 		 * Initialize with no app loaded (starts with the home screen)
 		 */
 		switchApp(null);
-	};
+	}
 
 	/**
 	 * Switches to the given app. Updates the GUI & relays the switch to the
 	 * container below.
-	 * 
+	 *
 	 * @param app
 	 */
 	public void switchApp(App app) {
@@ -161,7 +161,7 @@ public class GuiAdvancedMachine extends GuiContainer {
 			// TODO: do we even handle non-custom buttons?
 		}
 	}
-	
+
 	public int getGuiLeft() {
 		return guiLeft;
 	}
@@ -169,7 +169,7 @@ public class GuiAdvancedMachine extends GuiContainer {
 	public int getGuiTop() {
 		return guiTop;
 	}
-	
+
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
 		/*
