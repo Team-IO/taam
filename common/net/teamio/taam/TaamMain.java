@@ -5,7 +5,6 @@ import java.util.List;
 import org.apache.commons.lang3.NotImplementedException;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockLadder;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
@@ -84,6 +83,7 @@ import net.teamio.taam.gui.GuiHandler;
 import net.teamio.taam.gui.advanced.IAdvancedMachineGUI;
 import net.teamio.taam.machines.MachineBlock;
 import net.teamio.taam.machines.MachineItemBlock;
+import net.teamio.taam.machines.MachineItemMultipart;
 import net.teamio.taam.machines.MachineTileEntity;
 import net.teamio.taam.piping.IPipe;
 import net.teamio.taam.piping.PipeEnd;
@@ -113,7 +113,15 @@ public class TaamMain {
 	public static ItemWithMetadata<Taam.BLOCK_ORE_META> itemIngot;
 	public static ItemWithMetadata<Taam.BLOCK_ORE_META> itemDust;
 
+	/**
+	 * Wrapper block for multipart machines. Only used if multipart is disabled,
+	 * but always loaded for worlds containing the wrapper blocks.
+	 */
 	public static MachineBlock blockMachine;
+	/**
+	 * Either {@link MachineItemBlock} or {@link MachineItemMultipart},
+	 * depending on availability of multipart.
+	 */
 	public static Item itemMachine;
 
 	public static CreativeTabs creativeTab;

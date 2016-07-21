@@ -20,6 +20,11 @@ import net.teamio.taam.conveyors.IConveyorSlots;
 import net.teamio.taam.gui.advanced.IAdvancedMachineGUI;
 import net.teamio.taam.machines.IMachine;
 import net.teamio.taam.machines.IMachineMetaInfo;
+import net.teamio.taam.machines.MachineBlock;
+import net.teamio.taam.machines.MachineItemBlock;
+import net.teamio.taam.machines.MachineItemMultipart;
+import net.teamio.taam.machines.MachineMultipart;
+import net.teamio.taam.machines.MachineTileEntity;
 import net.teamio.taam.piping.IPipe;
 import net.teamio.taam.rendering.TankRenderInfo;
 
@@ -105,6 +110,11 @@ public final class Taam {
 	public static final String BLOCK_MAGNET_RAIL = "magnet_rail";
 	public static final String BLOCK_SUPPORT_BEAM = "support_beam";
 
+	/**
+	 * Wrapper for multipart-based machines, if multipart is not found or disabled via config.
+	 * 
+	 * See {@link MACHINE_META} for the single meta values (not actually block metadata.)
+	 */
 	public static final String BLOCK_MACHINE_WRAPPER = "machine";
 
 	public static enum BLOCK_ORE_META implements IStringSerializable {
@@ -214,6 +224,12 @@ public final class Taam {
 		}
 	};
 
+	/**
+	 * Non-Multipart machines that are not part of the conveyor-system.
+	 * 
+	 * @author Oliver Kahrmann
+	 *
+	 */
 	public static enum BLOCK_MACHINES_META implements IStringSerializable {
 		chute,
 		creativecache,
@@ -234,6 +250,12 @@ public final class Taam {
 		}
 	};
 
+	/**
+	 * Productionline-Machines, i.e. part of the conveyor system.
+	 * 
+	 * @author Oliver Kahrmann
+	 *
+	 */
 	public static enum BLOCK_PRODUCTIONLINE_META implements IStringSerializable {
 		conveyor1,
 		conveyor2,
@@ -500,6 +522,19 @@ public final class Taam {
 		}
 	};
 
+	/**
+	 * Meta info for all multipart-based machines. Used for items, the wrapper block & multipart registry.
+	 * 
+	 * {@link MachineBlock} + {@link MachineTileEntity} -> Wrapper block & TE if multipart is not available.
+	 * 
+	 * {@link MachineItemBlock} -> Item for the wrapper block, mutually exclusive with {@link MachineItemMultipart}.
+	 * Only one of them is used, depending on availability of multipart.
+	 * 
+	 * {@link MachineMultipart} -> Multipart wrapper for all these machines.
+	 * 
+	 * @author Oliver Kahrmann
+	 *
+	 */
 	public static enum MACHINE_META implements IMachineMetaInfo {
 
 		pipe(MachinePipe.class, "pipe", null),
