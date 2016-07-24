@@ -19,6 +19,7 @@ public class Config {
 	public static final int[] oreDepositCount = new int[NUM_ORES];
 
 	public static boolean debug_output;
+	public static boolean debug_output_as_info;
 	public static boolean use_iinventory_compat;
 	public static boolean render_tank_content;
 	public static boolean render_items;
@@ -31,10 +32,10 @@ public class Config {
 
 	public static int pl_conveyor_supportrange;
 	public static final byte[] pl_conveyor_speedsteps = new byte[3];
-	
+
 
 	public static byte pl_elevator_speedsteps;
-	
+
 	public static byte pl_sieve_speedsteps;
 
 	public static int pl_hopper_highspeed_delay;
@@ -46,14 +47,14 @@ public class Config {
 	public static int pl_processor_shredder_timeout;
 	public static int pl_processor_grinder_timeout;
 	public static int pl_processor_crusher_timeout;
-	
+
 	public static int pl_fluid_drier_timeout;
 	public static int pl_fluid_drier_capacity;
-	
+
 	public static int pl_mixer_timeout;
 	public static int pl_mixer_capacity_input;
 	public static int pl_mixer_capacity_output;
-	
+
 	public static int pl_pipe_capacity;
 	public static boolean pl_pipe_wrap_ifluidhandler;
 
@@ -67,7 +68,7 @@ public class Config {
 	public static int pl_creativewell_pressure;
 
 	public static int pl_sprayer_capacity;
-	
+
 	public static boolean multipart_load = true;
 	public static boolean multipart_register_items = true;
 
@@ -76,7 +77,7 @@ public class Config {
 	 * If true, mcmultipart was found & can be used.
 	 */
 	public static boolean multipart_present;
-	
+
 	public static boolean jei_render_machines_into_gui = true;
 
 	public static final String SECTION_WORLDGEN = "worldgen";
@@ -99,14 +100,14 @@ public class Config {
 	public static final String SECTION_INTEGRATION = "integration";
 	public static final String SECTION_INTEGRATION_MULTIPART = SECTION_INTEGRATION + ".multipart";
 	public static final String SECTION_INTEGRATION_JEI = SECTION_INTEGRATION + ".jei";
-	
+
 	public static final String[] guiSections = {
 			Configuration.CATEGORY_GENERAL,
 			SECTION_WORLDGEN,
 			SECTION_PRODUCTIONLINE,
 			SECTION_INTEGRATION
 	};
-	
+
 
 	public static void init(File configFile)
 	{
@@ -120,12 +121,12 @@ public class Config {
 		}
 
 	}
-	
+
 	private static int getInt(String name, String category, int defaultValue, int minValue, int maxValue, String comment) {
 		String langKey = String.format("taam.config.%s.%s", category, name);
 		return config.getInt(name, category, defaultValue, minValue, maxValue, comment, langKey);
 	}
-	
+
 	/**
 	 * Sets needsWorldRestart
 	 * @param name
@@ -153,12 +154,12 @@ public class Config {
 		String langKey = String.format("taam.config.%s.%s", category, name);
 		return (byte)config.getInt(name, category, defaultValue, minValue, maxValue, comment, langKey);
 	}
-	
+
 	private static boolean getBoolean(String name, String category, boolean defaultValue, String comment) {
 		String langKey = String.format("taam.config.%s.%s", category, name);
 		return config.getBoolean(name, category, defaultValue, comment, langKey);
 	}
-	
+
 	private static void loadConfig()
 	{
 		Taam.BLOCK_ORE_META[] oreMeta = Taam.BLOCK_ORE_META.values();
@@ -173,14 +174,16 @@ public class Config {
 		}
 
 		config.getCategory(SECTION_INTEGRATION_MULTIPART).setRequiresMcRestart(true);
-		
-		debug_output = getBoolean("debug_output", Configuration.CATEGORY_GENERAL, false, "Should the Debug mode of Taam be activated");
+
+		debug_output = getBoolean("debug_output", Configuration.CATEGORY_GENERAL, false, "Should the Debug mode of Taam be activated? Enables some extra output to debug what is going on.");
+		debug_output_as_info = getBoolean("debug_output_as_info", Configuration.CATEGORY_GENERAL, false, "Reroute debug output to INFO level?");
+
 		use_iinventory_compat = getBoolean("use_iinventory_compat", Configuration.CATEGORY_GENERAL, true, "Enable or disable compatibility for IInventory. If enabled, IInventory will be wrapped in IItemHandler etc.");
 		render_tank_content = getBoolean("render_tank_content", Configuration.CATEGORY_GENERAL, true, "Enable or disable rendering of tank content. Troubleshooting only; should remain enabled, else tanks et. al. will always look empty.");
 		render_items = getBoolean("render_items", Configuration.CATEGORY_GENERAL, true, "Enable or disable rendering of items on machines. Troubleshooting only; should remain enabled, else conveyors et. al. will always look empty.");
-		
+
 		dark_theme = getBoolean("dark_theme", Configuration.CATEGORY_GENERAL, true, "Enable dark theme for some of the GUIs.");
-		
+
 		sensor_delay = getInt("sdelay", SECTION_MULTITRONIX_SENSOR, 30, 10, 100, "Sensor [Motion, Minect] delay (minimum activation time) in game ticks, minimum 10");
 		sensor_placement_mode = getInt("placement_mode", SECTION_MULTITRONIX_SENSOR, 1, 1, 2, "Sensor [Motion, Minect] placement mode when side by side. 1 = move together, 2 = merge into one");
 
@@ -200,37 +203,37 @@ public class Config {
 		pl_processor_shredder_timeout = getInt("shredder_timeout", SECTION_PRODUCTIONLINE_PROCESSORS, 1, 1, 200, "Ticks between each shredded item in the conveyor shredder.");
 		pl_processor_grinder_timeout = getInt("grinder_timeout", SECTION_PRODUCTIONLINE_PROCESSORS, 15, 1, 200, "Ticks between each processed item in the conveyor grinder.");
 		pl_processor_crusher_timeout = getInt("crusher_timeout", SECTION_PRODUCTIONLINE_PROCESSORS, 15, 1, 200, "Ticks between each processed item in the conveyor crusher.");
-		
+
 		pl_elevator_speedsteps = getByte("speedsteps", SECTION_PRODUCTIONLINE_ELEVATOR, 30, 1, Byte.MAX_VALUE, "Speedsteps (1/speed) for conveyor elevators.");
 
 		pl_sieve_speedsteps = getByte("speedsteps", SECTION_PRODUCTIONLINE_SIEVE, 20, 1, Byte.MAX_VALUE, "Speedsteps (1/speed) for conveyor sieves.");
 
 		pl_fluid_drier_timeout = getInt("timeout", SECTION_PRODUCTIONLINE_FLUIDDRIER, 50, 1, 200, "Ticks between each processed item in the fluid drier.");
 		pl_fluid_drier_capacity = getIntWR("capacity", SECTION_PRODUCTIONLINE_FLUIDDRIER, 1000, 0, Integer.MAX_VALUE, "Capacity of the pipe end of the fluid drier. Keep in mind that lowering this too much can make some recipes impossible! Unit: mB");
-		
+
 		pl_mixer_timeout = getInt("timeout", SECTION_PRODUCTIONLINE_MIXER, 15, 1, 200, "Ticks between each processed item in the mixer.");
 		pl_mixer_capacity_input = getIntWR("capacity_input", SECTION_PRODUCTIONLINE_MIXER, 2000, 0, Integer.MAX_VALUE, "Capacity of the input pipe end of the mixer. Keep in mind that lowering this too much can make some recipes impossible! Unit: mB");
 		pl_mixer_capacity_output = getIntWR("capacity_output", SECTION_PRODUCTIONLINE_MIXER, 2000, 0, Integer.MAX_VALUE, "Capacity of the output pipe end of the mixer. Does not accect recipes, only output speed & loss when breaking the block. Unit: mB");
 
 		pl_pipe_capacity = getIntWR("capacity", SECTION_PRODUCTIONLINE_PIPE, 500, 1, Integer.MAX_VALUE, "Capacity of the pipes. Higher capacity means higher loss when breaking a pipe, but also faster transfer of fluids. Unit: mB");
 		pl_pipe_wrap_ifluidhandler = getBoolean("wrap_ifluidhandler", SECTION_PRODUCTIONLINE_PIPE, true, "Enable or disable pipes connecting to 'regular' IFluidHandler-based machines. Setting this to false makes pipes only connect to other pipes & pipe ends in machines.");
-		
+
 		pl_pump_capacity = getIntWR("capacity", SECTION_PRODUCTIONLINE_PUMP, 125, 1, Integer.MAX_VALUE, "Capacity of the pumps. Higher capacity means higher loss when breaking a pump, but also faster transfer of fluids. Unit: mB");
 		pl_pump_pressure = getIntWR("pressure", SECTION_PRODUCTIONLINE_PUMP, 50, 1, Integer.MAX_VALUE, "Pressure of the pumps. Higher pressure means higher output range.");
 		pl_pump_suction = getIntWR("suction", SECTION_PRODUCTIONLINE_PUMP, 50, 1, Integer.MAX_VALUE, "Suction of the pumps. Higher suction means higher input range.");
 
 		pl_tank_capacity = getIntWR("capacity", SECTION_PRODUCTIONLINE_TANK, 8000, 1, Integer.MAX_VALUE, "Capacity of the tanks. Higher capacity means higher loss when breaking a tank, but also more storage. Transfer rate is limited by connected pipe, not by the tank. Unit: mB");
 		pl_tank_suction = getIntWR("suction", SECTION_PRODUCTIONLINE_TANK, 10, 1, Integer.MAX_VALUE, "Suction of the tanks. Higher suction means higher input range. Suction on the lower end of the tank is always 1 lower than on the top, so stacked tanks always transfer down.");
-		
+
 		pl_creativewell_pressure = getIntWR("pressure", SECTION_PRODUCTIONLINE_CREATIVEWELL, 20, 1, Integer.MAX_VALUE, "Pressure of the creative wells. Higher pressure means higher output range.");
-		
+
 		pl_sprayer_capacity = getIntWR("capacity", SECTION_PRODUCTIONLINE_SPRAYER, 2000, 1, Integer.MAX_VALUE, "Capacity of the pipe end of the sprayer appliance. Keep in mind that lowering this too much can make some recipes impossible! Unit: mB");
-		
+
 		multipart_load = getBoolean("load_multiparts", SECTION_INTEGRATION_MULTIPART, true, "Load machines as multiparts if McMultipart is found.");
 		multipart_register_items = getBoolean("register_multipart_items", SECTION_INTEGRATION_MULTIPART, true, "Allows you to disable registering of the multipart-variants of the items. Setting this to false means that multiparts will load without an issue, but all new machines will be created as full blocks and not as multiparts.");
 
 		jei_render_machines_into_gui = getBoolean("render_machines_into_gui", SECTION_INTEGRATION_JEI, true, "Enable or disable rendering the machine into the recipe display in JEI. For troubleshooting only; you should leave this enabled normally.");
-		
+
 		if(config.hasChanged())
 		{
 			config.save();
