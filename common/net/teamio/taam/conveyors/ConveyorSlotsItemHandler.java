@@ -18,11 +18,11 @@ public class ConveyorSlotsItemHandler implements IItemHandlerModifiable {
 		this.slots = slots;
 		this.slot = slot;
 	}
-	
+
 	/**
 	 * This method should be called by implementations when content changes,
 	 * that needs to be saved / updated.
-	 * 
+	 *
 	 * Implementations further down can then call their own logic in here.
 	 */
 	public void onChangeHook() {

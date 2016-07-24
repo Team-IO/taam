@@ -19,7 +19,7 @@ public abstract class ConveyorSlotsBase implements IConveyorSlots {
 	/**
 	 * This method should be called by implementations when content changes,
 	 * that needs to be saved / updated.
-	 * 
+	 *
 	 * Implementations further down can then call their own logic in here.
 	 */
 	public void onChangeHook() {

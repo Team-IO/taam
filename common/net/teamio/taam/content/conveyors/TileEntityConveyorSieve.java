@@ -58,7 +58,7 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements IRotatabl
 			public byte getSpeedsteps() {
 				return Config.pl_sieve_speedsteps;
 			}
-			
+
 			@Override
 			public EnumFacing getNextSlot(int slot) {
 				return direction;
@@ -70,7 +70,7 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements IRotatabl
 		};
 		conveyorSlots.rotation = direction;
 	}
-	
+
 	@Override
 	public String getName() {
 		return "tile.taam.productionline.sieve.name";
@@ -206,7 +206,7 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements IRotatabl
 		conveyorSlots.rotation = direction;
 		conveyorSlots.deserializeNBT(tag.getTagList("items", NBT.TAG_COMPOUND));
 	}
-	
+
 	@Override
 	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
 		if(capability == Taam.CAPABILITY_CONVEYOR) {

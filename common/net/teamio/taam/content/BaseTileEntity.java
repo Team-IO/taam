@@ -53,12 +53,12 @@ public abstract class BaseTileEntity extends TileEntity implements IWorldNameabl
 	public UUID getOwner() {
 		return owner;
 	}
-	
+
 	@Override
 	public boolean hasCustomName() {
 		return false;
 	}
-	
+
 	@Override
 	public ITextComponent getDisplayName() {
 		return new TextComponentTranslation(getName());
@@ -129,7 +129,7 @@ public abstract class BaseTileEntity extends TileEntity implements IWorldNameabl
 	public NBTTagCompound getUpdateTag() {
 		return writeToNBT(new NBTTagCompound());
 	}
-	
+
 	@Override
 	public void handleUpdateTag(NBTTagCompound tag) {
 		readFromNBT(tag);

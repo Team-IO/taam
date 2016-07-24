@@ -81,7 +81,7 @@ public class ConveyorSlotsStandard extends ConveyorSlotsBase implements INBTSeri
 	/*
 	 * INBTSerializable implementation
 	 */
-	
+
 	@Override
 	public NBTTagList serializeNBT() {
 		NBTTagList itemsTag = new NBTTagList();

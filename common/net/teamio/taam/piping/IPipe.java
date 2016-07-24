@@ -17,9 +17,6 @@ import net.minecraftforge.fluids.FluidStack;
  */
 public interface IPipe {
 
-
-
-
 	/**
 	 * Get the pressure currently on the pipe. Effective pressure is calculated
 	 * using getPressure and getSuction.

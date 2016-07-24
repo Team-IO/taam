@@ -33,7 +33,7 @@ public class MachineTank implements IMachine, IWorldInteractable {
 	public static final float b_basePlate = 2f / 16;
 	public static final float b_border = 1.5f / 16;
 	public static final float b_occlusion = 2f / 16;
-	
+
 	public static final AxisAlignedBB bbTankContent = new AxisAlignedBB(
 			b_border,   b_basePlate, b_border,
 			1-b_border, 1,		   1-b_border
