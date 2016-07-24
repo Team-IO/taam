@@ -17,14 +17,20 @@ public final class FluidUtils {
 	}
 
 	public static FluidStack getFluidFromItem(ItemStack stack) {
+		if(stack == null) {
+			return null;
+		}
 		IFluidHandler fluidHandler = stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, EnumFacing.UP);
-		return fluidHandler.drain(1, false);
+		if(fluidHandler == null) {
+			return null;
+		}
+		return fluidHandler.drain(Integer.MAX_VALUE, false);
 	}
-	
+
 	public static IFluidHandler getFluidHandlerForItem(ItemStack stack) {
 		return stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, EnumFacing.UP);
 	}
-	
+
 	public static IFluidHandler getFluidHandler(IBlockAccess world, BlockPos pos, EnumFacing side) {
 		return FluidUtils.getFluidHandler(world.getTileEntity(pos), side);
 	}
