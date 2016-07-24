@@ -23,7 +23,7 @@ public class CustomButton extends GuiButton {
 	static final int baseTextureV = 0;
 	boolean mouseDown = false;
 	public Function<CustomButton, Boolean> eventHandler;
-	
+
 	public Drawable image;
 	public int textPadding = 2;
 	public boolean trimText = true;
@@ -43,7 +43,7 @@ public class CustomButton extends GuiButton {
 	 * 4: Beside, Right
 	 */
 	public int textHorizontalAlignment = 2;
-	
+
 	@Override
 	public boolean mousePressed(Minecraft mc, int mouseX, int mouseY) {
 		boolean inside = super.mousePressed(mc, mouseX, mouseY);
@@ -75,7 +75,7 @@ public class CustomButton extends GuiButton {
 					3, zLevel);
 
 			int pressOffset = hoverState == 3 ? 1 : 0;
-			
+
 			if (displayString != null) {
 
 				int color = 0xE0E0E0;
@@ -90,9 +90,9 @@ public class CustomButton extends GuiButton {
 
 				String buttonText = displayString;
 				int strWidth = mc.fontRendererObj.getStringWidth(buttonText);
-				
+
 				boolean doEllipsis = trimText && textHorizontalAlignment > 0 && textHorizontalAlignment < 4;
-				
+
 				if(doEllipsis) {
 					int ellipsisWidth = mc.fontRendererObj.getStringWidth("...");
 
@@ -101,12 +101,12 @@ public class CustomButton extends GuiButton {
 						buttonText = mc.fontRendererObj.trimStringToWidth(buttonText, strWidth).trim() + "...";
 					}
 				}
-				
+
 				int textHeight = 8;
-				
+
 				int leftOffset;
 				int topOffset;
-				
+
 				switch(textHorizontalAlignment) {
 				case 0:
 					leftOffset = -strWidth - textPadding;
@@ -147,9 +147,9 @@ public class CustomButton extends GuiButton {
 
 				drawString(mc.fontRendererObj, buttonText, xPosition + pressOffset + leftOffset, yPosition + pressOffset + topOffset, color);
 			}
-			
+
 			if(image != null) {
-				image.drawCentered(this, xPosition + width / 2 + pressOffset, yPosition + height / 2 + pressOffset);
+				image.drawCentered(xPosition + width / 2 + pressOffset, yPosition + height / 2 + pressOffset);
 			}
 		}
 	}

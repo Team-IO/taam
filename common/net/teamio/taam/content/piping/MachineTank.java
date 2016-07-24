@@ -16,11 +16,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
-import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.teamio.taam.Config;
 import net.teamio.taam.Log;
 import net.teamio.taam.Taam;
@@ -31,7 +28,7 @@ import net.teamio.taam.piping.PipeUtil;
 import net.teamio.taam.rendering.TankRenderInfo;
 import net.teamio.taam.util.FaceBitmap;
 
-public class MachineTank implements IMachine, IFluidHandler, IWorldInteractable {
+public class MachineTank implements IMachine, IWorldInteractable {
 
 	public static final float b_basePlate = 2f / 16;
 	public static final float b_border = 1.5f / 16;
@@ -53,12 +50,12 @@ public class MachineTank implements IMachine, IFluidHandler, IWorldInteractable 
 	private byte occludedSides;
 
 	public MachineTank() {
-		pipeEndUP = new PipeEndFluidHandler(this, EnumFacing.UP, true);
-		pipeEndDOWN = new PipeEndFluidHandler(this, EnumFacing.DOWN, true);
+		tank = new FluidTank(Config.pl_tank_capacity);
+		pipeEndUP = new PipeEndFluidHandler(tank, EnumFacing.UP, true);
+		pipeEndDOWN = new PipeEndFluidHandler(tank, EnumFacing.DOWN, true);
 		pipeEndUP.setSuction(Config.pl_tank_suction);
 		// Suction on lower end of the tank is always 1 lower than on the top, so stacked tanks always transfer down.
 		pipeEndDOWN.setSuction(Config.pl_tank_suction - 1);
-		tank = new FluidTank(Config.pl_tank_capacity);
 	}
 
 	private void updateOcclusion() {
@@ -153,6 +150,9 @@ public class MachineTank implements IMachine, IFluidHandler, IWorldInteractable 
 		if (capability == Taam.CAPABILITY_PIPE) {
 			return facing.getAxis() == Axis.Y;
 		}
+		if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+			return facing.getAxis() == Axis.Y;
+		}
 		if (capability == Taam.CAPABILITY_RENDER_TANK) {
 			return true;
 		}
@@ -170,6 +170,9 @@ public class MachineTank implements IMachine, IFluidHandler, IWorldInteractable 
 			} else {
 				return null;
 			}
+		}
+		if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing.getAxis() == Axis.Y) {
+			return (T) tank;
 		}
 		if (capability == Taam.CAPABILITY_RENDER_TANK) {
 			tankRI.tankInfo = tank.getInfo();
@@ -197,85 +200,4 @@ public class MachineTank implements IMachine, IFluidHandler, IWorldInteractable 
 	public boolean onBlockHit(World world, EntityPlayer player, boolean hasWrench) {
 		return false;
 	}
-
-	/*
-	 * IFluidHandler implementation
-	 */
-
-	@Override
-	public int fill(EnumFacing from, FluidStack resource, boolean doFill) {
-		if (from.getAxis() != Axis.Y) {
-			return 0;
-		}
-		if (resource == null || resource.amount == 0) {
-			return 0;
-		}
-		if (tank.getFluidAmount() == 0) {
-			tank.setFluid(null);
-		}
-		int filled = tank.fill(resource, doFill);
-		// TODO: markDirty();
-		return filled;
-	}
-
-	@Override
-	public FluidStack drain(EnumFacing from, FluidStack resource, boolean doDrain) {
-		if (from.getAxis() != Axis.Y) {
-			return null;
-		}
-		if (resource.isFluidEqual(tank.getFluid())) {
-			// TODO: markDirty();
-			FluidStack returnStack = tank.drain(resource.amount, doDrain);
-			if (tank.getFluidAmount() == 0) {
-				tank.setFluid(null);
-			}
-			return returnStack;
-		} else {
-			return null;
-		}
-	}
-
-	@Override
-	public FluidStack drain(EnumFacing from, int maxDrain, boolean doDrain) {
-		if (from.getAxis() != Axis.Y) {
-			return null;
-		}
-		// TODO: markDirty();
-		FluidStack returnStack = tank.drain(maxDrain, doDrain);
-		if (tank.getFluidAmount() == 0) {
-			tank.setFluid(null);
-		}
-		return returnStack;
-	}
-
-	@Override
-	public boolean canFill(EnumFacing from, Fluid fluid) {
-		if (from.getAxis() != Axis.Y) {
-			return false;
-		}
-		if (tank.getFluidAmount() == 0) {
-			tank.setFluid(null);
-		}
-		FluidStack tankFluid = tank.getFluid();
-		return tankFluid == null || tankFluid.getFluid() == fluid;
-	}
-
-	@Override
-	public boolean canDrain(EnumFacing from, Fluid fluid) {
-		if (from.getAxis() != Axis.Y) {
-			return false;
-		}
-		FluidStack tankFluid = tank.getFluid();
-		return tankFluid != null && tankFluid.getFluid() == fluid;
-	}
-
-	@Override
-	public FluidTankInfo[] getTankInfo(EnumFacing from) {
-		if (from.getAxis() == Axis.Y) {
-			return new FluidTankInfo[] { new FluidTankInfo(tank) };
-		} else {
-			return new FluidTankInfo[0];
-		}
-	}
-
 }

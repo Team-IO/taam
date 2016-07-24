@@ -59,8 +59,7 @@ public class WrenchUtil {
 	}
 
 	public static EnumActionResult wrenchBlock(World world, BlockPos pos, EntityPlayer player, EnumHand hand,
-			EnumFacing side, float hitX, float hitY,
-			float hitZ) {
+			EnumFacing side, float hitX, float hitY, float hitZ) {
 		Log.debug("Checking for wrench activity.");
 
 		boolean playerHasWrenchInMainhand = WrenchUtil.playerHasWrenchInHand(player, EnumHand.MAIN_HAND);
@@ -82,13 +81,11 @@ public class WrenchUtil {
 			if (WrenchUtil.isWrenchableBlock(blockState) || WrenchUtil.isWrenchableEntity(te)) {
 				TaamUtil.breakBlockToInventory(player, world, pos, blockState);
 				return EnumActionResult.SUCCESS;
-			} else {
-				return EnumActionResult.FAIL;
 			}
-		} else {
-			blockState.getBlock().rotateBlock(world, pos, side);
-			return EnumActionResult.SUCCESS;
+			return EnumActionResult.FAIL;
 		}
+		blockState.getBlock().rotateBlock(world, pos, side);
+		return EnumActionResult.SUCCESS;
 	}
 
 	public static boolean rotateBlock(TileEntity te) {

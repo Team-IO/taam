@@ -105,7 +105,6 @@ public class MachineItemBlock extends ItemBlock {
 						}
 					}
 				}
-				System.out.println("Setting " + placeDir);
 				((IRotatable) te.machine).setFacingDirection(placeDir);
 			}
 		}

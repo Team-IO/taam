@@ -80,7 +80,7 @@ public class SlotMatrix {
 		rotated[1] = rotate(rotated[0]);
 	}
 
-	private boolean[] rotate(boolean[] source) {
+	public static boolean[] rotate(boolean[] source) {
 		return new boolean[] {
 				source[6], source[3], source[0],
 				source[7], source[4], source[1],

@@ -30,20 +30,15 @@ public class ConveyorSlotsItemHandler implements IItemHandlerModifiable {
 
 	@Override
 	public int getSlots() {
-		if (slots.isSlotAvailable(slot)) {
-			return 1;
-		} else {
-			return 0;
-		}
+		return slots.isSlotAvailable(slot) ? 1 : 0;
 	}
 
 	@Override
 	public ItemStack getStackInSlot(int slot) {
 		if (slots.isSlotAvailable(slot)) {
 			return slots.getSlot(slot).itemStack;
-		} else {
-			return null;
 		}
+		return null;
 	}
 
 	@Override
@@ -55,14 +50,13 @@ public class ConveyorSlotsItemHandler implements IItemHandlerModifiable {
 		if (amount == stack.stackSize) {
 			onChangeHook();
 			return null;
-		} else {
-			ItemStack didNotFit = stack.copy();
-			if(amount > 0) {
-				onChangeHook();
-				didNotFit.stackSize -= amount;
-			}
-			return didNotFit;
 		}
+		ItemStack didNotFit = stack.copy();
+		if(amount > 0) {
+			onChangeHook();
+			didNotFit.stackSize -= amount;
+		}
+		return didNotFit;
 	}
 
 	@Override

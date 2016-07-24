@@ -19,6 +19,7 @@ import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.teamio.taam.Log;
 import net.teamio.taam.Taam;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.rendering.obj.OBJModel;
@@ -60,7 +61,9 @@ public class BlockProductionLineAttachable extends BlockProductionLine {
 
 		// Let the tile entity update anything that is required for rendering
 		ATileEntityAttachable te = (ATileEntityAttachable) worldIn.getTileEntity(pos);
-		te.renderUpdate();
+		if(te.getWorld().isRemote) {
+			te.renderUpdate();
+		}
 
 		// This makes the state shows up in F3. Previously it was not actually applied on the rendering, though.
 		// Rendering Transform was applied in getExtendedState
@@ -101,8 +104,10 @@ public class BlockProductionLineAttachable extends BlockProductionLine {
 		case trashcan:
 			// Trash Can
 			return new TileEntityConveyorTrashCan();
+		default:
+			Log.error("Was not able to create a TileEntity for " + getClass().getName());
+			return null;
 		}
-		return null;
 	}
 
 	@Override
@@ -160,9 +165,8 @@ public class BlockProductionLineAttachable extends BlockProductionLine {
 		TileEntity te = world.getTileEntity(pos);
 		if (te instanceof IRotatable) {
 			return TaamUtil.canAttach(world, pos, ((IRotatable) te).getFacingDirection());
-		} else {
-			return true;
 		}
+		return true;
 	}
 
 }

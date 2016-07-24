@@ -75,8 +75,9 @@ public class BlockMachines extends BaseBlock {
 			return new TileEntityCreativeCache();
 		case creativewell:
 			return new TileEntityCreativeWell();
+		default:
+			return null;
 		}
-		return null;
 	}
 
 	public String getUnlocalizedName(ItemStack itemStack) {
@@ -114,9 +115,8 @@ public class BlockMachines extends BaseBlock {
 		Taam.BLOCK_MACHINES_META variant = base_state.getValue(VARIANT);
 		if (variant == BLOCK_MACHINES_META.chute) {
 			return side == EnumFacing.DOWN || side == EnumFacing.UP;
-		} else {
-			return true;
 		}
+		return true;
 	}
 
 	@Override

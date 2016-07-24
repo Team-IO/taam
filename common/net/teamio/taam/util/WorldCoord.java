@@ -1,5 +1,6 @@
 package net.teamio.taam.util;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.nbt.NBTTagCompound;
@@ -77,18 +78,13 @@ public class WorldCoord {
 		WorldClient worldClient = Minecraft.getMinecraft().theWorld;
 		if (worldClient.provider.getDimension() == world) {
 			return worldClient;
-		} else {
-			return null;
 		}
+		return null;
 	}
 
 	public WorldCoord getDirectionalOffset(EnumFacing direction) {
 		return new WorldCoord(world, x + direction.getFrontOffsetX(), y + direction.getFrontOffsetY(),
 				z + direction.getFrontOffsetZ());
-	}
-
-	public boolean isDirectionalOffset(EnumFacing direction, WorldCoord other) {
-		return getDirectionalOffset(direction).equals(this);
 	}
 
 	@Override
@@ -162,5 +158,20 @@ public class WorldCoord {
 
 	public boolean isZero() {
 		return x == 0 && y == 0 && z == 0;
+	}
+
+	public static void writeCoords(ByteBuf buf, WorldCoord coords) {
+		buf.writeInt(coords.world);
+		buf.writeInt(coords.x);
+		buf.writeInt(coords.y);
+		buf.writeInt(coords.z);
+	}
+
+	public static WorldCoord readCoords(ByteBuf buf) {
+		int world = buf.readInt();
+		int x = buf.readInt();
+		int y = buf.readInt();
+		int z = buf.readInt();
+		return new WorldCoord(world, x, y, z);
 	}
 }

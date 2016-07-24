@@ -66,7 +66,7 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements IRotatabl
 			@Override
 			public void onChangeHook() {
 				updateState(true, false, false);
-			};
+			}
 		};
 		conveyorSlots.rotation = direction;
 	}
@@ -182,14 +182,13 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements IRotatabl
 				wrapper.itemStack = null;
 			}
 			return true;
-		} else {
-			// Output to inventory
-			if(wrapper.itemStack == null) {
-				return true;
-			}
-			wrapper.itemStack = ItemHandlerHelper.insertItemStacked(outputInventory, wrapper.itemStack, false);
-			return wrapper.itemStack == null;
 		}
+		// Output to inventory
+		if(wrapper.itemStack == null) {
+			return true;
+		}
+		wrapper.itemStack = ItemHandlerHelper.insertItemStacked(outputInventory, wrapper.itemStack, false);
+		return wrapper.itemStack == null;
 	}
 
 	@Override

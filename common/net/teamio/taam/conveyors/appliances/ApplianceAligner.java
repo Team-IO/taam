@@ -10,7 +10,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.teamio.taam.Log;
 import net.teamio.taam.Taam;
 import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.IWorldInteractable;
@@ -33,28 +32,28 @@ public class ApplianceAligner extends ATileEntityAppliance implements IWorldInte
 	 * These ItemWrappers will be set to null by the renderer once complete.
 	 */
 	@SideOnly(Side.CLIENT)
-	public final ItemWrapper[] down = new ItemWrapper[4];
-	
+	public ItemWrapper[] clientRenderCache;
+
 	@SideOnly(Side.CLIENT)
-	public EnumFacing conveyorDirection = EnumFacing.NORTH;
-	
+	public EnumFacing conveyorDirection;
+
 	@SideOnly(Side.CLIENT)
-	public byte conveyorSpeedsteps = 10;
-	
+	public byte conveyorSpeedsteps;
+
 	public final ItemFilterCustomizable[] filters;
-	
+
 	public ApplianceAligner() {
 		filters = new ItemFilterCustomizable[3];
 		for(int i = 0; i < 3; i++) {
 			filters[i] = new ItemFilterCustomizable(3);
 		}
 	}
-	
+
 	@Override
 	public String getName() {
 		return "tile.taam.productionline_appliance.aligner.name";
 	}
-	
+
 	@Override
 	public void renderUpdate() {
 		TileEntity te = worldObj.getTileEntity(pos.offset(direction));
@@ -65,35 +64,36 @@ public class ApplianceAligner extends ATileEntityAppliance implements IWorldInte
 			conveyorSpeedsteps = slots.getSpeedsteps();
 		}
 	}
-	
+
 	public final IAdvancedMachineGUI gui = new IAdvancedMachineGUI() {
-		
+
 		@Override
 		public boolean hasCustomName() {
 			return ApplianceAligner.this.hasCustomName();
 		}
-		
+
 		@Override
 		public String getName() {
 			return ApplianceAligner.this.getName();
 		}
-		
+
 		@Override
 		public ITextComponent getDisplayName() {
 			return ApplianceAligner.this.getDisplayName();
 		}
-		
+
 		@Override
 		public void setup(ContainerAdvancedMachine container) {
 			new RedstoneMode(container, null);
 			new AlignerSettings(container, ApplianceAligner.this);
 		}
-		
+
+		@Override
 		public void markDirty() {
 			ApplianceAligner.this.markDirty();
-		};
+		}
 	};
-	
+
 	@Override
 	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
 		if(capability == Taam.CAPABILITY_ADVANCED_GUI) {
@@ -101,7 +101,7 @@ public class ApplianceAligner extends ATileEntityAppliance implements IWorldInte
 		}
 		return super.hasCapability(capability, facing);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
@@ -110,7 +110,7 @@ public class ApplianceAligner extends ATileEntityAppliance implements IWorldInte
 		}
 		return super.getCapability(capability, facing);
 	}
-	
+
 	@Override
 	protected void writePropertiesToNBT(NBTTagCompound tag) {
 		super.writePropertiesToNBT(tag);
@@ -120,7 +120,7 @@ public class ApplianceAligner extends ATileEntityAppliance implements IWorldInte
 			tag.setTag("filter" + i, filterTag);
 		}
 	}
-	
+
 	@Override
 	protected void readPropertiesFromNBT(NBTTagCompound tag) {
 		super.readPropertiesFromNBT(tag);
@@ -146,7 +146,7 @@ public class ApplianceAligner extends ATileEntityAppliance implements IWorldInte
 	public boolean onBlockHit(World world, EntityPlayer player, boolean hasWrench) {
 		return false;
 	}
-	
+
 	/*
 	 * IConveyorAppliance implementation
 	 */
@@ -163,9 +163,9 @@ public class ApplianceAligner extends ATileEntityAppliance implements IWorldInte
 		if(wrapper.itemStack == null) {
 			return beforeOverride;
 		}
-		
+
 		EnumFacing direction = host.getSlots().getMovementDirection();
-		
+
 		// We can only align when it passes left/right
 		if(direction.getAxis() == this.direction.getAxis()) {
 			return beforeOverride;
@@ -182,12 +182,12 @@ public class ApplianceAligner extends ATileEntityAppliance implements IWorldInte
 		EnumFacing left = direction.rotateYCCW();
 		EnumFacing right = direction.rotateY();
 		EnumFacing afterOverride = beforeOverride;
-		
+
 		ItemFilterCustomizable filterLane1;
 		ItemFilterCustomizable filterLane2;
 		ItemFilterCustomizable filterLane3;
-		
-		if(direction == right) {
+
+		if(direction == this.direction.rotateY()) {
 			filterLane1 = filters[0];
 			filterLane2 = filters[1];
 			filterLane3 = filters[2];
@@ -197,14 +197,15 @@ public class ApplianceAligner extends ATileEntityAppliance implements IWorldInte
 			filterLane2 = filters[1];
 			filterLane3 = filters[0];
 		}
-		
+
+
+		// Item can continue on lane if filter matches & is include or does not match & is exclude
 		boolean canContinueLane1 = filterLane1.isItemStackMatching(wrapper.itemStack) != filterLane1.isExcluding();
 		boolean canContinueLane2 = filterLane2.isItemStackMatching(wrapper.itemStack) != filterLane2.isExcluding();
 		boolean canContinueLane3 = filterLane3.isItemStackMatching(wrapper.itemStack) != filterLane3.isExcluding();
-		
+
 		// FIXME Debug-Mode, move all to center
 		if(lane == 1) {
-			// Item can continue on lane if filter matches & is include or does not match & is exclude
 			if(!canContinueLane1) {
 				// If it can continue on one of the other lanes, move right. Else block.
 				if(canContinueLane2 || canContinueLane3) {
@@ -215,7 +216,6 @@ public class ApplianceAligner extends ATileEntityAppliance implements IWorldInte
 			}
 		} else if(lane == 3) {
 			if(!canContinueLane3) {
-				// If it can continue on one of the other lanes, move left. Else block.
 				if(canContinueLane1 || canContinueLane2) {
 					afterOverride = left;
 				} else {
@@ -224,7 +224,6 @@ public class ApplianceAligner extends ATileEntityAppliance implements IWorldInte
 			}
 		} else {
 			if(!canContinueLane2) {
-				// If it can continue on one of the other lanes, move left/right. Else block.
 				if(canContinueLane1) {
 					afterOverride = left;
 				} else if(canContinueLane3) {
@@ -234,26 +233,29 @@ public class ApplianceAligner extends ATileEntityAppliance implements IWorldInte
 				}
 			}
 		}
-		
+
 		// On the client, update the rendering information
 		if(worldObj.isRemote) {
+			if(clientRenderCache == null) {
+				clientRenderCache = new ItemWrapper[4];
+			}
 			if(afterOverride == right) {
 				if(lane == 1) {
-					down[0] = wrapper;
+					clientRenderCache[0] = wrapper;
 				} else if(lane == 2) {
-					down[2] = wrapper;
+					clientRenderCache[2] = wrapper;
 				}
 			}
 			if(afterOverride == left) {
 				if(lane == 2) {
-					down[1] = wrapper;
+					clientRenderCache[1] = wrapper;
 				} else if(lane == 3) {
-					down[3] = wrapper;
+					clientRenderCache[3] = wrapper;
 				}
 			}
 		}
-			
-		
+
+
 		return afterOverride;
 	}
 

@@ -247,7 +247,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData, IModelSim
         private List<Vector3f> normals = Lists.newArrayList();
         private List<Vector3f> texCoords = Lists.newArrayList();
 
-        public Parser(IResource from, IResourceManager manager) throws IOException
+        public Parser(IResource from, IResourceManager manager)
         {
             this.manager = manager;
             this.objFrom = from.getResourceLocation();
@@ -893,8 +893,9 @@ public class OBJModel implements IRetexturableModel, IModelCustomData, IModelSim
 
         protected boolean setVertices(Vertex[] verts)
         {
-            if (verts == null) return false;
-            else this.verts = verts;
+            if (verts == null)
+            	return false;
+			this.verts = verts;
             checkData();
             return true;
         }
@@ -1342,7 +1343,8 @@ public class OBJModel implements IRetexturableModel, IModelCustomData, IModelSim
             return parent;
         }
 
-        public Optional<TRSRTransformation> apply(Optional<? extends IModelPart> part)
+        @Override
+		public Optional<TRSRTransformation> apply(Optional<? extends IModelPart> part)
         {
             if (this.parent != null) return parent.apply(part);
             return Optional.absent();
@@ -1406,7 +1408,8 @@ public class OBJModel implements IRetexturableModel, IModelCustomData, IModelSim
     public enum OBJProperty implements IUnlistedProperty<OBJState>
     {
         instance;
-        public String getName()
+        @Override
+		public String getName()
         {
             return "OBJPropery";
         }
@@ -1414,7 +1417,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData, IModelSim
         @Override
         public boolean isValid(OBJState value)
         {
-            return value instanceof OBJState;
+            return value != null;
         }
 
         @Override

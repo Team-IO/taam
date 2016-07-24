@@ -6,6 +6,7 @@ import org.apache.commons.lang3.NotImplementedException;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -18,10 +19,13 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.fluids.BlockFluidClassic;
+import net.minecraftforge.fluids.BlockFluidFinite;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
@@ -38,10 +42,12 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
+import net.teamio.taam.Taam.FLUID_MATERIAL_META;
 import net.teamio.taam.Taam.ITEM_PART_META;
 import net.teamio.taam.content.ItemWithMetadata;
 import net.teamio.taam.content.ItemWithMetadata.ItemDelegate;
 import net.teamio.taam.content.common.BlockBuilding;
+import net.teamio.taam.content.common.BlockLamp;
 import net.teamio.taam.content.common.BlockMachines;
 import net.teamio.taam.content.common.BlockOre;
 import net.teamio.taam.content.common.BlockSensor;
@@ -62,6 +68,7 @@ import net.teamio.taam.content.conveyors.ItemAppliance;
 import net.teamio.taam.content.conveyors.ItemAttachable;
 import net.teamio.taam.content.conveyors.ItemProductionLine;
 import net.teamio.taam.content.conveyors.TileEntityConveyor;
+import net.teamio.taam.content.conveyors.TileEntityConveyorElevator;
 import net.teamio.taam.content.conveyors.TileEntityConveyorHopper;
 import net.teamio.taam.content.conveyors.TileEntityConveyorItemBag;
 import net.teamio.taam.content.conveyors.TileEntityConveyorProcessor;
@@ -76,6 +83,7 @@ import net.teamio.taam.gui.GuiHandler;
 import net.teamio.taam.gui.advanced.IAdvancedMachineGUI;
 import net.teamio.taam.machines.MachineBlock;
 import net.teamio.taam.machines.MachineItemBlock;
+import net.teamio.taam.machines.MachineItemMultipart;
 import net.teamio.taam.machines.MachineTileEntity;
 import net.teamio.taam.piping.IPipe;
 import net.teamio.taam.piping.PipeEnd;
@@ -105,11 +113,20 @@ public class TaamMain {
 	public static ItemWithMetadata<Taam.BLOCK_ORE_META> itemIngot;
 	public static ItemWithMetadata<Taam.BLOCK_ORE_META> itemDust;
 
+	/**
+	 * Wrapper block for multipart machines. Only used if multipart is disabled,
+	 * but always loaded for worlds containing the wrapper blocks.
+	 */
 	public static MachineBlock blockMachine;
+	/**
+	 * Either {@link MachineItemBlock} or {@link MachineItemMultipart},
+	 * depending on availability of multipart.
+	 */
 	public static Item itemMachine;
 
 	public static CreativeTabs creativeTab;
 
+	public static BlockLamp blockLamp;
 	public static BlockSensor blockSensor;
 	public static BlockMachines blockMachines;
 	public static BlockProductionLine blockProductionLine;
@@ -123,6 +140,7 @@ public class TaamMain {
 	public static FluidDye[] fluidsDye;
 	public static BlockFluidClassic[] blocksFluidDye;
 	public static FluidMaterial[] fluidsMaterial;
+	public static BlockFluidFinite[] blocksFluidMaterial;
 
 	public static DamageSource ds_processed = new DamageSource("taam.processed").setDamageBypassesArmor();
 	public static DamageSource ds_shredded = new DamageSource("taam.shredded").setDamageBypassesArmor();
@@ -132,19 +150,19 @@ public class TaamMain {
 
 	public static SoundEvent soundSipAh;
 
-	private void registerBlock(Block block, ItemBlock item, String name) {
+	private static void registerBlock(Block block, ItemBlock item, String name) {
 		registerBlock(block, name);
 		registerItem(item, name);
 	}
 
-	private void registerBlock(Block block, String name) {
+	private static void registerBlock(Block block, String name) {
 		block.setUnlocalizedName(Taam.MOD_ID + "." + name);
 		block.setCreativeTab(creativeTab);
 		block.setRegistryName(name);
 		GameRegistry.register(block);
 	}
 
-	private void registerItem(Item item, String name) {
+	private static void registerItem(Item item, String name) {
 		item.setUnlocalizedName(Taam.MOD_ID + "." + name);
 		item.setCreativeTab(creativeTab);
 		item.setRegistryName(name);
@@ -215,6 +233,11 @@ public class TaamMain {
 		 * Register Stuff
 		 */
 
+		registerBlock(
+				blockLamp = new BlockLamp(),
+				new ItemBlock(blockLamp),
+				Taam.BLOCK_LAMP
+				);
 		registerBlock(
 				blockSensor = new BlockSensor(),
 				new ItemBlock(blockSensor),
@@ -327,6 +350,7 @@ public class TaamMain {
 		GameRegistry.registerTileEntity(TileEntityConveyorItemBag.class, Taam.TILEENTITY_CONVEYOR_ITEMBAG);
 		GameRegistry.registerTileEntity(TileEntityConveyorTrashCan.class, Taam.TILEENTITY_CONVEYOR_TRASHCAN);
 		GameRegistry.registerTileEntity(TileEntityConveyorSieve.class, Taam.TILEENTITY_CONVEYOR_SIEVE);
+		GameRegistry.registerTileEntity(TileEntityConveyorElevator.class, Taam.TILEENTITY_CONVEYOR_ELEVATOR);
 
 		GameRegistry.registerTileEntity(ApplianceSprayer.class, Taam.TILEENTITY_APPLIANCE_SPRAYER);
 		GameRegistry.registerTileEntity(ApplianceAligner.class, Taam.TILEENTITY_APPLIANCE_ALIGNER);
@@ -377,7 +401,7 @@ public class TaamMain {
 		 * Fluids
 		 */
 
-		boolean registerFluidBlocks = false;
+		boolean registerFluidBlocks = true;
 
 		Taam.FLUID_DYE_META[] fluidsDyeValues = Taam.FLUID_DYE_META.values();
 		fluidsDye = new FluidDye[fluidsDyeValues.length];
@@ -389,7 +413,18 @@ public class TaamMain {
 			FluidRegistry.addBucketForFluid(fluidsDye[i]);
 
 			if (registerFluidBlocks) {
-				BlockFluidClassic fluidBlock = new BlockFluidClassic(fluidsDye[i], Material.WATER);
+				BlockFluidClassic fluidBlock = new BlockFluidClassic(fluidsDye[i], Material.WATER) {
+					@Override
+					public boolean shouldSideBeRendered(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
+						IBlockState neighbor = world.getBlockState(pos.offset(side));
+						// Force rendering if there is a different block adjacent, not only a different material
+						if (neighbor.getBlock() != this)
+				        {
+				            return true;
+				        }
+				        return super.shouldSideBeRendered(state, world, pos, side);
+					}
+				};
 				String blockName = "fluid.dye." + fluidsDyeValues[i].name();
 				registerBlock(
 						fluidBlock,
@@ -402,11 +437,38 @@ public class TaamMain {
 
 		Taam.FLUID_MATERIAL_META[] fluidsMaterialValues = Taam.FLUID_MATERIAL_META.values();
 		fluidsMaterial = new FluidMaterial[fluidsMaterialValues.length];
+		blocksFluidMaterial = new BlockFluidFinite[fluidsMaterialValues.length];
 
 		for(int i = 0; i < fluidsMaterialValues.length; i++) {
 			fluidsMaterial[i] = new FluidMaterial(fluidsMaterialValues[i]);
 			FluidRegistry.registerFluid(fluidsMaterial[i]);
 			FluidRegistry.addBucketForFluid(fluidsMaterial[i]);
+
+			if (registerFluidBlocks) {
+				BlockFluidFinite fluidBlock = new BlockFluidFinite(fluidsMaterial[i], Material.WATER) {
+					@Override
+					public boolean shouldSideBeRendered(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
+						IBlockState neighbor = world.getBlockState(pos.offset(side));
+						// Force rendering if there is a different block adjacent, not only a different material
+				        if (neighbor.getBlock() != this)
+				        {
+				            return true;
+				        }
+				        return super.shouldSideBeRendered(state, world, pos, side);
+					}
+				};
+				if(fluidsMaterialValues[i] == FLUID_MATERIAL_META.coating) {
+					fluidBlock.setQuantaPerBlock(2);
+				} else {
+					fluidBlock.setQuantaPerBlock(1);
+				}
+				String blockName = "fluid.material." + fluidsMaterialValues[i].name();
+				registerBlock(
+						fluidBlock,
+						new ItemBlock(fluidBlock),
+						blockName);
+				blocksFluidMaterial[i] = fluidBlock;
+			}
 		}
 
 		/*
@@ -459,7 +521,7 @@ public class TaamMain {
 			}
 
 		}, ConveyorSlotsStandard.class);
-		
+
 		CapabilityManager.INSTANCE.register(IAdvancedMachineGUI.class, new Capability.IStorage<IAdvancedMachineGUI>() {
 
 			@Override
@@ -487,11 +549,11 @@ public class TaamMain {
 		if(Taam.CAPABILITY_ADVANCED_GUI == null) {
 			throw new RuntimeException("Registering a capability failed (Taam.CAPABILITY_ADVANCED_GUI - IAdvancedMachineGUI) - field was null after registry.");
 		}
-		
+
 		soundSipAh = new SoundEvent(Taam.SOUND_SIP_AH);
 		soundSipAh.setRegistryName(Taam.SOUND_SIP_AH);
 		GameRegistry.register(soundSipAh);
-		
+
 		/*
 		 * Network
 		 */

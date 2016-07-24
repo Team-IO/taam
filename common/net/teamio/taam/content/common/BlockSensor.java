@@ -1,6 +1,7 @@
 package net.teamio.taam.content.common;
 
 import net.minecraft.block.SoundType;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -11,9 +12,12 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.property.ExtendedBlockState;
+import net.minecraftforge.common.property.IUnlistedProperty;
 import net.teamio.taam.Taam;
 import net.teamio.taam.content.BaseBlock;
 import net.teamio.taam.content.MaterialMachinesTransparent;
+import net.teamio.taam.rendering.obj.OBJModel;
 
 public class BlockSensor extends BaseBlock {
 
@@ -46,7 +50,8 @@ public class BlockSensor extends BaseBlock {
 
 	@Override
 	protected BlockStateContainer createBlockState() {
-		return new BlockStateContainer(this, DIRECTION);
+		return new ExtendedBlockState(this, new IProperty[] { DIRECTION },
+				new IUnlistedProperty[] { OBJModel.OBJProperty.instance });
 	}
 
 	@Override
@@ -151,12 +156,11 @@ public class BlockSensor extends BaseBlock {
 		EnumFacing dir = blockState.getValue(DIRECTION);
 		if(dir == side) {
 			return getRedstoneLevel(blockAccess, pos);
-		} else {
-			return 0;
 		}
+		return 0;
 	}
 
-	public int getRedstoneLevel(IBlockAccess world, BlockPos pos) {
+	public static int getRedstoneLevel(IBlockAccess world, BlockPos pos) {
 		TileEntitySensor te = (TileEntitySensor) world.getTileEntity(pos);
 		return te == null ? 0 : te.getRedstoneLevel();
 	}
@@ -193,15 +197,13 @@ public class BlockSensor extends BaseBlock {
 	@Override
 	public boolean canBlockStay(World worldIn, BlockPos pos, IBlockState state) {
 		EnumFacing dir = state.getValue(DIRECTION);
-		EnumFacing side = dir.getOpposite();
 
-		return worldIn.isSideSolid(pos.offset(side), dir);
+		return worldIn.isSideSolid(pos.offset(dir.getOpposite()), dir);
 	}
 
 	@Override
 	public boolean canPlaceBlockOnSide(World worldIn, BlockPos pos, EnumFacing side) {
-		//return worldIn.isSideSolid(pos.offset(side), side);
-		return true;
+		return worldIn.isSideSolid(pos.offset(side.getOpposite()), side);
 	}
 
 }

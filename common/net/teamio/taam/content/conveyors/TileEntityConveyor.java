@@ -86,7 +86,7 @@ public class TileEntityConveyor extends BaseTileEntity implements IRotatable, IC
 			@Override
 			public void onChangeHook() {
 				updateState(true, false, false);
-			};
+			}
 		};
 		conveyorSlots.rotation = direction;
 	}
@@ -121,42 +121,41 @@ public class TileEntityConveyor extends BaseTileEntity implements IRotatable, IC
 	private EnumFacing getNextSlot(int slot) {
 		if (speedLevel >= 2) {
 			return ConveyorUtil.getHighspeedTransition(slot, direction);
-		} else {
-			/*
-			 * Handle indicators
-			 */
-			if (redirectorRight) {
-				EnumFacing right = direction.rotateY();
-				if (slot == ConveyorUtil.getSlot(right)) {
-					return right;
-				}
-			}
-			if (redirectorLeft) {
-				EnumFacing left = direction.rotateYCCW();
-				if (slot == ConveyorUtil.getSlot(left)) {
-					return left;
-				}
-			}
-
-			/*
-			 * Assume default direction
-			 */
-			EnumFacing nextSlot = direction;
-
-			/*
-			 * Let the appliances override the direction, if required
-			 */
-			List<IConveyorAppliance> appliances = getAppliances();
-			if (appliances != null) {
-				ItemWrapper wrapper = conveyorSlots.getSlot(slot);
-				// Let each appliance have the chance to override the next slot
-				for (IConveyorAppliance appliance : appliances) {
-					nextSlot = appliance.overrideNextSlot(this, slot, wrapper, nextSlot);
-				}
-			}
-
-			return nextSlot;
 		}
+		/*
+		 * Handle indicators
+		 */
+		if (redirectorRight) {
+			EnumFacing right = direction.rotateY();
+			if (slot == ConveyorUtil.getSlot(right)) {
+				return right;
+			}
+		}
+		if (redirectorLeft) {
+			EnumFacing left = direction.rotateYCCW();
+			if (slot == ConveyorUtil.getSlot(left)) {
+				return left;
+			}
+		}
+
+		/*
+		 * Assume default direction
+		 */
+		EnumFacing nextSlot = direction;
+
+		/*
+		 * Let the appliances override the direction, if required
+		 */
+		List<IConveyorAppliance> appliances = getAppliances();
+		if (appliances != null) {
+			ItemWrapper wrapper = conveyorSlots.getSlot(slot);
+			// Let each appliance have the chance to override the next slot
+			for (IConveyorAppliance appliance : appliances) {
+				nextSlot = appliance.overrideNextSlot(this, slot, wrapper, nextSlot);
+			}
+		}
+
+		return nextSlot;
 	}
 
 	@Override

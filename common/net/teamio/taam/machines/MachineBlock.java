@@ -73,7 +73,7 @@ public class MachineBlock extends BaseBlock implements ITileEntityProvider {
 	@Override
 	protected BlockStateContainer createBlockState() {
 		return new ExtendedBlockState(this, new IProperty[] { DIRECTION, VARIANT }, new IUnlistedProperty[]{ OBJModel.OBJProperty.instance });
-	};
+	}
 
 	@Override
 	public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
@@ -156,7 +156,7 @@ public class MachineBlock extends BaseBlock implements ITileEntityProvider {
 		for(int i = 0; i < tempList.size(); i++) {
 			collidingBoxes.add(tempList.get(i).offset(pos.getX(), pos.getY(), pos.getZ()));
 		}
-	};
+	}
 
 	@Override
 	public RayTraceResult collisionRayTrace(IBlockState blockState, World worldIn, BlockPos pos, Vec3d start,
@@ -188,9 +188,8 @@ public class MachineBlock extends BaseBlock implements ITileEntityProvider {
 		}
 		if (closestHit == null) {
 			return null;
-		} else {
-			return new RayTraceResult(closestHit.hitVec, closestHit.sideHit, pos);
 		}
+		return new RayTraceResult(closestHit.hitVec, closestHit.sideHit, pos);
 	}
 
 	@Override
@@ -209,9 +208,8 @@ public class MachineBlock extends BaseBlock implements ITileEntityProvider {
 		// determined (edge cases)
 		if (closestBB == null) {
 			return new AxisAlignedBB(pos, pos.add(1, 1, 1));
-		} else {
-			return closestBB.offset(pos.getX(), pos.getY(), pos.getZ());
 		}
+		return closestBB.offset(pos.getX(), pos.getY(), pos.getZ());
 	}
 
 }

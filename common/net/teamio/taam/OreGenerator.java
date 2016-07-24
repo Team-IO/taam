@@ -16,7 +16,7 @@ import net.minecraft.world.gen.feature.WorldGenMinable;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.IWorldGenerator;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.teamio.taam.content.common.BlockOre;
+import net.teamio.taam.Taam.BLOCK_ORE_META;
 
 public class OreGenerator implements IWorldGenerator {
 
@@ -69,16 +69,12 @@ public class OreGenerator implements IWorldGenerator {
 			if(Config.genOre[i]) {
 				Log.info("Enabling {} generation", oreMeta[i].config_name);
 				gens.add(new GenerationInfo(oreMeta[i],
-						new WorldGenMinable(getOre(oreMeta[i]), Config.oreSize[i], stone),
+						new WorldGenMinable(BLOCK_ORE_META.getOre(oreMeta[i]), Config.oreSize[i], stone),
 						Config.oreAbove[i], Config.oreBelow[i], Config.oreDepositCount[i]));
 			} else {
 				Log.info("Disabling {} generation", oreMeta[i].config_name);
 			}
 		}
-	}
-
-	private IBlockState getOre(Taam.BLOCK_ORE_META ore) {
-		return TaamMain.blockOre.getDefaultState().withProperty(BlockOre.VARIANT, ore);
 	}
 
 	@Override

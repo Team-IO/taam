@@ -4,9 +4,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.teamio.taam.recipes.BaseProcessingRecipeFluidBased;
 import net.teamio.taam.recipes.ChancedOutput;
-import net.teamio.taam.recipes.IProcessingRecipeFluidBased;
 
-public class SprayerRecipe extends BaseProcessingRecipeFluidBased implements IProcessingRecipeFluidBased {
+public class SprayerRecipe extends BaseProcessingRecipeFluidBased {
 
 	private ChancedOutput[] output;
 

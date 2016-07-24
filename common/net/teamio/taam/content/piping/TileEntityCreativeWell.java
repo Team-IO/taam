@@ -8,11 +8,8 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.ITickable;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.teamio.taam.Config;
 import net.teamio.taam.Log;
 import net.teamio.taam.Taam;
@@ -20,12 +17,13 @@ import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IWorldInteractable;
 import net.teamio.taam.piping.PipeEnd;
 import net.teamio.taam.piping.PipeUtil;
+import net.teamio.taam.util.FluidHandlerCreative;
+import net.teamio.taam.util.FluidUtils;
 
-public class TileEntityCreativeWell extends BaseTileEntity implements IFluidHandler, ITickable, IWorldInteractable {
+public class TileEntityCreativeWell extends BaseTileEntity implements ITickable, IWorldInteractable {
 
 	private final PipeEnd[] pipeEnds;
-
-	private FluidStack fluid;
+	private final FluidHandlerCreative fluidHandler;
 
 	private static final int capacity = Integer.MAX_VALUE;
 
@@ -36,8 +34,9 @@ public class TileEntityCreativeWell extends BaseTileEntity implements IFluidHand
 			pipeEnds[index] = new PipeEnd(side, capacity, true);
 			pipeEnds[index].setPressure(Config.pl_creativewell_pressure);
 		}
+		fluidHandler = new FluidHandlerCreative();
 	}
-	
+
 	@Override
 	public String getName() {
 		return "tile.taam.machines.creativewell.name";
@@ -47,8 +46,8 @@ public class TileEntityCreativeWell extends BaseTileEntity implements IFluidHand
 	public void update() {
 		for (EnumFacing side : EnumFacing.VALUES) {
 			int index = side.ordinal();
-			if(fluid != null) {
-				pipeEnds[index].addFluid(fluid);
+			if(fluidHandler.template != null) {
+				pipeEnds[index].addFluid(fluidHandler.template);
 			}
 			PipeUtil.processPipes(pipeEnds[index], worldObj, pos);
 		}
@@ -57,9 +56,9 @@ public class TileEntityCreativeWell extends BaseTileEntity implements IFluidHand
 
 	@Override
 	protected void writePropertiesToNBT(NBTTagCompound tag) {
-		if(fluid != null) {
+		if(fluidHandler.template != null) {
 			NBTTagCompound fluidTag = new NBTTagCompound();
-			fluid.writeToNBT(fluidTag);
+			fluidHandler.template.writeToNBT(fluidTag);
 			tag.setTag("fluid", fluidTag);
 		}
 	}
@@ -68,15 +67,18 @@ public class TileEntityCreativeWell extends BaseTileEntity implements IFluidHand
 	protected void readPropertiesFromNBT(NBTTagCompound tag) {
 		NBTTagCompound fluidTag = tag.getCompoundTag("fluid");
 		if(fluidTag == null) {
-			fluid = null;
+			fluidHandler.template = null;
 		} else {
-			fluid = FluidStack.loadFluidStackFromNBT(fluidTag);
+			fluidHandler.template = FluidStack.loadFluidStackFromNBT(fluidTag);
 		}
 	}
 
 	@Override
 	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
 		if(capability == Taam.CAPABILITY_PIPE) {
+			return true;
+		}
+		if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
 			return true;
 		}
 		return false;
@@ -89,49 +91,10 @@ public class TileEntityCreativeWell extends BaseTileEntity implements IFluidHand
 			int index = facing.ordinal();
 			return (T) pipeEnds[index];
 		}
+		if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+			return (T) fluidHandler;
+		}
 		return null;
-	}
-
-	/*
-	 * IFluidHandler implementation
-	 */
-
-	@Override
-	public int fill(EnumFacing from, FluidStack resource, boolean doFill) {
-		return 0;
-	}
-
-	@Override
-	public FluidStack drain(EnumFacing from, FluidStack resource, boolean doDrain) {
-		if(fluid != null && resource != null && resource.isFluidEqual(fluid)) {
-			return resource;
-		} else {
-			return null;
-		}
-	}
-
-	@Override
-	public FluidStack drain(EnumFacing from, int maxDrain, boolean doDrain) {
-		if(fluid == null) {
-			return null;
-		} else {
-			return new FluidStack(fluid, maxDrain);
-		}
-	}
-
-	@Override
-	public boolean canFill(EnumFacing from, Fluid fluid) {
-		return false;
-	}
-
-	@Override
-	public boolean canDrain(EnumFacing from, Fluid fluid) {
-		return this.fluid != null && this.fluid.getFluid() == fluid;
-	}
-
-	@Override
-	public FluidTankInfo[] getTankInfo(EnumFacing from) {
-		return new FluidTankInfo[] { new FluidTankInfo(fluid, capacity) };
 	}
 
 	/*
@@ -143,12 +106,12 @@ public class TileEntityCreativeWell extends BaseTileEntity implements IFluidHand
 			float hitX, float hitY, float hitZ) {
 		ItemStack stack = player.inventory.getStackInSlot(player.inventory.currentItem);
 		if(stack == null) {
-			fluid = null;
+			fluidHandler.template = null;
 		} else {
-			fluid = FluidContainerRegistry.getFluidForFilledItem(stack);
-			if(fluid != null) {
-				fluid.amount = capacity;
-				Log.debug("Set creative well fluid to " + fluid);
+			fluidHandler.template = FluidUtils.getFluidFromItem(stack);
+			if(fluidHandler.template != null) {
+				fluidHandler.template.amount = capacity;
+				Log.debug("Set creative well fluid to " + fluidHandler.template);
 			}
 		}
 		for (EnumFacing peSide : EnumFacing.VALUES) {

@@ -36,16 +36,23 @@ public final class TPMachineConfiguration implements IMessage {
 						case 3:
 							((TileEntityConveyorHopper) te).setLinearMode(message.boolValue);
 							break;
+						default:
+							//TODO: Log Error
+							break;
 						}
 					} else {
 						//TODO: Log Error
 					}
 					break;
+				default:
 				case ChangeInteger:
 					if(te instanceof IRedstoneControlled) {
 						switch(message.id) {
 						case 1:
 							((IRedstoneControlled) te).setRedstoneMode((byte)message.intValue);
+							break;
+						default:
+							//TODO: Log Error
 							break;
 						}
 					} else {
@@ -97,12 +104,13 @@ public final class TPMachineConfiguration implements IMessage {
 		int modeOrd = buf.readInt();
 		//TODO: Check Range
 		mode = Action.values()[modeOrd];
-		tileEntity = readCoords(buf);
+		tileEntity = WorldCoord.readCoords(buf);
 		switch(mode) {
 		case ChangeBoolean:
 			id = buf.readByte();
 			boolValue = buf.readBoolean();
 			break;
+		default:
 		case ChangeInteger:
 			id = buf.readByte();
 			intValue = buf.readInt();
@@ -110,30 +118,16 @@ public final class TPMachineConfiguration implements IMessage {
 		}
 	}
 
-	private WorldCoord readCoords(ByteBuf buf) {
-		int world = buf.readInt();
-		int x = buf.readInt();
-		int y = buf.readInt();
-		int z = buf.readInt();
-		return new WorldCoord(world, x, y, z);
-	}
-
-	private void writeCoords(ByteBuf buf, WorldCoord coords) {
-		buf.writeInt(coords.world);
-		buf.writeInt(coords.x);
-		buf.writeInt(coords.y);
-		buf.writeInt(coords.z);
-	}
-
 	@Override
 	public void toBytes(ByteBuf buf) {
 		buf.writeInt(mode.ordinal());
-		writeCoords(buf, tileEntity);
+		WorldCoord.writeCoords(buf, tileEntity);
 		switch(mode) {
 		case ChangeBoolean:
 			buf.writeByte(id);
 			buf.writeBoolean(boolValue);
 			return;
+		default:
 		case ChangeInteger:
 			buf.writeByte(id);
 			buf.writeInt(intValue);

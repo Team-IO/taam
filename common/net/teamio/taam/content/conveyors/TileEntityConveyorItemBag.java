@@ -28,11 +28,11 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable {
 			@Override
 			public void onChangeHook() {
 				updateState(true, false, false);
-			};
+			}
 		};
 		conveyorSlots.rotation = direction;
 	}
-	
+
 	@Override
 	public String getName() {
 		return "tile.taam.productionline_attachable.itembag.name";
@@ -57,11 +57,11 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable {
 			}
 		}
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see net.teamio.taam.content.conveyors.ATileEntityAttachable#setFacingDirection(net.minecraft.util.EnumFacing)
-	 * 
+	 *
 	 * Overridden because of slots rotation
 	 */
 	@Override

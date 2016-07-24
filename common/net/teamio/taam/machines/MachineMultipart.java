@@ -47,6 +47,7 @@ import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.BaseBlock;
 import net.teamio.taam.content.IRenderable;
 import net.teamio.taam.content.IRotatable;
+import net.teamio.taam.content.IWorldInteractable;
 import net.teamio.taam.content.piping.MachinePipe;
 import net.teamio.taam.rendering.obj.OBJModel;
 import net.teamio.taam.util.FaceBitmap;
@@ -76,7 +77,7 @@ public class MachineMultipart extends Multipart implements INormallyOccludingPar
 	@Override
 	public float getHardness(PartMOP hit) {
 		return 3.5f;
-	};
+	}
 
 	@Override
 	public ResourceLocation getType() {
@@ -115,13 +116,11 @@ public class MachineMultipart extends Multipart implements INormallyOccludingPar
 
 	@Override
 	public List<ItemStack> getDrops() {
-		System.out.println("Getting drops: " + new ItemStack(TaamMain.itemMachine, 1, meta.metaData()));
 		return Arrays.asList(new ItemStack(TaamMain.itemMachine, 1, meta.metaData()));
 	}
 
 	@Override
 	public ItemStack getPickBlock(EntityPlayer player, PartMOP hit) {
-		System.out.println("Getting pickblock: " + new ItemStack(TaamMain.itemMachine, 1, meta.metaData()));
 		return new ItemStack(TaamMain.itemMachine, 1, meta.metaData());
 	}
 
@@ -171,6 +170,9 @@ public class MachineMultipart extends Multipart implements INormallyOccludingPar
 		boolean playerHasWrench = WrenchUtil.playerHasWrenchInHand(player, hand);
 
 		if (!playerHasWrench) {
+			if(machine instanceof IWorldInteractable) {
+				return ((IWorldInteractable) machine).onBlockActivated(getWorld(), player, hand, false, hit.sideHit, (float)hit.hitVec.xCoord, (float)hit.hitVec.yCoord, (float)hit.hitVec.zCoord);
+			}
 			return false;
 		}
 
@@ -187,10 +189,9 @@ public class MachineMultipart extends Multipart implements INormallyOccludingPar
 			InventoryUtils.tryDropToInventory(player, dropStack, getPos());
 			getContainer().removePart(this);
 			return true;
-		} else {
-			rotatePart(hit.sideHit);
-			return true;
 		}
+		rotatePart(hit.sideHit);
+		return true;
 	}
 
 	@Override
@@ -234,13 +235,13 @@ public class MachineMultipart extends Multipart implements INormallyOccludingPar
 		}
 		return machine.getExtendedState(newState, world, pos);
 	}
-	
+
 	@Override
 	public IBlockState getActualState(IBlockState state) {
 		// FIXME: Hacky workaround
 		return super.getActualState(getExtendedState(state));
 	}
-	
+
 	@Override
 	public boolean canRenderInLayer(BlockRenderLayer layer) {
 		return layer == BlockRenderLayer.CUTOUT;
@@ -288,7 +289,7 @@ public class MachineMultipart extends Multipart implements INormallyOccludingPar
 		buf.writeString(meta.unlocalizedName());
 		machine.writeUpdatePacket(buf);
 	}
-	
+
 	@Override
 	public NBTTagCompound writeToNBT(NBTTagCompound tag) {
 		tag.setString("machine", meta.unlocalizedName());

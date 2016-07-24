@@ -5,12 +5,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
+import net.teamio.taam.content.common.BlockOre;
 import net.teamio.taam.content.piping.MachineFluidDrier;
 import net.teamio.taam.content.piping.MachineMixer;
 import net.teamio.taam.content.piping.MachinePipe;
@@ -20,6 +22,11 @@ import net.teamio.taam.conveyors.IConveyorSlots;
 import net.teamio.taam.gui.advanced.IAdvancedMachineGUI;
 import net.teamio.taam.machines.IMachine;
 import net.teamio.taam.machines.IMachineMetaInfo;
+import net.teamio.taam.machines.MachineBlock;
+import net.teamio.taam.machines.MachineItemBlock;
+import net.teamio.taam.machines.MachineItemMultipart;
+import net.teamio.taam.machines.MachineMultipart;
+import net.teamio.taam.machines.MachineTileEntity;
 import net.teamio.taam.piping.IPipe;
 import net.teamio.taam.rendering.TankRenderInfo;
 
@@ -85,11 +92,12 @@ public final class Taam {
 	 */
 
 	public static final ResourceLocation SOUND_SIP_AH = new ResourceLocation("taam", "sip_ah");
-	
+
 	/*
 	 * Blocks
 	 */
-	
+
+	public static final String BLOCK_LAMP = "lamp";
 	public static final String BLOCK_SENSOR = "sensor";
 	public static final String BLOCK_MACHINES = "machines";
 	public static final String BLOCK_PRODUCTIONLINE = "productionline";
@@ -104,6 +112,11 @@ public final class Taam {
 	public static final String BLOCK_MAGNET_RAIL = "magnet_rail";
 	public static final String BLOCK_SUPPORT_BEAM = "support_beam";
 
+	/**
+	 * Wrapper for multipart-based machines, if multipart is not found or disabled via config.
+	 *
+	 * See {@link MACHINE_META} for the single meta values (not actually block metadata.)
+	 */
 	public static final String BLOCK_MACHINE_WRAPPER = "machine";
 
 	public static enum BLOCK_ORE_META implements IStringSerializable {
@@ -183,7 +196,11 @@ public final class Taam {
 		public String getName() {
 			return name();
 		}
-	};
+
+		public static IBlockState getOre(Taam.BLOCK_ORE_META ore) {
+			return TaamMain.blockOre.getDefaultState().withProperty(BlockOre.VARIANT, ore);
+		}
+	}
 
 	public static enum BLOCK_CONCRETE_META implements IStringSerializable {
 		rough,
@@ -211,8 +228,14 @@ public final class Taam {
 		public String getName() {
 			return name();
 		}
-	};
+	}
 
+	/**
+	 * Non-Multipart machines that are not part of the conveyor-system.
+	 *
+	 * @author Oliver Kahrmann
+	 *
+	 */
 	public static enum BLOCK_MACHINES_META implements IStringSerializable {
 		chute,
 		creativecache,
@@ -231,8 +254,14 @@ public final class Taam {
 		public String getName() {
 			return name();
 		}
-	};
+	}
 
+	/**
+	 * Productionline-Machines, i.e. part of the conveyor system.
+	 *
+	 * @author Oliver Kahrmann
+	 *
+	 */
 	public static enum BLOCK_PRODUCTIONLINE_META implements IStringSerializable {
 		conveyor1,
 		conveyor2,
@@ -244,6 +273,7 @@ public final class Taam {
 		grinder,
 		crusher,
 		chute,
+		elevator,
 		;
 		public static String[] valuesAsString() {
 			Enum<?>[] valuesAsEnum = values();
@@ -258,7 +288,7 @@ public final class Taam {
 		public String getName() {
 			return name();
 		}
-	};
+	}
 
 	public static enum BLOCK_PRODUCTIONLINE_ATTACHABLE_META implements IStringSerializable {
 		itembag,
@@ -277,7 +307,7 @@ public final class Taam {
 		public String getName() {
 			return name();
 		}
-	};
+	}
 
 	public static enum BLOCK_PRODUCTIONLINE_APPLIANCE_META implements IStringSerializable {
 		sprayer,
@@ -296,7 +326,7 @@ public final class Taam {
 		public String getName() {
 			return name();
 		}
-	};
+	}
 
 	public static enum BLOCK_LOGISTICS_META {
 		logistics_manager,
@@ -310,7 +340,7 @@ public final class Taam {
 			}
 			return valuesAsString;
 		}
-	};
+	}
 
 	public static final String MULTIPART_MULTINET_CABLE = "multinet.cable";
 	public static final String MULTIPART_MULTINET_MULTITRONIX = "multinet.multitronix";
@@ -337,7 +367,7 @@ public final class Taam {
 			}
 			return valuesAsString;
 		}
-	};
+	}
 
 	public static enum ITEM_TOOL_META {
 		saw
@@ -350,7 +380,7 @@ public final class Taam {
 			}
 			return valuesAsString;
 		}
-	};
+	}
 
 	public static enum ITEM_MATERIAL_META {
 		plastic_sheet,
@@ -388,7 +418,7 @@ public final class Taam {
 			}
 			return valuesAsString;
 		}
-	};
+	}
 	public static enum ITEM_PART_META {
 		photocell,
 		motor,
@@ -416,7 +446,7 @@ public final class Taam {
 			}
 			return valuesAsString;
 		}
-	};
+	}
 
 	public static final String TILEENTITY_SENSOR = "taam.sensor";
 	public static final String TILEENTITY_CHUTE = "taam.chute";
@@ -431,6 +461,7 @@ public final class Taam {
 	public static final String TILEENTITY_CONVEYOR_ITEMBAG = "taam.itembag";
 	public static final String TILEENTITY_CONVEYOR_TRASHCAN = "taam.trashcan";
 	public static final String TILEENTITY_CONVEYOR_SIEVE = "taam.sieve";
+	public static final String TILEENTITY_CONVEYOR_ELEVATOR = "taam.elevator";
 
 	public static final String TILEENTITY_CREATIVEWELL = "taam.creativewell";
 
@@ -467,7 +498,7 @@ public final class Taam {
 			}
 			return valuesAsString;
 		}
-	};
+	}
 
 	public static final String FLUID_DYE = "dye_";
 
@@ -495,8 +526,21 @@ public final class Taam {
 			}
 			return valuesAsString;
 		}
-	};
+	}
 
+	/**
+	 * Meta info for all multipart-based machines. Used for items, the wrapper block & multipart registry.
+	 *
+	 * {@link MachineBlock} + {@link MachineTileEntity} -> Wrapper block & TE if multipart is not available.
+	 *
+	 * {@link MachineItemBlock} -> Item for the wrapper block, mutually exclusive with {@link MachineItemMultipart}.
+	 * Only one of them is used, depending on availability of multipart.
+	 *
+	 * {@link MachineMultipart} -> Multipart wrapper for all these machines.
+	 *
+	 * @author Oliver Kahrmann
+	 *
+	 */
 	public static enum MACHINE_META implements IMachineMetaInfo {
 
 		pipe(MachinePipe.class, "pipe", null),

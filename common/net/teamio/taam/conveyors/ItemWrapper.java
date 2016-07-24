@@ -41,9 +41,8 @@ public class ItemWrapper implements INBTSerializable<NBTTagCompound>{
 	public int getStackSize() {
 		if (itemStack == null) {
 			return 0;
-		} else {
-			return itemStack.stackSize;
 		}
+		return itemStack.stackSize;
 	}
 
 	public void setStackSize(int stackSize) {

@@ -161,6 +161,11 @@ public class ConveyorUtil {
 				slot += frontOffsetZ;
 			}
 		}
+		int frontOffsetY = dir.getFrontOffsetY();
+		if(frontOffsetY != 0) {
+			// Offset by 9 is the same slot, but marks it as wrapped
+			slot += 9 * frontOffsetY;
+		}
 		return slot;
 	}
 
@@ -212,12 +217,12 @@ public class ConveyorUtil {
 			rotated = new int[4][];
 			// North
 			rotated[2] = unrotated;
-			// East
-			rotated[3] = rotate(unrotated);
-			// South
-			rotated[0] = rotate(rotated[3]);
 			// West
-			rotated[1] = rotate(rotated[0]);
+			rotated[1] = rotate(unrotated);
+			// South
+			rotated[0] = rotate(rotated[1]);
+			// East
+			rotated[3] = rotate(rotated[0]);
 		}
 		
 		public int get(int slot, EnumFacing rotation) {
@@ -245,15 +250,15 @@ public class ConveyorUtil {
 	
 	public static RotatedDefinition LANES = new RotatedDefinition(
 			// Remember, this definition is inverted being left-to-right not top-down order, so NORTH is left!
-			3, 3, 3,
+			1, 1, 1,
 			2, 2, 2,
-			1, 1, 1
+			3, 3, 3
 			);
 	public static RotatedDefinition ROWS = new RotatedDefinition(
 			// Remember, this definition is inverted being left-to-right not top-down order, so NORTH is left!
-			1, 2, 3,
-			1, 2, 3,
-			1, 2, 3
+			3, 2, 1,
+			3, 2, 1,
+			3, 2, 1
 			);
 	
 
@@ -402,8 +407,6 @@ public class ConveyorUtil {
 	}
 
 	public static boolean transferSlot(IConveyorSlots tileEntity, int slot, IConveyorSlots nextBlock, int nextSlot) {
-		// System.out.println("Transfer external " + slot + " to " + nextSlot);
-
 		ItemWrapper slotObject = tileEntity.getSlot(slot);
 
 		int transferred = nextBlock.insertItemAt(slotObject.itemStack.copy(), nextSlot, false);
@@ -421,7 +424,6 @@ public class ConveyorUtil {
 	}
 
 	public static boolean transferSlot(IConveyorSlots tileEntity, int slot, int nextSlot) {
-		// System.out.println("Transfer internal " + slot + " to " + nextSlot);
 
 		ItemWrapper slotObject = tileEntity.getSlot(slot);
 		ItemWrapper nextSlotObject = tileEntity.getSlot(nextSlot);
@@ -454,9 +456,8 @@ public class ConveyorUtil {
 					slotObject.itemStack.stackSize += availableSpace;
 				}
 				return availableSpace;
-			} else {
-				return 0;
 			}
+			return 0;
 		} else {
 			return 0;
 		}
@@ -468,13 +469,12 @@ public class ConveyorUtil {
 		}
 		if (tileEntity instanceof IConveyorSlots) {
 			return (IConveyorSlots) tileEntity;
-		} else {
-			IConveyorSlots candidate = tileEntity.getCapability(Taam.CAPABILITY_CONVEYOR, side);
-			if (candidate == null && Config.multipart_present) {
-				candidate = MultipartHandler.getCapabilityForCenter(Taam.CAPABILITY_CONVEYOR, tileEntity.getWorld(), tileEntity.getPos(), side);
-			}
-			return candidate;
 		}
+		IConveyorSlots candidate = tileEntity.getCapability(Taam.CAPABILITY_CONVEYOR, side);
+		if (candidate == null && Config.multipart_present) {
+			candidate = MultipartHandler.getCapabilityForCenter(Taam.CAPABILITY_CONVEYOR, tileEntity.getWorld(), tileEntity.getPos(), side);
+		}
+		return candidate;
 	}
 
 	/**
@@ -548,7 +548,6 @@ public class ConveyorUtil {
 			 * Move the contents to the next slot
 			 */
 
-			EnumFacing direction = tileEntity.getMovementDirection();
 			byte speedsteps = tileEntity.getSpeedsteps();
 
 			boolean slotWrapped = false;
@@ -585,7 +584,7 @@ public class ConveyorUtil {
 
 				TileEntity te = world.getTileEntity(nextBlockPos);
 
-				nextBlock = getSlots(te, direction.getOpposite());
+				nextBlock = getSlots(te, nextSlotDir.getOpposite());
 
 				if (nextBlock == null) {
 					// Drop it
@@ -697,8 +696,8 @@ public class ConveyorUtil {
 		return appliances;
 	}
 
-	public static RedirectorSide getRedirectorSide(EnumFacing direction, EnumFacing hitSide, float hitX, float hitY,
-			float hitZ, boolean topOnly) {
+	public static RedirectorSide getRedirectorSide(EnumFacing direction, EnumFacing hitSide,
+			float hitX, float hitY, float hitZ, boolean topOnly) {
 		EnumFacing sideToConsider = hitSide;
 	
 		if (hitSide == EnumFacing.UP) {

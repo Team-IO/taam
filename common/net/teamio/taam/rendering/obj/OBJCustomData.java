@@ -270,13 +270,10 @@ public class OBJCustomData
 			{
 				return this.combinedConfigs.get(combinedName);
 			}
-			else
-			{
-				GroupConfigBuilder builder = new GroupConfigBuilder(this.groupNames).startCombination(combinedName);
-				GroupConfig combined = builder.combine(configsToMerge, this.configMap, ignoreHidden);
-				this.combinedConfigs.put(combinedName, combined);
-				return combined;
-			}
+			GroupConfigBuilder builder = new GroupConfigBuilder(this.groupNames).startCombination(combinedName);
+			GroupConfig combined = builder.combine(configsToMerge, this.configMap, ignoreHidden);
+			this.combinedConfigs.put(combinedName, combined);
+			return combined;
 		}
 		
 		public ImmutableMap<String, GroupConfig> getCombinedConfigMap()

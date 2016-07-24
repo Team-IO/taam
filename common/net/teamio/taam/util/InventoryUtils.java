@@ -29,6 +29,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -200,7 +201,7 @@ public final class InventoryUtils {
 	 * 
 	 * @author Oliver Kahrmann
 	 */
-	public static IItemHandler getInventory(World world, BlockPos pos, EnumFacing side) {
+	public static IItemHandler getInventory(IBlockAccess world, BlockPos pos, EnumFacing side) {
 		return getInventory(world.getTileEntity(pos), side);
 	}
 

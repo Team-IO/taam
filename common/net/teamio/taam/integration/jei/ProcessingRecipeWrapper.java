@@ -31,13 +31,11 @@ public class ProcessingRecipeWrapper implements IRecipeWrapper {
 			String oreDictName = recipe.getInputOreDict();
 			if (oreDictName == null) {
 				return null;
-			} else {
-				List<ItemStack> oreDictInput = OreDictionary.getOres(oreDictName);
-				return Lists.newArrayList(oreDictInput);
 			}
-		} else {
-			return Lists.newArrayList(input);
+			List<ItemStack> oreDictInput = OreDictionary.getOres(oreDictName);
+			return Lists.newArrayList(oreDictInput);
 		}
+		return Lists.newArrayList(input);
 	}
 
 	@Override

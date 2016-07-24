@@ -20,6 +20,7 @@ import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.conveyors.ConveyorSlotsInventory;
 import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.network.TPMachineConfiguration;
+import net.teamio.taam.util.InventoryUtils;
 import net.teamio.taam.util.TaamUtil;
 import net.teamio.taam.util.WorldCoord;
 
@@ -51,17 +52,13 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IRedston
 			@Override
 			public void onChangeHook() {
 				updateState(true, false, false);
-			};
+			}
 		};
 	}
 
 	@Override
 	public String getName() {
-		if (highSpeed) {
-			return "tile.taam.productionline.hopper_hs.name";
-		} else {
-			return "tile.taam.productionline.hopper.name";
-		}
+		return highSpeed ? "tile.taam.productionline.hopper_hs.name" : "tile.taam.productionline.hopper.name";
 	}
 
 	@Override
@@ -122,7 +119,7 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IRedston
 				return;
 			}
 			for(int i = 0; i < itemHandler.getSlots(); i++) {
-				ItemStack stack = itemHandler.extractItem(i, wholeStack ? 1 : 64, false);
+				ItemStack stack = itemHandler.extractItem(i, wholeStack ? 64 : 1, false);
 				if(stack == null || stack.stackSize == 0) {
 					continue;
 				}
@@ -143,10 +140,7 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IRedston
 		} else {
 
 			TileEntity ent = worldObj.getTileEntity(pos.down());
-			if(ent == null) {
-				return;
-			}
-			IItemHandler targetHandler = ent.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
+			IItemHandler targetHandler = InventoryUtils.getInventory(ent, EnumFacing.UP);
 			if(targetHandler == null) {
 				return;
 			}

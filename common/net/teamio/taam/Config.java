@@ -32,6 +32,9 @@ public class Config {
 	public static int pl_conveyor_supportrange;
 	public static final byte[] pl_conveyor_speedsteps = new byte[3];
 	
+
+	public static byte pl_elevator_speedsteps;
+	
 	public static byte pl_sieve_speedsteps;
 
 	public static int pl_hopper_highspeed_delay;
@@ -88,6 +91,7 @@ public class Config {
 	public static final String SECTION_PRODUCTIONLINE_CREATIVEWELL = SECTION_PRODUCTIONLINE + ".creativewell";
 	public static final String SECTION_PRODUCTIONLINE_CONVEYORS = SECTION_PRODUCTIONLINE + ".conveyors";
 	public static final String SECTION_PRODUCTIONLINE_SIEVE = SECTION_PRODUCTIONLINE + ".sieve";
+	public static final String SECTION_PRODUCTIONLINE_ELEVATOR = SECTION_PRODUCTIONLINE + ".elevator";
 	public static final String SECTION_PRODUCTIONLINE_TRASHCAN = SECTION_PRODUCTIONLINE + ".trashcan";
 	public static final String SECTION_PRODUCTIONLINE_HOPPER = SECTION_PRODUCTIONLINE + ".hopper";
 	public static final String SECTION_PRODUCTIONLINE_PROCESSORS = SECTION_PRODUCTIONLINE + ".processors";
@@ -197,6 +201,8 @@ public class Config {
 		pl_processor_grinder_timeout = getInt("grinder_timeout", SECTION_PRODUCTIONLINE_PROCESSORS, 15, 1, 200, "Ticks between each processed item in the conveyor grinder.");
 		pl_processor_crusher_timeout = getInt("crusher_timeout", SECTION_PRODUCTIONLINE_PROCESSORS, 15, 1, 200, "Ticks between each processed item in the conveyor crusher.");
 		
+		pl_elevator_speedsteps = getByte("speedsteps", SECTION_PRODUCTIONLINE_ELEVATOR, 30, 1, Byte.MAX_VALUE, "Speedsteps (1/speed) for conveyor elevators.");
+
 		pl_sieve_speedsteps = getByte("speedsteps", SECTION_PRODUCTIONLINE_SIEVE, 20, 1, Byte.MAX_VALUE, "Speedsteps (1/speed) for conveyor sieves.");
 
 		pl_fluid_drier_timeout = getInt("timeout", SECTION_PRODUCTIONLINE_FLUIDDRIER, 50, 1, 200, "Ticks between each processed item in the fluid drier.");
