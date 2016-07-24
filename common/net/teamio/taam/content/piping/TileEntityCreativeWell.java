@@ -36,7 +36,7 @@ public class TileEntityCreativeWell extends BaseTileEntity implements ITickable,
 		}
 		fluidHandler = new FluidHandlerCreative();
 	}
-	
+
 	@Override
 	public String getName() {
 		return "tile.taam.machines.creativewell.name";

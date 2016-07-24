@@ -10,7 +10,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.teamio.taam.Log;
 import net.teamio.taam.Taam;
 import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.IWorldInteractable;
@@ -187,8 +186,6 @@ public class ApplianceAligner extends ATileEntityAppliance implements IWorldInte
 		ItemFilterCustomizable filterLane1;
 		ItemFilterCustomizable filterLane2;
 		ItemFilterCustomizable filterLane3;
-
-		Log.debug("Dir: {} Left: {} Right: {} IsRight: {}", direction, left, right, direction == this.direction.rotateY());
 
 		if(direction == this.direction.rotateY()) {
 			filterLane1 = filters[0];

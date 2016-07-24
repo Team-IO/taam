@@ -10,7 +10,6 @@ import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.teamio.taam.Config;
-import net.teamio.taam.Log;
 import net.teamio.taam.Taam;
 import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IRotatable;
@@ -51,14 +50,14 @@ public class TileEntityConveyorElevator extends BaseTileEntity implements ITicka
 	}
 
 	private EnumFacing getNextSlot(int slot) {
-		if(isTop) {
-			if(direction.getAxis() == Axis.X) {
-				if(ConveyorUtil.ROWS.get(slot, EnumFacing.EAST) == 1) {
+		if (isTop) {
+			if (direction.getAxis() == Axis.X) {
+				if (ConveyorUtil.ROWS.get(slot, EnumFacing.EAST) == 1) {
 					return EnumFacing.WEST;
 				}
 				return EnumFacing.EAST;
 			}
-			if(ConveyorUtil.ROWS.get(slot, EnumFacing.SOUTH) == 1) {
+			if (ConveyorUtil.ROWS.get(slot, EnumFacing.SOUTH) == 1) {
 				return EnumFacing.SOUTH;
 			}
 			return EnumFacing.NORTH;
@@ -134,9 +133,8 @@ public class TileEntityConveyorElevator extends BaseTileEntity implements ITicka
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-		if(facing != null && facing != EnumFacing.UP)
-			Log.debug("Facing: {} Direction: {}", facing, direction);
-		if (capability == Taam.CAPABILITY_CONVEYOR && (facing == null || facing.getAxis() == direction.getAxis() || facing.getAxis() == Axis.Y)) {
+		if (capability == Taam.CAPABILITY_CONVEYOR
+				&& (facing == null || facing.getAxis() == direction.getAxis() || facing.getAxis() == Axis.Y)) {
 			return (T) conveyorSlots;
 		}
 		return super.getCapability(capability, facing);
