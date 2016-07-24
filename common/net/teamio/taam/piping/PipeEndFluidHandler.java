@@ -65,7 +65,7 @@ public class PipeEndFluidHandler implements IPipe {
 
 	@Override
 	public int addFluid(FluidStack stack) {
-		return fluidHandler.fill(stack, false);
+		return fluidHandler.fill(stack, true);
 	}
 
 	@Override
