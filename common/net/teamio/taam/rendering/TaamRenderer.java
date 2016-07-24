@@ -340,7 +340,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 				GL11.glTranslated(-.5f, -.5f, -.5f);
 
 				for(TankRenderInfo renderInfo : tankRI) {
-					renderTankContent(renderInfo.tankInfo.fluid, renderInfo.tankInfo.capacity, renderInfo.bounds);
+					renderTankContent(renderInfo.fluid, renderInfo.capacity, renderInfo.bounds);
 				}
 				GL11.glPopMatrix();
 			}
@@ -913,6 +913,11 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 			direction = EnumFacing.SOUTH;
 		}
 		return direction;
+	}
+
+	public static float getRotationDegrees(IRotatable rotatable) {
+		EnumFacing direction = rotatable.getFacingDirection();
+		return getRotationDegrees(direction);
 	}
 
 	public static float getRotationDegrees(Object tileEntity) {

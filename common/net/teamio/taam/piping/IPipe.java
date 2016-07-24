@@ -102,16 +102,16 @@ public interface IPipe {
 	int getCapacity();
 
 	/**
-	 * Ask the implementation to get all pipes this pipe is connected to. The do
-	 * not necessarily have to be side-by-side, nor do they have to be in
-	 * different blocks.
+	 * Ask the implementation to get all pipes this pipe is connected to
+	 * internally. Regular side-by-side connections are handled differently.
 	 *
 	 * @param world
 	 *            World of this pipe.
 	 * @param pos
 	 *            Position of this pipe.
 	 * @return An array of pipes. May return null if there are no connected
-	 *         pipes.
+	 *         pipes. May return a re-usable array, as this method has to be
+	 *         trimmed for performance!
 	 */
 	IPipe[] getInternalPipes(IBlockAccess world, BlockPos pos);
 

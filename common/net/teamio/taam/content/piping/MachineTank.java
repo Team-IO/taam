@@ -44,9 +44,9 @@ public class MachineTank implements IMachine, IWorldInteractable {
 	private final PipeEndFluidHandler pipeEndUP;
 	private final PipeEndFluidHandler pipeEndDOWN;
 	private final FluidTank tank;
-	
-	private final TankRenderInfo tankRI = new TankRenderInfo(bbTankContent, null);
-	
+
+	private final TankRenderInfo tankRI = new TankRenderInfo(bbTankContent);
+
 	private byte occludedSides;
 
 	public MachineTank() {
@@ -175,7 +175,7 @@ public class MachineTank implements IMachine, IWorldInteractable {
 			return (T) tank;
 		}
 		if (capability == Taam.CAPABILITY_RENDER_TANK) {
-			tankRI.tankInfo = tank.getInfo();
+			tankRI.setInfo(tank);
 			return (T) tankRI.asArray();
 		}
 		return null;

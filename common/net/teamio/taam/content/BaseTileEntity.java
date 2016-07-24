@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import org.apache.logging.log4j.Level;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -14,7 +12,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.IWorldNameable;
-import net.teamio.taam.Log;
 import net.teamio.taam.util.TaamUtil;
 
 /**
@@ -162,7 +159,8 @@ public abstract class BaseTileEntity extends TileEntity implements IWorldNameabl
 	 */
 	private void writePropertiesToNBTInternal(NBTTagCompound tag) {
 		if (owner != null) {
-			tag.setString("owner", owner.toString());
+			tag.setBoolean("owner", true);
+			tag.setUniqueId("owner", owner);
 		}
 		writePropertiesToNBT(tag);
 	}
@@ -181,15 +179,10 @@ public abstract class BaseTileEntity extends TileEntity implements IWorldNameabl
 	 * @param tag
 	 */
 	private void readPropertiesFromNBTInternal(NBTTagCompound tag) {
-		String ownerString = tag.getString("owner");
-		if (ownerString != null && !ownerString.isEmpty()) {
-			try {
-				owner = UUID.fromString(ownerString);
-			} catch (IllegalArgumentException e) {
-				Log.warn("Trouble reading owner UUID. This might not be an issue. (Owner will be set to null. If this issue keeps reappering for the same blocks, notify the authors!");
-				Log.LOGGER.catching(Level.DEBUG, e);
-				owner = null;
-			}
+		if(tag.getBoolean("owner")) {
+			owner = tag.getUniqueId("owner");
+		} else {
+			owner = null;
 		}
 		readPropertiesFromNBT(tag);
 	}

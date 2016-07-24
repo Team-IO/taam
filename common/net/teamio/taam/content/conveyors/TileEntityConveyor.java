@@ -24,7 +24,6 @@ import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IRenderable;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.content.IWorldInteractable;
-import net.teamio.taam.conveyors.ConveyorSlotsItemHandler;
 import net.teamio.taam.conveyors.ConveyorSlotsMoving;
 import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.conveyors.IConveyorAppliance;
@@ -328,7 +327,7 @@ public class TileEntityConveyor extends BaseTileEntity implements IRotatable, IC
 			return (T) conveyorSlots;
 		}
 		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-			return (T) new ConveyorSlotsItemHandler(conveyorSlots, facing);
+			return (T) conveyorSlots.getItemHandler(facing);
 		}
 		return super.getCapability(capability, facing);
 	}

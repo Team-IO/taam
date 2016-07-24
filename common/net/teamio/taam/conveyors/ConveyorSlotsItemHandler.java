@@ -6,8 +6,8 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 
 public class ConveyorSlotsItemHandler implements IItemHandlerModifiable {
 
-	private final IConveyorSlots slots;
-	private final int slot;
+	public final IConveyorSlots slots;
+	public final int slot;
 
 	public ConveyorSlotsItemHandler(IConveyorSlots slots, EnumFacing side) {
 		this.slots = slots;
