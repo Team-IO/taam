@@ -91,19 +91,20 @@ public abstract class BaseBlock extends Block {
 		/*
 		 * Drop Items
 		 */
-		
-		IConveyorSlots conveyorSlots = te.getCapability(Taam.CAPABILITY_CONVEYOR, EnumFacing.UP);
-		if (conveyorSlots != null) {
-			ConveyorUtil.dropItems(worldIn, pos, conveyorSlots, false);
-		}
+		if(te != null) {
+			IConveyorSlots conveyorSlots = te.getCapability(Taam.CAPABILITY_CONVEYOR, EnumFacing.UP);
+			if (conveyorSlots != null) {
+				ConveyorUtil.dropItems(worldIn, pos, conveyorSlots, false);
+			}
 
-		IItemHandler itemHandler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
-		if (itemHandler != null) {
-			for (int index = 0; index < itemHandler.getSlots(); index++) {
-				ItemStack itemstack = itemHandler.getStackInSlot(index);
+			IItemHandler itemHandler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
+			if (itemHandler != null) {
+				for (int index = 0; index < itemHandler.getSlots(); index++) {
+					ItemStack itemstack = itemHandler.getStackInSlot(index);
 
-				if (itemstack != null && itemstack.stackSize > 0 && itemstack.getItem() != null) {
-					InventoryUtils.dropItem(itemstack, worldIn, pos);
+					if (itemstack != null && itemstack.stackSize > 0 && itemstack.getItem() != null) {
+						InventoryUtils.dropItem(itemstack, worldIn, pos);
+					}
 				}
 			}
 		}
@@ -120,7 +121,7 @@ public abstract class BaseBlock extends Block {
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
 
 		//TODO: clean this up.
-		
+
 		if(WrenchUtil.wrenchBlock(worldIn, pos, playerIn, hand, side, hitX, hitY, hitZ) == EnumActionResult.SUCCESS) {
 			return true;
 		}
@@ -245,7 +246,7 @@ public abstract class BaseBlock extends Block {
 
 		OBJModel.OBJState retState = new OBJModel.OBJState(visibleParts);
 		retState.setIgnoreHidden(true);
-		
+
 		IExtendedBlockState extendedState = (IExtendedBlockState) state;
 
 		return extendedState.withProperty(OBJModel.OBJProperty.instance, retState);
