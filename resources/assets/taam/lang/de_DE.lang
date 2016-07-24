@@ -136,6 +136,28 @@ item.taam.machine.mixer.name=Mixer
 item.taam.machine.fluid_drier.name=Flüssigkeits-Trocker
 
 # Fluids
+tile.taam.fluid.dye.black.name=Schwarzer Farbstoff
+tile.taam.fluid.dye.blue.name=Blauer Farbstoff
+tile.taam.fluid.dye.brown.name=Brauner Farbstoff
+tile.taam.fluid.dye.cyan.name=Cyaner Farbstoff
+tile.taam.fluid.dye.gray.name=Grauer Farbstoff
+tile.taam.fluid.dye.green.name=Grüner Farbstoff
+tile.taam.fluid.dye.lightBlue.name=Hellblauer Farbstoff
+tile.taam.fluid.dye.lightGray.name=Hellgrauer Farbstoff
+tile.taam.fluid.dye.lime.name=Terminalfarbstoff
+tile.taam.fluid.dye.magenta.name=Magenta Farbstoff
+tile.taam.fluid.dye.orange.name=Orangener Farbstoff
+tile.taam.fluid.dye.pink.name=Rosaner Farbstoff
+tile.taam.fluid.dye.purple.name=Lilaner Farbstoff
+tile.taam.fluid.dye.red.name=Roter Farbstoff
+tile.taam.fluid.dye.white.name=Weißer Farbstoff
+tile.taam.fluid.dye.yellow.name=Gelber Farbstoff
+
+tile.taam.fluid.material.concreteRough.name=Grober Beton
+tile.taam.fluid.material.concreteFine.name=Feiner Beton
+tile.taam.fluid.material.coating.name=Beschichtung auf Harzbasis
+
+# Fluids
 fluid.dye_black=Schwarzer Farbstoff
 fluid.dye_blue=Blauer Farbstoff
 fluid.dye_brown=Brauner Farbstoff

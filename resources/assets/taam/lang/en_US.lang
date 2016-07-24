@@ -136,6 +136,28 @@ item.taam.machine.mixer.name=Mixer
 item.taam.machine.fluid_drier.name=Fluid Drier
 
 # Fluids
+tile.taam.fluid.dye.black.name=Liquid Black Dye
+tile.taam.fluid.dye.blue.name=Liquid Blue Dye
+tile.taam.fluid.dye.brown.name=Liquid Brown Dye
+tile.taam.fluid.dye.cyan.name=Liquid Cyan Dye
+tile.taam.fluid.dye.gray.name=Liquid Gray Dye
+tile.taam.fluid.dye.green.name=Liquid Green Dye
+tile.taam.fluid.dye.lightBlue.name=Liquid Light Blue Dye
+tile.taam.fluid.dye.lightGray.name=Liquid Light Gray Dye
+tile.taam.fluid.dye.lime.name=Liquid Terminal Dye
+tile.taam.fluid.dye.magenta.name=Liquid Magenta Dye
+tile.taam.fluid.dye.orange.name=Liquid Orange Dye
+tile.taam.fluid.dye.pink.name=Liquid Pink Dye
+tile.taam.fluid.dye.purple.name=Liquid Purple Dye
+tile.taam.fluid.dye.red.name=Liquid Red Dye
+tile.taam.fluid.dye.white.name=Liquid White Dye
+tile.taam.fluid.dye.yellow.name=Liquid Yellow Dye
+
+tile.taam.fluid.material.concreteRough.name=Rough Concrete
+tile.taam.fluid.material.concreteFine.name=Fine Concrete
+tile.taam.fluid.material.coating.name=Resin-Based Coating
+
+# Fluids
 fluid.dye_black=Liquid Black Dye
 fluid.dye_blue=Liquid Blue Dye
 fluid.dye_brown=Liquid Brown Dye

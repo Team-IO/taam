@@ -186,6 +186,26 @@ public class TaamClientProxy extends TaamCommonProxy {
 		}
 
 		/*
+		 * Fluids
+		 */
+
+		for (Taam.FLUID_DYE_META meta : Taam.FLUID_DYE_META.values()) {
+			int metaInt = meta.ordinal();
+			String metaName = meta.name();
+			itemToRegister = GameRegistry.findItem(Taam.MOD_ID, "fluid.dye." + metaName);
+			ModelBakery.registerItemVariants(itemToRegister, new ResourceLocation(Taam.MOD_ID, "fluid.dye." + metaName));
+			modelMesher.register(itemToRegister, 0, new ModelResourceLocation(Taam.MOD_ID + ":fluid.dye." + metaName, "inventory"));
+		}
+
+		for (Taam.FLUID_MATERIAL_META meta : Taam.FLUID_MATERIAL_META.values()) {
+			int metaInt = meta.ordinal();
+			String metaName = meta.name();
+			itemToRegister = GameRegistry.findItem(Taam.MOD_ID, "fluid.material." + metaName);
+			ModelBakery.registerItemVariants(itemToRegister, new ResourceLocation(Taam.MOD_ID, "fluid.material." + metaName));
+			modelMesher.register(itemToRegister, 0, new ModelResourceLocation(Taam.MOD_ID + ":fluid.material." + metaName, "inventory"));
+		}
+
+		/*
 		 * Other Items
 		 */
 
