@@ -197,15 +197,13 @@ public class BlockSensor extends BaseBlock {
 	@Override
 	public boolean canBlockStay(World worldIn, BlockPos pos, IBlockState state) {
 		EnumFacing dir = state.getValue(DIRECTION);
-		EnumFacing side = dir.getOpposite();
 
-		return worldIn.isSideSolid(pos.offset(side), dir);
+		return worldIn.isSideSolid(pos.offset(dir.getOpposite()), dir);
 	}
 
 	@Override
 	public boolean canPlaceBlockOnSide(World worldIn, BlockPos pos, EnumFacing side) {
-		//return worldIn.isSideSolid(pos.offset(side), side);
-		return true;
+		return worldIn.isSideSolid(pos.offset(side.getOpposite()), side);
 	}
 
 }
