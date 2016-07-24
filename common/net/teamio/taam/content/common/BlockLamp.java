@@ -15,6 +15,8 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.teamio.taam.content.MaterialMachinesTransparent;
 import net.teamio.taam.rendering.obj.OBJModel;
 
@@ -34,8 +36,8 @@ public class BlockLamp extends Block {
 	/**
 	 * Hitbox "offset" height (block bottom/top -> sensor base)
 	 */
-	private static final float height = 0.43f;
-	
+	private static final float height = 6/16f;
+
 	public BlockLamp() {
 		super(MaterialMachinesTransparent.INSTANCE);
 		setHardness(3.5f);
@@ -132,14 +134,43 @@ public class BlockLamp extends Block {
 		}
 		return new AxisAlignedBB(minX,minY,minZ, maxX, maxY,maxZ);
 	}
-	
+
+	@Override
+	public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn) {
+
+		boolean isOn = state.getValue(POWERED);
+
+		boolean powered = worldIn.isBlockPowered(pos);
+
+		if(isOn != powered) {
+			worldIn.setBlockState(pos, state.withProperty(POWERED, powered), 2);
+		}
+	}
+
 	@Override
 	public int getLightValue(IBlockState state) {
-		return 15;
+		return state.getValue(POWERED) ? 15 : 0;
 	}
 
 	@Override
 	public boolean isBlockSolid(IBlockAccess worldIn, BlockPos pos, EnumFacing side) {
+		return false;
+	}
+
+	@Override
+	public boolean isOpaqueCube(IBlockState state) {
+		return false;
+	}
+
+	@Override
+	public boolean isFullCube(IBlockState state) {
+		// Required false to prevent suffocation
+		return false;
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public boolean isBlockNormalCube(IBlockState state) {
 		return false;
 	}
 
@@ -157,19 +188,37 @@ public class BlockLamp extends Block {
 
 	public static boolean canBlockStay(World worldIn, BlockPos pos, IBlockState state) {
 		EnumFacing dir = state.getValue(DIRECTION);
-		EnumFacing side = dir.getOpposite();
 
-		return worldIn.isSideSolid(pos.offset(side), dir);
+		return worldIn.isSideSolid(pos.offset(dir.getOpposite()), dir);
 	}
 
 	@Override
 	public boolean canPlaceBlockOnSide(World worldIn, BlockPos pos, EnumFacing side) {
-		//return worldIn.isSideSolid(pos.offset(side), side);
-		return true;
+		return worldIn.isSideSolid(pos.offset(side.getOpposite()), side);
 	}
 
 	@Override
 	public int damageDropped(IBlockState state) {
 		return 0;
 	}
+
+	@Override
+	public boolean rotateBlock(World world, BlockPos pos, EnumFacing axis) {
+		IBlockState state = world.getBlockState(pos);
+		EnumFacing currentDirection = state.getValue(DIRECTION);
+		EnumFacing previousRotation = currentDirection;
+		for(int i = 0; i < 6; i++) {
+			state = state.cycleProperty(DIRECTION);
+			currentDirection = state.getValue(DIRECTION);
+			if(canPlaceBlockOnSide(world, pos, currentDirection)) {
+				break;
+			}
+		}
+		if(currentDirection != previousRotation) {
+			world.setBlockState(pos, state, 2);
+			return true;
+		}
+		return false;
+	}
+
 }

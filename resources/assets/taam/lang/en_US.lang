@@ -79,6 +79,7 @@ itemGroup.taam=Taam
 tile.taam.sensor.name=Motion Sensor
 tile.taam.slidingdoor.name=Sliding Door
 tile.taam.support_beam.name=Support Beam
+tile.taam.lamp.name=Industrial Lamp
 # Concrete
 tile.taam.concrete.name=Concrete
 tile.taam.concrete.rough.name=Rough Concrete

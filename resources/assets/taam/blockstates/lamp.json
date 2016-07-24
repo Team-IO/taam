@@ -1,7 +1,6 @@
 {
     "forge_marker": 1,
     "defaults": {
-        "textures": {},
         "model": "taam:industrial_lamp.obj",
         "custom": {
             "flip-v": true
@@ -14,8 +13,16 @@
             "transform": "forge:default-block"
         }],
         "powered": {
-        	"true": {},
-        	"false": {}
+        	"true": {
+		        "textures": {
+		        	"Conveyor": "taam:blocks/industrial_lamp_on"
+		        }
+	        },
+        	"false": {
+		        "textures": {
+		        	"Conveyor": "taam:blocks/industrial_lamp_off"
+		        }
+	        }
         },
         "direction": {
         	"up": {"x": 90},
