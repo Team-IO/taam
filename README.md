@@ -1,5 +1,7 @@
 taam [![Build Status](https://travis-ci.org/Team-IO/taam.svg?branch=1.9)](https://travis-ci.org/Team-IO/taam)
 ====
+
+[![Join the chat at https://gitter.im/Team-IO/taam](https://badges.gitter.im/Team-IO/taam.svg)](https://gitter.im/Team-IO/taam?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 Tech and Accessory Mod
 
 For details on how to use this mod, check the [Wiki](https://github.com/Team-IO/taam/wiki).
