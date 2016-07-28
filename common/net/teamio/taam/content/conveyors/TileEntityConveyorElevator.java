@@ -107,7 +107,7 @@ public class TileEntityConveyorElevator extends BaseTileEntity implements ITicka
 		// one conveyor,
 		// as we depend on the status of the next slot
 		int[] slotOrder = ConveyorUtil.getSlotOrderForDirection(EnumFacing.UP);
-		if (ConveyorUtil.defaultTransition(worldObj, pos, conveyorSlots, slotOrder)) {
+		if (ConveyorUtil.defaultTransition(worldObj, pos, conveyorSlots, null, slotOrder)) {
 			updateState(false, false, false);
 		}
 	}

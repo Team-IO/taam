@@ -146,7 +146,7 @@ public class TileEntityConveyor extends BaseTileEntity implements IRotatable, IC
 		 * Let the appliances override the direction, if required
 		 */
 		List<IConveyorAppliance> appliances = getAppliances();
-		if (appliances != null) {
+		if (appliances != null && appliances.size() > 0) {
 			ItemWrapper wrapper = conveyorSlots.getSlot(slot);
 			// Let each appliance have the chance to override the next slot
 			for (IConveyorAppliance appliance : appliances) {
@@ -282,7 +282,7 @@ public class TileEntityConveyor extends BaseTileEntity implements IRotatable, IC
 		// one conveyor,
 		// as we depend on the status of the next slot
 		int[] slotOrder = ConveyorUtil.getSlotOrderForDirection(direction);
-		if (ConveyorUtil.defaultTransition(worldObj, pos, conveyorSlots, slotOrder)) {
+		if (ConveyorUtil.defaultTransition(worldObj, pos, conveyorSlots, this, slotOrder)) {
 			updateState(false, false, false);
 		}
 	}

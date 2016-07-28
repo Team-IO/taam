@@ -491,14 +491,12 @@ public class ConveyorUtil {
 	 * @return true if the state of any item changed (TIleEntity should be
 	 *         marked dirty).
 	 */
-	public static boolean defaultTransition(World world, BlockPos pos, IConveyorSlots tileEntity, int[] slotOrder) {
+	public static boolean defaultTransition(World world, BlockPos pos, IConveyorSlots tileEntity, IConveyorApplianceHost applianceHost, int[] slotOrder) {
 		/*
 		 * Fetch info on appliances
 		 */
 		List<IConveyorAppliance> appliances = null;
-		IConveyorApplianceHost applianceHost = null;
-		if (tileEntity instanceof IConveyorApplianceHost) {
-			applianceHost = (IConveyorApplianceHost) tileEntity;
+		if (applianceHost != null) {
 			appliances = applianceHost.getAppliances();
 		}
 
@@ -530,7 +528,7 @@ public class ConveyorUtil {
 			/*
 			 * Let the appliances process the current slot.
 			 */
-			if (appliances != null) {
+			if (appliances != null && appliances.size() > 0) {
 
 				// Let each appliance process the item
 				for (IConveyorAppliance appliance : appliances) {

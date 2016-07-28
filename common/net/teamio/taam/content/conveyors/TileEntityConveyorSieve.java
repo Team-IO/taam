@@ -127,7 +127,7 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements IRotatabl
 			 * Move items already on the conveyor
 			 */
 
-			if(ConveyorUtil.defaultTransition(worldObj, pos, conveyorSlots, slotOrder)) {
+			if(ConveyorUtil.defaultTransition(worldObj, pos, conveyorSlots, null, slotOrder)) {
 				needsUpdate = true;
 			}
 		}
