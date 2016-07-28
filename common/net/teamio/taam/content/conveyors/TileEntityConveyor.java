@@ -24,7 +24,6 @@ import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IRenderable;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.content.IWorldInteractable;
-import net.teamio.taam.conveyors.ConveyorSlotsItemHandler;
 import net.teamio.taam.conveyors.ConveyorSlotsMoving;
 import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.conveyors.IConveyorAppliance;
@@ -77,12 +76,12 @@ public class TileEntityConveyor extends BaseTileEntity implements IRotatable, IC
 			public byte getSpeedsteps() {
 				return Config.pl_conveyor_speedsteps[TileEntityConveyor.this.speedLevel];
 			}
-			
+
 			@Override
 			public EnumFacing getNextSlot(int slot) {
 				return TileEntityConveyor.this.getNextSlot(slot);
 			}
-			
+
 			@Override
 			public void onChangeHook() {
 				updateState(true, false, false);
@@ -90,7 +89,7 @@ public class TileEntityConveyor extends BaseTileEntity implements IRotatable, IC
 		};
 		conveyorSlots.rotation = direction;
 	}
-	
+
 	@Override
 	public String getName() {
 		return "tile.taam.productionline.conveyor.name";
@@ -147,7 +146,7 @@ public class TileEntityConveyor extends BaseTileEntity implements IRotatable, IC
 		 * Let the appliances override the direction, if required
 		 */
 		List<IConveyorAppliance> appliances = getAppliances();
-		if (appliances != null) {
+		if (appliances != null && appliances.size() > 0) {
 			ItemWrapper wrapper = conveyorSlots.getSlot(slot);
 			// Let each appliance have the chance to override the next slot
 			for (IConveyorAppliance appliance : appliances) {
@@ -235,7 +234,7 @@ public class TileEntityConveyor extends BaseTileEntity implements IRotatable, IC
 		// there.
 		renderAbove = worldObj.isSideSolid(pos.offset(EnumFacing.UP), EnumFacing.DOWN)
 				|| ConveyorUtil.getSlots(worldObj.getTileEntity(pos.offset(EnumFacing.UP)), EnumFacing.DOWN) != null;
-		
+
 		updateApplianceCache();
 	}
 
@@ -283,7 +282,7 @@ public class TileEntityConveyor extends BaseTileEntity implements IRotatable, IC
 		// one conveyor,
 		// as we depend on the status of the next slot
 		int[] slotOrder = ConveyorUtil.getSlotOrderForDirection(direction);
-		if (ConveyorUtil.defaultTransition(worldObj, pos, conveyorSlots, slotOrder)) {
+		if (ConveyorUtil.defaultTransition(worldObj, pos, conveyorSlots, this, slotOrder)) {
 			updateState(false, false, false);
 		}
 	}
@@ -309,7 +308,7 @@ public class TileEntityConveyor extends BaseTileEntity implements IRotatable, IC
 		redirectorRight = tag.getBoolean("redirectorRight");
 		conveyorSlots.deserializeNBT(tag.getTagList("items", NBT.TAG_COMPOUND));
 	}
-	
+
 	@Override
 	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
 		if(capability == Taam.CAPABILITY_CONVEYOR) {
@@ -328,11 +327,11 @@ public class TileEntityConveyor extends BaseTileEntity implements IRotatable, IC
 			return (T) conveyorSlots;
 		}
 		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-			return (T) new ConveyorSlotsItemHandler(conveyorSlots, facing);
+			return (T) conveyorSlots.getItemHandler(facing);
 		}
 		return super.getCapability(capability, facing);
 	}
-	
+
 	/*
 	 * IRotatable implementation
 	 */
@@ -390,7 +389,7 @@ public class TileEntityConveyor extends BaseTileEntity implements IRotatable, IC
 			applianceCache = null;
 		}
 	}
-	
+
 	@Override
 	public IConveyorSlots getSlots() {
 		return conveyorSlots;
@@ -431,7 +430,7 @@ public class TileEntityConveyor extends BaseTileEntity implements IRotatable, IC
 		}
 
 		//TODO: Cleanup, move to base block with the rest of the hand logic
-		
+
 		boolean playerHasWrenchInMainhand = WrenchUtil.playerHasWrenchInHand(player, EnumHand.MAIN_HAND);
 		boolean playerHasWrench = playerHasWrenchInMainhand || (player.isSneaking() && WrenchUtil.playerHasWrenchInHand(player, EnumHand.OFF_HAND));
 		if (playerHasWrench) {

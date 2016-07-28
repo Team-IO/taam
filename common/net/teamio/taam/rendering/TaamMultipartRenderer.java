@@ -32,7 +32,7 @@ public class TaamMultipartRenderer extends MultipartSpecialRenderer<MachineMulti
 				GL11.glTranslated(-.5f, -.5f, -.5f);
 
 				for (TankRenderInfo renderInfo : tankRI) {
-					renderer.renderTankContent(renderInfo.tankInfo.fluid, renderInfo.tankInfo.capacity, renderInfo.bounds);
+					renderer.renderTankContent(renderInfo.fluid, renderInfo.capacity, renderInfo.bounds);
 				}
 				GL11.glPopMatrix();
 			}

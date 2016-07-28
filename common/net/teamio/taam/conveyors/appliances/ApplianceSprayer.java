@@ -38,7 +38,7 @@ public class ApplianceSprayer extends ATileEntityAppliance implements ITickable,
 
 	private final FluidTank tank;
 	private final PipeEndFluidHandler pipeEnd;
-	private final TankRenderInfo tankRI = new TankRenderInfo(bounds_sprayer_tank, null);
+	private final TankRenderInfo tankRI = new TankRenderInfo(bounds_sprayer_tank);
 
 	private FluidStack lastInputFluid;
 	private IProcessingRecipeFluidBased[] matchingRecipes;
@@ -264,7 +264,7 @@ public class ApplianceSprayer extends ATileEntityAppliance implements ITickable,
 			return (T) tank;
 		}
 		if (capability == Taam.CAPABILITY_RENDER_TANK) {
-			tankRI.tankInfo = tank.getInfo();
+			tankRI.setInfo(tank);
 			return (T) tankRI.asArray();
 		}
 		return null;

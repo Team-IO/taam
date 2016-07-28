@@ -81,7 +81,7 @@ public class ConveyorSlotsStandard extends ConveyorSlotsBase implements INBTSeri
 	/*
 	 * INBTSerializable implementation
 	 */
-	
+
 	@Override
 	public NBTTagList serializeNBT() {
 		NBTTagList itemsTag = new NBTTagList();
@@ -96,7 +96,12 @@ public class ConveyorSlotsStandard extends ConveyorSlotsBase implements INBTSeri
 		if (nbt != null) {
 			int count = Math.min(nbt.tagCount(), slots.length);
 			for (int i = 0; i < count; i++) {
-				slots[i] = ItemWrapper.readFromNBT(nbt.getCompoundTagAt(i));
+				slots[i].deserializeNBT(nbt.getCompoundTagAt(i));
+			}
+			if(count < slots.length) {
+				for(int i = count; i < slots.length; i++) {
+					slots[i].itemStack = null;
+				}
 			}
 		}
 	}

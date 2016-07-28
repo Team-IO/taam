@@ -203,7 +203,7 @@ public class ConveyorUtil {
 			return getNextSlot(4, dir);
 		}
 	}
-	
+
 	public static class RotatedDefinition {
 		private int[][] rotated;
 
@@ -212,7 +212,7 @@ public class ConveyorUtil {
 			int[] unrotated = new int[] { one, two, three, four, five, six, seven, eight, nine };
 			calculateRotations(unrotated);
 		}
-		
+
 		private void calculateRotations(int[] unrotated) {
 			rotated = new int[4][];
 			// North
@@ -224,10 +224,14 @@ public class ConveyorUtil {
 			// East
 			rotated[3] = rotate(rotated[0]);
 		}
-		
+
 		public int get(int slot, EnumFacing rotation) {
+			int horizontalIndex = rotation.getHorizontalIndex();
+			if(horizontalIndex < 0) {
+				horizontalIndex = 0;
+			}
 			// Horizontal Index: S-W-N-E
-			int[] slots = rotated[rotation.getHorizontalIndex()];
+			int[] slots = rotated[horizontalIndex];
 
 			slot = MathHelper.clamp_int(slot, 0, 8);
 
@@ -247,7 +251,7 @@ public class ConveyorUtil {
 				source[8], source[5], source[2]
 		};
 	}
-	
+
 	public static RotatedDefinition LANES = new RotatedDefinition(
 			// Remember, this definition is inverted being left-to-right not top-down order, so NORTH is left!
 			1, 1, 1,
@@ -260,7 +264,7 @@ public class ConveyorUtil {
 			3, 2, 1,
 			3, 2, 1
 			);
-	
+
 
 	public static double getItemPositionX(int slot) {
 		double x = Math.floor(slot / 3) + 0.5;
@@ -368,7 +372,7 @@ public class ConveyorUtil {
 			ConveyorUtil.dropItem(world, pos, slots, index, withVelocity);
 		}
 	}
-	
+
 	/**
 	 * Drops the item in the passed slot, exactly where it is rendered now.
 	 *
@@ -491,14 +495,12 @@ public class ConveyorUtil {
 	 * @return true if the state of any item changed (TIleEntity should be
 	 *         marked dirty).
 	 */
-	public static boolean defaultTransition(World world, BlockPos pos, IConveyorSlots tileEntity, int[] slotOrder) {
+	public static boolean defaultTransition(World world, BlockPos pos, IConveyorSlots tileEntity, IConveyorApplianceHost applianceHost, int[] slotOrder) {
 		/*
 		 * Fetch info on appliances
 		 */
 		List<IConveyorAppliance> appliances = null;
-		IConveyorApplianceHost applianceHost = null;
-		if (tileEntity instanceof IConveyorApplianceHost) {
-			applianceHost = (IConveyorApplianceHost) tileEntity;
+		if (applianceHost != null) {
 			appliances = applianceHost.getAppliances();
 		}
 
@@ -530,7 +532,7 @@ public class ConveyorUtil {
 			/*
 			 * Let the appliances process the current slot.
 			 */
-			if (appliances != null) {
+			if (appliances != null && appliances.size() > 0) {
 
 				// Let each appliance process the item
 				for (IConveyorAppliance appliance : appliances) {
@@ -680,7 +682,7 @@ public class ConveyorUtil {
 		}
 	}
 
-	public static List<IConveyorAppliance> getTouchingAppliances(IConveyorApplianceHost tileEntityConveyor, IBlockAccess world, BlockPos pos) {
+	public static List<IConveyorAppliance> getTouchingAppliances(IConveyorApplianceHost host, IBlockAccess world, BlockPos pos) {
 		List<IConveyorAppliance> appliances = new ArrayList<IConveyorAppliance>();
 
 		for (EnumFacing direction : EnumFacing.VALUES) {
@@ -696,12 +698,12 @@ public class ConveyorUtil {
 		return appliances;
 	}
 
-	public static RedirectorSide getRedirectorSide(EnumFacing direction, EnumFacing hitSide,
-			float hitX, float hitY, float hitZ, boolean topOnly) {
+	public static RedirectorSide getRedirectorSide(EnumFacing dir, EnumFacing hitSide, float hitX, float hitY,
+			float hitZ, boolean topOnly) {
 		EnumFacing sideToConsider = hitSide;
-	
+
 		if (hitSide == EnumFacing.UP) {
-			if (direction.getAxis() == Axis.Z) {
+			if (dir.getAxis() == Axis.Z) {
 				// We look in Z direction, need to check X
 				sideToConsider = hitX > 0.5 ? EnumFacing.EAST : EnumFacing.WEST;
 			} else {
@@ -711,10 +713,10 @@ public class ConveyorUtil {
 		} else if (topOnly) {
 			return RedirectorSide.None;
 		}
-	
-		if (sideToConsider == direction.rotateY()) {
+
+		if (sideToConsider == dir.rotateY()) {
 			return topOnly ? RedirectorSide.None : RedirectorSide.Right;
-		} else if (sideToConsider == direction.rotateYCCW()) {
+		} else if (sideToConsider == dir.rotateYCCW()) {
 			return topOnly ? RedirectorSide.None : RedirectorSide.Left;
 		} else {
 			return RedirectorSide.None;

@@ -27,7 +27,6 @@ import net.teamio.taam.content.IRedstoneControlled;
 import net.teamio.taam.content.IRenderable;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.content.IWorldInteractable;
-import net.teamio.taam.conveyors.ConveyorSlotsItemHandler;
 import net.teamio.taam.conveyors.ConveyorSlotsMoving;
 import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.conveyors.ItemWrapper;
@@ -58,7 +57,7 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements IRotatabl
 			public byte getSpeedsteps() {
 				return Config.pl_sieve_speedsteps;
 			}
-			
+
 			@Override
 			public EnumFacing getNextSlot(int slot) {
 				return direction;
@@ -70,7 +69,7 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements IRotatabl
 		};
 		conveyorSlots.rotation = direction;
 	}
-	
+
 	@Override
 	public String getName() {
 		return "tile.taam.productionline.sieve.name";
@@ -128,7 +127,7 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements IRotatabl
 			 * Move items already on the conveyor
 			 */
 
-			if(ConveyorUtil.defaultTransition(worldObj, pos, conveyorSlots, slotOrder)) {
+			if(ConveyorUtil.defaultTransition(worldObj, pos, conveyorSlots, null, slotOrder)) {
 				needsUpdate = true;
 			}
 		}
@@ -206,7 +205,7 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements IRotatabl
 		conveyorSlots.rotation = direction;
 		conveyorSlots.deserializeNBT(tag.getTagList("items", NBT.TAG_COMPOUND));
 	}
-	
+
 	@Override
 	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
 		if(capability == Taam.CAPABILITY_CONVEYOR) {
@@ -225,7 +224,7 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements IRotatabl
 			return (T) conveyorSlots;
 		}
 		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-			return (T) new ConveyorSlotsItemHandler(conveyorSlots, facing);
+			return (T) conveyorSlots.getItemHandler(facing);
 		}
 		return super.getCapability(capability, facing);
 	}

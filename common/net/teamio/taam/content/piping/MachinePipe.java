@@ -1,6 +1,5 @@
 package net.teamio.taam.content.piping;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.block.state.IBlockState;
@@ -48,6 +47,11 @@ public class MachinePipe implements IMachine, IPipe, IRenderable {
 	public static AxisAlignedBB bbBaseplate = new AxisAlignedBB(
 			fromBorderBaseplate, 0, fromBorderBaseplate,
 			1-fromBorderBaseplate, baseplateSize, 1-fromBorderBaseplate);
+
+	/**
+	 * pipearray for {@link #getInternalPipes(IBlockAccess, BlockPos)}.
+	 */
+	private static final IPipe[] internalPipes = new IPipe[6];
 
 	static {
 		bbFaces[EnumFacing.EAST.ordinal()]	= new AxisAlignedBB(1-fromBorder,	fromBorder,		fromBorder,
@@ -344,23 +348,26 @@ public class MachinePipe implements IMachine, IPipe, IRenderable {
 
 	@Override
 	public IPipe[] getInternalPipes(IBlockAccess world, BlockPos pos) {
-		List<IPipe> pipes = new ArrayList<IPipe>(6);
-		if(Config.pl_pipe_wrap_ifluidhandler && adjacentFluidHandlers != null) {
-			for (EnumFacing side : EnumFacing.values()) {
-				if(isSideAvailable(side)) {
-					// If there is no "regular" pipe on that side
-					IPipe pipeOnSide = PipeUtil.getConnectedPipe(world, pos, side);
-					if (pipeOnSide == null) {
-						// Check for fluid handler wrappers
-						int sideIdx = side.ordinal();
-						if(adjacentFluidHandlers[sideIdx] != null) {
-							pipes.add(adjacentFluidHandlers[sideIdx]);
-						}
+		if(!Config.pl_pipe_wrap_ifluidhandler || adjacentFluidHandlers == null) {
+			return null;
+		}
+
+		for (EnumFacing side : EnumFacing.values()) {
+			int sideIdx = side.ordinal();
+			if(isSideAvailable(side)) {
+				// If there is no "regular" pipe on that side
+				IPipe pipeOnSide = PipeUtil.getConnectedPipe(world, pos, side);
+				if (pipeOnSide == null) {
+					// Check for fluid handler wrappers
+					if(adjacentFluidHandlers[sideIdx] != null) {
+						internalPipes[sideIdx] = adjacentFluidHandlers[sideIdx];
+						continue;
 					}
 				}
 			}
+			internalPipes[sideIdx] = null;
 		}
-		return pipes.toArray(new IPipe[pipes.size()]);
+		return internalPipes;
 	}
 
 	@Override

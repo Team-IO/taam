@@ -14,7 +14,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.fluids.FluidTankInfo;
 import net.teamio.taam.Config;
 import net.teamio.taam.Log;
 import net.teamio.taam.Taam;
@@ -59,7 +58,7 @@ public class MachinePump implements IMachine, IRotatable {
 	public static final AxisAlignedBB bbCoolusion = new AxisAlignedBB(fromBorderOcclusion, fromBorderOcclusion,
 			fromBorderOcclusion, 1 - fromBorderOcclusion, 1 - fromBorderOcclusion, 1 - fromBorderOcclusion);
 
-	private TankRenderInfo tankRI = new TankRenderInfo(boundsPumpTank[2], null);
+	private TankRenderInfo tankRI = new TankRenderInfo(boundsPumpTank[2]);
 
 	private byte occludedSides;
 
@@ -195,7 +194,8 @@ public class MachinePump implements IMachine, IRotatable {
 			}
 		}
 		if (capability == Taam.CAPABILITY_RENDER_TANK) {
-			tankRI.tankInfo = new FluidTankInfo(info.content.isEmpty() ? null : info.content.get(0), info.capacity);
+			tankRI.fluid = info.content.isEmpty() ? null : info.content.get(0);
+			tankRI.capacity = info.capacity;
 			return (T) tankRI.asArray();
 		}
 		return null;

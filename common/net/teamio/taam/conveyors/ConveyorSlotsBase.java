@@ -16,10 +16,19 @@ public abstract class ConveyorSlotsBase implements IConveyorSlots {
 	public double insertMinY = 0.3;
 	public float verticalPosition = 0.51f;
 
+	private ConveyorSlotsItemHandler handler;
+
+	public ConveyorSlotsItemHandler getItemHandler(EnumFacing side) {
+		if(handler == null || handler.slot != ConveyorUtil.getSlot(side)) {
+			handler = new ConveyorSlotsItemHandler(this, side);
+		}
+		return handler;
+	}
+
 	/**
 	 * This method should be called by implementations when content changes,
 	 * that needs to be saved / updated.
-	 * 
+	 *
 	 * Implementations further down can then call their own logic in here.
 	 */
 	public void onChangeHook() {
