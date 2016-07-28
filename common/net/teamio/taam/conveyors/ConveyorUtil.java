@@ -226,8 +226,12 @@ public class ConveyorUtil {
 		}
 
 		public int get(int slot, EnumFacing rotation) {
+			int horizontalIndex = rotation.getHorizontalIndex();
+			if(horizontalIndex < 0) {
+				horizontalIndex = 0;
+			}
 			// Horizontal Index: S-W-N-E
-			int[] slots = rotated[rotation.getHorizontalIndex()];
+			int[] slots = rotated[horizontalIndex];
 
 			slot = MathHelper.clamp_int(slot, 0, 8);
 
