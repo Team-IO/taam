@@ -178,6 +178,9 @@ public class MachinePump implements IMachine, IRotatable {
 		if (capability == Taam.CAPABILITY_PIPE) {
 			return facing.getAxis() == direction.getAxis();
 		}
+		if (capability == Taam.CAPABILITY_RENDER_TANK) {
+			return true;
+		}
 		return false;
 	}
 

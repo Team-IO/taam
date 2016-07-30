@@ -17,7 +17,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.IWorldNameable;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.oredict.OreDictionary;
+import net.teamio.taam.Config;
+import net.teamio.taam.MultipartHandler;
 import net.teamio.taam.Taam;
 import net.teamio.taam.content.IRedstoneControlled;
 import net.teamio.taam.conveyors.IConveyorApplianceHost;
@@ -270,5 +273,18 @@ public final class TaamUtil {
 			return inventory.getDisplayName().getFormattedText();
 		}
 		return I18n.format(inventory.getDisplayName().getFormattedText(), new Object[0]);
+	}
+
+	public static <T> T getCapability(Capability<T> capability, TileEntity tileEntity, EnumFacing side) {
+		if (tileEntity == null) {
+			return null;
+		}
+		if(tileEntity.hasCapability(capability, side)) {
+			return tileEntity.getCapability(capability, side);
+		}
+		if(Config.multipart_present) {
+			return MultipartHandler.getCapabilityForCenter(capability, tileEntity.getWorld(), tileEntity.getPos(), side);
+		}
+		return null;
 	}
 }

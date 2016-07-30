@@ -18,9 +18,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
-import net.teamio.taam.Config;
-import net.teamio.taam.MultipartHandler;
 import net.teamio.taam.Taam;
+import net.teamio.taam.util.TaamUtil;
 
 public class ConveyorUtil {
 
@@ -39,7 +38,7 @@ public class ConveyorUtil {
 		double relativeY = ei.posY - pos.getY();
 		double relativeZ = ei.posZ - pos.getZ();
 
-		IConveyorSlots conveyorTE = tileEntity.getCapability(Taam.CAPABILITY_CONVEYOR, EnumFacing.UP);
+		IConveyorSlots conveyorTE = TaamUtil.getCapability(Taam.CAPABILITY_CONVEYOR, tileEntity, EnumFacing.UP);
 		if (conveyorTE != null) {
 			int slot = getSlotForRelativeCoordinates(relativeX, relativeZ);
 
@@ -471,14 +470,14 @@ public class ConveyorUtil {
 		if (tileEntity == null) {
 			return null;
 		}
+		IConveyorSlots slots = TaamUtil.getCapability(Taam.CAPABILITY_CONVEYOR, tileEntity, side);
+		if(slots != null) {
+			return slots;
+		}
 		if (tileEntity instanceof IConveyorSlots) {
 			return (IConveyorSlots) tileEntity;
 		}
-		IConveyorSlots candidate = tileEntity.getCapability(Taam.CAPABILITY_CONVEYOR, side);
-		if (candidate == null && Config.multipart_present) {
-			candidate = MultipartHandler.getCapabilityForCenter(Taam.CAPABILITY_CONVEYOR, tileEntity.getWorld(), tileEntity.getPos(), side);
-		}
-		return candidate;
+		return null;
 	}
 
 	/**

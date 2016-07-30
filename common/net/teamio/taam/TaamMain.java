@@ -368,11 +368,12 @@ public class TaamMain {
 			MultipartHandler.registerMultipartStuff();
 		}
 
+		Taam.MACHINE_META[] machine_meta_values = Taam.MACHINE_META.values();
 		/*
 		 * Wrapper block for machines if multipart is not available
 		 */
 		registerBlock(
-				blockMachine = new MachineBlock(Taam.MACHINE_META.values()),
+				blockMachine = new MachineBlock(machine_meta_values),
 				Taam.BLOCK_MACHINE_WRAPPER
 				);
 
@@ -381,10 +382,10 @@ public class TaamMain {
 		 */
 		if(Config.multipart_load && Config.multipart_register_items) {
 			// Multipart Item
-			itemMachine = MultipartHandler.createMultipartItem(Taam.BLOCK_MACHINE_WRAPPER, Taam.MACHINE_META.values());
+			itemMachine = MultipartHandler.createMultipartItem(machine_meta_values);
 		} else {
 			// Regular item, places a wrapper block
-			itemMachine = new MachineItemBlock(blockMachine, Taam.MACHINE_META.values());
+			itemMachine = new MachineItemBlock(blockMachine, machine_meta_values);
 		}
 		registerItem(itemMachine, Taam.BLOCK_MACHINE_WRAPPER);
 

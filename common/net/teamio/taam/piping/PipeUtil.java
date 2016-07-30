@@ -11,12 +11,11 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.teamio.taam.Config;
 import net.teamio.taam.Log;
-import net.teamio.taam.MultipartHandler;
 import net.teamio.taam.Taam;
 import net.teamio.taam.util.FluidUtils;
 import net.teamio.taam.util.InventoryUtils;
+import net.teamio.taam.util.TaamUtil;
 
 public final class PipeUtil {
 	private PipeUtil() {
@@ -62,10 +61,7 @@ public final class PipeUtil {
 			return null;
 		}
 		EnumFacing opposite = side.getOpposite();
-		IPipe candidate = ent.getCapability(Taam.CAPABILITY_PIPE, opposite);
-		if(candidate == null && Config.multipart_present) {
-			candidate = MultipartHandler.getCapabilityForCenter(Taam.CAPABILITY_PIPE, world, offsetPos, opposite);
-		}
+		IPipe candidate = TaamUtil.getCapability(Taam.CAPABILITY_PIPE, ent, opposite);
 		if(candidate != null && candidate.isSideAvailable(opposite)) {
 			return candidate;
 		}
@@ -92,11 +88,7 @@ public final class PipeUtil {
 			return null;
 		}
 		EnumFacing opposite = side.getOpposite();
-		IPipe candidate = ent.getCapability(Taam.CAPABILITY_PIPE, opposite);
-		if(candidate == null && Config.multipart_present) {
-			candidate = MultipartHandler.getCapabilityForCenter(Taam.CAPABILITY_PIPE, world, offsetPos, opposite);
-		}
-		return candidate;
+		return TaamUtil.getCapability(Taam.CAPABILITY_PIPE, ent, opposite);
 	}
 
 	private static final ThreadLocal<ArrayList<IPipe>> connected = new ThreadLocal<ArrayList<IPipe>>() {

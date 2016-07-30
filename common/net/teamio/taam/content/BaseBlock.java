@@ -92,13 +92,13 @@ public abstract class BaseBlock extends Block {
 		/*
 		 * Drop Items
 		 */
-		if(te != null) {
-			IConveyorSlots conveyorSlots = te.getCapability(Taam.CAPABILITY_CONVEYOR, EnumFacing.UP);
+		if(te != null && !(te instanceof TileEntityChute)) {
+			IConveyorSlots conveyorSlots = TaamUtil.getCapability(Taam.CAPABILITY_CONVEYOR, te, EnumFacing.UP);
 			if (conveyorSlots != null) {
 				ConveyorUtil.dropItems(worldIn, pos, conveyorSlots, false);
 			}
 
-			IItemHandler itemHandler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
+			IItemHandler itemHandler = TaamUtil.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, te, EnumFacing.UP);
 			if (itemHandler != null) {
 				for (int index = 0; index < itemHandler.getSlots(); index++) {
 					ItemStack itemstack = itemHandler.getStackInSlot(index);

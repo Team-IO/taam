@@ -24,7 +24,7 @@ import net.teamio.taam.machines.MachineMultipart;
 public class MultipartHandler {
 
 	public static void registerMultipartStuff() {
-		
+
 		MultipartRegistry.registerPartFactory(new IAdvancedPartFactory() {
 			@Override
 			public IMultipart createPart(ResourceLocation type, NBTTagCompound tag) {
@@ -42,11 +42,9 @@ public class MultipartHandler {
 				return multipart;
 			}
 		}, Taam.MACHINE_META.valuesAsString());
-
-		//MultipartRegistry.registerPart(MachineMultipart.class, "taam.machine");
 	}
 
-	public static Item createMultipartItem(String unlocalizedName, IMachineMetaInfo[] meta) {
+	public static Item createMultipartItem(IMachineMetaInfo[] meta) {
 		MachineItemMultipart item = new MachineItemMultipart(meta);
 		return item;
 	}
@@ -57,12 +55,20 @@ public class MultipartHandler {
 			return null;
 		}
 		ISlottedPart part = container.getPartInSlot(PartSlot.CENTER);
+		// Slotted capability prodiver
 		if(part instanceof ISlottedCapabilityProvider) {
-			return ((ISlottedCapabilityProvider) part).getCapability(capability, PartSlot.getFaceSlot(facing), facing);
-		} else if(part instanceof ICapabilityProvider) {
-			return ((ICapabilityProvider) part).getCapability(capability, facing);
-		} else {
-			return container.getCapability(capability, PartSlot.CENTER, facing);
+			ISlottedCapabilityProvider capProvider = (ISlottedCapabilityProvider) part;
+			PartSlot faceSlot = PartSlot.getFaceSlot(facing);
+			if(capProvider.hasCapability(capability, faceSlot, facing))
+				return capProvider.getCapability(capability, faceSlot, facing);
 		}
+		// "Regular" capability prodiver
+		if(part instanceof ICapabilityProvider) {
+			ICapabilityProvider capProvider = (ICapabilityProvider) part;
+			if(capProvider.hasCapability(capability, facing))
+				return capProvider.getCapability(capability, facing);
+		}
+		// Fallback, ask the container
+		return container.getCapability(capability, PartSlot.CENTER, facing);
 	}
 }
