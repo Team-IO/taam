@@ -24,6 +24,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.teamio.taam.Taam;
 import net.teamio.taam.TaamMain;
+import net.teamio.taam.content.common.TileEntityChute;
 import net.teamio.taam.content.conveyors.TileEntityConveyorHopper;
 import net.teamio.taam.content.conveyors.TileEntityConveyorItemBag;
 import net.teamio.taam.conveyors.ConveyorUtil;
