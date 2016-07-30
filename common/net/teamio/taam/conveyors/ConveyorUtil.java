@@ -596,7 +596,7 @@ public class ConveyorUtil {
 					ItemWrapper nextWrapper = nextBlock.getSlot(nextSlot);
 					nextSlotFree = nextWrapper.isEmpty();
 					wrappedIsSameDirection = nextBlock.getNextSlot(nextSlot) == nextSlotDir;
-					nextSlotMovable = nextBlock.canSlotMove(nextSlot) && wrappedIsSameDirection;
+					nextSlotMovable = nextBlock.canSlotMove(nextSlot) && (wrappedIsSameDirection || nextSlotDir.getAxis() == Axis.Y);
 					nextSlotProgress = nextWrapper.movementProgress;
 					byte nextSpeedSteps = nextBlock.getSpeedsteps();
 					if (nextSpeedSteps != speedsteps) {
@@ -643,7 +643,7 @@ public class ConveyorUtil {
 			 * forward
 			 */
 			if (nextSlotFree
-					|| nextSlotMovable && wrappedIsSameDirection && wrapper.movementProgress < nextSlotProgress) {
+					|| nextSlotMovable && wrapper.movementProgress < nextSlotProgress) {
 				wrapper.movementProgress++;
 				if (wrapper.movementProgress > speedsteps) {
 					wrapper.movementProgress = 0;

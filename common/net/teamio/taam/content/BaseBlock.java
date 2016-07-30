@@ -121,7 +121,25 @@ public abstract class BaseBlock extends Block {
 	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
 
-		//TODO: clean this up.
+		TileEntity te = worldIn.getTileEntity(pos);
+		IWorldInteractable interactable = null;
+		if (te instanceof IWorldInteractable) {
+			interactable = (IWorldInteractable) te;
+		} else if(te instanceof MachineTileEntity) {
+			MachineTileEntity mte = (MachineTileEntity)te;
+			if(mte.machine instanceof IWorldInteractable) {
+				interactable = (IWorldInteractable) mte.machine;
+			}
+		}
+		if(interactable != null) {
+			// All world interaction (perform action, open gui, etc.) is
+			// handled within the entity
+			boolean playerHasWrench = WrenchUtil.playerHasWrenchInHand(playerIn, hand);
+			boolean intercepted = interactable.onBlockActivated(worldIn, playerIn, hand, playerHasWrench, side, hitX, hitY, hitZ);
+			if(intercepted) {
+				return true;
+			}
+		}
 
 		if(WrenchUtil.wrenchBlock(worldIn, pos, playerIn, hand, side, hitX, hitY, hitZ) == EnumActionResult.SUCCESS) {
 			return true;
@@ -131,32 +149,18 @@ public abstract class BaseBlock extends Block {
 			return false;
 		}
 
-		TileEntity te = worldIn.getTileEntity(pos);
+		if (te instanceof TileEntityConveyorHopper || te instanceof TileEntityConveyorItemBag) {
+			playerIn.openGui(TaamMain.instance, 0, worldIn, pos.getX(), pos.getY(), pos.getZ());
+			return true;
+		}
+		return false;
+
 //		if (worldIn.isRemote) {
 //			return te instanceof IWorldInteractable || te instanceof TileEntityConveyorHopper
 //					|| te instanceof TileEntityConveyorItemBag;
 //		} else {
 
-			IWorldInteractable interactable = null;
-			if (te instanceof IWorldInteractable) {
-				interactable = (IWorldInteractable) te;
-			} else if(te instanceof MachineTileEntity) {
-				MachineTileEntity mte = (MachineTileEntity)te;
-				if(mte.machine instanceof IWorldInteractable) {
-					interactable = (IWorldInteractable) mte.machine;
-				}
-			}
-			if(interactable != null) {
-				// All world interaction (perform action, open gui, etc.) is
-				// handled within the entity
-				boolean playerHasWrench = WrenchUtil.playerHasWrenchInHand(playerIn, hand);
-				boolean intercepted = interactable.onBlockActivated(worldIn, playerIn, hand, playerHasWrench, side, hitX, hitY, hitZ);
-				return intercepted;
-			} else if (te instanceof TileEntityConveyorHopper || te instanceof TileEntityConveyorItemBag) {
-				playerIn.openGui(TaamMain.instance, 0, worldIn, pos.getX(), pos.getY(), pos.getZ());
-				return true;
-			}
-			return false;
+
 //		}
 	}
 

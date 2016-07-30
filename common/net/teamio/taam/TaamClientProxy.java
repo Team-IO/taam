@@ -249,7 +249,7 @@ public class TaamClientProxy extends TaamCommonProxy {
 		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_PRODUCTIONLINE, Taam.BLOCK_PRODUCTIONLINE_META.hopper.ordinal(), "conveyor_hopper.obj");
 		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_PRODUCTIONLINE, Taam.BLOCK_PRODUCTIONLINE_META.hopper_hs.ordinal(), "conveyor_hopper_hs.obj");
 		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_PRODUCTIONLINE, Taam.BLOCK_PRODUCTIONLINE_META.sieve.ordinal(), "conveyor_sieve.obj");
-		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_PRODUCTIONLINE, Taam.BLOCK_PRODUCTIONLINE_META.elevator.ordinal(), "conveyor_elevator.obj");
+		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_PRODUCTIONLINE, Taam.BLOCK_PRODUCTIONLINE_META.elevator.ordinal(), "conveyor_elevator_int.obj");
 	}
 
 	/**

@@ -1,28 +1,53 @@
 package net.teamio.taam.content.conveyors;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.teamio.taam.Config;
+import net.teamio.taam.Log;
 import net.teamio.taam.Taam;
 import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IRotatable;
+import net.teamio.taam.content.IWorldInteractable;
 import net.teamio.taam.conveyors.ConveyorSlotsMoving;
 import net.teamio.taam.conveyors.ConveyorUtil;
 
-public class TileEntityConveyorElevator extends BaseTileEntity implements ITickable, IRotatable {
+public class TileEntityConveyorElevator extends BaseTileEntity implements ITickable, IRotatable, IWorldInteractable {
 
 	private final ConveyorSlotsMoving conveyorSlots;
 	private EnumFacing direction = EnumFacing.NORTH;
+	private ElevatorDirection exitDirection = ElevatorDirection.UP;
 
 	public boolean isTop = false;
 	public boolean isBottom = false;
+
+	public static enum ElevatorDirection {
+		UP,
+		DOWN,
+		FORWARD,
+		BACK;
+
+		private static ElevatorDirection[] nexts = {
+				DOWN,
+				FORWARD,
+				BACK,
+				UP,
+		};
+
+		public ElevatorDirection getNext() {
+			return nexts[this.ordinal()];
+		}
+	}
 
 	public TileEntityConveyorElevator() {
 		conveyorSlots = new ConveyorSlotsMoving() {
@@ -50,21 +75,27 @@ public class TileEntityConveyorElevator extends BaseTileEntity implements ITicka
 	}
 
 	private EnumFacing getNextSlot(int slot) {
-		if (isTop) {
-			if (direction.getAxis() == Axis.X) {
-				if (ConveyorUtil.ROWS.get(slot, EnumFacing.EAST) == 1) {
-					return EnumFacing.WEST;
-				}
-				return EnumFacing.EAST;
+		if(exitDirection == ElevatorDirection.UP || exitDirection == ElevatorDirection.DOWN) {
+			int row = ConveyorUtil.ROWS.get(slot, direction);
+			if(row == 1) {
+				return direction;
+			} else if(row == 3) {
+				return direction.getOpposite();
 			}
-			if (ConveyorUtil.ROWS.get(slot, EnumFacing.SOUTH) == 1) {
-				return EnumFacing.SOUTH;
-			}
-			return EnumFacing.NORTH;
 		}
 
-		// TODO: Handle up/down settings, exit points
-		return EnumFacing.UP;
+		switch(exitDirection) {
+		default:
+		case UP:
+			//if(isTop) do something else?
+			return EnumFacing.UP;
+		case DOWN:
+			return EnumFacing.DOWN;
+		case FORWARD:
+			return direction;
+		case BACK:
+			return direction.getOpposite();
+		}
 	}
 
 	@Override
@@ -115,17 +146,26 @@ public class TileEntityConveyorElevator extends BaseTileEntity implements ITicka
 	@Override
 	protected void writePropertiesToNBT(NBTTagCompound tag) {
 		tag.setTag("items", conveyorSlots.serializeNBT());
+		tag.setInteger("direction", direction.ordinal());
+		tag.setInteger("exit", exitDirection.ordinal());
 	}
 
 	@Override
 	protected void readPropertiesFromNBT(NBTTagCompound tag) {
 		conveyorSlots.deserializeNBT(tag.getTagList("items", NBT.TAG_COMPOUND));
+
+		direction = EnumFacing.getFront(tag.getInteger("direction"));
+		if (direction == EnumFacing.UP || direction == EnumFacing.DOWN) {
+			direction = EnumFacing.NORTH;
+		}
+
+		exitDirection = ElevatorDirection.values()[MathHelper.clamp_int(tag.getInteger("exit"), 0, 3)];
 	}
 
 	@Override
 	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
 		if (capability == Taam.CAPABILITY_CONVEYOR) {
-			return facing.getAxis() == direction.getAxis() || facing.getAxis() == Axis.Y;
+			return facing == null || facing.getAxis() == direction.getAxis() || facing.getAxis() == Axis.Y;
 		}
 		return super.hasCapability(capability, facing);
 	}
@@ -138,6 +178,14 @@ public class TileEntityConveyorElevator extends BaseTileEntity implements ITicka
 			return (T) conveyorSlots;
 		}
 		return super.getCapability(capability, facing);
+	}
+
+	/**
+	 * Cycles between exit point in a certain direction or just continuing movement up or down
+	 */
+	public void cycleExitDirection() {
+		exitDirection = exitDirection.getNext();
+		Log.info("Setting exit direction to {}", exitDirection);
 	}
 
 	/*
@@ -169,5 +217,23 @@ public class TileEntityConveyorElevator extends BaseTileEntity implements ITicka
 	@Override
 	public EnumFacing getFacingDirection() {
 		return direction;
+	}
+
+	/*
+	 * IWorldInteractable implementation
+	 */
+	@Override
+	public boolean onBlockActivated(World world, EntityPlayer player, EnumHand hand, boolean hasWrench, EnumFacing side,
+			float hitX, float hitY, float hitZ) {
+		if(hasWrench && side.getAxis() == direction.getAxis()) {
+			cycleExitDirection();
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean onBlockHit(World world, EntityPlayer player, boolean hasWrench) {
+		return false;
 	}
 }
