@@ -238,8 +238,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 
 
 
-		float rotation = player.rotationYaw - 45;
-		rotation -= rotation % 90;
+		float rotation = (float)Math.floor((player.rotationYaw + 45) / 90f) * 90;
 
 		GlStateManager.rotate(-rotation, 0, 1, 0);
 
@@ -563,21 +562,22 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		}
 		boolean hasDebugTool = WrenchUtil.playerHasDebugTool(player);
 
-		if (hasDebugTool && tileEntity instanceof IPipe) {
+		if (hasDebugTool && tileEntity.hasCapability(Taam.CAPABILITY_PIPE, EnumFacing.UP)) {
 
 			FontRenderer fontRendererObj = Minecraft.getMinecraft().fontRendererObj;
 
-			IPipe pipe = (IPipe) tileEntity;
+			IPipe pipe = tileEntity.getCapability(Taam.CAPABILITY_PIPE, EnumFacing.UP);
 
 			int fillLevel = 0;
 
-			//TODO: Pipe Fill Level
-			//if(pipe instanceof TileEntityPipe) {
-			//	fillLevel = ((TileEntityPipe) pipe).getFillLevel();
-			//}
+			for(FluidStack fluid : pipe.getFluids()) {
+				if(fluid != null) {
+					fillLevel += fluid.amount;
+				}
+			}
 
 			String info0 = String.format("%03d/%d", fillLevel, pipe.getCapacity());
-			String info1 = String.format("%d-%d", pipe.getPressure(), pipe.getSuction());
+			String info1 = String.format("%d-%d %s", pipe.getPressure(), pipe.getSuction(), pipe.isActive() ? "A" : "P");
 			String info2 = "E: " + (pipe.getPressure() == 0 ? -pipe.getSuction() : pipe.getPressure());
 
 			GL11.glPushMatrix();
@@ -586,13 +586,13 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 
 				GL11.glTranslated(.5f, .5f, .5f);
 
-				float playerRot = player.getRotationYawHead();
-				float pitch = player.rotationPitch;
+				double playerRot = Math.floor((player.getRotationYawHead() + 45) / 90f) * 90;
+				double pitch = Math.floor((player.rotationPitch + 45) / 90f) * 90;
 
 				GL11.glRotatef(180, 0, 0, 1);
-				GL11.glRotatef(playerRot, 0, 1, 0);
-				GL11.glRotatef(-pitch, 1, 0, 0);
-				GL11.glTranslated(-.5f, -.5f, -.5f);
+				GL11.glRotated(playerRot, 0, 1, 0);
+				GL11.glRotated(-pitch, 1, 0, 0);
+				GL11.glTranslated(-.5f, -.5f, -.7f);
 
 				GL11.glPushMatrix();
 				{
@@ -600,9 +600,9 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 
 					GL11.glScalef(.02f, .02f, .02f);
 
-					fontRendererObj.drawString(info0, 0, 0, 0x00FFFF);
-					fontRendererObj.drawString(info1, 0, 8, 0xFFFFFF);
-					fontRendererObj.drawString(info2, 0, 16, 0xFFFF00);
+					fontRendererObj.drawString(info0, -8, 0, 0x00FFFF);
+					fontRendererObj.drawString(info1, -8, 8, 0xFFFFFF);
+					fontRendererObj.drawString(info2, -8, 16, 0xFFFF00);
 				}
 				GL11.glPopMatrix();
 			}
