@@ -4,6 +4,7 @@
 /*.ipr
 /*.iws
 /.idea
+/classes/
 logs
 
 #Eclipse
@@ -34,3 +35,4 @@ logs
 *.blend1
 
 /CameraStudio_log.*
+*.hprof
