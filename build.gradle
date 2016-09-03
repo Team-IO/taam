@@ -63,8 +63,7 @@ sourceSets {
 
 dependencies {
     //compile 'com.mod-buildcraft:buildcraft:6.0.8:dev'
-    //deobfProvided "MCMultiPart:MCMultiPart:${config.mcmultipart_version}:universal"
-    provided files ('run/mods/MCMultiPart-experimental-.._-universal.jar')
+    deobfCompile "MCMultiPart:MCMultiPart:${config.mcmultipart_version}:universal"
     compile "mezz.jei:jei_${config.jei_mc_version}:${config.jei_version}"
 }
 
