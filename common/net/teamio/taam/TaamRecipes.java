@@ -751,7 +751,7 @@ public class TaamRecipes {
 		//		nozzle
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1 ,Taam.ITEM_PART_META.nozzle.ordinal()),
 				" I ", "I I", " I ",
-				'I', "ingotIron"));
+				'I', "nuggetIron"));
 
 		//		Pump
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.pump.ordinal()),
