@@ -661,7 +661,7 @@ public class TaamRecipes {
 				'G', "blockGlass",
 				'p', "partPhotocell",
 				'I', "ingotIron",
-				'R', Items.REDSTONE));
+				'R', "dustRedstone"));
 
 		/*
 		 * Misc Items
@@ -719,13 +719,23 @@ public class TaamRecipes {
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.circuit_basic.ordinal()),
 				"CCC", "RGR", "CCC",
 				'C', "ingotCopper",
-				'G', Items.GOLD_INGOT,
-				'R', Items.REDSTONE));
+				'G', "ingotGold",
+				'R', "dustRedstone"));
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.circuit_basic.ordinal()),
+				"CRC", "CGC", "CRC",
+				'C', "ingotCopper",
+				'G', "ingotGold",
+				'R', "dustRedstone"));
 		//		advanced circuit
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.circuit_advanced.ordinal()),
 				"RGR", "GCG", "RGR",
-				'R', Items.REDSTONE,
-				'G', Items.GOLD_INGOT,
+				'R', "dustRedstone",
+				'G', "ingotGold",
+				'C', new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.circuit_basic.ordinal())));
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.circuit_advanced.ordinal()),
+				"GRG", "RCR", "GRG",
+				'R', "dustRedstone",
+				'G', "ingotGold",
 				'C', new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.circuit_basic.ordinal())));
 		//		logistics chip
 		/*GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.logistics_chip.ordinal()),
@@ -764,14 +774,14 @@ public class TaamRecipes {
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.motor.ordinal()),
 				"ACA", "CIC", "ACA",
 				'C', new ItemStack(TaamMain.itemPart,1,Taam.ITEM_PART_META.magnetic_coil.ordinal()),
-				'I', Items.IRON_INGOT,
+				'I', "ingotIron",
 				'A', "ingotAluminum"
 				));
 		//		Sieve
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.sieve.ordinal()),
 				"IBI", "BBB", "IBI",
 				'B', Blocks.IRON_BARS,
-				'I', Items.IRON_INGOT
+				'I', "ingotIron"
 				));
 
 		/*
@@ -803,13 +813,18 @@ public class TaamRecipes {
 				"www", "s s",
 				'w', "plankWood",
 				's', "stickWood"));
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemMaterial, 6 ,Taam.ITEM_MATERIAL_META.wooden_board.ordinal()),
+				"s s", "www",
+				'w', "plankWood",
+				's', "stickWood"));
+
 		//		aluminum plate
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemMaterial, 6 ,Taam.ITEM_MATERIAL_META.aluminum_plate.ordinal()),
-				"aaa", " a ",
+				" a ", "aaa",
 				'a', "ingotAluminum"));
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemMaterial, 6 ,Taam.ITEM_MATERIAL_META.aluminum_plate.ordinal()),
 				"aaa", " a ",
-				'a', "ingotAluminium"));
+				'a', "ingotAluminum"));
 	}
 
 }
