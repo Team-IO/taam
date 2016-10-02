@@ -12,6 +12,8 @@ import net.teamio.taam.recipes.IProcessingRecipe;
 
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 public abstract class ProcessingCategory extends BlankRecipeCategory {
 
 	public static final int slotInput = 0;
@@ -23,7 +25,7 @@ public abstract class ProcessingCategory extends BlankRecipeCategory {
 	}
 
 	@Override
-	public void setRecipe(IRecipeLayout recipeLayout, IRecipeWrapper recipeWrapper) {
+	public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull IRecipeWrapper recipeWrapper) {
 		if(!(recipeWrapper instanceof ProcessingRecipeWrapper)) {
 			Log.error("RecipeWrapper type unknown: {}", recipeWrapper);
 			return;
@@ -48,7 +50,7 @@ public abstract class ProcessingCategory extends BlankRecipeCategory {
 	}
 
 	@Override
-	public void setRecipe(IRecipeLayout recipeLayout, IRecipeWrapper recipeWrapper, IIngredients ingredients) {
+	public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull IRecipeWrapper recipeWrapper, @Nonnull IIngredients ingredients) {
 		if(!(recipeWrapper instanceof ProcessingRecipeWrapper)) {
 			Log.error("RecipeWrapper type unknown: {}", recipeWrapper);
 			return;

@@ -24,16 +24,19 @@ public class GrinderCategory extends ProcessingCategory {
 		background = guiHelper.createDrawable(bgLocation, 0, 63, 162, 62);
 	}
 
+	@Nonnull
 	@Override
 	public String getTitle() {
 		return localizedName;
 	}
 
+	@Nonnull
 	@Override
 	public String getUid() {
 		return Taam.INTEGRATION_JEI_CAT_GRINDER;
 	}
 
+	@Nonnull
 	@Override
 	public IDrawable getBackground() {
 		return background;
