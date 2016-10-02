@@ -55,8 +55,8 @@ public class GuiAdvancedMachine extends GuiContainer {
 	 *
 	 * @param button
 	 */
-	public void addButton(GuiButton button) {
-		this.buttonList.add(button);
+	public <T extends GuiButton> T addButton(T button) {
+		return super.addButton(button);
 	}
 
 	@Override

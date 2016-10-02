@@ -24,6 +24,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTPrimitive;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
@@ -225,7 +226,7 @@ public final class InventoryUtils {
 			int b = tag.getShort("Slot");
 			items[b] = ItemStack.loadItemStackFromNBT(tag);
 			if (tag.hasKey("Quantity"))
-				items[b].stackSize = ((NBTBase.NBTPrimitive) tag.getTag("Quantity")).getInt();
+				items[b].stackSize = ((NBTPrimitive)tag.getTag("Quantity")).getInt();
 		}
 	}
 
@@ -248,7 +249,7 @@ public final class InventoryUtils {
 			int b = tag.getShort("Slot");
 			items[b] = ItemStack.loadItemStackFromNBT(tag);
 			if (tag.hasKey("Quantity"))
-				items[b].stackSize = ((NBTBase.NBTPrimitive) tag.getTag("Quantity")).getInt();
+				items[b].stackSize = ((NBTPrimitive) tag.getTag("Quantity")).getInt();
 		}
 	}
 

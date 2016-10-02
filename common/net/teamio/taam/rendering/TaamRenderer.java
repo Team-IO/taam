@@ -299,7 +299,6 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 
 		GlStateManager.enableBlend();
 		GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-		GlStateManager.color(colorR, colorG, colorB, colorA);
 		GL11.glLineWidth(lineWidth);
 		// For whatever reason, we need to enable, THEN disable. Otherwise color gets somewhat garbled..
 		GlStateManager.enableTexture2D();
@@ -312,7 +311,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 
 		GL11.glTranslated(-d0, -d1, -d2);
 
-		RenderGlobal.drawSelectionBoundingBox(box.expand(boundingBoxExpand, boundingBoxExpand, boundingBoxExpand));
+		RenderGlobal.drawSelectionBoundingBox(box.expand(boundingBoxExpand, boundingBoxExpand, boundingBoxExpand), colorR, colorG, colorB, colorA);
 
 		GlStateManager.depthMask(true);
 		GlStateManager.enableTexture2D();
@@ -546,7 +545,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 			        GlStateManager.disableTexture2D();
 
 					// Render bit
-					RenderGlobal.drawOutlinedBoundingBox(new AxisAlignedBB(0, 0, 0, size, 0.8/3, size), 30, 80, 80, 255);
+					RenderGlobal.drawSelectionBoundingBox(new AxisAlignedBB(0, 0, 0, size, 0.8/3, size), 30, 80, 80, 255);
 
 					GlStateManager.popMatrix();
 				}
