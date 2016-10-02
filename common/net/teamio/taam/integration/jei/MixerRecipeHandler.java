@@ -13,7 +13,13 @@ public class MixerRecipeHandler implements IRecipeHandler<MixerRecipe> {
 	}
 
 	@Override
+	@Deprecated
 	public String getRecipeCategoryUid() {
+		return getRecipeCategoryUid(null);
+	}
+
+	@Override
+	public String getRecipeCategoryUid(MixerRecipe recipe) {
 		return Taam.INTEGRATION_JEI_CAT_MIXER;
 	}
 

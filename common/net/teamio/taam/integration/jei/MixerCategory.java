@@ -2,6 +2,7 @@ package net.teamio.taam.integration.jei;
 
 import javax.annotation.Nonnull;
 
+import mezz.jei.api.ingredients.IIngredients;
 import org.lwjgl.opengl.GL11;
 
 import mezz.jei.api.IGuiHelper;
@@ -29,6 +30,8 @@ import net.teamio.taam.Taam;
 import net.teamio.taam.TaamMain;
 import net.teamio.taam.recipes.IProcessingRecipe;
 import net.teamio.taam.recipes.impl.MixerRecipe;
+
+import java.util.List;
 
 public class MixerCategory extends BlankRecipeCategory {
 
@@ -134,4 +137,36 @@ public class MixerCategory extends BlankRecipeCategory {
 		guiItemStacks.setFromRecipe(slotInputItem, recipeWrapper.getInputs());
 	}
 
+	@Override
+	public void setRecipe(IRecipeLayout recipeLayout, IRecipeWrapper recipeWrapper, IIngredients ingredients) {
+		if(!(recipeWrapper instanceof ProcessingRecipeWrapper)) {
+			Log.error("RecipeWrapper type unknown: {}", recipeWrapper);
+			return;
+		}
+		ProcessingRecipeWrapper processingWrapper = (ProcessingRecipeWrapper)recipeWrapper;
+		IProcessingRecipe proRec = processingWrapper.recipe;
+		if(!(proRec instanceof MixerRecipe)) {
+			Log.error("Recipe type unknown: {}", proRec);
+			return;
+		}
+		MixerRecipe recipe = (MixerRecipe)proRec;
+		FluidStack input = recipe.getInputFluid();
+		FluidStack output = recipe.getOutputFluid();
+
+		IGuiFluidStackGroup guiFluidStack = recipeLayout.getFluidStacks();
+		IGuiItemStackGroup guiItemStacks = recipeLayout.getItemStacks();
+
+		guiFluidStack.init(slotInput, true, 5, 25, 16, 16, input.amount/*MachineFluidDrier.capacity*/, false, null);
+		guiFluidStack.set(slotInput, input);
+
+		guiFluidStack.init(slotOutput, false, 76, 25, 16, 16, output.amount/*MachineFluidDrier.capacity*/, false, null);
+		guiFluidStack.set(slotOutput, output);
+
+		guiItemStacks.init(slotInputItem, true, 4, 2);
+		List<List<ItemStack>> inputs = ingredients.getInputs(ItemStack.class);
+		if (inputs == null || inputs.size() != 1) {
+			throw new IllegalStateException("Recipe inputs invalid: " + inputs);
+		}
+		guiItemStacks.set(slotInputItem, inputs.get(0));
+	}
 }

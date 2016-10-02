@@ -1,7 +1,9 @@
 package net.teamio.taam.integration.jei;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import mezz.jei.api.ingredients.IIngredients;
 import org.lwjgl.opengl.GL11;
 
 import com.google.common.collect.Lists;
@@ -25,7 +27,7 @@ public class ProcessingRecipeWrapper implements IRecipeWrapper {
 	}
 
 	@Override
-	public List<?> getInputs() {
+	public List<ItemStack> getInputs() {
 		ItemStack input = recipe.getInput();
 		if (input == null) {
 			String oreDictName = recipe.getInputOreDict();
@@ -39,7 +41,7 @@ public class ProcessingRecipeWrapper implements IRecipeWrapper {
 	}
 
 	@Override
-	public List<?> getOutputs() {
+	public List<ItemStack> getOutputs() {
 		List<ItemStack> outputs = Lists.newArrayList();
 		ChancedOutput[] output = recipe.getOutput();
 		if(output == null || output.length == 0) {
@@ -49,6 +51,15 @@ public class ProcessingRecipeWrapper implements IRecipeWrapper {
 			outputs.add(co.output);
 		}
 		return outputs;
+	}
+
+	@Override
+	public void getIngredients(IIngredients ingredients) {
+		List<List<ItemStack>> list = new ArrayList<List<ItemStack>>(1);
+		list.add(getInputs());
+		ingredients.setInputLists(ItemStack.class, list);
+
+		ingredients.setOutputs(ItemStack.class, getOutputs());
 	}
 
 	@Override

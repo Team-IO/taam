@@ -2,6 +2,7 @@ package net.teamio.taam.integration.jei;
 
 import javax.annotation.Nonnull;
 
+import mezz.jei.api.ingredients.IIngredients;
 import org.lwjgl.opengl.GL11;
 
 import mezz.jei.api.IGuiHelper;
@@ -104,6 +105,11 @@ public class FluidDrierCategory extends BlankRecipeCategory {
 
 	@Override
 	public void setRecipe(IRecipeLayout recipeLayout, IRecipeWrapper recipeWrapper) {
+		setRecipe(recipeLayout, recipeWrapper, null);
+	}
+
+	@Override
+	public void setRecipe(IRecipeLayout recipeLayout, IRecipeWrapper recipeWrapper, IIngredients ingredients) {
 		if(!(recipeWrapper instanceof ProcessingRecipeWrapper)) {
 			Log.error("RecipeWrapper type unknown: {}", recipeWrapper);
 			return;
@@ -127,5 +133,4 @@ public class FluidDrierCategory extends BlankRecipeCategory {
 		guiItemStacks.init(slotOutput, false, 71, 42);
 		guiItemStacks.set(slotOutput, output);
 	}
-
 }
