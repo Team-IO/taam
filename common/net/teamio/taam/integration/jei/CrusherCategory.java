@@ -20,16 +20,19 @@ public class CrusherCategory extends ProcessingCategory {
 		background = guiHelper.createDrawable(bgLocation, 0, 0, 162, 62);
 	}
 
+	@Nonnull
 	@Override
 	public String getTitle() {
 		return localizedName;
 	}
 
+	@Nonnull
 	@Override
 	public String getUid() {
 		return Taam.INTEGRATION_JEI_CAT_CRUSHER;
 	}
 
+	@Nonnull
 	@Override
 	public IDrawable getBackground() {
 		return background;

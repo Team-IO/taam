@@ -25,7 +25,7 @@ public class ProcessingRecipeWrapper implements IRecipeWrapper {
 	}
 
 	@Override
-	public List<?> getInputs() {
+	public List<ItemStack> getInputs() {
 		ItemStack input = recipe.getInput();
 		if (input == null) {
 			String oreDictName = recipe.getInputOreDict();
@@ -39,7 +39,7 @@ public class ProcessingRecipeWrapper implements IRecipeWrapper {
 	}
 
 	@Override
-	public List<?> getOutputs() {
+	public List<ItemStack> getOutputs() {
 		List<ItemStack> outputs = Lists.newArrayList();
 		ChancedOutput[] output = recipe.getOutput();
 		if(output == null || output.length == 0) {

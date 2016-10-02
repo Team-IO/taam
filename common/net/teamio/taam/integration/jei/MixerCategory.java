@@ -49,23 +49,26 @@ public class MixerCategory extends BlankRecipeCategory {
 		renderStackFluidDrier = new ItemStack(TaamMain.itemMachine, 1, Taam.MACHINE_META.mixer.metaData());
 	}
 
+	@Nonnull
 	@Override
 	public String getUid() {
 		return Taam.INTEGRATION_JEI_CAT_MIXER;
 	}
 
+	@Nonnull
 	@Override
 	public String getTitle() {
 		return localizedName;
 	}
 
+	@Nonnull
 	@Override
 	public IDrawable getBackground() {
 		return background;
 	}
 
 	@Override
-	public void drawExtras(Minecraft minecraft) {
+	public void drawExtras(@Nonnull Minecraft minecraft) {
 		if(Config.jei_render_machines_into_gui) {
 			TextureManager texturemanager = minecraft.renderEngine;
 			texturemanager.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
@@ -106,7 +109,7 @@ public class MixerCategory extends BlankRecipeCategory {
 	}
 
 	@Override
-	public void setRecipe(IRecipeLayout recipeLayout, IRecipeWrapper recipeWrapper) {
+	public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull IRecipeWrapper recipeWrapper) {
 		if(!(recipeWrapper instanceof ProcessingRecipeWrapper)) {
 			Log.error("RecipeWrapper type unknown: {}", recipeWrapper);
 			return;

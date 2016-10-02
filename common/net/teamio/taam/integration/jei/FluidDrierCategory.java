@@ -48,16 +48,19 @@ public class FluidDrierCategory extends BlankRecipeCategory {
 		renderStackFluidDrier = new ItemStack(TaamMain.itemMachine, 1, Taam.MACHINE_META.fluid_drier.metaData());
 	}
 
+	@Nonnull
 	@Override
 	public String getUid() {
 		return Taam.INTEGRATION_JEI_CAT_FLUIDDRIER;
 	}
 
+	@Nonnull
 	@Override
 	public String getTitle() {
 		return localizedName;
 	}
 
+	@Nonnull
 	@Override
 	public IDrawable getBackground() {
 		return background;
@@ -103,7 +106,7 @@ public class FluidDrierCategory extends BlankRecipeCategory {
 	}
 
 	@Override
-	public void setRecipe(IRecipeLayout recipeLayout, IRecipeWrapper recipeWrapper) {
+	public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull IRecipeWrapper recipeWrapper) {
 		if(!(recipeWrapper instanceof ProcessingRecipeWrapper)) {
 			Log.error("RecipeWrapper type unknown: {}", recipeWrapper);
 			return;
