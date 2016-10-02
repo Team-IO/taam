@@ -497,19 +497,23 @@ public class TaamRecipes {
 	}
 	public static void addSmeltingRecipes(){
 		BLOCK_ORE_META[] values = Taam.BLOCK_ORE_META.values();
+		// Ores -> Ingots
 		for(int meta = 0; meta < values.length; meta++) {
 			if(!values[meta].ingot || !values[meta].ore) {
 				continue;
 			}
 			GameRegistry.addSmelting(new ItemStack(TaamMain.blockOre, 1, meta), new ItemStack(TaamMain.itemIngot, 1, meta), 1);
-
 		}
+		// Dusts -> Ingots
 		for(int meta = 0; meta < values.length; meta++) {
 			if(!values[meta].ingot || !values[meta].dust) {
 				continue;
 			}
 			GameRegistry.addSmelting(new ItemStack(TaamMain.itemDust, 1, meta), new ItemStack(TaamMain.itemIngot, 1, meta), 1);
 		}
+		// Bauxite (+Dust) -> Aluminum Ingot
+		GameRegistry.addSmelting(new ItemStack(TaamMain.blockOre, 1, Taam.BLOCK_ORE_META.bauxite.ordinal()), new ItemStack(TaamMain.itemMaterial, 1, Taam.ITEM_MATERIAL_META.aluminum_nugget.ordinal()), 1);
+		GameRegistry.addSmelting(new ItemStack(TaamMain.itemDust, 1, Taam.BLOCK_ORE_META.bauxite.ordinal()), new ItemStack(TaamMain.itemMaterial, 1, Taam.ITEM_MATERIAL_META.aluminum_nugget.ordinal()), 1);
 		// Resin -> Rubber Bar
 		GameRegistry.addSmelting(new ItemStack(TaamMain.itemMaterial,1,Taam.ITEM_MATERIAL_META.resin.ordinal()), new ItemStack(TaamMain.itemMaterial, 1, Taam.ITEM_MATERIAL_META.rubber_bar.ordinal()), 1);
 		//Iron Dust -> Iron Ingot
@@ -775,8 +779,25 @@ public class TaamRecipes {
 		 */
 
 		//		iron nugget
-		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(TaamMain.itemMaterial, 9, Taam.ITEM_MATERIAL_META.iron_nugget.ordinal()),
-				"ingotIron"));
+		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(TaamMain.itemMaterial, 9, Taam.ITEM_MATERIAL_META.iron_nugget.ordinal()), "ingotIron"));
+		String nugget = "nuggetIron";
+		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(Items.IRON_INGOT), nugget, nugget, nugget, nugget, nugget, nugget, nugget, nugget, nugget));
+
+		//		copper nugget
+		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(TaamMain.itemMaterial, 9, Taam.ITEM_MATERIAL_META.copper_nugget.ordinal()), "ingotCopper"));
+		nugget = "nuggetCopper";
+		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(TaamMain.itemIngot, 1, Taam.BLOCK_ORE_META.copper.ordinal()), nugget, nugget, nugget, nugget, nugget, nugget, nugget, nugget, nugget));
+
+		//		tin nugget
+		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(TaamMain.itemMaterial, 9, Taam.ITEM_MATERIAL_META.tin_nugget.ordinal()), "ingotTin"));
+		nugget = "nuggetTin";
+		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(TaamMain.itemIngot, 1, Taam.BLOCK_ORE_META.tin.ordinal()), nugget, nugget, nugget, nugget, nugget, nugget, nugget, nugget, nugget));
+
+		//		aluminum nugget
+		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(TaamMain.itemMaterial, 9, Taam.ITEM_MATERIAL_META.aluminum_nugget.ordinal()), "ingotAluminum"));
+		nugget = "nuggetAluminum";
+		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(TaamMain.itemIngot, 1, Taam.BLOCK_ORE_META.aluminum.ordinal()), nugget, nugget, nugget, nugget, nugget, nugget, nugget, nugget, nugget));
+
 		//		wooden board
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemMaterial, 6 ,Taam.ITEM_MATERIAL_META.wooden_board.ordinal()),
 				"www", "s s",

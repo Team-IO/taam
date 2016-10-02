@@ -608,6 +608,9 @@ public class TaamMain {
 		OreDictionary.registerOre("dustCoal", new ItemStack(itemDust, 1, Taam.BLOCK_ORE_META.coal.ordinal()));
 
 		OreDictionary.registerOre("nuggetIron", new ItemStack(itemMaterial, 1, Taam.ITEM_MATERIAL_META.iron_nugget.ordinal()));
+		OreDictionary.registerOre("nuggetCopper", new ItemStack(itemMaterial, 1, Taam.ITEM_MATERIAL_META.copper_nugget.ordinal()));
+		OreDictionary.registerOre("nuggetAluminum", new ItemStack(itemMaterial, 1, Taam.ITEM_MATERIAL_META.aluminum_nugget.ordinal()));
+		OreDictionary.registerOre("nuggetTin", new ItemStack(itemMaterial, 1, Taam.ITEM_MATERIAL_META.tin_nugget.ordinal()));
 
 		OreDictionary.registerOre("materialPlastic", new ItemStack(itemMaterial, 1, Taam.ITEM_MATERIAL_META.plastic_sheet.ordinal()));
 		OreDictionary.registerOre("materialRubber", new ItemStack(itemMaterial, 1, Taam.ITEM_MATERIAL_META.rubber_bar.ordinal()));
