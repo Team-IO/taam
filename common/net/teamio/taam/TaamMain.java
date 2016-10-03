@@ -551,6 +551,10 @@ public class TaamMain {
 			throw new RuntimeException("Registering a capability failed (Taam.CAPABILITY_ADVANCED_GUI - IAdvancedMachineGUI) - field was null after registry.");
 		}
 
+		/*
+		 * Sounds
+		 */
+
 		soundSipAh = new SoundEvent(Taam.SOUND_SIP_AH);
 		soundSipAh.setRegistryName(Taam.SOUND_SIP_AH);
 		GameRegistry.register(soundSipAh);
@@ -576,10 +580,19 @@ public class TaamMain {
 		 * Recipe Stuff
 		 */
 
+		// Register things with the ore dictionary
 		oreRegistration();
-		TaamRecipes.addRecipes();
-		TaamRecipes.addSmeltingRecipes();
-		TaamRecipes.addOreRecipes();
+
+		// Machine Recipes
+		TaamRecipesCrusher.registerRecipes();
+		TaamRecipesFluidDrier.registerRecipes();
+		TaamRecipesGrinder.registerRecipes();
+		TaamRecipesMixer.registerRecipes();
+		TaamRecipesSprayer.registerRecipes();
+
+		// Smelting & Crafting
+		TaamRecipes.registerSmeltingRecipes();
+		TaamRecipes.registerCraftingRecipes();
 
 	}
 
@@ -606,8 +619,12 @@ public class TaamMain {
 		OreDictionary.registerOre("dustKaolinite", new ItemStack(itemDust, 1, Taam.BLOCK_ORE_META.kaolinite.ordinal()));
 		OreDictionary.registerOre("dustGold", new ItemStack(itemDust, 1, Taam.BLOCK_ORE_META.gold.ordinal()));
 		OreDictionary.registerOre("dustCoal", new ItemStack(itemDust, 1, Taam.BLOCK_ORE_META.coal.ordinal()));
+		OreDictionary.registerOre("dustStone", new ItemStack(itemDust, 1, Taam.BLOCK_ORE_META.stone.ordinal()));
 
 		OreDictionary.registerOre("nuggetIron", new ItemStack(itemMaterial, 1, Taam.ITEM_MATERIAL_META.iron_nugget.ordinal()));
+		OreDictionary.registerOre("nuggetCopper", new ItemStack(itemMaterial, 1, Taam.ITEM_MATERIAL_META.copper_nugget.ordinal()));
+		OreDictionary.registerOre("nuggetAluminum", new ItemStack(itemMaterial, 1, Taam.ITEM_MATERIAL_META.aluminum_nugget.ordinal()));
+		OreDictionary.registerOre("nuggetTin", new ItemStack(itemMaterial, 1, Taam.ITEM_MATERIAL_META.tin_nugget.ordinal()));
 
 		OreDictionary.registerOre("materialPlastic", new ItemStack(itemMaterial, 1, Taam.ITEM_MATERIAL_META.plastic_sheet.ordinal()));
 		OreDictionary.registerOre("materialRubber", new ItemStack(itemMaterial, 1, Taam.ITEM_MATERIAL_META.rubber_bar.ordinal()));
@@ -615,6 +632,8 @@ public class TaamMain {
 		OreDictionary.registerOre("materialGraphite", new ItemStack(itemMaterial, 1, Taam.ITEM_MATERIAL_META.graphite.ordinal()));
 		OreDictionary.registerOre("materialSiliconWafer", new ItemStack(itemMaterial, 1, Taam.ITEM_MATERIAL_META.silicon_wafer.ordinal()));
 		OreDictionary.registerOre("materialResin", new ItemStack(itemMaterial, 1, Taam.ITEM_MATERIAL_META.resin.ordinal()));
+		OreDictionary.registerOre("materialCement", new ItemStack(itemMaterial, 1, Taam.ITEM_MATERIAL_META.cement.ordinal()));
+		OreDictionary.registerOre("materialRoughCement", new ItemStack(itemMaterial, 1, Taam.ITEM_MATERIAL_META.cementRough.ordinal()));
 
 		OreDictionary.registerOre("partPhotocell", new ItemStack(itemPart, 1, Taam.ITEM_PART_META.photocell.ordinal()));
 		OreDictionary.registerOre("partMotor", new ItemStack(itemPart, 1, Taam.ITEM_PART_META.motor.ordinal()));
