@@ -753,6 +753,13 @@ public class TaamRecipes {
 				'I', "ingotIron",
 				'R', "dustRedstone"));
 
+		//      industial lamp
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.blockLamp, 2, 0),
+				"GPG", "grg",
+				'P', "materialPlastic",
+				'G', "paneGlass",
+				'g', "dustGlowstone",
+				'r', "dustRedstone"));
 		/*
 		 * Tools
 		 */
