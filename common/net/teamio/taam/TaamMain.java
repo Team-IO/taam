@@ -551,6 +551,10 @@ public class TaamMain {
 			throw new RuntimeException("Registering a capability failed (Taam.CAPABILITY_ADVANCED_GUI - IAdvancedMachineGUI) - field was null after registry.");
 		}
 
+		/*
+		 * Sounds
+		 */
+
 		soundSipAh = new SoundEvent(Taam.SOUND_SIP_AH);
 		soundSipAh.setRegistryName(Taam.SOUND_SIP_AH);
 		GameRegistry.register(soundSipAh);
@@ -576,10 +580,19 @@ public class TaamMain {
 		 * Recipe Stuff
 		 */
 
+		// Register things with the ore dictionary
 		oreRegistration();
-		TaamRecipes.addRecipes();
-		TaamRecipes.addSmeltingRecipes();
-		TaamRecipes.addOreRecipes();
+
+		// Machine Recipes
+		TaamRecipesCrusher.registerRecipes();
+		TaamRecipesFluidDrier.registerRecipes();
+		TaamRecipesGrinder.registerRecipes();
+		TaamRecipesMixer.registerRecipes();
+		TaamRecipesSprayer.registerRecipes();
+
+		// Smelting & Crafting
+		TaamRecipes.registerSmeltingRecipes();
+		TaamRecipes.registerCraftingRecipes();
 
 	}
 
