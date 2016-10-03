@@ -423,6 +423,12 @@ public class TaamRecipes {
 				'B', Blocks.IRON_BARS,
 				'I', "ingotIron"
 		));
+		//		Redirector
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 4, Taam.ITEM_PART_META.redirector.ordinal()),
+				"P", "I", "I",
+				'P', materialAluminumPlate,
+				'I', "ingotAluminum"
+		));
 
 		/*
 		 * Materials
