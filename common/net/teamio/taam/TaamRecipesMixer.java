@@ -40,7 +40,7 @@ public class TaamRecipesMixer {
 				new MixerRecipe(
 						new ItemStack(TaamMain.itemMaterial, 1, Taam.ITEM_MATERIAL_META.resin.ordinal()),
 						new FluidStack(FluidRegistry.WATER, 500),
-						new FluidStack(TaamMain.fluidsMaterial[Taam.FLUID_MATERIAL_META.coating.ordinal()], 25))
+						new FluidStack(TaamMain.fluidsMaterial[Taam.FLUID_MATERIAL_META.coating.ordinal()], 50))
 		);
 	}
 }

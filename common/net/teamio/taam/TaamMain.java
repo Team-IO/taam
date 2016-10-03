@@ -619,6 +619,7 @@ public class TaamMain {
 		OreDictionary.registerOre("dustKaolinite", new ItemStack(itemDust, 1, Taam.BLOCK_ORE_META.kaolinite.ordinal()));
 		OreDictionary.registerOre("dustGold", new ItemStack(itemDust, 1, Taam.BLOCK_ORE_META.gold.ordinal()));
 		OreDictionary.registerOre("dustCoal", new ItemStack(itemDust, 1, Taam.BLOCK_ORE_META.coal.ordinal()));
+		OreDictionary.registerOre("dustStone", new ItemStack(itemDust, 1, Taam.BLOCK_ORE_META.stone.ordinal()));
 
 		OreDictionary.registerOre("nuggetIron", new ItemStack(itemMaterial, 1, Taam.ITEM_MATERIAL_META.iron_nugget.ordinal()));
 		OreDictionary.registerOre("nuggetCopper", new ItemStack(itemMaterial, 1, Taam.ITEM_MATERIAL_META.copper_nugget.ordinal()));
@@ -631,6 +632,8 @@ public class TaamMain {
 		OreDictionary.registerOre("materialGraphite", new ItemStack(itemMaterial, 1, Taam.ITEM_MATERIAL_META.graphite.ordinal()));
 		OreDictionary.registerOre("materialSiliconWafer", new ItemStack(itemMaterial, 1, Taam.ITEM_MATERIAL_META.silicon_wafer.ordinal()));
 		OreDictionary.registerOre("materialResin", new ItemStack(itemMaterial, 1, Taam.ITEM_MATERIAL_META.resin.ordinal()));
+		OreDictionary.registerOre("materialCement", new ItemStack(itemMaterial, 1, Taam.ITEM_MATERIAL_META.cement.ordinal()));
+		OreDictionary.registerOre("materialRoughCement", new ItemStack(itemMaterial, 1, Taam.ITEM_MATERIAL_META.cementRough.ordinal()));
 
 		OreDictionary.registerOre("partPhotocell", new ItemStack(itemPart, 1, Taam.ITEM_PART_META.photocell.ordinal()));
 		OreDictionary.registerOre("partMotor", new ItemStack(itemPart, 1, Taam.ITEM_PART_META.motor.ordinal()));

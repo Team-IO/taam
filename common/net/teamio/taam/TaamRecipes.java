@@ -65,6 +65,10 @@ public class TaamRecipes {
 		ItemStack blockMotionSensor = new ItemStack(TaamMain.blockSensor, 1, 0);
 
 		ItemStack blockConcreteCoatedChiseled = new ItemStack(TaamMain.blockConcrete, 1, Taam.BLOCK_CONCRETE_META.coated_chiseled.ordinal());
+		ItemStack blockConcreteFine = new ItemStack(TaamMain.blockConcrete, 1, Taam.BLOCK_CONCRETE_META.fine.ordinal());
+		ItemStack blockConcreteRough = new ItemStack(TaamMain.blockConcrete, 1, Taam.BLOCK_CONCRETE_META.rough.ordinal());
+		ItemStack blockConcreteCoated = new ItemStack(TaamMain.blockConcrete, 4, Taam.BLOCK_CONCRETE_META.coated.ordinal());
+		ItemStack blockConcreteBlack = new ItemStack(TaamMain.blockConcrete, 4, Taam.BLOCK_CONCRETE_META.black.ordinal());
 
 		ItemStack toolSawAnyDamage = new ItemStack(TaamMain.itemSaw, 1, OreDictionary.WILDCARD_VALUE);
 
@@ -501,6 +505,49 @@ public class TaamRecipes {
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemMaterial, 6, Taam.ITEM_MATERIAL_META.aluminum_plate.ordinal()),
 				"aaa", " a ",
 				'a', "ingotAluminum"
+		));
+
+		//      cement
+		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(TaamMain.itemMaterial, 4, Taam.ITEM_MATERIAL_META.cement.ordinal()),
+				Items.CLAY_BALL, "dustStone", "dustStone", "dustStone"
+		));
+		//      rough cement
+		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(TaamMain.itemMaterial, 2, Taam.ITEM_MATERIAL_META.cementRough.ordinal()),
+				"materialCement", "gravel"
+		));
+
+		//      concrete
+		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(TaamMain.blockConcrete, 1, Taam.BLOCK_CONCRETE_META.fine.ordinal()),
+				"materialCement", "materialCement", "materialCement", "materialCement", Items.WATER_BUCKET
+		));
+		//      rough concrete
+		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(TaamMain.blockConcrete, 1, Taam.BLOCK_CONCRETE_META.rough.ordinal()),
+				"materialRoughCement", "materialRoughCement", "materialRoughCement", "materialRoughCement", Items.WATER_BUCKET
+		));
+		//      coated concrete
+		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(TaamMain.blockConcrete, 1, Taam.BLOCK_CONCRETE_META.coated.ordinal()),
+				blockConcreteFine, "materialResin", "materialResin", "materialResin", "materialResin", "materialResin", Items.WATER_BUCKET
+		));
+
+		//      chiseled concrete
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.blockConcrete, 4, Taam.BLOCK_CONCRETE_META.fine_chiseled.ordinal()),
+				"CC", "CC",
+				'C', blockConcreteFine
+		));
+		//      rough chiseled concrete
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.blockConcrete, 4, Taam.BLOCK_CONCRETE_META.rough_chiseled.ordinal()),
+				"CC", "CC",
+				'C', blockConcreteRough
+		));
+		//      coated chiseled concrete
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.blockConcrete, 4, Taam.BLOCK_CONCRETE_META.coated_chiseled.ordinal()),
+				"CC", "CC",
+				'C', blockConcreteCoated
+		));
+		//      black chiseled concrete
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.blockConcrete, 4, Taam.BLOCK_CONCRETE_META.black_chiseled.ordinal()),
+				"CC", "CC",
+				'C', blockConcreteBlack
 		));
 	}
 
