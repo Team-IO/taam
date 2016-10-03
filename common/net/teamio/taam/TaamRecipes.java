@@ -604,9 +604,8 @@ public class TaamRecipes {
 				));
 		//		Shredder
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.blockProductionLine, 1, Taam.BLOCK_PRODUCTIONLINE_META.shredder.ordinal()),
-				"PAP","MTB", "bSb",
+				"P P","MTB", "bSb",
 				'P', materialAluminumPlate,
-				'A', "partAdvancedCircuit",
 				'M', "partMotor",
 				'T', blockTrashcan,
 				'B', partMetalBearing,
@@ -615,9 +614,9 @@ public class TaamRecipes {
 				));
 		//		Grinder
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.blockProductionLine, 1, Taam.BLOCK_PRODUCTIONLINE_META.grinder.ordinal()),
-				"WAW","MCB", "bSb",
-				'P', materialWoodenBoard,
-				'A', "partAdvancedCircuit",
+				"PsP","MCB", "bSb",
+				'P', materialAluminumPlate,
+				's', partSieve,
 				'M', "partMotor",
 				'C', blockChute,
 				'B', partMetalBearing,
@@ -626,9 +625,8 @@ public class TaamRecipes {
 				));
 		//		Crusher
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.blockProductionLine, 1, Taam.BLOCK_PRODUCTIONLINE_META.crusher.ordinal()),
-				"PAP","MCB", "bSb",
+				"P P","MCB", "bSb",
 				'P', materialAluminumPlate,
-				'A', "partAdvancedCircuit",
 				'M', "partMotor",
 				'C', blockChute,
 				'B', partMetalBearing,
