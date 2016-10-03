@@ -546,6 +546,7 @@ public class TaamRecipes {
 		ItemStack blockTrashcan = new ItemStack(TaamMain.blockProductionLineAttachable, 1, Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META.trashcan.ordinal());
 		ItemStack blockChute = new ItemStack(TaamMain.blockMachines, 1, Taam.BLOCK_MACHINES_META.chute.ordinal());
 		ItemStack blockPipe = new ItemStack(TaamMain.itemMachine, 1, Taam.MACHINE_META.pipe.ordinal());
+		ItemStack blockMotionSensor = new ItemStack(TaamMain.blockSensor, 1, 0);
 
 		ItemStack blockConcreteCoatedChiseled = new ItemStack(TaamMain.blockConcrete, 1, Taam.BLOCK_CONCRETE_META.coated_chiseled.ordinal());
 
@@ -686,6 +687,15 @@ public class TaamRecipes {
 				'P', partPump,
 				'R', blockPipe,
 				'T', partTank
+		));
+
+		//      aligner
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.blockProductionLineAppliance, 1, Taam.BLOCK_PRODUCTIONLINE_APPLIANCE_META.aligner.ordinal()),
+				"PSP", "AMM", "PP ",
+				'S', blockMotionSensor,
+				'A', "partAdvancedCircuit",
+				'P', materialAluminumPlate,
+				'M', "partMotor"
 		));
 
 		/*
