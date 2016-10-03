@@ -160,7 +160,6 @@ public class TaamRecipes {
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.blockProductionLine, 1, Taam.BLOCK_PRODUCTIONLINE_META.sieve.ordinal()),
 				"AsA","ACA", "MSM",
 				'A', "ingotAluminum",
-				'S', partSieve,
 				'C', blockChute,
 				'M', "partMotor",
 				'S', partSupportFrame,
