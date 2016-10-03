@@ -482,23 +482,23 @@ public class TaamRecipes {
 		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(TaamMain.itemIngot, 1, Taam.BLOCK_ORE_META.aluminum.ordinal()), nugget, nugget, nugget, nugget, nugget, nugget, nugget, nugget, nugget));
 
 		//		wooden board
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemMaterial, 6 ,Taam.ITEM_MATERIAL_META.wooden_board.ordinal()),
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemMaterial, 6, Taam.ITEM_MATERIAL_META.wooden_board.ordinal()),
 				"www", "s s",
 				'w', "plankWood",
 				's', "stickWood"
 		));
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemMaterial, 6 ,Taam.ITEM_MATERIAL_META.wooden_board.ordinal()),
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemMaterial, 6, Taam.ITEM_MATERIAL_META.wooden_board.ordinal()),
 				"s s", "www",
 				'w', "plankWood",
 				's', "stickWood"
 		));
 
 		//		aluminum plate
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemMaterial, 6 ,Taam.ITEM_MATERIAL_META.aluminum_plate.ordinal()),
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemMaterial, 6, Taam.ITEM_MATERIAL_META.aluminum_plate.ordinal()),
 				" a ", "aaa",
 				'a', "ingotAluminum"
 		));
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemMaterial, 6 ,Taam.ITEM_MATERIAL_META.aluminum_plate.ordinal()),
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemMaterial, 6, Taam.ITEM_MATERIAL_META.aluminum_plate.ordinal()),
 				"aaa", " a ",
 				'a', "ingotAluminum"
 		));
