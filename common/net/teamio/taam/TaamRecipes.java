@@ -165,6 +165,14 @@ public class TaamRecipes {
 				'S', partSupportFrame,
 				's', partSieve
 		));
+		//		Elevator
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.blockProductionLine, 1, Taam.BLOCK_PRODUCTIONLINE_META.elevator.ordinal()),
+				"MFM","PFP", "MSM",
+				'P', materialAluminumPlate,
+				'M', "partMotor",
+				'F', partIronFrame,
+				'S', partSupportFrame
+		));
 
 		/*
 		 * Conveyor Stuff (Production Line Attachables)
