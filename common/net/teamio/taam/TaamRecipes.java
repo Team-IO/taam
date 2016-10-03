@@ -526,16 +526,42 @@ public class TaamRecipes {
 
 	public static void addOreRecipes(){
 		/*
+		 * Input Values for better overview
+		 */
+		ItemStack materialWoodenBoard = new ItemStack(TaamMain.itemMaterial, 1, Taam.ITEM_MATERIAL_META.wooden_board.ordinal());
+		ItemStack materialAluminumPlate = new ItemStack(TaamMain.itemMaterial, 1, Taam.ITEM_MATERIAL_META.aluminum_plate.ordinal());
+
+		ItemStack partSieve = new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.sieve.ordinal());
+		ItemStack partRubberBand = new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.rubber_band.ordinal());
+		ItemStack partWoodenSupportFrame = new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.support_frame_wood.ordinal());
+		ItemStack partMetalBearing = new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.metal_bearing.ordinal());
+		ItemStack partSupportFrame = new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.support_frame.ordinal());
+		ItemStack partIronFrame = new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.iron_frame.ordinal());
+		ItemStack partPump = new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.pump.ordinal());
+		ItemStack partTank = new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.tank.ordinal());
+		ItemStack partNozzle = new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.nozzle.ordinal());
+		ItemStack partCopperWire = new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.copper_wire.ordinal());
+
+		ItemStack blockConveyor2 = new ItemStack(TaamMain.blockProductionLine, 1, Taam.BLOCK_PRODUCTIONLINE_META.conveyor2.ordinal());
+		ItemStack blockTrashcan = new ItemStack(TaamMain.blockProductionLineAttachable, 1, Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META.trashcan.ordinal());
+		ItemStack blockChute = new ItemStack(TaamMain.blockMachines, 1, Taam.BLOCK_MACHINES_META.chute.ordinal());
+		ItemStack blockPipe = new ItemStack(TaamMain.itemMachine, 1, Taam.MACHINE_META.pipe.ordinal());
+
+		ItemStack blockConcreteCoatedChiseled = new ItemStack(TaamMain.blockConcrete, 1, Taam.BLOCK_CONCRETE_META.coated_chiseled.ordinal());
+
+		ItemStack toolSawAnyDamage = new ItemStack(TaamMain.itemSaw, 1, OreDictionary.WILDCARD_VALUE);
+
+		/*
 		 * Conveyor Stuff (Production Line)
 		 */
 
 		//		conveyor1 (Wood)
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.blockProductionLine, 8, Taam.BLOCK_PRODUCTIONLINE_META.conveyor1.ordinal()),
 				"rRP", "wSw", "WsW",
-				'P', new ItemStack(Blocks.PISTON, 1, 0),
-				'R', new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.rubber_band.ordinal()),
-				'w', new ItemStack(TaamMain.itemMaterial, 1, Taam.ITEM_MATERIAL_META.wooden_board.ordinal()),
-				'S', new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.support_frame_wood.ordinal()),
+				'P', Blocks.PISTON,
+				'R', partRubberBand,
+				'w', materialWoodenBoard,
+				'S', partWoodenSupportFrame,
 				'W', "plankWood",
 				's', "stickWood",
 				'r', "dustRedstone"
@@ -543,78 +569,80 @@ public class TaamRecipes {
 		//		conveyor2 (Aluminum)
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.blockProductionLine, 8, Taam.BLOCK_PRODUCTIONLINE_META.conveyor2.ordinal()),
 				"MRM", "CSC", "ABA",
-				'M', new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.motor.ordinal()),
-				'R', new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.rubber_band.ordinal()),
-				'C', new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.metal_bearing.ordinal()),
-				'S', new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.support_frame.ordinal()),
+				'M', "partMotor",
+				'R', partRubberBand,
+				'C', partMetalBearing,
+				'S', partSupportFrame,
 				'A', "ingotAluminum",
-				'B', new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_MATERIAL_META.plastic_sheet.ordinal())));
-		//		conveyor3 (High Througput)
+				'B', "materialPlastic"));
+		//		conveyor3 (High Throughput)
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.blockProductionLine, 1, Taam.BLOCK_PRODUCTIONLINE_META.conveyor3.ordinal()),
 				"YBY", "F F", "MCM",
-				'M', new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.motor.ordinal()),
-				'C', new ItemStack(TaamMain.blockProductionLine, 1, Taam.BLOCK_PRODUCTIONLINE_META.conveyor2.ordinal()),
-				'F', new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.iron_frame.ordinal()),
+				'M', "partMotor",
+				'C', blockConveyor2,
+				'F', partIronFrame,
 				'Y', "dyeYellow",
 				'B', "dyeBlack"
 				));
 		//		conveyor hopper
 		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(TaamMain.blockProductionLine, 1, Taam.BLOCK_PRODUCTIONLINE_META.hopper.ordinal()),
-				Blocks.HOPPER, new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.support_frame.ordinal())));
+				Blocks.HOPPER,
+				partSupportFrame));
 
 		//		conveyor chute
 		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(TaamMain.blockProductionLine, 1, Taam.BLOCK_PRODUCTIONLINE_META.chute.ordinal()),
-				new ItemStack(TaamMain.blockMachines, 1, Taam.BLOCK_MACHINES_META.chute.ordinal()), new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.support_frame.ordinal())));
+				blockChute,
+				partSupportFrame));
 
 		//		High Speed Conveyor Hopper
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.blockProductionLine, 1, Taam.BLOCK_PRODUCTIONLINE_META.hopper_hs.ordinal()),
 				"C C"," H ", " I ",
-				'C', new ItemStack(TaamMain.blockProductionLine,1,Taam.BLOCK_PRODUCTIONLINE_META.conveyor2.ordinal()),
+				'C', blockConveyor2,
 				'H', Blocks.HOPPER,
-				'I', new ItemStack(TaamMain.itemPart,1,Taam.ITEM_PART_META.support_frame.ordinal())
+				'I', partSupportFrame
 				));
 		//		Shredder
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.blockProductionLine, 1, Taam.BLOCK_PRODUCTIONLINE_META.shredder.ordinal()),
 				"PAP","MTB", "bSb",
-				'P', new ItemStack(TaamMain.itemMaterial,1,Taam.ITEM_MATERIAL_META.aluminum_plate.ordinal()),
-				'A', new ItemStack(TaamMain.itemPart,1,Taam.ITEM_PART_META.circuit_advanced.ordinal()),
-				'M', new ItemStack(TaamMain.itemPart,1,Taam.ITEM_PART_META.motor.ordinal()),
-				'T', new ItemStack(TaamMain.blockProductionLineAttachable,1,Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META.trashcan.ordinal()),
-				'B', new ItemStack(TaamMain.itemPart,1,Taam.ITEM_PART_META.metal_bearing.ordinal()),
-				'b', new ItemStack(TaamMain.itemPart,1,Taam.ITEM_PART_META.circuit_basic.ordinal()),
-				'S', new ItemStack(TaamMain.itemPart,1,Taam.ITEM_PART_META.support_frame.ordinal())
+				'P', materialAluminumPlate,
+				'A', "partAdvancedCircuit",
+				'M', "partMotor",
+				'T', blockTrashcan,
+				'B', partMetalBearing,
+				'b', "partBasicCircuit",
+				'S', partSupportFrame
 				));
 		//		Grinder
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.blockProductionLine, 1, Taam.BLOCK_PRODUCTIONLINE_META.grinder.ordinal()),
 				"WAW","MCB", "bSb",
-				'P', new ItemStack(TaamMain.itemMaterial,1,Taam.ITEM_MATERIAL_META.wooden_board.ordinal()),
-				'A', new ItemStack(TaamMain.itemPart,1,Taam.ITEM_PART_META.circuit_advanced.ordinal()),
-				'M', new ItemStack(TaamMain.itemPart,1,Taam.ITEM_PART_META.motor.ordinal()),
-				'C', new ItemStack(TaamMain.blockMachines,1,Taam.BLOCK_MACHINES_META.chute.ordinal()),
-				'B', new ItemStack(TaamMain.itemPart,1,Taam.ITEM_PART_META.metal_bearing.ordinal()),
-				'b', new ItemStack(TaamMain.itemPart,1,Taam.ITEM_PART_META.circuit_basic.ordinal()),
-				'S', new ItemStack(TaamMain.itemPart,1,Taam.ITEM_PART_META.support_frame.ordinal())
+				'P', materialWoodenBoard,
+				'A', "partAdvancedCircuit",
+				'M', "partMotor",
+				'C', blockChute,
+				'B', partMetalBearing,
+				'b', "partBasicCircuit",
+				'S', partSupportFrame
 				));
 		//		Crusher
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.blockProductionLine, 1, Taam.BLOCK_PRODUCTIONLINE_META.crusher.ordinal()),
 				"PAP","MCB", "bSb",
-				'P', new ItemStack(TaamMain.itemMaterial,1,Taam.ITEM_MATERIAL_META.aluminum_plate.ordinal()),
-				'A', new ItemStack(TaamMain.itemPart,1,Taam.ITEM_PART_META.circuit_advanced.ordinal()),
-				'M', new ItemStack(TaamMain.itemPart,1,Taam.ITEM_PART_META.motor.ordinal()),
-				'C', new ItemStack(TaamMain.blockMachines,1,Taam.BLOCK_MACHINES_META.chute.ordinal()),
-				'B', new ItemStack(TaamMain.itemPart,1,Taam.ITEM_PART_META.metal_bearing.ordinal()),
-				'b', new ItemStack(TaamMain.itemPart,1,Taam.ITEM_PART_META.circuit_basic.ordinal()),
-				'S', new ItemStack(TaamMain.itemPart,1,Taam.ITEM_PART_META.support_frame.ordinal())
+				'P', materialAluminumPlate,
+				'A', "partAdvancedCircuit",
+				'M', "partMotor",
+				'C', blockChute,
+				'B', partMetalBearing,
+				'b', "partBasicCircuit",
+				'S', partSupportFrame
 				));
 		//		Sieve
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.blockProductionLine, 1, Taam.BLOCK_PRODUCTIONLINE_META.sieve.ordinal()),
 				"AsA","ACA", "MSM",
 				'A', "ingotAluminum",
-				'S', new ItemStack(TaamMain.itemPart,1,Taam.ITEM_PART_META.sieve.ordinal()),
-				'C', new ItemStack(TaamMain.blockMachines,1,Taam.BLOCK_MACHINES_META.chute.ordinal()),
-				'M', new ItemStack(TaamMain.itemPart,1,Taam.ITEM_PART_META.motor.ordinal()),
-				'S', new ItemStack(TaamMain.itemPart,1,Taam.ITEM_PART_META.support_frame.ordinal()),
-				's', new ItemStack(TaamMain.itemPart,1,Taam.ITEM_PART_META.sieve.ordinal())
+				'S', partSieve,
+				'C', blockChute,
+				'M', "partMotor",
+				'S', partSupportFrame,
+				's', partSieve
 				));
 
 		/*
@@ -626,15 +654,15 @@ public class TaamRecipes {
 				"PLP","PIP","PPP",
 				'P', "materialPlastic",
 				'L', "dyeBlue",
-				'I', new ItemStack(TaamMain.itemPart,1,Taam.ITEM_PART_META.iron_frame.ordinal())
-				));
+				'I', partIronFrame
+		));
 		//		Conveyor Trash Bag
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.blockProductionLineAttachable, 1, Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META.trashcan.ordinal()),
 				"PLP","PIP","PPP",
 				'P', "materialPlastic",
 				'L', "dyeGreen",
-				'I', new ItemStack(TaamMain.itemPart,1,Taam.ITEM_PART_META.iron_frame.ordinal())
-				));
+				'I', partIronFrame
+		));
 
 		/*
 		 * Conveyor Stuff (Appliances)
@@ -643,20 +671,22 @@ public class TaamRecipes {
 		//		sprayer
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.blockProductionLineAppliance, 1, Taam.BLOCK_PRODUCTIONLINE_APPLIANCE_META.sprayer.ordinal()),
 				"RNN", "TCP", "aaa",
-				'N', new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.nozzle.ordinal()),
+				'N', partNozzle,
 				'C', "partBasicCircuit",
-				'a', new ItemStack(TaamMain.itemMaterial,1,Taam.ITEM_MATERIAL_META.aluminum_plate.ordinal()),
-				'P', new ItemStack(TaamMain.itemPart, 1 ,Taam.ITEM_PART_META.pump.ordinal()),
-				'R', new ItemStack(TaamMain.itemMachine, 1, Taam.MACHINE_META.pipe.ordinal()),
-				'T', new ItemStack(TaamMain.itemPart, 1 ,Taam.ITEM_PART_META.tank.ordinal())));
+				'a', materialAluminumPlate,
+				'P', partPump,
+				'R', blockPipe,
+				'T', partTank
+		));
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.blockProductionLineAppliance, 1, Taam.BLOCK_PRODUCTIONLINE_APPLIANCE_META.sprayer.ordinal()),
 				"NNR", "PCT", "aaa",
-				'N', new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.nozzle.ordinal()),
+				'N', partNozzle,
 				'C', "partBasicCircuit",
-				'a', new ItemStack(TaamMain.itemMaterial,1,Taam.ITEM_MATERIAL_META.aluminum_plate.ordinal()),
-				'P', new ItemStack(TaamMain.itemPart, 1 ,Taam.ITEM_PART_META.pump.ordinal()),
-				'R', new ItemStack(TaamMain.itemMachine, 1, Taam.MACHINE_META.pipe.ordinal()),
-				'T', new ItemStack(TaamMain.itemPart, 1 ,Taam.ITEM_PART_META.tank.ordinal())));
+				'a', materialAluminumPlate,
+				'P', partPump,
+				'R', blockPipe,
+				'T', partTank
+		));
 
 		/*
 		 * Fluid Machines
@@ -674,36 +704,36 @@ public class TaamRecipes {
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemMachine, 1, Taam.MACHINE_META.tank.ordinal()),
 				"GGG", "G G", "SSS",
 				'G', "paneGlass",
-				'S', new ItemStack(TaamMain.blockConcrete, 1, Taam.BLOCK_CONCRETE_META.coated_chiseled.ordinal())));
+				'S', blockConcreteCoatedChiseled));
 		//      pump
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemMachine, 1, Taam.MACHINE_META.pump.ordinal()),
 				"AAA", "PTR", "SSS",
 				'A', "ingotAluminum",
-				'P', new ItemStack(TaamMain.itemPart, 1 ,Taam.ITEM_PART_META.pump.ordinal()),
-				'T', new ItemStack(TaamMain.itemPart, 1 ,Taam.ITEM_PART_META.tank.ordinal()),
-				'R', new ItemStack(TaamMain.itemMachine, 1, Taam.MACHINE_META.pipe.ordinal()),
-				'S', new ItemStack(TaamMain.blockConcrete, 1, Taam.BLOCK_CONCRETE_META.coated_chiseled.ordinal())));
+				'P', partPump,
+				'T', partTank,
+				'R', blockPipe,
+				'S', blockConcreteCoatedChiseled));
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemMachine, 1, Taam.MACHINE_META.pump.ordinal()),
 				"AAA", "RTP", "SSS",
 				'A', "ingotAluminum",
-				'P', new ItemStack(TaamMain.itemPart, 1 ,Taam.ITEM_PART_META.pump.ordinal()),
-				'T', new ItemStack(TaamMain.itemPart, 1 ,Taam.ITEM_PART_META.tank.ordinal()),
-				'R', new ItemStack(TaamMain.itemMachine, 1, Taam.MACHINE_META.pipe.ordinal()),
-				'S', new ItemStack(TaamMain.blockConcrete, 1, Taam.BLOCK_CONCRETE_META.coated_chiseled.ordinal())));
+				'P', partPump,
+				'T', partTank,
+				'R', blockPipe,
+				'S', blockConcreteCoatedChiseled));
 		//      mixer
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemMachine, 1, Taam.MACHINE_META.mixer.ordinal()),
 				" M ", "RCR", "SSS",
-				'C', new ItemStack(TaamMain.blockMachines,1,Taam.BLOCK_MACHINES_META.chute.ordinal()),
-				'M', new ItemStack(TaamMain.itemPart, 1 ,Taam.ITEM_PART_META.motor.ordinal()),
-				'R', new ItemStack(TaamMain.itemMachine, 1, Taam.MACHINE_META.pipe.ordinal()),
-				'S', new ItemStack(TaamMain.blockConcrete, 1, Taam.BLOCK_CONCRETE_META.coated_chiseled.ordinal())));
+				'C', blockChute,
+				'M', "partMotor",
+				'R', blockPipe,
+				'S', blockConcreteCoatedChiseled));
 		//      fluid drier
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemMachine, 1, Taam.MACHINE_META.fluid_drier.ordinal()),
 				" R ", "sMs", " C ",
-				'C', new ItemStack(TaamMain.blockMachines,1,Taam.BLOCK_MACHINES_META.chute.ordinal()),
-				'M', new ItemStack(TaamMain.itemPart, 1 ,Taam.ITEM_PART_META.motor.ordinal()),
-				's', new ItemStack(TaamMain.itemPart, 1 ,Taam.ITEM_PART_META.sieve.ordinal()),
-				'R', new ItemStack(TaamMain.itemMachine, 1, Taam.MACHINE_META.pipe.ordinal())));
+				'C', blockChute,
+				'M', "partMotor",
+				's', partSieve,
+				'R', blockPipe));
 
 		/*
 		 * Other Machines
@@ -724,7 +754,7 @@ public class TaamRecipes {
 				'R', "dustRedstone"));
 
 		/*
-		 * Misc Items
+		 * Tools
 		 */
 
 		//		wrench
@@ -749,57 +779,68 @@ public class TaamRecipes {
 		 */
 		//		photo cell
 		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(TaamMain.itemPart, 9, Taam.ITEM_PART_META.photocell.ordinal()),
-				Blocks.DAYLIGHT_DETECTOR, new ItemStack(TaamMain.itemSaw, 1, OreDictionary.WILDCARD_VALUE)));
+				Blocks.DAYLIGHT_DETECTOR,
+				toolSawAnyDamage
+		));
 		//		magnetic coil
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.magnetic_coil.ordinal()),
 				"CCC", "CIC", "CCC",
-				'C', new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.copper_wire.ordinal()),
-				'I', "ingotIron"));
+				'C', partCopperWire,
+				'I', "ingotIron"
+		));
 		//		metal bearing
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.metal_bearing.ordinal()),
 				"INI", "N*N", "INI",
 				'I', "ingotIron",
-				'N', "nuggetIron"));
+				'N', "nuggetIron"
+		));
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.metal_bearing.ordinal()),
 				"NIN", "I*I", "NIN",
 				'I', "ingotIron",
-				'N', "nuggetIron"));
+				'N', "nuggetIron"
+		));
 		//		support frame
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1 ,Taam.ITEM_PART_META.support_frame.ordinal()),
+		GameRegistry.addRecipe(new ShapedOreRecipe(partSupportFrame,
 				"*A*", "A*A", "AAA",
 				'A', "ingotAluminum"));
 		//		support frame wood
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1 ,Taam.ITEM_PART_META.support_frame_wood.ordinal()),
+		GameRegistry.addRecipe(new ShapedOreRecipe(partWoodenSupportFrame,
 				"*S*", "S*S", "WWW",
 				'W', "plankWood",
-				'S', "stickWood"));
+				'S', "stickWood"
+		));
 		//		copper wire
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 12, Taam.ITEM_PART_META.copper_wire.ordinal()),
 				"CCC",
-				'C', "ingotCopper"));
+				'C', "ingotCopper"
+		));
 
 		//		basic circuit
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.circuit_basic.ordinal()),
 				"CCC", "RGR", "CCC",
 				'C', "ingotCopper",
 				'G', "ingotGold",
-				'R', "dustRedstone"));
+				'R', "dustRedstone"
+		));
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.circuit_basic.ordinal()),
 				"CRC", "CGC", "CRC",
 				'C', "ingotCopper",
 				'G', "ingotGold",
-				'R', "dustRedstone"));
+				'R', "dustRedstone"
+		));
 		//		advanced circuit
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.circuit_advanced.ordinal()),
 				"RGR", "GCG", "RGR",
 				'R', "dustRedstone",
 				'G', "ingotGold",
-				'C', new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.circuit_basic.ordinal())));
+				'C', "partBasicCircuit"
+		));
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.circuit_advanced.ordinal()),
 				"GRG", "RCR", "GRG",
 				'R', "dustRedstone",
 				'G', "ingotGold",
-				'C', new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.circuit_basic.ordinal())));
+				'C', "partBasicCircuit"
+		));
 		//		logistics chip
 		/*GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.logistics_chip.ordinal()),
 				"PKP", "HCH", "PVP",
@@ -807,45 +848,50 @@ public class TaamRecipes {
 				'K', Blocks.chest,
 				'H', Blocks.hopper,
 				'V', Items.comparator,
-				'C', new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.circuit_advanced.ordinal())));*/
+				'C', "partAdvancedCircuit"
+		));*/
 		//		iron frame
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.iron_frame.ordinal()),
 				" I ", "I I", "I I",
-				'I', "ingotIron"));
+				'I', "ingotIron"
+		));
 
 		//		rubber band
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.rubber_band.ordinal()),
 				"RRR", "R R", "RRR",
-				'R', "materialRubber"));
+				'R', "materialRubber"
+		));
 		//		tank
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.tank.ordinal()),
 				" I ", "I I", "III",
-				'I', "ingotIron"));
+				'I', "ingotIron"
+		));
 		//		nozzle
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1 ,Taam.ITEM_PART_META.nozzle.ordinal()),
 				" I ", "I I", " I ",
-				'I', "nuggetIron"));
+				'I', "nuggetIron"
+		));
 
 		//		Pump
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.pump.ordinal()),
 				"AAA","PMP", "AAA",
-				'M', new ItemStack(TaamMain.itemPart,1,Taam.ITEM_PART_META.motor.ordinal()),
+				'M', "partMotor",
 				'P', Blocks.PISTON,
 				'A', "ingotAluminum"
-				));
+		));
 		//		Motor
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.motor.ordinal()),
 				"ACA", "CIC", "ACA",
 				'C', new ItemStack(TaamMain.itemPart,1,Taam.ITEM_PART_META.magnetic_coil.ordinal()),
 				'I', "ingotIron",
 				'A', "ingotAluminum"
-				));
+		));
 		//		Sieve
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.sieve.ordinal()),
 				"IBI", "BBB", "IBI",
 				'B', Blocks.IRON_BARS,
 				'I', "ingotIron"
-				));
+		));
 
 		/*
 		 * Materials
