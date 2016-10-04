@@ -135,7 +135,8 @@ boolean isValidMtlLine(String line) {
 	line.startsWith('illum') ||
 	line.startsWith('Ns') ||
 	line.startsWith('Ni') ||
-	line.startsWith('Ks')
+	line.startsWith('Ks') ||
+	line.startsWith('Ke')
 	) {
 		return false;
 	}
