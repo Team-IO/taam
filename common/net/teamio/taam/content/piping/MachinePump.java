@@ -3,20 +3,18 @@ package net.teamio.taam.content.piping;
 import java.io.IOException;
 import java.util.List;
 
-import com.google.common.collect.Lists;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.fluids.FluidTankInfo;
+import net.teamio.taam.Config;
 import net.teamio.taam.Log;
 import net.teamio.taam.Taam;
 import net.teamio.taam.content.IRotatable;
@@ -24,7 +22,6 @@ import net.teamio.taam.machines.IMachine;
 import net.teamio.taam.piping.PipeEndSharedDistinct;
 import net.teamio.taam.piping.PipeInfo;
 import net.teamio.taam.piping.PipeUtil;
-import net.teamio.taam.rendering.TaamRenderer;
 import net.teamio.taam.rendering.TankRenderInfo;
 import net.teamio.taam.util.FaceBitmap;
 
@@ -36,57 +33,48 @@ public class MachinePump implements IMachine, IRotatable {
 	private EnumFacing direction = EnumFacing.NORTH;
 	private final PipeInfo info;
 
-	private static final int capacity = 125;
-	private static final int pressure = 50;
-
-	public static final List<String> visibleParts = Lists.newArrayList("Baseplate_pmdl", "Pump_pumdl");
-
 	private static final float fromBorder = 2f / 16;
 	public static final AxisAlignedBB boundsPump = new AxisAlignedBB(fromBorder, 0, fromBorder, 1 - fromBorder,
 			1 - 4 / 16f, 1 - fromBorder);
-	
+
 
 	private static final float tankBottom = 5 / 16f;
 	private static final float tankHeight = 5 / 16f;
 	private static final float tankTop = tankBottom + tankHeight;
-	
+
 	private static final float tankLeft = 3 / 16f;
 	private static final float tankWidth = 2 / 16f;
-	
+
 	private static final float tankBack = 6 / 16f;
-	
+
 	public static final AxisAlignedBB[] boundsPumpTank = new AxisAlignedBB[] {
-			new AxisAlignedBB(1-tankLeft,	tankBottom, tankBack,	1-tankLeft-tankWidth,	tankTop,	tankBack+tankWidth).expand(TaamRenderer.shrinkValue, TaamRenderer.shrinkValue, TaamRenderer.shrinkValue),//S
-			new AxisAlignedBB(1-tankBack,	tankBottom,	1-tankLeft, 1-tankBack-tankWidth,	tankTop,	1-tankLeft-tankWidth).expand(TaamRenderer.shrinkValue, TaamRenderer.shrinkValue, TaamRenderer.shrinkValue),//W
-			new AxisAlignedBB(tankLeft,		tankBottom, 1-tankBack,	tankLeft+tankWidth,		tankTop,	1-tankBack-tankWidth).expand(TaamRenderer.shrinkValue, TaamRenderer.shrinkValue, TaamRenderer.shrinkValue),//N
-			new AxisAlignedBB(tankBack,		tankBottom, tankLeft,	tankBack+tankWidth,		tankTop,	tankLeft+tankWidth).expand(TaamRenderer.shrinkValue, TaamRenderer.shrinkValue, TaamRenderer.shrinkValue)//E
+			new AxisAlignedBB(1-tankLeft,	tankBottom, tankBack,	1-tankLeft-tankWidth,	tankTop,	tankBack+tankWidth).expand(TankRenderInfo.shrinkValue, TankRenderInfo.shrinkValue, TankRenderInfo.shrinkValue),//S
+			new AxisAlignedBB(1-tankBack,	tankBottom,	1-tankLeft, 1-tankBack-tankWidth,	tankTop,	1-tankLeft-tankWidth).expand(TankRenderInfo.shrinkValue, TankRenderInfo.shrinkValue, TankRenderInfo.shrinkValue),//W
+			new AxisAlignedBB(tankLeft,		tankBottom, 1-tankBack,	tankLeft+tankWidth,		tankTop,	1-tankBack-tankWidth).expand(TankRenderInfo.shrinkValue, TankRenderInfo.shrinkValue, TankRenderInfo.shrinkValue),//N
+			new AxisAlignedBB(tankBack,		tankBottom, tankLeft,	tankBack+tankWidth,		tankTop,	tankLeft+tankWidth).expand(TankRenderInfo.shrinkValue, TankRenderInfo.shrinkValue, TankRenderInfo.shrinkValue)//E
 	};
 
 	private static final float fromBorderOcclusion = 2f / 16;
 	public static final AxisAlignedBB bbCoolusion = new AxisAlignedBB(fromBorderOcclusion, fromBorderOcclusion,
 			fromBorderOcclusion, 1 - fromBorderOcclusion, 1 - fromBorderOcclusion, 1 - fromBorderOcclusion);
 
-	private TankRenderInfo tankRI = new TankRenderInfo(boundsPumpTank[2], null);
+	private TankRenderInfo tankRI = new TankRenderInfo(boundsPumpTank[2]);
 
 	private byte occludedSides;
 
 	public MachinePump() {
-		info = new PipeInfo(capacity);
+		info = new PipeInfo(Config.pl_pump_capacity);
 		pipeEndOut = new PipeEndSharedDistinct(direction, info, true);
 		pipeEndIn = new PipeEndSharedDistinct(direction.getOpposite(), info, true);
-		pipeEndOut.setPressure(pressure);
-		pipeEndIn.setSuction(pressure);
+		pipeEndOut.setPressure(Config.pl_pump_pressure);
+		pipeEndIn.setSuction(Config.pl_pump_suction);
 	}
 
 	private void updateOcclusion() {
 		pipeEndOut.occluded = FaceBitmap.isSideBitSet(occludedSides, pipeEndOut.getSide());
 		pipeEndIn.occluded = FaceBitmap.isSideBitSet(occludedSides, pipeEndIn.getSide());
-		
-		tankRI.bounds = boundsPumpTank[direction.getHorizontalIndex()];
-	}
 
-	public List<String> getVisibleParts() {
-		return visibleParts;
+		tankRI.bounds = boundsPumpTank[direction.getHorizontalIndex()];
 	}
 
 	@Override
@@ -109,6 +97,7 @@ public class MachinePump implements IMachine, IRotatable {
 		updateOcclusion();
 	}
 
+	@Override
 	public void writeUpdatePacket(PacketBuffer buf) {
 		NBTTagCompound tag = new NBTTagCompound();
 		writePropertiesToNBT(tag);
@@ -116,6 +105,7 @@ public class MachinePump implements IMachine, IRotatable {
 		buf.writeByte(occludedSides);
 	}
 
+	@Override
 	public void readUpdatePacket(PacketBuffer buf) {
 		try {
 			NBTTagCompound tag = buf.readNBTTagCompoundFromBuffer();
@@ -188,6 +178,9 @@ public class MachinePump implements IMachine, IRotatable {
 		if (capability == Taam.CAPABILITY_PIPE) {
 			return facing.getAxis() == direction.getAxis();
 		}
+		if (capability == Taam.CAPABILITY_RENDER_TANK) {
+			return true;
+		}
 		return false;
 	}
 
@@ -204,7 +197,8 @@ public class MachinePump implements IMachine, IRotatable {
 			}
 		}
 		if (capability == Taam.CAPABILITY_RENDER_TANK) {
-			tankRI.tankInfo = new FluidTankInfo(info.content.isEmpty() ? null : info.content.get(0), info.capacity);
+			tankRI.fluid = info.content.isEmpty() ? null : info.content.get(0);
+			tankRI.capacity = info.capacity;
 			return (T) tankRI.asArray();
 		}
 		return null;

@@ -9,9 +9,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -27,7 +27,7 @@ public class MachineItemBlock extends ItemBlock {
 			throw new IllegalArgumentException("Specified meta values were null or empty");
 		}
 		this.values = values;
-		this.setHasSubtypes(true);
+		setHasSubtypes(true);
 	}
 
 	public IMachineMetaInfo getInfo(int meta) {
@@ -77,7 +77,7 @@ public class MachineItemBlock extends ItemBlock {
 			te.meta = info;
 			te.machine = info.createMachine();
 			te.markDirty();
-			world.markBlockForUpdate(pos);
+			//TODO: world.markBlockForUpdate(pos);
 
 			if (te.machine instanceof IRotatable) {
 
@@ -105,7 +105,6 @@ public class MachineItemBlock extends ItemBlock {
 						}
 					}
 				}
-				System.out.println("Setting " + placeDir);
 				((IRotatable) te.machine).setFacingDirection(placeDir);
 			}
 		}

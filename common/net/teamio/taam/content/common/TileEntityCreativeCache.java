@@ -4,15 +4,16 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IWorldInteractable;
 
 public class TileEntityCreativeCache extends BaseTileEntity implements IInventory, IWorldInteractable {
-	
+
 	private ItemStack template = null;
 
 	public void setTemplate(ItemStack stack) {
@@ -22,11 +23,11 @@ public class TileEntityCreativeCache extends BaseTileEntity implements IInventor
 			template = stack.copy();
 		}
 	}
-	
+
 	public ItemStack getTemplate() {
 		return template;
 	}
-	
+
 	@Override
 	protected void writePropertiesToNBT(NBTTagCompound tag) {
 		if(template != null) {
@@ -47,8 +48,8 @@ public class TileEntityCreativeCache extends BaseTileEntity implements IInventor
 	}
 
 	@Override
-	public boolean onBlockActivated(World world, EntityPlayer player, boolean hasWrench, EnumFacing side, float hitX,
-			float hitY, float hitZ) {
+	public boolean onBlockActivated(World world, EntityPlayer player, EnumHand hand, boolean hasWrench, EnumFacing side,
+			float hitX, float hitY, float hitZ) {
 		ItemStack stack = player.inventory.getStackInSlot(player.inventory.currentItem);
 		if(stack == null) {
 			template = null;
@@ -63,11 +64,11 @@ public class TileEntityCreativeCache extends BaseTileEntity implements IInventor
 	public boolean onBlockHit(World world, EntityPlayer player, boolean hasWrench) {
 		return false;
 	}
-	
+
 	/*
 	 * IInventory implementation
 	 */
-	
+
 	@Override
 	public int getSizeInventory() {
 		return 1;
@@ -98,7 +99,7 @@ public class TileEntityCreativeCache extends BaseTileEntity implements IInventor
 		}
 		return template.copy();
 	}
-	
+
 	@Override
 	public void setInventorySlotContents(int slot, ItemStack stack) {
 	}
@@ -137,8 +138,8 @@ public class TileEntityCreativeCache extends BaseTileEntity implements IInventor
 	}
 
 	@Override
-	public IChatComponent getDisplayName() {
-		return new ChatComponentTranslation("tile.taam.machines.creativecache.name");
+	public ITextComponent getDisplayName() {
+		return new TextComponentTranslation("tile.taam.machines.creativecache.name");
 	}
 
 	@Override

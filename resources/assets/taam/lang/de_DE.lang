@@ -1,6 +1,215 @@
 #Item localization
-tile.taam.sensor.name=Bewegungssensor
-tile.taam.item.cable=MulitNet Kabel
-tile.taam.item.debugger=Debugger
-#Creativ Tab localization
+item.taam.debugger.name=Kaffee
+item.taam.wrench.name=Englänger
+# Ingots
+item.taam.ingot.tin.name=Zinnbarren
+item.taam.ingot.copper.name=Kupferbarren
+item.taam.ingot.aluminum.name=Aluminiumbarren
+item.taam.ingot.bauxite.name=Der unmögliche Bauxit-Barren
+item.taam.ingot.kaolinite.name=Der unmögliche Kaolinit-Barren
+item.taam.ingot.gold.name=Cheated Gold Ingot
+item.taam.ingot.iron.name=Cheated Iron Ingot
+item.taam.ingot.coal.name=Cheated Coal Ingot (what is that?)
+# Dusts
+item.taam.dust.tin.name=Zinnstaub
+item.taam.dust.copper.name=Kupferstaub
+item.taam.dust.aluminum.name=Aluminiumstaub
+item.taam.dust.bauxite.name=Bauxit-Staub
+item.taam.dust.kaolinite.name=Kaolinit-Staub
+item.taam.dust.gold.name=Goldstaub
+item.taam.dust.iron.name=Eisenstaub
+item.taam.dust.coal.name=Kohlestaub
+item.taam.dust.stone.name=Gemahlener Stein
+# Parts (Crafting Items)
+item.taam.part.photocell.name=Fotozelle
+item.taam.part.motor.name=Motor
+item.taam.part.support_frame_wood.name=Hölzerner Rahmen
+item.taam.part.support_frame.name=Rahmen
+item.taam.part.circuit_basic.name=Einfacher Schaltkreis
+item.taam.part.circuit_advanced.name=Komplexer Schaltkreis
+item.taam.part.logistics_chip.name=Logistik-Chip
+item.taam.part.rubber_band.name=Gummiband
+item.taam.part.tank.name=Tankmodul
+item.taam.part.pump.name=Pumpmodul
+item.taam.part.nozzle.name=Düse
+item.taam.part.magnetic_coil.name=Spule
+item.taam.part.iron_frame.name=Eisenrahmen
+item.taam.part.metal_bearing.name=Metallenes Lager
+item.taam.part.copper_wire.name=Kupferdraht
+item.taam.part.sieve.name=Sieb
+item.taam.part.redirector.name=Umlenkplatte
+# Materials
+item.taam.material.plastic_sheet.name=Plastik-Platte
+item.taam.material.plastic_bar.name=Plastik-Barren
+item.taam.material.rubber_bar.name=Gummi-Barren
+item.taam.material.rubber_sheet.name=Gummi-Platte
+item.taam.material.graphite.name=Graphit-Barren
+item.taam.material.silicon_wafer.name=Silikon-Wafer
+item.taam.material.iron_nugget.name=Eisen-Nugget
+item.taam.material.tin_nugget.name=Zinn-Nugget
+item.taam.material.aluminum_nugget.name=Aluminium-Nugget
+item.taam.material.copper_nugget.name=Kupfer-Nugget
+item.taam.material.wooden_board.name=Holzbrett
+item.taam.material.aluminum_plate.name=Aluminium-Platte
+item.taam.material.resin.name=Harz
+item.taam.material.cement.name=Zement
+item.taam.material.cementRough.name=Grober Zement
+
+item.taam.material.pigment_black.name=Schwarzes Pigment-Pellet
+item.taam.material.pigment_red.name=Rptes Pigment-Pellet
+item.taam.material.pigment_green.name=Grünes Pigment-Pellet
+item.taam.material.pigment_brown.name=Braunes Pigment-Pellet
+item.taam.material.pigment_blue.name=Blaues Pigment-Pellet
+item.taam.material.pigment_purple.name=Lilanes Pigment-Pellet
+item.taam.material.pigment_cyan.name=Cyanes Pigment-Pellet
+item.taam.material.pigment_lightGray.name=Hellgraues Pigment-Pellet
+item.taam.material.pigment_gray.name=Graues Pigment-Pellet
+item.taam.material.pigment_pink.name=Rosanes Pigment-Pellet
+item.taam.material.pigment_lime.name=Limettenes Pigment-Pellet
+item.taam.material.pigment_yellow.name=Gelbes Pigment-Pellet
+item.taam.material.pigment_lightBlue.name=Hellblaues Pigment-Pellet
+item.taam.material.pigment_magenta.name=Magenta Pigment-Pellet
+item.taam.material.pigment_orange.name=Orangenes Pigment-Pellet
+item.taam.material.pigment_white.name=Weißes Pigment-Pellet
+
+# Tools
+item.taam.tool.saw.name=Säge
+
+#Creative Tab localization
 itemGroup.taam=Taam
+
+# Block localization
+tile.taam.sensor.name=Bewegungsmelder
+tile.taam.slidingdoor.name=Schiebetür
+tile.taam.support_beam.name=Stützträger
+tile.taam.lamp.name=Industrielampe
+# Beton
+tile.taam.concrete.name=Beton
+tile.taam.concrete.rough.name=Grober Beton
+tile.taam.concrete.rough_chiseled.name=Grober Beton (Behauen)
+tile.taam.concrete.fine.name=Feiner Beton
+tile.taam.concrete.fine_chiseled.name=Feiner Beton (Behauen)
+tile.taam.concrete.coated.name=Beschichteter Beton
+tile.taam.concrete.coated_chiseled.name=Beschichteter Beton (Behauen)
+tile.taam.concrete.black.name=Schwarz Beschichteter Beton
+tile.taam.concrete.black_chiseled.name=Schwarz Beschichteter Beton (Behauen)
+tile.taam.concrete.warn1.name=Beton (Yellow Warning Paint)
+tile.taam.concrete.warn2.name=Beton (Red Warning Paint)
+# Ores
+tile.taam.ore.copper.name=Kupfererz
+tile.taam.ore.tin.name=Zinn-Erz
+tile.taam.ore.aluminum.name=Natives Aluminium-Erz
+tile.taam.ore.bauxite.name=Bauxit
+tile.taam.ore.kaolinite.name=Kaolinit
+# Machine Blocks
+
+tile.taam.machines.chute.name=Trichter
+tile.taam.machines.creativecache.name=Creative Item Cache
+tile.taam.machines.creativewell.name=Creative Fluid Well
+
+tile.taam.productionline.conveyor1.name=Holz-Förderband
+tile.taam.productionline.conveyor2.name=Förderband
+tile.taam.productionline.conveyor3.name=Hochgeschwindigkeits-Förderband
+tile.taam.productionline.hopper.name=Förderband-Hopper
+tile.taam.productionline.hopper_hs.name=Hochgeschwindigkeits-Förderband-Hopper
+tile.taam.productionline.sieve.name=Förderband-Sieb
+tile.taam.productionline.shredder.name=Förderband-Schredder
+tile.taam.productionline.grinder.name=Förderband-Fleischwolf
+tile.taam.productionline.crusher.name=Förderband-Zerkleinerer
+tile.taam.productionline.chute.name=Förderband-Trichter
+tile.taam.productionline.elevator.name=Förderband-Aufzug
+
+tile.taam.productionline_attachable.itembag.name=Förderband-Tasche
+tile.taam.productionline_attachable.trashcan.name=Förderband-Mülleimer
+tile.taam.productionline_attachable.lamp.name=Förderband-Lampe
+
+tile.taam.productionline_appliance.sprayer.name=Sprühmaschine
+tile.taam.productionline_appliance.aligner.name=Ausrichter
+
+#Machines
+tile.taam.machine.pipe.name=Rohrleitung
+tile.taam.machine.tank.name=Tank
+tile.taam.machine.pump.name=Pumpe
+tile.taam.machine.mixer.name=Mixer
+tile.taam.machine.fluid_drier.name=Flüssigkeits-Trocker
+
+item.taam.machine.pipe.name=Rohrleitung
+item.taam.machine.tank.name=Tank
+item.taam.machine.pump.name=Pumpe
+item.taam.machine.mixer.name=Mixer
+item.taam.machine.fluid_drier.name=Flüssigkeits-Trocker
+
+# Fluids
+tile.taam.fluid.dye.black.name=Schwarzer Farbstoff
+tile.taam.fluid.dye.blue.name=Blauer Farbstoff
+tile.taam.fluid.dye.brown.name=Brauner Farbstoff
+tile.taam.fluid.dye.cyan.name=Cyaner Farbstoff
+tile.taam.fluid.dye.gray.name=Grauer Farbstoff
+tile.taam.fluid.dye.green.name=Grüner Farbstoff
+tile.taam.fluid.dye.lightBlue.name=Hellblauer Farbstoff
+tile.taam.fluid.dye.lightGray.name=Hellgrauer Farbstoff
+tile.taam.fluid.dye.lime.name=Terminalfarbstoff
+tile.taam.fluid.dye.magenta.name=Magenta Farbstoff
+tile.taam.fluid.dye.orange.name=Orangener Farbstoff
+tile.taam.fluid.dye.pink.name=Rosaner Farbstoff
+tile.taam.fluid.dye.purple.name=Lilaner Farbstoff
+tile.taam.fluid.dye.red.name=Roter Farbstoff
+tile.taam.fluid.dye.white.name=Weißer Farbstoff
+tile.taam.fluid.dye.yellow.name=Gelber Farbstoff
+
+tile.taam.fluid.material.concreteRough.name=Grober Beton
+tile.taam.fluid.material.concreteFine.name=Feiner Beton
+tile.taam.fluid.material.coating.name=Beschichtung auf Harzbasis
+
+# Fluids
+fluid.dye_black=Schwarzer Farbstoff
+fluid.dye_blue=Blauer Farbstoff
+fluid.dye_brown=Brauner Farbstoff
+fluid.dye_cyan=Cyaner Farbstoff
+fluid.dye_gray=Grauer Farbstoff
+fluid.dye_green=Grüner Farbstoff
+fluid.dye_lightBlue=Hellblauer Farbstoff
+fluid.dye_lightGray=Hellgrauer Farbstoff
+fluid.dye_lime=Terminalfarbstoff
+fluid.dye_magenta=Magenta Farbstoff
+fluid.dye_orange=Orangener Farbstoff
+fluid.dye_pink=Rosaner Farbstoff
+fluid.dye_purple=Lilaner Farbstoff
+fluid.dye_red=Roter Farbstoff
+fluid.dye_white=Weißer Farbstoff
+fluid.dye_yellow=Gelber Farbstoff
+
+fluid.concreteRough=Grober Beton
+fluid.concreteFine=Feiner Beton
+fluid.coating=Beschichtung auf Harzbasis
+
+# Lore localization
+lore.taam.shift=<Shift Drücken>
+lore.taam.conveyor_appliance=Förderband-Appliance
+lore.taam.conveyor_appliance.usage=Kann an Förderbändern oder anderen\nkompatiblen Maschinen platziert werden.
+lore.taam.productionline=Komponente einer Produktionskette
+lore.taam.productionline.usage=Kann mit anderen Produktionsketten-\nKomponenten zu einem integrierten Verarbeitungs-\n und Transportsystem verbunden werden.
+lore.taam.productionline.isappliancehost=Ist mit Appliances kompatibel
+lore.taam.debugtool=Debug Tool
+lore.taam.debugtool.usage=Dieses Item kann nicht hergestellt werden.\nGibt Debug-Informationen in Chat oder Log aus.
+lore.taam.wrench=Das Werkzeug eines Ingenieurs
+lore.taam.wrench.usage=Benutze diese Schraubzwinge zum rotieren\nund konfigurieren der Teile einer Produktionskette.
+lore.taam.redirector.usage=Befestige dieses Teil an einem Conveyor,\num Transportgut nach links oder rechts umzulenken.\nAbnehmbar mit dem Engländer.
+
+# Death causes
+death.attack.taam.processed=%1$s wurde verarbeitet (schmerzhaft)
+death.attack.taam.shredded=%1$s wurde langsam in Teile geschnitten
+death.attack.taam.ground=%1$s wurde zu Brei gemahlen
+death.attack.taam.crushed=%1$s's Knochen wurden zu Staub zermahlen
+death.attack.taam.reconfigured=%1$s wurde von %2$s schmerzhaft rekonfiguriert
+death.attack.taam.reconfigured.item=%1$s wurde von %2$s schmerzhaft mit %3$s rekonfiguriert
+
+# JEI Integration
+taam.integration.jei.categories.crusher=Zerkleinern
+taam.integration.jei.categories.grinder=Zermahlen
+taam.integration.jei.categories.fluiddrier=Flüssigkeit Trocknen
+taam.integration.jei.categories.mixer=Vermischen
+
+taam.integration.jei.lore.internalcapacity=Fassungsvermögen: %d mB
+taam.integration.jei.lore.internalcapacity_in=Fassungsvermögen (Rein): %d mB
+taam.integration.jei.lore.internalcapacity_out=Fassungsvermögen (Raus): %d mB

@@ -18,7 +18,12 @@ public class MachineTileEntity extends BaseTileEntity implements ITickable {
 
 	public MachineTileEntity(IMachineMetaInfo meta) {
 		this.meta = meta;
-		this.machine = meta.createMachine();
+		machine = meta.createMachine();
+	}
+
+	@Override
+	public String getName() {
+		return "tile.taam.machine." + meta.getName() + ".name";
 	}
 
 	@Override
@@ -38,9 +43,10 @@ public class MachineTileEntity extends BaseTileEntity implements ITickable {
 	protected void readPropertiesFromNBT(NBTTagCompound tag) {
 		String machineID = tag.getString("machine");
 		IMachineMetaInfo meta = Taam.MACHINE_META.fromId(machineID);
-		if (meta != null) {
+		if (meta != null && this.meta != meta) {
 			this.meta = meta;
 			machine = meta.createMachine();
+			updateState(false, true, false);
 		}
 		machine.readPropertiesFromNBT(tag);
 	}

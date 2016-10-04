@@ -13,8 +13,17 @@
         "inventory": [{
             "transform": "forge:default-block"
         }],
-        "variant=sprayer": [{
-        	"model": "taam:sprayer.obj"
-        }]
+        "direction": {
+        	"up": {},
+        	"down": {},
+        	"south": {},
+        	"north": {"y": 180},
+        	"west": {"y": 90},
+        	"east": {"y": 270}
+        },
+        "variant": {
+        	"sprayer":		{ "model": "taam:sprayer.obj" },
+        	"aligner":		{ "model": "taam:appliance_aligner.obj" }
+        }
     }
 }

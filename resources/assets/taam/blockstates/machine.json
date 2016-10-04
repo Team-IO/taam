@@ -12,63 +12,35 @@
         "inventory": [{
             "transform": "forge:default-block"
         }],
-        "variant=pipe": [{
-           "model": "taam:pipes.obj"
-        }],
-        "direction=down,variant=pipe": [{
-           "model": "taam:pipes.obj"
-        }],
         
-        "variant=tank": [{
-           "model": "taam:tank.obj"
-        }],
-        "direction=down,variant=tank": [{
-           "model": "taam:tank.obj"
-        }],
-        
-        "variant=pump": [{
-        	"model": "taam:pump.obj"
-        }],
-        "direction=south,variant=pump": [{
-        	"model": "taam:pump.obj"
-        }],
-        "direction=north,variant=pump": [{
-        	"model": "taam:pump.obj",
-        	"y": 180
-        }],
-        "direction=west,variant=pump": [{
-        	"model": "taam:pump.obj",
-        	"y": 90
-        }],
-        "direction=east,variant=pump": [{
-        	"model": "taam:pump.obj",
-        	"y": 270
-        }],
-        
-        "variant=mixer": [{
-        	"model": "taam:mixer.obj"
-        }],
-        "direction=south,variant=mixer": [{
-        	"model": "taam:mixer.obj"
-        }],
-        "direction=north,variant=mixer": [{
-        	"model": "taam:mixer.obj",
-        	"y": 180
-        }],
-        "direction=west,variant=mixer": [{
-        	"model": "taam:mixer.obj",
-        	"y": 90
-        }],
-        "direction=east,variant=mixer": [{
-        	"model": "taam:mixer.obj",
-        	"y": 270
-        }],
-        
-        "variant=fluid_drier": [{
-        	"model": "taam:fluid_drier.obj"
-        }],
-        "direction=down,variant=fluid_drier": [{
-        	"model": "taam:fluid_drier.obj"
-        }]
+        "direction": {
+        	"up": {},
+        	"down": {},
+        	"south": {},
+        	"north": {"y": 180},
+        	"west": {"y": 90},
+        	"east": {"y": 270}
+        },
+        "variant": {
+        	"pump":			{ "model": "taam:pump.obj" },
+      		"fluid_drier":	{ "model": "taam:fluid_drier.obj" },
+      		"mixer":		{ "model": "taam:mixer.obj" },
+      		"pipe":			{
+      			"model": "taam:pipes.obj",
+	        	"custom": {
+					"groupConfigs": {
+						"Pipe_Center": {"show": ["Center_pcmdl"], "hide": [], "flags": ["alwaysActive"]},
+						"Pipe_West": {"show": ["FlangeMX_pfmdl"]},
+						"Pipe_East": {"show": ["FlangePX_pfmdl"]},
+						"Pipe_South": {"show": ["FlangeMY_pfmdl"]},
+						"Pipe_North": {"show": ["FlangePY_pfmdl"]},
+						"Pipe_Down": {"show": ["FlangeMZ_pfmdl"]},
+						"Pipe_Up": {"show": ["FlangePZ_pfmdl"]}
+					}
+				}
+			},
+      		"tank":			{ "model": "taam:tank.obj" },
+      		"fluid_drier":	{ "model": "taam:fluid_drier.obj" }
+        }
     }
 }

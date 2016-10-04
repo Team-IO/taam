@@ -2,7 +2,6 @@
     "forge_marker": 1,
     "defaults": {
         "textures": {},
-        "model": "taam:conveyor.obj",
         "custom": {
             "flip-v": true
         },
@@ -13,15 +12,186 @@
         "inventory": [{
             "transform": "forge:default-block"
         }],
-        "variant=conveyor1": [{}],
-        "variant=conveyor2": [{}],
-        "variant=conveyor3": [{}],
-        "variant=hopper": [{}],
-        "variant=hopper_hs": [{}],
-        "variant=sieve": [{}],
-        "variant=shredder": [{}],
-        "variant=grinder": [{}],
-        "variant=crusher": [{}],
-        "variant=chute": [{}]
+        "direction": {
+        	"up": {},
+        	"down": {},
+        	"south": {},
+        	"north": {"y": 180},
+        	"west": {"y": 90},
+        	"east": {"y": 270}
+        },
+        "variant": {
+        	"conveyor1": {
+        		"model": "taam:conveyor.obj",
+	        	"custom": {
+					"groupConfigs": {
+						"0_Conveyor_base": {
+                            "show": [
+                                "Support_Wood_smdl_wood", 
+                                "ConveyorDirectionMarker_Wood_cdmdl_wood"
+                            ], "hide": [], "flags": ["alwaysActive"]
+                        },
+						"0_Conveyor_RoundEnd": {
+                            "show": [
+                                "ConveyorRoundEnd_crmdl",
+                                "ConveyorRoundEnd_Walz_Wood_cwalzmdl_wood",
+                                "ConveyorRoundEnd_Framing_Wood_crfmdl_wood"
+                            ]
+                        },
+                        "0_Conveyor_StraightEnd": {
+                            "show": [
+                                "ConveyorStraightEnd_csmdl",
+                                "ConveyorStraightEnd_Walz_Wood_cwalzmdl_wood",
+                                "ConveyorStraightEnd_Framing_Wood_csfmdl_wood"
+                            ]
+                        },
+                        "0_Conveyor_RoundBegin": {
+                            "show": [
+                                "ConveyorRoundBegin_crmdl",
+                                "ConveyorRoundBegin_Walz_Wood_cwalzmdl_wood",
+                                "ConveyorRoundBegin_Framing_Wood_crfmdl_wood"
+                            ]
+                        },
+                        "0_Conveyor_StraightBegin": {
+                            "show": [
+                                "ConveyorStraightBegin_csmdl",
+                                "ConveyorStraightBegin_Walz_Wood_cwalzmdl_wood",
+                                "ConveyorStraightBegin_Framing_Wood_csfmdl_wood"
+                            ]
+                        },
+                        "0_Conveyor_T_Above": {"show": ["ConveyorSupportAbove_Wood_samdl_wood"]},
+                        "0_Conveyor_T_Begin": {"show": ["ConveyorRoundBeginCap_Wood_cecmdl_wood"]},
+                        "0_Conveyor_T_End": {"show": ["ConveyorRoundEndCap_Wood_cecmdl_wood"]},
+                        "0_Conveyor_T_Left": {"show": ["ConveyorLeftCap_Wood_cecmdl_wood"]},
+                        "0_Conveyor_T_Right": {"show": ["ConveyorRightCap_Wood_cecmdl_wood"]}
+					}
+				}
+        	},
+            "conveyor2": {
+                "model": "taam:conveyor.obj",
+                "custom": {
+                    "groupConfigs": {
+                        "1_Conveyor_base": {
+                            "show": [
+                                "Support_Alu_smdl_alu",
+                                "ConveyorDirectionMarker_Alu_cdmdl_alu"
+                            ], "hide": [], "flags": ["alwaysActive"]
+                        },
+                        "1_Conveyor_RoundEnd": {
+                            "show": [
+                                "ConveyorRoundEnd_crmdl",
+                                "ConveyorRoundEnd_Walz_Alu_cwalzmdl_alu",
+                                "ConveyorRoundEnd_Framing_Alu_crfmdl_alu"
+                            ]
+                        },
+                        "1_Conveyor_StraightEnd": {
+                            "show": [
+                                "ConveyorStraightEnd_csmdl",
+                                "ConveyorStraightEnd_Walz_Alu_cwalzmdl_alu",
+                                "ConveyorStraightEnd_Framing_Alu_csfmdl_alu"
+                            ]
+                        },
+                        "1_Conveyor_RoundBegin": {
+                            "show": [
+                                "ConveyorRoundBegin_crmdl",
+                                "ConveyorRoundBegin_Walz_Alu_cwalzmdl_alu",
+                                "ConveyorRoundBegin_Framing_Alu_crfmdl_alu"
+                            ]
+                        },
+                        "1_Conveyor_StraightBegin": {
+                            "show": [
+                                "ConveyorStraightBegin_csmdl",
+                                "ConveyorStraightBegin_Walz_Alu_cwalzmdl_alu",
+                                "ConveyorStraightBegin_Framing_Alu_csfmdl_alu"
+                            ]
+                        },
+                        "1_Conveyor_T_Above": {"show": ["ConveyorSupportAbove_Alu_samdl_alu"]},
+                        "1_Conveyor_T_Begin": {"show": ["ConveyorRoundBeginCap_Alu_cecmdl_alu"]},
+                        "1_Conveyor_T_End": {"show": ["ConveyorRoundEndCap_Alu_cecmdl_alu"]},
+                        "1_Conveyor_T_Left": {"show": ["ConveyorLeftCap_Alu_cecmdl_alu"]},
+                        "1_Conveyor_T_Right": {"show": ["ConveyorRightCap_Alu_cecmdl_alu"]},
+                        "1_Conveyor_R_Right": {"show": ["RedirectorRight_crdrmdl_r"]},
+                        "1_Conveyor_R_Left": {"show": ["RedirectorLeft_crdrmdl_l"]}
+                    }
+                }
+            },
+            "conveyor3": {
+                "model": "taam:conveyor.obj",
+                "custom": {
+                    "groupConfigs": {
+                        "2_Conveyor_base": {
+                            "show": [
+                                "Support_Alu_smdl_alu",
+                                "ConveyorDirectionMarker_Alu_cdmdl_alu",
+                                "ConveyorHighThroughput_Framing_Alu_chtpmdl_alu"
+                            ], "hide": [], "flags": ["alwaysActive"]
+                        },
+                        "2_Conveyor_RoundEnd": {
+                            "show": [
+                                "ConveyorRoundEnd_crmdl",
+                                "ConveyorRoundEnd_Walz_Alu_cwalzmdl_alu",
+                                "ConveyorRoundEnd_Framing_Alu_crfmdl_alu"
+                            ]
+                        },
+                        "2_Conveyor_StraightEnd": {
+                            "show": [
+                                "ConveyorStraightEnd_csmdl",
+                                "ConveyorStraightEnd_Walz_Alu_cwalzmdl_alu",
+                                "ConveyorStraightEnd_Framing_Alu_csfmdl_alu"
+                            ]
+                        },
+                        "2_Conveyor_RoundBegin": {
+                            "show": [
+                                "ConveyorRoundBegin_crmdl",
+                                "ConveyorRoundBegin_Walz_Alu_cwalzmdl_alu",
+                                "ConveyorRoundBegin_Framing_Alu_crfmdl_alu"
+                            ]
+                        },
+                        "2_Conveyor_StraightBegin": {
+                            "show": [
+                                "ConveyorStraightBegin_csmdl",
+                                "ConveyorStraightBegin_Walz_Alu_cwalzmdl_alu",
+                                "ConveyorStraightBegin_Framing_Alu_csfmdl_alu"
+                            ]
+                        },
+                        "2_Conveyor_T_Above": {"show": ["ConveyorSupportAbove_Alu_samdl_alu"]},
+                        "2_Conveyor_T_Begin": {"show": ["ConveyorRoundBeginCap_Alu_cecmdl_alu"]},
+                        "2_Conveyor_T_End": {"show": ["ConveyorRoundEndCap_Alu_cecmdl_alu"]},
+                        "2_Conveyor_T_Left": {"show": ["ConveyorLeftCap_Alu_cecmdl_alu"]},
+                        "2_Conveyor_T_Right": {"show": ["ConveyorRightCap_Alu_cecmdl_alu"]}
+                    }
+                }
+            },
+            "hopper": {
+                "model": "taam:conveyor_hopper.obj"
+            },
+            "hopper_hs": {
+                "model": "taam:conveyor_hopper_hs.obj"
+            },
+            "sieve": {
+                "model": "taam:conveyor_sieve.obj",
+	        	"custom": {
+					"groupConfigs": {
+						"Sieve_Base": {"show": ["Support_Alu_smdl_alu", "SieveChute_cscmdl"], "hide": [], "flags": ["alwaysActive"]},
+						"Sieve_Sieve": {"show": ["Sieve_csvmdl"]}
+					}
+				}
+            },
+            "shredder": {
+                "model": "taam:conveyor_processor_shredder.obj"
+            },
+            "grinder": {
+                "model": "taam:conveyor_processor_grinder.obj"
+            },
+            "crusher": {
+                "model": "taam:conveyor_processor_crusher.obj"
+            },
+            "chute": {
+                "model": "taam:conveyor_chute.obj"
+            },
+            "elevator": {
+                "model": "taam:conveyor_elevator_int.obj"
+            }
+        }
     }
 }

@@ -4,11 +4,11 @@ import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 
 public class MaterialMachinesTransparent extends Material {
-	public static final MaterialMachinesTransparent INSTANCE = new MaterialMachinesTransparent(MapColor.ironColor);
+	public static final MaterialMachinesTransparent INSTANCE = new MaterialMachinesTransparent(MapColor.IRON);
 
 	public MaterialMachinesTransparent(MapColor color) {
 		super(color);
-		this.setRequiresTool();
+		setRequiresTool();
 	}
 
 	@Override

@@ -1,22 +1,18 @@
 package net.teamio.taam.content.conveyors;
 
-import java.util.List;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemMultiTexture;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.teamio.taam.Taam;
-import net.teamio.taam.content.IRenderableItem;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.util.TaamUtil;
 
-public class ItemAttachable extends ItemMultiTexture implements IRenderableItem {
+public class ItemAttachable extends ItemMultiTexture {
 
 	public ItemAttachable(Block block, String[] names) {
 		super(block, block, names);
@@ -41,19 +37,4 @@ public class ItemAttachable extends ItemMultiTexture implements IRenderableItem 
 		}
 		return false;
 	}
-
-	@Override
-	public List<String> getVisibleParts(ItemStack stack) {
-		int meta = stack.getMetadata();
-		Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META variant = Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META.values()[meta];
-		switch (variant) {
-		case itembag:
-			return TileEntityConveyorItemBag.parts;
-		case trashcan:
-			return TileEntityConveyorTrashCan.parts;
-		default:
-			return TileEntityConveyor.parts_invalid;
-		}
-	}
-
 }

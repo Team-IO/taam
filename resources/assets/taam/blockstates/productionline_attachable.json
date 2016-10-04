@@ -2,7 +2,6 @@
     "forge_marker": 1,
     "defaults": {
         "textures": {},
-        "model": "taam:conveyor_attachables.obj",
         "custom": {
             "flip-v": true
         }
@@ -12,7 +11,17 @@
         "inventory": [{
             "transform": "forge:default-block"
         }],
-        "variant=itembag": [{}],
-        "variant=trashcan": [{}]
+        "direction": {
+        	"up": {},
+        	"down": {},
+        	"south": {},
+        	"north": {"y": 180},
+        	"west": {"y": 90},
+        	"east": {"y": 270}
+        },
+        "variant": {
+        	"itembag":		{ "model": "taam:itembag.obj" },
+      		"trashcan":		{ "model": "taam:trashcan.obj" }
+        }
     }
 }

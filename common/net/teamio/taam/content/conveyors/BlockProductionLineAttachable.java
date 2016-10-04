@@ -2,34 +2,42 @@ package net.teamio.taam.content.conveyors;
 
 import java.util.List;
 
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
-import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.property.ExtendedBlockState;
+import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.teamio.taam.Log;
 import net.teamio.taam.Taam;
 import net.teamio.taam.content.IRotatable;
+import net.teamio.taam.rendering.obj.OBJModel;
 import net.teamio.taam.util.TaamUtil;
 
 public class BlockProductionLineAttachable extends BlockProductionLine {
 
 	public static final PropertyEnum<Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META> VARIANT = PropertyEnum.create("variant", Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META.class);
+	public static final PropertyEnum<EnumFacing> DIRECTION = PropertyEnum.create("direction", EnumFacing.class, EnumFacing.HORIZONTALS);
 
 	public BlockProductionLineAttachable() {
 		super();
 	}
 
 	@Override
-	protected BlockState createBlockState() {
-		return new BlockState(this, VARIANT);
+	protected BlockStateContainer createBlockState() {
+		return new ExtendedBlockState(this, new IProperty[] { DIRECTION, VARIANT },
+				new IUnlistedProperty[] { OBJModel.OBJProperty.instance });
 	}
 
 	@Override
@@ -48,6 +56,24 @@ public class BlockProductionLineAttachable extends BlockProductionLine {
 		return getDefaultState().withProperty(VARIANT, values[meta]);
 	}
 
+	@Override
+	public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
+
+		// Let the tile entity update anything that is required for rendering
+		ATileEntityAttachable te = (ATileEntityAttachable) worldIn.getTileEntity(pos);
+		if(te.getWorld().isRemote) {
+			te.renderUpdate();
+		}
+
+		// This makes the state shows up in F3. Previously it was not actually applied on the rendering, though.
+		// Rendering Transform was applied in getExtendedState
+		// Since 1.9 this seems to work, though
+
+		// Add rotation to state
+		return state.withProperty(DIRECTION, ((IRotatable) te).getFacingDirection());
+	}
+
+	@Override
 	public String getUnlocalizedName(ItemStack itemStack) {
 		int i = itemStack.getItemDamage();
 		Enum<?>[] values = Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META.values();
@@ -69,7 +95,7 @@ public class BlockProductionLineAttachable extends BlockProductionLine {
 
 	@Override
 	public TileEntity createTileEntity(World world, IBlockState state) {
-		Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META variant = (Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META) state
+		Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META variant = state
 				.getValue(VARIANT);
 		switch (variant) {
 		case itembag:
@@ -78,53 +104,55 @@ public class BlockProductionLineAttachable extends BlockProductionLine {
 		case trashcan:
 			// Trash Can
 			return new TileEntityConveyorTrashCan();
+		default:
+			Log.error("Was not able to create a TileEntity for " + getClass().getName());
+			return null;
 		}
-		return null;
 	}
 
 	@Override
-	public void setBlockBoundsBasedOnState(IBlockAccess world, BlockPos pos) {
-		IBlockState state = world.getBlockState(pos);
-		this.minY = 0f;
-		this.maxY = 0.5f;
-		TileEntity te = world.getTileEntity(pos);
-
-		if (state.getBlock() != this || !(te instanceof IRotatable)) {
-			this.minX = 0;
-			this.maxX = 1;
-			this.minZ = 0;
-			this.maxZ = 1;
-			return;
+	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
+		//TODO: Optimize
+		float minY, maxY, minX,maxX, minZ, maxZ;
+		minY = 0f;
+		maxY = 0.5f;
+		TileEntity te = source.getTileEntity(pos);
+		if(state.getBlock() != this || !(te instanceof IRotatable)) {
+			minX = 0;
+			maxX = 1;
+			minZ = 0;
+			maxZ = 1;
+		} else {
+			EnumFacing facing = ((IRotatable) te).getFacingDirection();
+			switch (facing) {
+			default:
+			case NORTH:
+				minX = 0;
+				maxX = 1;
+				minZ = 0;
+				maxZ = 0.35f;
+				break;
+			case SOUTH:
+				minX = 0;
+				maxX = 1;
+				minZ = 0.65f;
+				maxZ = 1;
+				break;
+			case EAST:
+				minX = 0.65f;
+				maxX = 1;
+				minZ = 0;
+				maxZ = 1;
+				break;
+			case WEST:
+				minX = 0;
+				maxX = 0.35f;
+				minZ = 0;
+				maxZ = 1;
+				break;
+			}
 		}
-
-		EnumFacing facing = ((IRotatable) te).getFacingDirection();
-		switch (facing) {
-		default:
-		case NORTH:
-			this.minX = 0;
-			this.maxX = 1;
-			this.minZ = 0;
-			this.maxZ = 0.35f;
-			break;
-		case SOUTH:
-			this.minX = 0;
-			this.maxX = 1;
-			this.minZ = 0.65f;
-			this.maxZ = 1;
-			break;
-		case EAST:
-			this.minX = 0.65f;
-			this.maxX = 1;
-			this.minZ = 0;
-			this.maxZ = 1;
-			break;
-		case WEST:
-			this.minX = 0;
-			this.maxX = 0.35f;
-			this.minZ = 0;
-			this.maxZ = 1;
-			break;
-		}
+		return new AxisAlignedBB(minX,minY,minZ, maxX, maxY,maxZ);
 	}
 
 	@Override
@@ -137,9 +165,8 @@ public class BlockProductionLineAttachable extends BlockProductionLine {
 		TileEntity te = world.getTileEntity(pos);
 		if (te instanceof IRotatable) {
 			return TaamUtil.canAttach(world, pos, ((IRotatable) te).getFacingDirection());
-		} else {
-			return true;
 		}
+		return true;
 	}
 
 }

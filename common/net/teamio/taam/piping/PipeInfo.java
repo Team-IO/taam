@@ -13,7 +13,7 @@ import net.teamio.taam.Log;
 /**
  * Data class that implements most methods of {@link IPipe} to ease
  * implementation of said interface.
- * 
+ *
  * @author Oliver Kahrmann
  *
  */

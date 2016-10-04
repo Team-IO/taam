@@ -1,4 +1,4 @@
 {
-	"sip": {"category": "neutral","sounds":[{"name": "sip", "stream": false}]},
-	"sip_ah": {"category": "neutral","sounds":[{"name": "sip_ah", "stream": false}]}
+	"sip": {"category": "neutral","sounds":[{"name": "taam:sip", "stream": false}]},
+	"sip_ah": {"category": "neutral","sounds":[{"name": "taam:sip_ah", "stream": false}]}
 }

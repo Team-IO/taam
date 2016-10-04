@@ -3,10 +3,10 @@ package net.teamio.taam.conveyors;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
-import net.teamio.taam.util.inv.InventoryUtils;
+import net.teamio.taam.util.InventoryUtils;
 
 public class OutputChuteBacklog extends OutputChute {
 	public ItemStack[] backlog;

@@ -6,7 +6,7 @@ import java.util.Arrays;
 import net.minecraft.item.ItemStack;
 import net.teamio.taam.util.TaamUtil;
 
-public class ChanceBasedRecipe extends BaseProcessingRecipe implements IProcessingRecipe {
+public abstract class ChanceBasedRecipe extends BaseProcessingRecipe {
 
 	private ChancedOutput[] output;
 
@@ -24,28 +24,34 @@ public class ChanceBasedRecipe extends BaseProcessingRecipe implements IProcessi
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((inputOreDict == null) ? 0 : inputOreDict.hashCode());
-		result = prime * result + ((input == null) ? 0 : input.hashCode());
+		result = prime * result + (inputOreDict == null ? 0 : inputOreDict.hashCode());
+		result = prime * result + (input == null ? 0 : input.hashCode());
 		result = prime * result + Arrays.hashCode(output);
 		return result;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		ChanceBasedRecipe other = (ChanceBasedRecipe) obj;
 		if (input == null) {
-			if (other.input != null)
+			if (other.input != null) {
 				return false;
-		} else if (!input.equals(other.input))
+			}
+		} else if (!input.equals(other.input)) {
 			return false;
-		if (!Arrays.equals(output, other.output))
+		}
+		if (!Arrays.equals(output, other.output)) {
 			return false;
+		}
 		return true;
 	}
 
