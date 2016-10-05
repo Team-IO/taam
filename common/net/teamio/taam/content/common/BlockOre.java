@@ -5,10 +5,9 @@ import java.util.List;
 import com.google.common.base.Predicate;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
-import net.minecraft.block.state.BlockStateContainer;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
@@ -28,16 +27,16 @@ public class BlockOre extends Block {
 	});
 
 	public BlockOre() {
-		super(Material.ROCK);
-		setSoundType(SoundType.STONE);
+		super(Material.rock);
+		setStepSound(Block.soundTypeStone);
 		this.setHarvestLevel("pickaxe", 1);
 		setResistance(3.14159265359f);
 		setHardness(2);
 	}
 
 	@Override
-	protected BlockStateContainer createBlockState() {
-		return new BlockStateContainer(this, VARIANT);
+	protected BlockState createBlockState() {
+		return new BlockState(this, VARIANT);
 	}
 
 	@Override

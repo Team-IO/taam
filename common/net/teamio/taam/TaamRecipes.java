@@ -80,7 +80,7 @@ public class TaamRecipes {
 		//		conveyor1 (Wood)
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.blockProductionLine, 8, Taam.BLOCK_PRODUCTIONLINE_META.conveyor1.ordinal()),
 				"rRP", "wSw", "WsW",
-				'P', Blocks.PISTON,
+				'P', Blocks.piston,
 				'R', partRubberBand,
 				'w', materialWoodenBoard,
 				'S', partWoodenSupportFrame,
@@ -109,7 +109,7 @@ public class TaamRecipes {
 		));
 		//		conveyor hopper
 		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(TaamMain.blockProductionLine, 1, Taam.BLOCK_PRODUCTIONLINE_META.hopper.ordinal()),
-				Blocks.HOPPER,
+				Blocks.hopper,
 				partSupportFrame
 		));
 
@@ -123,7 +123,7 @@ public class TaamRecipes {
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.blockProductionLine, 1, Taam.BLOCK_PRODUCTIONLINE_META.hopper_hs.ordinal()),
 				"C C"," H ", " I ",
 				'C', blockConveyor2,
-				'H', Blocks.HOPPER,
+				'H', Blocks.hopper,
 				'I', partSupportFrame
 		));
 		//		Shredder
@@ -349,7 +349,7 @@ public class TaamRecipes {
 		 */
 		//		photo cell
 		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(TaamMain.itemPart, 9, Taam.ITEM_PART_META.photocell.ordinal()),
-				Blocks.DAYLIGHT_DETECTOR,
+				Blocks.daylight_detector,
 				toolSawAnyDamage
 		));
 		//		magnetic coil
@@ -446,7 +446,7 @@ public class TaamRecipes {
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.pump.ordinal()),
 				"AAA","PMP", "AAA",
 				'M', "partMotor",
-				'P', Blocks.PISTON,
+				'P', Blocks.piston,
 				'A', "ingotAluminum"
 		));
 		//		Motor
@@ -459,7 +459,7 @@ public class TaamRecipes {
 		//		Sieve
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.sieve.ordinal()),
 				"IBI", "BBB", "IBI",
-				'B', Blocks.IRON_BARS,
+				'B', Blocks.iron_bars,
 				'I', "ingotIron"
 		));
 		//		Redirector
@@ -476,7 +476,7 @@ public class TaamRecipes {
 		//		iron nugget
 		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(TaamMain.itemMaterial, 9, Taam.ITEM_MATERIAL_META.iron_nugget.ordinal()), "ingotIron"));
 		String nugget = "nuggetIron";
-		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(Items.IRON_INGOT), nugget, nugget, nugget, nugget, nugget, nugget, nugget, nugget, nugget));
+		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(Items.iron_ingot), nugget, nugget, nugget, nugget, nugget, nugget, nugget, nugget, nugget));
 
 		//		copper nugget
 		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(TaamMain.itemMaterial, 9, Taam.ITEM_MATERIAL_META.copper_nugget.ordinal()), "ingotCopper"));
@@ -517,7 +517,7 @@ public class TaamRecipes {
 
 		//      cement
 		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(TaamMain.itemMaterial, 4, Taam.ITEM_MATERIAL_META.cement.ordinal()),
-				Items.CLAY_BALL, "dustStone", "dustStone", "dustStone"
+				Items.clay_ball, "dustStone", "dustStone", "dustStone"
 		));
 		//      rough cement
 		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(TaamMain.itemMaterial, 2, Taam.ITEM_MATERIAL_META.cementRough.ordinal()),
@@ -526,15 +526,15 @@ public class TaamRecipes {
 
 		//      concrete
 		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(TaamMain.blockConcrete, 1, Taam.BLOCK_CONCRETE_META.fine.ordinal()),
-				"materialCement", "materialCement", "materialCement", "materialCement", Items.WATER_BUCKET
+				"materialCement", "materialCement", "materialCement", "materialCement", Items.water_bucket
 		));
 		//      rough concrete
 		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(TaamMain.blockConcrete, 1, Taam.BLOCK_CONCRETE_META.rough.ordinal()),
-				"materialRoughCement", "materialRoughCement", "materialRoughCement", "materialRoughCement", Items.WATER_BUCKET
+				"materialRoughCement", "materialRoughCement", "materialRoughCement", "materialRoughCement", Items.water_bucket
 		));
 		//      coated concrete
 		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(TaamMain.blockConcrete, 1, Taam.BLOCK_CONCRETE_META.coated.ordinal()),
-				blockConcreteFine, "materialResin", "materialResin", "materialResin", "materialResin", "materialResin", Items.WATER_BUCKET
+				blockConcreteFine, "materialResin", "materialResin", "materialResin", "materialResin", "materialResin", Items.water_bucket
 		));
 
 		//      chiseled concrete

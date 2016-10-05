@@ -8,10 +8,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.ITickable;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
@@ -361,7 +360,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements IReds
 	 */
 
 	@Override
-	public boolean onBlockActivated(World world, EntityPlayer player, EnumHand hand, boolean hasWrench, EnumFacing side,
+	public boolean onBlockActivated(World world, EntityPlayer player, boolean hasWrench, EnumFacing side,
 			float hitX, float hitY, float hitZ) {
 		if(side != EnumFacing.UP) {
 			return false;

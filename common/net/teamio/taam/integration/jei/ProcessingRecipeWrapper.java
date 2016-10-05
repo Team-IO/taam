@@ -16,6 +16,8 @@ import net.teamio.taam.recipes.ChanceBasedRecipe;
 import net.teamio.taam.recipes.ChancedOutput;
 import net.teamio.taam.recipes.IProcessingRecipe;
 
+import javax.annotation.Nonnull;
+
 public class ProcessingRecipeWrapper implements IRecipeWrapper {
 
 	public final IProcessingRecipe recipe;
@@ -59,6 +61,11 @@ public class ProcessingRecipeWrapper implements IRecipeWrapper {
 	@Override
 	public List<FluidStack> getFluidOutputs() {
 		return null;
+	}
+
+	@Override
+	public void drawInfo(@Nonnull Minecraft minecraft, int recipeWidth, int recipeHeight) {
+		drawInfo(minecraft, recipeWidth, recipeHeight, 0, 0);
 	}
 
 	@Override

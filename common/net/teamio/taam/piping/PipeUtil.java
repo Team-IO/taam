@@ -6,11 +6,11 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.IFluidHandler;
 import net.teamio.taam.Log;
 import net.teamio.taam.Taam;
 import net.teamio.taam.util.FluidUtils;
@@ -222,7 +222,7 @@ public final class PipeUtil {
 	 * @param tank
 	 * @return
 	 */
-	public static boolean defaultPlayerInteraction(EntityPlayer player, IFluidTank tank) {
+	public static boolean defaultPlayerInteraction(EntityPlayer player, EnumFacing side, IFluidTank tank) {
 
 		Log.debug("Beginning fluid interaction.");
 		ItemStack playerStack = player.inventory.getCurrentItem();
@@ -245,7 +245,7 @@ public final class PipeUtil {
 			if(inTank != null) {
 				Log.debug("Attempting to fill {}x{} into item.", inTank.amount, inTank.getFluid());
 				// Fill into the item
-				int fill = itemFH.fill(inTank, true);
+				int fill = itemFH.fill(side, inTank, true);
 				Log.debug("Filled {} into item.", fill);
 				if(fill > 0) {
 					// Drain from the tank
@@ -263,7 +263,7 @@ public final class PipeUtil {
 						FluidStack toDrain = inTank.copy();
 						toDrain.amount = capa - inTank.amount;
 						// Drain maximum of that from the item
-						FluidStack drain = itemFH.drain(toDrain, true);
+						FluidStack drain = itemFH.drain(side, toDrain, true);
 						if(drain != null && drain.amount > 0) {
 							Log.debug("Drained {}x{} from item.", drain.amount, drain.getFluid());
 							// Fill into the tank
@@ -281,7 +281,7 @@ public final class PipeUtil {
 			} else {
 				Log.debug("Attempting to drain anything from item.");
 				// Drain maximum of tank capacity from the item
-				FluidStack drain = itemFH.drain(tank.getCapacity(), true);
+				FluidStack drain = itemFH.drain(side, tank.getCapacity(), true);
 				if(drain != null && drain.amount > 0) {
 					Log.debug("Drained {}x{} from item.", drain.amount, drain.getFluid());
 					// Fill into the tank

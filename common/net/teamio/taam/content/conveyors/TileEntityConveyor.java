@@ -8,7 +8,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.ITickable;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -399,9 +398,9 @@ public class TileEntityConveyor extends BaseTileEntity implements IRotatable, IC
 	 * IWorldInteractable implementation
 	 */
 	@Override
-	public boolean onBlockActivated(World world, EntityPlayer player, EnumHand hand, boolean hasWrench, EnumFacing side,
+	public boolean onBlockActivated(World world, EntityPlayer player, boolean hasWrench, EnumFacing side,
 			float hitX, float hitY, float hitZ) {
-		ItemStack held = player.getHeldItem(hand);
+		ItemStack held = player.getHeldItem();
 		if (speedLevel == 1 && held != null && held.getItem() == TaamMain.itemPart
 				&& held.getMetadata() == Taam.ITEM_PART_META.redirector.ordinal()) {
 			RedirectorSide redirectorSide = ConveyorUtil.getRedirectorSide(direction, side, hitX, hitY, hitZ, false);
@@ -431,10 +430,9 @@ public class TileEntityConveyor extends BaseTileEntity implements IRotatable, IC
 
 		//TODO: Cleanup, move to base block with the rest of the hand logic
 
-		boolean playerHasWrenchInMainhand = WrenchUtil.playerHasWrenchInHand(player, EnumHand.MAIN_HAND);
-		boolean playerHasWrench = playerHasWrenchInMainhand || (player.isSneaking() && WrenchUtil.playerHasWrenchInHand(player, EnumHand.OFF_HAND));
+		boolean playerHasWrench = WrenchUtil.playerHasWrenchInHand(player);
 		if (playerHasWrench) {
-			boolean playerIsSneaking = player.isSneaking() && playerHasWrenchInMainhand;
+			boolean playerIsSneaking = player.isSneaking();
 			if (playerIsSneaking) {
 				RedirectorSide redirectorSide = ConveyorUtil.getRedirectorSide(direction, side, hitX, hitY, hitZ, false);
 				Log.debug("Tried disassembling redirector on side: {}", redirectorSide);

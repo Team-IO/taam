@@ -13,7 +13,7 @@ public class TaamRecipesMixer {
 		for(int dyeMeta = 0; dyeMeta < 16; dyeMeta++) {
 			ProcessingRegistry.registerRecipe(ProcessingRegistry.MIXER,
 					new MixerRecipe(
-							new ItemStack(Items.DYE, 1, dyeMeta),
+							new ItemStack(Items.dye, 1, dyeMeta),
 							new FluidStack(FluidRegistry.WATER, 10),
 							new FluidStack(TaamMain.fluidsDye[dyeMeta], 10))
 			);

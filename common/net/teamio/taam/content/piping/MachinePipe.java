@@ -7,13 +7,13 @@ import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.IFluidHandler;
 import net.teamio.taam.Config;
 import net.teamio.taam.Taam;
 import net.teamio.taam.content.BaseTileEntity;
@@ -84,7 +84,7 @@ public class MachinePipe implements IMachine, IPipe, IRenderable {
 	private final PipeInfo info;
 	/**
 	 * Bitmap containing the surrounding pipes Runtime-only, required for
-	 * rendering. This is updated in the {@link #renderUpdate()} method, called
+	 * rendering. This is updated in the {@link #renderUpdate(IBlockAccess world, BlockPos pos)} method, called
 	 * from
 	 * {@link net.minecraft.block.Block#getActualState(net.minecraft.block.state.IBlockState, IBlockAccess, BlockPos)}
 	 * just before rendering.

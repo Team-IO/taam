@@ -31,75 +31,75 @@ public class TaamRecipesCrusher {
 			ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
 					new CrusherRecipe(oreDic[ore],
 							new ChancedOutput(new ItemStack(TaamMain.itemDust, 2, ore), 1.0f),
-							new ChancedOutput(new ItemStack(Blocks.COBBLESTONE), 0.4f),
+							new ChancedOutput(new ItemStack(Blocks.cobblestone), 0.4f),
 							new ChancedOutput(new ItemStack(TaamMain.itemDust, 1, stoneDustMeta), 0.3f),
-							new ChancedOutput(new ItemStack(Blocks.MOSSY_COBBLESTONE), 0.0001f)
+							new ChancedOutput(new ItemStack(Blocks.mossy_cobblestone), 0.0001f)
 					));
 		}
 
 		// Vanilla Ores
 		ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
-				new CrusherRecipe("oreDiamond",
-						new ChancedOutput(new ItemStack(Items.DIAMOND, 1), 1.0f),
-						new ChancedOutput(new ItemStack(Items.DIAMOND, 1), 0.01f),
-						new ChancedOutput(new ItemStack(Blocks.COBBLESTONE), 0.4f),
+				new CrusherRecipe("orediamond",
+						new ChancedOutput(new ItemStack(Items.diamond, 1), 1.0f),
+						new ChancedOutput(new ItemStack(Items.diamond, 1), 0.01f),
+						new ChancedOutput(new ItemStack(Blocks.cobblestone), 0.4f),
 						new ChancedOutput(new ItemStack(TaamMain.itemDust, 1, stoneDustMeta), 0.3f),
-						new ChancedOutput(new ItemStack(Blocks.MOSSY_COBBLESTONE), 0.0001f)
+						new ChancedOutput(new ItemStack(Blocks.mossy_cobblestone), 0.0001f)
 				));
 		ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
-				new CrusherRecipe("oreEmerald",
-						new ChancedOutput(new ItemStack(Items.EMERALD, 1), 1.0f),
-						new ChancedOutput(new ItemStack(Items.EMERALD, 1), 0.01f),
-						new ChancedOutput(new ItemStack(Blocks.COBBLESTONE), 0.4f),
+				new CrusherRecipe("oreemerald",
+						new ChancedOutput(new ItemStack(Items.emerald, 1), 1.0f),
+						new ChancedOutput(new ItemStack(Items.emerald, 1), 0.01f),
+						new ChancedOutput(new ItemStack(Blocks.cobblestone), 0.4f),
 						new ChancedOutput(new ItemStack(TaamMain.itemDust, 1, stoneDustMeta), 0.3f),
-						new ChancedOutput(new ItemStack(Blocks.MOSSY_COBBLESTONE), 0.0001f)
+						new ChancedOutput(new ItemStack(Blocks.mossy_cobblestone), 0.0001f)
 				));
 		ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
-				new CrusherRecipe("oreRedstone",
-						new ChancedOutput(new ItemStack(Items.REDSTONE, 4), 1.0f),
-						new ChancedOutput(new ItemStack(Items.REDSTONE, 2), 0.05f),
-						new ChancedOutput(new ItemStack(Items.REDSTONE, 1), 0.01f),
-						new ChancedOutput(new ItemStack(Blocks.COBBLESTONE), 0.4f),
+				new CrusherRecipe("oreredstone",
+						new ChancedOutput(new ItemStack(Items.redstone, 4), 1.0f),
+						new ChancedOutput(new ItemStack(Items.redstone, 2), 0.05f),
+						new ChancedOutput(new ItemStack(Items.redstone, 1), 0.01f),
+						new ChancedOutput(new ItemStack(Blocks.cobblestone), 0.4f),
 						new ChancedOutput(new ItemStack(TaamMain.itemDust, 1, stoneDustMeta), 0.3f),
-						new ChancedOutput(new ItemStack(Blocks.MOSSY_COBBLESTONE), 0.0001f)
+						new ChancedOutput(new ItemStack(Blocks.mossy_cobblestone), 0.0001f)
 				));
 		ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
 				new CrusherRecipe("oreLapis",
-						new ChancedOutput(new ItemStack(Items.DYE, 4, 4), 1.0f),
-						new ChancedOutput(new ItemStack(Items.DYE, 2, 4), 0.05f),
-						new ChancedOutput(new ItemStack(Items.DYE, 1, 4), 0.01f),
-						new ChancedOutput(new ItemStack(Blocks.COBBLESTONE), 0.4f),
+						new ChancedOutput(new ItemStack(Items.dye, 4, 4), 1.0f),
+						new ChancedOutput(new ItemStack(Items.dye, 2, 4), 0.05f),
+						new ChancedOutput(new ItemStack(Items.dye, 1, 4), 0.01f),
+						new ChancedOutput(new ItemStack(Blocks.cobblestone), 0.4f),
 						new ChancedOutput(new ItemStack(TaamMain.itemDust, 1, stoneDustMeta), 0.3f),
-						new ChancedOutput(new ItemStack(Blocks.MOSSY_COBBLESTONE), 0.0001f)
+						new ChancedOutput(new ItemStack(Blocks.mossy_cobblestone), 0.0001f)
 				));
 		ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
-				new CrusherRecipe("oreQuartz",
-						new ChancedOutput(new ItemStack(Items.QUARTZ, 1), 1.0f),
-						new ChancedOutput(new ItemStack(Items.QUARTZ, 1), 0.01f),
-						new ChancedOutput(new ItemStack(Blocks.NETHERRACK), 0.4f),
-						new ChancedOutput(new ItemStack(Blocks.SOUL_SAND), 0.0001f)
+				new CrusherRecipe("orequartz",
+						new ChancedOutput(new ItemStack(Items.quartz, 1), 1.0f),
+						new ChancedOutput(new ItemStack(Items.quartz, 1), 0.01f),
+						new ChancedOutput(new ItemStack(Blocks.netherrack), 0.4f),
+						new ChancedOutput(new ItemStack(Blocks.soul_sand), 0.0001f)
 				));
 		ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
-				new CrusherRecipe("oreCoal",
-						new ChancedOutput(new ItemStack(Items.COAL, 1), 1.0f),
-						new ChancedOutput(new ItemStack(Items.COAL, 1), 0.01f),
-						new ChancedOutput(new ItemStack(Blocks.COBBLESTONE), 0.4f),
+				new CrusherRecipe("orecoal",
+						new ChancedOutput(new ItemStack(Items.coal, 1), 1.0f),
+						new ChancedOutput(new ItemStack(Items.coal, 1), 0.01f),
+						new ChancedOutput(new ItemStack(Blocks.cobblestone), 0.4f),
 						new ChancedOutput(new ItemStack(TaamMain.itemDust, 1, stoneDustMeta), 0.3f),
-						new ChancedOutput(new ItemStack(Blocks.MOSSY_COBBLESTONE), 0.0001f)
+						new ChancedOutput(new ItemStack(Blocks.mossy_cobblestone), 0.0001f)
 				));
 		ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
 				new CrusherRecipe("oreGold",
 						new ChancedOutput(new ItemStack(TaamMain.itemDust, 2, Taam.BLOCK_ORE_META.gold.ordinal()), 1.0f),
-						new ChancedOutput(new ItemStack(Blocks.COBBLESTONE), 0.4f),
+						new ChancedOutput(new ItemStack(Blocks.cobblestone), 0.4f),
 						new ChancedOutput(new ItemStack(TaamMain.itemDust, 1, stoneDustMeta), 0.3f),
-						new ChancedOutput(new ItemStack(Blocks.MOSSY_COBBLESTONE), 0.0001f)
+						new ChancedOutput(new ItemStack(Blocks.mossy_cobblestone), 0.0001f)
 				));
 		ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
 				new CrusherRecipe("oreIron",
 						new ChancedOutput(new ItemStack(TaamMain.itemDust, 2, Taam.BLOCK_ORE_META.iron.ordinal()), 1.0f),
-						new ChancedOutput(new ItemStack(Blocks.COBBLESTONE), 0.4f),
+						new ChancedOutput(new ItemStack(Blocks.cobblestone), 0.4f),
 						new ChancedOutput(new ItemStack(TaamMain.itemDust, 1, stoneDustMeta), 0.3f),
-						new ChancedOutput(new ItemStack(Blocks.MOSSY_COBBLESTONE), 0.0001f)
+						new ChancedOutput(new ItemStack(Blocks.mossy_cobblestone), 0.0001f)
 				));
 		ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
 				new CrusherRecipe("ingotGold",
@@ -110,65 +110,65 @@ public class TaamRecipesCrusher {
 						new ChancedOutput(new ItemStack(TaamMain.itemDust, 1, Taam.BLOCK_ORE_META.iron.ordinal()), 1.0f)
 				));
 
-		// Stone/Cobble/Gravel/etc
+		// stone/Cobble/gravel/etc
 
 		ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
-				new CrusherRecipe(new ItemStack(Blocks.STONE),
-						new ChancedOutput(new ItemStack(Blocks.COBBLESTONE), 1.0f),
-						new ChancedOutput(new ItemStack(Blocks.GRAVEL), 0.15f),
+				new CrusherRecipe(new ItemStack(Blocks.stone),
+						new ChancedOutput(new ItemStack(Blocks.cobblestone), 1.0f),
+						new ChancedOutput(new ItemStack(Blocks.gravel), 0.15f),
 						new ChancedOutput(new ItemStack(TaamMain.itemDust, 1, stoneDustMeta), 0.3f)
 				)
 		);
 		ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
-				new CrusherRecipe(new ItemStack(Blocks.COBBLESTONE),
-						new ChancedOutput(new ItemStack(Blocks.GRAVEL), 1.0f),
-						new ChancedOutput(new ItemStack(Blocks.SAND), 0.15f)
+				new CrusherRecipe(new ItemStack(Blocks.cobblestone),
+						new ChancedOutput(new ItemStack(Blocks.gravel), 1.0f),
+						new ChancedOutput(new ItemStack(Blocks.sand), 0.15f)
 				)
 		);
 		ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
-				new CrusherRecipe(new ItemStack(Blocks.GRAVEL),
-						new ChancedOutput(new ItemStack(Blocks.SAND), 1.0f),
-						new ChancedOutput(new ItemStack(Blocks.SAND), 0.05f)
+				new CrusherRecipe(new ItemStack(Blocks.gravel),
+						new ChancedOutput(new ItemStack(Blocks.sand), 1.0f),
+						new ChancedOutput(new ItemStack(Blocks.sand), 0.05f)
 				)
 		);
 
 		// Ore/Dust Blocks
 
 		ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
-				new CrusherRecipe(new ItemStack(Blocks.GOLD_BLOCK),
-						new ChancedOutput(new ItemStack(Items.GOLD_INGOT, 9), 1.0f)
+				new CrusherRecipe(new ItemStack(Blocks.gold_block),
+						new ChancedOutput(new ItemStack(Items.gold_ingot, 9), 1.0f)
 				)
 		);
 		ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
-				new CrusherRecipe(new ItemStack(Blocks.IRON_BLOCK),
-						new ChancedOutput(new ItemStack(Items.IRON_INGOT, 9), 1.0f)
+				new CrusherRecipe(new ItemStack(Blocks.iron_block),
+						new ChancedOutput(new ItemStack(Items.iron_ingot, 9), 1.0f)
 				)
 		);
 		ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
-				new CrusherRecipe(new ItemStack(Blocks.DIAMOND_BLOCK),
-						new ChancedOutput(new ItemStack(Items.DIAMOND, 9), 1.0f)
+				new CrusherRecipe(new ItemStack(Blocks.diamond_block),
+						new ChancedOutput(new ItemStack(Items.diamond, 9), 1.0f)
 				)
 		);
 		ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
-				new CrusherRecipe(new ItemStack(Blocks.EMERALD_BLOCK),
-						new ChancedOutput(new ItemStack(Items.EMERALD, 9), 1.0f)
+				new CrusherRecipe(new ItemStack(Blocks.emerald_block),
+						new ChancedOutput(new ItemStack(Items.emerald, 9), 1.0f)
 				)
 		);
 		ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
-				new CrusherRecipe(new ItemStack(Blocks.REDSTONE_BLOCK),
-						new ChancedOutput(new ItemStack(Items.REDSTONE, 9), 1.0f)
+				new CrusherRecipe(new ItemStack(Blocks.redstone_block),
+						new ChancedOutput(new ItemStack(Items.redstone, 9), 1.0f)
 				)
 		);
 		ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
-				new CrusherRecipe(new ItemStack(Blocks.LAPIS_BLOCK),
-						new ChancedOutput(new ItemStack(Items.DYE, 9, 4), 1.0f)
+				new CrusherRecipe(new ItemStack(Blocks.lapis_block),
+						new ChancedOutput(new ItemStack(Items.dye, 9, 4), 1.0f)
 				)
 		);
 
 		ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
-				new CrusherRecipe(new ItemStack(Blocks.QUARTZ_BLOCK),
-						new ChancedOutput(new ItemStack(Items.QUARTZ, 3), 1.0f),
-						new ChancedOutput(new ItemStack(Items.QUARTZ, 1), 0.25f)
+				new CrusherRecipe(new ItemStack(Blocks.quartz_block),
+						new ChancedOutput(new ItemStack(Items.quartz, 3), 1.0f),
+						new ChancedOutput(new ItemStack(Items.quartz, 1), 0.25f)
 				)
 		);
 	}

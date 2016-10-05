@@ -2,6 +2,7 @@ package net.teamio.taam;
 
 import java.util.List;
 
+import net.minecraftforge.client.event.sound.SoundEvent;
 import org.apache.commons.lang3.NotImplementedException;
 
 import net.minecraft.block.Block;
@@ -18,8 +19,7 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
@@ -159,14 +159,14 @@ public class TaamMain {
 		block.setUnlocalizedName(Taam.MOD_ID + "." + name);
 		block.setCreativeTab(creativeTab);
 		block.setRegistryName(name);
-		GameRegistry.register(block);
+		GameRegistry.registerBlock(block, (Class<? extends ItemBlock>)null);
 	}
 
 	private static void registerItem(Item item, String name) {
 		item.setUnlocalizedName(Taam.MOD_ID + "." + name);
 		item.setCreativeTab(creativeTab);
 		item.setRegistryName(name);
-		GameRegistry.register(item);
+		GameRegistry.registerItem(item);
 	}
 
 	@EventHandler
@@ -414,16 +414,16 @@ public class TaamMain {
 			FluidRegistry.addBucketForFluid(fluidsDye[i]);
 
 			if (registerFluidBlocks) {
-				BlockFluidClassic fluidBlock = new BlockFluidClassic(fluidsDye[i], Material.WATER) {
+				BlockFluidClassic fluidBlock = new BlockFluidClassic(fluidsDye[i], Material.water) {
 					@Override
-					public boolean shouldSideBeRendered(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
+					public boolean shouldSideBeRendered(IBlockAccess world, BlockPos pos, EnumFacing side) {
 						IBlockState neighbor = world.getBlockState(pos.offset(side));
 						// Force rendering if there is a different block adjacent, not only a different material
 						if (neighbor.getBlock() != this)
 				        {
 				            return true;
 				        }
-				        return super.shouldSideBeRendered(state, world, pos, side);
+				        return super.shouldSideBeRendered(world, pos, side);
 					}
 				};
 				String blockName = "fluid.dye." + fluidsDyeValues[i].name();
@@ -446,16 +446,16 @@ public class TaamMain {
 			FluidRegistry.addBucketForFluid(fluidsMaterial[i]);
 
 			if (registerFluidBlocks) {
-				BlockFluidFinite fluidBlock = new BlockFluidFinite(fluidsMaterial[i], Material.WATER) {
+				BlockFluidFinite fluidBlock = new BlockFluidFinite(fluidsMaterial[i], Material.water) {
 					@Override
-					public boolean shouldSideBeRendered(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
+					public boolean shouldSideBeRendered(IBlockAccess world, BlockPos pos, EnumFacing side) {
 						IBlockState neighbor = world.getBlockState(pos.offset(side));
 						// Force rendering if there is a different block adjacent, not only a different material
 				        if (neighbor.getBlock() != this)
 				        {
 				            return true;
 				        }
-				        return super.shouldSideBeRendered(state, world, pos, side);
+				        return super.shouldSideBeRendered(world, pos, side);
 					}
 				};
 				if(fluidsMaterialValues[i] == FLUID_MATERIAL_META.coating) {
@@ -550,14 +550,6 @@ public class TaamMain {
 		if(Taam.CAPABILITY_ADVANCED_GUI == null) {
 			throw new RuntimeException("Registering a capability failed (Taam.CAPABILITY_ADVANCED_GUI - IAdvancedMachineGUI) - field was null after registry.");
 		}
-
-		/*
-		 * Sounds
-		 */
-
-		soundSipAh = new SoundEvent(Taam.SOUND_SIP_AH);
-		soundSipAh.setRegistryName(Taam.SOUND_SIP_AH);
-		GameRegistry.register(soundSipAh);
 
 		/*
 		 * Network

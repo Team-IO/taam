@@ -1,11 +1,11 @@
 package net.teamio.taam.piping;
 
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidTankProperties;
+import net.minecraftforge.fluids.FluidTankInfo;
+import net.minecraftforge.fluids.IFluidHandler;
 
 /**
  * Pipe end, used in machines to connect to a pipe "network". This delegates any
@@ -17,7 +17,7 @@ import net.minecraftforge.fluids.capability.IFluidTankProperties;
 public class PipeEndFluidHandler implements IPipe {
 	/**
 	 * One array per PipeEnd, used to optimize the
-	 * {@link IPipeTE#getPipesForSide(EnumFacing)} as usually there is only one
+	 * {@link IPipe#getInternalPipes(IBlockAccess, BlockPos)} as usually there is only one
 	 * pipe end per side.
 	 */
 	private final IPipe[] pipeArray;
@@ -55,31 +55,31 @@ public class PipeEndFluidHandler implements IPipe {
 
 	@Override
 	public int getCapacity() {
-		IFluidTankProperties[] tankInfo = fluidHandler.getTankProperties();
+		FluidTankInfo[] tankInfo = fluidHandler.getTankInfo(side);
 		int capacity = 0;
-		for (IFluidTankProperties tank : tankInfo) {
-			capacity += tank.getCapacity();
+		for (FluidTankInfo tank : tankInfo) {
+			capacity += tank.capacity;
 		}
 		return capacity;
 	}
 
 	@Override
 	public int addFluid(FluidStack stack) {
-		return fluidHandler.fill(stack, true);
+		return fluidHandler.fill(side, stack, true);
 	}
 
 	@Override
 	public int removeFluid(FluidStack like) {
-		FluidStack drained = fluidHandler.drain(like, true);
+		FluidStack drained = fluidHandler.drain(side, like, true);
 		return drained == null ? 0 : drained.amount;
 	}
 
 	@Override
 	public int getFluidAmount(FluidStack like) {
-		IFluidTankProperties[] tankInfo = fluidHandler.getTankProperties();
+		FluidTankInfo[] tankInfo = fluidHandler.getTankInfo(side);
 		int amount = 0;
-		for (IFluidTankProperties tank : tankInfo) {
-			FluidStack contents = tank.getContents();
+		for (FluidTankInfo tank : tankInfo) {
+			FluidStack contents = tank.fluid;
 			if(contents != null && contents.isFluidEqual(like)) {
 				amount += contents.amount;
 			}
@@ -89,10 +89,10 @@ public class PipeEndFluidHandler implements IPipe {
 
 	@Override
 	public FluidStack[] getFluids() {
-		IFluidTankProperties[] tankInfo = fluidHandler.getTankProperties();
+		FluidTankInfo[] tankInfo = fluidHandler.getTankInfo(side);
 		FluidStack[] content = new FluidStack[tankInfo.length];
 		for (int i = 0; i < tankInfo.length; i++) {
-			content[i] = tankInfo[i].getContents();
+			content[i] = tankInfo[i].fluid;
 		}
 		return content;
 	}

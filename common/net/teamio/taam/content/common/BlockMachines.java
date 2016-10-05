@@ -2,19 +2,18 @@ package net.teamio.taam.content.common;
 
 import java.util.List;
 
-import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
-import net.minecraft.block.state.BlockStateContainer;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.EnumWorldBlockLayer;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.ExtendedBlockState;
@@ -32,20 +31,20 @@ public class BlockMachines extends BaseBlock {
 	public static final PropertyEnum<Taam.BLOCK_MACHINES_META> VARIANT = PropertyEnum.create("variant", Taam.BLOCK_MACHINES_META.class);
 
 	public BlockMachines() {
-		super(Material.WOOD);
-		setSoundType(SoundType.METAL);
+		super(Material.wood);
+		setStepSound(BlockSensor.soundTypeMetal);
 		setHardness(6);
 		this.setHarvestLevel("pickaxe", 2);
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public BlockRenderLayer getBlockLayer() {
-		return BlockRenderLayer.CUTOUT;
+	public EnumWorldBlockLayer getBlockLayer() {
+		return EnumWorldBlockLayer.CUTOUT;
 	}
 
 	@Override
-	protected BlockStateContainer createBlockState() {
+	protected BlockState createBlockState() {
 		return new ExtendedBlockState(this, new IProperty[] { VARIANT },
 				new IUnlistedProperty[] { OBJModel.OBJProperty.instance });
 	}
@@ -111,7 +110,8 @@ public class BlockMachines extends BaseBlock {
 	}
 
 	@Override
-	public boolean isSideSolid(IBlockState base_state, IBlockAccess world, BlockPos pos, EnumFacing side) {
+	public boolean isSideSolid(IBlockAccess world, BlockPos pos, EnumFacing side) {
+		IBlockState base_state = world.getBlockState(pos);
 		Taam.BLOCK_MACHINES_META variant = base_state.getValue(VARIANT);
 		if (variant == BLOCK_MACHINES_META.chute) {
 			return side == EnumFacing.DOWN || side == EnumFacing.UP;

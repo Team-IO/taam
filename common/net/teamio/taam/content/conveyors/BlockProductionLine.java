@@ -1,11 +1,9 @@
 package net.teamio.taam.content.conveyors;
 
-import java.util.List;
-
-import net.minecraft.block.SoundType;
+import net.minecraft.block.Block;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
-import net.minecraft.block.state.BlockStateContainer;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
@@ -13,11 +11,11 @@ import net.minecraft.inventory.Container;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.ExtendedBlockState;
@@ -37,6 +35,8 @@ import net.teamio.taam.content.common.TileEntityChute;
 import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.rendering.obj.OBJModel;
 
+import java.util.List;
+
 public class BlockProductionLine extends BaseBlock {
 
 	public static final PropertyEnum<Taam.BLOCK_PRODUCTIONLINE_META> VARIANT = PropertyEnum.create("variant", Taam.BLOCK_PRODUCTIONLINE_META.class);
@@ -49,12 +49,12 @@ public class BlockProductionLine extends BaseBlock {
 	public BlockProductionLine() {
 		super(MaterialMachinesTransparent.INSTANCE);
 		setHardness(3.5f);
-		setSoundType(SoundType.METAL);
+		setStepSound(Block.soundTypeMetal);
 		this.setHarvestLevel("pickaxe", 1);
 	}
 
 	@Override
-	protected BlockStateContainer createBlockState() {
+	protected BlockState createBlockState() {
 		return new ExtendedBlockState(this, new IProperty[] { DIRECTION, VARIANT },
 				new IUnlistedProperty[] { OBJModel.OBJProperty.instance });
 	}
@@ -107,8 +107,8 @@ public class BlockProductionLine extends BaseBlock {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public BlockRenderLayer getBlockLayer() {
-		return BlockRenderLayer.CUTOUT;
+	public EnumWorldBlockLayer getBlockLayer() {
+		return EnumWorldBlockLayer.CUTOUT;
 	}
 
 	@Override
@@ -164,6 +164,15 @@ public class BlockProductionLine extends BaseBlock {
 	}
 
 	@Override
+	public AxisAlignedBB getCollisionBoundingBox(World worldIn, BlockPos pos, IBlockState state) {
+		return getBoundingBox(state, worldIn, pos);
+	}
+
+	@Override
+	public AxisAlignedBB getSelectedBoundingBox(World worldIn, BlockPos pos) {
+		return getBoundingBox(worldIn.getBlockState(pos), worldIn, pos);
+	}
+
 	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
 		if(state.getBlock() != TaamMain.blockProductionLine) {
 			// Can only work for actual production line, else we crash with wrong variant
@@ -180,21 +189,23 @@ public class BlockProductionLine extends BaseBlock {
 	}
 
 	@Override
-	public boolean isLadder(IBlockState state, IBlockAccess world, BlockPos pos, EntityLivingBase entity) {
+	public boolean isLadder(IBlockAccess world, BlockPos pos, EntityLivingBase entity) {
+		IBlockState state = world.getBlockState(pos);
 		if(state.getBlock() != TaamMain.blockProductionLine) {
 			// Can only work for actual production line, else we crash with wrong variant
 			return false;
 		}
 		return state.getValue(VARIANT) == BLOCK_PRODUCTIONLINE_META.elevator;
 	}
-	
+
 	@Override
 	public boolean isBlockSolid(IBlockAccess world, BlockPos pos, EnumFacing side) {
 		return false;
 	}
 
 	@Override
-	public boolean isSideSolid(IBlockState base_state, IBlockAccess world, BlockPos pos, EnumFacing side) {
+	public boolean isSideSolid(IBlockAccess world, BlockPos pos, EnumFacing side) {
+		IBlockState base_state = world.getBlockState(pos);
 		if(base_state.getBlock() != TaamMain.blockProductionLine) {
 			// Can only work for actual production line, else we crash with wrong variant
 			return false;
@@ -210,14 +221,14 @@ public class BlockProductionLine extends BaseBlock {
 		}
 		return false;
 	}
-	
+
 	@Override
-	public boolean hasComparatorInputOverride(IBlockState state) {
+	public boolean hasComparatorInputOverride() {
 		return true;
 	}
 
 	@Override
-	public int getComparatorInputOverride(IBlockState blockState, World worldIn, BlockPos pos) {
+	public int getComparatorInputOverride(World worldIn, BlockPos pos) {
 		TileEntity te = worldIn.getTileEntity(pos);
 		return Container.calcRedstone(te);
 	}

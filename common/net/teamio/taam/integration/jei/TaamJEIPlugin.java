@@ -27,19 +27,6 @@ public class TaamJEIPlugin extends BlankModPlugin {
 				new MixerCategory(guiHelper)
 				);
 
-		registry.addRecipeCategoryCraftingItem(
-				new ItemStack(TaamMain.blockProductionLine, 1, Taam.BLOCK_PRODUCTIONLINE_META.grinder.ordinal()),
-				Taam.INTEGRATION_JEI_CAT_GRINDER);
-		registry.addRecipeCategoryCraftingItem(
-				new ItemStack(TaamMain.blockProductionLine, 1, Taam.BLOCK_PRODUCTIONLINE_META.crusher.ordinal()),
-				Taam.INTEGRATION_JEI_CAT_CRUSHER);
-		registry.addRecipeCategoryCraftingItem(
-				new ItemStack(TaamMain.itemMachine, 1, Taam.MACHINE_META.fluid_drier.metaData()),
-				Taam.INTEGRATION_JEI_CAT_FLUIDDRIER);
-		registry.addRecipeCategoryCraftingItem(
-				new ItemStack(TaamMain.itemMachine, 1, Taam.MACHINE_META.mixer.metaData()),
-				Taam.INTEGRATION_JEI_CAT_MIXER);
-
 		registry.addRecipeHandlers(
 				new GrinderRecipeHander(),
 				new CrusherRecipeHandler(),

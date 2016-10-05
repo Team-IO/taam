@@ -4,8 +4,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.IChatComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
@@ -78,7 +77,7 @@ public class ApplianceAligner extends ATileEntityAppliance implements IWorldInte
 		}
 
 		@Override
-		public ITextComponent getDisplayName() {
+		public IChatComponent getDisplayName() {
 			return ApplianceAligner.this.getDisplayName();
 		}
 
@@ -136,7 +135,7 @@ public class ApplianceAligner extends ATileEntityAppliance implements IWorldInte
 	 */
 
 	@Override
-	public boolean onBlockActivated(World world, EntityPlayer player, EnumHand hand, boolean hasWrench, EnumFacing side,
+	public boolean onBlockActivated(World world, EntityPlayer player, boolean hasWrench, EnumFacing side,
 			float hitX, float hitY, float hitZ) {
 		player.openGui(TaamMain.instance, 2, world, pos.getX(), pos.getY(), pos.getZ());
 		return true;

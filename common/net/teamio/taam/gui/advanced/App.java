@@ -2,8 +2,8 @@ package net.teamio.taam.gui.advanced;
 
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.IChatComponent;
+import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.world.IWorldNameable;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -69,8 +69,8 @@ public abstract class App implements IWorldNameable {
 	}
 	
 	@Override
-	public ITextComponent getDisplayName() {
-		return new TextComponentTranslation(getName());
+	public IChatComponent getDisplayName() {
+		return new ChatComponentTranslation(getName());
 	}
 
 }

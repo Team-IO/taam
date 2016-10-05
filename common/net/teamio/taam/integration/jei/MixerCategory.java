@@ -2,6 +2,8 @@ package net.teamio.taam.integration.jei;
 
 import javax.annotation.Nonnull;
 
+import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.client.resources.model.IBakedModel;
 import org.lwjgl.opengl.GL11;
 
 import mezz.jei.api.IGuiHelper;
@@ -17,8 +19,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.RenderItem;
-import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.item.ItemStack;
@@ -71,7 +71,7 @@ public class MixerCategory extends BlankRecipeCategory {
 	public void drawExtras(@Nonnull Minecraft minecraft) {
 		if(Config.jei_render_machines_into_gui) {
 			TextureManager texturemanager = minecraft.renderEngine;
-			texturemanager.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+			texturemanager.bindTexture(TextureMap.locationBlocksTexture);
 
 			GL11.glPushMatrix();
 

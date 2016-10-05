@@ -1,5 +1,9 @@
 package net.teamio.taam.content.common;
 
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTankInfo;
+import net.minecraftforge.fluids.IFluidHandler;
 import org.apache.commons.lang3.ArrayUtils;
 
 import net.minecraft.entity.item.EntityItem;
@@ -10,8 +14,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.ITickable;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -25,7 +27,7 @@ import net.teamio.taam.util.FluidUtils;
 import net.teamio.taam.util.InventoryUtils;
 import net.teamio.taam.util.TaamUtil;
 
-public class TileEntityChute extends BaseTileEntity implements IRotatable, ITickable {
+public class TileEntityChute extends BaseTileEntity implements IRotatable, ITickable, IFluidHandler {
 
 	public boolean isConveyorVersion = false;
 	private EnumFacing direction = EnumFacing.NORTH;
@@ -100,12 +102,47 @@ public class TileEntityChute extends BaseTileEntity implements IRotatable, ITick
 		}
 	}
 
+	/*
+	BEGIN BACKPORT for old IFluidHandler
+	 */
+
+	@Override
+	public boolean canDrain(EnumFacing from, Fluid fluid) {
+		return wrappedHandler.canDrain(from, fluid);
+	}
+
+	@Override
+	public boolean canFill(EnumFacing from, Fluid fluid) {
+		return wrappedHandler.canFill(from, fluid);
+	}
+
+	@Override
+	public FluidStack drain(EnumFacing from, int maxDrain, boolean doDrain) {
+		return wrappedHandler.drain(from, maxDrain, doDrain);
+	}
+
+	@Override
+	public FluidStack drain(EnumFacing from, FluidStack resource, boolean doDrain) {
+		return wrappedHandler.drain(from, resource, doDrain);
+	}
+
+	@Override
+	public FluidTankInfo[] getTankInfo(EnumFacing from) {
+		return wrappedHandler.getTankInfo(from);
+	}
+
+	@Override
+	public int fill(EnumFacing from, FluidStack resource, boolean doFill) {
+		return wrappedHandler.fill(from, resource, doFill);
+	}
+
+	/*
+	END BACKPORT for old IFluidHandler
+	 */
+
 	@Override
 	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
 		if (capability == Taam.CAPABILITY_CONVEYOR) {
-			return true;
-		}
-		if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
 			return true;
 		}
 		if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
@@ -119,9 +156,6 @@ public class TileEntityChute extends BaseTileEntity implements IRotatable, ITick
 	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
 		if(capability == Taam.CAPABILITY_CONVEYOR) {
 			return (T) conveyorSlots;
-		}
-		if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
-			return (T) getTargetFluidHandlerWrapped();
 		}
 		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
 			return (T) getTargetItemHandler();

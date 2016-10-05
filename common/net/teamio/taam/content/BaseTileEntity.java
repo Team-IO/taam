@@ -7,10 +7,10 @@ import java.util.UUID;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.ChatComponentTranslation;
+import net.minecraft.util.IChatComponent;
 import net.minecraft.world.IWorldNameable;
 import net.teamio.taam.util.TaamUtil;
 
@@ -57,8 +57,8 @@ public abstract class BaseTileEntity extends TileEntity implements IWorldNameabl
 	}
 
 	@Override
-	public ITextComponent getDisplayName() {
-		return new TextComponentTranslation(getName());
+	public IChatComponent getDisplayName() {
+		return new ChatComponentTranslation(getName());
 	}
 
 	/**
@@ -109,27 +109,17 @@ public abstract class BaseTileEntity extends TileEntity implements IWorldNameabl
 	 */
 
 	@Override
-	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
+	public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt) {
 		NBTTagCompound nbt = pkt.getNbtCompound();
 
 		readPropertiesFromNBTInternal(nbt);
 	}
 
 	@Override
-	public SPacketUpdateTileEntity getUpdatePacket() {
+	public S35PacketUpdateTileEntity getDescriptionPacket() {
 		NBTTagCompound nbt = new NBTTagCompound();
 		writePropertiesToNBTInternal(nbt);
-		return new SPacketUpdateTileEntity(getPos(), getBlockMetadata(), nbt);
-	}
-
-	@Override
-	public NBTTagCompound getUpdateTag() {
-		return writeToNBT(new NBTTagCompound());
-	}
-
-	@Override
-	public void handleUpdateTag(NBTTagCompound tag) {
-		readFromNBT(tag);
+		return new S35PacketUpdateTileEntity(getPos(), getBlockMetadata(), nbt);
 	}
 
 	/*
@@ -137,11 +127,10 @@ public abstract class BaseTileEntity extends TileEntity implements IWorldNameabl
 	 */
 
 	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound tag) {
+	public void writeToNBT(NBTTagCompound tag) {
 		super.writeToNBT(tag);
 
 		writePropertiesToNBTInternal(tag);
-		return tag;
 	}
 
 	@Override
@@ -160,7 +149,7 @@ public abstract class BaseTileEntity extends TileEntity implements IWorldNameabl
 	private void writePropertiesToNBTInternal(NBTTagCompound tag) {
 		if (owner != null) {
 			tag.setBoolean("owner", true);
-			tag.setUniqueId("owner", owner);
+			TaamUtil.setUniqueId(tag, "owner", owner);
 		}
 		writePropertiesToNBT(tag);
 	}
@@ -180,7 +169,7 @@ public abstract class BaseTileEntity extends TileEntity implements IWorldNameabl
 	 */
 	private void readPropertiesFromNBTInternal(NBTTagCompound tag) {
 		if(tag.getBoolean("owner")) {
-			owner = tag.getUniqueId("owner");
+			owner = TaamUtil.getUniqueId(tag, "owner");
 		} else {
 			owner = null;
 		}

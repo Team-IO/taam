@@ -1,16 +1,15 @@
 package net.teamio.taam.content.common;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.SoundType;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyEnum;
-import net.minecraft.block.state.BlockStateContainer;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.ExtendedBlockState;
@@ -41,12 +40,12 @@ public class BlockLamp extends Block {
 	public BlockLamp() {
 		super(MaterialMachinesTransparent.INSTANCE);
 		setHardness(3.5f);
-		setSoundType(SoundType.METAL);
+		setStepSound(Block.soundTypeMetal);
 		this.setHarvestLevel("pickaxe", 1);
 	}
 
 	@Override
-	protected BlockStateContainer createBlockState() {
+	protected BlockState createBlockState() {
 		return new ExtendedBlockState(this, new IProperty[] { DIRECTION, POWERED },
 				new IUnlistedProperty[] { OBJModel.OBJProperty.instance });
 	}
@@ -64,11 +63,15 @@ public class BlockLamp extends Block {
 	}
 
 	@Override
-	public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, World worldIn, BlockPos pos) {
-		return null;
+	public AxisAlignedBB getSelectedBoundingBox(World worldIn, BlockPos pos) {
+		return getBoundingBox(worldIn.getBlockState(pos), worldIn, pos);
 	}
 
 	@Override
+	public AxisAlignedBB getCollisionBoundingBox(World worldIn, BlockPos pos, IBlockState state) {
+		return null;
+	}
+
 	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
 		// Type is determined by the tile entity, we just need the rotation here
 
@@ -136,11 +139,10 @@ public class BlockLamp extends Block {
 	}
 
 	@Override
-	public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn) {
-
+	public void onNeighborBlockChange(World worldIn, BlockPos pos, IBlockState state, Block neighborBlock) {
 		boolean isOn = state.getValue(POWERED);
 
-		boolean powered = worldIn.isBlockPowered(pos);
+		boolean powered = worldIn.getStrongPower(pos, state.getValue(DIRECTION)) > 0;
 
 		if(isOn != powered) {
 			worldIn.setBlockState(pos, state.withProperty(POWERED, powered), 2);
@@ -148,7 +150,8 @@ public class BlockLamp extends Block {
 	}
 
 	@Override
-	public int getLightValue(IBlockState state) {
+	public int getLightValue(IBlockAccess world, BlockPos pos) {
+		IBlockState state = world.getBlockState(pos);
 		return state.getValue(POWERED) ? 15 : 0;
 	}
 
@@ -158,19 +161,19 @@ public class BlockLamp extends Block {
 	}
 
 	@Override
-	public boolean isOpaqueCube(IBlockState state) {
+	public boolean isOpaqueCube() {
 		return false;
 	}
 
 	@Override
-	public boolean isFullCube(IBlockState state) {
+	public boolean isFullCube() {
 		// Required false to prevent suffocation
 		return false;
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public boolean isBlockNormalCube(IBlockState state) {
+	public boolean isBlockNormalCube() {
 		return false;
 	}
 

@@ -1,5 +1,7 @@
 package net.teamio.taam.gui.advanced.apps;
 
+import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.client.resources.model.IBakedModel;
 import org.lwjgl.opengl.GL11;
 
 import com.google.common.base.Function;
@@ -7,8 +9,6 @@ import com.google.common.base.Function;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.RenderItem;
-import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.item.ItemStack;
@@ -185,7 +185,7 @@ public class AlignerSettingsGui extends AppGui {
 		final ItemStack renderStack = new ItemStack(TaamMain.blockProductionLine, 1, Taam.BLOCK_PRODUCTIONLINE_META.conveyor2.ordinal());
 		
 		{
-			textureManager.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+			textureManager.bindTexture(TextureMap.locationBlocksTexture);
 
 			GL11.glPushMatrix();
 

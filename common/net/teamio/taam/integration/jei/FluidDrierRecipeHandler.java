@@ -15,11 +15,6 @@ public class FluidDrierRecipeHandler implements IRecipeHandler<FluidDrierRecipe>
 	@Override
 	@Deprecated
 	public String getRecipeCategoryUid() {
-		return getRecipeCategoryUid(null);
-	}
-
-	@Override
-	public String getRecipeCategoryUid(FluidDrierRecipe recipe) {
 		return Taam.INTEGRATION_JEI_CAT_FLUIDDRIER;
 	}
 

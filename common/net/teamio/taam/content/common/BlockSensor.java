@@ -1,15 +1,14 @@
 package net.teamio.taam.content.common;
 
-import net.minecraft.block.SoundType;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
-import net.minecraft.block.state.BlockStateContainer;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.ExtendedBlockState;
@@ -44,12 +43,12 @@ public class BlockSensor extends BaseBlock {
 	public BlockSensor() {
 		super(MaterialMachinesTransparent.INSTANCE);
 		setHardness(3.5f);
-		setSoundType(SoundType.METAL);
+		setStepSound(BlockSensor.soundTypeMetal);
 		this.setHarvestLevel("pickaxe", 1);
 	}
 
 	@Override
-	protected BlockStateContainer createBlockState() {
+	protected BlockState createBlockState() {
 		return new ExtendedBlockState(this, new IProperty[] { DIRECTION },
 				new IUnlistedProperty[] { OBJModel.OBJProperty.instance });
 	}
@@ -66,7 +65,7 @@ public class BlockSensor extends BaseBlock {
 	}
 
 	@Override
-	public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, World worldIn, BlockPos pos) {
+	public AxisAlignedBB getCollisionBoundingBox(World worldIn, BlockPos pos, IBlockState state) {
 		return null;
 	}
 
@@ -75,7 +74,12 @@ public class BlockSensor extends BaseBlock {
 		return new TileEntitySensor(state.getValue(DIRECTION));
 
 	}
+
 	@Override
+	public AxisAlignedBB getSelectedBoundingBox(World worldIn, BlockPos pos) {
+		return getBoundingBox(worldIn.getBlockState(pos), worldIn, pos);
+	}
+
 	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
 		// Type is determined by the tile entity, we just need the rotation here
 
@@ -142,17 +146,17 @@ public class BlockSensor extends BaseBlock {
 		return new AxisAlignedBB(minX,minY,minZ, maxX, maxY,maxZ);
 	}
 	@Override
-	public boolean canProvidePower(IBlockState state) {
+	public boolean canProvidePower() {
 		return true;
 	}
 
 	@Override
-	public int getWeakPower(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
+	public int getWeakPower(IBlockAccess blockAccess, BlockPos pos, IBlockState blockState, EnumFacing side) {
 		return getRedstoneLevel(blockAccess, pos);
 	}
 
 	@Override
-	public int getStrongPower(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
+	public int getStrongPower(IBlockAccess blockAccess, BlockPos pos, IBlockState blockState, EnumFacing side) {
 		EnumFacing dir = blockState.getValue(DIRECTION);
 		if(dir == side) {
 			return getRedstoneLevel(blockAccess, pos);

@@ -5,10 +5,8 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.teamio.taam.Log;
 import net.teamio.taam.TaamMain;
@@ -24,13 +22,13 @@ import net.teamio.taam.machines.MachineTileEntity;
 public class WrenchUtil {
 
 	/**
-	 * Returns true if the player is holding a wrench in his mainhand hand.
+	 * Returns true if the player is holding a wrench.
 	 *
 	 * @param player
 	 * @return
 	 */
-	public static boolean playerHasWrenchInHand(EntityPlayer player, EnumHand hand) {
-		ItemStack held = player.getHeldItem(hand);
+	public static boolean playerHasWrenchInHand(EntityPlayer player) {
+		ItemStack held = player.getHeldItem();
 		if(held == null) {
 			return false;
 		}
@@ -39,39 +37,26 @@ public class WrenchUtil {
 	}
 
 	public static boolean playerHasDebugTool(EntityPlayer player) {
-		return playerHasDebugToolInMainhand(player) || playerHasDebugToolInOffhand(player);
-	}
-
-	public static boolean playerHasDebugToolInMainhand(EntityPlayer player) {
-		ItemStack held = player.getHeldItemMainhand();
+		ItemStack held = player.getHeldItem();
 		if (held == null) {
 			return false;
 		}
 		return held.getItem() == TaamMain.itemDebugTool;
 	}
 
-	public static boolean playerHasDebugToolInOffhand(EntityPlayer player) {
-		ItemStack held = player.getHeldItemOffhand();
-		if (held == null) {
-			return false;
-		}
-		return held.getItem() == TaamMain.itemDebugTool;
-	}
-
-	public static EnumActionResult wrenchBlock(World world, BlockPos pos, EntityPlayer player, EnumHand hand,
+	public static boolean wrenchBlock(World world, BlockPos pos, EntityPlayer player,
 			EnumFacing side, float hitX, float hitY, float hitZ) {
 		Log.debug("Checking for wrench activity.");
 
-		boolean playerHasWrenchInMainhand = WrenchUtil.playerHasWrenchInHand(player, EnumHand.MAIN_HAND);
-		boolean playerHasWrench = playerHasWrenchInMainhand || (player.isSneaking() && WrenchUtil.playerHasWrenchInHand(player, EnumHand.OFF_HAND));
+		boolean playerHasWrench = WrenchUtil.playerHasWrenchInHand(player);
 		Log.debug("Player has wrench: " + playerHasWrench);
 
 		if(!playerHasWrench) {
 			Log.debug("Player has no wrench, skipping.");
-			return EnumActionResult.PASS;
+			return false;
 		}
 
-		boolean playerIsSneaking = player.isSneaking() && playerHasWrenchInMainhand;
+		boolean playerIsSneaking = player.isSneaking();
 		Log.debug("Wrenching block. Player is sneaking: {}", playerIsSneaking);
 
 		TileEntity te = world.getTileEntity(pos);
@@ -80,12 +65,11 @@ public class WrenchUtil {
 		if (playerIsSneaking) {
 			if (WrenchUtil.isWrenchableBlock(blockState) || WrenchUtil.isWrenchableEntity(te)) {
 				TaamUtil.breakBlockToInventory(player, world, pos, blockState);
-				return EnumActionResult.SUCCESS;
 			}
-			return EnumActionResult.FAIL;
+			return true;
 		}
 		blockState.getBlock().rotateBlock(world, pos, side);
-		return EnumActionResult.SUCCESS;
+		return false;
 	}
 
 	public static boolean rotateBlock(TileEntity te) {

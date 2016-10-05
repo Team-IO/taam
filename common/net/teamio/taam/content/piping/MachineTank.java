@@ -10,14 +10,12 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.fluids.FluidTank;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.*;
 import net.teamio.taam.Config;
 import net.teamio.taam.Log;
 import net.teamio.taam.Taam;
@@ -28,7 +26,7 @@ import net.teamio.taam.piping.PipeUtil;
 import net.teamio.taam.rendering.TankRenderInfo;
 import net.teamio.taam.util.FaceBitmap;
 
-public class MachineTank implements IMachine, IWorldInteractable {
+public class MachineTank implements IMachine, IWorldInteractable, IFluidHandler {
 
 	public static final float b_basePlate = 2f / 16;
 	public static final float b_border = 1.5f / 16;
@@ -51,8 +49,8 @@ public class MachineTank implements IMachine, IWorldInteractable {
 
 	public MachineTank() {
 		tank = new FluidTank(Config.pl_tank_capacity);
-		pipeEndUP = new PipeEndFluidHandler(tank, EnumFacing.UP, true);
-		pipeEndDOWN = new PipeEndFluidHandler(tank, EnumFacing.DOWN, true);
+		pipeEndUP = new PipeEndFluidHandler(this, EnumFacing.UP, true);
+		pipeEndDOWN = new PipeEndFluidHandler(this, EnumFacing.DOWN, true);
 		pipeEndUP.setSuction(Config.pl_tank_suction);
 		// Suction on lower end of the tank is always 1 lower than on the top, so stacked tanks always transfer down.
 		pipeEndDOWN.setSuction(Config.pl_tank_suction - 1);
@@ -62,6 +60,76 @@ public class MachineTank implements IMachine, IWorldInteractable {
 		pipeEndUP.occluded = FaceBitmap.isSideBitSet(occludedSides, EnumFacing.UP);
 		pipeEndDOWN.occluded = FaceBitmap.isSideBitSet(occludedSides, EnumFacing.DOWN);
 	}
+
+	/*
+	BEGIN BACKPORT for old IFluidHandler
+	 */
+
+	@Override
+	public boolean canDrain(EnumFacing from, Fluid fluid) {
+		return from.getAxis() == Axis.Y && fluid != null && tank.getFluid() != null && fluid.equals(tank.getFluid().getFluid());
+	}
+
+	@Override
+	public boolean canFill(EnumFacing from, Fluid fluid) {
+		return from.getAxis() == Axis.Y && fluid != null && (tank.getFluid() == null || tank.getFluidAmount() <= 0 || fluid.equals(tank.getFluid().getFluid()));
+	}
+
+	@Override
+	public FluidStack drain(EnumFacing from, int maxDrain, boolean doDrain) {
+		if(from.getAxis() != Axis.Y) {
+			return null;
+		}
+		FluidStack drained = tank.drain(maxDrain, doDrain);
+		if(doDrain && drained != null && drained.amount > 0) {
+			//updateState(true, false, false);
+		}
+		return drained;
+	}
+
+	@Override
+	public FluidStack drain(EnumFacing from, FluidStack resource, boolean doDrain) {
+		if(from.getAxis() != Axis.Y) {
+			return null;
+		}
+		FluidStack fluidInTank = tank.getFluid();
+		if(fluidInTank == null || resource == null) {
+			return null;
+		}
+		if(!fluidInTank.isFluidEqual(resource)) {
+			return null;
+		}
+		FluidStack drained = tank.drain(resource.amount, doDrain);
+		if(doDrain && drained != null && drained.amount > 0) {
+			//updateState(true, false, false);
+		}
+		return drained;
+	}
+	FluidTankInfo[] tankInfo = new FluidTankInfo[1];
+	@Override
+	public FluidTankInfo[] getTankInfo(EnumFacing from) {
+		tankInfo[0] = tank.getInfo();
+		return tankInfo;
+	}
+
+	@Override
+	public int fill(EnumFacing from, FluidStack resource, boolean doFill) {
+		if(from.getAxis() != Axis.Y) {
+			return 0;
+		}
+		if(resource == null) {
+			return 0;
+		}
+		int filled = tank.fill(resource, doFill);
+		if(doFill && filled > 0) {
+			//updateState(true, false, false);
+		}
+		return filled;
+	}
+
+	/*
+	END BACKPORT for old IFluidHandler
+	 */
 
 	@Override
 	public void writePropertiesToNBT(NBTTagCompound tag) {
@@ -150,9 +218,6 @@ public class MachineTank implements IMachine, IWorldInteractable {
 		if (capability == Taam.CAPABILITY_PIPE) {
 			return facing.getAxis() == Axis.Y;
 		}
-		if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
-			return facing.getAxis() == Axis.Y;
-		}
 		if (capability == Taam.CAPABILITY_RENDER_TANK) {
 			return true;
 		}
@@ -171,9 +236,6 @@ public class MachineTank implements IMachine, IWorldInteractable {
 				return null;
 			}
 		}
-		if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing.getAxis() == Axis.Y) {
-			return (T) tank;
-		}
 		if (capability == Taam.CAPABILITY_RENDER_TANK) {
 			tankRI.setInfo(tank);
 			return (T) tankRI.asArray();
@@ -186,9 +248,9 @@ public class MachineTank implements IMachine, IWorldInteractable {
 	 */
 
 	@Override
-	public boolean onBlockActivated(World world, EntityPlayer player, EnumHand hand, boolean hasWrench, EnumFacing side,
+	public boolean onBlockActivated(World world, EntityPlayer player, boolean hasWrench, EnumFacing side,
 			float hitX, float hitY, float hitZ) {
-		boolean didSomething = PipeUtil.defaultPlayerInteraction(player, tank);
+		boolean didSomething = PipeUtil.defaultPlayerInteraction(player, side, tank);
 
 		if (didSomething) {
 			// TODO: updateState(true, false, false);

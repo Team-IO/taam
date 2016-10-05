@@ -10,11 +10,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EntityDamageSource;
-import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -34,9 +32,9 @@ public class ItemWrench extends Item {
 	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean detailInfo) {
 
-		list.add(TextFormatting.DARK_GREEN + I18n.format("lore.taam.wrench", new Object[0]));
+		list.add(EnumChatFormatting.DARK_GREEN + I18n.format("lore.taam.wrench", new Object[0]));
 		if (!GuiScreen.isShiftKeyDown()) {
-			list.add(TextFormatting.DARK_PURPLE + I18n.format("lore.taam.shift", new Object[0]));
+			list.add(EnumChatFormatting.DARK_PURPLE + I18n.format("lore.taam.shift", new Object[0]));
 		} else {
 			String usage = I18n.format("lore.taam.wrench.usage", new Object[0]);
 			//Split at literal \n in the translated text. a lot of escaping here.
@@ -66,18 +64,19 @@ public class ItemWrench extends Item {
 	//		return true;
 	//	}
 
+
 	@Override
-	public boolean doesSneakBypassUse(ItemStack stack, IBlockAccess world, BlockPos pos, EntityPlayer player) {
+	public boolean doesSneakBypassUse(World world, BlockPos pos, EntityPlayer player) {
 		// Required for disassembling, as we need shift click on the target block
 		return true;
 	}
 
 	@Override
-	public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+	public boolean onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ) {
 		// This call is for vanilla blocks (mainly stairs). Chests & Furnace etc cannot be called by this.
 		// TODO: how to bypass the clicked tileentity?
 		// The productionline blocks do not use this call here, they are handled in the corresponding block class itself.
 		// This is done, so that wrenches from other mods can be supported eventually.
-		return WrenchUtil.wrenchBlock(worldIn, pos, playerIn, hand, facing, hitX, hitY, hitZ);
+		return WrenchUtil.wrenchBlock(worldIn, pos, playerIn, facing, hitX, hitY, hitZ);
 	}
 }

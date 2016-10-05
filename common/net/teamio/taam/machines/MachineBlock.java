@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
-import net.minecraft.block.SoundType;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
-import net.minecraft.block.state.BlockStateContainer;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -16,13 +16,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.*;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.ExtendedBlockState;
@@ -54,7 +48,7 @@ public class MachineBlock extends BaseBlock implements ITileEntityProvider {
 		}
 		this.values = values;
 		setHardness(3.5f);
-		setSoundType(SoundType.METAL);
+		setStepSound(Block.soundTypeMetal);
 		this.setHarvestLevel("pickaxe", 1);
 	}
 
@@ -71,12 +65,12 @@ public class MachineBlock extends BaseBlock implements ITileEntityProvider {
 	}
 
 	@Override
-	protected BlockStateContainer createBlockState() {
+	protected BlockState createBlockState() {
 		return new ExtendedBlockState(this, new IProperty[] { DIRECTION, VARIANT }, new IUnlistedProperty[]{ OBJModel.OBJProperty.instance });
 	}
 
 	@Override
-	public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
+	public ItemStack getPickBlock(MovingObjectPosition target, World world, BlockPos pos, EntityPlayer player) {
 		MachineTileEntity te = (MachineTileEntity) world.getTileEntity(pos);
 		return new ItemStack(TaamMain.itemMachine, 1, te.meta.metaData());
 	}
@@ -89,8 +83,8 @@ public class MachineBlock extends BaseBlock implements ITileEntityProvider {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public BlockRenderLayer getBlockLayer() {
-		return BlockRenderLayer.CUTOUT;
+	public EnumWorldBlockLayer getBlockLayer() {
+		return EnumWorldBlockLayer.CUTOUT;
 	}
 
 	@Override
@@ -146,7 +140,7 @@ public class MachineBlock extends BaseBlock implements ITileEntityProvider {
 	};
 
 	@Override
-	public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox, java.util.List<AxisAlignedBB> collidingBoxes, Entity entityIn) {
+	public void addCollisionBoxesToList(World worldIn, BlockPos pos, IBlockState state, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, Entity entityIn) {
 		MachineTileEntity tileEntity = (MachineTileEntity)worldIn.getTileEntity(pos);
 
 		List<AxisAlignedBB> tempList = this.tempList.get();
@@ -159,8 +153,8 @@ public class MachineBlock extends BaseBlock implements ITileEntityProvider {
 	}
 
 	@Override
-	public RayTraceResult collisionRayTrace(IBlockState blockState, World worldIn, BlockPos pos, Vec3d start,
-			Vec3d end) {
+	public MovingObjectPosition collisionRayTrace(World worldIn, BlockPos pos, Vec3 start,
+			Vec3 end) {
 		start = start.subtract(pos.getX(), pos.getY(), pos.getZ());
 		end = end.subtract(pos.getX(), pos.getY(), pos.getZ());
 
@@ -170,13 +164,13 @@ public class MachineBlock extends BaseBlock implements ITileEntityProvider {
 		MachineTileEntity tileEntity = (MachineTileEntity)worldIn.getTileEntity(pos);
 		tileEntity.machine.addSelectionBoxes(tempList);
 
-		RayTraceResult closestHit = null;
+		MovingObjectPosition closestHit = null;
 		double dist = Double.MAX_VALUE;
 		closestBB = null;
 
 		for (AxisAlignedBB box : tempList) {
 
-			RayTraceResult newHit = box.calculateIntercept(start, end);
+			MovingObjectPosition newHit = box.calculateIntercept(start, end);
 			if (newHit != null) {
 				double newDist = newHit.hitVec.distanceTo(start);
 				if (newDist < dist) {
@@ -189,20 +183,20 @@ public class MachineBlock extends BaseBlock implements ITileEntityProvider {
 		if (closestHit == null) {
 			return null;
 		}
-		return new RayTraceResult(closestHit.hitVec, closestHit.sideHit, pos);
+		return new MovingObjectPosition(closestHit.hitVec, closestHit.sideHit, pos);
 	}
 
 	@Override
-	public AxisAlignedBB getSelectedBoundingBox(IBlockState state, World worldIn, BlockPos pos) {
+	public AxisAlignedBB getSelectedBoundingBox(World worldIn, BlockPos pos) {
 		// Get player position + look vector
 		EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
-		Vec3d eyes = player.getPositionEyes(0);
-		Vec3d look = player.getLook(0);
+		Vec3 eyes = player.getPositionEyes(0);
+		Vec3 look = player.getLook(0);
 		float reach = Minecraft.getMinecraft().playerController.getBlockReachDistance();
-		Vec3d dest = eyes.addVector(look.xCoord * reach, look.yCoord * reach, look.zCoord * reach);
+		Vec3 dest = eyes.addVector(look.xCoord * reach, look.yCoord * reach, look.zCoord * reach);
 
 		// in that method, we update the closestBB
-		collisionRayTrace(state, worldIn, pos, eyes, dest);
+		collisionRayTrace(worldIn, pos, eyes, dest);
 
 		// Return the box that is hovered, or the default if nothing could be
 		// determined (edge cases)

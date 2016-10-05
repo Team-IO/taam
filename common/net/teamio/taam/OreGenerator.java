@@ -8,9 +8,8 @@ import com.google.common.base.Predicate;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.IChunkGenerator;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.feature.WorldGenMinable;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
@@ -48,7 +47,7 @@ public class OreGenerator implements IWorldGenerator {
 	public void onConfigChangedEvent(ConfigChangedEvent.OnConfigChangedEvent event)
 	{
 		// Reload when the config changes to apply it BEFORE restart.
-		if (event.getModID().equalsIgnoreCase(Taam.MOD_ID))
+		if (event.modID.equalsIgnoreCase(Taam.MOD_ID))
 		{
 			reloadGenerationInfo();
 		}
@@ -61,7 +60,7 @@ public class OreGenerator implements IWorldGenerator {
 
 			@Override
 			public boolean apply(IBlockState input){
-				return input != null && input.getBlock() == Blocks.STONE;
+				return input != null && input.getBlock() == Blocks.stone;
 			}
 		};
 		Taam.BLOCK_ORE_META[] oreMeta = Taam.BLOCK_ORE_META.values();
@@ -78,8 +77,8 @@ public class OreGenerator implements IWorldGenerator {
 	}
 
 	@Override
-	public void generate(Random random, int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator, IChunkProvider chunkProvider) {
-		switch (world.provider.getDimension()) {
+	public void generate(Random random, int chunkX, int chunkZ, World world, IChunkProvider chunkGenerator, IChunkProvider chunkProvider) {
+		switch (world.provider.getDimensionId()) {
 		case -1:
 			generateNether(world, random, chunkX * 16, chunkZ * 16);
 			break;

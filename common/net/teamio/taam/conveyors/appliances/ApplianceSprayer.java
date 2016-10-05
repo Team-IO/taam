@@ -4,14 +4,11 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.ITickable;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTank;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.*;
 import net.teamio.taam.Config;
 import net.teamio.taam.Taam;
 import net.teamio.taam.content.IWorldInteractable;
@@ -25,7 +22,7 @@ import net.teamio.taam.recipes.IProcessingRecipeFluidBased;
 import net.teamio.taam.recipes.ProcessingRegistry;
 import net.teamio.taam.rendering.TankRenderInfo;
 
-public class ApplianceSprayer extends ATileEntityAppliance implements ITickable, IWorldInteractable {
+public class ApplianceSprayer extends ATileEntityAppliance implements ITickable, IWorldInteractable, IFluidHandler {
 
 	public static final float b_tankBorder = 1.5f / 16f;
 	public static final float b_tankBorderSprayer = b_tankBorder + 4f / 16f;
@@ -44,14 +41,79 @@ public class ApplianceSprayer extends ATileEntityAppliance implements ITickable,
 	private IProcessingRecipeFluidBased[] matchingRecipes;
 
 	public ApplianceSprayer() {
-		tank = new FluidTank(Config.pl_sprayer_capacity) {
-			@Override
-			protected void onContentsChanged() {
-				updateState(true, false, false);
-			}
-		};
-		pipeEnd = new PipeEndFluidHandler(tank, direction.getOpposite(), false);
+		tank = new FluidTank(Config.pl_sprayer_capacity);
+		pipeEnd = new PipeEndFluidHandler(this, direction.getOpposite(), false);
 	}
+
+	/*
+	BEGIN BACKPORT for old IFluidHandler
+	 */
+
+	@Override
+	public boolean canDrain(EnumFacing from, Fluid fluid) {
+		return from == direction.getOpposite() && fluid != null && tank.getFluid() != null && fluid.equals(tank.getFluid().getFluid());
+	}
+
+	@Override
+	public boolean canFill(EnumFacing from, Fluid fluid) {
+		return from == direction.getOpposite() && fluid != null && (tank.getFluid() == null || tank.getFluidAmount() <= 0 || fluid.equals(tank.getFluid().getFluid()));
+	}
+
+	@Override
+	public FluidStack drain(EnumFacing from, int maxDrain, boolean doDrain) {
+		if(from != direction.getOpposite()) {
+			return null;
+		}
+		FluidStack drained = tank.drain(maxDrain, doDrain);
+		if(doDrain && drained != null && drained.amount > 0) {
+			updateState(true, false, false);
+		}
+		return drained;
+	}
+
+	@Override
+	public FluidStack drain(EnumFacing from, FluidStack resource, boolean doDrain) {
+		if(from != direction.getOpposite()) {
+			return null;
+		}
+		FluidStack fluidInTank = tank.getFluid();
+		if(fluidInTank == null || resource == null) {
+			return null;
+		}
+		if(!fluidInTank.isFluidEqual(resource)) {
+			return null;
+		}
+		FluidStack drained = tank.drain(resource.amount, doDrain);
+		if(doDrain && drained != null && drained.amount > 0) {
+			updateState(true, false, false);
+		}
+		return drained;
+	}
+	FluidTankInfo[] tankInfo = new FluidTankInfo[1];
+	@Override
+	public FluidTankInfo[] getTankInfo(EnumFacing from) {
+		tankInfo[0] = tank.getInfo();
+		return tankInfo;
+	}
+
+	@Override
+	public int fill(EnumFacing from, FluidStack resource, boolean doFill) {
+		if(from != direction.getOpposite()) {
+			return 0;
+		}
+		if(resource == null) {
+			return 0;
+		}
+		int filled = tank.fill(resource, doFill);
+		if(doFill && filled > 0) {
+			updateState(true, false, false);
+		}
+		return filled;
+	}
+
+	/*
+	END BACKPORT for old IFluidHandler
+	 */
 
 	@Override
 	public String getName() {
@@ -225,9 +287,9 @@ public class ApplianceSprayer extends ATileEntityAppliance implements ITickable,
 	 */
 
 	@Override
-	public boolean onBlockActivated(World world, EntityPlayer player, EnumHand hand, boolean hasWrench, EnumFacing side,
+	public boolean onBlockActivated(World world, EntityPlayer player, boolean hasWrench, EnumFacing side,
 			float hitX, float hitY, float hitZ) {
-		boolean didSomething = PipeUtil.defaultPlayerInteraction(player, getTank());
+		boolean didSomething = PipeUtil.defaultPlayerInteraction(player, side, getTank());
 
 		if(didSomething) {
 			updateState(true, false, false);
@@ -245,9 +307,6 @@ public class ApplianceSprayer extends ATileEntityAppliance implements ITickable,
 		if(capability == Taam.CAPABILITY_PIPE) {
 			return facing == pipeEnd.getSide();
 		}
-		if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
-			return facing == direction.getOpposite();
-		}
 		if (capability == Taam.CAPABILITY_RENDER_TANK) {
 			return true;
 		}
@@ -259,9 +318,6 @@ public class ApplianceSprayer extends ATileEntityAppliance implements ITickable,
 	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
 		if(capability == Taam.CAPABILITY_PIPE && facing == pipeEnd.getSide()) {
 			return (T) pipeEnd;
-		}
-		if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing == direction.getOpposite()) {
-			return (T) tank;
 		}
 		if (capability == Taam.CAPABILITY_RENDER_TANK) {
 			tankRI.setInfo(tank);

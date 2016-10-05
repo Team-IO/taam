@@ -1,9 +1,6 @@
 package net.teamio.taam.content;
 
-import java.util.List;
-
 import com.google.common.collect.Lists;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -11,10 +8,8 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.IExtendedBlockState;
@@ -34,6 +29,8 @@ import net.teamio.taam.rendering.obj.OBJModel;
 import net.teamio.taam.util.InventoryUtils;
 import net.teamio.taam.util.TaamUtil;
 import net.teamio.taam.util.WrenchUtil;
+
+import java.util.List;
 
 public abstract class BaseBlock extends Block {
 
@@ -60,7 +57,7 @@ public abstract class BaseBlock extends Block {
 	public abstract boolean canBlockStay(World worldIn, BlockPos pos, IBlockState state);
 
 	@Override
-	public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn) {
+	public void onNeighborBlockChange(World worldIn, BlockPos pos, IBlockState state, Block neighborBlock) {
 		if (!canBlockStay(worldIn, pos, state)) {
 
 			TaamUtil.breakBlockInWorld(worldIn, pos, state);
@@ -119,7 +116,7 @@ public abstract class BaseBlock extends Block {
 	}
 
 	@Override
-	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
+	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumFacing side, float hitX, float hitY, float hitZ) {
 
 		TileEntity te = worldIn.getTileEntity(pos);
 		IWorldInteractable interactable = null;
@@ -134,18 +131,18 @@ public abstract class BaseBlock extends Block {
 		if(interactable != null) {
 			// All world interaction (perform action, open gui, etc.) is
 			// handled within the entity
-			boolean playerHasWrench = WrenchUtil.playerHasWrenchInHand(playerIn, hand);
-			boolean intercepted = interactable.onBlockActivated(worldIn, playerIn, hand, playerHasWrench, side, hitX, hitY, hitZ);
+			boolean playerHasWrench = WrenchUtil.playerHasWrenchInHand(playerIn);
+			boolean intercepted = interactable.onBlockActivated(worldIn, playerIn, playerHasWrench, side, hitX, hitY, hitZ);
 			if(intercepted) {
 				return true;
 			}
 		}
 
-		if(WrenchUtil.wrenchBlock(worldIn, pos, playerIn, hand, side, hitX, hitY, hitZ) == EnumActionResult.SUCCESS) {
+		if(WrenchUtil.wrenchBlock(worldIn, pos, playerIn, side, hitX, hitY, hitZ)) {
 			return true;
 		}
 
-		if (playerIn.isSneaking() && hand == EnumHand.MAIN_HAND) {
+		if (playerIn.isSneaking()) {
 			return false;
 		}
 
@@ -181,7 +178,7 @@ public abstract class BaseBlock extends Block {
 			if(interactable != null) {
 				// All world interaction (perform action, open gui, etc.) is
 				// handled within the entity
-				boolean playerHasWrench = WrenchUtil.playerHasWrenchInHand(playerIn, EnumHand.MAIN_HAND);
+				boolean playerHasWrench = WrenchUtil.playerHasWrenchInHand(playerIn);
 				interactable.onBlockHit(worldIn, playerIn, playerHasWrench);
 			}
 		}
@@ -193,19 +190,19 @@ public abstract class BaseBlock extends Block {
 	}
 
 	@Override
-	public boolean isOpaqueCube(IBlockState state) {
+	public boolean isOpaqueCube() {
 		return false;
 	}
 
 	@Override
-	public boolean isFullCube(IBlockState state) {
+	public boolean isFullCube() {
 		// Required false to prevent suffocation
 		return false;
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public boolean isBlockNormalCube(IBlockState state) {
+	public boolean isBlockNormalCube() {
 		return false;
 	}
 
@@ -264,9 +261,7 @@ public abstract class BaseBlock extends Block {
 	 * Useful when working with redstone.
 	 *
 	 * @param world
-	 * @param x
-	 * @param y
-	 * @param z
+	 * @param pos
 	 */
 	public static void updateBlocksAround(World world, BlockPos pos) {
 		Block blockType = world.getBlockState(pos).getBlock();

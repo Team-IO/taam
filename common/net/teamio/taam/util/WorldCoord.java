@@ -6,7 +6,7 @@ import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -36,11 +36,11 @@ public class WorldCoord {
 	}
 
 	public WorldCoord(World world, int x, int y, int z) {
-		this(world.provider.getDimension(), x, y, z);
+		this(world.provider.getDimensionId(), x, y, z);
 	}
 
 	public WorldCoord(World world, BlockPos pos) {
-		this(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ());
+		this(world.provider.getDimensionId(), pos.getX(), pos.getY(), pos.getZ());
 	}
 
 	public WorldCoord(TileEntity tile) {
@@ -76,7 +76,7 @@ public class WorldCoord {
 
 	public WorldClient getWorldClient() {
 		WorldClient worldClient = Minecraft.getMinecraft().theWorld;
-		if (worldClient.provider.getDimension() == world) {
+		if (worldClient.provider.getDimensionId() == world) {
 			return worldClient;
 		}
 		return null;

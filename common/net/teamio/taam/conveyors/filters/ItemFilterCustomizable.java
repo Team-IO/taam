@@ -2,7 +2,7 @@ package net.teamio.taam.conveyors.filters;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.MathHelper;
 import net.teamio.taam.Log;
 import net.teamio.taam.util.TaamUtil;
 

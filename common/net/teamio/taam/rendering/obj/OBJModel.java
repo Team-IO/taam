@@ -18,6 +18,8 @@ import javax.vecmath.Vector2f;
 import javax.vecmath.Vector3f;
 import javax.vecmath.Vector4f;
 
+import net.minecraft.client.resources.model.IBakedModel;
+import net.minecraftforge.client.model.*;
 import org.apache.commons.lang3.builder.StandardToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.tuple.Pair;
@@ -34,25 +36,15 @@ import com.google.common.collect.Sets;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
-import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.IModelCustomData;
-import net.minecraftforge.client.model.IModelSimpleProperties;
-import net.minecraftforge.client.model.IPerspectiveAwareModel;
-import net.minecraftforge.client.model.IRetexturableModel;
-import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
-import net.minecraftforge.common.model.IModelPart;
-import net.minecraftforge.common.model.IModelState;
-import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.common.FMLLog;
@@ -66,7 +58,7 @@ import net.minecraftforge.fml.common.FMLLog;
  * https://github.com/shadekiller666/MinecraftForge/tree/1.9_OBJLoader/src/main/java/net/minecraftforge/client/model/obj
  *
  */
-public class OBJModel implements IRetexturableModel, IModelCustomData, IModelSimpleProperties
+public class OBJModel implements IRetexturableModel<OBJModel>, IModelCustomData<OBJModel>, IModelSimpleProperties
 {
 	public static final StandardToStringStyle STYLE = new StandardToStringStyle();
     private MaterialLibrary matLib;
@@ -132,10 +124,10 @@ public class OBJModel implements IRetexturableModel, IModelCustomData, IModelSim
     }
 
     @Override
-    public IBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
+    public IFlexibleBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
     {
         ImmutableMap.Builder<String, TextureAtlasSprite> builder = ImmutableMap.builder();
-        builder.put(ModelLoader.White.LOCATION.toString(), ModelLoader.White.INSTANCE);
+        builder.put(ModelLoader.White.loc.toString(), ModelLoader.White.instance);
         TextureAtlasSprite missing = bakedTextureGetter.apply(new ResourceLocation("missingno"));
         for (Map.Entry<String, Material> e : this.matLib.materials.entrySet())
         {
@@ -1443,7 +1435,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData, IModelSim
         private IModelState state;
         private Set<BakedQuad> quads;
         private ImmutableMap<String, TextureAtlasSprite> textures;
-        private TextureAtlasSprite sprite = ModelLoader.White.INSTANCE;
+        private TextureAtlasSprite sprite = ModelLoader.White.instance;
         private Map<Group, Boolean> visibilityMap = Maps.newHashMap();
         private Map<String, Vector4f> colorMap = Maps.newHashMap();
         private Map<String, Material> materials;
@@ -1481,11 +1473,15 @@ public class OBJModel implements IRetexturableModel, IModelCustomData, IModelSim
         		faces.addAll(g.applyTransform(transform, this.model, this.materials));
         	}
         }
-        
-        @Override
-        public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand)
-        {
-        	if (side != null) return ImmutableList.of();
+
+	    @Override
+	    public List<BakedQuad> getGeneralQuads() {
+		    return getFaceQuads(null);
+	    }
+
+	    @Override
+	    public List<BakedQuad> getFaceQuads(EnumFacing facing) {
+        	if (facing != null) return ImmutableList.of();
         	IModelState modelState = this.state;
         	if (state instanceof IExtendedBlockState)
             {
@@ -1546,7 +1542,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData, IModelSim
         		{
         			if (this.materials.get(f.getMaterialName()).isWhite())
         			{
-        				this.sprite = ModelLoader.White.INSTANCE;
+        				this.sprite = ModelLoader.White.instance;
         			}
         			else
         			{
@@ -1555,9 +1551,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData, IModelSim
         			Vector3f[] defUVs = MaterialLibrary.getDefaultUVs(Pair.of(false, false));
                     Vector3f faceNormal = f.getNormal();
                     UnpackedBakedQuad.Builder builder = new UnpackedBakedQuad.Builder(this.format);
-                    builder.setContractUVs(true);
                     builder.setQuadOrientation(EnumFacing.getFacingFromVector(faceNormal.x, faceNormal.y, faceNormal.z));
-                    builder.setTexture(this.sprite);
         			putVertexData(builder, f.verts[0], defUVs[0], this.sprite);
         			putVertexData(builder, f.verts[1], defUVs[1], this.sprite);
         			putVertexData(builder, f.verts[2], defUVs[2], this.sprite);
@@ -1588,7 +1582,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData, IModelSim
                     case UV:
                     	if (this.model.customData.useFullAtlas)
                     		builder.put(e, defUV.x, defUV.y, 0, 1);
-                    	else if (sprite.equals(ModelLoader.White.INSTANCE))
+                    	else if (sprite.equals(ModelLoader.White.instance))
                     		builder.put(e,
                     				sprite.getInterpolatedU(defUV.x * 16),
                     				sprite.getInterpolatedV(defUV.y * 16),
@@ -1638,12 +1632,6 @@ public class OBJModel implements IRetexturableModel, IModelCustomData, IModelSim
         {
             return ItemCameraTransforms.DEFAULT;
         }
-        
-        @Override
-        public ItemOverrideList getOverrides()
-        {
-        	return ItemOverrideList.NONE;
-        }
 
 //        private final LoadingCache<IModelState, OBJBakedModel> cache = CacheBuilder.newBuilder().maximumSize(20).build(new CacheLoader<IModelState, OBJBakedModel>()
 //        {
@@ -1658,7 +1646,12 @@ public class OBJModel implements IRetexturableModel, IModelCustomData, IModelSim
 //            return cache.getUnchecked(state);
 //        }
 
-        public OBJModel getModel()
+	    @Override
+	    public VertexFormat getFormat() {
+		    return format;
+	    }
+
+	    public OBJModel getModel()
         {
             return this.model;
         }
@@ -1674,7 +1667,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData, IModelSim
         }
 
         @Override
-        public Pair<? extends IBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType)
+        public Pair<? extends IFlexibleBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType)
         {
             return IPerspectiveAwareModel.MapWrapper.handlePerspective(this, this.state, cameraTransformType);
         }

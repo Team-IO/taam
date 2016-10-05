@@ -39,7 +39,7 @@ if(System.env.BUILD_NUMBER)
 	version = "${config.mod_version}.b${System.env.BUILD_NUMBER}"
 
 minecraft {
-	version = "${config.mc_version}-${config.forge_version}"
+	version = "${config.mc_version}-${config.forge_version}-${config.mc_version}"
 	runDir = "run"
 	replace "@VERSION@", project.version
 	mappings = "${config.forge_mappings}"

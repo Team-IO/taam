@@ -8,8 +8,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -234,8 +234,6 @@ public class MachineFluidDrier implements IMachine {
 
 	/**
 	 * Checks if there is a recipe for the current input fluid & returns it.
-	 *
-	 * @param stack
 	 */
 	private IProcessingRecipeFluidBased getRecipe() {
 		FluidStack inside = pipeEndIn.getFluid();

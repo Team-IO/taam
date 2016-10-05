@@ -9,33 +9,22 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
 import mcmultipart.MCMultiPartMod;
-import mcmultipart.block.BlockMultipartContainer;
+import mcmultipart.block.BlockMultipart;
 import mcmultipart.capabilities.ISlottedCapabilityProvider;
 import mcmultipart.microblock.IMicroblock;
-import mcmultipart.multipart.IMultipart;
-import mcmultipart.multipart.INormallyOccludingPart;
-import mcmultipart.multipart.ISlottedPart;
-import mcmultipart.multipart.Multipart;
-import mcmultipart.multipart.OcclusionHelper;
-import mcmultipart.multipart.PartSlot;
+import mcmultipart.multipart.*;
 import mcmultipart.raytrace.PartMOP;
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
-import net.minecraft.block.state.BlockStateContainer;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.ITickable;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.*;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.property.ExtendedBlockState;
@@ -54,7 +43,7 @@ import net.teamio.taam.util.FaceBitmap;
 import net.teamio.taam.util.InventoryUtils;
 import net.teamio.taam.util.WrenchUtil;
 
-public class MachineMultipart extends Multipart implements INormallyOccludingPart, ITickable, ISlottedPart, ISlottedCapabilityProvider {
+public class MachineMultipart extends Multipart implements IOccludingPart, ITickable, ISlottedPart, ISlottedCapabilityProvider {
 	public IMachine machine;
 	private IMachineMetaInfo meta;
 
@@ -80,8 +69,8 @@ public class MachineMultipart extends Multipart implements INormallyOccludingPar
 	}
 
 	@Override
-	public ResourceLocation getType() {
-		return new ResourceLocation(Taam.MOD_ID, meta.unlocalizedName());
+	public String getType() {
+		return meta.unlocalizedName();
 	}
 
 	@Override
@@ -127,14 +116,13 @@ public class MachineMultipart extends Multipart implements INormallyOccludingPar
 	private void doBlockUpdate() {
 		byte occlusionField = 0;
 		Collection<? extends IMultipart> parts = getContainer().getParts();
-		Predicate<IMultipart> predicateThis = Predicates.equalTo((IMultipart)this);
 		for(EnumFacing side : EnumFacing.VALUES) {
 			PartSlot slot = PartSlot.getFaceSlot(side);
 
 			/*
 			 * Physical occlusion
 			 */
-			if(!OcclusionHelper.occlusionTest(parts, predicateThis, MachinePipe.bbFaces[side.ordinal()])) {
+			if(!OcclusionHelper.occlusionTest(parts, this, MachinePipe.bbFaces[side.ordinal()])) {
 				occlusionField = FaceBitmap.setSideBit(occlusionField, side);
 				continue;
 			}
@@ -153,7 +141,7 @@ public class MachineMultipart extends Multipart implements INormallyOccludingPar
 				/*
 				 * Last resort: slotted occluding parts
 				 */
-			} else if(OcclusionHelper.isSlotOccluded(parts, slot, predicateThis)) {
+			} else if(OcclusionHelper.isSlotOccluded(parts, this, slot)) {
 				occlusionField = FaceBitmap.setSideBit(occlusionField, side);
 			}
 		}
@@ -166,23 +154,18 @@ public class MachineMultipart extends Multipart implements INormallyOccludingPar
 	}
 
 	@Override
-	public boolean onActivated(EntityPlayer player, EnumHand hand, ItemStack heldItem, PartMOP hit) {
-		boolean playerHasWrench = WrenchUtil.playerHasWrenchInHand(player, hand);
+	public boolean onActivated(EntityPlayer player, ItemStack heldItem, PartMOP hit) {
+		boolean playerHasWrench = WrenchUtil.playerHasWrenchInHand(player);
 
 		if (!playerHasWrench) {
 			if(machine instanceof IWorldInteractable) {
-				return ((IWorldInteractable) machine).onBlockActivated(getWorld(), player, hand, false, hit.sideHit, (float)hit.hitVec.xCoord, (float)hit.hitVec.yCoord, (float)hit.hitVec.zCoord);
+				return ((IWorldInteractable) machine).onBlockActivated(getWorld(), player, false, hit.sideHit, (float)hit.hitVec.xCoord, (float)hit.hitVec.yCoord, (float)hit.hitVec.zCoord);
 			}
 			return false;
 		}
 
 		boolean playerIsSneaking = player.isSneaking();
 		Log.debug("Wrenching multipart. Player is sneaking: {}", playerIsSneaking);
-
-		if(playerIsSneaking && hand == EnumHand.OFF_HAND) {
-			Log.debug("Wrench in offhand, NOT disassembling!");
-			playerIsSneaking = false;
-		}
 
 		if (playerIsSneaking) {
 			ItemStack dropStack = getPickBlock(player, hit);
@@ -237,27 +220,21 @@ public class MachineMultipart extends Multipart implements INormallyOccludingPar
 	}
 
 	@Override
-	public IBlockState getActualState(IBlockState state) {
-		// FIXME: Hacky workaround
-		return super.getActualState(getExtendedState(state));
+	public boolean canRenderInLayer(EnumWorldBlockLayer layer) {
+		return layer == EnumWorldBlockLayer.CUTOUT;
 	}
 
 	@Override
-	public boolean canRenderInLayer(BlockRenderLayer layer) {
-		return layer == BlockRenderLayer.CUTOUT;
-	}
-
-	@Override
-	public BlockStateContainer createBlockState() {
+	public BlockState createBlockState() {
 		return new ExtendedBlockState(MCMultiPartMod.multipart,
 				new IProperty[] { DIRECTION, VARIANT },
-				new IUnlistedProperty[] { BlockMultipartContainer.PROPERTY_MULTIPART_CONTAINER, OBJModel.OBJProperty.instance }
+				new IUnlistedProperty[] { BlockMultipart.properties[0], OBJModel.OBJProperty.instance }
 				);
 	}
 
 	@Override
-	public ResourceLocation getModelPath() {
-		return new ResourceLocation(machine.getModelPath());
+	public String getModelPath() {
+		return machine.getModelPath();
 	}
 
 	@Override
@@ -291,10 +268,9 @@ public class MachineMultipart extends Multipart implements INormallyOccludingPar
 	}
 
 	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound tag) {
+	public void writeToNBT(NBTTagCompound tag) {
 		tag.setString("machine", meta.unlocalizedName());
 		machine.writePropertiesToNBT(tag);
-		return tag;
 	}
 
 	@Override

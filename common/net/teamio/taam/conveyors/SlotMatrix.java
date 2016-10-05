@@ -2,7 +2,7 @@ package net.teamio.taam.conveyors;
 
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.MathHelper;
 
 /**
  * Helper to get slot availability, with automatic calculation of rotations.

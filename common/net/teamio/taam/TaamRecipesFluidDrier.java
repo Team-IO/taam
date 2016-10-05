@@ -28,7 +28,7 @@ public class TaamRecipesFluidDrier {
 		ProcessingRegistry.registerRecipe(ProcessingRegistry.FLUIDDRIER,
 				new FluidDrierRecipe(
 						new FluidStack(FluidRegistry.LAVA, 1000),
-						new ItemStack(Blocks.OBSIDIAN, 1))
+						new ItemStack(Blocks.obsidian, 1))
 		);
 
 		// dyes -> pigment pellet

@@ -6,6 +6,12 @@ import java.util.List;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3f;
 
+import net.minecraft.client.renderer.vertex.VertexFormat;
+import net.minecraft.client.resources.model.IBakedModel;
+import net.minecraft.client.resources.model.ModelBakery;
+import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.util.IRegistry;
+import net.minecraftforge.client.model.*;
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.collect.ImmutableMap;
@@ -14,27 +20,16 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemModelMesher;
 import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
-import net.minecraft.client.renderer.block.model.ItemOverrideList;
-import net.minecraft.client.renderer.block.model.ModelBakery;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.item.Item;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.IRegistry;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.client.model.IPerspectiveAwareModel;
-import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.client.model.ModelLoaderRegistry;
-import net.minecraftforge.client.model.SimpleModelState;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.model.IModelState;
-import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -303,7 +298,7 @@ public class TaamClientProxy extends TaamCommonProxy {
 	}
 
 	private static void textureStitchPre(Fluid fluid, TextureStitchEvent.Pre event) {
-		TextureMap map = event.getMap();
+		TextureMap map = event.map;
 		TextureAtlasSprite still = map.getTextureExtry(fluid.getStill().toString());
 		if (still == null) {
 			map.registerSprite(fluid.getStill());
@@ -349,7 +344,7 @@ public class TaamClientProxy extends TaamCommonProxy {
 		 * model with one that understands our items
 		 */
 
-		IRegistry<ModelResourceLocation, IBakedModel> modelRegistry = event.getModelRegistry();
+		IRegistry<ModelResourceLocation, IBakedModel> modelRegistry = event.modelRegistry;
 		for (ModelResourceLocation resourceLocation : locationsToReplace) {
 			IBakedModel bakedModel = modelRegistry.getObject(resourceLocation);
 			if (bakedModel instanceof OBJBakedModel) {
@@ -387,7 +382,7 @@ public class TaamClientProxy extends TaamCommonProxy {
 	}
 
 	/**
-	 * Original: {@link net.minecraftforge.client.model.ForgeBlockStateV1.Variant.Deserializer.get(float, float, float, float, float, float, float)}
+	 * Original: net.minecraftforge.client.model.ForgeBlockStateV1.Variant.Deserializer.get(float, float, float, float, float, float, float)
 	 * @param tx
 	 * @param ty
 	 * @param tz
@@ -401,24 +396,9 @@ public class TaamClientProxy extends TaamCommonProxy {
 	{
 		return TRSRTransformation.blockCenterToCorner(new TRSRTransformation(
 				new Vector3f(tx / 16, ty / 16, tz / 16),
-				TRSRTransformation.quatFromXYZDegrees(new Vector3f(ax, ay, az)),
+				TRSRTransformation.quatFromYXZDegrees(new Vector3f(ax, ay, az)),
 				new Vector3f(s, s, s),
 				null));
-	}
-
-	/**
-	 * Original: {@link net.minecraftforge.client.model.ForgeBlockStateV1.Variant.Deserializer.flipX}
-	 */
-	public static final TRSRTransformation flipX = new TRSRTransformation(null, null, new Vector3f(-1, 1, 1), null);
-
-	/**
-	 * Original: {@link net.minecraftforge.client.model.ForgeBlockStateV1.Variant.Deserializer.leftify(TRSRTransformation)}
-	 * @param transform
-	 * @return
-	 */
-	public static TRSRTransformation leftify(TRSRTransformation transform)
-	{
-		return TRSRTransformation.blockCenterToCorner(flipX.compose(TRSRTransformation.blockCornerToCenter(transform)).compose(flipX));
 	}
 
 	/**
@@ -447,10 +427,8 @@ public class TaamClientProxy extends TaamCommonProxy {
 			builder.put(TransformType.GUI,                     get(0, 0, 0, 30, 225, 0, 0.625f));
 			builder.put(TransformType.GROUND,                  get(0, 3, 0, 0, 0, 0, 0.25f));
 			builder.put(TransformType.FIXED,                   get(0, 0, 0, 0, 0, 0, 0.5f));
-			builder.put(TransformType.THIRD_PERSON_RIGHT_HAND, thirdperson);
-			builder.put(TransformType.THIRD_PERSON_LEFT_HAND,  leftify(thirdperson));
-			builder.put(TransformType.FIRST_PERSON_RIGHT_HAND, get(0, 0, 0, 0, 45, 0, 0.4f));
-			builder.put(TransformType.FIRST_PERSON_LEFT_HAND,  get(0, 0, 0, 0, 225, 0, 0.4f));
+			builder.put(TransformType.THIRD_PERSON,            thirdperson);
+			builder.put(TransformType.FIRST_PERSON,            get(0, 0, 0, 0, 45, 0, 0.4f));
 			defaultBlockTransform = new SimpleModelState(builder.build());
 		}
 
@@ -465,7 +443,7 @@ public class TaamClientProxy extends TaamCommonProxy {
 		 */
 
 		@Override
-		public Pair<? extends IBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType) {
+		public Pair<? extends IFlexibleBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType) {
 			// Use forge default block transform
 			return IPerspectiveAwareModel.MapWrapper.handlePerspective(this, defaultBlockTransform, cameraTransformType);
 		}
@@ -475,8 +453,13 @@ public class TaamClientProxy extends TaamCommonProxy {
 		 */
 
 		@Override
-		public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand) {
-			return original.getQuads(state, side, rand);
+		public List<BakedQuad> getGeneralQuads() {
+			return original.getGeneralQuads();
+		}
+
+		@Override
+		public List<BakedQuad> getFaceQuads(EnumFacing facing) {
+			return original.getFaceQuads(facing);
 		}
 
 		@Override
@@ -505,9 +488,8 @@ public class TaamClientProxy extends TaamCommonProxy {
 		}
 
 		@Override
-		public ItemOverrideList getOverrides() {
-			return original.getOverrides();
+		public VertexFormat getFormat() {
+			return original.getFormat();
 		}
-
 	}
 }

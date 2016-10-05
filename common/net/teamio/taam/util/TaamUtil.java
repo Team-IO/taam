@@ -2,7 +2,11 @@ package net.teamio.taam.util;
 
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.fml.common.registry.GameData;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import org.apache.commons.lang3.ArrayUtils;
 
 import net.minecraft.block.Block;
@@ -13,7 +17,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.IWorldNameable;
 import net.minecraft.world.World;
@@ -25,6 +29,8 @@ import net.teamio.taam.Taam;
 import net.teamio.taam.content.IRedstoneControlled;
 import net.teamio.taam.conveyors.IConveyorApplianceHost;
 import net.teamio.taam.conveyors.IConveyorSlots;
+
+import javax.annotation.Nullable;
 
 /**
  * Generic Utility Methods, used across multiple "themes".
@@ -53,8 +59,7 @@ public final class TaamUtil {
 		if (world.isRemote) {
 			return;
 		}
-		IBlockState state = world.getBlockState(pos);
-		world.notifyBlockUpdate(pos, state, state, 3);
+		world.markBlockForUpdate(pos);
 	}
 
 	/**
@@ -68,7 +73,7 @@ public final class TaamUtil {
 	public static boolean canDropIntoWorld(IBlockAccess world, BlockPos pos) {
 		IBlockState state = world.getBlockState(pos);
 		Block block = state.getBlock();
-		return block.isAir(state, world, pos) || state.getMaterial().isLiquid();
+		return block.isAir(world, pos) || block.getMaterial().isLiquid();
 	}
 
 	/**
@@ -238,7 +243,7 @@ public final class TaamUtil {
 	/**
 	 * Compares if the two given itemstacks have a common ore dictionary name.
 	 * 
-	 * @param stack
+	 * @param stack1
 	 * @param stack2
 	 * @return
 	 */
@@ -263,8 +268,8 @@ public final class TaamUtil {
 	 * @return
 	 */
 	public static boolean isModMatch(ItemStack stack1, ItemStack stack2) {
-		ResourceLocation regName1 = stack1.getItem().getRegistryName();
-		ResourceLocation regName2 = stack2.getItem().getRegistryName();
+		ResourceLocation regName1 = GameData.getItemRegistry().getNameForObject(stack1.getItem());
+		ResourceLocation regName2 = GameData.getItemRegistry().getNameForObject(stack2.getItem());
 		return regName1.getResourceDomain().equals(regName2.getResourceDomain());
 	}
 
@@ -286,5 +291,28 @@ public final class TaamUtil {
 			return MultipartHandler.getCapabilityForCenter(capability, tileEntity.getWorld(), tileEntity.getPos(), side);
 		}
 		return null;
+	}
+
+	/**
+	 * Backport of NBTTagCompound.setUniqueId(String key, UUID value) for 1.8
+	 * @param tag
+	 * @param key
+	 * @param value
+	 */
+	public static void setUniqueId(NBTTagCompound tag, String key, UUID value)
+	{
+		tag.setLong(key + "Most", value.getMostSignificantBits());
+		tag.setLong(key + "Least", value.getLeastSignificantBits());
+	}
+
+	/**
+	 * Backport of NBTTagCompound.getUniqueId(String key) for 1.8
+	 * @param tag
+	 * @param key
+	 */
+	@Nullable
+	public static UUID getUniqueId(NBTTagCompound tag, String key)
+	{
+		return new UUID(tag.getLong(key + "Most"), tag.getLong(key + "Least"));
 	}
 }

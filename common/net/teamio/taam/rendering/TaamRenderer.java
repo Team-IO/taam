@@ -5,6 +5,11 @@ import java.util.Random;
 import javax.vecmath.Vector2f;
 import javax.vecmath.Vector3f;
 
+import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.client.renderer.vertex.VertexBuffer;
+import net.minecraft.client.resources.model.IBakedModel;
+import net.minecraft.util.*;
 import org.lwjgl.opengl.GL11;
 
 import com.google.common.base.Function;
@@ -12,13 +17,6 @@ import com.google.common.base.Function;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderGlobal;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.RenderItem;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
-import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
@@ -26,12 +24,6 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.fluids.Fluid;
@@ -140,12 +132,12 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		if(!failureFreeBlockHightlight) {
 			return;
 		}
-		RayTraceResult target = event.getTarget();
+		MovingObjectPosition target = event.target;
 		if(target != null && target.sideHit == EnumFacing.UP) {
 			BlockPos pos = target.getBlockPos();
 			TileEntity te;
 			if(pos != null) {
-				EntityPlayer player = event.getPlayer();
+				EntityPlayer player = event.player;
 				World world = player.worldObj;
 				boolean playerHasDebugTool = WrenchUtil.playerHasDebugTool(player);
 				te = world.getTileEntity(pos);
@@ -158,7 +150,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 							return;
 						}
 
-						Vec3d hitVec = target.hitVec;
+						Vec3 hitVec = target.hitVec;
 						int slot = ConveyorUtil.getSlotForRelativeCoordinates(hitVec.xCoord - pos.getX(),
 								hitVec.zCoord - pos.getZ());
 
@@ -173,23 +165,23 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 						double z = pos.getZ() + slot % 3 * ConveyorUtil.oneThird;
 
 
-						if(wrapper.itemStack == null && player.getHeldItemMainhand() != null) {
-							drawSelectionBoundingBox(player, event.getPartialTicks(), 4, 1, 1, 1, 1, new AxisAlignedBB(x, y, z,
+						if(wrapper.itemStack == null && player.getHeldItem() != null) {
+							drawSelectionBoundingBox(player, event.partialTicks, 4, 1, 1, 1, 1, new AxisAlignedBB(x, y, z,
 									x + ConveyorUtil.oneThird, y + 0.1d, z + ConveyorUtil.oneThird));
 						} else {
-							drawSelectionBoundingBox(player, event.getPartialTicks(), 2, 1, 1, 1, 1, new AxisAlignedBB(x, y, z,
+							drawSelectionBoundingBox(player, event.partialTicks, 2, 1, 1, 1, 1, new AxisAlignedBB(x, y, z,
 									x + ConveyorUtil.oneThird, y + 0.1d, z + ConveyorUtil.oneThird));
 						}
 
 						if(playerHasDebugTool) {
-							drawSlotInfo(player, x, y, z, slot, cte.getMovementDirection(), event.getPartialTicks());
+							drawSlotInfo(player, x, y, z, slot, cte.getMovementDirection(), event.partialTicks);
 						}
 
 						if(wrapper.itemStack != null) {
 							float progress = wrapper.movementProgress;
 
 							if (wrapper.isRenderingInterpolated()) {
-								progress += event.getPartialTicks();
+								progress += event.partialTicks;
 							} else {
 								// Interpolation since last frame already advanced to almost 1, so we prevent stutter by "skipping ahead"
 								progress += 1;
@@ -202,7 +194,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 							z += dir.getFrontOffsetZ() * progress;
 							y += dir.getFrontOffsetY() * progress * 3;
 
-							drawSelectionBoundingBox(player, event.getPartialTicks(), 4, 1, 1, 1, 1, new AxisAlignedBB(x, y, z,
+							drawSelectionBoundingBox(player, event.partialTicks, 4, 1, 1, 1, 1, new AxisAlignedBB(x, y, z,
 									x + ConveyorUtil.oneThird, y + ConveyorUtil.oneThird, z + ConveyorUtil.oneThird));
 						}
 
@@ -298,7 +290,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		GlStateManager.pushAttrib();
 
 		GlStateManager.enableBlend();
-		GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+		GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
 		GlStateManager.color(colorR, colorG, colorB, colorA);
 		GL11.glLineWidth(lineWidth);
 		// For whatever reason, we need to enable, THEN disable. Otherwise color gets somewhat garbled..
@@ -371,7 +363,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 				setupDefaultGL();
 
 
-				bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+				bindTexture(TextureMap.locationBlocksTexture);
 
 				/*
 				 * Get Rotation
@@ -622,10 +614,10 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		 */
 		TextureAtlasSprite sprite = textureGetter.apply(fluid.getStill());
 
-		VertexBuffer renderer = Tessellator.getInstance().getBuffer();
+		WorldRenderer renderer = Tessellator.getInstance().getWorldRenderer();
 
 		renderer.begin(7, DefaultVertexFormats.POSITION_TEX_NORMAL);
-		bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+		bindTexture(TextureMap.locationBlocksTexture);
 
 		/*
 		 * Begin rendering
@@ -709,10 +701,10 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		 */
 
 		TextureAtlasSprite sprite = textureGetter.apply(conveyorTextures);
-		VertexBuffer renderer = Tessellator.getInstance().getBuffer();
+		WorldRenderer renderer = Tessellator.getInstance().getWorldRenderer();
 
 		renderer.begin(7, DefaultVertexFormats.POSITION_TEX_NORMAL);
-		bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+		bindTexture(TextureMap.locationBlocksTexture);
 
 		/* Vertex infos from exported .obj file
 		v 0.020000 0.030001 0.977282
@@ -817,10 +809,10 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		 */
 
 		TextureAtlasSprite sprite = textureGetter.apply(conveyorTextures);
-		VertexBuffer renderer = Tessellator.getInstance().getBuffer();
+		WorldRenderer renderer = Tessellator.getInstance().getWorldRenderer();
 
 		renderer.begin(7, DefaultVertexFormats.POSITION_TEX_NORMAL);
-		bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+		bindTexture(TextureMap.locationBlocksTexture);
 
 		if(shutDown) {
 			GL11.glTranslated(0, 0.01, 0);
@@ -950,7 +942,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 
 			setupDefaultGL();
 
-			bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+			bindTexture(TextureMap.locationBlocksTexture);
 			float posYOffset = 0.15f;
 			if(oscillate) {
 				posYOffset += (float) (rotSin * 0.04);

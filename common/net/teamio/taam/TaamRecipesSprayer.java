@@ -10,65 +10,65 @@ import net.teamio.taam.recipes.impl.SprayerRecipe;
 
 public class TaamRecipesSprayer {
 	public static void registerRecipes() {
-		int amountWool = 5;
-		int amountCarpet = (int)Math.ceil(amountWool / 3f);
-		int amountClayAndClass = (int)Math.ceil(amountWool / 8f);
+		int amountwool = 5;
+		int amountcarpet = (int)Math.ceil(amountwool / 3f);
+		int amountClayAndClass = (int)Math.ceil(amountwool / 8f);
 
 		for(int dyeMeta = 0; dyeMeta < 16; dyeMeta++) {
 			int blockMeta = 15-dyeMeta;
 			Fluid fluid = TaamMain.fluidsDye[dyeMeta];
-			// Wool
+			// wool
 			ProcessingRegistry.registerRecipe(ProcessingRegistry.SPRAYER,
 					new SprayerRecipe(
-							new ItemStack(Blocks.WOOL, 1, OreDictionary.WILDCARD_VALUE),
-							new FluidStack(fluid, amountWool),
-							new ItemStack(Blocks.WOOL, 1, blockMeta))
+							new ItemStack(Blocks.wool, 1, OreDictionary.WILDCARD_VALUE),
+							new FluidStack(fluid, amountwool),
+							new ItemStack(Blocks.wool, 1, blockMeta))
 			);
-			// Carpet
+			// carpet
 			ProcessingRegistry.registerRecipe(ProcessingRegistry.SPRAYER,
 					new SprayerRecipe(
-							new ItemStack(Blocks.CARPET, 1, OreDictionary.WILDCARD_VALUE),
-							new FluidStack(fluid, amountCarpet),
-							new ItemStack(Blocks.CARPET, 1, blockMeta))
+							new ItemStack(Blocks.carpet, 1, OreDictionary.WILDCARD_VALUE),
+							new FluidStack(fluid, amountcarpet),
+							new ItemStack(Blocks.carpet, 1, blockMeta))
 			);
 			// Hardened Clay
 			ProcessingRegistry.registerRecipe(ProcessingRegistry.SPRAYER,
 					new SprayerRecipe(
-							new ItemStack(Blocks.STAINED_HARDENED_CLAY, 1, OreDictionary.WILDCARD_VALUE),
+							new ItemStack(Blocks.stained_hardened_clay, 1, OreDictionary.WILDCARD_VALUE),
 							new FluidStack(fluid, amountClayAndClass),
-							new ItemStack(Blocks.STAINED_HARDENED_CLAY, 1, blockMeta))
+							new ItemStack(Blocks.stained_hardened_clay, 1, blockMeta))
 			);
 			ProcessingRegistry.registerRecipe(ProcessingRegistry.SPRAYER,
 					new SprayerRecipe(
-							new ItemStack(Blocks.HARDENED_CLAY, 1, 0),
+							new ItemStack(Blocks.hardened_clay, 1, 0),
 							new FluidStack(fluid, amountClayAndClass),
-							new ItemStack(Blocks.STAINED_HARDENED_CLAY, 1, blockMeta))
+							new ItemStack(Blocks.stained_hardened_clay, 1, blockMeta))
 			);
-			// Stained Glass
+			// Stained glass
 			ProcessingRegistry.registerRecipe(ProcessingRegistry.SPRAYER,
 					new SprayerRecipe(
-							new ItemStack(Blocks.STAINED_GLASS, 1, OreDictionary.WILDCARD_VALUE),
+							new ItemStack(Blocks.stained_glass, 1, OreDictionary.WILDCARD_VALUE),
 							new FluidStack(fluid, amountClayAndClass),
-							new ItemStack(Blocks.STAINED_GLASS, 1, blockMeta))
-			);
-			ProcessingRegistry.registerRecipe(ProcessingRegistry.SPRAYER,
-					new SprayerRecipe(
-							new ItemStack(Blocks.GLASS, 1, 0),
-							new FluidStack(fluid, amountClayAndClass),
-							new ItemStack(Blocks.STAINED_GLASS, 1, blockMeta))
-			);
-			// Stained Glass Panes
-			ProcessingRegistry.registerRecipe(ProcessingRegistry.SPRAYER,
-					new SprayerRecipe(
-							new ItemStack(Blocks.STAINED_GLASS_PANE, 1, OreDictionary.WILDCARD_VALUE),
-							new FluidStack(fluid, amountClayAndClass),
-							new ItemStack(Blocks.STAINED_GLASS_PANE, 1, blockMeta))
+							new ItemStack(Blocks.stained_glass, 1, blockMeta))
 			);
 			ProcessingRegistry.registerRecipe(ProcessingRegistry.SPRAYER,
 					new SprayerRecipe(
-							new ItemStack(Blocks.GLASS_PANE, 1, 0),
+							new ItemStack(Blocks.glass, 1, 0),
 							new FluidStack(fluid, amountClayAndClass),
-							new ItemStack(Blocks.STAINED_GLASS_PANE, 1, blockMeta))
+							new ItemStack(Blocks.stained_glass, 1, blockMeta))
+			);
+			// Stained glass panes
+			ProcessingRegistry.registerRecipe(ProcessingRegistry.SPRAYER,
+					new SprayerRecipe(
+							new ItemStack(Blocks.stained_glass_pane, 1, OreDictionary.WILDCARD_VALUE),
+							new FluidStack(fluid, amountClayAndClass),
+							new ItemStack(Blocks.stained_glass_pane, 1, blockMeta))
+			);
+			ProcessingRegistry.registerRecipe(ProcessingRegistry.SPRAYER,
+					new SprayerRecipe(
+							new ItemStack(Blocks.glass_pane, 1, 0),
+							new FluidStack(fluid, amountClayAndClass),
+							new ItemStack(Blocks.stained_glass_pane, 1, blockMeta))
 			);
 		}
 		// Concrete Coating
@@ -88,25 +88,25 @@ public class TaamRecipesSprayer {
 		ProcessingRegistry.registerRecipe(ProcessingRegistry.SPRAYER,
 				new SprayerRecipe(
 						new ItemStack(TaamMain.blockConcrete, 1, Taam.BLOCK_CONCRETE_META.coated.ordinal()),
-						new FluidStack(TaamMain.fluidsDye[Taam.FLUID_DYE_META.black.ordinal()], amountWool),
+						new FluidStack(TaamMain.fluidsDye[Taam.FLUID_DYE_META.black.ordinal()], amountwool),
 						new ItemStack(TaamMain.blockConcrete, 1, Taam.BLOCK_CONCRETE_META.black.ordinal()))
 		);
 		ProcessingRegistry.registerRecipe(ProcessingRegistry.SPRAYER,
 				new SprayerRecipe(
 						new ItemStack(TaamMain.blockConcrete, 1, Taam.BLOCK_CONCRETE_META.coated_chiseled.ordinal()),
-						new FluidStack(TaamMain.fluidsDye[Taam.FLUID_DYE_META.black.ordinal()], amountWool),
+						new FluidStack(TaamMain.fluidsDye[Taam.FLUID_DYE_META.black.ordinal()], amountwool),
 						new ItemStack(TaamMain.blockConcrete, 1, Taam.BLOCK_CONCRETE_META.black_chiseled.ordinal()))
 		);
 		ProcessingRegistry.registerRecipe(ProcessingRegistry.SPRAYER,
 				new SprayerRecipe(
 						new ItemStack(TaamMain.blockConcrete, 1, Taam.BLOCK_CONCRETE_META.black.ordinal()),
-						new FluidStack(TaamMain.fluidsDye[Taam.FLUID_DYE_META.yellow.ordinal()], amountWool),
+						new FluidStack(TaamMain.fluidsDye[Taam.FLUID_DYE_META.yellow.ordinal()], amountwool),
 						new ItemStack(TaamMain.blockConcrete, 1, Taam.BLOCK_CONCRETE_META.warn1.ordinal()))
 		);
 		ProcessingRegistry.registerRecipe(ProcessingRegistry.SPRAYER,
 				new SprayerRecipe(
 						new ItemStack(TaamMain.blockConcrete, 1, Taam.BLOCK_CONCRETE_META.black.ordinal()),
-						new FluidStack(TaamMain.fluidsDye[Taam.FLUID_DYE_META.red.ordinal()], amountWool),
+						new FluidStack(TaamMain.fluidsDye[Taam.FLUID_DYE_META.red.ordinal()], amountwool),
 						new ItemStack(TaamMain.blockConcrete, 1, Taam.BLOCK_CONCRETE_META.warn2.ordinal()))
 		);
 	}

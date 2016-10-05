@@ -15,11 +15,6 @@ public class CrusherRecipeHandler implements IRecipeHandler<CrusherRecipe> {
 	@Override
 	@Deprecated
 	public String getRecipeCategoryUid() {
-		return getRecipeCategoryUid(null);
-	}
-
-	@Override
-	public String getRecipeCategoryUid(CrusherRecipe recipe) {
 		return Taam.INTEGRATION_JEI_CAT_CRUSHER;
 	}
 

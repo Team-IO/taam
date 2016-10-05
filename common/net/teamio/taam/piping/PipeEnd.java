@@ -2,7 +2,7 @@ package net.teamio.taam.piping;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -10,7 +10,7 @@ public class PipeEnd implements IPipe {
 
 	/**
 	 * One array per PipeEnd, used to optimize the
-	 * {@link IPipeTE#getPipesForSide(EnumFacing)} as usually there is only one
+	 * {@link IPipe#getInternalPipes(IBlockAccess, BlockPos)} as usually there is only one
 	 * pipe end per side.
 	 */
 	private final IPipe[] pipeArray;

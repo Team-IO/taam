@@ -1,8 +1,10 @@
 package net.teamio.taam.util;
 
+import net.minecraft.util.EnumFacing;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidTankProperties;
+import net.minecraftforge.fluids.FluidTankInfo;
+import net.minecraftforge.fluids.IFluidHandler;
 
 /**
  * Creative fluid handler that spawns infinite amounts of a given FluidStack.
@@ -15,65 +17,45 @@ public class FluidHandlerCreative implements IFluidHandler {
 
 	public FluidStack template;
 
-	private final IFluidTankProperties[] tankProperties = new IFluidTankProperties[] { new IFluidTankProperties() {
-
-		@Override
-		public FluidStack getContents() {
-			return template.copy();
-		}
-
-		@Override
-		public int getCapacity() {
-			return 10000;
-		}
-
-		@Override
-		public boolean canFillFluidType(FluidStack fluidStack) {
-			return false;
-		}
-
-		@Override
-		public boolean canFill() {
-			return false;
-		}
-
-		@Override
-		public boolean canDrainFluidType(FluidStack fluidStack) {
-			return fluidStack != null && fluidStack.isFluidEqual(template);
-		}
-
-		@Override
-		public boolean canDrain() {
-			return true;
-		}
-	} };
+	private final FluidTankInfo[] tankProperties = new FluidTankInfo[] { new FluidTankInfo(template.copy(), 10000) };
 
 	@Override
-	public IFluidTankProperties[] getTankProperties() {
-		return tankProperties;
-	}
-
-	@Override
-	public int fill(FluidStack resource, boolean doFill) {
+	public int fill(EnumFacing from, FluidStack resource, boolean doFill) {
 		return 0;
 	}
 
 	@Override
-	public FluidStack drain(FluidStack resource, boolean doDrain) {
-		if (template != null && template.isFluidEqual(resource)) {
-			return resource;
+	public FluidStack drain(EnumFacing from, FluidStack resource, boolean doDrain) {
+		if(resource == null) {
+			return null;
+		}
+		if(resource.isFluidEqual(template)) {
+			FluidStack drained = template.copy();
+			drained.amount = Math.min(resource.amount, 10000);
+			return drained;
 		}
 		return null;
 	}
 
 	@Override
-	public FluidStack drain(int maxDrain, boolean doDrain) {
-		if (template == null) {
-			return null;
-		}
-		FluidStack cloned = template.copy();
-		cloned.amount = maxDrain;
-		return cloned;
+	public FluidStack drain(EnumFacing from, int maxDrain, boolean doDrain) {
+		FluidStack drained = template.copy();
+		drained.amount = Math.min(maxDrain, 10000);
+		return drained;
 	}
 
+	@Override
+	public boolean canFill(EnumFacing from, Fluid fluid) {
+		return false;
+	}
+
+	@Override
+	public boolean canDrain(EnumFacing from, Fluid fluid) {
+		return template != null && template.getFluid() == fluid;
+	}
+
+	@Override
+	public FluidTankInfo[] getTankInfo(EnumFacing from) {
+		return tankProperties;
+	}
 }

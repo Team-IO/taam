@@ -13,7 +13,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -27,16 +27,16 @@ public class MultipartHandler {
 
 		MultipartRegistry.registerPartFactory(new IAdvancedPartFactory() {
 			@Override
-			public IMultipart createPart(ResourceLocation type, NBTTagCompound tag) {
-				IMachineMetaInfo meta = Taam.MACHINE_META.fromId(type.getResourcePath());
+			public IMultipart createPart(String type, NBTTagCompound tag) {
+				IMachineMetaInfo meta = Taam.MACHINE_META.fromId(type);
 				MachineMultipart multipart = new MachineMultipart(meta);
 				multipart.readFromNBT(tag);
 				return multipart;
 			}
 
 			@Override
-			public IMultipart createPart(ResourceLocation type, PacketBuffer buf) {
-				IMachineMetaInfo meta = Taam.MACHINE_META.fromId(type.getResourcePath());
+			public IMultipart createPart(String type, PacketBuffer buf) {
+				IMachineMetaInfo meta = Taam.MACHINE_META.fromId(type);
 				MachineMultipart multipart = new MachineMultipart(meta);
 				multipart.readUpdatePacket(buf);
 				return multipart;

@@ -1,11 +1,13 @@
 package net.teamio.taam.rendering.obj;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import net.minecraftforge.fml.common.LoaderException;
 import org.apache.logging.log4j.Level;
 
 import net.minecraft.client.resources.IResource;
@@ -52,7 +54,7 @@ public enum OBJLoader implements ICustomModelLoader {
 	}
 
 	@Override
-	public IModel loadModel(ResourceLocation modelLocation) throws Exception {
+	public IModel loadModel(ResourceLocation modelLocation) throws LoaderException, IOException {
 		ResourceLocation file = new ResourceLocation(modelLocation.getResourceDomain(),
 				modelLocation.getResourcePath());
 		if (!this.cache.containsKey(file)) {
@@ -79,7 +81,7 @@ public enum OBJLoader implements ICustomModelLoader {
 		}
 		OBJModel model = cache.get(file);
 		if (model == null)
-			throw new ModelLoaderRegistry.LoaderException("Error loading model previously: " + file);
+			throw new LoaderException("Error loading model previously: " + file);
 		return model;
 	}
 }

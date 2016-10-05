@@ -1,12 +1,9 @@
 package net.teamio.taam.content.common;
 
-import java.util.List;
-
 import net.minecraft.block.Block;
-import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
-import net.minecraft.block.state.BlockStateContainer;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
@@ -15,21 +12,23 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.teamio.taam.Taam;
 
+import java.util.List;
+
 public class BlockBuilding extends Block {
 
 	public static final PropertyEnum<Taam.BLOCK_CONCRETE_META> VARIANT = PropertyEnum.create("variant", Taam.BLOCK_CONCRETE_META.class);
 
 	public BlockBuilding() {
-		super(Material.ROCK);
-		setSoundType(SoundType.STONE);
+		super(Material.rock);
+		setStepSound(Block.soundTypeStone);
 		this.setHarvestLevel("pickaxe", 1);
 		setResistance(3.7f);
 		setHardness(2);
 	}
 
 	@Override
-	protected BlockStateContainer createBlockState() {
-		return new BlockStateContainer(this, VARIANT);
+	protected BlockState createBlockState() {
+		return new BlockState(this, VARIANT);
 	}
 
 	@Override

@@ -1,10 +1,8 @@
 package net.teamio.taam.content.common;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.SoundType;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.teamio.taam.content.MaterialMachinesTransparent;
 
@@ -14,19 +12,19 @@ public class BlockSupportBeam extends Block {
 
 	public BlockSupportBeam() {
 		super(MaterialMachinesTransparent.INSTANCE);
-		setSoundType(SoundType.METAL);
+		setStepSound(Block.soundTypeMetal);
 		this.setHarvestLevel("pickaxe", 1);
 		setResistance(3.7f);
 		setHardness(2);
 	}
 
 	@Override
-	public boolean isOpaqueCube(IBlockState state) {
+	public boolean isOpaqueCube() {
 		return false;
 	}
 
 	@Override
-	public boolean isSideSolid(IBlockState base_state, IBlockAccess world, BlockPos pos, EnumFacing side){
+	public boolean isSideSolid(IBlockAccess world, BlockPos pos, EnumFacing side){
 		return true;
 	}
 
