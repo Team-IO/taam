@@ -264,7 +264,7 @@ public class TaamMain {
 
 		registerBlock(
 				blockProductionLineAppliance = new BlockProductionLineAppliance(),
-				new ItemAppliance(blockProductionLineAppliance, Taam.BLOCK_PRODUCTIONLINE_APPLIANCE_META.valuesAsString()),
+				new ItemAppliance(blockProductionLineAppliance, Taam.BLOCK_PRODUCTIONLINE_APPLIANCE_META.values()),
 				Taam.BLOCK_PRODUCTIONLINE_APPLIANCE
 				);
 

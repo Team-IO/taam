@@ -70,7 +70,12 @@ public class BlockProductionLineAttachable extends BlockProductionLine {
 		// Since 1.9 this seems to work, though
 
 		// Add rotation to state
-		return state.withProperty(DIRECTION, ((IRotatable) te).getFacingDirection());
+		EnumFacing dir = ((IRotatable) te).getFacingDirection();
+		// Safety net for incorrect information to prevent crash
+		if(dir.getAxis() == EnumFacing.Axis.Y) {
+			dir = EnumFacing.NORTH;
+		}
+		return state.withProperty(DIRECTION, dir);
 	}
 
 	@Override
