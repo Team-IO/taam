@@ -57,6 +57,7 @@ public class TaamRecipes {
 		ItemStack partTank = new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.tank.ordinal());
 		ItemStack partNozzle = new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.nozzle.ordinal());
 		ItemStack partCopperWire = new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.copper_wire.ordinal());
+		ItemStack partMagneticCoil = new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.magnetic_coil.ordinal());
 
 		ItemStack blockConveyor2 = new ItemStack(TaamMain.blockProductionLine, 1, Taam.BLOCK_PRODUCTIONLINE_META.conveyor2.ordinal());
 		ItemStack blockTrashcan = new ItemStack(TaamMain.blockProductionLineAttachable, 1, Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META.trashcan.ordinal());
@@ -369,11 +370,11 @@ public class TaamRecipes {
 				'N', "nuggetIron"
 		));
 		//		support frame
-		GameRegistry.addRecipe(new ShapedOreRecipe(partSupportFrame,
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.support_frame.ordinal()),
 				"*A*", "A*A", "AAA",
 				'A', "ingotAluminum"));
 		//		support frame wood
-		GameRegistry.addRecipe(new ShapedOreRecipe(partWoodenSupportFrame,
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.support_frame_wood.ordinal()),
 				"*S*", "S*S", "WWW",
 				'W', "plankWood",
 				'S', "stickWood"
@@ -451,7 +452,7 @@ public class TaamRecipes {
 		//		Motor
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.motor.ordinal()),
 				"ACA", "CIC", "ACA",
-				'C', new ItemStack(TaamMain.itemPart,1,Taam.ITEM_PART_META.magnetic_coil.ordinal()),
+				'C', partMagneticCoil,
 				'I', "ingotIron",
 				'A', "ingotAluminum"
 		));

@@ -8,6 +8,7 @@ import java.util.Map;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
@@ -18,6 +19,7 @@ import net.teamio.taam.content.piping.MachineMixer;
 import net.teamio.taam.content.piping.MachinePipe;
 import net.teamio.taam.content.piping.MachinePump;
 import net.teamio.taam.content.piping.MachineTank;
+import net.teamio.taam.conveyors.IConveyorApplianceMetaInfo;
 import net.teamio.taam.conveyors.IConveyorSlots;
 import net.teamio.taam.gui.advanced.IAdvancedMachineGUI;
 import net.teamio.taam.machines.IMachine;
@@ -309,9 +311,9 @@ public final class Taam {
 		}
 	}
 
-	public static enum BLOCK_PRODUCTIONLINE_APPLIANCE_META implements IStringSerializable {
+	public static enum BLOCK_PRODUCTIONLINE_APPLIANCE_META implements IConveyorApplianceMetaInfo {
 		sprayer,
-		aligner,
+		aligner
 		;
 		public static String[] valuesAsString() {
 			Enum<?>[] valuesAsEnum = values();
@@ -325,6 +327,26 @@ public final class Taam {
 		@Override
 		public String getName() {
 			return name();
+		}
+
+		@Override
+		public int metaData() {
+			return ordinal();
+		}
+
+		@Override
+		public String unlocalizedName() {
+			return name();
+		}
+
+		@Override
+		public boolean isDirectionSupported(EnumFacing dir) {
+			return dir.getAxis() != EnumFacing.Axis.Y;
+		}
+
+		@Override
+		public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
+			// So far, no additional info
 		}
 	}
 
