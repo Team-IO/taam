@@ -71,7 +71,12 @@ public class BlockProductionLineAppliance extends BlockProductionLine {
 		// Since 1.9 this seems to work, though
 
 		// Add rotation to state
-		return state.withProperty(DIRECTION, ((IRotatable) te).getFacingDirection());
+		EnumFacing dir = te.getFacingDirection();
+		// Safety net for incorrect information to prevent crash
+		if(!DIRECTION.getAllowedValues().contains(dir)) {
+			dir = DIRECTION.getAllowedValues().iterator().next();
+		}
+		return state.withProperty(DIRECTION, dir);
 	}
 
 	@Override
