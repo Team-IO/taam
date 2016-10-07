@@ -21,6 +21,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.teamio.taam.Log;
 import net.teamio.taam.Taam;
 import net.teamio.taam.content.IRotatable;
+import net.teamio.taam.conveyors.IConveyorAppliance;
 import net.teamio.taam.conveyors.appliances.ApplianceAligner;
 import net.teamio.taam.conveyors.appliances.ApplianceSprayer;
 import net.teamio.taam.rendering.obj.OBJModel;
@@ -70,7 +71,12 @@ public class BlockProductionLineAppliance extends BlockProductionLine {
 		// Since 1.9 this seems to work, though
 
 		// Add rotation to state
-		return state.withProperty(DIRECTION, ((IRotatable) te).getFacingDirection());
+		EnumFacing dir = te.getFacingDirection();
+		// Safety net for incorrect information to prevent crash
+		if(!DIRECTION.getAllowedValues().contains(dir)) {
+			dir = DIRECTION.getAllowedValues().iterator().next();
+		}
+		return state.withProperty(DIRECTION, dir);
 	}
 
 	@Override
@@ -115,7 +121,7 @@ public class BlockProductionLineAppliance extends BlockProductionLine {
 	@Override
 	public boolean canPlaceBlockAt(World world, BlockPos pos) {
 		TileEntity te = world.getTileEntity(pos);
-		if(te instanceof IRotatable) {
+		if(te instanceof IConveyorAppliance) {
 			return TaamUtil.canAttachAppliance(world, pos, ((IRotatable) te).getFacingDirection());
 		}
 		return true;

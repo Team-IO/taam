@@ -20,13 +20,14 @@ public class TaamRecipesMixer {
 		}
 
 		// Cement + Water -> concrete
+		// fine
 		ProcessingRegistry.registerRecipe(ProcessingRegistry.MIXER,
 				new MixerRecipe(
 						new ItemStack(TaamMain.itemMaterial, 1, Taam.ITEM_MATERIAL_META.cement.ordinal()),
 						new FluidStack(FluidRegistry.WATER, 1000),
 						new FluidStack(TaamMain.fluidsMaterial[Taam.FLUID_MATERIAL_META.concreteFine.ordinal()], 250))
 		);
-
+		// rough
 		ProcessingRegistry.registerRecipe(ProcessingRegistry.MIXER,
 				new MixerRecipe(
 						new ItemStack(TaamMain.itemMaterial, 1, Taam.ITEM_MATERIAL_META.cementRough.ordinal()),
