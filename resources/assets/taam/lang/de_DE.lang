@@ -187,6 +187,17 @@ fluid.coating=Beschichtung auf Harzbasis
 taam.app.common.redstone=Redstone
 taam.app.settings.aligner=Filtereinstellungen
 
+taam.gui.filter.mode=Filtertyp
+taam.gui.filter.mode.exact=Filtertyp\nGenaue Übereinstimmung
+taam.gui.filter.mode.oredict=Filtertyp\nOre Dictionary Kompatibel
+taam.gui.filter.mode.mod=Filtertyp\nGleicher Mod
+taam.gui.filter.meta=Metadaten Prüfen
+taam.gui.filter.meta.true=Metadaten Prüfen\nAn
+taam.gui.filter.meta.false=Metadaten Prüfen\nAus
+taam.gui.filter.nbt=NBT Daten Prüfen
+taam.gui.filter.nbt.true=NBT Daten Prüfen\nAn
+taam.gui.filter.nbt.false=NBT Daten Prüfen\nAus
+
 # Lore localization
 lore.taam.shift=<Shift Drücken>
 lore.taam.conveyor_appliance=Förderband-Appliance

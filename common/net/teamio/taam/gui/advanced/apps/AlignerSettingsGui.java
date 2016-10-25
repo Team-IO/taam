@@ -243,6 +243,39 @@ public class AlignerSettingsGui extends AppGui {
 
 	@Override
 	public void drawForeground(GuiAdvancedMachine gui, int mouseX, int mouseY) {
+		for (int i = 0; i < cbExcluding.length; i++) {
+			ItemFilterCustomizable filter = app.aligner.filters[i];
+			if(cbMode[i].isMouseOver()) {
+				switch(filter.mode) {
+					default:
+						gui.drawTooltipTranslated("taam.gui.filter.mode", mouseX, mouseY);
+						break;
+					case Exact:
+						gui.drawTooltipTranslated("taam.gui.filter.mode.exact", mouseX, mouseY);
+						break;
+					case Mod:
+						gui.drawTooltipTranslated("taam.gui.filter.mode.mod", mouseX, mouseY);
+						break;
+					case OreDict:
+						gui.drawTooltipTranslated("taam.gui.filter.mode.oredict", mouseX, mouseY);
+						break;
+				}
+			}
+			if(cbCheckMeta[i].isMouseOver()) {
+				if(filter.checkMeta) {
+					gui.drawTooltipTranslated("taam.gui.filter.meta.true", mouseX, mouseY);
+				} else {
+					gui.drawTooltipTranslated("taam.gui.filter.meta.false", mouseX, mouseY);
+				}
+			}
+			if(cbCheckNBT[i].isMouseOver()) {
+				if(filter.checkNBT) {
+					gui.drawTooltipTranslated("taam.gui.filter.nbt.true", mouseX, mouseY);
+				} else {
+					gui.drawTooltipTranslated("taam.gui.filter.nbt.false", mouseX, mouseY);
+				}
+			}
+		}
 	}
 
 	@Override

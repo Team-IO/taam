@@ -187,6 +187,17 @@ fluid.coating=Resin-Based Coating
 taam.app.common.redstone=Redstone
 taam.app.settings.aligner=Filter Setup
 
+taam.gui.filter.mode=Filter Mode
+taam.gui.filter.mode.exact=Filter Mode\nExact Matches
+taam.gui.filter.mode.oredict=Filter Mode\nOre Dictionary Matches
+taam.gui.filter.mode.mod=Filter Mode\nMod Matches
+taam.gui.filter.meta=Check Metadata
+taam.gui.filter.meta.true=Check Metadata\nYes
+taam.gui.filter.meta.false=Check Metadata\nNo
+taam.gui.filter.nbt=Check NBT
+taam.gui.filter.nbt.true=Check NBT\nYes
+taam.gui.filter.nbt.false=Check NBT\nNo
+
 # Lore localization
 lore.taam.shift=Hold Shift
 lore.taam.conveyor_appliance=Conveyor Appliance
