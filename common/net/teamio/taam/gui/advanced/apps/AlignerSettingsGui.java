@@ -195,7 +195,19 @@ public class AlignerSettingsGui extends AppGui {
 			GL11.glTranslated(xCenter, yCenter, 0.5);
 			GL11.glScaled(60, -60, 2);
 			GL11.glRotated(90, 1, 0, 0);
-			float degrees = TaamRenderer.getRotationDegrees(app.aligner.conveyorDirection);
+
+			float degrees = 0;
+			if(app.aligner.conveyorDirection == app.aligner.getFacingDirection().rotateY()) {
+				// Right
+				degrees = 90;
+			} else if(app.aligner.conveyorDirection == app.aligner.getFacingDirection().rotateYCCW()) {
+				// Left
+				degrees = -90;
+			} else if(app.aligner.conveyorDirection == app.aligner.getFacingDirection()) {
+				// Facing away
+				degrees = 180;
+			}
+
 			GL11.glRotated(degrees, 0, 1, 0);
 
 			RenderItem ri = Minecraft.getMinecraft().getRenderItem();
