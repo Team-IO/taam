@@ -183,6 +183,10 @@ fluid.concreteRough=Grober Beton
 fluid.concreteFine=Feiner Beton
 fluid.coating=Beschichtung auf Harzbasis
 
+# Apps
+taam.app.common.redstone=Redstone
+taam.app.settings.aligner=Filtereinstellungen
+
 # Lore localization
 lore.taam.shift=<Shift Drücken>
 lore.taam.conveyor_appliance=Förderband-Appliance
