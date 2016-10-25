@@ -45,7 +45,7 @@ public class ItemAppliance extends ItemBlock {
 
 	@Override
 	public int getMetadata(int damage) {
-		return 0;
+		return damage;
 	}
 
 	@Override
