@@ -603,6 +603,8 @@ public class TaamMain {
 		TaamRecipes.registerSmeltingRecipes();
 		TaamRecipes.registerCraftingRecipes();
 
+		// Compat Recipes
+		TaamRecipeCompat.registerRecipes();
 	}
 
 	@EventHandler
