@@ -10,6 +10,7 @@ item.taam.ingot.kaolinite.name=The Impossible Kaolinite Ingot
 item.taam.ingot.gold.name=Cheated Gold Ingot
 item.taam.ingot.iron.name=Cheated Iron Ingot
 item.taam.ingot.coal.name=Cheated Coal Ingot (what is that?)
+item.taam.ingot.stone.name=Cheated Stone Ingot (interesting...)
 # Dusts
 item.taam.dust.tin.name=Tin Dust
 item.taam.dust.copper.name=Copper Dust
@@ -210,6 +211,8 @@ lore.taam.debugtool.usage=This item can't be obtained in Survival.\nIt prints de
 lore.taam.wrench=An engineers utility
 lore.taam.wrench.usage=Use this wrench to rotate\nand manage productionline machines.
 lore.taam.redirector.usage=Attach this part to a conveyor to redirect\ntransported goods to the left or right.\nCan be detached with a wrench.
+
+lore.taam.ingots.cheaty=Unusable Item!\nPlace in a crafting grid to get regular ingots.
 
 # Death causes
 death.attack.taam.processed=%1$s was processed (painfully)
