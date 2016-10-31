@@ -127,6 +127,7 @@ public class TaamMain {
 	public static CreativeTabs creativeTab;
 
 	public static BlockLamp blockLamp;
+	public static BlockLamp blockLampInverted;
 	public static BlockSensor blockSensor;
 	public static BlockMachines blockMachines;
 	public static BlockProductionLine blockProductionLine;
@@ -234,10 +235,15 @@ public class TaamMain {
 		 */
 
 		registerBlock(
-				blockLamp = new BlockLamp(),
+				blockLamp = new BlockLamp(false),
 				new ItemBlock(blockLamp),
 				Taam.BLOCK_LAMP
 				);
+		registerBlock(
+				blockLampInverted = new BlockLamp(true),
+				new ItemBlock(blockLampInverted),
+				Taam.BLOCK_LAMP_INVERTED
+		);
 		registerBlock(
 				blockSensor = new BlockSensor(),
 				new ItemBlock(blockSensor),
@@ -320,6 +326,15 @@ public class TaamMain {
 					@Override
 					public void addInformation(ItemStack stack, EntityPlayer player, List<String> lines,
 							boolean detailedInfoSetting) {
+						if(stack.getMetadata() == Taam.BLOCK_ORE_META.iron.ordinal() ||
+								stack.getMetadata() == Taam.BLOCK_ORE_META.gold.ordinal()) {
+							String usage = I18n.format("lore.taam.ingots.cheaty", new Object[0]);
+							// Split at literal \n in the translated text. a lot of escaping here.
+							String[] split = usage.split("\\\\n");
+							for (int i = 0; i < split.length; i++) {
+								lines.add(split[i]);
+							}
+						}
 					}
 				}), Taam.ITEM_INGOT);
 
@@ -594,6 +609,8 @@ public class TaamMain {
 		TaamRecipes.registerSmeltingRecipes();
 		TaamRecipes.registerCraftingRecipes();
 
+		// Compat Recipes
+		TaamRecipeCompat.registerRecipes();
 	}
 
 	@EventHandler

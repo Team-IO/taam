@@ -8,7 +8,7 @@ import net.teamio.taam.util.TaamUtil;
 
 public abstract class ATileEntityAttachable extends BaseTileEntity implements IRotatable {
 
-	public static SlotMatrix SLOT_MATRIX = new SlotMatrix(false, false, true, false, false, true, false, false, true);
+	public static SlotMatrix SLOT_MATRIX = new SlotMatrix(true, false, false, true, false, false, true, false, false);
 	
 	protected EnumFacing direction = EnumFacing.NORTH;
 

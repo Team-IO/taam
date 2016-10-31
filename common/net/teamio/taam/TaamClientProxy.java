@@ -220,6 +220,7 @@ public class TaamClientProxy extends TaamCommonProxy {
 		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_SENSOR, 0, "sensor.obj");
 		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_SUPPORT_BEAM, 0, "support_beam.obj");
 		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_LAMP, 0, "industrial_lamp.obj");
+		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_LAMP_INVERTED, 0, "industrial_lamp.obj");
 
 		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_MACHINES, Taam.BLOCK_MACHINES_META.chute.ordinal(), "chute.obj");
 		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_MACHINES, Taam.BLOCK_MACHINES_META.creativecache.ordinal(), "creative_cache.obj");

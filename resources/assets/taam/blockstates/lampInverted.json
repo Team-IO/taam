@@ -1,0 +1,36 @@
+{
+    "forge_marker": 1,
+    "defaults": {
+        "model": "taam:industrial_lamp.obj",
+        "custom": {
+            "flip-v": true
+        },
+        "transform": "forge:default-block"
+     },
+    "variants": {
+        "normal": [{}],
+        "inventory": [{
+            "transform": "forge:default-block"
+        }],
+        "powered": {
+        	"true": {
+		        "textures": {
+		        	"Conveyor": "taam:blocks/industrial_lamp_on"
+		        }
+	        },
+        	"false": {
+		        "textures": {
+		        	"Conveyor": "taam:blocks/industrial_lamp_off"
+		        }
+	        }
+        },
+        "direction": {
+        	"up": {"x": 90},
+        	"down": {"x": -90},
+        	"south": {},
+        	"north": {"y": 180},
+        	"west": {"y": 90},
+        	"east": {"y": 270}
+        }
+    }
+}

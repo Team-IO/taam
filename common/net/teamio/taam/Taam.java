@@ -57,7 +57,7 @@ public final class Taam {
 	public static final String MOD_NAME = "Taam";
 	public static final String MOD_VERSION = "@VERSION@";
 	public static final String MOD_AUTHOR1 = "founderio";
-	public static final String MOD_AUTHOR2 = "Xander112";
+	public static final String MOD_AUTHOR2 = "Xanderio";
 	public static final String MOD_DESCRIPTION = "Taam: Tech and Acessories Mod\nTaam is open source, puplished under the MIT license. Feel free to poke around the source code! Any support is appreciated, so check out our Patreon page and our website and report any issues on GitHub!";
 	public static final String MOD_CREDITS = "Taam is a mod by Team I/O";
 	public static final String MOD_URL = "https://team-io.net/taam.php";
@@ -79,11 +79,13 @@ public final class Taam {
 	public static final String INTEGRATION_JEI_CAT_CRUSHER = "taam.integration.jei.crusher";
 	public static final String INTEGRATION_JEI_CAT_FLUIDDRIER = "taam.integration.jei.fluiddrier";
 	public static final String INTEGRATION_JEI_CAT_MIXER = "taam.integration.jei.mixer";
+	public static final String INTEGRATION_JEI_CAT_SPRAYER = "taam.integration.jei.sprayer";
 
 	public static final String INTEGRATION_JEI_CATNAME_GRINDER = "taam.integration.jei.categories.grinder";
 	public static final String INTEGRATION_JEI_CATNAME_CRUSHER = "taam.integration.jei.categories.crusher";
 	public static final String INTEGRATION_JEI_CATNAME_FLUIDDRIER = "taam.integration.jei.categories.fluiddrier";
 	public static final String INTEGRATION_JEI_CATNAME_MIXER = "taam.integration.jei.categories.mixer";
+	public static final String INTEGRATION_JEI_CATNAME_SPRAYER = "taam.integration.jei.categories.sprayer";
 
 	public static final String INTEGRATION_JEI_LORE_INTERNAL_CAPACITY = "taam.integration.jei.lore.internalcapacity";
 	public static final String INTEGRATION_JEI_LORE_INTERNAL_CAPACITY_IN = "taam.integration.jei.lore.internalcapacity_in";
@@ -100,6 +102,7 @@ public final class Taam {
 	 */
 
 	public static final String BLOCK_LAMP = "lamp";
+	public static final String BLOCK_LAMP_INVERTED = "lampInverted";
 	public static final String BLOCK_SENSOR = "sensor";
 	public static final String BLOCK_MACHINES = "machines";
 	public static final String BLOCK_PRODUCTIONLINE = "productionline";

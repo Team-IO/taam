@@ -10,6 +10,7 @@ item.taam.ingot.kaolinite.name=The Impossible Kaolinite Ingot
 item.taam.ingot.gold.name=Cheated Gold Ingot
 item.taam.ingot.iron.name=Cheated Iron Ingot
 item.taam.ingot.coal.name=Cheated Coal Ingot (what is that?)
+item.taam.ingot.stone.name=Cheated Stone Ingot (interesting...)
 # Dusts
 item.taam.dust.tin.name=Tin Dust
 item.taam.dust.copper.name=Copper Dust
@@ -83,6 +84,7 @@ tile.taam.sensor.name=Motion Sensor
 tile.taam.slidingdoor.name=Sliding Door
 tile.taam.support_beam.name=Support Beam
 tile.taam.lamp.name=Industrial Lamp
+tile.taam.lampInverted.name=Industrial Lamp (Inverted)
 # Concrete
 tile.taam.concrete.name=Concrete
 tile.taam.concrete.rough.name=Rough Concrete
@@ -187,6 +189,17 @@ fluid.coating=Resin-Based Coating
 taam.app.common.redstone=Redstone
 taam.app.settings.aligner=Filter Setup
 
+taam.gui.filter.mode=Filter Mode
+taam.gui.filter.mode.exact=Filter Mode\nExact Matches
+taam.gui.filter.mode.oredict=Filter Mode\nOre Dictionary Matches
+taam.gui.filter.mode.mod=Filter Mode\nMod Matches
+taam.gui.filter.meta=Check Metadata
+taam.gui.filter.meta.true=Check Metadata\nYes
+taam.gui.filter.meta.false=Check Metadata\nNo
+taam.gui.filter.nbt=Check NBT
+taam.gui.filter.nbt.true=Check NBT\nYes
+taam.gui.filter.nbt.false=Check NBT\nNo
+
 # Lore localization
 lore.taam.shift=Hold Shift
 lore.taam.conveyor_appliance=Conveyor Appliance
@@ -199,6 +212,8 @@ lore.taam.debugtool.usage=This item can't be obtained in Survival.\nIt prints de
 lore.taam.wrench=An engineers utility
 lore.taam.wrench.usage=Use this wrench to rotate\nand manage productionline machines.
 lore.taam.redirector.usage=Attach this part to a conveyor to redirect\ntransported goods to the left or right.\nCan be detached with a wrench.
+
+lore.taam.ingots.cheaty=Unusable Item!\nPlace in a crafting grid to get regular ingots.
 
 # Death causes
 death.attack.taam.processed=%1$s was processed (painfully)
@@ -213,6 +228,7 @@ taam.integration.jei.categories.crusher=Crushing
 taam.integration.jei.categories.grinder=Grinding
 taam.integration.jei.categories.fluiddrier=Dry Fluid
 taam.integration.jei.categories.mixer=Mixing
+taam.integration.jei.categories.sprayer=Spraying
 
 taam.integration.jei.lore.internalcapacity=Internal Capacity: %d mB
 taam.integration.jei.lore.internalcapacity_in=Input Capacity: %d mB

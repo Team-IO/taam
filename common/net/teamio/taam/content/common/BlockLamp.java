@@ -38,8 +38,11 @@ public class BlockLamp extends Block {
 	 */
 	private static final float height = 6/16f;
 
-	public BlockLamp() {
+	public final boolean isInverted;
+
+	public BlockLamp(boolean isInverted) {
 		super(MaterialMachinesTransparent.INSTANCE);
+		this.isInverted = isInverted;
 		setHardness(3.5f);
 		setSoundType(SoundType.METAL);
 		this.setHarvestLevel("pickaxe", 1);
@@ -142,6 +145,10 @@ public class BlockLamp extends Block {
 
 		boolean powered = worldIn.isBlockPowered(pos);
 
+		if(isInverted) {
+			powered = !powered;
+		}
+
 		if(isOn != powered) {
 			worldIn.setBlockState(pos, state.withProperty(POWERED, powered), 2);
 		}
@@ -177,7 +184,7 @@ public class BlockLamp extends Block {
 	@Override
 	public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ,
 			int meta, EntityLivingBase placer) {
-		return getDefaultState().withProperty(DIRECTION, facing);
+		return getDefaultState().withProperty(DIRECTION, facing).withProperty(POWERED, isInverted);
 	}
 
 	@Override
