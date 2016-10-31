@@ -16,6 +16,8 @@ import net.teamio.taam.recipes.ProcessingRegistryEntry;
 public class TaamJEIPlugin extends BlankModPlugin {
 	@Override
 	public void register(IModRegistry registry) {
+		Log.debug("Registering JEI Categories + RecipeHandlers");
+
 		IJeiHelpers jeiHelpers = registry.getJeiHelpers();
 
 		IGuiHelper guiHelper = jeiHelpers.getGuiHelper();
@@ -24,14 +26,32 @@ public class TaamJEIPlugin extends BlankModPlugin {
 				new GrinderCategory(guiHelper),
 				new CrusherCategory(guiHelper),
 				new FluidDrierCategory(guiHelper),
-				new MixerCategory(guiHelper)
+				new MixerCategory(guiHelper),
+				new SprayerCategory(guiHelper)
 				);
+
+		registry.addRecipeCategoryCraftingItem(
+				new ItemStack(TaamMain.blockProductionLine, 1, Taam.BLOCK_PRODUCTIONLINE_META.grinder.ordinal()),
+				Taam.INTEGRATION_JEI_CAT_GRINDER);
+		registry.addRecipeCategoryCraftingItem(
+				new ItemStack(TaamMain.blockProductionLine, 1, Taam.BLOCK_PRODUCTIONLINE_META.crusher.ordinal()),
+				Taam.INTEGRATION_JEI_CAT_CRUSHER);
+		registry.addRecipeCategoryCraftingItem(
+				new ItemStack(TaamMain.itemMachine, 1, Taam.MACHINE_META.fluid_drier.metaData()),
+				Taam.INTEGRATION_JEI_CAT_FLUIDDRIER);
+		registry.addRecipeCategoryCraftingItem(
+				new ItemStack(TaamMain.itemMachine, 1, Taam.MACHINE_META.mixer.metaData()),
+				Taam.INTEGRATION_JEI_CAT_MIXER);
+		registry.addRecipeCategoryCraftingItem(
+				new ItemStack(TaamMain.blockProductionLineAppliance, 1, Taam.BLOCK_PRODUCTIONLINE_APPLIANCE_META.sprayer.metaData()),
+				Taam.INTEGRATION_JEI_CAT_SPRAYER);
 
 		registry.addRecipeHandlers(
 				new GrinderRecipeHander(),
 				new CrusherRecipeHandler(),
 				new FluidDrierRecipeHandler(),
-				new MixerRecipeHandler()
+				new MixerRecipeHandler(),
+				new SprayerRecipeHandler()
 				);
 		/*
 		 * Add all recipes from the registry, for all machines we have

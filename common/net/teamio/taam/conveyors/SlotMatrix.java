@@ -72,12 +72,12 @@ public class SlotMatrix {
 		rotated = new boolean[4][];
 		// North
 		rotated[2] = unrotated;
-		// East
-		rotated[3] = rotate(unrotated);
-		// South
-		rotated[0] = rotate(rotated[3]);
 		// West
-		rotated[1] = rotate(rotated[0]);
+		rotated[1] = rotate(unrotated);
+		// South
+		rotated[0] = rotate(rotated[1]);
+		// East
+		rotated[3] = rotate(rotated[0]);
 	}
 
 	public static boolean[] rotate(boolean[] source) {

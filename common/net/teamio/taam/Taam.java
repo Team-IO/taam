@@ -8,6 +8,7 @@ import java.util.Map;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
@@ -18,6 +19,7 @@ import net.teamio.taam.content.piping.MachineMixer;
 import net.teamio.taam.content.piping.MachinePipe;
 import net.teamio.taam.content.piping.MachinePump;
 import net.teamio.taam.content.piping.MachineTank;
+import net.teamio.taam.conveyors.IConveyorApplianceMetaInfo;
 import net.teamio.taam.conveyors.IConveyorSlots;
 import net.teamio.taam.gui.advanced.IAdvancedMachineGUI;
 import net.teamio.taam.machines.IMachine;
@@ -55,7 +57,7 @@ public final class Taam {
 	public static final String MOD_NAME = "Taam";
 	public static final String MOD_VERSION = "@VERSION@";
 	public static final String MOD_AUTHOR1 = "founderio";
-	public static final String MOD_AUTHOR2 = "Xander112";
+	public static final String MOD_AUTHOR2 = "Xanderio";
 	public static final String MOD_DESCRIPTION = "Taam: Tech and Acessories Mod\nTaam is open source, puplished under the MIT license. Feel free to poke around the source code! Any support is appreciated, so check out our Patreon page and our website and report any issues on GitHub!";
 	public static final String MOD_CREDITS = "Taam is a mod by Team I/O";
 	public static final String MOD_URL = "https://team-io.net/taam.php";
@@ -77,11 +79,13 @@ public final class Taam {
 	public static final String INTEGRATION_JEI_CAT_CRUSHER = "taam.integration.jei.crusher";
 	public static final String INTEGRATION_JEI_CAT_FLUIDDRIER = "taam.integration.jei.fluiddrier";
 	public static final String INTEGRATION_JEI_CAT_MIXER = "taam.integration.jei.mixer";
+	public static final String INTEGRATION_JEI_CAT_SPRAYER = "taam.integration.jei.sprayer";
 
 	public static final String INTEGRATION_JEI_CATNAME_GRINDER = "taam.integration.jei.categories.grinder";
 	public static final String INTEGRATION_JEI_CATNAME_CRUSHER = "taam.integration.jei.categories.crusher";
 	public static final String INTEGRATION_JEI_CATNAME_FLUIDDRIER = "taam.integration.jei.categories.fluiddrier";
 	public static final String INTEGRATION_JEI_CATNAME_MIXER = "taam.integration.jei.categories.mixer";
+	public static final String INTEGRATION_JEI_CATNAME_SPRAYER = "taam.integration.jei.categories.sprayer";
 
 	public static final String INTEGRATION_JEI_LORE_INTERNAL_CAPACITY = "taam.integration.jei.lore.internalcapacity";
 	public static final String INTEGRATION_JEI_LORE_INTERNAL_CAPACITY_IN = "taam.integration.jei.lore.internalcapacity_in";
@@ -98,6 +102,7 @@ public final class Taam {
 	 */
 
 	public static final String BLOCK_LAMP = "lamp";
+	public static final String BLOCK_LAMP_INVERTED = "lampInverted";
 	public static final String BLOCK_SENSOR = "sensor";
 	public static final String BLOCK_MACHINES = "machines";
 	public static final String BLOCK_PRODUCTIONLINE = "productionline";
@@ -309,9 +314,9 @@ public final class Taam {
 		}
 	}
 
-	public static enum BLOCK_PRODUCTIONLINE_APPLIANCE_META implements IStringSerializable {
+	public static enum BLOCK_PRODUCTIONLINE_APPLIANCE_META implements IConveyorApplianceMetaInfo {
 		sprayer,
-		aligner,
+		aligner
 		;
 		public static String[] valuesAsString() {
 			Enum<?>[] valuesAsEnum = values();
@@ -325,6 +330,26 @@ public final class Taam {
 		@Override
 		public String getName() {
 			return name();
+		}
+
+		@Override
+		public int metaData() {
+			return ordinal();
+		}
+
+		@Override
+		public String unlocalizedName() {
+			return name();
+		}
+
+		@Override
+		public boolean isDirectionSupported(EnumFacing dir) {
+			return dir.getAxis() != EnumFacing.Axis.Y;
+		}
+
+		@Override
+		public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
+			// So far, no additional info
 		}
 	}
 

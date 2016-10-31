@@ -205,4 +205,23 @@ public class GuiAdvancedMachine extends GuiContainer {
 		}
 	}
 
+	public void drawTooltip(List<String> text, int mouseX, int mouseY) {
+		this.drawHoveringText(text, mouseX - guiLeft, mouseY - guiTop);
+	}
+
+	private static final List<String> textList = new ArrayList<String>();
+
+	public void drawTooltipTranslated(String unlocalized, int mouseX, int mouseY) {
+		textList.clear();
+
+		String localized = I18n.format(unlocalized, new Object[0]);
+		// Split at literal \n in the translated text. a lot of escaping here.
+		String[] split = localized.split("\\\\n");
+		for (int i = 0; i < split.length; i++) {
+			textList.add(split[i]);
+		}
+
+		this.drawHoveringText(textList, mouseX - guiLeft, mouseY - guiTop);
+	}
+
 }

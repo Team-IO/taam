@@ -22,10 +22,13 @@ public class ItemAttachable extends ItemMultiTexture {
 	public boolean placeBlockAt(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side,
 			float hitX, float hitY, float hitZ, IBlockState newState) {
 		EnumFacing dir = side.getOpposite();
+
+		// If the player clicked the top or bottom use the player's facing direction
+		if (dir.getAxis() == EnumFacing.Axis.Y) {
+			dir = player.getAdjustedHorizontalFacing();
+		}
+		// Only place the attachable if we actually can attach
 		if (TaamUtil.canAttach(world, pos, dir)) {
-			if (dir == EnumFacing.UP || dir == EnumFacing.DOWN) {
-				dir = EnumFacing.NORTH;
-			}
 			boolean success = super.placeBlockAt(stack, player, world, pos, side, hitX, hitY, hitZ, newState);
 			if (success) {
 				TileEntity te = world.getTileEntity(pos);

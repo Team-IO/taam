@@ -10,6 +10,7 @@ item.taam.ingot.kaolinite.name=Der unmögliche Kaolinit-Barren
 item.taam.ingot.gold.name=Cheated Gold Ingot
 item.taam.ingot.iron.name=Cheated Iron Ingot
 item.taam.ingot.coal.name=Cheated Coal Ingot (what is that?)
+item.taam.ingot.stone.name=Cheated Stone Ingot (interesting...)
 # Dusts
 item.taam.dust.tin.name=Zinnstaub
 item.taam.dust.copper.name=Kupferstaub
@@ -83,6 +84,7 @@ tile.taam.sensor.name=Bewegungsmelder
 tile.taam.slidingdoor.name=Schiebetür
 tile.taam.support_beam.name=Stützträger
 tile.taam.lamp.name=Industrielampe
+tile.taam.lampInverted.name=Industrielampe (Invertiert)
 # Beton
 tile.taam.concrete.name=Beton
 tile.taam.concrete.rough.name=Grober Beton
@@ -183,6 +185,21 @@ fluid.concreteRough=Grober Beton
 fluid.concreteFine=Feiner Beton
 fluid.coating=Beschichtung auf Harzbasis
 
+# Apps
+taam.app.common.redstone=Redstone
+taam.app.settings.aligner=Filtereinstellungen
+
+taam.gui.filter.mode=Filtertyp
+taam.gui.filter.mode.exact=Filtertyp\nGenaue Übereinstimmung
+taam.gui.filter.mode.oredict=Filtertyp\nOre Dictionary Kompatibel
+taam.gui.filter.mode.mod=Filtertyp\nGleicher Mod
+taam.gui.filter.meta=Metadaten Prüfen
+taam.gui.filter.meta.true=Metadaten Prüfen\nAn
+taam.gui.filter.meta.false=Metadaten Prüfen\nAus
+taam.gui.filter.nbt=NBT Daten Prüfen
+taam.gui.filter.nbt.true=NBT Daten Prüfen\nAn
+taam.gui.filter.nbt.false=NBT Daten Prüfen\nAus
+
 # Lore localization
 lore.taam.shift=<Shift Drücken>
 lore.taam.conveyor_appliance=Förderband-Appliance
@@ -195,6 +212,8 @@ lore.taam.debugtool.usage=Dieses Item kann nicht hergestellt werden.\nGibt Debug
 lore.taam.wrench=Das Werkzeug eines Ingenieurs
 lore.taam.wrench.usage=Benutze diese Schraubzwinge zum rotieren\nund konfigurieren der Teile einer Produktionskette.
 lore.taam.redirector.usage=Befestige dieses Teil an einem Conveyor,\num Transportgut nach links oder rechts umzulenken.\nAbnehmbar mit dem Engländer.
+
+lore.taam.ingots.cheaty=Nicht verwendbares Item!\nIn ein Crafting-Menü legen, um normale Barren zu erhalten.
 
 # Death causes
 death.attack.taam.processed=%1$s wurde verarbeitet (schmerzhaft)
@@ -209,6 +228,7 @@ taam.integration.jei.categories.crusher=Zerkleinern
 taam.integration.jei.categories.grinder=Zermahlen
 taam.integration.jei.categories.fluiddrier=Flüssigkeit Trocknen
 taam.integration.jei.categories.mixer=Vermischen
+taam.integration.jei.categories.sprayer=Sprühen
 
 taam.integration.jei.lore.internalcapacity=Fassungsvermögen: %d mB
 taam.integration.jei.lore.internalcapacity_in=Fassungsvermögen (Rein): %d mB
