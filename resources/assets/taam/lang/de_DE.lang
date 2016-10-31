@@ -227,6 +227,7 @@ taam.integration.jei.categories.crusher=Zerkleinern
 taam.integration.jei.categories.grinder=Zermahlen
 taam.integration.jei.categories.fluiddrier=Flüssigkeit Trocknen
 taam.integration.jei.categories.mixer=Vermischen
+taam.integration.jei.categories.sprayer=Sprühen
 
 taam.integration.jei.lore.internalcapacity=Fassungsvermögen: %d mB
 taam.integration.jei.lore.internalcapacity_in=Fassungsvermögen (Rein): %d mB
