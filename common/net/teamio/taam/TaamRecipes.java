@@ -33,9 +33,9 @@ public class TaamRecipes {
 		// Resin -> Rubber Bar
 		GameRegistry.addSmelting(new ItemStack(TaamMain.itemMaterial,1,Taam.ITEM_MATERIAL_META.resin.ordinal()), new ItemStack(TaamMain.itemMaterial, 1, Taam.ITEM_MATERIAL_META.rubber_bar.ordinal()), 1);
 		//Iron Dust -> Iron Ingot
-		GameRegistry.addSmelting(new ItemStack(TaamMain.itemDust, 1, Taam.BLOCK_ORE_META.iron.ordinal()), new ItemStack(TaamMain.itemIngot, 1, Taam.BLOCK_ORE_META.iron.ordinal()), 1);
+		GameRegistry.addSmelting(new ItemStack(TaamMain.itemDust, 1, Taam.BLOCK_ORE_META.iron.ordinal()), new ItemStack(Items.IRON_INGOT), 1);
 		//Gold Dust -> Gold Ingot
-		GameRegistry.addSmelting(new ItemStack(TaamMain.itemDust, 1, Taam.BLOCK_ORE_META.gold.ordinal()), new ItemStack(TaamMain.itemIngot, 1, Taam.BLOCK_ORE_META.gold.ordinal()), 1);
+		GameRegistry.addSmelting(new ItemStack(TaamMain.itemDust, 1, Taam.BLOCK_ORE_META.gold.ordinal()), new ItemStack(Items.GOLD_INGOT), 1);
 		//Rubber Bar -> Plastic sheets
 		GameRegistry.addSmelting(new ItemStack(TaamMain.itemMaterial, 1, Taam.ITEM_MATERIAL_META.rubber_bar.ordinal()),new ItemStack(TaamMain.itemMaterial, 1, Taam.ITEM_MATERIAL_META.plastic_sheet.ordinal()) , 1);
 	}
@@ -557,6 +557,13 @@ public class TaamRecipes {
 				"CC", "CC",
 				'C', blockConcreteBlack
 		));
+
+		// Fallback materials & error correction stuff
+		ItemStack cheatyIronIngot = new ItemStack(TaamMain.itemIngot, 1, Taam.BLOCK_ORE_META.iron.ordinal());
+		GameRegistry.addShapelessRecipe(new ItemStack(Items.IRON_INGOT), cheatyIronIngot);
+
+		ItemStack cheatyGoldIngot = new ItemStack(TaamMain.itemIngot, 1, Taam.BLOCK_ORE_META.gold.ordinal());
+		GameRegistry.addShapelessRecipe(new ItemStack(Items.GOLD_INGOT), cheatyGoldIngot);
 	}
 
 }

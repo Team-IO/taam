@@ -320,6 +320,15 @@ public class TaamMain {
 					@Override
 					public void addInformation(ItemStack stack, EntityPlayer player, List<String> lines,
 							boolean detailedInfoSetting) {
+						if(stack.getMetadata() == Taam.BLOCK_ORE_META.iron.ordinal() ||
+								stack.getMetadata() == Taam.BLOCK_ORE_META.gold.ordinal()) {
+							String usage = I18n.format("lore.taam.ingots.cheaty", new Object[0]);
+							// Split at literal \n in the translated text. a lot of escaping here.
+							String[] split = usage.split("\\\\n");
+							for (int i = 0; i < split.length; i++) {
+								lines.add(split[i]);
+							}
+						}
 					}
 				}), Taam.ITEM_INGOT);
 
