@@ -84,6 +84,7 @@ tile.taam.sensor.name=Motion Sensor
 tile.taam.slidingdoor.name=Sliding Door
 tile.taam.support_beam.name=Support Beam
 tile.taam.lamp.name=Industrial Lamp
+tile.taam.lampInverted.name=Industrial Lamp (Inverted)
 # Concrete
 tile.taam.concrete.name=Concrete
 tile.taam.concrete.rough.name=Rough Concrete

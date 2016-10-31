@@ -309,6 +309,10 @@ public class TaamRecipes {
 				'g', "dustGlowstone",
 				'r', "dustRedstone"
 		));
+		// Inverted
+		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(TaamMain.blockLampInverted, 1, 0),
+				TaamMain.blockLamp, Blocks.REDSTONE_TORCH
+		));
 
 		/*
 		 * Blocks

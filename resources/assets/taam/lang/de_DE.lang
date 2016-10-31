@@ -84,6 +84,7 @@ tile.taam.sensor.name=Bewegungsmelder
 tile.taam.slidingdoor.name=Schiebetür
 tile.taam.support_beam.name=Stützträger
 tile.taam.lamp.name=Industrielampe
+tile.taam.lampInverted.name=Industrielampe (Invertiert)
 # Beton
 tile.taam.concrete.name=Beton
 tile.taam.concrete.rough.name=Grober Beton

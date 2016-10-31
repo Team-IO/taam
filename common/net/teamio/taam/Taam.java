@@ -102,6 +102,7 @@ public final class Taam {
 	 */
 
 	public static final String BLOCK_LAMP = "lamp";
+	public static final String BLOCK_LAMP_INVERTED = "lampInverted";
 	public static final String BLOCK_SENSOR = "sensor";
 	public static final String BLOCK_MACHINES = "machines";
 	public static final String BLOCK_PRODUCTIONLINE = "productionline";
