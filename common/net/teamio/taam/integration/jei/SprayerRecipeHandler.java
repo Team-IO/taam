@@ -15,11 +15,6 @@ public class SprayerRecipeHandler implements IRecipeHandler<SprayerRecipe> {
 	@Override
 	@Deprecated
 	public String getRecipeCategoryUid() {
-		return getRecipeCategoryUid(null);
-	}
-
-	@Override
-	public String getRecipeCategoryUid(SprayerRecipe recipe) {
 		return Taam.INTEGRATION_JEI_CAT_SPRAYER;
 	}
 

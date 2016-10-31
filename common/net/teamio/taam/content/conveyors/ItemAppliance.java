@@ -10,18 +10,17 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemMultiTexture;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.conveyors.IConveyorApplianceMetaInfo;
-import net.teamio.taam.machines.IMachineMetaInfo;
 import net.teamio.taam.util.TaamUtil;
 
 public class ItemAppliance extends ItemBlock {
@@ -74,7 +73,7 @@ public class ItemAppliance extends ItemBlock {
 		// use the player's facing direction
 		if(!info.isDirectionSupported(dir)) {
 			if(dir.getAxis() == EnumFacing.Axis.Y) {
-				dir = player.getAdjustedHorizontalFacing();
+				dir = player.getHorizontalFacing();
 			} else {
 				return false;
 			}

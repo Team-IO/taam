@@ -100,9 +100,9 @@ public class TaamRecipeCompat {
 				ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
 						new CrusherRecipe(ingot,
 								new ChancedOutput(InventoryUtils.copyStack(dustStack, 2), 1.0f),
-								new ChancedOutput(new ItemStack(Blocks.COBBLESTONE), 0.4f),
+								new ChancedOutput(new ItemStack(Blocks.cobblestone), 0.4f),
 								new ChancedOutput(new ItemStack(TaamMain.itemDust, 1, Taam.BLOCK_ORE_META.stone.ordinal()), 0.3f),
-								new ChancedOutput(new ItemStack(Blocks.MOSSY_COBBLESTONE), 0.0001f)
+								new ChancedOutput(new ItemStack(Blocks.mossy_cobblestone), 0.0001f)
 						));
 			}
 		}
@@ -121,9 +121,9 @@ public class TaamRecipeCompat {
 						new CrusherRecipe(ore,
 								new ChancedOutput(gemStack, 1.0f),
 								new ChancedOutput(gemStack, 0.01f),
-								new ChancedOutput(new ItemStack(Blocks.COBBLESTONE), 0.4f),
+								new ChancedOutput(new ItemStack(Blocks.cobblestone), 0.4f),
 								new ChancedOutput(new ItemStack(TaamMain.itemDust, 1, Taam.BLOCK_ORE_META.stone.ordinal()), 0.3f),
-								new ChancedOutput(new ItemStack(Blocks.MOSSY_COBBLESTONE), 0.0001f)
+								new ChancedOutput(new ItemStack(Blocks.mossy_cobblestone), 0.0001f)
 						));
 			}
 		}

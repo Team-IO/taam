@@ -25,7 +25,7 @@ public class ItemAttachable extends ItemMultiTexture {
 
 		// If the player clicked the top or bottom use the player's facing direction
 		if (dir.getAxis() == EnumFacing.Axis.Y) {
-			dir = player.getAdjustedHorizontalFacing();
+			dir = player.getHorizontalFacing();
 		}
 		// Only place the attachable if we actually can attach
 		if (TaamUtil.canAttach(world, pos, dir)) {
