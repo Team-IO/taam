@@ -318,7 +318,7 @@ public class TaamRecipes {
 		 * Blocks
 		 */
 		//      support bream
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.blockSupportBeam, 8, 0),
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.blockSupportBeam, 16, 0),
 				"FFF", "F F", "FFF",
 				'F', partIronFrame
 		));
