@@ -84,6 +84,7 @@ tile.taam.sensor.name=Bewegungsmelder
 tile.taam.slidingdoor.name=Schiebetür
 tile.taam.support_beam.name=Stützträger
 tile.taam.lamp.name=Industrielampe
+tile.taam.lampInverted.name=Industrielampe (Invertiert)
 # Beton
 tile.taam.concrete.name=Beton
 tile.taam.concrete.rough.name=Grober Beton
@@ -227,6 +228,7 @@ taam.integration.jei.categories.crusher=Zerkleinern
 taam.integration.jei.categories.grinder=Zermahlen
 taam.integration.jei.categories.fluiddrier=Flüssigkeit Trocknen
 taam.integration.jei.categories.mixer=Vermischen
+taam.integration.jei.categories.sprayer=Sprühen
 
 taam.integration.jei.lore.internalcapacity=Fassungsvermögen: %d mB
 taam.integration.jei.lore.internalcapacity_in=Fassungsvermögen (Rein): %d mB

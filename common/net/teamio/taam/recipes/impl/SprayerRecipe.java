@@ -8,22 +8,29 @@ import net.teamio.taam.recipes.ChancedOutput;
 public class SprayerRecipe extends BaseProcessingRecipeFluidBased {
 
 	private ChancedOutput[] output;
+	private ItemStack outputStack;
 
 	public SprayerRecipe(String inputOreDict, FluidStack inputFluid, ItemStack output) {
 		this.inputOreDict = inputOreDict;
-		this.output = new ChancedOutput[] { new ChancedOutput(output, 1) };
+		outputStack = output;
+		this.output = new ChancedOutput[] { new ChancedOutput(outputStack, 1) };
 		this.inputFluid = inputFluid;
 	}
 
 	public SprayerRecipe(ItemStack input, FluidStack inputFluid, ItemStack output) {
 		this.input = input;
-		this.output = new ChancedOutput[] { new ChancedOutput(output, 1) };
+		outputStack = output;
+		this.output = new ChancedOutput[] { new ChancedOutput(outputStack, 1) };
 		this.inputFluid = inputFluid;
 	}
 
 	@Override
 	public ChancedOutput[] getOutput() {
 		return output;
+	}
+
+	public ItemStack getOutputStack() {
+		return outputStack;
 	}
 
 	@Override

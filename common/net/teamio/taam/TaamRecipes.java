@@ -309,12 +309,16 @@ public class TaamRecipes {
 				'g', "dustGlowstone",
 				'r', "dustRedstone"
 		));
+		// Inverted
+		GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(TaamMain.blockLampInverted, 1, 0),
+				TaamMain.blockLamp, Blocks.REDSTONE_TORCH
+		));
 
 		/*
 		 * Blocks
 		 */
 		//      support bream
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.blockSupportBeam, 8, 0),
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.blockSupportBeam, 16, 0),
 				"FFF", "F F", "FFF",
 				'F', partIronFrame
 		));

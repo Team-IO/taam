@@ -84,6 +84,7 @@ tile.taam.sensor.name=Motion Sensor
 tile.taam.slidingdoor.name=Sliding Door
 tile.taam.support_beam.name=Support Beam
 tile.taam.lamp.name=Industrial Lamp
+tile.taam.lampInverted.name=Industrial Lamp (Inverted)
 # Concrete
 tile.taam.concrete.name=Concrete
 tile.taam.concrete.rough.name=Rough Concrete
@@ -227,6 +228,7 @@ taam.integration.jei.categories.crusher=Crushing
 taam.integration.jei.categories.grinder=Grinding
 taam.integration.jei.categories.fluiddrier=Dry Fluid
 taam.integration.jei.categories.mixer=Mixing
+taam.integration.jei.categories.sprayer=Spraying
 
 taam.integration.jei.lore.internalcapacity=Internal Capacity: %d mB
 taam.integration.jei.lore.internalcapacity_in=Input Capacity: %d mB
