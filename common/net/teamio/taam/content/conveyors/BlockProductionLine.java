@@ -11,11 +11,8 @@ import net.minecraft.inventory.Container;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.*;
 import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.ExtendedBlockState;
@@ -165,12 +162,24 @@ public class BlockProductionLine extends BaseBlock {
 
 	@Override
 	public AxisAlignedBB getCollisionBoundingBox(World worldIn, BlockPos pos, IBlockState state) {
-		return getBoundingBox(state, worldIn, pos);
+		return getBoundingBox(state, worldIn, pos).offset(pos.getX(), pos.getY(), pos.getZ());
 	}
 
 	@Override
 	public AxisAlignedBB getSelectedBoundingBox(World worldIn, BlockPos pos) {
-		return getBoundingBox(worldIn.getBlockState(pos), worldIn, pos);
+		return getBoundingBox(worldIn.getBlockState(pos), worldIn, pos).offset(pos.getX(), pos.getY(), pos.getZ());
+	}
+
+	@Override
+	public MovingObjectPosition collisionRayTrace(World worldIn, BlockPos pos, Vec3 start, Vec3 end) {
+		AxisAlignedBB selBox = getBoundingBox(worldIn.getBlockState(pos), worldIn, pos);
+		this.minX = selBox.minX;
+		this.maxX = selBox.maxX;
+		this.minY = selBox.minY;
+		this.maxY = selBox.maxY;
+		this.minZ = selBox.minZ;
+		this.maxZ = selBox.maxZ;
+		return super.collisionRayTrace(worldIn, pos, start, end);
 	}
 
 	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
