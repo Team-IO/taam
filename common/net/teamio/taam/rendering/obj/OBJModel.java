@@ -52,7 +52,7 @@ import net.minecraftforge.fml.common.FMLLog;
 /**
  *
  * Replacement for the original OBJModel. Hacky workaround.
- * Adjusted to ease hacking ;)
+ * Adjusted to ease hacking ;) And backported to 1.8.9...
  * 
  * @author shadekiller666
  * https://github.com/shadekiller666/MinecraftForge/tree/1.9_OBJLoader/src/main/java/net/minecraftforge/client/model/obj
@@ -1425,7 +1425,7 @@ public class OBJModel implements IRetexturableModel<OBJModel>, IModelCustomData<
         }
     }
 
-    public class OBJBakedModel implements IPerspectiveAwareModel
+    public class OBJBakedModel implements IPerspectiveAwareModel, ISmartBlockModel
     {
         private final OBJModel model;
         private final VertexFormat format;
@@ -1483,20 +1483,7 @@ public class OBJModel implements IRetexturableModel<OBJModel>, IModelCustomData<
 	    public List<BakedQuad> getFaceQuads(EnumFacing facing) {
         	if (facing != null) return ImmutableList.of();
         	IModelState modelState = this.state;
-        	if (state instanceof IExtendedBlockState)
-            {
-            	IExtendedBlockState exState = (IExtendedBlockState) state;
-            	if (exState.getUnlistedNames().contains(OBJProperty.instance))
-            	{
-            		OBJState s = exState.getValue(OBJProperty.instance);
-            		if (s != null)
-            		{
-            			modelState = OBJState.copyFrom(s);
-            			((OBJState) modelState).setParent(OBJState.getParent(this.state));
-            		}
-            	}
-            }
-        	if (this.quads == null || !modelState.equals(this.state))
+        	if (this.quads == null)
         	{
         		boolean applyToAll = true;
         		this.quads = Collections.synchronizedSet(Sets.<BakedQuad>newLinkedHashSet());
@@ -1678,5 +1665,24 @@ public class OBJModel implements IRetexturableModel<OBJModel>, IModelCustomData<
         	//TODO
             return this.model.modelLocation.toString();
         }
+
+	    @Override
+	    public IBakedModel handleBlockState(IBlockState state) {
+		    IModelState modelState = this.state;
+		    if (state instanceof IExtendedBlockState)
+		    {
+			    IExtendedBlockState exState = (IExtendedBlockState) state;
+			    if (exState.getUnlistedNames().contains(OBJProperty.instance))
+			    {
+				    OBJState s = exState.getValue(OBJProperty.instance);
+				    if (s != null)
+				    {
+					    modelState = OBJState.copyFrom(s);
+					    ((OBJState) modelState).setParent(OBJState.getParent(this.state));
+				    }
+			    }
+		    }
+		    return new OBJBakedModel(this.model, modelState, this.format, this.textures);
+	    }
     }
 }
