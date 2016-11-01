@@ -1,5 +1,5 @@
 {
-    "parent": "item/handheld",
+    "parent": "builtin/generated",
     "textures": {
         "layer0": "taam:items/dust.impossible"
     },
