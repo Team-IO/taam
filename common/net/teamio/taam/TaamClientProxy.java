@@ -375,9 +375,10 @@ public class TaamClientProxy extends TaamCommonProxy {
 			}
 		}
 
-		//		if(Config.multipart_load) {
-		//			MultipartHandlerClient.onModelBakeEvent(event);
-		//		}
+		if(Config.multipart_load) {
+			Log.debug("Handling multipart models");
+			MultipartHandlerClient.onModelBakeEvent(event);
+		}
 
 		Log.debug("Completed onModelBakeEvent");
 	}
@@ -433,7 +434,7 @@ public class TaamClientProxy extends TaamCommonProxy {
 			defaultBlockTransform = new SimpleModelState(builder.build());
 		}
 
-		private OBJBakedModel original;
+		protected OBJBakedModel original;
 
 		public ItemAwareOBJBakedModel(OBJBakedModel original) {
 			this.original = original;
