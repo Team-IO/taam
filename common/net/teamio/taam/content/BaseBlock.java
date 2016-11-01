@@ -8,8 +8,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.*;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.IExtendedBlockState;
@@ -38,6 +37,7 @@ public abstract class BaseBlock extends Block {
 	 * One instance for the OBJState visible parts constant "ALL"
 	 */
 	public static final List<String> ALL = Lists.newArrayList(OBJModel.Group.ALL);
+	public static final AxisAlignedBB FULL_BLOCK = new AxisAlignedBB(0, 0, 0, 1, 1, 1);
 
 	public BaseBlock(Material material) {
 		super(material);
@@ -53,6 +53,30 @@ public abstract class BaseBlock extends Block {
 			te.setOwner((EntityPlayer) placer);
 		}
 	}
+
+	@Override
+	public AxisAlignedBB getCollisionBoundingBox(World worldIn, BlockPos pos, IBlockState state) {
+		return getBoundingBox(state, worldIn, pos).offset(pos.getX(), pos.getY(), pos.getZ());
+	}
+
+	@Override
+	public AxisAlignedBB getSelectedBoundingBox(World worldIn, BlockPos pos) {
+		return getBoundingBox(worldIn.getBlockState(pos), worldIn, pos).offset(pos.getX(), pos.getY(), pos.getZ());
+	}
+
+	@Override
+	public MovingObjectPosition collisionRayTrace(World worldIn, BlockPos pos, Vec3 start, Vec3 end) {
+		AxisAlignedBB selBox = getBoundingBox(worldIn.getBlockState(pos), worldIn, pos);
+		this.minX = selBox.minX;
+		this.maxX = selBox.maxX;
+		this.minY = selBox.minY;
+		this.maxY = selBox.maxY;
+		this.minZ = selBox.minZ;
+		this.maxZ = selBox.maxZ;
+		return super.collisionRayTrace(worldIn, pos, start, end);
+	}
+
+	public abstract AxisAlignedBB getBoundingBox(IBlockState state, World source, BlockPos pos);
 
 	public abstract boolean canBlockStay(World worldIn, BlockPos pos, IBlockState state);
 

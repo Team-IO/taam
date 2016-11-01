@@ -72,15 +72,10 @@ public class BlockSensor extends BaseBlock {
 	@Override
 	public TileEntity createTileEntity(World world, IBlockState state) {
 		return new TileEntitySensor(state.getValue(DIRECTION));
-
 	}
 
 	@Override
-	public AxisAlignedBB getSelectedBoundingBox(World worldIn, BlockPos pos) {
-		return getBoundingBox(worldIn.getBlockState(pos), worldIn, pos);
-	}
-
-	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
+	public AxisAlignedBB getBoundingBox(IBlockState state, World source, BlockPos pos) {
 		// Type is determined by the tile entity, we just need the rotation here
 
 		EnumFacing dir = state.getValue(DIRECTION);

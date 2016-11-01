@@ -187,7 +187,7 @@ public class MachineBlock extends BaseBlock implements ITileEntityProvider {
 	}
 
 	@Override
-	public AxisAlignedBB getSelectedBoundingBox(World worldIn, BlockPos pos) {
+	public AxisAlignedBB getBoundingBox(IBlockState state, World source, BlockPos pos) {
 		// Get player position + look vector
 		EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
 		Vec3 eyes = player.getPositionEyes(0);
@@ -196,14 +196,19 @@ public class MachineBlock extends BaseBlock implements ITileEntityProvider {
 		Vec3 dest = eyes.addVector(look.xCoord * reach, look.yCoord * reach, look.zCoord * reach);
 
 		// in that method, we update the closestBB
-		collisionRayTrace(worldIn, pos, eyes, dest);
+		collisionRayTrace(source, pos, eyes, dest);
 
 		// Return the box that is hovered, or the default if nothing could be
 		// determined (edge cases)
 		if (closestBB == null) {
 			return new AxisAlignedBB(pos, pos.add(1, 1, 1));
 		}
-		return closestBB.offset(pos.getX(), pos.getY(), pos.getZ());
+		return closestBB;
+	}
+
+	@Override
+	public AxisAlignedBB getSelectedBoundingBox(World worldIn, BlockPos pos) {
+		return getBoundingBox(worldIn.getBlockState(pos), worldIn, pos).offset(pos.getX(), pos.getY(), pos.getZ());
 	}
 
 }

@@ -11,6 +11,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.util.BlockPos;
@@ -124,4 +125,9 @@ public class BlockMachines extends BaseBlock {
 		return true;
 	}
 
+
+	@Override
+	public AxisAlignedBB getBoundingBox(IBlockState state, World source, BlockPos pos) {
+		return FULL_BLOCK;
+	}
 }

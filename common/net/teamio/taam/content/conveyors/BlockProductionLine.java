@@ -161,28 +161,7 @@ public class BlockProductionLine extends BaseBlock {
 	}
 
 	@Override
-	public AxisAlignedBB getCollisionBoundingBox(World worldIn, BlockPos pos, IBlockState state) {
-		return getBoundingBox(state, worldIn, pos).offset(pos.getX(), pos.getY(), pos.getZ());
-	}
-
-	@Override
-	public AxisAlignedBB getSelectedBoundingBox(World worldIn, BlockPos pos) {
-		return getBoundingBox(worldIn.getBlockState(pos), worldIn, pos).offset(pos.getX(), pos.getY(), pos.getZ());
-	}
-
-	@Override
-	public MovingObjectPosition collisionRayTrace(World worldIn, BlockPos pos, Vec3 start, Vec3 end) {
-		AxisAlignedBB selBox = getBoundingBox(worldIn.getBlockState(pos), worldIn, pos);
-		this.minX = selBox.minX;
-		this.maxX = selBox.maxX;
-		this.minY = selBox.minY;
-		this.maxY = selBox.maxY;
-		this.minZ = selBox.minZ;
-		this.maxZ = selBox.maxZ;
-		return super.collisionRayTrace(worldIn, pos, start, end);
-	}
-
-	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
+	public AxisAlignedBB getBoundingBox(IBlockState state, World source, BlockPos pos) {
 		if(state.getBlock() != TaamMain.blockProductionLine) {
 			// Can only work for actual production line, else we crash with wrong variant
 			return BOUNDS_CONVEYORS;

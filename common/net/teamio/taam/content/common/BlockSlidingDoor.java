@@ -3,6 +3,7 @@ package net.teamio.taam.content.common;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -31,6 +32,10 @@ public class BlockSlidingDoor extends BaseBlock {
 	public boolean canBlockStay(World worldIn, BlockPos pos, IBlockState state) {
 		// TODO Auto-generated method stub
 		return true;
+	}
+	@Override
+	public AxisAlignedBB getBoundingBox(IBlockState state, World source, BlockPos pos) {
+		return FULL_BLOCK;
 	}
 
 }

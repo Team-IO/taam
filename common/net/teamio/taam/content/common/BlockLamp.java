@@ -7,9 +7,7 @@ import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.*;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.ExtendedBlockState;
@@ -66,16 +64,28 @@ public class BlockLamp extends Block {
 	}
 
 	@Override
-	public AxisAlignedBB getSelectedBoundingBox(World worldIn, BlockPos pos) {
-		return getBoundingBox(worldIn.getBlockState(pos), worldIn, pos);
-	}
-
-	@Override
 	public AxisAlignedBB getCollisionBoundingBox(World worldIn, BlockPos pos, IBlockState state) {
 		return null;
 	}
 
-	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
+	@Override
+	public AxisAlignedBB getSelectedBoundingBox(World worldIn, BlockPos pos) {
+		return getBoundingBox(worldIn.getBlockState(pos), worldIn, pos).offset(pos.getX(), pos.getY(), pos.getZ());
+	}
+
+	@Override
+	public MovingObjectPosition collisionRayTrace(World worldIn, BlockPos pos, Vec3 start, Vec3 end) {
+		AxisAlignedBB selBox = getBoundingBox(worldIn.getBlockState(pos), worldIn, pos);
+		this.minX = selBox.minX;
+		this.maxX = selBox.maxX;
+		this.minY = selBox.minY;
+		this.maxY = selBox.maxY;
+		this.minZ = selBox.minZ;
+		this.maxZ = selBox.maxZ;
+		return super.collisionRayTrace(worldIn, pos, start, end);
+	}
+
+	public AxisAlignedBB getBoundingBox(IBlockState state, World source, BlockPos pos) {
 		// Type is determined by the tile entity, we just need the rotation here
 
 		EnumFacing dir = state.getValue(DIRECTION);
