@@ -630,14 +630,14 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		GlStateManager.pushMatrix();
 		GlStateManager.pushAttrib();
 
-		GlStateManager.enableBlend();
-		GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-		GlStateManager.color(0.8f, 0.8f, 0.8f, 1);
+
+		setupDefaultGL();
+
+		GlStateManager.color(0.75f, 0.75f, 0.75f, 1);
 		GL11.glLineWidth(20);
 		// For whatever reason, we need to enable, THEN disable. Otherwise color gets somewhat garbled..
 		GlStateManager.enableTexture2D();
 		GlStateManager.disableTexture2D();
-		//GlStateManager.depthMask(false);
 
 
 		Tessellator tessellator = Tessellator.getInstance();
@@ -655,6 +655,8 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 			escalationOffset = stepHeight - escalationOffset;
 		}
 
+		vertexbuffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION);
+
 		for (int y = 0; y < stepAmount; y++) {
 			for(int x = 0; x < 3; x++) {
 				double minX = x * ConveyorUtil.oneThird + margin;
@@ -663,21 +665,27 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 				double maxZ = minZ + ConveyorUtil.oneThird - margin2*2;
 				double miny = y * stepHeight + escalationOffset;
 
-				vertexbuffer.begin(3, DefaultVertexFormats.POSITION);
 				vertexbuffer.pos(minX, miny, minZ).endVertex();
 				vertexbuffer.pos(maxX, miny, minZ).endVertex();
+
 				vertexbuffer.pos(maxX, miny, maxZ).endVertex();
 				vertexbuffer.pos(minX, miny, maxZ).endVertex();
-				vertexbuffer.pos(minX, miny, minZ).endVertex();
-				tessellator.draw();
+
+				if (x > 0) {
+					vertexbuffer.pos(minX, miny, minZ).endVertex();
+					vertexbuffer.pos(minX, miny, maxZ).endVertex();
+				}
+				if (x < 2) {
+					vertexbuffer.pos(maxX, miny, minZ).endVertex();
+					vertexbuffer.pos(maxX, miny, maxZ).endVertex();
+				}
 			}
 
 		}
-		//GlStateManager.depthMask(true);
-		GlStateManager.enableTexture2D();
-		GlStateManager.disableBlend();
+		tessellator.draw();
 
-		GlStateManager.popAttrib();
+
+		tearDownDefaultGL();
 		GlStateManager.popMatrix();
 
 	}
