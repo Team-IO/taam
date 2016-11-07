@@ -43,4 +43,8 @@ public class MixerRecipe extends BaseProcessingRecipeFluidBased {
 		return outputFluid;
 	}
 
+	@Override
+	public String toString() {
+		return String.format("Mixer Recipe [%s + %s -> %s]", inputFluid == null ? "null" : inputFluid.getUnlocalizedName(), input, outputFluid == null ? null : outputFluid.getUnlocalizedName());
+	}
 }
