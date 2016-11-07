@@ -48,4 +48,8 @@ public class SprayerRecipe extends BaseProcessingRecipeFluidBased {
 		return null;
 	}
 
+	@Override
+	public String toString() {
+		return String.format("Sprayer Recipe [%s + %s -> %s]", inputFluid == null ? "null" : inputFluid.getUnlocalizedName(), input, getOutputStack());
+	}
 }

@@ -230,7 +230,7 @@ public final class ProcessingRegistryEntry {
 		}
 		String keyOreDict = recipe.getInputOreDict();
 
-		Log.debug("Registering recipe for machine %d: %s->%s", machineName, key == null ? keyOreDict : key, recipe);
+		Log.debug("Registering item  recipe for machine {}: {}->{}", machineName, key == null ? keyOreDict : key.getUnlocalizedName(), recipe);
 
 		IProcessingRecipe[] matches;
 
@@ -267,7 +267,7 @@ public final class ProcessingRegistryEntry {
 	private void registerRecipeFluidBased(IProcessingRecipeFluidBased recipe) {
 		Fluid key = recipe.getInputFluid().getFluid();
 
-		Log.debug("Registering fluid recipe for machine {}: {}->{}", machineName, key, recipe);
+		Log.debug("Registering fluid recipe for machine {}: {}->{}", machineName, recipe.getInputFluid().getUnlocalizedName(), recipe);
 
 		IProcessingRecipeFluidBased[] matches;
 

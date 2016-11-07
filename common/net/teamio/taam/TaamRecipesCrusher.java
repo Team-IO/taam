@@ -27,7 +27,7 @@ public class TaamRecipesCrusher {
 		// Ores -> Dusts & stuff
 		int stoneDustMeta = Taam.BLOCK_ORE_META.stone.ordinal();
 
-		String[] oreDic = { "oreCopper", "oreTin", "oreAluminum", "oreBauxite", "oreKaolinte" };
+		String[] oreDic = { "oreCopper", "oreTin", "oreAluminum", "oreBauxite", "oreKaolinite" };
 		for (int ore = 0 ; ore < oreDic.length; ore++){
 			ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
 					new CrusherRecipe(oreDic[ore],

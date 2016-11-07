@@ -22,4 +22,9 @@ public class CrusherRecipe extends ChanceBasedRecipe {
 		super(inputOreDict, output);
 	}
 
+	@Override
+	public String toString() {
+		ChancedOutput[] output = getOutput();
+		return String.format("Crusher Recipe [%s -> %d outputs]", input, output == null ? 0 : output.length);
+	}
 }

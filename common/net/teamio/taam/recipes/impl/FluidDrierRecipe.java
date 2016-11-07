@@ -47,4 +47,8 @@ public class FluidDrierRecipe extends BaseProcessingRecipeFluidBased {
 		return new ItemStack[] { output[0].output.copy() };
 	}
 
+	@Override
+	public String toString() {
+		return String.format("Fluid Drier Recipe [%s -> %s]", inputFluid == null ? "null" : inputFluid.getUnlocalizedName(), getOutputStack());
+	}
 }
