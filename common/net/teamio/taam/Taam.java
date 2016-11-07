@@ -32,6 +32,8 @@ import net.teamio.taam.machines.MachineTileEntity;
 import net.teamio.taam.piping.IPipe;
 import net.teamio.taam.rendering.TankRenderInfo;
 
+import javax.annotation.Nonnull;
+
 public final class Taam {
 	private Taam() {
 		//Util Class
@@ -58,7 +60,7 @@ public final class Taam {
 	public static final String MOD_VERSION = "@VERSION@";
 	public static final String MOD_AUTHOR1 = "founderio";
 	public static final String MOD_AUTHOR2 = "Xanderio";
-	public static final String MOD_DESCRIPTION = "Taam: Tech and Acessories Mod\nTaam is open source, puplished under the MIT license. Feel free to poke around the source code! Any support is appreciated, so check out our Patreon page and our website and report any issues on GitHub!";
+	public static final String MOD_DESCRIPTION = "Taam: Tech and Accessories Mod\nTaam is open source, puplished under the MIT license. Feel free to poke around the source code! Any support is appreciated, so check out our Patreon page and our website and report any issues on GitHub!";
 	public static final String MOD_CREDITS = "Taam is a mod by Team I/O";
 	public static final String MOD_URL = "https://team-io.net/taam.php";
 	public static final String MOD_UPDATE_URL = "https://team-io.net/taam-updates.php";
@@ -119,12 +121,12 @@ public final class Taam {
 
 	/**
 	 * Wrapper for multipart-based machines, if multipart is not found or disabled via config.
-	 *
+	 * <p>
 	 * See {@link MACHINE_META} for the single meta values (not actually block metadata.)
 	 */
 	public static final String BLOCK_MACHINE_WRAPPER = "machine";
 
-	public static enum BLOCK_ORE_META implements IStringSerializable {
+	public enum BLOCK_ORE_META implements IStringSerializable {
 		/*0*/copper		(true, true, "Copper",		14, 7, 0, 59),
 		/*1*/tin		(true, true, "Tin",			13, 7, 0, 59),
 		/*2*/aluminum	(true, true, "Aluminum",	2,  3,  0, 59),
@@ -158,7 +160,7 @@ public final class Taam {
 
 		public final String config_name;
 
-		private BLOCK_ORE_META(boolean ingot, boolean dust) {
+		BLOCK_ORE_META(boolean ingot, boolean dust) {
 			ore = false;
 			this.ingot = ingot;
 			this.dust = dust;
@@ -169,7 +171,7 @@ public final class Taam {
 			config_name = name();
 		}
 
-		private BLOCK_ORE_META(boolean ingot, boolean dust, String config_name, int default_size, int default_count, int default_above, int default_below) {
+		BLOCK_ORE_META(boolean ingot, boolean dust, String config_name, int default_size, int default_count, int default_above, int default_below) {
 			ore = true;
 			this.ingot = ingot;
 			this.dust = dust;
@@ -183,7 +185,7 @@ public final class Taam {
 		public static String[] valuesAsString() {
 			Enum<?>[] valuesAsEnum = values();
 			String[] valuesAsString = new String[valuesAsEnum.length];
-			for(int i = 0; i < valuesAsEnum.length; i++) {
+			for (int i = 0; i < valuesAsEnum.length; i++) {
 				valuesAsString[i] = valuesAsEnum[i].name();
 			}
 			return valuesAsString;
@@ -191,12 +193,13 @@ public final class Taam {
 
 		public static BLOCK_ORE_META valueOf(int meta) {
 			BLOCK_ORE_META[] valuesAsEnum = values();
-			if(meta < 0 || meta > valuesAsEnum.length) {
+			if (meta < 0 || meta > valuesAsEnum.length) {
 				return copper;
 			}
 			return valuesAsEnum[meta];
 		}
 
+		@Nonnull
 		@Override
 		public String getName() {
 			return name();
@@ -207,7 +210,7 @@ public final class Taam {
 		}
 	}
 
-	public static enum BLOCK_CONCRETE_META implements IStringSerializable {
+	public enum BLOCK_CONCRETE_META implements IStringSerializable {
 		rough,
 		rough_chiseled,
 		fine,
@@ -217,18 +220,18 @@ public final class Taam {
 		black,
 		black_chiseled,
 		warn1,
-		warn2
-		;
+		warn2;
 
 		public static String[] valuesAsString() {
 			Enum<?>[] valuesAsEnum = values();
 			String[] valuesAsString = new String[valuesAsEnum.length];
-			for(int i = 0; i < valuesAsEnum.length; i++) {
+			for (int i = 0; i < valuesAsEnum.length; i++) {
 				valuesAsString[i] = valuesAsEnum[i].name();
 			}
 			return valuesAsString;
 		}
 
+		@Nonnull
 		@Override
 		public String getName() {
 			return name();
@@ -239,22 +242,22 @@ public final class Taam {
 	 * Non-Multipart machines that are not part of the conveyor-system.
 	 *
 	 * @author Oliver Kahrmann
-	 *
 	 */
-	public static enum BLOCK_MACHINES_META implements IStringSerializable {
+	public enum BLOCK_MACHINES_META implements IStringSerializable {
 		chute,
 		creativecache,
-		creativewell
-		;
+		creativewell;
+
 		public static String[] valuesAsString() {
 			Enum<?>[] valuesAsEnum = values();
 			String[] valuesAsString = new String[valuesAsEnum.length];
-			for(int i = 0; i < valuesAsEnum.length; i++) {
+			for (int i = 0; i < valuesAsEnum.length; i++) {
 				valuesAsString[i] = valuesAsEnum[i].name();
 			}
 			return valuesAsString;
 		}
 
+		@Nonnull
 		@Override
 		public String getName() {
 			return name();
@@ -265,9 +268,8 @@ public final class Taam {
 	 * Productionline-Machines, i.e. part of the conveyor system.
 	 *
 	 * @author Oliver Kahrmann
-	 *
 	 */
-	public static enum BLOCK_PRODUCTIONLINE_META implements IStringSerializable {
+	public enum BLOCK_PRODUCTIONLINE_META implements IStringSerializable {
 		conveyor1,
 		conveyor2,
 		conveyor3,
@@ -278,55 +280,58 @@ public final class Taam {
 		grinder,
 		crusher,
 		chute,
-		elevator,
-		;
+		elevator,;
+
 		public static String[] valuesAsString() {
 			Enum<?>[] valuesAsEnum = values();
 			String[] valuesAsString = new String[valuesAsEnum.length];
-			for(int i = 0; i < valuesAsEnum.length; i++) {
+			for (int i = 0; i < valuesAsEnum.length; i++) {
 				valuesAsString[i] = valuesAsEnum[i].name();
 			}
 			return valuesAsString;
 		}
 
+		@Nonnull
 		@Override
 		public String getName() {
 			return name();
 		}
 	}
 
-	public static enum BLOCK_PRODUCTIONLINE_ATTACHABLE_META implements IStringSerializable {
+	public enum BLOCK_PRODUCTIONLINE_ATTACHABLE_META implements IStringSerializable {
 		itembag,
-		trashcan,
-		;
+		trashcan,;
+
 		public static String[] valuesAsString() {
 			Enum<?>[] valuesAsEnum = values();
 			String[] valuesAsString = new String[valuesAsEnum.length];
-			for(int i = 0; i < valuesAsEnum.length; i++) {
+			for (int i = 0; i < valuesAsEnum.length; i++) {
 				valuesAsString[i] = valuesAsEnum[i].name();
 			}
 			return valuesAsString;
 		}
 
+		@Nonnull
 		@Override
 		public String getName() {
 			return name();
 		}
 	}
 
-	public static enum BLOCK_PRODUCTIONLINE_APPLIANCE_META implements IConveyorApplianceMetaInfo {
+	public enum BLOCK_PRODUCTIONLINE_APPLIANCE_META implements IConveyorApplianceMetaInfo {
 		sprayer,
-		aligner
-		;
+		aligner;
+
 		public static String[] valuesAsString() {
 			Enum<?>[] valuesAsEnum = values();
 			String[] valuesAsString = new String[valuesAsEnum.length];
-			for(int i = 0; i < valuesAsEnum.length; i++) {
+			for (int i = 0; i < valuesAsEnum.length; i++) {
 				valuesAsString[i] = valuesAsEnum[i].name();
 			}
 			return valuesAsString;
 		}
 
+		@Nonnull
 		@Override
 		public String getName() {
 			return name();
@@ -337,6 +342,7 @@ public final class Taam {
 			return ordinal();
 		}
 
+		@Nonnull
 		@Override
 		public String unlocalizedName() {
 			return name();
@@ -353,14 +359,14 @@ public final class Taam {
 		}
 	}
 
-	public static enum BLOCK_LOGISTICS_META {
+	public enum BLOCK_LOGISTICS_META {
 		logistics_manager,
-		logistics_station
-		;
+		logistics_station;
+
 		public static String[] valuesAsString() {
 			Enum<?>[] valuesAsEnum = values();
 			String[] valuesAsString = new String[valuesAsEnum.length];
-			for(int i = 0; i < valuesAsEnum.length; i++) {
+			for (int i = 0; i < valuesAsEnum.length; i++) {
 				valuesAsString[i] = valuesAsEnum[i].name();
 			}
 			return valuesAsString;
@@ -381,33 +387,33 @@ public final class Taam {
 	public static final String ITEM_DUST = "dust";
 	public static final String ITEM_LOGISTICS_CART = "logistics_cart";
 
-	public static enum ITEM_LOGISTICS_CART_META {
-		basic
-		;
+	public enum ITEM_LOGISTICS_CART_META {
+		basic;
+
 		public static String[] valuesAsString() {
 			Enum<?>[] valuesAsEnum = values();
 			String[] valuesAsString = new String[valuesAsEnum.length];
-			for(int i = 0; i < valuesAsEnum.length; i++) {
+			for (int i = 0; i < valuesAsEnum.length; i++) {
 				valuesAsString[i] = valuesAsEnum[i].name();
 			}
 			return valuesAsString;
 		}
 	}
 
-	public static enum ITEM_TOOL_META {
-		saw
-		;
+	public enum ITEM_TOOL_META {
+		saw;
+
 		public static String[] valuesAsString() {
 			Enum<?>[] valuesAsEnum = values();
 			String[] valuesAsString = new String[valuesAsEnum.length];
-			for(int i = 0; i < valuesAsEnum.length; i++) {
+			for (int i = 0; i < valuesAsEnum.length; i++) {
 				valuesAsString[i] = valuesAsEnum[i].name();
 			}
 			return valuesAsString;
 		}
 	}
 
-	public static enum ITEM_MATERIAL_META {
+	public enum ITEM_MATERIAL_META {
 		plastic_sheet,
 		rubber_bar,
 		graphite,
@@ -436,18 +442,19 @@ public final class Taam {
 		pigment_lightBlue,
 		pigment_magenta,
 		pigment_orange,
-		pigment_white
-		;
+		pigment_white;
+
 		public static String[] valuesAsString() {
 			Enum<?>[] valuesAsEnum = values();
 			String[] valuesAsString = new String[valuesAsEnum.length];
-			for(int i = 0; i < valuesAsEnum.length; i++) {
+			for (int i = 0; i < valuesAsEnum.length; i++) {
 				valuesAsString[i] = valuesAsEnum[i].name();
 			}
 			return valuesAsString;
 		}
 	}
-	public static enum ITEM_PART_META {
+
+	public enum ITEM_PART_META {
 		photocell,
 		motor,
 		support_frame_wood,
@@ -464,12 +471,12 @@ public final class Taam {
 		metal_bearing,
 		copper_wire,
 		sieve,
-		redirector
-		;
+		redirector;
+
 		public static String[] valuesAsString() {
 			Enum<?>[] valuesAsEnum = values();
 			String[] valuesAsString = new String[valuesAsEnum.length];
-			for(int i = 0; i < valuesAsEnum.length; i++) {
+			for (int i = 0; i < valuesAsEnum.length; i++) {
 				valuesAsString[i] = valuesAsEnum[i].name();
 			}
 			return valuesAsString;
@@ -500,7 +507,7 @@ public final class Taam {
 
 	public static final String ENTITY_LOGISTICS_CART = "taam.logistics_manager";
 
-	public static enum FLUID_DYE_META {
+	public enum FLUID_DYE_META {
 		black,
 		red,
 		green,
@@ -516,12 +523,12 @@ public final class Taam {
 		lightBlue,
 		magenta,
 		orange,
-		white
-		;
+		white;
+
 		public static String[] valuesAsString() {
 			Enum<?>[] valuesAsEnum = values();
 			String[] valuesAsString = new String[valuesAsEnum.length];
-			for(int i = 0; i < valuesAsEnum.length; i++) {
+			for (int i = 0; i < valuesAsEnum.length; i++) {
 				valuesAsString[i] = valuesAsEnum[i].name();
 			}
 			return valuesAsString;
@@ -530,11 +537,10 @@ public final class Taam {
 
 	public static final String FLUID_DYE = "dye_";
 
-	public static enum FLUID_MATERIAL_META {
+	public enum FLUID_MATERIAL_META {
 		concreteFine("concreteFine", 2000, 8000),
 		concreteRough("concreteRough", 2000, 10000),
-		coating("coating", 900, 4000)
-		;
+		coating("coating", 900, 4000);
 
 		public final String registryName;
 		public final int viscosity;
@@ -549,7 +555,7 @@ public final class Taam {
 		public static String[] valuesAsString() {
 			Enum<?>[] valuesAsEnum = values();
 			String[] valuesAsString = new String[valuesAsEnum.length];
-			for(int i = 0; i < valuesAsEnum.length; i++) {
+			for (int i = 0; i < valuesAsEnum.length; i++) {
 				valuesAsString[i] = valuesAsEnum[i].name();
 			}
 			return valuesAsString;
@@ -558,18 +564,17 @@ public final class Taam {
 
 	/**
 	 * Meta info for all multipart-based machines. Used for items, the wrapper block & multipart registry.
-	 *
+	 * <p>
 	 * {@link MachineBlock} + {@link MachineTileEntity} -> Wrapper block & TE if multipart is not available.
-	 *
+	 * <p>
 	 * {@link MachineItemBlock} -> Item for the wrapper block, mutually exclusive with {@link MachineItemMultipart}.
 	 * Only one of them is used, depending on availability of multipart.
-	 *
+	 * <p>
 	 * {@link MachineMultipart} -> Multipart wrapper for all these machines.
 	 *
 	 * @author Oliver Kahrmann
-	 *
 	 */
-	public static enum MACHINE_META implements IMachineMetaInfo {
+	public enum MACHINE_META implements IMachineMetaInfo {
 
 		pipe(MachinePipe.class, "pipe", null),
 		tank(MachineTank.class, "tank", null),
@@ -582,13 +587,12 @@ public final class Taam {
 		private String[] info;
 
 
-
 		/**
-		 * @param machineClass
-		 * @param unlocalizedName
-		 * @param info
+		 * @param machineClass    Implementation of the machine logic
+		 * @param unlocalizedName The unlocalized name for registration and translation
+		 * @param info            Information added to the item tooltip
 		 */
-		private MACHINE_META(Class<? extends IMachine> machineClass, String unlocalizedName, String[] info) {
+		MACHINE_META(Class<? extends IMachine> machineClass, String unlocalizedName, String[] info) {
 			this.machineClass = machineClass;
 			this.unlocalizedName = unlocalizedName;
 			this.info = info;
@@ -622,7 +626,7 @@ public final class Taam {
 
 		@Override
 		public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
-			if(info != null) {
+			if (info != null) {
 				Collections.addAll(tooltip, info);
 			}
 		}
@@ -631,6 +635,7 @@ public final class Taam {
 		 * IStringSerializable implementation
 		 */
 
+		@Nonnull
 		@Override
 		public String getName() {
 			return unlocalizedName();
@@ -643,7 +648,7 @@ public final class Taam {
 		private static Map<String, MACHINE_META> nameToInstanceMap = new HashMap<String, MACHINE_META>();
 
 		static {
-			for(MACHINE_META value : values()) {
+			for (MACHINE_META value : values()) {
 				nameToInstanceMap.put(value.unlocalizedName(), value);
 			}
 		}
@@ -655,7 +660,7 @@ public final class Taam {
 		public static String[] valuesAsString() {
 			MACHINE_META[] valuesAsEnum = values();
 			String[] valuesAsString = new String[valuesAsEnum.length];
-			for(int i = 0; i < valuesAsEnum.length; i++) {
+			for (int i = 0; i < valuesAsEnum.length; i++) {
 				valuesAsString[i] = valuesAsEnum[i].unlocalizedName();
 			}
 			return valuesAsString;
