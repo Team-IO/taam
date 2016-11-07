@@ -264,9 +264,7 @@ public abstract class BaseBlock extends Block {
 	 * Useful when working with redstone.
 	 *
 	 * @param world
-	 * @param x
-	 * @param y
-	 * @param z
+	 * @param pos
 	 */
 	public static void updateBlocksAround(World world, BlockPos pos) {
 		Block blockType = world.getBlockState(pos).getBlock();
