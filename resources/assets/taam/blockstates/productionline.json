@@ -190,7 +190,15 @@
                 "model": "taam:conveyor_chute.obj"
             },
             "elevator": {
-                "model": "taam:conveyor_elevator_int.obj"
+                "model": "taam:conveyor_elevator_int.obj",
+                "custom": {
+                    "groupConfigs": {
+                        "Elevator_Frame": {"show": ["Frame_fmdl"], "hide": [], "flags": ["alwaysActive"]},
+                        "Elevator_Attach": {"show": ["Attach_attachmdl"]},
+                        "Elevator_Cap_Top": {"show": ["CapTop_ctmdl"]},
+                        "Elevator_Cap_Bottom": {"show": ["CapBottom_cbmdl"]}
+                    }
+                }
             }
         }
     }

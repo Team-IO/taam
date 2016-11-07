@@ -17,35 +17,51 @@ import net.teamio.taam.Config;
 import net.teamio.taam.Log;
 import net.teamio.taam.Taam;
 import net.teamio.taam.content.BaseTileEntity;
+import net.teamio.taam.content.IRenderable;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.content.IWorldInteractable;
 import net.teamio.taam.conveyors.ConveyorSlotsMoving;
 import net.teamio.taam.conveyors.ConveyorUtil;
 
-public class TileEntityConveyorElevator extends BaseTileEntity implements ITickable, IRotatable, IWorldInteractable {
+import java.util.List;
+
+public class TileEntityConveyorElevator extends BaseTileEntity implements ITickable, IRotatable, IWorldInteractable, IRenderable {
 
 	private final ConveyorSlotsMoving conveyorSlots;
 	private EnumFacing direction = EnumFacing.NORTH;
-	private ElevatorDirection exitDirection = ElevatorDirection.UP;
+	private ElevatorDirection escalation = ElevatorDirection.UP;
+	private ElevatorMode mode = ElevatorMode.PASS;
 
 	public boolean isTop = false;
 	public boolean isBottom = false;
 
-	public static enum ElevatorDirection {
+	public enum ElevatorDirection {
 		UP,
-		DOWN,
-		FORWARD,
-		BACK;
+		DOWN;
 
-		private static ElevatorDirection[] nexts = {
+		private static ElevatorDirection[] next = {
 				DOWN,
-				FORWARD,
-				BACK,
 				UP,
 		};
 
 		public ElevatorDirection getNext() {
-			return nexts[this.ordinal()];
+			return next[this.ordinal()];
+		}
+	}
+
+	public enum ElevatorMode {
+		PASS,
+		ENTER,
+		EXIT;
+
+		private static ElevatorMode[] next = {
+				ENTER,
+				EXIT,
+				PASS,
+		};
+
+		public ElevatorMode getNext() {
+			return next[this.ordinal()];
 		}
 	}
 
@@ -74,28 +90,56 @@ public class TileEntityConveyorElevator extends BaseTileEntity implements ITicka
 		return "tile.taam.productionline.conveyor.name";
 	}
 
-	private EnumFacing getNextSlot(int slot) {
-		if(exitDirection == ElevatorDirection.UP || exitDirection == ElevatorDirection.DOWN) {
-			int row = ConveyorUtil.ROWS.get(slot, direction);
-			if(row == 1) {
-				return direction;
-			} else if(row == 3) {
-				return direction.getOpposite();
+	@Override
+	@SideOnly(Side.CLIENT)
+	public List<String> getVisibleParts() {
+		List<String> visibleParts = BaseTileEntity.visibleParts.get();
+
+		// Visible parts list is re-used to reduce object creation
+		visibleParts.clear();
+
+		visibleParts.add("Elevator_Frame");
+
+		if(mode == ElevatorMode.ENTER) {
+			visibleParts.add("Elevator_Attach");
+			if(escalation == ElevatorDirection.UP) {
+				visibleParts.add("Elevator_Cap_Bottom");
+			} else {
+				visibleParts.add("Elevator_Cap_Top");
+			}
+		} else if(mode == ElevatorMode.EXIT) {
+			visibleParts.add("Elevator_Attach");
+			if(escalation == ElevatorDirection.UP) {
+				visibleParts.add("Elevator_Cap_Top");
+			} else {
+				visibleParts.add("Elevator_Cap_Bottom");
 			}
 		}
 
-		switch(exitDirection) {
-		default:
-		case UP:
-			//if(isTop) do something else?
-			return EnumFacing.UP;
-		case DOWN:
-			return EnumFacing.DOWN;
-		case FORWARD:
-			return direction;
-		case BACK:
+		return visibleParts;
+	}
+
+	private EnumFacing getNextSlot(int slot) {
+
+		if(mode == ElevatorMode.EXIT) {
 			return direction.getOpposite();
+		} else {
+			// Slots not part of elevator shaft
+			int row = ConveyorUtil.ROWS.get(slot, direction);
+			if(row == 1 || row == 3) {
+				return direction;
+			}
+			// Part of elevator shaft
+			switch(escalation) {
+				default:
+				case UP:
+					//if(isTop) do something else?
+					return EnumFacing.UP;
+				case DOWN:
+					return EnumFacing.DOWN;
+			}
 		}
+
 	}
 
 	@Override
@@ -147,7 +191,8 @@ public class TileEntityConveyorElevator extends BaseTileEntity implements ITicka
 	protected void writePropertiesToNBT(NBTTagCompound tag) {
 		tag.setTag("items", conveyorSlots.serializeNBT());
 		tag.setInteger("direction", direction.ordinal());
-		tag.setInteger("exit", exitDirection.ordinal());
+		tag.setInteger("escalation", escalation.ordinal());
+		tag.setInteger("mode", mode.ordinal());
 	}
 
 	@Override
@@ -159,7 +204,8 @@ public class TileEntityConveyorElevator extends BaseTileEntity implements ITicka
 			direction = EnumFacing.NORTH;
 		}
 
-		exitDirection = ElevatorDirection.values()[MathHelper.clamp_int(tag.getInteger("exit"), 0, 3)];
+		escalation = ElevatorDirection.values()[MathHelper.clamp_int(tag.getInteger("escalation"), 0, 1)];
+		mode = ElevatorMode.values()[MathHelper.clamp_int(tag.getInteger("mode"), 0, 2)];
 	}
 
 	@Override
@@ -174,18 +220,36 @@ public class TileEntityConveyorElevator extends BaseTileEntity implements ITicka
 	@Override
 	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
 		if (capability == Taam.CAPABILITY_CONVEYOR
-				&& (facing == null || facing.getAxis() == direction.getAxis() || facing.getAxis() == Axis.Y)) {
+				&& (facing == null || (facing == direction.getOpposite() && mode != ElevatorMode.PASS) || facing.getAxis() == Axis.Y)) {
 			return (T) conveyorSlots;
 		}
 		return super.getCapability(capability, facing);
 	}
 
 	/**
+	 * Cycles between exit, entry or pass
+	 */
+	public void cycleMode() {
+		mode = mode.getNext();
+		Log.info("Setting mode to {}", mode);
+		updateState(true, true, true);
+	}
+
+	/**
 	 * Cycles between exit point in a certain direction or just continuing movement up or down
 	 */
-	public void cycleExitDirection() {
-		exitDirection = exitDirection.getNext();
-		Log.info("Setting exit direction to {}", exitDirection);
+	public void cycleEscalation() {
+		escalation = escalation.getNext();
+		Log.info("Setting elevator direction to {}", escalation);
+		updateState(true, true, true);
+	}
+
+	/**
+	 * Cycles between exit point in a certain direction or just continuing movement up or down
+	 */
+	public void cycleRotation() {
+		setFacingDirection(getNextFacingDirection());
+		updateState(true, true, true);
 	}
 
 	/*
@@ -225,11 +289,22 @@ public class TileEntityConveyorElevator extends BaseTileEntity implements ITicka
 	@Override
 	public boolean onBlockActivated(World world, EntityPlayer player, EnumHand hand, boolean hasWrench, EnumFacing side,
 			float hitX, float hitY, float hitZ) {
-		if(hasWrench && side.getAxis() == direction.getAxis()) {
-			cycleExitDirection();
+		if(!hasWrench) {
+			return false;
+		}
+		if(side.getAxis() == direction.getAxis()) {
+			cycleMode();
+			if(mode != ElevatorMode.PASS) {
+				setFacingDirection(side.getOpposite());
+			}
 			return true;
 		}
-		return false;
+		if(side.getAxis().isVertical()) {
+			cycleRotation();
+		} else {
+			cycleEscalation();
+		}
+		return true;
 	}
 
 	@Override

@@ -10,7 +10,7 @@ import net.minecraft.util.EnumFacing;
  */
 public abstract class ConveyorSlotsBase implements IConveyorSlots {
 
-	protected SlotMatrix slotMatrix = SlotMatrix.ALL;
+	public SlotMatrix slotMatrix = SlotMatrix.ALL;
 	public EnumFacing rotation = EnumFacing.NORTH;
 	public double insertMaxY = 0.9;
 	public double insertMinY = 0.3;
