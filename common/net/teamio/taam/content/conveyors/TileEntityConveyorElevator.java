@@ -29,8 +29,8 @@ public class TileEntityConveyorElevator extends BaseTileEntity implements ITicka
 
 	private final ConveyorSlotsMoving conveyorSlots;
 	private EnumFacing direction = EnumFacing.NORTH;
-	private ElevatorDirection escalation = ElevatorDirection.UP;
-	private ElevatorMode mode = ElevatorMode.PASS;
+	public ElevatorDirection escalation = ElevatorDirection.UP;
+	public ElevatorMode mode = ElevatorMode.PASS;
 
 	public boolean isTop = false;
 	public boolean isBottom = false;
