@@ -98,7 +98,7 @@ public class TaamRecipeCompat {
 			// Ore -> Dust
 			if(oreStack != null && dustStack != null) {
 				ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
-						new CrusherRecipe(ingot,
+						new CrusherRecipe(ore,
 								new ChancedOutput(InventoryUtils.copyStack(dustStack, 2), 1.0f),
 								new ChancedOutput(new ItemStack(Blocks.cobblestone), 0.4f),
 								new ChancedOutput(new ItemStack(TaamMain.itemDust, 1, Taam.BLOCK_ORE_META.stone.ordinal()), 0.3f),

@@ -600,13 +600,13 @@ public class TaamMain {
 		// Smelting & Crafting
 		TaamRecipes.registerSmeltingRecipes();
 		TaamRecipes.registerCraftingRecipes();
-
-		// Compat Recipes
-		TaamRecipeCompat.registerRecipes();
 	}
 
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
+
+		// Compat Recipes -> in postInit to catch as many recipes as possible
+		TaamRecipeCompat.registerRecipes();
 	}
 
 	public static void oreRegistration() {

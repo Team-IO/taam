@@ -3,6 +3,7 @@ package net.teamio.taam;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.oredict.OreDictionary;
 import net.teamio.taam.recipes.ChancedOutput;
 import net.teamio.taam.recipes.ProcessingRegistry;
 import net.teamio.taam.recipes.impl.CrusherRecipe;
@@ -165,10 +166,17 @@ public class TaamRecipesCrusher {
 				)
 		);
 
+		// Other blocks
 		ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
-				new CrusherRecipe(new ItemStack(Blocks.quartz_block),
+				new CrusherRecipe(new ItemStack(Blocks.quartz_block, 1, OreDictionary.WILDCARD_VALUE),
 						new ChancedOutput(new ItemStack(Items.quartz, 3), 1.0f),
 						new ChancedOutput(new ItemStack(Items.quartz, 1), 0.25f)
+				)
+		);
+		ProcessingRegistry.registerRecipe(ProcessingRegistry.CRUSHER,
+				new CrusherRecipe(new ItemStack(Blocks.glowstone),
+						new ChancedOutput(new ItemStack(Items.glowstone_dust, 3), 1.0f),
+						new ChancedOutput(new ItemStack(Items.glowstone_dust, 1), 0.75f)
 				)
 		);
 	}
