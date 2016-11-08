@@ -682,7 +682,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		}
 		tessellator.draw();
 
-
+		GlStateManager.enableTexture2D();
 		tearDownDefaultGL();
 		GlStateManager.popMatrix();
 
