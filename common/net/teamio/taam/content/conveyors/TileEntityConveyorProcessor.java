@@ -134,12 +134,14 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements IReds
 					needsUpdate = true;
 				}
 			} else {
-				if(processOther()) {
+				ProcessResult processResult = processOther();
+				if(processResult == ProcessResult.Processed) {
 					itemHandler.extractItem(0, 1, false);
+					needsUpdate = true;
+				} else if (processResult == ProcessResult.Output) {
 					needsUpdate = true;
 				}
 			}
-
 
 			if(worldObj.rand.nextFloat() < Config.pl_processor_hurt_chance) {
 				hurtEntities();
@@ -179,7 +181,13 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements IReds
 		living.attackEntityFrom(ds, 5);
 	}
 
-	private boolean processOther() {
+	public enum ProcessResult {
+		NoOperation,
+		Output,
+		Processed
+	}
+
+	private ProcessResult processOther() {
 		BlockPos down = pos.down();
 
 		/*
@@ -187,7 +195,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements IReds
 		 */
 		chute.refreshOutputInventory(worldObj, down);
 		if(!chute.isOperable()) {
-			return false;
+			return ProcessResult.NoOperation;
 		}
 
 		/*
@@ -195,20 +203,20 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements IReds
 		 */
 		// Output the backlog. Returns true if there were items transferred or there are still items left.
 		if(chute.output(worldObj, down)) {
-			return true;
+			return ProcessResult.Output;
 		}
 
 		// If output finished, continue processing.
 		if(isCoolingDown()) {
 			timeout--;
-			return false;
+			return ProcessResult.NoOperation;
 		}
 
 		ItemStack input = itemHandler.getStackInSlot(0);
 
 		if(input == null) {
 			recipe = null;
-			return false;
+			return ProcessResult.NoOperation;
 		}
 
 		if(recipe == null || !input.equals(cachedInput)) {
@@ -225,10 +233,10 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements IReds
 				timeout += Config.pl_processor_crusher_timeout;
 			}
 			// Consume input
-			return true;
+			return ProcessResult.Processed;
 		}
 
-		return false;
+		return ProcessResult.NoOperation;
 	}
 
 	private boolean processShredder() {
