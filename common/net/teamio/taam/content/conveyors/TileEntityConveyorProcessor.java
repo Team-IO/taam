@@ -221,7 +221,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements IReds
 			return ProcessResult.NoOperation;
 		}
 
-		if(recipe == null || !input.equals(cachedInput)) {
+		if(recipe == null || !input.isItemEqual(cachedInput)) {
 			recipe = getRecipe(input);
 			cachedInput = input;
 		}
