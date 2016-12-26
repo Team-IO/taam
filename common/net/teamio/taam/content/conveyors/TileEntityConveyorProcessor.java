@@ -18,6 +18,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.items.wrapper.EmptyHandler;
 import net.teamio.taam.Config;
 import net.teamio.taam.Taam;
 import net.teamio.taam.TaamMain;
@@ -134,12 +135,14 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements IReds
 					needsUpdate = true;
 				}
 			} else {
-				if(processOther()) {
+				ProcessResult processResult = processOther();
+				if(processResult == ProcessResult.Processed) {
 					itemHandler.extractItem(0, 1, false);
+					needsUpdate = true;
+				} else if (processResult == ProcessResult.Output) {
 					needsUpdate = true;
 				}
 			}
-
 
 			if(worldObj.rand.nextFloat() < Config.pl_processor_hurt_chance) {
 				hurtEntities();
@@ -163,9 +166,11 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements IReds
 	}
 
 	private void hurtEntity(EntityLivingBase living) {
-		DamageSource ds = TaamMain.ds_processed;
+		DamageSource ds;
 		switch(mode) {
 		default:
+			ds = TaamMain.ds_processed;
+			break;
 		case Shredder:
 			ds = TaamMain.ds_shredded;
 			break;
@@ -179,7 +184,13 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements IReds
 		living.attackEntityFrom(ds, 5);
 	}
 
-	private boolean processOther() {
+	public enum ProcessResult {
+		NoOperation,
+		Output,
+		Processed
+	}
+
+	private ProcessResult processOther() {
 		BlockPos down = pos.down();
 
 		/*
@@ -187,7 +198,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements IReds
 		 */
 		chute.refreshOutputInventory(worldObj, down);
 		if(!chute.isOperable()) {
-			return false;
+			return ProcessResult.NoOperation;
 		}
 
 		/*
@@ -195,23 +206,23 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements IReds
 		 */
 		// Output the backlog. Returns true if there were items transferred or there are still items left.
 		if(chute.output(worldObj, down)) {
-			return true;
+			return ProcessResult.Output;
 		}
 
 		// If output finished, continue processing.
 		if(isCoolingDown()) {
 			timeout--;
-			return false;
+			return ProcessResult.NoOperation;
 		}
 
 		ItemStack input = itemHandler.getStackInSlot(0);
 
 		if(input == null) {
 			recipe = null;
-			return false;
+			return ProcessResult.NoOperation;
 		}
 
-		if(recipe == null || !input.equals(cachedInput)) {
+		if(recipe == null || !input.isItemEqual(cachedInput)) {
 			recipe = getRecipe(input);
 			cachedInput = input;
 		}
@@ -225,10 +236,10 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements IReds
 				timeout += Config.pl_processor_crusher_timeout;
 			}
 			// Consume input
-			return true;
+			return ProcessResult.Processed;
 		}
 
-		return false;
+		return ProcessResult.NoOperation;
 	}
 
 	private boolean processShredder() {
@@ -314,7 +325,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements IReds
 			return true;
 		}
 		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-			return facing == EnumFacing.UP;
+			return facing.getAxis() == EnumFacing.Axis.Y;
 		}
 		return super.hasCapability(capability, facing);
 	}
@@ -325,8 +336,13 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements IReds
 		if(capability == Taam.CAPABILITY_CONVEYOR) {
 			return (T) conveyorSlots;
 		}
-		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing == EnumFacing.UP) {
-			return (T) itemHandler;
+		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+			if(facing == EnumFacing.UP) {
+				return (T) itemHandler;
+			} else {
+				// This is to prevent hoppers from doing weird things... (#244)
+				return (T) EmptyHandler.INSTANCE;
+			}
 		}
 		return super.getCapability(capability, facing);
 	}

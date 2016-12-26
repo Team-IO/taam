@@ -1,36 +1,111 @@
 {
-    "forge_marker": 1,
-    "defaults": {
-        "model": "taam:industrial_lamp.obj",
-        "custom": {
-            "flip-v": true
-        },
+  "forge_marker": 1,
+  "defaults": {
+    "model": "taam:industrial_lamp.obj",
+    "custom": {
+      "flip-v": true
+    },
+    "transform": "forge:default-block"
+  },
+  "variants": {
+    "normal": [{}],
+    "inventory": [
+      {
         "transform": "forge:default-block"
-     },
-    "variants": {
-        "normal": [{}],
-        "inventory": [{
-            "transform": "forge:default-block"
-        }],
-        "powered": {
-        	"true": {
-		        "textures": {
-		        	"Conveyor": "taam:blocks/industrial_lamp_on"
-		        }
-	        },
-        	"false": {
-		        "textures": {
-		        	"Conveyor": "taam:blocks/industrial_lamp_off"
-		        }
-	        }
-        },
-        "direction": {
-        	"up": {"x": 90},
-        	"down": {"x": -90},
-        	"south": {},
-        	"north": {"y": 180},
-        	"west": {"y": 90},
-        	"east": {"y": 270}
+      }
+    ],
+    "powered": {
+      "true": {
+        "textures": {
+          "Conveyor": "taam:blocks/industrial_lamp_on"
         }
-    }
+      },
+      "false": {
+        "textures": {
+          "Conveyor": "taam:blocks/industrial_lamp_off"
+        }
+      }
+    },
+    "direction": {
+      "up": {"x": 90},
+      "down": {"x": -90},
+      "south": {},
+      "north": {"y": 180},
+      "west": {"y": 90},
+      "east": {"y": 270}
+    },
+    "attached": {
+      "true": {},
+      "false": {}
+    },
+    /*
+    These fully-defined variants override the permuated ones from above
+     Reason we need this is that on permutations, transforms do not stack,
+     So we'd either have rotated or moved down by 0.25, but not both
+     */
+    // Powered:
+    "attached=true,direction=south,powered=true": [
+      {
+        "transform": {
+          "translation": [0,-0.25,0]
+        }
+      }
+    ],
+    "attached=true,direction=north,powered=true": [
+      {
+        "transform": {
+          "translation": [0,-0.25,0],
+          "rotation": {"y": 180}
+        }
+      }
+    ],
+    "attached=true,direction=west,powered=true": [
+      {
+        "transform": {
+          "translation": [0,-0.25,0],
+          "rotation": {"y": 270}// for some reason, this is opposite of the vanilla-rotatin used above
+        }
+      }
+    ],
+    "attached=true,direction=east,powered=true": [
+      {
+        "transform": {
+          "translation": [0,-0.25,0],
+          "rotation": {"y": 90}// for some reason, this is opposite of the vanilla-rotatin used above
+        }
+      }
+    ],
+    // Unpowered:
+    "attached=true,direction=south,powered=false": [
+      {
+        "transform": {
+          "translation": [0,-0.25,0]
+        }
+      }
+    ],
+    "attached=true,direction=north,powered=false": [
+      {
+        "transform": {
+          "translation": [0,-0.25,0],
+          "rotation": {"y": 180}
+        }
+      }
+    ],
+    "attached=true,direction=west,powered=false": [
+      {
+        "transform": {
+          "translation": [0,-0.25,0],
+          "rotation": {"y": 270}// for some reason, this is opposite of the vanilla-rotatin used above
+        }
+      }
+    ],
+    "attached=true,direction=east,powered=false": [
+      {
+        "transform": {
+          "translation": [0,-0.25,0],
+          "rotation": {"y": 90}// for some reason, this is opposite of the vanilla-rotatin used above
+        }
+      }
+    ]
+  }
 }

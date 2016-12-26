@@ -5,6 +5,7 @@ import java.util.Random;
 import javax.vecmath.Vector2f;
 import javax.vecmath.Vector3f;
 
+import net.teamio.taam.content.conveyors.*;
 import org.lwjgl.opengl.GL11;
 
 import com.google.common.base.Function;
@@ -42,10 +43,6 @@ import net.teamio.taam.Config;
 import net.teamio.taam.Log;
 import net.teamio.taam.Taam;
 import net.teamio.taam.content.IRotatable;
-import net.teamio.taam.content.conveyors.TileEntityConveyorItemBag;
-import net.teamio.taam.content.conveyors.TileEntityConveyorProcessor;
-import net.teamio.taam.content.conveyors.TileEntityConveyorSieve;
-import net.teamio.taam.content.conveyors.TileEntityConveyorTrashCan;
 import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.conveyors.IConveyorSlots;
 import net.teamio.taam.conveyors.ItemWrapper;
@@ -556,6 +553,24 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 			}
 		}
 
+		if (tileEntity instanceof TileEntityConveyorElevator) {
+			GL11.glPushMatrix();
+			GL11.glTranslated(x, y, z);
+
+			float rotationDegrees = getRotationDegrees(tileEntity);
+
+			GL11.glTranslated(.5f, .5f, .5f);
+			GL11.glRotatef(rotationDegrees, 0, 1, 0);
+			GL11.glTranslated(-.5f, -.5f, -.5f);
+
+
+			TileEntityConveyorElevator.ElevatorDirection escalation = ((TileEntityConveyorElevator) tileEntity).escalation;
+
+			renderElevator(escalation, partialTicks);
+
+			GL11.glPopMatrix();
+		}
+
 		EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
 		if(player == null) {
 			return;
@@ -608,6 +623,69 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 			}
 			GL11.glPopMatrix();
 		}
+	}
+
+	public void renderElevator(TileEntityConveyorElevator.ElevatorDirection escalation, float partialTicks) {
+
+		GlStateManager.pushMatrix();
+
+		setupDefaultGL();
+
+		GlStateManager.color(0.75f, 0.75f, 0.75f, 1);
+		GL11.glLineWidth(20);
+		// For whatever reason, we need to enable, THEN disable. Otherwise color gets somewhat garbled..
+		GlStateManager.enableTexture2D();
+		GlStateManager.disableTexture2D();
+
+
+		Tessellator tessellator = Tessellator.getInstance();
+		VertexBuffer vertexbuffer = tessellator.getBuffer();
+
+		final float margin = 0.02f;
+		final float margin2 = 0.03f;
+
+		final int stepAmount = 4;
+		final double stepHeight = ConveyorUtil.oneThird / stepAmount * 3;
+		final int speed = Config.pl_elevator_speedsteps / stepAmount;
+
+		double escalationOffset = stepHeight * ((rot + partialTicks) % speed) / speed;
+		if(escalation != TileEntityConveyorElevator.ElevatorDirection.UP) {
+			escalationOffset = stepHeight - escalationOffset;
+		}
+
+		vertexbuffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION);
+
+		for (int y = 0; y < stepAmount; y++) {
+			for(int x = 0; x < 3; x++) {
+				double minX = x * ConveyorUtil.oneThird + margin;
+				double maxX = minX + ConveyorUtil.oneThird - margin*2;
+				double minZ = ConveyorUtil.oneThird + margin2;
+				double maxZ = minZ + ConveyorUtil.oneThird - margin2*2;
+				double miny = y * stepHeight + escalationOffset;
+
+				vertexbuffer.pos(minX, miny, minZ).endVertex();
+				vertexbuffer.pos(maxX, miny, minZ).endVertex();
+
+				vertexbuffer.pos(maxX, miny, maxZ).endVertex();
+				vertexbuffer.pos(minX, miny, maxZ).endVertex();
+
+				if (x > 0) {
+					vertexbuffer.pos(minX, miny, minZ).endVertex();
+					vertexbuffer.pos(minX, miny, maxZ).endVertex();
+				}
+				if (x < 2) {
+					vertexbuffer.pos(maxX, miny, minZ).endVertex();
+					vertexbuffer.pos(maxX, miny, maxZ).endVertex();
+				}
+			}
+
+		}
+		tessellator.draw();
+
+		GlStateManager.enableTexture2D();
+		tearDownDefaultGL();
+		GlStateManager.popMatrix();
+
 	}
 
 	public void renderTankContent(FluidStack content, int capacity, AxisAlignedBB bounds) {

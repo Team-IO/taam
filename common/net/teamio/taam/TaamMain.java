@@ -608,13 +608,13 @@ public class TaamMain {
 		// Smelting & Crafting
 		TaamRecipes.registerSmeltingRecipes();
 		TaamRecipes.registerCraftingRecipes();
-
-		// Compat Recipes
-		TaamRecipeCompat.registerRecipes();
 	}
 
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
+
+		// Compat Recipes -> in postInit to catch as many recipes as possible
+		TaamRecipeCompat.registerRecipes();
 	}
 
 	public static void oreRegistration() {
@@ -622,7 +622,7 @@ public class TaamMain {
 		OreDictionary.registerOre("oreTin", new ItemStack(blockOre, 1, Taam.BLOCK_ORE_META.tin.ordinal()));
 		OreDictionary.registerOre("oreAluminum", new ItemStack(blockOre, 1, Taam.BLOCK_ORE_META.aluminum.ordinal()));
 		OreDictionary.registerOre("oreBauxite", new ItemStack(blockOre, 1, Taam.BLOCK_ORE_META.bauxite.ordinal()));
-		OreDictionary.registerOre("oreKaolinte", new ItemStack(blockOre, 1, Taam.BLOCK_ORE_META.kaolinite.ordinal()));
+		OreDictionary.registerOre("oreKaolinite", new ItemStack(blockOre, 1, Taam.BLOCK_ORE_META.kaolinite.ordinal()));
 
 		OreDictionary.registerOre("ingotCopper", new ItemStack(itemIngot, 1, Taam.BLOCK_ORE_META.copper.ordinal()));
 		OreDictionary.registerOre("ingotTin", new ItemStack(itemIngot, 1, Taam.BLOCK_ORE_META.tin.ordinal()));
