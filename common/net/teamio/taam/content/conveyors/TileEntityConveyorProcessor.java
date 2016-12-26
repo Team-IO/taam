@@ -165,9 +165,11 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements IReds
 	}
 
 	private void hurtEntity(EntityLivingBase living) {
-		DamageSource ds = TaamMain.ds_processed;
+		DamageSource ds;
 		switch(mode) {
 		default:
+			ds = TaamMain.ds_processed;
+			break;
 		case Shredder:
 			ds = TaamMain.ds_shredded;
 			break;
