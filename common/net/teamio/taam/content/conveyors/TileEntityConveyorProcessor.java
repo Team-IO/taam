@@ -17,6 +17,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.items.wrapper.EmptyHandler;
 import net.teamio.taam.Config;
 import net.teamio.taam.Taam;
 import net.teamio.taam.TaamMain;
@@ -323,7 +324,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements IReds
 			return true;
 		}
 		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-			return facing == EnumFacing.UP;
+			return facing.getAxis() == EnumFacing.Axis.Y;
 		}
 		return super.hasCapability(capability, facing);
 	}
@@ -334,8 +335,13 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements IReds
 		if(capability == Taam.CAPABILITY_CONVEYOR) {
 			return (T) conveyorSlots;
 		}
-		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && facing == EnumFacing.UP) {
-			return (T) itemHandler;
+		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+			if(facing == EnumFacing.UP) {
+				return (T) itemHandler;
+			} else {
+				// This is to prevent hoppers from doing weird things... (#244)
+				return (T) EmptyHandler.INSTANCE;
+			}
 		}
 		return super.getCapability(capability, facing);
 	}
