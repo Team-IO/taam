@@ -7,13 +7,19 @@ import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.util.*;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.teamio.taam.Taam;
 import net.teamio.taam.content.MaterialMachinesTransparent;
 import net.teamio.taam.rendering.obj.OBJModel;
 
@@ -21,6 +27,7 @@ public class BlockLamp extends Block {
 
 	public static PropertyEnum<EnumFacing> DIRECTION = PropertyEnum.create("direction", EnumFacing.class, EnumFacing.VALUES);
 	public static PropertyBool POWERED = PropertyBool.create("powered");
+	public static PropertyBool ATTACHED = PropertyBool.create("attached");
 
 	/**
 	 * Hitbox "offset" depth (attaching side -> sensor front)
@@ -47,7 +54,7 @@ public class BlockLamp extends Block {
 
 	@Override
 	protected BlockState createBlockState() {
-		return new ExtendedBlockState(this, new IProperty[] { DIRECTION, POWERED },
+		return new ExtendedBlockState(this, new IProperty[] { DIRECTION, POWERED, ATTACHED },
 				new IUnlistedProperty[] { OBJModel.OBJProperty.instance });
 	}
 
@@ -60,7 +67,7 @@ public class BlockLamp extends Block {
 
 	@Override
 	public IBlockState getStateFromMeta(int meta) {
-		return getDefaultState().withProperty(DIRECTION, EnumFacing.getFront(meta & 7)).withProperty(POWERED, (meta & 8) != 0);
+		return getDefaultState().withProperty(DIRECTION, EnumFacing.getFront(meta & 7)).withProperty(POWERED, (meta & 8) != 0).withProperty(ATTACHED, false);
 	}
 
 	@Override
@@ -148,11 +155,45 @@ public class BlockLamp extends Block {
 			maxZ = 1;
 			break;
 		}
+		boolean attached = isAttached(source, pos, dir);
+		if(attached) {
+			minY -= 0.25f;
+			maxY -= 0.25f;
+		}
 		return new AxisAlignedBB(minX,minY,minZ, maxX, maxY,maxZ);
 	}
 
 	@Override
+	public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
+		EnumFacing dir = state.getValue(DIRECTION);
+		boolean attached = isAttached(worldIn, pos, dir);
+		return super.getActualState(state, worldIn, pos).withProperty(ATTACHED, attached);
+	}
+
+	@Override
+	public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
+		EnumFacing dir = state.getValue(DIRECTION);
+		boolean attached = isAttached(world, pos, dir);
+		return super.getExtendedState(state, world, pos).withProperty(ATTACHED, attached);
+	}
+
+	public static boolean isAttached(IBlockAccess world, BlockPos pos, EnumFacing dir) {
+		if (dir.getAxis() == EnumFacing.Axis.Y) {
+			return false;
+		}
+
+		// Check for a conveyor or other compatible machine
+		EnumFacing opposite = dir.getOpposite();
+		BlockPos offsetPos = pos.offset(opposite);
+		TileEntity ent = world.getTileEntity(offsetPos);
+
+		// Attached means we move down the lamp so it can sit on the side of the conveyor instead of floating
+		return ent != null && ent.hasCapability(Taam.CAPABILITY_CONVEYOR, opposite);
+	}
+
+	@Override
 	public void onNeighborBlockChange(World worldIn, BlockPos pos, IBlockState state, Block neighborBlock) {
+
 		boolean isOn = state.getValue(POWERED);
 
 		boolean powered = worldIn.getStrongPower(pos, state.getValue(DIRECTION)) > 0;
@@ -197,7 +238,7 @@ public class BlockLamp extends Block {
 	@Override
 	public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ,
 			int meta, EntityLivingBase placer) {
-		return getDefaultState().withProperty(DIRECTION, facing).withProperty(POWERED, isInverted);
+		return getDefaultState().withProperty(DIRECTION, facing).withProperty(POWERED, isInverted).withProperty(ATTACHED, false);
 	}
 
 	@Override
@@ -209,12 +250,27 @@ public class BlockLamp extends Block {
 	public static boolean canBlockStay(World worldIn, BlockPos pos, IBlockState state) {
 		EnumFacing dir = state.getValue(DIRECTION);
 
-		return worldIn.isSideSolid(pos.offset(dir.getOpposite()), dir);
+		return canPlaceBlock(worldIn, pos, dir);
+	}
+
+	public static boolean canPlaceBlock(World worldIn, BlockPos pos, EnumFacing dir) {
+		EnumFacing opposite = dir.getOpposite();
+		BlockPos offsetPos = pos.offset(opposite);
+
+		if (worldIn.isSideSolid(offsetPos, dir)) {
+			return true;
+		}
+		// Only do special handling for conveyors if on the sides
+		if (dir.getAxis() == EnumFacing.Axis.Y) {
+			return false;
+		}
+		TileEntity ent = worldIn.getTileEntity(offsetPos);
+		return ent != null && ent.hasCapability(Taam.CAPABILITY_CONVEYOR, opposite);
 	}
 
 	@Override
 	public boolean canPlaceBlockOnSide(World worldIn, BlockPos pos, EnumFacing side) {
-		return worldIn.isSideSolid(pos.offset(side.getOpposite()), side);
+		return canPlaceBlock(worldIn, pos, side);
 	}
 
 	@Override
