@@ -627,8 +627,6 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 	public void renderElevator(TileEntityConveyorElevator.ElevatorDirection escalation, float partialTicks) {
 
 		GlStateManager.pushMatrix();
-		GlStateManager.pushAttrib();
-
 
 		setupDefaultGL();
 
@@ -683,7 +681,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		}
 		tessellator.draw();
 
-
+		GlStateManager.enableTexture2D();
 		tearDownDefaultGL();
 		GlStateManager.popMatrix();
 
