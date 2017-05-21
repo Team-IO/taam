@@ -6,6 +6,7 @@ import java.util.List;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3f;
 
+import net.teamio.taam.rendering.HoloGui;
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.collect.ImmutableMap;
@@ -80,6 +81,7 @@ public class TaamClientProxy extends TaamCommonProxy {
 		OBJLoader.INSTANCE.addDomain(Taam.MOD_ID.toLowerCase());
 
 		taamRenderer = new TaamRenderer();
+		HoloGui.INSTANCE.load();
 
 		// Tile Entity Rendering
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityConveyor.class, taamRenderer);

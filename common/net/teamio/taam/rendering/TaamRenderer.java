@@ -8,14 +8,11 @@ import javax.vecmath.Vector3f;
 import net.teamio.taam.content.conveyors.*;
 import org.lwjgl.opengl.GL11;
 
-import com.google.common.base.Function;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderGlobal;
-import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
@@ -96,16 +93,6 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 			).expand(shrinkValue, shrinkValue, shrinkValue);
 
 	/**
-	 * Function for fetching texture sprites.
-	 */
-	public static final Function<ResourceLocation, TextureAtlasSprite> textureGetter = new Function<ResourceLocation, TextureAtlasSprite>() {
-		@Override
-		public TextureAtlasSprite apply(ResourceLocation location) {
-			return Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString());
-		}
-	};
-
-	/**
 	 * Executed each client tick to update the animated values. Client tick,
 	 * because that is fixed timing, so not framerate dependent.
 	 *
@@ -171,10 +158,10 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 
 
 						if(wrapper.itemStack == null && player.getHeldItemMainhand() != null) {
-							drawSelectionBoundingBox(player, event.getPartialTicks(), 4, 1, 1, 1, 1, new AxisAlignedBB(x, y, z,
+							RenderUtil.drawSelectionBoundingBox(player, event.getPartialTicks(), 4, 1, 1, 1, 1, new AxisAlignedBB(x, y, z,
 									x + ConveyorUtil.oneThird, y + 0.1d, z + ConveyorUtil.oneThird));
 						} else {
-							drawSelectionBoundingBox(player, event.getPartialTicks(), 2, 1, 1, 1, 1, new AxisAlignedBB(x, y, z,
+							RenderUtil.drawSelectionBoundingBox(player, event.getPartialTicks(), 2, 1, 1, 1, 1, new AxisAlignedBB(x, y, z,
 									x + ConveyorUtil.oneThird, y + 0.1d, z + ConveyorUtil.oneThird));
 						}
 
@@ -199,11 +186,18 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 							z += dir.getFrontOffsetZ() * progress;
 							y += dir.getFrontOffsetY() * progress * 3;
 
-							drawSelectionBoundingBox(player, event.getPartialTicks(), 4, 1, 1, 1, 1, new AxisAlignedBB(x, y, z,
+							RenderUtil.drawSelectionBoundingBox(player, event.getPartialTicks(), 4, 1, 1, 1, 1, new AxisAlignedBB(x, y, z,
 									x + ConveyorUtil.oneThird, y + ConveyorUtil.oneThird, z + ConveyorUtil.oneThird));
 						}
 
+						GlStateManager.pushMatrix();
+						GL11.glTranslated(pos.getX(),pos.getY(),pos.getZ());
+
+						HoloGui.INSTANCE.renderHoloTopDown(player, event.getPartialTicks(), rendererDispatcher.renderEngine, 0, 0, 0.6f);
+
+						GlStateManager.popMatrix();
 					}
+
 				} catch (Exception e) {
 					Log.error("Error drawing block highlight for a tile entity. Disabling block highlight drawing to prevent you from crashing - This is an error, please report!", e);
 					failureFreeBlockHightlight = false;
@@ -255,70 +249,6 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		GlStateManager.popMatrix();
 	}
 
-	/**
-	 * Draw a single selection box at the given bounding box.
-	 *
-	 * @param player
-	 * @param partialTicks
-	 * @param box
-	 */
-	public static void drawSelectionBoundingBox(EntityPlayer player, float partialTicks, AxisAlignedBB box) {
-		drawSelectionBoundingBox(player, partialTicks, 2.0f, 0, 0, 0, 0.4f, box);
-	}
-
-	/**
-	 * Draw a single selection box at the given bounding box.
-	 *
-	 * @param player
-	 * @param partialTicks
-	 * @param lineWidth
-	 * @param box
-	 */
-	public static void drawSelectionBoundingBox(EntityPlayer player, float partialTicks, float lineWidth, AxisAlignedBB box) {
-		drawSelectionBoundingBox(player, partialTicks, lineWidth, 0, 0, 0, 0.4f, box);
-	}
-
-	/**
-	 * Draw a single selection box at the given bounding box.
-	 *
-	 * @param player
-	 * @param partialTicks
-	 * @param lineWidth
-	 * @param colorR
-	 * @param colorG
-	 * @param colorB
-	 * @param colorA
-	 * @param box
-	 */
-	public static void drawSelectionBoundingBox(EntityPlayer player, float partialTicks, float lineWidth, float colorR, float colorG, float colorB, float colorA, AxisAlignedBB box) {
-		GlStateManager.pushMatrix();
-		GlStateManager.pushAttrib();
-
-		GlStateManager.enableBlend();
-		GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-		GlStateManager.color(colorR, colorG, colorB, colorA);
-		GL11.glLineWidth(lineWidth);
-		// For whatever reason, we need to enable, THEN disable. Otherwise color gets somewhat garbled..
-		GlStateManager.enableTexture2D();
-		GlStateManager.disableTexture2D();
-		GlStateManager.depthMask(false);
-
-		double d0 = player.lastTickPosX + (player.posX - player.lastTickPosX) * partialTicks;
-		double d1 = player.lastTickPosY + (player.posY - player.lastTickPosY) * partialTicks;
-		double d2 = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * partialTicks;
-
-		GL11.glTranslated(-d0, -d1, -d2);
-
-		RenderGlobal.drawSelectionBoundingBox(box.expand(boundingBoxExpand, boundingBoxExpand, boundingBoxExpand));
-
-		GlStateManager.depthMask(true);
-		GlStateManager.enableTexture2D();
-		GlStateManager.disableBlend();
-
-		GlStateManager.popAttrib();
-		GlStateManager.popMatrix();
-	}
-
 	@Override
 	public void renderTileEntityAt(TileEntity tileEntity, double x, double y, double z, float partialTicks, int destroyStage) {
 
@@ -365,7 +295,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 				GL11.glPushMatrix();
 				GL11.glTranslated(x, y, z);
 
-				setupDefaultGL();
+				RenderUtil.setupDefaultGL();
 
 
 				bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
@@ -398,7 +328,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 
 				ri.renderItem(processingStack, model);
 
-				tearDownDefaultGL();
+				RenderUtil.tearDownDefaultGL();
 
 				GL11.glPopMatrix();
 			}
@@ -477,7 +407,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 				int animFrames = 5;
 
 				GlStateManager.pushMatrix();
-				setupDefaultGL();
+				RenderUtil.setupDefaultGL();
 
 				GL11.glTranslated(x, y, z);
 
@@ -548,7 +478,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 					GlStateManager.popMatrix();
 				}
 
-				tearDownDefaultGL();
+				RenderUtil.tearDownDefaultGL();
 				GlStateManager.popMatrix();
 			}
 		}
@@ -629,7 +559,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 
 		GlStateManager.pushMatrix();
 
-		setupDefaultGL();
+		RenderUtil.setupDefaultGL();
 
 		GlStateManager.color(0.75f, 0.75f, 0.75f, 1);
 		GL11.glLineWidth(20);
@@ -683,7 +613,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		tessellator.draw();
 
 		GlStateManager.enableTexture2D();
-		tearDownDefaultGL();
+		RenderUtil.tearDownDefaultGL();
 		GlStateManager.popMatrix();
 
 	}
@@ -698,7 +628,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		/*
 		 * Get texture
 		 */
-		TextureAtlasSprite sprite = textureGetter.apply(fluid.getStill());
+		TextureAtlasSprite sprite = RenderUtil.textureGetter.apply(fluid.getStill());
 
 		VertexBuffer renderer = Tessellator.getInstance().getBuffer();
 
@@ -771,11 +701,11 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		renderer.pos(bounds.minX, fillHeight, bounds.maxZ)	.tex(minU_X, maxV_Z).normal(0, 1, 0).endVertex();
 		renderer.pos(bounds.maxX, fillHeight, bounds.maxZ)	.tex(maxU_X, maxV_Z).normal(0, 1, 0).endVertex();
 
-		setupDefaultGL();
+		RenderUtil.setupDefaultGL();
 
 		Tessellator.getInstance().draw();
 
-		tearDownDefaultGL();
+		RenderUtil.tearDownDefaultGL();
 	}
 
 	public void renderBagFilling(float fillFactor) {
@@ -786,7 +716,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		 * Prepare rendering
 		 */
 
-		TextureAtlasSprite sprite = textureGetter.apply(conveyorTextures);
+		TextureAtlasSprite sprite = RenderUtil.textureGetter.apply(conveyorTextures);
 		VertexBuffer renderer = Tessellator.getInstance().getBuffer();
 
 		renderer.begin(7, DefaultVertexFormats.POSITION_TEX_NORMAL);
@@ -820,11 +750,11 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		renderer.pos(0.888147, 0.03, 0.667282).tex(minU + U*0.000000, minV + V*(1-0.480469)).normal(0, 1, 0).endVertex();
 		renderer.pos(0.111853, 0.03, 0.667282).tex(minU + U*0.187500, minV + V*(1-0.480469)).normal(0, 1, 0).endVertex();
 
-		setupDefaultGL();
+		RenderUtil.setupDefaultGL();
 
 		Tessellator.getInstance().draw();
 
-		tearDownDefaultGL();
+		RenderUtil.tearDownDefaultGL();
 	}
 
 	/*
@@ -870,23 +800,23 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 			new Vector3f(-1.00000f,  0.00000f,  0.00000f),
 			new Vector3f(0.000000f, 0.000000f, 1.000000f)
 	};
-	ObjFace[] sieve_faces = new ObjFace[] {
-		new	ObjFace(new int[] {8 , 14, 4 , 1 }, new int[] {1, 2, 3 , 4}, 1),
-		new	ObjFace(new int[] {1 , 4 , 6 , 2 }, new int[] {5, 6, 4 , 7}, 2),
-		new	ObjFace(new int[] {9 , 2 , 6 , 15}, new int[] {1, 4, 3 , 2}, 3),
-		new	ObjFace(new int[] {8 , 1 , 2 , 9 }, new int[] {8, 9, 10, 4}, 4),
-		new	ObjFace(new int[] {12, 3 , 4 , 14}, new int[] {1, 4, 3 , 2}, 1),
-		new	ObjFace(new int[] {3 , 5 , 6 , 4 }, new int[] {5, 7, 4 , 6}, 2),
-		new	ObjFace(new int[] {16, 15, 6 , 5 }, new int[] {1, 2, 3 , 4}, 3),
-		new	ObjFace(new int[] {12, 16, 5 , 3 }, new int[] {8, 4, 10, 9}, 5),
-		new	ObjFace(new int[] {8 , 7 , 13, 14}, new int[] {1, 4, 3 , 2}, 1),
-		new	ObjFace(new int[] {7 , 10, 18, 13}, new int[] {5, 7, 4 , 6}, 6),
-		new	ObjFace(new int[] {9 , 15, 18, 10}, new int[] {1, 2, 3 , 4}, 3),
-		new	ObjFace(new int[] {8 , 9 , 10, 7 }, new int[] {8, 4, 10, 9}, 4),
-		new	ObjFace(new int[] {12, 14, 13, 11}, new int[] {1, 2, 3 , 4}, 1),
-		new	ObjFace(new int[] {11, 13, 18, 17}, new int[] {5, 6, 4 , 7}, 6),
-		new	ObjFace(new int[] {16, 17, 18, 15}, new int[] {1, 4, 3 , 2}, 3),
-		new	ObjFace(new int[] {12, 11, 17, 16}, new int[] {8, 9, 10, 4}, 5)
+	RenderUtil.ObjFace[] sieve_faces = new RenderUtil.ObjFace[] {
+		new RenderUtil.ObjFace(new int[] {8 , 14, 4 , 1 }, new int[] {1, 2, 3 , 4}, 1),
+		new RenderUtil.ObjFace(new int[] {1 , 4 , 6 , 2 }, new int[] {5, 6, 4 , 7}, 2),
+		new RenderUtil.ObjFace(new int[] {9 , 2 , 6 , 15}, new int[] {1, 4, 3 , 2}, 3),
+		new RenderUtil.ObjFace(new int[] {8 , 1 , 2 , 9 }, new int[] {8, 9, 10, 4}, 4),
+		new RenderUtil.ObjFace(new int[] {12, 3 , 4 , 14}, new int[] {1, 4, 3 , 2}, 1),
+		new RenderUtil.ObjFace(new int[] {3 , 5 , 6 , 4 }, new int[] {5, 7, 4 , 6}, 2),
+		new RenderUtil.ObjFace(new int[] {16, 15, 6 , 5 }, new int[] {1, 2, 3 , 4}, 3),
+		new RenderUtil.ObjFace(new int[] {12, 16, 5 , 3 }, new int[] {8, 4, 10, 9}, 5),
+		new RenderUtil.ObjFace(new int[] {8 , 7 , 13, 14}, new int[] {1, 4, 3 , 2}, 1),
+		new RenderUtil.ObjFace(new int[] {7 , 10, 18, 13}, new int[] {5, 7, 4 , 6}, 6),
+		new RenderUtil.ObjFace(new int[] {9 , 15, 18, 10}, new int[] {1, 2, 3 , 4}, 3),
+		new RenderUtil.ObjFace(new int[] {8 , 9 , 10, 7 }, new int[] {8, 4, 10, 9}, 4),
+		new RenderUtil.ObjFace(new int[] {12, 14, 13, 11}, new int[] {1, 2, 3 , 4}, 1),
+		new RenderUtil.ObjFace(new int[] {11, 13, 18, 17}, new int[] {5, 6, 4 , 7}, 6),
+		new RenderUtil.ObjFace(new int[] {16, 17, 18, 15}, new int[] {1, 4, 3 , 2}, 3),
+		new RenderUtil.ObjFace(new int[] {12, 11, 17, 16}, new int[] {8, 9, 10, 4}, 5)
 	};
 
 	public void renderSieveMesh(boolean shutDown) {
@@ -894,7 +824,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		 * Prepare rendering
 		 */
 
-		TextureAtlasSprite sprite = textureGetter.apply(conveyorTextures);
+		TextureAtlasSprite sprite = RenderUtil.textureGetter.apply(conveyorTextures);
 		VertexBuffer renderer = Tessellator.getInstance().getBuffer();
 
 		renderer.begin(7, DefaultVertexFormats.POSITION_TEX_NORMAL);
@@ -915,7 +845,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		float U = maxU - minU;
 
 
-		for(ObjFace face : sieve_faces) {
+		for(RenderUtil.ObjFace face : sieve_faces) {
 			for(int i = 0; i < 4; i++) {
 				Vector3f vertice = sieve_vertices[face.vertexIndexes[i]-1];
 				Vector2f uv = sieve_tex[face.textureIndexes[i]-1];
@@ -928,59 +858,11 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 			}
 		}
 
-		setupDefaultGL();
+		RenderUtil.setupDefaultGL();
 
 		Tessellator.getInstance().draw();
 
-		tearDownDefaultGL();
-	}
-
-	public static class ObjFace {
-		public int[] vertexIndexes;
-		public int[] textureIndexes;
-		public int normalIndex;
-		/**
-		 * @param vertexIndexes
-		 * @param textureIndexes
-		 * @param normalIndex
-		 */
-		public ObjFace(int[] vertexIndexes, int[] textureIndexes, int normalIndex) {
-			this.vertexIndexes = vertexIndexes;
-			this.textureIndexes = textureIndexes;
-			this.normalIndex = normalIndex;
-		}
-
-	}
-
-	/**
-	 * Set up default GL flags for rendering.
-	 *
-	 * Remember to use {@link #tearDownDefaultGL()} after rendering.
-	 */
-	public static void setupDefaultGL() {
-		GlStateManager.pushAttrib();
-
-		RenderHelper.enableStandardItemLighting();
-		GlStateManager.enableRescaleNormal();
-		GlStateManager.enableBlend();
-		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-		GlStateManager.enableAlpha();
-		GlStateManager.color(1, 1, 1, 1);
-	}
-
-	/**
-	 * Restore previous GL flags, to not disturb other renderers.
-	 *
-	 * Remember to use {@link #setupDefaultGL()} before rendering.
-	 */
-	public static void tearDownDefaultGL() {
-		// Just paranoid:
-		GlStateManager.disableRescaleNormal();
-		GlStateManager.disableBlend();
-		GlStateManager.enableAlpha();
-		RenderHelper.disableStandardItemLighting();
-
-		GlStateManager.popAttrib();
+		RenderUtil.tearDownDefaultGL();
 	}
 
 	public static EnumFacing getDirection(Object tileEntity) {
@@ -1026,7 +908,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 			GL11.glPushMatrix();
 			GL11.glTranslated(x, y, z);
 
-			setupDefaultGL();
+			RenderUtil.setupDefaultGL();
 
 			bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 			float posYOffset = 0.15f;
@@ -1071,7 +953,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 
 				GL11.glPopMatrix();
 			}
-			tearDownDefaultGL();
+			RenderUtil.tearDownDefaultGL();
 
 			GL11.glPopMatrix();
 		}
