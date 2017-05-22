@@ -100,6 +100,10 @@ public final class PipeUtil {
 
 	public static void processPipes(IPipe pipe, IBlockAccess world, BlockPos pos) {
 
+		if (pipe == null) {
+			Log.warn("null pipe requested for processing at {} in {}", pos, world);
+		}
+
 		ArrayList<IPipe> connected = PipeUtil.connected.get();
 
 		connected.clear();
@@ -158,7 +162,11 @@ public final class PipeUtil {
 		 */
 
 		int totalAmount = 0;
-		for (FluidStack fs : pipe.getFluids()) {
+		FluidStack[] pipeFluids = pipe.getFluids();
+		if(pipeFluids == null) {
+			Log.warn("Pipe returned null fluid array, requested for processing at {} in {}", pos, world);
+		}
+		for (FluidStack fs : pipeFluids) {
 			if (fs == null) {
 				continue;
 			}
@@ -186,7 +194,14 @@ public final class PipeUtil {
 			}
 
 			int share = (int) Math.ceil(totalAmount * pipeTransferFactor);
-			for (FluidStack fs : pipe.getFluids()) {
+			pipeFluids = pipe.getFluids();
+			if(pipeFluids == null) {
+				Log.warn("Pipe returned null fluid array, requested for processing at {} in {}", pos, world);
+			}
+			for (FluidStack fs : pipeFluids) {
+				if(fs == null) {
+					continue;
+				}
 				FluidStack transfer = fs.copy();
 				transfer.amount = Math.min(transfer.amount, share);
 
