@@ -2,6 +2,7 @@ package net.teamio.taam.piping;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -154,7 +155,7 @@ public class PipeInfo {
 		return 0;
 	}
 
-	public FluidStack[] getFluids() {
-		return content.toArray(new FluidStack[content.size()]);
+	public List<FluidStack> getFluids() {
+		return content;
 	}
 }

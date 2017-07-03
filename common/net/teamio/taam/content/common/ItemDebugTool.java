@@ -112,9 +112,11 @@ public class ItemDebugTool extends Item {
 			IPipe pipe = (IPipe)te;
 
 			String content = "[";
-			FluidStack[] fs = pipe.getFluids();
-			for(FluidStack fluidContent : fs) {
-				content += fluidContent.getLocalizedName() + " " + fluidContent.amount + ", ";
+			List<FluidStack> fs = pipe.getFluids();
+			if (fs != null) {
+				for(FluidStack fluidContent : fs) {
+					content += fluidContent.getLocalizedName() + " " + fluidContent.amount + ", ";
+				}
 			}
 			content += "]";
 

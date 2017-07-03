@@ -1,6 +1,7 @@
 package net.teamio.taam.piping;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -162,9 +163,9 @@ public final class PipeUtil {
 		 */
 
 		int totalAmount = 0;
-		FluidStack[] pipeFluids = pipe.getFluids();
+		List<FluidStack> pipeFluids = pipe.getFluids();
 		if(pipeFluids == null) {
-			Log.warn("Pipe returned null fluid array, requested for processing at {} in {}", pos, world);
+			Log.warn("Pipe returned null fluid list, requested for processing at {} in {}", pos, world);
 		}
 		for (FluidStack fs : pipeFluids) {
 			if (fs == null) {

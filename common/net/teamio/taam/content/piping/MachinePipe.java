@@ -317,7 +317,7 @@ public class MachinePipe implements IMachine, IPipe, IRenderable {
 	}
 
 	@Override
-	public FluidStack[] getFluids() {
+	public List<FluidStack> getFluids() {
 		return info.getFluids();
 	}
 

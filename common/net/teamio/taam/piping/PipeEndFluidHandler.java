@@ -7,6 +7,9 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Pipe end, used in machines to connect to a pipe "network". This delegates any
  * addFluid or getFluids to the IFluidHandler used when creating this pipe end.
@@ -16,9 +19,9 @@ import net.minecraftforge.fluids.capability.IFluidTankProperties;
  */
 public class PipeEndFluidHandler implements IPipe {
 	/**
-	 * One array per PipeEnd, used to optimize the
-	 * {@link IPipeTE#getPipesForSide(EnumFacing)} as usually there is only one
-	 * pipe end per side.
+	 * One array per PipeEnd, used to optimize the pipe fetching in machines
+	 * as usually there is only one pipe end per side.
+	 * TODO: Is this still in use?
 	 */
 	private final IPipe[] pipeArray;
 
@@ -88,11 +91,14 @@ public class PipeEndFluidHandler implements IPipe {
 	}
 
 	@Override
-	public FluidStack[] getFluids() {
+	public List<FluidStack> getFluids() {
 		IFluidTankProperties[] tankInfo = fluidHandler.getTankProperties();
-		FluidStack[] content = new FluidStack[tankInfo.length];
+		ArrayList<FluidStack> content = new ArrayList<FluidStack>(tankInfo.length);
 		for (int i = 0; i < tankInfo.length; i++) {
-			content[i] = tankInfo[i].getContents();
+			FluidStack inTank = tankInfo[i].getContents();
+			if (inTank != null) {
+				content.add(inTank);
+			}
 		}
 		return content;
 	}
