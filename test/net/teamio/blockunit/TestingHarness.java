@@ -35,7 +35,7 @@ public class TestingHarness {
 	}
 
 	public void assertFalse(boolean b) {
-		if (!b) {
+		if (b) {
 			throw new TestAssertionException("AssertFalse: passed value is true");
 		}
 	}

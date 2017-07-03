@@ -1,5 +1,6 @@
 package net.teamio.blockunit;
 
+import net.teamio.net.teamio.taam.content.piping.MachineTankTest;
 import net.teamio.taam.piping.PipeEndFluidHandlerTest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -10,6 +11,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Base framework for the in-game unit testing.
+ * Test classes that are registered are instantiated & all methods annotated with {@link TestMethod} are executed.
+ * Test methods have to be either parameterless, in which case only exception-free execution is tested;
+ * or have one parameter of the type {@link TestingHarness} for performing test assertions.
+ *
  * Created by oliver on 2017-07-03.
  */
 public class Framework {
@@ -79,7 +85,6 @@ public class Framework {
 				m.invoke(instance, new TestingHarness());
 			} catch (IllegalAccessException e) {
 				LOGGER.error("Error accessing test method " + m.getName(), e);
-				return;
 			} catch (InvocationTargetException e) {
 				Throwable te = e.getTargetException();
 				if (te instanceof  TestAssertionException) {
@@ -91,12 +96,7 @@ public class Framework {
 		} else {
 			// Umm.. did you read the documentation?
 			LOGGER.error("Incorrect parameters for test method " + m.getName());
-			return;
 		}
-	}
-
-	public static void clearTests() {
-		tests.clear();
 	}
 
 	public static void registerTestClass(Class cls) {
@@ -107,5 +107,6 @@ public class Framework {
 		tests.clear();
 		//TODO: This should not be in the Framework class
 		registerTestClass(PipeEndFluidHandlerTest.class);
+		registerTestClass(MachineTankTest.class);
 	}
 }
