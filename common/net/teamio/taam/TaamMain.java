@@ -2,6 +2,7 @@ package net.teamio.taam;
 
 import java.util.List;
 
+import net.teamio.blockunit.UnitTesterItem;
 import org.apache.commons.lang3.NotImplementedException;
 
 import net.minecraft.block.Block;
@@ -123,6 +124,8 @@ public class TaamMain {
 	 * depending on availability of multipart.
 	 */
 	public static Item itemMachine;
+
+	public static UnitTesterItem unitTesterItem;
 
 	public static CreativeTabs creativeTab;
 
@@ -292,6 +295,7 @@ public class TaamMain {
 				Taam.BLOCK_SUPPORT_BEAM
 				);
 
+		registerItem(unitTesterItem = new UnitTesterItem(), Taam.ITEM_DEBUG_UNIT_TESTER);
 		registerItem(itemDebugTool = new ItemDebugTool(), Taam.ITEM_DEBUG_TOOL);
 		registerItem(itemWrench = new ItemWrench(), Taam.ITEM_WRENCH);
 		registerItem(itemSaw = new ItemTool(Taam.ITEM_TOOL_META.saw), Taam.ITEM_TOOL + "." + Taam.ITEM_TOOL_META.saw.name());

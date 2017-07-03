@@ -377,6 +377,7 @@ public final class Taam {
 	public static final String MULTIPART_MULTINET_MULTITRONIX = "multinet.multitronix";
 
 	public static final String ITEM_MULTINET_CABLE = "cable";
+	public static final String ITEM_DEBUG_UNIT_TESTER = "unit_tester";
 	public static final String ITEM_DEBUG_TOOL = "debugger";
 	public static final String ITEM_WRENCH = "wrench";
 	public static final String ITEM_MULTINET_MULTITRONIX = "multitronix";
