@@ -20,7 +20,11 @@ public class Framework {
 
 	public static void runTests() {
 		registerTests();
+
+		LOGGER.info("Running tests...");
+
 		for (Class<?> cls : tests) {
+			LOGGER.info("Test class " + cls.getName());
 			Object instance;
 			try {
 				instance = cls.newInstance();
@@ -45,6 +49,7 @@ public class Framework {
 				}
 			}
 		}
+		LOGGER.info("Tests complete");
 	}
 
 	public static void runTest(Object instance, Method m) {
@@ -99,6 +104,7 @@ public class Framework {
 	}
 
 	public static void registerTests() {
+		tests.clear();
 		//TODO: This should not be in the Framework class
 		registerTestClass(PipeEndFluidHandlerTest.class);
 	}
