@@ -71,11 +71,21 @@ public class MachineTankTest {
 		// Insert from pipe
 		pipe.addFluid(new FluidStack(FluidRegistry.WATER, 5));
 
-		// Drain from FH
+		// Simulate Drain from FH
 		drained = fluidHandler.drain(new FluidStack(FluidRegistry.WATER, 5), false);
 		t.assertNotNull(drained);
 		t.assertEquals(5, drained.amount);
+		// Check amount still the same
+		amount = pipe2.getFluidAmount(new FluidStack(FluidRegistry.WATER, 0));
+		t.assertEquals(5, amount);
 
+
+		// Simulate Insert in FH
+		amount = fluidHandler.fill(new FluidStack(FluidRegistry.WATER, 5), false);
+		t.assertEquals(5, amount);
+		// Check amount still the same
+		amount = pipe2.getFluidAmount(new FluidStack(FluidRegistry.WATER, 0));
+		t.assertEquals(5, amount);
 
 	}
 

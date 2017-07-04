@@ -1,5 +1,6 @@
 package net.teamio.blockunit;
 
+import net.teamio.taam.content.piping.MachinePipeTest;
 import net.teamio.taam.content.piping.MachineTankTest;
 import net.teamio.taam.piping.PipeEndFluidHandlerTest;
 import org.apache.logging.log4j.LogManager;
@@ -108,5 +109,6 @@ public class Framework {
 		//TODO: This should not be in the Framework class
 		registerTestClass(PipeEndFluidHandlerTest.class);
 		registerTestClass(MachineTankTest.class);
+		registerTestClass(MachinePipeTest.class);
 	}
 }
