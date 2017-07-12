@@ -8,6 +8,7 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.teamio.blockunit.TestMethod;
 import net.teamio.blockunit.TestingHarness;
+import net.teamio.taam.Config;
 import net.teamio.taam.Taam;
 import net.teamio.taam.content.piping.MachineTank;
 import net.teamio.taam.piping.IPipe;
@@ -20,7 +21,11 @@ public class MachineTankTest {
 	@TestMethod
 	public void testFluidHandlerPipeHandlerInterop(TestingHarness t) {
 
+		GenericPipeTests.testPipeEnd(t, new MachineTank().getCapability(Taam.CAPABILITY_PIPE, EnumFacing.UP), Config.pl_tank_capacity, true);
+
 		MachineTank tank = new MachineTank();
+
+		GenericPipeTests.testPipeEnd(t, tank.getCapability(Taam.CAPABILITY_PIPE, EnumFacing.UP), Config.pl_tank_capacity, true);
 
 		IFluidHandler fluidHandler = tank.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, EnumFacing.UP);
 		IPipe pipe = tank.getCapability(Taam.CAPABILITY_PIPE, EnumFacing.UP);
@@ -69,7 +74,8 @@ public class MachineTankTest {
 		t.assertEquals(0, amount);
 
 		// Insert from pipe
-		pipe.addFluid(new FluidStack(FluidRegistry.WATER, 5));
+		amount = pipe.addFluid(new FluidStack(FluidRegistry.WATER, 5));
+		t.assertEquals(5, amount);
 
 		// Simulate Drain from FH
 		drained = fluidHandler.drain(new FluidStack(FluidRegistry.WATER, 5), false);
@@ -86,6 +92,12 @@ public class MachineTankTest {
 		// Check amount still the same
 		amount = pipe2.getFluidAmount(new FluidStack(FluidRegistry.WATER, 0));
 		t.assertEquals(5, amount);
+
+		// Drain from pipe
+		amount = pipe.removeFluid(new FluidStack(FluidRegistry.WATER, 5));
+		t.assertEquals(5, amount);
+
+		GenericPipeTests.testPipeEnd(t, tank.getCapability(Taam.CAPABILITY_PIPE, EnumFacing.UP), Config.pl_tank_capacity, true);
 
 	}
 

@@ -20,9 +20,33 @@ public class GenericPipeTests {
 	public static void testPipeEnd(TestingHarness t, IPipe pipe, int capacity, boolean singularCapacity) {
 		int amount;
 
-		// Insert LAVA
-		amount = pipe.addFluid(new FluidStack(FluidRegistry.LAVA, 5));
 
+
+		// Insert LAVA
+		FluidStack stack = new FluidStack(FluidRegistry.LAVA, 5);
+		amount = pipe.addFluid(stack);
+
+		t.assertEquals(5, pipe.getFluidAmount(new FluidStack(FluidRegistry.LAVA, 0)));
+		t.assertEquals(5, amount);
+
+
+		/*
+		Test: Inserting fluidstack does not modify original fluid stack
+		+ modifying stack does not change amount in pipe
+		 */
+		t.assertEquals(5, stack.amount);
+		stack.amount = 0;
+		amount = pipe.getFluidAmount(stack);
+		t.assertEquals(5, amount);
+		stack.amount = 5;
+
+		amount = pipe.addFluid(stack);
+		t.assertEquals(5, stack.amount);
+		t.assertEquals(10, pipe.getFluidAmount(new FluidStack(FluidRegistry.LAVA, 0)));
+		t.assertEquals(5, amount);
+
+		amount = pipe.removeFluid(stack);
+		t.assertEquals(5, stack.amount);
 		t.assertEquals(5, pipe.getFluidAmount(new FluidStack(FluidRegistry.LAVA, 0)));
 		t.assertEquals(5, amount);
 
