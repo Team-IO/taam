@@ -271,7 +271,7 @@ public class TileEntityConveyor extends BaseTileEntity implements IRotatable, IC
 		 */
 
 		if (ConveyorUtil.tryInsertItemsFromWorld(this, worldObj, null, false)) {
-			updateState(false, false, false);
+			markDirty();
 		}
 
 		/*
@@ -283,7 +283,7 @@ public class TileEntityConveyor extends BaseTileEntity implements IRotatable, IC
 		// as we depend on the status of the next slot
 		int[] slotOrder = ConveyorUtil.getSlotOrderForDirection(direction);
 		if (ConveyorUtil.defaultTransition(worldObj, pos, conveyorSlots, this, slotOrder)) {
-			updateState(false, false, false);
+			markDirty();
 		}
 	}
 

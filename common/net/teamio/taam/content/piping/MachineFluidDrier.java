@@ -51,6 +51,9 @@ public class MachineFluidDrier implements IMachine {
 		resetTimeout();
 	}
 
+	@Override
+	public void onCreated(World worldObj, BlockPos pos) {}
+
 	private void updateOcclusion() {
 		pipeEndIn.occluded = FaceBitmap.isSideBitSet(occludedSides, EnumFacing.UP);
 	}
@@ -120,16 +123,17 @@ public class MachineFluidDrier implements IMachine {
 	}
 
 	@Override
-	public void update(World world, BlockPos pos) {
+	public boolean update(World world, BlockPos pos) {
 		PipeUtil.processPipes(pipeEndIn, world, pos);
 
 		if(world.isRemote) {
-			return;
+			return false;
 		}
 
 		if(process(world, pos)) {
-			//TODO: updateState(false, false, false);
+			return true;
 		}
+		return false;
 	}
 
 	@Override

@@ -12,6 +12,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.IWorldNameable;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.teamio.taam.util.TaamUtil;
 
 /**
@@ -34,6 +36,11 @@ public abstract class BaseTileEntity extends TileEntity implements IWorldNameabl
 			return new ArrayList<String>(14);
 		}
 	};
+
+	@Override
+	public void onLoad() {
+		super.onLoad();
+	}
 
 	public void setOwner(EntityPlayer player) {
 		if (player == null) {
@@ -109,6 +116,7 @@ public abstract class BaseTileEntity extends TileEntity implements IWorldNameabl
 	 */
 
 	@Override
+	@SideOnly(Side.CLIENT)
 	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
 		NBTTagCompound nbt = pkt.getNbtCompound();
 

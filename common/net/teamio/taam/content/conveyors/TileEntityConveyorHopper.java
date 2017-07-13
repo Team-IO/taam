@@ -194,7 +194,7 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IRedston
 			}
 		}
 		if(changed) {
-			updateState(false, false, false);
+			markDirty();
 		}
 	}
 

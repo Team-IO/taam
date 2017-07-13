@@ -195,7 +195,7 @@ public class ApplianceSprayer extends ATileEntityAppliance implements ITickable,
 		wrapper.itemStack = result;
 		wrapper.unblock();
 
-		updateState(false, false, false);
+		markDirty();
 		//TODO: Particles
 
 		return true;

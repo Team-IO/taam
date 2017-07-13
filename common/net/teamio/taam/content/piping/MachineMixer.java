@@ -59,13 +59,7 @@ public class MachineMixer implements IMachine, IRotatable {
 			MachinePipe.fromBorderFlange, MachinePipe.fromBorderFlange, 0,
 			1 - MachinePipe.fromBorderFlange, 1 - MachinePipe.fromBorderFlange, 1);
 
-	/**
-	 * Cached from last block update
-	 */
-	private World world;
-	/**
-	 * Cached from last block update
-	 */
+	private World worldObj;
 	private BlockPos pos;
 
 	/**
@@ -93,6 +87,12 @@ public class MachineMixer implements IMachine, IRotatable {
 			return 0;
 		}
 	};
+
+	@Override
+	public void onCreated(World worldObj, BlockPos pos) {
+		this.worldObj = worldObj;
+		this.pos = pos;
+	}
 
 	public MachineMixer() {
 		pipeEndOut = new PipeEnd(direction, Config.pl_mixer_capacity_output, false);
@@ -184,16 +184,19 @@ public class MachineMixer implements IMachine, IRotatable {
 	}
 
 	@Override
-	public void update(World world, BlockPos pos) {
+	public boolean update(World world, BlockPos pos) {
 		// Output backlog of already processed stuff
 		if (backlog != null) {
 			backlog.amount -= pipeEndOut.addFluid(backlog);
 			if (backlog.amount <= 0) {
 				backlog = null;
 			}
+			return true;
 		}
 		PipeUtil.processPipes(pipeEndIn, world, pos);
 		PipeUtil.processPipes(pipeEndOut, world, pos);
+		//TODO: only true if actually updated... Awaiting pipe network logic
+		return true;
 	}
 
 	@Override
@@ -204,8 +207,6 @@ public class MachineMixer implements IMachine, IRotatable {
 	@Override
 	public void blockUpdate(World world, BlockPos pos, byte occlusionField) {
 		occludedSides = occlusionField;
-		this.world = world;
-		this.pos = pos;
 		updateOcclusion();
 	}
 
@@ -277,7 +278,7 @@ public class MachineMixer implements IMachine, IRotatable {
 	 * @param stack
 	 * @return true if there is a recipe available, false if not. Also returns
 	 *         false if there is no input fluid. Does not check for the amount
-	 *         of fluid, so {@link #process(ItemStack)} may still fail.
+	 *         of fluid, so {@link #process(ItemStack, boolean)} may still fail.
 	 */
 	private IProcessingRecipeFluidBased getRecipe(ItemStack stack) {
 		FluidStack inside = pipeEndIn.getFluid();
@@ -322,7 +323,7 @@ public class MachineMixer implements IMachine, IRotatable {
 		 */
 
 		//TODO: move process() to the update method & save one stack in an internal inventory
-		boolean redstoneHigh = world != null && world.isBlockIndirectlyGettingPowered(pos) > 0;
+		boolean redstoneHigh = worldObj != null && worldObj.isBlockIndirectlyGettingPowered(pos) > 0;
 
 		isShutdown = TaamUtil.isShutdown(TaamUtil.RANDOM, redstoneMode, redstoneHigh);
 

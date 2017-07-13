@@ -70,6 +70,9 @@ public class MachinePump implements IMachine, IRotatable {
 		pipeEndIn.setSuction(Config.pl_pump_suction);
 	}
 
+	@Override
+	public void onCreated(World worldObj, BlockPos pos) {}
+
 	private void updateOcclusion() {
 		pipeEndOut.occluded = FaceBitmap.isSideBitSet(occludedSides, pipeEndOut.getSide());
 		pipeEndIn.occluded = FaceBitmap.isSideBitSet(occludedSides, pipeEndIn.getSide());
@@ -129,9 +132,10 @@ public class MachinePump implements IMachine, IRotatable {
 	}
 
 	@Override
-	public void update(World world, BlockPos pos) {
+	public boolean update(World world, BlockPos pos) {
 		PipeUtil.processPipes(pipeEndOut, world, pos);
 		PipeUtil.processPipes(pipeEndIn, world, pos);
+		return true;
 	}
 
 	@Override

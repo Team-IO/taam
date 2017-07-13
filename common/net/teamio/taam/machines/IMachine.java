@@ -29,8 +29,9 @@ public interface IMachine extends ICapabilityProvider {
 	 *
 	 * @param world
 	 * @param pos
+	 * @return true if state changed & the TileEntity/Multipart needs to be marked as dirty.
 	 */
-	void update(World world, BlockPos pos);
+	boolean update(World world, BlockPos pos);
 
 	/**
 	 * Called when a neighbor block changes, or for multiparts, a part in the
@@ -57,4 +58,6 @@ public interface IMachine extends ICapabilityProvider {
 	void addCollisionBoxes(AxisAlignedBB mask, List<AxisAlignedBB> list, Entity collidingEntity);
 	void addSelectionBoxes(List<AxisAlignedBB> list);
 	void addOcclusionBoxes(List<AxisAlignedBB> list);
+
+	void onCreated(World worldObj, BlockPos pos);
 }

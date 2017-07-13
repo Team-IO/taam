@@ -100,9 +100,11 @@ public final class PipeUtil {
 	};
 
 	public static void processPipes(IPipe pipe, IBlockAccess world, BlockPos pos) {
+		//TODO: Migrate to pipe network logic
 
 		if (pipe == null) {
 			Log.warn("null pipe requested for processing at {} in {}", pos, world);
+			return;
 		}
 
 		ArrayList<IPipe> connected = PipeUtil.connected.get();

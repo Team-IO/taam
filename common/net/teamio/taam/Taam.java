@@ -1,10 +1,5 @@
 package net.teamio.taam;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -33,6 +28,10 @@ import net.teamio.taam.piping.IPipe;
 import net.teamio.taam.rendering.TankRenderInfo;
 
 import javax.annotation.Nonnull;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public final class Taam {
 	private Taam() {
@@ -127,31 +126,31 @@ public final class Taam {
 	public static final String BLOCK_MACHINE_WRAPPER = "machine";
 
 	public enum BLOCK_ORE_META implements IStringSerializable {
-		/*0*/copper		(true, true, "Copper",		14, 7, 0, 59),
-		/*1*/tin		(true, true, "Tin",			13, 7, 0, 59),
-		/*2*/aluminum	(true, true, "Aluminum",	2,  3,  0, 59),
-		/*3*/bauxite	(false, true, "Bauxite",	35, 10, 0, 128),  //No Ingot
-		/*4*/kaolinite	(false, true, "Kaolinite", 	35, 5, 0, 100), //No Ingot
+		/*0*/copper(true, true, "Copper", 14, 7, 0, 59),
+		/*1*/tin(true, true, "Tin", 13, 7, 0, 59),
+		/*2*/aluminum(true, true, "Aluminum", 2, 3, 0, 59),
+		/*3*/bauxite(false, true, "Bauxite", 35, 10, 0, 128),  //No Ingot
+		/*4*/kaolinite(false, true, "Kaolinite", 35, 5, 0, 100), //No Ingot
 		// Reserved for future use as blocks
-		/*5*/reserved1	(false, false),
-		/*6*/reserved2	(false, false),
-		/*7*/reserved3	(false, false),
-		/*8*/reserved4	(false, false),
-		/*9*/reserved5	(false, false),
-		/*10*/reserved6	(false, false),
-		/*11*/reserved7	(false, false),
-		/*12*/reserved8	(false, false),
-		/*13*/reserved9	(false, false),
+		/*5*/reserved1(false, false),
+		/*6*/reserved2(false, false),
+		/*7*/reserved3(false, false),
+		/*8*/reserved4(false, false),
+		/*9*/reserved5(false, false),
+		/*10*/reserved6(false, false),
+		/*11*/reserved7(false, false),
+		/*12*/reserved8(false, false),
+		/*13*/reserved9(false, false),
 		/*14*/reserved10(false, false),
 		/*15*/reserved11(false, false),
 
 		//Vanilla requires only the "custom" stuff
-		/*16*/gold		(false, true),
-		/*17*/iron		(false, true),
-		/*18*/coal		(false, true),
+		/*16*/gold(false, true),
+		/*17*/iron(false, true),
+		/*18*/coal(false, true),
 
 		// Non-Ore stuff
-		/*19*/stone		(false, true),
+		/*19*/stone(false, true),
 		;
 
 		public final boolean ore, ingot, dust;

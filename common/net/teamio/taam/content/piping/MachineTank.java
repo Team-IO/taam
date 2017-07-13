@@ -49,13 +49,27 @@ public class MachineTank implements IMachine, IWorldInteractable {
 
 	private byte occludedSides;
 
+	private World worldObj;
+	private BlockPos pos;
+
 	public MachineTank() {
-		tank = new FluidTank(Config.pl_tank_capacity);
+		tank = new FluidTank(Config.pl_tank_capacity) {
+			@Override
+			protected void onContentsChanged() {
+				//TODO: Mark Dirty
+			}
+		};
 		pipeEndUP = new PipeEndFluidHandler(tank, EnumFacing.UP, true);
 		pipeEndDOWN = new PipeEndFluidHandler(tank, EnumFacing.DOWN, true);
 		pipeEndUP.setSuction(Config.pl_tank_suction);
 		// Suction on lower end of the tank is always 1 lower than on the top, so stacked tanks always transfer down.
 		pipeEndDOWN.setSuction(Config.pl_tank_suction - 1);
+	}
+
+	@Override
+	public void onCreated(World worldObj, BlockPos pos) {
+		this.worldObj = worldObj;
+		this.pos = pos;
 	}
 
 	private void updateOcclusion() {
@@ -108,9 +122,10 @@ public class MachineTank implements IMachine, IWorldInteractable {
 	}
 
 	@Override
-	public void update(World world, BlockPos pos) {
+	public boolean update(World world, BlockPos pos) {
 		PipeUtil.processPipes(pipeEndUP, world, pos);
 		PipeUtil.processPipes(pipeEndDOWN, world, pos);
+		return true;
 	}
 
 	@Override

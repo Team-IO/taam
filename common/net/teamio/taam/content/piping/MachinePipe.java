@@ -84,8 +84,7 @@ public class MachinePipe implements IMachine, IPipe, IRenderable {
 	private final PipeInfo info;
 	/**
 	 * Bitmap containing the surrounding pipes Runtime-only, required for
-	 * rendering. This is updated in the {@link #renderUpdate()} method, called
-	 * from
+	 * rendering. This is updated in the {@link #renderUpdate(IBlockAccess, BlockPos)} method, called from
 	 * {@link net.minecraft.block.Block#getActualState(net.minecraft.block.state.IBlockState, IBlockAccess, BlockPos)}
 	 * just before rendering.
 	 */
@@ -101,6 +100,9 @@ public class MachinePipe implements IMachine, IPipe, IRenderable {
 	public MachinePipe() {
 		info = new PipeInfo(Config.pl_pipe_capacity);
 	}
+
+	@Override
+	public void onCreated(World worldObj, BlockPos pos) {}
 
 	@Override
 	public List<String> getVisibleParts() {
@@ -201,7 +203,7 @@ public class MachinePipe implements IMachine, IPipe, IRenderable {
 	}
 
 	@Override
-	public void update(World world, BlockPos pos) {
+	public boolean update(World world, BlockPos pos) {
 		// Process "this"
 		PipeUtil.processPipes(this, world, pos);
 		// Process the fluid handlers for adjecent non-pipe-machines (implementing IFluidHandler)
@@ -213,8 +215,7 @@ public class MachinePipe implements IMachine, IPipe, IRenderable {
 				}
 			}
 		}
-
-		//TODO: updateState(false, false, false);
+		return true;
 	}
 
 	@Override

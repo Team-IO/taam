@@ -20,8 +20,6 @@ public class GenericPipeTests {
 	public static void testPipeEnd(TestingHarness t, IPipe pipe, int capacity, boolean singularCapacity) {
 		int amount;
 
-
-
 		// Insert LAVA
 		FluidStack stack = new FluidStack(FluidRegistry.LAVA, 5);
 		amount = pipe.addFluid(stack);
