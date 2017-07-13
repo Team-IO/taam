@@ -1,7 +1,5 @@
 package net.teamio.taam.content.conveyors;
 
-import java.util.List;
-
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -11,6 +9,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.teamio.taam.Taam;
 import net.teamio.taam.content.ItemWithMetadata;
+
+import java.util.List;
 
 public class ItemConveyorAppliance extends ItemWithMetadata<Taam.BLOCK_PRODUCTIONLINE_APPLIANCE_META> {
 

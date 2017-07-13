@@ -1,15 +1,6 @@
 package net.teamio.taam;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.vecmath.Matrix4f;
-import javax.vecmath.Vector3f;
-
-import org.apache.commons.lang3.tuple.Pair;
-
 import com.google.common.collect.ImmutableMap;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemModelMesher;
@@ -57,6 +48,12 @@ import net.teamio.taam.rendering.obj.OBJCustomData;
 import net.teamio.taam.rendering.obj.OBJLoader;
 import net.teamio.taam.rendering.obj.OBJModel;
 import net.teamio.taam.rendering.obj.OBJModel.OBJBakedModel;
+import org.apache.commons.lang3.tuple.Pair;
+
+import javax.vecmath.Matrix4f;
+import javax.vecmath.Vector3f;
+import java.util.ArrayList;
+import java.util.List;
 
 @SuppressWarnings("deprecation")
 public class TaamClientProxy extends TaamCommonProxy {

@@ -1,9 +1,5 @@
 package net.teamio.taam.gui.advanced;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -14,6 +10,10 @@ import net.teamio.taam.Config;
 import net.teamio.taam.Log;
 import net.teamio.taam.gui.util.CustomButton;
 import net.teamio.taam.gui.util.Drawable;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GuiAdvancedMachine extends GuiContainer {
 

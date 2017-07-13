@@ -1,7 +1,5 @@
 package net.teamio.taam.content.common;
 
-import java.util.List;
-
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
@@ -26,6 +24,8 @@ import net.teamio.taam.Taam.BLOCK_MACHINES_META;
 import net.teamio.taam.content.BaseBlock;
 import net.teamio.taam.content.piping.TileEntityCreativeWell;
 import net.teamio.taam.rendering.obj.OBJModel;
+
+import java.util.List;
 
 public class BlockMachines extends BaseBlock {
 

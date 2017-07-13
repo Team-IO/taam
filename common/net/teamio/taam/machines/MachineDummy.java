@@ -1,7 +1,5 @@
 package net.teamio.taam.machines;
 
-import java.util.List;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
@@ -13,6 +11,8 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.teamio.taam.Log;
+
+import java.util.List;
 
 /**
  * Dummy machine used instead of thousands of null-checks
@@ -59,8 +59,9 @@ public class MachineDummy implements IMachine {
 	}
 
 	@Override
-	public void update(World world, BlockPos pos) {
-		Log.warn("Machine Tile Entity with Dummy machine on {}. This means, a machine was not saved properly.", pos);
+	public boolean update(World world, BlockPos pos) {
+		Log.warn("Machine Tile Entity with Dummy machine at {}. This means, a machine was not saved properly.", pos);
+		return false;
 	}
 
 	@Override
@@ -85,4 +86,8 @@ public class MachineDummy implements IMachine {
 	public void addOcclusionBoxes(List<AxisAlignedBB> list) {
 	}
 
+	@Override
+	public void onCreated(World worldObj, BlockPos pos) {
+		Log.error("Dummy entity created on load. This means machine creation code is flawed. THIS IS AN ERROR! Report to author!", pos);
+	}
 }

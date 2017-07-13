@@ -1,10 +1,5 @@
 package net.teamio.taam.util;
 
-import java.util.List;
-import java.util.Random;
-
-import org.apache.commons.lang3.ArrayUtils;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
@@ -18,6 +13,8 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.IWorldNameable;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 import net.teamio.taam.Config;
 import net.teamio.taam.MultipartHandler;
@@ -25,12 +22,15 @@ import net.teamio.taam.Taam;
 import net.teamio.taam.content.IRedstoneControlled;
 import net.teamio.taam.conveyors.IConveyorApplianceHost;
 import net.teamio.taam.conveyors.IConveyorSlots;
+import org.apache.commons.lang3.ArrayUtils;
+
+import java.util.List;
+import java.util.Random;
 
 /**
  * Generic Utility Methods, used across multiple "themes".
  *
  * @author Oliver Kahrmann
- *
  */
 public final class TaamUtil {
 	private TaamUtil() {
@@ -45,7 +45,7 @@ public final class TaamUtil {
 	/**
 	 * Updates a block on server-side so that an update packet is sent to the
 	 * player.
-	 * 
+	 *
 	 * @param world
 	 * @param pos
 	 */
@@ -60,7 +60,7 @@ public final class TaamUtil {
 	/**
 	 * Checks if the given block can be dropped into, i.e. there is air or a
 	 * liquid.
-	 * 
+	 *
 	 * @param world
 	 * @param pos
 	 * @return true, if the block at the given position is air or a liquid.
@@ -73,7 +73,7 @@ public final class TaamUtil {
 
 	/**
 	 * Breaks a block in the world, dropping it as an item.
-	 * 
+	 *
 	 * @param world
 	 * @param pos
 	 */
@@ -84,9 +84,9 @@ public final class TaamUtil {
 
 	/**
 	 * Breaks a block in the world, dropping it as an item.
-	 * 
+	 * <p>
 	 * Convenience method if the blockstate is already available.
-	 * 
+	 *
 	 * @param world
 	 * @param pos
 	 * @param blockState
@@ -100,7 +100,7 @@ public final class TaamUtil {
 	/**
 	 * Breaks a block in the world and tries to add it to the given player's
 	 * inventory. If that fails, it is dropped into the world.
-	 * 
+	 *
 	 * @param player
 	 * @param world
 	 * @param pos
@@ -113,9 +113,9 @@ public final class TaamUtil {
 	/**
 	 * Breaks a block in the world and tries to add it to the given player's
 	 * inventory. If that fails, it is dropped into the world.
-	 * 
+	 * <p>
 	 * Convenience method if the blockstate is already available.
-	 * 
+	 *
 	 * @param player
 	 * @param world
 	 * @param pos
@@ -133,7 +133,7 @@ public final class TaamUtil {
 
 	/**
 	 * Returns the block drops on a given block. Assumes 0 fortune level.
-	 * 
+	 *
 	 * @param world
 	 * @param pos
 	 * @param blockState
@@ -147,15 +147,13 @@ public final class TaamUtil {
 	/**
 	 * Utility method for checking if a machine is allowed to run, given a
 	 * redstone mode and the available redstone signal.
-	 * 
-	 * 
+	 *
 	 * @param rand
 	 * @param redstoneMode
 	 * @param redstoneHigh
 	 * @return
-	 * 
 	 * @deprecated Will be revised & potentially (re)moved. Currently no
-	 *             alternative. TODO: Revise
+	 * alternative. TODO: Revise
 	 */
 	@Deprecated
 	public static boolean isShutdown(Random rand, int redstoneMode, boolean redstoneHigh) {
@@ -177,11 +175,9 @@ public final class TaamUtil {
 	 * capability on that side.
 	 *
 	 * @param world
-	 * @param pos
-	 *            The attachable block.
-	 * @param dir
-	 *            The direction in which to check. Checks the block at the
-	 *            offset coordinates.
+	 * @param pos   The attachable block.
+	 * @param dir   The direction in which to check. Checks the block at the
+	 *              offset coordinates.
 	 * @return
 	 */
 	public static boolean canAttach(IBlockAccess world, BlockPos pos, EnumFacing dir) {
@@ -196,7 +192,7 @@ public final class TaamUtil {
 	/**
 	 * Decides whether an appliance can be placed somewhere. Checks availability
 	 * of an {@link IConveyorApplianceHost}. TODO: use a capability for that!
-	 * 
+	 *
 	 * @param world
 	 * @param pos
 	 * @param dir
@@ -236,9 +232,9 @@ public final class TaamUtil {
 	}
 
 	/**
-	 * Compares if the two given itemstacks have a common ore dictionary name.
-	 * 
-	 * @param stack
+	 * Compares if the two given items tacks have a common ore dictionary name.
+	 *
+	 * @param stack1
 	 * @param stack2
 	 * @return
 	 */
@@ -257,7 +253,7 @@ public final class TaamUtil {
 	/**
 	 * Compares if the two given itemstacks are from the same mod. (a.k.a.
 	 * sharing the same domain)
-	 * 
+	 *
 	 * @param stack1
 	 * @param stack2
 	 * @return
@@ -268,6 +264,13 @@ public final class TaamUtil {
 		return regName1.getResourceDomain().equals(regName2.getResourceDomain());
 	}
 
+	/**
+	 * Translates an inventory (IWorldNameable) or returns a custom name, if present.
+	 *
+	 * @param inventory
+	 * @return A translated or custom name of the given IWorldNameable.
+	 */
+	@SideOnly(Side.CLIENT)
 	public static String getTranslatedName(IWorldNameable inventory) {
 		if (inventory.hasCustomName()) {
 			return inventory.getDisplayName().getFormattedText();
@@ -279,10 +282,10 @@ public final class TaamUtil {
 		if (tileEntity == null) {
 			return null;
 		}
-		if(tileEntity.hasCapability(capability, side)) {
+		if (tileEntity.hasCapability(capability, side)) {
 			return tileEntity.getCapability(capability, side);
 		}
-		if(Config.multipart_present) {
+		if (Config.multipart_present) {
 			return MultipartHandler.getCapabilityForCenter(capability, tileEntity.getWorld(), tileEntity.getPos(), side);
 		}
 		return null;

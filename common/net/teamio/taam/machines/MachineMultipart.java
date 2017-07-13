@@ -1,13 +1,7 @@
 package net.teamio.taam.machines;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.EnumSet;
-import java.util.List;
-
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
-
 import mcmultipart.MCMultiPartMod;
 import mcmultipart.block.BlockMultipartContainer;
 import mcmultipart.capabilities.ISlottedCapabilityProvider;
@@ -54,6 +48,11 @@ import net.teamio.taam.util.FaceBitmap;
 import net.teamio.taam.util.InventoryUtils;
 import net.teamio.taam.util.WrenchUtil;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.EnumSet;
+import java.util.List;
+
 public class MachineMultipart extends Multipart implements INormallyOccludingPart, ITickable, ISlottedPart, ISlottedCapabilityProvider {
 	public IMachine machine;
 	private IMachineMetaInfo meta;
@@ -67,6 +66,15 @@ public class MachineMultipart extends Multipart implements INormallyOccludingPar
 	public MachineMultipart(IMachineMetaInfo meta) {
 		this.meta = meta;
 		machine = meta.createMachine();
+	}
+
+	@Override
+	public void onAdded() {
+		if (machine == null) {
+			Log.error("MachineMultipart at {} is missing machine instance.", getPos());
+			return;
+		}
+		machine.onCreated(getWorld(), getPos());
 	}
 
 	@Override
@@ -86,6 +94,9 @@ public class MachineMultipart extends Multipart implements INormallyOccludingPar
 
 	@Override
 	public void addCollisionBoxes(AxisAlignedBB mask, List<AxisAlignedBB> list, Entity collidingEntity) {
+		if (machine == null) {
+			return;
+		}
 		machine.addCollisionBoxes(mask, list, collidingEntity);
 	}
 
@@ -158,6 +169,11 @@ public class MachineMultipart extends Multipart implements INormallyOccludingPar
 			}
 		}
 
+		if (machine == null) {
+			// DO NOT LOG, prevent some log spamming.
+			return;
+		}
+
 		machine.blockUpdate(getWorld(), getPos(), occlusionField);
 		if(machine.renderUpdate(getWorld(), getPos())) {
 			markRenderUpdate();
@@ -209,6 +225,10 @@ public class MachineMultipart extends Multipart implements INormallyOccludingPar
 
 	@Override
 	public IBlockState getExtendedState(IBlockState state) {
+		if (machine == null) {
+			Log.error("MachineMultipart at {} is missing machine instance.", getPos());
+			return state;
+		}
 		World world = getWorld();
 		BlockPos pos = getPos();
 		machine.renderUpdate(world, pos);
@@ -269,6 +289,10 @@ public class MachineMultipart extends Multipart implements INormallyOccludingPar
 			machine = meta.createMachine();
 			markRenderUpdate();
 		}
+		if (machine == null) {
+			Log.error("MachineMultipart at {} is missing machine instance.", getPos());
+			return;
+		}
 		machine.readPropertiesFromNBT(tag);
 	}
 
@@ -281,29 +305,49 @@ public class MachineMultipart extends Multipart implements INormallyOccludingPar
 			machine = meta.createMachine();
 			markRenderUpdate();
 		}
+		if (machine == null) {
+			Log.error("MachineMultipart at {} is missing machine instance.", getPos());
+			return;
+		}
 		machine.readUpdatePacket(buf);
 	}
 
 	@Override
 	public void writeUpdatePacket(PacketBuffer buf) {
 		buf.writeString(meta.unlocalizedName());
+		if (machine == null) {
+			Log.error("MachineMultipart at {} is missing machine instance.", getPos());
+			return;
+		}
 		machine.writeUpdatePacket(buf);
 	}
 
 	@Override
 	public NBTTagCompound writeToNBT(NBTTagCompound tag) {
 		tag.setString("machine", meta.unlocalizedName());
+		if (machine == null) {
+			Log.error("MachineMultipart at {} is missing machine instance.", getPos());
+			return tag;
+		}
 		machine.writePropertiesToNBT(tag);
 		return tag;
 	}
 
 	@Override
 	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+		if (machine == null) {
+			Log.error("MachineMultipart at {} is missing machine instance.", getPos());
+			return false;
+		}
 		return machine.hasCapability(capability, facing);
 	}
 
 	@Override
 	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+		if (machine == null) {
+			Log.error("MachineMultipart at {} is missing machine instance.", getPos());
+			return null;
+		}
 		return machine.getCapability(capability, facing);
 	}
 
@@ -314,7 +358,9 @@ public class MachineMultipart extends Multipart implements INormallyOccludingPar
 
 	@Override
 	public void update() {
-		machine.update(getWorld(), getPos());
+		if(machine.update(getWorld(), getPos())) {
+			markDirty();
+		}
 	}
 
 	/*

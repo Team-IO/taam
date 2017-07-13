@@ -1,7 +1,5 @@
 package net.teamio.taam.content.conveyors;
 
-import java.util.List;
-
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -36,6 +34,8 @@ import net.teamio.taam.recipes.ProcessingRegistry;
 import net.teamio.taam.util.InventoryUtils;
 import net.teamio.taam.util.TaamUtil;
 import net.teamio.taam.util.WorldCoord;
+
+import java.util.List;
 
 public class TileEntityConveyorProcessor extends BaseTileEntity implements IRedstoneControlled, IWorldInteractable, IRotatable, ITickable {
 

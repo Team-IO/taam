@@ -1,8 +1,5 @@
 package net.teamio.taam.content.piping;
 
-import java.io.IOException;
-import java.util.List;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
@@ -24,6 +21,9 @@ import net.teamio.taam.piping.PipeInfo;
 import net.teamio.taam.piping.PipeUtil;
 import net.teamio.taam.rendering.TankRenderInfo;
 import net.teamio.taam.util.FaceBitmap;
+
+import java.io.IOException;
+import java.util.List;
 
 public class MachinePump implements IMachine, IRotatable {
 
@@ -69,6 +69,9 @@ public class MachinePump implements IMachine, IRotatable {
 		pipeEndOut.setPressure(Config.pl_pump_pressure);
 		pipeEndIn.setSuction(Config.pl_pump_suction);
 	}
+
+	@Override
+	public void onCreated(World worldObj, BlockPos pos) {}
 
 	private void updateOcclusion() {
 		pipeEndOut.occluded = FaceBitmap.isSideBitSet(occludedSides, pipeEndOut.getSide());
@@ -129,9 +132,10 @@ public class MachinePump implements IMachine, IRotatable {
 	}
 
 	@Override
-	public void update(World world, BlockPos pos) {
+	public boolean update(World world, BlockPos pos) {
 		PipeUtil.processPipes(pipeEndOut, world, pos);
 		PipeUtil.processPipes(pipeEndIn, world, pos);
+		return true;
 	}
 
 	@Override

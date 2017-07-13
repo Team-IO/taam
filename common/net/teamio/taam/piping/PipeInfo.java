@@ -1,14 +1,15 @@
 package net.teamio.taam.piping;
 
-import java.io.IOException;
-import java.util.ArrayList;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fluids.FluidStack;
 import net.teamio.taam.Log;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Data class that implements most methods of {@link IPipe} to ease
@@ -154,7 +155,7 @@ public class PipeInfo {
 		return 0;
 	}
 
-	public FluidStack[] getFluids() {
-		return content.toArray(new FluidStack[content.size()]);
+	public List<FluidStack> getFluids() {
+		return content;
 	}
 }

@@ -5,6 +5,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fluids.FluidStack;
 
+import java.util.List;
+
 /**
  * Base interface for a pipe. Not necessarily a tile entity, as there can be
  * multiple pipes/pipe ends per block.
@@ -88,9 +90,9 @@ public interface IPipe {
 	/**
 	 * Get all fluids currently in the pipe.
 	 *
-	 * @return An array of {@link FluidStack} that are currently in the pipe.
+	 * @return A list of {@link FluidStack} that are currently in the pipe.
 	 */
-	FluidStack[] getFluids();
+	List<FluidStack> getFluids();
 
 	/**
 	 * Get the capacity of this pipe. This is the total sum, so if there is

@@ -1,8 +1,5 @@
 package net.teamio.taam.content.piping;
 
-import java.io.IOException;
-import java.util.List;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
@@ -27,6 +24,9 @@ import net.teamio.taam.recipes.ProcessingRegistry;
 import net.teamio.taam.util.FaceBitmap;
 import net.teamio.taam.util.TaamUtil;
 
+import java.io.IOException;
+import java.util.List;
+
 public class MachineFluidDrier implements IMachine {
 
 	private PipeEndRestricted pipeEndIn;
@@ -50,6 +50,9 @@ public class MachineFluidDrier implements IMachine {
 		pipeEndIn = new PipeEndRestricted(EnumFacing.UP, Config.pl_fluid_drier_capacity, false);
 		resetTimeout();
 	}
+
+	@Override
+	public void onCreated(World worldObj, BlockPos pos) {}
 
 	private void updateOcclusion() {
 		pipeEndIn.occluded = FaceBitmap.isSideBitSet(occludedSides, EnumFacing.UP);
@@ -120,16 +123,17 @@ public class MachineFluidDrier implements IMachine {
 	}
 
 	@Override
-	public void update(World world, BlockPos pos) {
+	public boolean update(World world, BlockPos pos) {
 		PipeUtil.processPipes(pipeEndIn, world, pos);
 
 		if(world.isRemote) {
-			return;
+			return false;
 		}
 
 		if(process(world, pos)) {
-			//TODO: updateState(false, false, false);
+			return true;
 		}
+		return false;
 	}
 
 	@Override

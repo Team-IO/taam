@@ -1,7 +1,6 @@
 package net.teamio.taam.gui.util;
 
 import com.google.common.base.Function;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraftforge.fml.client.config.GuiUtils;

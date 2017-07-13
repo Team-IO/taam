@@ -1,9 +1,5 @@
 package net.teamio.taam;
 
-import java.util.List;
-
-import org.apache.commons.lang3.NotImplementedException;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -42,6 +38,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
+import net.teamio.blockunit.UnitTesterItem;
 import net.teamio.taam.Taam.FLUID_MATERIAL_META;
 import net.teamio.taam.Taam.ITEM_PART_META;
 import net.teamio.taam.content.ItemWithMetadata;
@@ -51,7 +48,6 @@ import net.teamio.taam.content.common.BlockLamp;
 import net.teamio.taam.content.common.BlockMachines;
 import net.teamio.taam.content.common.BlockOre;
 import net.teamio.taam.content.common.BlockSensor;
-import net.teamio.taam.content.common.BlockSlidingDoor;
 import net.teamio.taam.content.common.BlockSupportBeam;
 import net.teamio.taam.content.common.FluidDye;
 import net.teamio.taam.content.common.FluidMaterial;
@@ -88,6 +84,9 @@ import net.teamio.taam.machines.MachineTileEntity;
 import net.teamio.taam.piping.IPipe;
 import net.teamio.taam.piping.PipeEnd;
 import net.teamio.taam.rendering.TankRenderInfo;
+import org.apache.commons.lang3.NotImplementedException;
+
+import java.util.List;
 
 
 @Mod(modid = Taam.MOD_ID, name = Taam.MOD_NAME, version = Taam.MOD_VERSION, guiFactory = Taam.GUI_FACTORY_CLASS, updateJSON = Taam.MOD_UPDATE_URL)
@@ -124,6 +123,8 @@ public class TaamMain {
 	 */
 	public static Item itemMachine;
 
+	public static UnitTesterItem unitTesterItem;
+
 	public static CreativeTabs creativeTab;
 
 	public static BlockLamp blockLamp;
@@ -133,7 +134,6 @@ public class TaamMain {
 	public static BlockProductionLine blockProductionLine;
 	public static BlockProductionLineAttachable blockProductionLineAttachable;
 	public static BlockProductionLineAppliance blockProductionLineAppliance;
-	public static BlockSlidingDoor blockSlidingDoor;
 	public static BlockOre blockOre;
 	public static BlockBuilding blockConcrete;
 	public static BlockSupportBeam blockSupportBeam;
@@ -292,6 +292,7 @@ public class TaamMain {
 				Taam.BLOCK_SUPPORT_BEAM
 				);
 
+		registerItem(unitTesterItem = new UnitTesterItem(), Taam.ITEM_DEBUG_UNIT_TESTER);
 		registerItem(itemDebugTool = new ItemDebugTool(), Taam.ITEM_DEBUG_TOOL);
 		registerItem(itemWrench = new ItemWrench(), Taam.ITEM_WRENCH);
 		registerItem(itemSaw = new ItemTool(Taam.ITEM_TOOL_META.saw), Taam.ITEM_TOOL + "." + Taam.ITEM_TOOL_META.saw.name());
@@ -300,6 +301,7 @@ public class TaamMain {
 		registerItem(itemPart = new ItemWithMetadata<Taam.ITEM_PART_META>("part", Taam.ITEM_PART_META.values(),
 				new ItemDelegate<Taam.ITEM_PART_META>() {
 					@Override
+					@SideOnly(Side.CLIENT)
 					public void addInformation(ItemStack stack, EntityPlayer player, List<String> lines,
 							boolean detailedInfoSetting) {
 						if(stack.getMetadata() == Taam.ITEM_PART_META.redirector.ordinal()) {
@@ -324,6 +326,7 @@ public class TaamMain {
 					}
 
 					@Override
+					@SideOnly(Side.CLIENT)
 					public void addInformation(ItemStack stack, EntityPlayer player, List<String> lines,
 							boolean detailedInfoSetting) {
 						if(stack.getMetadata() == Taam.BLOCK_ORE_META.iron.ordinal() ||
@@ -346,6 +349,7 @@ public class TaamMain {
 					}
 
 					@Override
+					@SideOnly(Side.CLIENT)
 					public void addInformation(ItemStack stack, EntityPlayer player, List<String> lines,
 							boolean detailedInfoSetting) {
 					}

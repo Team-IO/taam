@@ -1,11 +1,10 @@
 package net.teamio.taam.rendering;
 
-import org.lwjgl.opengl.GL11;
-
 import mcmultipart.client.multipart.MultipartSpecialRenderer;
 import net.teamio.taam.Config;
 import net.teamio.taam.Taam;
 import net.teamio.taam.machines.MachineMultipart;
+import org.lwjgl.opengl.GL11;
 
 public class TaamMultipartRenderer extends MultipartSpecialRenderer<MachineMultipart> {
 

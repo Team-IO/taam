@@ -1,7 +1,5 @@
 package net.teamio.taam.piping;
 
-import java.util.ArrayList;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -16,6 +14,9 @@ import net.teamio.taam.Taam;
 import net.teamio.taam.util.FluidUtils;
 import net.teamio.taam.util.InventoryUtils;
 import net.teamio.taam.util.TaamUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public final class PipeUtil {
 	private PipeUtil() {
@@ -98,7 +99,20 @@ public final class PipeUtil {
 		}
 	};
 
+	private static final ThreadLocal<ArrayList<FluidStack>> pipeFluidsList = new ThreadLocal<ArrayList<FluidStack>>() {
+		@Override
+		protected ArrayList<FluidStack> initialValue() {
+			return new ArrayList<FluidStack>(6);
+		}
+	};
+
 	public static void processPipes(IPipe pipe, IBlockAccess world, BlockPos pos) {
+		//TODO: Migrate to pipe network logic
+
+		if (pipe == null) {
+			Log.warn("null pipe requested for processing at {} in {}", pos, world);
+			return;
+		}
 
 		ArrayList<IPipe> connected = PipeUtil.connected.get();
 
@@ -158,7 +172,19 @@ public final class PipeUtil {
 		 */
 
 		int totalAmount = 0;
-		for (FluidStack fs : pipe.getFluids()) {
+
+		// Get fluids from pipe
+		List<FluidStack> pipeFluids = pipeFluidsList.get();
+		pipeFluids.clear();
+		List<FluidStack> fromPipe = pipe.getFluids();
+		if(fromPipe == null) {
+			Log.warn("Pipe returned null fluid array, requested for processing at {} in {}", pos, world);
+		} else {
+			pipeFluids.addAll(fromPipe);
+		}
+
+		// Check if pipe is empty and bail early
+		for (FluidStack fs : pipeFluids) {
 			if (fs == null) {
 				continue;
 			}
@@ -186,7 +212,20 @@ public final class PipeUtil {
 			}
 
 			int share = (int) Math.ceil(totalAmount * pipeTransferFactor);
-			for (FluidStack fs : pipe.getFluids()) {
+
+			// Get fluids from pipe
+			pipeFluids.clear();
+			fromPipe = pipe.getFluids();
+			if(fromPipe == null) {
+				Log.warn("Pipe returned null fluid array, requested for processing at {} in {}", pos, world);
+			} else {
+				pipeFluids.addAll(fromPipe);
+			}
+
+			for (FluidStack fs : pipeFluids) {
+				if(fs == null) {
+					continue;
+				}
 				FluidStack transfer = fs.copy();
 				transfer.amount = Math.min(transfer.amount, share);
 

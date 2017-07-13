@@ -6,6 +6,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fluids.FluidStack;
 
+import java.util.List;
+
 public class PipeEnd implements IPipe {
 
 	/**
@@ -97,7 +99,7 @@ public class PipeEnd implements IPipe {
 	}
 
 	@Override
-	public FluidStack[] getFluids() {
+	public List<FluidStack> getFluids() {
 		return info.getFluids();
 	}
 

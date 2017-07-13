@@ -1,7 +1,5 @@
 package net.teamio.taam.content.conveyors;
 
-import java.util.List;
-
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
@@ -24,6 +22,8 @@ import net.teamio.taam.Taam;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.rendering.obj.OBJModel;
 import net.teamio.taam.util.TaamUtil;
+
+import java.util.List;
 
 public class BlockProductionLineAttachable extends BlockProductionLine {
 

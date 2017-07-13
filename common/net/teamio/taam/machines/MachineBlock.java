@@ -1,9 +1,5 @@
 package net.teamio.taam.machines;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.properties.IProperty;
@@ -37,6 +33,10 @@ import net.teamio.taam.content.BaseBlock;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.content.MaterialMachinesTransparent;
 import net.teamio.taam.rendering.obj.OBJModel;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class MachineBlock extends BaseBlock implements ITileEntityProvider {
 
