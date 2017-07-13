@@ -1,7 +1,5 @@
 package net.teamio.taam.gui;
 
-import org.lwjgl.opengl.GL11;
-
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.EnumFacing;
@@ -9,6 +7,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.IWorldNameable;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.teamio.taam.util.TaamUtil;
+import org.lwjgl.opengl.GL11;
 
 public class GuiConveyorSmallInventory<T extends ICapabilityProvider & IWorldNameable> extends GuiContainer {
 	ResourceLocation bg = new ResourceLocation("textures/gui/container/hopper.png");

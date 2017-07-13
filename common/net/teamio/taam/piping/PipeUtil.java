@@ -1,8 +1,5 @@
 package net.teamio.taam.piping;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -17,6 +14,9 @@ import net.teamio.taam.Taam;
 import net.teamio.taam.util.FluidUtils;
 import net.teamio.taam.util.InventoryUtils;
 import net.teamio.taam.util.TaamUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public final class PipeUtil {
 	private PipeUtil() {

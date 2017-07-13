@@ -1,9 +1,6 @@
 package net.teamio.taam.content;
 
-import java.util.List;
-
 import com.google.common.collect.Lists;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -34,6 +31,8 @@ import net.teamio.taam.rendering.obj.OBJModel;
 import net.teamio.taam.util.InventoryUtils;
 import net.teamio.taam.util.TaamUtil;
 import net.teamio.taam.util.WrenchUtil;
+
+import java.util.List;
 
 public abstract class BaseBlock extends Block {
 

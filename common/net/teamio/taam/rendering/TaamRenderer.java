@@ -1,15 +1,6 @@
 package net.teamio.taam.rendering;
 
-import java.util.Random;
-
-import javax.vecmath.Vector2f;
-import javax.vecmath.Vector3f;
-
-import net.teamio.taam.content.conveyors.*;
-import org.lwjgl.opengl.GL11;
-
 import com.google.common.base.Function;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
@@ -43,12 +34,22 @@ import net.teamio.taam.Config;
 import net.teamio.taam.Log;
 import net.teamio.taam.Taam;
 import net.teamio.taam.content.IRotatable;
+import net.teamio.taam.content.conveyors.TileEntityConveyorElevator;
+import net.teamio.taam.content.conveyors.TileEntityConveyorItemBag;
+import net.teamio.taam.content.conveyors.TileEntityConveyorProcessor;
+import net.teamio.taam.content.conveyors.TileEntityConveyorSieve;
+import net.teamio.taam.content.conveyors.TileEntityConveyorTrashCan;
 import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.conveyors.IConveyorSlots;
 import net.teamio.taam.conveyors.ItemWrapper;
 import net.teamio.taam.conveyors.appliances.ApplianceAligner;
 import net.teamio.taam.piping.IPipe;
 import net.teamio.taam.util.WrenchUtil;
+import org.lwjgl.opengl.GL11;
+
+import javax.vecmath.Vector2f;
+import javax.vecmath.Vector3f;
+import java.util.Random;
 
 public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 

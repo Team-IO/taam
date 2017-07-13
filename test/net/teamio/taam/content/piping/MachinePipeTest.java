@@ -4,12 +4,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.teamio.blockunit.TestMethod;
 import net.teamio.blockunit.TestingHarness;
 import net.teamio.taam.Config;
 import net.teamio.taam.Taam;
-import net.teamio.taam.piping.IPipe;
 
 /**
  * Created by oliver on 2017-07-03.

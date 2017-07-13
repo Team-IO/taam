@@ -1,7 +1,5 @@
 package net.teamio.taam.content.common;
 
-import java.util.List;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
@@ -28,6 +26,8 @@ import net.teamio.taam.content.conveyors.TileEntityConveyor;
 import net.teamio.taam.conveyors.IConveyorApplianceHost;
 import net.teamio.taam.piping.IPipe;
 import net.teamio.taam.util.FluidUtils;
+
+import java.util.List;
 
 /**
  * Debug Tool, currently used for debugging conveyors.

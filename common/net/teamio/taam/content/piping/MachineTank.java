@@ -1,8 +1,5 @@
 package net.teamio.taam.content.piping;
 
-import java.io.IOException;
-import java.util.List;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -27,6 +24,9 @@ import net.teamio.taam.piping.PipeEndFluidHandler;
 import net.teamio.taam.piping.PipeUtil;
 import net.teamio.taam.rendering.TankRenderInfo;
 import net.teamio.taam.util.FaceBitmap;
+
+import java.io.IOException;
+import java.util.List;
 
 public class MachineTank implements IMachine, IWorldInteractable {
 

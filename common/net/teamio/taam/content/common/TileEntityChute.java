@@ -1,7 +1,5 @@
 package net.teamio.taam.content.common;
 
-import org.apache.commons.lang3.ArrayUtils;
-
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -24,6 +22,7 @@ import net.teamio.taam.util.FluidHandlerOutputOnly;
 import net.teamio.taam.util.FluidUtils;
 import net.teamio.taam.util.InventoryUtils;
 import net.teamio.taam.util.TaamUtil;
+import org.apache.commons.lang3.ArrayUtils;
 
 public class TileEntityChute extends BaseTileEntity implements IRotatable, ITickable {
 

@@ -10,7 +10,6 @@ import net.teamio.blockunit.TestMethod;
 import net.teamio.blockunit.TestingHarness;
 import net.teamio.taam.Config;
 import net.teamio.taam.Taam;
-import net.teamio.taam.content.piping.MachineTank;
 import net.teamio.taam.piping.IPipe;
 
 /**

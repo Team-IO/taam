@@ -1,9 +1,6 @@
 package net.teamio.taam.gui.advanced.apps;
 
-import org.lwjgl.opengl.GL11;
-
 import com.google.common.base.Function;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
@@ -23,7 +20,7 @@ import net.teamio.taam.gui.advanced.ContainerAdvancedMachine;
 import net.teamio.taam.gui.advanced.GuiAdvancedMachine;
 import net.teamio.taam.gui.util.CustomButton;
 import net.teamio.taam.gui.util.Drawable;
-import net.teamio.taam.rendering.TaamRenderer;
+import org.lwjgl.opengl.GL11;
 
 public class AlignerSettingsGui extends AppGui {
 	

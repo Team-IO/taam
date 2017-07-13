@@ -1,9 +1,5 @@
 package net.teamio.taam.gui.advanced;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
@@ -13,6 +9,10 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.teamio.taam.Log;
 import net.teamio.taam.conveyors.filters.HidableSlot;
 import net.teamio.taam.network.TPAdvancedGuiAppData;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class ContainerAdvancedMachine extends Container {
 

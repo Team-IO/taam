@@ -1,7 +1,5 @@
 package net.teamio.taam.content.piping;
 
-import java.util.List;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
@@ -25,6 +23,8 @@ import net.teamio.taam.piping.PipeInfo;
 import net.teamio.taam.piping.PipeUtil;
 import net.teamio.taam.util.FaceBitmap;
 import net.teamio.taam.util.FluidUtils;
+
+import java.util.List;
 
 public class MachinePipe implements IMachine, IPipe, IRenderable {
 

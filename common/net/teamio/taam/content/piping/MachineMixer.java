@@ -1,8 +1,5 @@
 package net.teamio.taam.content.piping;
 
-import java.io.IOException;
-import java.util.List;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
@@ -31,6 +28,9 @@ import net.teamio.taam.recipes.IProcessingRecipeFluidBased;
 import net.teamio.taam.recipes.ProcessingRegistry;
 import net.teamio.taam.util.FaceBitmap;
 import net.teamio.taam.util.TaamUtil;
+
+import java.io.IOException;
+import java.util.List;
 
 public class MachineMixer implements IMachine, IRotatable {
 

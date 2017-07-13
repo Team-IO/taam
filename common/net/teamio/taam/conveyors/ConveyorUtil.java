@@ -1,8 +1,5 @@
 package net.teamio.taam.conveyors;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -20,6 +17,9 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.teamio.taam.Taam;
 import net.teamio.taam.util.TaamUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ConveyorUtil {
 

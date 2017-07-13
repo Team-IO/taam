@@ -1,7 +1,5 @@
 package net.teamio.taam.content.common;
 
-import java.util.List;
-
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
@@ -20,6 +18,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.teamio.taam.util.WrenchUtil;
+
+import java.util.List;
 
 public class ItemWrench extends Item {
 

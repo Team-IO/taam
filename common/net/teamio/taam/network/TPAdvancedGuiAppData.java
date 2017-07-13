@@ -1,7 +1,5 @@
 package net.teamio.taam.network;
 
-import java.io.IOException;
-
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.inventory.Container;
@@ -13,6 +11,8 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.teamio.taam.Log;
 import net.teamio.taam.gui.advanced.ContainerAdvancedMachine;
+
+import java.io.IOException;
 
 public class TPAdvancedGuiAppData implements IMessage {
 

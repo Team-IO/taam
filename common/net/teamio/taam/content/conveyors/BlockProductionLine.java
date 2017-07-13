@@ -1,7 +1,5 @@
 package net.teamio.taam.content.conveyors;
 
-import java.util.List;
-
 import net.minecraft.block.SoundType;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
@@ -36,6 +34,8 @@ import net.teamio.taam.content.MaterialMachinesTransparent;
 import net.teamio.taam.content.common.TileEntityChute;
 import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.rendering.obj.OBJModel;
+
+import java.util.List;
 
 public class BlockProductionLine extends BaseBlock {
 

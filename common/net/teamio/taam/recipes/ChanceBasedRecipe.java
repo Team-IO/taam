@@ -1,10 +1,10 @@
 package net.teamio.taam.recipes;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
 import net.minecraft.item.ItemStack;
 import net.teamio.taam.util.TaamUtil;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public abstract class ChanceBasedRecipe extends BaseProcessingRecipe {
 

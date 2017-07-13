@@ -1,13 +1,7 @@
 package net.teamio.taam.machines;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.EnumSet;
-import java.util.List;
-
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
-
 import mcmultipart.MCMultiPartMod;
 import mcmultipart.block.BlockMultipartContainer;
 import mcmultipart.capabilities.ISlottedCapabilityProvider;
@@ -53,6 +47,11 @@ import net.teamio.taam.rendering.obj.OBJModel;
 import net.teamio.taam.util.FaceBitmap;
 import net.teamio.taam.util.InventoryUtils;
 import net.teamio.taam.util.WrenchUtil;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.EnumSet;
+import java.util.List;
 
 public class MachineMultipart extends Multipart implements INormallyOccludingPart, ITickable, ISlottedPart, ISlottedCapabilityProvider {
 	public IMachine machine;

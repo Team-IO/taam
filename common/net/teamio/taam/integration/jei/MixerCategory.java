@@ -1,9 +1,5 @@
 package net.teamio.taam.integration.jei;
 
-import javax.annotation.Nonnull;
-
-import org.lwjgl.opengl.GL11;
-
 import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.gui.IDrawable;
 import mezz.jei.api.gui.IGuiFluidStackGroup;
@@ -29,6 +25,9 @@ import net.teamio.taam.Taam;
 import net.teamio.taam.TaamMain;
 import net.teamio.taam.recipes.IProcessingRecipe;
 import net.teamio.taam.recipes.impl.MixerRecipe;
+import org.lwjgl.opengl.GL11;
+
+import javax.annotation.Nonnull;
 
 public class MixerCategory extends BlankRecipeCategory {
 

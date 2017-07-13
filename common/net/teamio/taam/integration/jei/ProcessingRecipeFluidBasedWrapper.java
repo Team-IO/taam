@@ -1,11 +1,10 @@
 package net.teamio.taam.integration.jei;
 
-import java.util.List;
-
 import com.google.common.collect.Lists;
-
 import net.minecraftforge.fluids.FluidStack;
 import net.teamio.taam.recipes.IProcessingRecipeFluidBased;
+
+import java.util.List;
 
 public class ProcessingRecipeFluidBasedWrapper extends ProcessingRecipeWrapper {
 

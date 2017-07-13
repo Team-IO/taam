@@ -1,7 +1,5 @@
 package net.teamio.taam.machines;
 
-import java.util.List;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
@@ -13,6 +11,8 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.teamio.taam.Log;
+
+import java.util.List;
 
 /**
  * Dummy machine used instead of thousands of null-checks

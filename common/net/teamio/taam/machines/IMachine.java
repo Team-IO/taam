@@ -1,7 +1,5 @@
 package net.teamio.taam.machines;
 
-import java.util.List;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
@@ -13,6 +11,8 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.teamio.taam.util.FaceBitmap;
+
+import java.util.List;
 
 public interface IMachine extends ICapabilityProvider {
 	void writePropertiesToNBT(NBTTagCompound tag);
