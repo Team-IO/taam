@@ -99,6 +99,13 @@ public final class PipeUtil {
 		}
 	};
 
+	private static final ThreadLocal<ArrayList<FluidStack>> pipeFluidsList = new ThreadLocal<ArrayList<FluidStack>>() {
+		@Override
+		protected ArrayList<FluidStack> initialValue() {
+			return new ArrayList<FluidStack>(6);
+		}
+	};
+
 	public static void processPipes(IPipe pipe, IBlockAccess world, BlockPos pos) {
 		//TODO: Migrate to pipe network logic
 
@@ -165,10 +172,18 @@ public final class PipeUtil {
 		 */
 
 		int totalAmount = 0;
-		List<FluidStack> pipeFluids = pipe.getFluids();
-		if(pipeFluids == null) {
-			Log.warn("Pipe returned null fluid list, requested for processing at {} in {}", pos, world);
+
+		// Get fluids from pipe
+		List<FluidStack> pipeFluids = pipeFluidsList.get();
+		pipeFluids.clear();
+		List<FluidStack> fromPipe = pipe.getFluids();
+		if(fromPipe == null) {
+			Log.warn("Pipe returned null fluid array, requested for processing at {} in {}", pos, world);
+		} else {
+			pipeFluids.addAll(fromPipe);
 		}
+
+		// Check if pipe is empty and bail early
 		for (FluidStack fs : pipeFluids) {
 			if (fs == null) {
 				continue;
@@ -197,10 +212,16 @@ public final class PipeUtil {
 			}
 
 			int share = (int) Math.ceil(totalAmount * pipeTransferFactor);
-			pipeFluids = pipe.getFluids();
-			if(pipeFluids == null) {
+
+			// Get fluids from pipe
+			pipeFluids.clear();
+			fromPipe = pipe.getFluids();
+			if(fromPipe == null) {
 				Log.warn("Pipe returned null fluid array, requested for processing at {} in {}", pos, world);
+			} else {
+				pipeFluids.addAll(fromPipe);
 			}
+
 			for (FluidStack fs : pipeFluids) {
 				if(fs == null) {
 					continue;
