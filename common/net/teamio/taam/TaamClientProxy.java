@@ -72,9 +72,13 @@ public class TaamClientProxy extends TaamCommonProxy {
 	}
 
 	@Override
-	public void registerRenderStuff() {
+	public void registerModelLoader() {
 		ModelLoaderRegistry.registerLoader(OBJLoader.INSTANCE);
 		OBJLoader.INSTANCE.addDomain(Taam.MOD_ID.toLowerCase());
+	}
+
+	@Override
+	public void registerRenderStuff() {
 
 		taamRenderer = new TaamRenderer();
 

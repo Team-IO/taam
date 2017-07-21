@@ -14,4 +14,7 @@ public class TaamCommonProxy {
 		network.registerMessage(TPMachineConfiguration.Handler.class, TPMachineConfiguration.class, 1, Side.SERVER);
 		network.registerMessage(TPAdvancedGuiAppData.Handler.class, TPAdvancedGuiAppData.class, 2, Side.SERVER);
 	}
+
+	public void registerModelLoader() {
+	}
 }
