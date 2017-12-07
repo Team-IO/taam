@@ -92,9 +92,24 @@ public class MachineTankTest {
 		amount = pipe2.getFluidAmount(new FluidStack(FluidRegistry.WATER, 0));
 		t.assertEquals(5, amount);
 
-		// Drain from pipe
-		amount = pipe.removeFluid(new FluidStack(FluidRegistry.WATER, 5));
+		// Simulate overfill in FH
+		amount = fluidHandler.fill(new FluidStack(FluidRegistry.WATER, Config.pl_tank_capacity + 50), false);
+		t.assertEquals(Config.pl_tank_capacity - 5, amount);
+		// Check amount still the same
+		amount = pipe2.getFluidAmount(new FluidStack(FluidRegistry.WATER, 0));
 		t.assertEquals(5, amount);
+
+
+		// Overfill in FH
+		amount = fluidHandler.fill(new FluidStack(FluidRegistry.WATER, Config.pl_tank_capacity + 50), true);
+		t.assertEquals(Config.pl_tank_capacity - 5, amount);
+		// Check amount is at maximum
+		amount = pipe2.getFluidAmount(new FluidStack(FluidRegistry.WATER, 0));
+		t.assertEquals(Config.pl_tank_capacity, amount);
+
+		// Drain from pipe
+		amount = pipe.removeFluid(new FluidStack(FluidRegistry.WATER, Config.pl_tank_capacity));
+		t.assertEquals(Config.pl_tank_capacity, amount);
 
 		GenericPipeTests.testPipeEnd(t, tank.getCapability(Taam.CAPABILITY_PIPE, EnumFacing.UP), Config.pl_tank_capacity, true);
 

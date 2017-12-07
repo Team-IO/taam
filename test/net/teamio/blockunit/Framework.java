@@ -16,7 +16,7 @@ import java.util.List;
  * Test classes that are registered are instantiated & all methods annotated with {@link TestMethod} are executed.
  * Test methods have to be either parameterless, in which case only exception-free execution is tested;
  * or have one parameter of the type {@link TestingHarness} for performing test assertions.
- *
+ * <p>
  * Created by oliver on 2017-07-03.
  */
 public class Framework {
@@ -30,7 +30,13 @@ public class Framework {
 
 		LOGGER.info("Running tests...");
 
+		int classCount = 0;
+		int classCountSuccessful = 0;
+		int methodCount = 0;
+		int methodCountSuccessful = 0;
+
 		for (Class<?> cls : tests) {
+			classCount++;
 			LOGGER.info("Test class " + cls.getName());
 			Object instance;
 			try {
@@ -43,20 +49,28 @@ public class Framework {
 				continue;
 			}
 
+			boolean didAnyFail = false;
+
 			Method[] methods = cls.getMethods();
 			for (Method m : methods) {
 				if (m.isAnnotationPresent(TestMethod.class)) {
+					methodCount++;
 					try {
 						LOGGER.info("Running test method " + m.getName());
 						runTest(instance, m);
 						LOGGER.info("Test case successful");
-					} catch(Exception e) {
+						methodCountSuccessful++;
+					} catch (Exception e) {
 						LOGGER.error("Test failed horribly", e);
+						didAnyFail = true;
 					}
 				}
 			}
+			if (!didAnyFail) {
+				classCountSuccessful++;
+			}
 		}
-		LOGGER.info("Tests complete");
+		LOGGER.info("Tests complete. {}/{} tests successful - {}/{} total methods successful", classCountSuccessful, classCount, methodCountSuccessful, methodCount);
 	}
 
 	public static void runTest(Object instance, Method m) {
@@ -69,7 +83,7 @@ public class Framework {
 				throw new RuntimeException("Error accessing test method " + m.getName(), e);
 			} catch (InvocationTargetException e) {
 				Throwable te = e.getTargetException();
-				if (te instanceof  TestAssertionException) {
+				if (te instanceof TestAssertionException) {
 					LOGGER.error("Test assertion failed", te);
 				} else {
 					LOGGER.error("Test failed with exception", te);
@@ -88,7 +102,7 @@ public class Framework {
 				LOGGER.error("Error accessing test method " + m.getName(), e);
 			} catch (InvocationTargetException e) {
 				Throwable te = e.getTargetException();
-				if (te instanceof  TestAssertionException) {
+				if (te instanceof TestAssertionException) {
 					LOGGER.error("Test assertion failed", te);
 				} else {
 					LOGGER.error("Test failed with exception", te);
