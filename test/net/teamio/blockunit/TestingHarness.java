@@ -39,4 +39,12 @@ public class TestingHarness {
 			throw new TestAssertionException("AssertFalse: passed value is true");
 		}
 	}
+
+	public void fail() {
+		throw new TestAssertionException("Test failed");
+	}
+
+	public void fail(String message) {
+		throw new TestAssertionException("Test failed: %s", message);
+	}
 }
