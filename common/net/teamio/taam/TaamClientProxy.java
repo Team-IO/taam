@@ -56,6 +56,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("deprecation")
+@SideOnly(Side.CLIENT)
 public class TaamClientProxy extends TaamCommonProxy {
 
 	public static int blockRendererId;
@@ -96,7 +97,7 @@ public class TaamClientProxy extends TaamCommonProxy {
 		ClientRegistry.bindTileEntitySpecialRenderer(MachineTileEntity.class, taamRenderer);
 
 		// If we load multipart, register multipart things, too
-		if(Config.multipart_load) {
+		if (Config.multipart_load) {
 			MultipartHandlerClient.registerRenderStuff();
 		}
 
@@ -257,7 +258,7 @@ public class TaamClientProxy extends TaamCommonProxy {
 	/**
 	 * Registers & remembers a model location for inventory rendering for the
 	 * given item, for a single meta value.
-	 *
+	 * <p>
 	 * Specific for items using OBJ models.
 	 *
 	 * @param modelMesher
@@ -281,7 +282,7 @@ public class TaamClientProxy extends TaamCommonProxy {
 
 	/**
 	 * Registers a model for inventory rendering for a single item.
-	 *
+	 * <p>
 	 * Default rendering, not for OBJ models.
 	 *
 	 * @param modelMesher
@@ -390,6 +391,7 @@ public class TaamClientProxy extends TaamCommonProxy {
 
 	/**
 	 * Original: {@link net.minecraftforge.client.model.ForgeBlockStateV1.Variant.Deserializer.get(float, float, float, float, float, float, float)}
+	 *
 	 * @param tx
 	 * @param ty
 	 * @param tz
@@ -399,8 +401,7 @@ public class TaamClientProxy extends TaamCommonProxy {
 	 * @param s
 	 * @return
 	 */
-	public static TRSRTransformation get(float tx, float ty, float tz, float ax, float ay, float az, float s)
-	{
+	public static TRSRTransformation get(float tx, float ty, float tz, float ax, float ay, float az, float s) {
 		return TRSRTransformation.blockCenterToCorner(new TRSRTransformation(
 				new Vector3f(tx / 16, ty / 16, tz / 16),
 				TRSRTransformation.quatFromXYZDegrees(new Vector3f(ax, ay, az)),
@@ -415,23 +416,22 @@ public class TaamClientProxy extends TaamCommonProxy {
 
 	/**
 	 * Original: {@link net.minecraftforge.client.model.ForgeBlockStateV1.Variant.Deserializer.leftify(TRSRTransformation)}
+	 *
 	 * @param transform
 	 * @return
 	 */
-	public static TRSRTransformation leftify(TRSRTransformation transform)
-	{
+	public static TRSRTransformation leftify(TRSRTransformation transform) {
 		return TRSRTransformation.blockCenterToCorner(flipX.compose(TRSRTransformation.blockCornerToCenter(transform)).compose(flipX));
 	}
 
 	/**
 	 * Baked model implementation that checks with the item type for a list of
 	 * parts to render using an OBJBakedModel as parent.
-	 *
+	 * <p>
 	 * Customized: item rendering. The rest of the implementation just relays to
 	 * the parent model.
 	 *
 	 * @author Oliver Kahrmann
-	 *
 	 */
 	public static class ItemAwareOBJBakedModel implements IPerspectiveAwareModel {
 
@@ -446,13 +446,13 @@ public class TaamClientProxy extends TaamCommonProxy {
 		static {
 			TRSRTransformation thirdperson = get(0, 2.5f, 0, 75, 45, 0, 0.375f);
 			ImmutableMap.Builder<TransformType, TRSRTransformation> builder = ImmutableMap.builder();
-			builder.put(TransformType.GUI,                     get(0, 0, 0, 30, 225, 0, 0.625f));
-			builder.put(TransformType.GROUND,                  get(0, 3, 0, 0, 0, 0, 0.25f));
-			builder.put(TransformType.FIXED,                   get(0, 0, 0, 0, 0, 0, 0.5f));
+			builder.put(TransformType.GUI, get(0, 0, 0, 30, 225, 0, 0.625f));
+			builder.put(TransformType.GROUND, get(0, 3, 0, 0, 0, 0, 0.25f));
+			builder.put(TransformType.FIXED, get(0, 0, 0, 0, 0, 0, 0.5f));
 			builder.put(TransformType.THIRD_PERSON_RIGHT_HAND, thirdperson);
-			builder.put(TransformType.THIRD_PERSON_LEFT_HAND,  leftify(thirdperson));
+			builder.put(TransformType.THIRD_PERSON_LEFT_HAND, leftify(thirdperson));
 			builder.put(TransformType.FIRST_PERSON_RIGHT_HAND, get(0, 0, 0, 0, 45, 0, 0.4f));
-			builder.put(TransformType.FIRST_PERSON_LEFT_HAND,  get(0, 0, 0, 0, 225, 0, 0.4f));
+			builder.put(TransformType.FIRST_PERSON_LEFT_HAND, get(0, 0, 0, 0, 225, 0, 0.4f));
 			defaultBlockTransform = new SimpleModelState(builder.build());
 		}
 
