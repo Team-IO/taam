@@ -57,9 +57,12 @@ public class Framework {
 					methodCount++;
 					try {
 						LOGGER.info("Running test method " + m.getName());
-						runTest(instance, m);
-						LOGGER.info("Test case successful");
-						methodCountSuccessful++;
+						if (runTest(instance, m)) {
+							LOGGER.info("Test case successful");
+							methodCountSuccessful++;
+						} else {
+							didAnyFail = true;
+						}
 					} catch (Exception e) {
 						LOGGER.error("Test failed horribly", e);
 						didAnyFail = true;
@@ -73,12 +76,13 @@ public class Framework {
 		LOGGER.info("Tests complete. {}/{} tests successful - {}/{} total methods successful", classCountSuccessful, classCount, methodCountSuccessful, methodCount);
 	}
 
-	public static void runTest(Object instance, Method m) {
+	public static boolean runTest(Object instance, Method m) {
 		Class<?>[] params = m.getParameterTypes();
 		if (params.length == 0) {
 			// "Just check for failure or not"
 			try {
 				m.invoke(instance);
+				return true;
 			} catch (IllegalAccessException e) {
 				throw new RuntimeException("Error accessing test method " + m.getName(), e);
 			} catch (InvocationTargetException e) {
@@ -93,11 +97,12 @@ public class Framework {
 			if (params[0] != TestingHarness.class) {
 				// Umm.. did you read the documentation?
 				LOGGER.error("Incorrect parameters for test method " + m.getName());
-				return;
+				return false;
 			}
 			// Detailed testing with test harness
 			try {
 				m.invoke(instance, new TestingHarness());
+				return true;
 			} catch (IllegalAccessException e) {
 				LOGGER.error("Error accessing test method " + m.getName(), e);
 			} catch (InvocationTargetException e) {
@@ -112,6 +117,7 @@ public class Framework {
 			// Umm.. did you read the documentation?
 			LOGGER.error("Incorrect parameters for test method " + m.getName());
 		}
+		return false;
 	}
 
 	public static void registerTestClass(Class cls) {
