@@ -7,9 +7,9 @@ import java.util.Set;
 
 public class AStar {
 
-	public static interface Navigator<T> {
-		public WorldCoord getCoords(T object);
-		public List<T> findNeighbors(T object, Node<T> predecessor);
+	public interface Navigator<T> {
+		WorldCoord getCoords(T object);
+		List<T> findNeighbors(T object, Node<T> predecessor);
 	}
 
 	public static class Node<T> implements Comparable<Node<T>> {

@@ -8,10 +8,10 @@ import net.minecraft.world.IBlockAccess;
  */
 public interface IPipePos {
 
-	public static class Constant implements IPipePos {
+	class Constant implements IPipePos {
 
-		public BlockPos pos;
-		public IBlockAccess world;
+		public final BlockPos pos;
+		public final IBlockAccess world;
 
 		public Constant(IBlockAccess world, BlockPos pos) {
 			this.world = world;

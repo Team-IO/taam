@@ -111,13 +111,10 @@ public final class Taam {
 	public static final String BLOCK_PRODUCTIONLINE = "productionline";
 	public static final String BLOCK_PRODUCTIONLINE_ATTACHABLE = "productionline_attachable";
 	public static final String BLOCK_PRODUCTIONLINE_APPLIANCE = "productionline_appliance";
-	public static final String BLOCK_LOGISTICS = "logistics";
-	public static final String BLOCK_SLIDINGDOOR = "slidingdoor";
 	public static final String BLOCK_SENSOR_MOTION = "sensor.motion";
 	public static final String BLOCK_SENSOR_MINECT = "sensor.minect";
 	public static final String BLOCK_ORE = "ore";
 	public static final String BLOCK_CONCRETE = "concrete";
-	public static final String BLOCK_MAGNET_RAIL = "magnet_rail";
 	public static final String BLOCK_SUPPORT_BEAM = "support_beam";
 
 	/**
@@ -374,33 +371,16 @@ public final class Taam {
 		}
 	}
 
-	public static final String MULTIPART_MULTINET_CABLE = "multinet.cable";
-	public static final String MULTIPART_MULTINET_MULTITRONIX = "multinet.multitronix";
-
-	public static final String ITEM_MULTINET_CABLE = "cable";
 	public static final String ITEM_DEBUG_UNIT_TESTER = "unit_tester";
 	public static final String ITEM_DEBUG_TOOL = "debugger";
 	public static final String ITEM_WRENCH = "wrench";
-	public static final String ITEM_MULTINET_MULTITRONIX = "multitronix";
 	public static final String ITEM_MATERIAL = "material";
 	public static final String ITEM_PART = "part";
 	public static final String ITEM_TOOL = "tool";
 	public static final String ITEM_INGOT = "ingot";
 	public static final String ITEM_DUST = "dust";
-	public static final String ITEM_LOGISTICS_CART = "logistics_cart";
 
-	public enum ITEM_LOGISTICS_CART_META {
-		basic;
 
-		public static String[] valuesAsString() {
-			Enum<?>[] valuesAsEnum = values();
-			String[] valuesAsString = new String[valuesAsEnum.length];
-			for (int i = 0; i < valuesAsEnum.length; i++) {
-				valuesAsString[i] = valuesAsEnum[i].name();
-			}
-			return valuesAsString;
-		}
-	}
 
 	public enum ITEM_TOOL_META {
 		saw;
@@ -488,13 +468,10 @@ public final class Taam {
 	public static final String TILEENTITY_SENSOR = "taam.sensor";
 	public static final String TILEENTITY_CHUTE = "taam.chute";
 	public static final String TILEENTITY_CREATIVECACHE = "taam.creativecache";
-	public static final String TILEENTITY_SLIDINGDOOR = "taam.slidingdoor";
 
 	public static final String TILEENTITY_CONVEYOR = "taam.conveyor";
 	public static final String TILEENTITY_CONVEYOR_HOPPER = "taam.conveyor_hopper";
 	public static final String TILEENTITY_CONVEYOR_PROCESSOR = "taam.conveyor_processor";
-	public static final String TILEENTITY_LOGISTICS_STATION = "taam.logistics_station";
-	public static final String TILEENTITY_LOGISTICS_MANAGER = "taam.logistics_manager";
 	public static final String TILEENTITY_CONVEYOR_ITEMBAG = "taam.itembag";
 	public static final String TILEENTITY_CONVEYOR_TRASHCAN = "taam.trashcan";
 	public static final String TILEENTITY_CONVEYOR_SIEVE = "taam.sieve";
@@ -506,8 +483,6 @@ public final class Taam {
 	public static final String TILEENTITY_APPLIANCE_ALIGNER = "taam.appliance.aligner";
 
 	public static final String TILEENTITY_MACHINE_WRAPPER = "taam.machine_wrapper";
-
-	public static final String ENTITY_LOGISTICS_CART = "taam.logistics_manager";
 
 	public enum FLUID_DYE_META {
 		black,
@@ -548,7 +523,7 @@ public final class Taam {
 		public final int viscosity;
 		public final int density;
 
-		private FLUID_MATERIAL_META(String registryName, int viscosity, int density) {
+		FLUID_MATERIAL_META(String registryName, int viscosity, int density) {
 			this.registryName = registryName;
 			this.viscosity = viscosity;
 			this.density = density;
@@ -649,7 +624,7 @@ public final class Taam {
 		 * Static stuff
 		 */
 
-		private static Map<String, MACHINE_META> nameToInstanceMap = new HashMap<String, MACHINE_META>();
+		private static final Map<String, MACHINE_META> nameToInstanceMap = new HashMap<String, MACHINE_META>();
 
 		static {
 			for (MACHINE_META value : values()) {

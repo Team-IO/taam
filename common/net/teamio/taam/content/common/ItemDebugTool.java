@@ -49,7 +49,7 @@ public class ItemDebugTool extends Item {
 	public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean detailInfo) {
 		list.add(TextFormatting.DARK_GREEN + I18n.format("lore.taam.debugtool", new Object[0]));
 		if (GuiScreen.isShiftKeyDown()) {
-			String usage = I18n.format("lore.taam.debugtool.usage", new Object[0]);
+			String usage = I18n.format("lore.taam.debugtool.usage");
 			//Split at literal \n in the translated text. a lot of escaping here.
 			String[] split = usage.split("\\\\n");
 			for(int i = 0;i < split.length; i++) {

@@ -251,13 +251,13 @@ public class ConveyorUtil {
 		};
 	}
 
-	public static RotatedDefinition LANES = new RotatedDefinition(
+	public static final RotatedDefinition LANES = new RotatedDefinition(
 			// Remember, this definition is inverted being left-to-right not top-down order, so NORTH is left!
 			1, 1, 1,
 			2, 2, 2,
 			3, 3, 3
 			);
-	public static RotatedDefinition ROWS = new RotatedDefinition(
+	public static final RotatedDefinition ROWS = new RotatedDefinition(
 			// Remember, this definition is inverted being left-to-right not top-down order, so NORTH is left!
 			3, 2, 1,
 			3, 2, 1,

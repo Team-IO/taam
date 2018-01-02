@@ -31,9 +31,9 @@ import java.util.List;
 
 public class MachineFluidDrier implements IMachine, IPipePos {
 
-	private PipeEndRestricted pipeEndIn;
+	private final PipeEndRestricted pipeEndIn;
 
-	private OutputChuteBacklog chute = new OutputChuteBacklog();
+	private final OutputChuteBacklog chute = new OutputChuteBacklog();
 
 	private FluidStack lastInputFluid;
 	private IProcessingRecipeFluidBased[] matchingRecipes;
@@ -190,7 +190,7 @@ public class MachineFluidDrier implements IMachine, IPipePos {
 		 * Check blocked & fetch output inventory
 		 */
 		chute.refreshOutputInventory(world, down);
-		if (!chute.isOperable()) {
+		if (chute.isBlocked()) {
 			resetTimeout();
 			return false;
 		}

@@ -10,7 +10,7 @@ import net.teamio.taam.Config;
 import java.util.List;
 
 public class PipeEnd implements IPipe {
-	protected IPipePos pos;
+	protected final IPipePos pos;
 	protected EnumFacing side;
 	public final PipeInfo info;
 	public boolean occluded;

@@ -275,7 +275,7 @@ public final class TaamUtil {
 		if (inventory.hasCustomName()) {
 			return inventory.getDisplayName().getFormattedText();
 		}
-		return I18n.format(inventory.getDisplayName().getFormattedText(), new Object[0]);
+		return I18n.format(inventory.getDisplayName().getFormattedText());
 	}
 
 	public static <T> T getCapability(Capability<T> capability, TileEntity tileEntity, EnumFacing side) {

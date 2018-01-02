@@ -62,7 +62,7 @@ public class MachinePump implements IMachine, IPipePos, IRotatable {
 	public static final AxisAlignedBB bbCoolusion = new AxisAlignedBB(fromBorderOcclusion, fromBorderOcclusion,
 			fromBorderOcclusion, 1 - fromBorderOcclusion, 1 - fromBorderOcclusion, 1 - fromBorderOcclusion);
 
-	private TankRenderInfo tankRI = new TankRenderInfo(boundsPumpTank[2]);
+	private final TankRenderInfo tankRI = new TankRenderInfo(boundsPumpTank[2]);
 
 	private byte occludedSides;
 	private World worldObj;

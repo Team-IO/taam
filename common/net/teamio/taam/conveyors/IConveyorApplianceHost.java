@@ -4,9 +4,9 @@ import java.util.List;
 
 public interface IConveyorApplianceHost {
 
-	public boolean canAcceptAppliance(String type);
+	boolean canAcceptAppliance(String type);
 
-	public List<IConveyorAppliance> getAppliances();
+	List<IConveyorAppliance> getAppliances();
 
-	public IConveyorSlots getSlots();
+	IConveyorSlots getSlots();
 }

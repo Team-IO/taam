@@ -38,11 +38,6 @@ public abstract class BaseTileEntity extends TileEntity implements IWorldNameabl
 		}
 	};
 
-	@Override
-	public void onLoad() {
-		super.onLoad();
-	}
-
 	public void setOwner(EntityPlayer player) {
 		if (player == null) {
 			owner = null;

@@ -43,12 +43,12 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements IReds
 	public static final byte Grinder = 1;
 	public static final byte Crusher = 2;
 
-	private ItemStackHandler itemHandler;
-	private IConveyorSlots conveyorSlots;
+	private final ItemStackHandler itemHandler;
+	private final IConveyorSlots conveyorSlots;
 	private ItemStack cachedInput;
 	private byte mode;
 
-	private OutputChuteBacklog chute = new OutputChuteBacklog();
+	private final OutputChuteBacklog chute = new OutputChuteBacklog();
 
 	private byte redstoneMode = IRedstoneControlled.MODE_ACTIVE_ON_LOW;
 	private EnumFacing direction = EnumFacing.NORTH;
@@ -144,7 +144,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements IReds
 				}
 			}
 
-			if(worldObj.rand.nextFloat() < Config.pl_processor_hurt_chance) {
+			if(Config.pl_processor_hurt && worldObj.rand.nextFloat() < Config.pl_processor_hurt_chance) {
 				hurtEntities();
 			}
 		}
@@ -197,7 +197,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements IReds
 		 * Check blocked & fetch output inventory
 		 */
 		chute.refreshOutputInventory(worldObj, down);
-		if(!chute.isOperable()) {
+		if(chute.isBlocked()) {
 			return ProcessResult.NoOperation;
 		}
 
@@ -281,8 +281,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements IReds
 			return null;
 		}
 
-		IProcessingRecipe recipe = ProcessingRegistry.getRecipe(machine, input);
-		return recipe;
+		return ProcessingRegistry.getRecipe(machine, input);
 	}
 
 	@Override

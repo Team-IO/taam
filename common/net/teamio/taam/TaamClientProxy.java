@@ -192,7 +192,6 @@ public class TaamClientProxy extends TaamCommonProxy {
 		 */
 
 		for (Taam.FLUID_DYE_META meta : Taam.FLUID_DYE_META.values()) {
-			int metaInt = meta.ordinal();
 			String metaName = meta.name();
 			itemToRegister = GameRegistry.findItem(Taam.MOD_ID, "fluid.dye." + metaName);
 			ModelBakery.registerItemVariants(itemToRegister, new ResourceLocation(Taam.MOD_ID, "fluid.dye." + metaName));
@@ -200,7 +199,6 @@ public class TaamClientProxy extends TaamCommonProxy {
 		}
 
 		for (Taam.FLUID_MATERIAL_META meta : Taam.FLUID_MATERIAL_META.values()) {
-			int metaInt = meta.ordinal();
 			String metaName = meta.name();
 			itemToRegister = GameRegistry.findItem(Taam.MOD_ID, "fluid.material." + metaName);
 			ModelBakery.registerItemVariants(itemToRegister, new ResourceLocation(Taam.MOD_ID, "fluid.material." + metaName));

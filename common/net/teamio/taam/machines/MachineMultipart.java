@@ -192,7 +192,6 @@ public class MachineMultipart extends Multipart implements INormallyOccludingPar
 				if (!faceMicro.isFaceHollow()) {
 					occlusionField = FaceBitmap.setSideBit(occlusionField, side);
 				}
-				continue;
 				/*
 				 * Last resort: slotted occluding parts
 				 */

@@ -8,7 +8,7 @@ import java.util.Arrays;
 
 public abstract class ChanceBasedRecipe extends BaseProcessingRecipe {
 
-	private ChancedOutput[] output;
+	private final ChancedOutput[] output;
 
 	public ChanceBasedRecipe(String inputOreDict, ChancedOutput... output) {
 		this.inputOreDict = inputOreDict;

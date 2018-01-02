@@ -8,7 +8,7 @@ import org.lwjgl.opengl.GL11;
 
 public class TaamMultipartRenderer extends MultipartSpecialRenderer<MachineMultipart> {
 
-	TaamRenderer renderer;
+	final TaamRenderer renderer;
 
 	public TaamMultipartRenderer(TaamRenderer renderer) {
 		this.renderer = renderer;

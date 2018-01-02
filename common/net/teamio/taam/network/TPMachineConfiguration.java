@@ -66,7 +66,7 @@ public final class TPMachineConfiguration implements IMessage {
 	}
 
 
-	public static enum Action {
+	public enum Action {
 		ChangeBoolean,
 		ChangeInteger
 	}
@@ -126,12 +126,12 @@ public final class TPMachineConfiguration implements IMessage {
 		case ChangeBoolean:
 			buf.writeByte(id);
 			buf.writeBoolean(boolValue);
-			return;
+			break;
 		default:
 		case ChangeInteger:
 			buf.writeByte(id);
 			buf.writeInt(intValue);
-			return;
+			break;
 		}
 	}
 

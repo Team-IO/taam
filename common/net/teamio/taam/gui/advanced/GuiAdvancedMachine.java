@@ -40,9 +40,9 @@ public class GuiAdvancedMachine extends GuiContainer {
 	public static final Drawable iconDontCheckNBT = new Drawable(guiTexture, 155, 30, 10, 10);
 
 
-	int buttonSpace = 60;
-	int buttonSize = 40;
-	int buttonsPerRow = 4;
+	final int buttonSpace = 60;
+	final int buttonSize = 40;
+	final int buttonsPerRow = 4;
 
 	public GuiAdvancedMachine(ContainerAdvancedMachine inventorySlotsIn) {
 		super(inventorySlotsIn);
@@ -147,7 +147,7 @@ public class GuiAdvancedMachine extends GuiContainer {
 	}
 
 	@Override
-	protected void actionPerformed(GuiButton button) throws IOException {
+	protected void actionPerformed(GuiButton button) {
 		if (button instanceof AppButton) {
 			App app = ((AppButton) button).app;
 			switchApp(app);
@@ -215,7 +215,7 @@ public class GuiAdvancedMachine extends GuiContainer {
 	public void drawTooltipTranslated(String unlocalized, int mouseX, int mouseY) {
 		textList.clear();
 
-		String localized = I18n.format(unlocalized, new Object[0]);
+		String localized = I18n.format(unlocalized);
 		// Split at literal \n in the translated text. a lot of escaping here.
 		String[] split = localized.split("\\\\n");
 		for (int i = 0; i < split.length; i++) {

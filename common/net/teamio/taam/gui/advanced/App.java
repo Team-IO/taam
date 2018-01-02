@@ -13,7 +13,7 @@ import net.teamio.taam.network.TPAdvancedGuiAppData;
 public abstract class App implements IWorldNameable {
 
 	public final ContainerAdvancedMachine container;
-	public int appContainerId;
+	public final int appContainerId;
 	/**
 	 * The first slot that belongs to this app. Set by the
 	 * {@link ContainerAdvancedMachine}. Used for enabling & disabling slots

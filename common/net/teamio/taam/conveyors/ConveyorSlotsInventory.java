@@ -13,7 +13,7 @@ import net.minecraftforge.items.ItemHandlerHelper;
  */
 public class ConveyorSlotsInventory extends ConveyorSlotsBase {
 
-	private IItemHandler inventory;
+	private final IItemHandler inventory;
 
 	/**
 	 * Creates a new {@link ConveyorSlotsInventory} instance for an

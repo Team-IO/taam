@@ -24,7 +24,7 @@ public class Framework {
 
 	public static final Logger LOGGER = LogManager.getLogger("net.teamio.blockunit");
 
-	private static List<Class<?>> tests = new ArrayList<Class<?>>(20);
+	private static final List<Class<?>> tests = new ArrayList<Class<?>>(20);
 
 	public static void runTests() {
 		registerTests();

@@ -20,9 +20,9 @@ import java.util.List;
  * @author Oliver Kahrmann
  */
 public class PipeEndFluidHandler implements IPipe {
-	protected IPipePos pos;
+	protected final IPipePos pos;
 	private EnumFacing side;
-	private IFluidHandler fluidHandler;
+	private final IFluidHandler fluidHandler;
 	public boolean occluded;
 
 	public PipeEndFluidHandler(IPipePos pos, IFluidHandler fluidHandler, EnumFacing side) {

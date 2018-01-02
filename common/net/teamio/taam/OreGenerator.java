@@ -20,12 +20,12 @@ import java.util.Random;
 public class OreGenerator implements IWorldGenerator {
 
 	public static class GenerationInfo {
-		public WorldGenMinable gen;
-		public int generateAbove;
-		public int generateBelow;
-		public int maxDepositCount;
+		public final WorldGenMinable gen;
+		public final int generateAbove;
+		public final int generateBelow;
+		public final int maxDepositCount;
 		// For Debug Purposes
-		public Taam.BLOCK_ORE_META ore;
+		public final Taam.BLOCK_ORE_META ore;
 		public GenerationInfo(Taam.BLOCK_ORE_META ore, WorldGenMinable gen, int generateAbove,
 				int generateBelow, int maxDepositCount) {
 			this.ore = ore;

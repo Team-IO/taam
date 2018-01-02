@@ -167,13 +167,8 @@ public class OBJModel implements IRetexturableModel, IModelCustomData, IModelSim
     {
     	return this.customData;
     }
-    
-    public ResourceLocation getModelLocation()
-    {
-    	return this.modelLocation;
-    }
 
-    @Override
+	@Override
     public OBJModel process(ImmutableMap<String, String> customData)
     {
     	OBJCustomData data;
@@ -186,15 +181,13 @@ public class OBJModel implements IRetexturableModel, IModelCustomData, IModelSim
     	{
     		data = new OBJCustomData(customData);
     	}
-        OBJModel ret = new OBJModel(this.matLib, this.modelLocation, data);
-        return ret;
+	    return new OBJModel(this.matLib, this.modelLocation, data);
     }
 
     @Override
     public OBJModel retexture(ImmutableMap<String, String> textures)
     {
-        OBJModel ret = new OBJModel(this.matLib.makeLibWithReplacements(textures), this.modelLocation, this.customData, this.gui3d, this.smooth);
-        return ret;
+	    return new OBJModel(this.matLib.makeLibWithReplacements(textures), this.modelLocation, this.customData, this.gui3d, this.smooth);
     }
     
     @Override
@@ -232,17 +225,17 @@ public class OBJModel implements IRetexturableModel, IModelCustomData, IModelSim
     public static class Parser
     {
         private static final Pattern WHITE_SPACE = Pattern.compile("\\s+");
-        private static Set<String> unknownObjectCommands = Sets.newHashSet();
-        private MaterialLibrary materialLibrary = new MaterialLibrary();
-        private IResourceManager manager;
-        private InputStreamReader objStream;
-        private BufferedReader objReader;
-        private ResourceLocation objFrom;
+        private static final Set<String> unknownObjectCommands = Sets.newHashSet();
+        private final MaterialLibrary materialLibrary = new MaterialLibrary();
+        private final IResourceManager manager;
+        private final InputStreamReader objStream;
+        private final BufferedReader objReader;
+        private final ResourceLocation objFrom;
 
-        private List<String> groupList = Lists.newArrayList();
-        private List<Vertex> vertices = Lists.newArrayList();
-        private List<Vector3f> normals = Lists.newArrayList();
-        private List<Vector3f> texCoords = Lists.newArrayList();
+        private final List<String> groupList = Lists.newArrayList();
+        private final List<Vertex> vertices = Lists.newArrayList();
+        private final List<Vector3f> normals = Lists.newArrayList();
+        private final List<Vector3f> texCoords = Lists.newArrayList();
 
         public Parser(IResource from, IResourceManager manager)
         {
@@ -446,8 +439,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData, IModelSim
             	this.materialLibrary.getGroups().remove(Group.DEFAULT_NAME);
             }
 
-            OBJModel model = new OBJModel(this.materialLibrary, this.objFrom, parsedUVBounds);
-            return model;
+	        return new OBJModel(this.materialLibrary, this.objFrom, parsedUVBounds);
         }
     }
 
@@ -759,7 +751,7 @@ public class OBJModel implements IRetexturableModel, IModelCustomData, IModelSim
     //TODO: evaluate the usefulness of having an entire class for this... currently no way to change position/scale/rotation
     public static class Texture
     {
-        public static Texture WHITE = new Texture("builtin/white", new Vector2f(0, 0), new Vector2f(1, 1), 0);
+        public static final Texture WHITE = new Texture("builtin/white", new Vector2f(0, 0), new Vector2f(1, 1), 0);
         private String path;
         private Vector2f position;
         private Vector2f scale;
@@ -1437,13 +1429,13 @@ public class OBJModel implements IRetexturableModel, IModelCustomData, IModelSim
         private final boolean gui3d;
         private final boolean smooth;
 //        private final LoadingCache<IBlockState, OBJState> cache;
-        private IModelState state;
+        private final IModelState state;
         private Set<BakedQuad> quads;
-        private ImmutableMap<String, TextureAtlasSprite> textures;
+        private final ImmutableMap<String, TextureAtlasSprite> textures;
         private TextureAtlasSprite sprite = ModelLoader.White.INSTANCE;
         private Map<Group, Boolean> visibilityMap = Maps.newHashMap();
         private Map<String, Vector4f> colorMap = Maps.newHashMap();
-        private Map<String, Material> materials;
+        private final Map<String, Material> materials;
 
         public OBJBakedModel(OBJModel model, IModelState state, VertexFormat format, ImmutableMap<String, TextureAtlasSprite> textures)
         {
@@ -1562,11 +1554,10 @@ public class OBJModel implements IRetexturableModel, IModelCustomData, IModelSim
         			this.quads.add(builder.build());
         		}
         	}
-        	List<BakedQuad> quadList = Collections.synchronizedList(Lists.newArrayList(this.quads));
-        	return quadList;
+	        return Collections.synchronizedList(Lists.newArrayList(this.quads));
         }
 
-        private final void putVertexData(UnpackedBakedQuad.Builder builder, Vertex v, Vector3f defUV, TextureAtlasSprite sprite)
+        private void putVertexData(UnpackedBakedQuad.Builder builder, Vertex v, Vector3f defUV, TextureAtlasSprite sprite)
         {
             for (int e = 0; e < format.getElementCount(); e++)
             {

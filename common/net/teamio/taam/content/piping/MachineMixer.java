@@ -39,8 +39,8 @@ public class MachineMixer implements IMachine, IPipePos, IRotatable {
 
 	private EnumFacing direction = EnumFacing.NORTH;
 
-	private PipeEndRestricted pipeEndIn;
-	private PipeEnd pipeEndOut;
+	private final PipeEndRestricted pipeEndIn;
+	private final PipeEnd pipeEndOut;
 
 	private FluidStack backlog;
 
@@ -68,7 +68,7 @@ public class MachineMixer implements IMachine, IPipePos, IRotatable {
 	/**
 	 * Conveyor Slot set for input on the sides
 	 */
-	private ConveyorSlotsBase conveyorSlots = new ConveyorSlotsBase() {
+	private final ConveyorSlotsBase conveyorSlots = new ConveyorSlotsBase() {
 
 		{
 			slotMatrix = new SlotMatrix(true, true, true, false, false, false, true, true, true);

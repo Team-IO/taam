@@ -28,7 +28,7 @@ public class PipeInfo {
 
 	public int pressure;
 	public int fillLevel;
-	public ArrayList<FluidStack> content;
+	public final ArrayList<FluidStack> content;
 
 	public void writeToNBT(NBTTagCompound tag) {
 		tag.setInteger("pressure", pressure);

@@ -39,7 +39,7 @@ public class TileEntityConveyorElevator extends BaseTileEntity implements ITicka
 		UP,
 		DOWN;
 
-		private static ElevatorDirection[] next = {
+		private static final ElevatorDirection[] next = {
 				DOWN,
 				UP,
 		};
@@ -54,7 +54,7 @@ public class TileEntityConveyorElevator extends BaseTileEntity implements ITicka
 		ENTER,
 		EXIT;
 
-		private static ElevatorMode[] next = {
+		private static final ElevatorMode[] next = {
 				ENTER,
 				EXIT,
 				PASS,

@@ -17,7 +17,7 @@ public class PressureSimulator {
 		}
 	};
 
-	public static Comparator<IPipe> pipePressureComparator = new Comparator<IPipe>() {
+	public static final Comparator<IPipe> pipePressureComparator = new Comparator<IPipe>() {
 		@Override
 		public int compare(IPipe pipe1, IPipe pipe2) {
 			int p1 = pipe1.getPressure();
@@ -55,11 +55,10 @@ public class PressureSimulator {
 				// Only use half the difference to even out the pipes
 				// (and not pump everything back in the second possible iteration)
 				int pressureDiff = pipe.getPressure() - other.getPressure();
-				if (pressureDiff <= 0) {
+				if (pressureDiff > 0) {
 					// Only simulate pushing, nothing "sucks" on this network
 					// The reverse is done from the other pipe which will always be part of the same simulation!
-					continue;
-				} else {
+
 					// Only transfer half the content at most - but always transfer something
 					if (pressureDiff > 1) {
 						pressureDiff = pressureDiff * 3 / 4;

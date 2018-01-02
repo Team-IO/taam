@@ -19,7 +19,7 @@ import java.util.TreeSet;
  */
 public class DirectedGraph<T> implements Iterable<T> {
 	private final Map<T, SortedSet<T>> graph = new HashMap<T, SortedSet<T>>();
-	public List<T> orderedNodes = new ArrayList<T>();
+	public final List<T> orderedNodes = new ArrayList<T>();
 
 	public boolean addNode(T node) {
 		// Ignore nodes already added

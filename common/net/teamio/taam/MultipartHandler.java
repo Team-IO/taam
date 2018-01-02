@@ -45,8 +45,7 @@ public class MultipartHandler {
 	}
 
 	public static Item createMultipartItem(IMachineMetaInfo[] meta) {
-		MachineItemMultipart item = new MachineItemMultipart(meta);
-		return item;
+		return new MachineItemMultipart(meta);
 	}
 
 	public static <T> T getCapabilityForCenter(Capability<T> capability, IBlockAccess world, BlockPos pos, EnumFacing facing) {

@@ -85,17 +85,6 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 
 	public static boolean failureFreeBlockHightlight = true;
 
-	public static final float shrinkValue = -0.001f;
-
-	public static final float b_tankBorder = 1.5f / 16f;
-	public static final float b_tankBorderSprayer = b_tankBorder + 4f / 16f;
-	public static final float b_basePlate = 2f / 16f;
-
-	public static AxisAlignedBB bounds_sprayer = new AxisAlignedBB(
-			b_tankBorder, b_basePlate, b_tankBorder,
-			1 - b_tankBorder, 1 - 4f / 16f, 1 - b_tankBorderSprayer
-	).expand(shrinkValue, shrinkValue, shrinkValue);
-
 	/**
 	 * Function for fetching texture sprites.
 	 */
@@ -783,7 +772,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 	/*
 	 * Vertex infos from exported .obj file
 	 */
-	Vector3f[] sieve_vertices = new Vector3f[]{
+	final Vector3f[] sieve_vertices = new Vector3f[]{
 			new Vector3f(0.9375f, 0.49f, 0.0625f),
 			new Vector3f(0.9375f, 0.52f, 0.0625f),
 			new Vector3f(0.0625f, 0.49f, 0.0625f),
@@ -803,7 +792,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 			new Vector3f(0.0625f, 0.48f, 0.9375f),
 			new Vector3f(0.5000f, 0.48f, 0.9375f)
 	};
-	Vector2f[] sieve_tex = new Vector2f[]{
+	final Vector2f[] sieve_tex = new Vector2f[]{
 			new Vector2f(0.000000f, 0.359375f),
 			new Vector2f(0.058594f, 0.359375f),
 			new Vector2f(0.058594f, 0.417969f),
@@ -815,7 +804,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 			new Vector2f(0.062500f, 0.414062f),
 			new Vector2f(0.062500f, 0.417969f)
 	};
-	Vector3f[] sieve_normals = new Vector3f[]{
+	final Vector3f[] sieve_normals = new Vector3f[]{
 			new Vector3f(0.000000f, -0.99900f, -0.0457f),
 			new Vector3f(0.000000f, 0.000000f, -1.00000f),
 			new Vector3f(0.000000f, 0.999000f, 0.045700f),
@@ -823,7 +812,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 			new Vector3f(-1.00000f, 0.00000f, 0.00000f),
 			new Vector3f(0.000000f, 0.000000f, 1.000000f)
 	};
-	ObjFace[] sieve_faces = new ObjFace[]{
+	final ObjFace[] sieve_faces = new ObjFace[]{
 			new ObjFace(new int[]{8, 14, 4, 1}, new int[]{1, 2, 3, 4}, 1),
 			new ObjFace(new int[]{1, 4, 6, 2}, new int[]{5, 6, 4, 7}, 2),
 			new ObjFace(new int[]{9, 2, 6, 15}, new int[]{1, 4, 3, 2}, 3),
@@ -889,9 +878,9 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 	}
 
 	public static class ObjFace {
-		public int[] vertexIndexes;
-		public int[] textureIndexes;
-		public int normalIndex;
+		public final int[] vertexIndexes;
+		public final int[] textureIndexes;
+		public final int normalIndex;
 
 		/**
 		 * @param vertexIndexes

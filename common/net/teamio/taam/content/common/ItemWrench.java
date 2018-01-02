@@ -38,7 +38,7 @@ public class ItemWrench extends Item {
 		if (!GuiScreen.isShiftKeyDown()) {
 			list.add(TextFormatting.DARK_PURPLE + I18n.format("lore.taam.shift", new Object[0]));
 		} else {
-			String usage = I18n.format("lore.taam.wrench.usage", new Object[0]);
+			String usage = I18n.format("lore.taam.wrench.usage");
 			//Split at literal \n in the translated text. a lot of escaping here.
 			String[] split = usage.split("\\\\n");
 			for(int i = 0;i < split.length; i++) {

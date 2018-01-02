@@ -52,8 +52,7 @@ public class PipeNetwork {
 			}
 		}
 
-		Queue<IPipe> toRescan = new ArrayDeque<IPipe>();
-		toRescan.addAll(graph.orderedNodes);
+		Queue<IPipe> toRescan = new ArrayDeque<IPipe>(graph.orderedNodes);
 
 		Set<IPipe> edges = new HashSet<IPipe>();
 		Set<IPipe> existingEdges = new HashSet<IPipe>();

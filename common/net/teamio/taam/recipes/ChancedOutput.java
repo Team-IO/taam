@@ -3,8 +3,8 @@ package net.teamio.taam.recipes;
 import net.minecraft.item.ItemStack;
 
 public class ChancedOutput {
-	public ItemStack output;
-	public float chance;
+	public final ItemStack output;
+	public final float chance;
 
 	public ChancedOutput(ItemStack output, float chance) {
 		super();

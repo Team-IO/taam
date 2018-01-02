@@ -23,21 +23,6 @@ public final class PipeUtil {
 		// Util Class
 	}
 
-	public static int calculateAppliedPressure(int current, int change, int limit) {
-		if (change > 0) {
-			int diff = limit - current;
-			if (diff > 0) {
-				return current + Math.min(change, diff);
-			}
-		} else {
-			int diff = limit - current;
-			if (diff < 0) {
-				return current + Math.max(change, diff);
-			}
-		}
-		return current;
-	}
-
 	/**
 	 * Returns a pipe connected to a side of a block. Looks for a TileEntity
 	 * in the direction of side, then asks that tile for a pipe in direction of

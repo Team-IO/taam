@@ -21,7 +21,7 @@ import net.teamio.taam.rendering.obj.OBJModel;
 
 public class BlockSensor extends BaseBlock {
 
-	public static PropertyEnum<EnumFacing> DIRECTION = PropertyEnum.create("direction", EnumFacing.class, EnumFacing.VALUES);
+	public static final PropertyEnum<EnumFacing> DIRECTION = PropertyEnum.create("direction", EnumFacing.class, EnumFacing.VALUES);
 
 	/**
 	 * Hitbox "offset" depth (attaching side -> sensor front)

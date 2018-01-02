@@ -24,7 +24,7 @@ public class CustomButton extends GuiButton {
 	public Function<CustomButton, Boolean> eventHandler;
 
 	public Drawable image;
-	public int textPadding = 2;
+	public final int textPadding = 2;
 	public boolean trimText = true;
 	/**
 	 * 0: Above

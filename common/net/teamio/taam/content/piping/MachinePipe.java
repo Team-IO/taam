@@ -42,12 +42,12 @@ public class MachinePipe implements IMachine, IPipe, IRenderable {
 	public static final float baseplateSize = 2 / 16f;
 	public static final float fromBorderBaseplate = (1f - baseplateWidth) / 2;
 
-	public static AxisAlignedBB bbCenter = new AxisAlignedBB(
+	public static final AxisAlignedBB bbCenter = new AxisAlignedBB(
 			fromBorder, fromBorder, fromBorder,
 			1 - fromBorder, 1 - fromBorder, 1 - fromBorder);
 	public static final AxisAlignedBB[] bbFaces = new AxisAlignedBB[6];
 	public static final AxisAlignedBB[] bbFlanges = new AxisAlignedBB[6];
-	public static AxisAlignedBB bbBaseplate = new AxisAlignedBB(
+	public static final AxisAlignedBB bbBaseplate = new AxisAlignedBB(
 			fromBorderBaseplate, 0, fromBorderBaseplate,
 			1 - fromBorderBaseplate, baseplateSize, 1 - fromBorderBaseplate);
 

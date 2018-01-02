@@ -43,10 +43,10 @@ public class ItemFilterCustomizable implements IItemFilter {
 	 */
 	public FilterMode mode = FilterMode.Exact;
 
-	public static enum FilterMode {
+	public enum FilterMode {
 		Exact, OreDict, Mod;
 		
-		private static FilterMode[] nextModes = {
+		private static final FilterMode[] nextModes = {
 				OreDict, Mod, Exact
 		};
 

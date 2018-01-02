@@ -12,7 +12,7 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
 public class ContainerConveyorSmallInventory extends Container {
-	protected IItemHandler tileEntity;
+	protected final IItemHandler tileEntity;
 
 	public ContainerConveyorSmallInventory(InventoryPlayer inventoryPlayer, ICapabilityProvider te, EnumFacing side) {
 		this(inventoryPlayer, te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side));

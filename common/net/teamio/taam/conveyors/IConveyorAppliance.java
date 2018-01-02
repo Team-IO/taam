@@ -19,7 +19,7 @@ public interface IConveyorAppliance extends IRotatable {
 	 *         appliance host was changed an needs to be communicated to clients
 	 *         or saved to disk. (TileEntity will be marked as dirty)
 	 */
-	public boolean processItem(IConveyorApplianceHost host, int slot, ItemWrapper wrapper);
+	boolean processItem(IConveyorApplianceHost host, int slot, ItemWrapper wrapper);
 
 	/**
 	 * Allows the appliance to override the direction a slot travels next.
@@ -36,5 +36,5 @@ public interface IConveyorAppliance extends IRotatable {
 	 * @return either the direction passed in to {@code beforeOverride} or a
 	 *         changed direction. Never return null!
 	 */
-	public EnumFacing overrideNextSlot(IConveyorApplianceHost host, int slot, ItemWrapper wrapper, EnumFacing beforeOverride);
+	EnumFacing overrideNextSlot(IConveyorApplianceHost host, int slot, ItemWrapper wrapper, EnumFacing beforeOverride);
 }

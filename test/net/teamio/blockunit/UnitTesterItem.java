@@ -22,9 +22,7 @@ public class UnitTesterItem extends Item {
 			Framework.runTests();
 		}
 
-
-
-		return new ActionResult(EnumActionResult.PASS, itemStackIn);
+		return new ActionResult<ItemStack>(EnumActionResult.PASS, itemStackIn);
 
 	}
 }

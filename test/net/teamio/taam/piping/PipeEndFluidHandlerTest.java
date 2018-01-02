@@ -12,8 +12,8 @@ import net.teamio.taam.content.piping.GenericPipeTests;
  */
 public class PipeEndFluidHandlerTest {
 
-	private PipeEndFluidHandler pipeEndFluidHandler;
-	private IFluidHandler fluidHandler;
+	private final PipeEndFluidHandler pipeEndFluidHandler;
+	private final IFluidHandler fluidHandler;
 
 	private static final int CAPACITY = 10;
 
@@ -23,17 +23,17 @@ public class PipeEndFluidHandlerTest {
 	}
 
 	@TestMethod
-	public void basicFunctions(TestingHarness t) throws Exception {
+	public void basicFunctions(TestingHarness t) {
 		t.assertEquals(CAPACITY, pipeEndFluidHandler.getCapacity());
 	}
 
 	@TestMethod
-	public void getInternalPipes(TestingHarness t) throws Exception {
+	public void getInternalPipes(TestingHarness t) {
 		t.assertNull(pipeEndFluidHandler.getInternalPipes());
 	}
 
 	@TestMethod
-	public void fluidAmount(TestingHarness t) throws Exception {
+	public void fluidAmount(TestingHarness t) {
 		GenericPipeTests.testPipeEnd(t, pipeEndFluidHandler, CAPACITY, true);
 	}
 
