@@ -24,6 +24,8 @@ import net.teamio.taam.gui.advanced.IAdvancedMachineGUI;
 import net.teamio.taam.gui.advanced.apps.AlignerSettings;
 import net.teamio.taam.gui.advanced.apps.RedstoneMode;
 
+import javax.annotation.Nonnull;
+
 public class ApplianceAligner extends ATileEntityAppliance implements IWorldInteractable {
 
 
@@ -49,12 +51,14 @@ public class ApplianceAligner extends ATileEntityAppliance implements IWorldInte
 		}
 	}
 
+	@Nonnull
 	@Override
 	public String getName() {
 		return "tile.taam.productionline_appliance.aligner.name";
 	}
 
 	@Override
+	@SideOnly(Side.CLIENT)
 	public void renderUpdate() {
 		TileEntity te = worldObj.getTileEntity(pos.offset(direction));
 		if(te instanceof IConveyorApplianceHost) {
@@ -72,11 +76,13 @@ public class ApplianceAligner extends ATileEntityAppliance implements IWorldInte
 			return ApplianceAligner.this.hasCustomName();
 		}
 
+		@Nonnull
 		@Override
 		public String getName() {
 			return ApplianceAligner.this.getName();
 		}
 
+		@Nonnull
 		@Override
 		public ITextComponent getDisplayName() {
 			return ApplianceAligner.this.getDisplayName();
@@ -95,16 +101,17 @@ public class ApplianceAligner extends ATileEntityAppliance implements IWorldInte
 	};
 
 	@Override
-	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+	public boolean hasCapability(@Nonnull Capability<?> capability, @Nonnull EnumFacing facing) {
 		if(capability == Taam.CAPABILITY_ADVANCED_GUI) {
 			return true;
 		}
 		return super.hasCapability(capability, facing);
 	}
 
+	@Nonnull
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+	public <T> T getCapability(@Nonnull Capability<T> capability, @Nonnull EnumFacing facing) {
 		if(capability == Taam.CAPABILITY_ADVANCED_GUI) {
 			return (T) gui;
 		}

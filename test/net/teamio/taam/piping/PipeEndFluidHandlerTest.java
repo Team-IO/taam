@@ -19,7 +19,7 @@ public class PipeEndFluidHandlerTest {
 
 	public PipeEndFluidHandlerTest() {
 		fluidHandler = new FluidTank(CAPACITY);
-		pipeEndFluidHandler = new PipeEndFluidHandler(fluidHandler, EnumFacing.UP, true);
+		pipeEndFluidHandler = new PipeEndFluidHandler(null, fluidHandler, EnumFacing.UP);
 	}
 
 	@TestMethod
@@ -29,7 +29,7 @@ public class PipeEndFluidHandlerTest {
 
 	@TestMethod
 	public void getInternalPipes(TestingHarness t) throws Exception {
-		t.assertNull(pipeEndFluidHandler.getInternalPipes(null, null));
+		t.assertNull(pipeEndFluidHandler.getInternalPipes());
 	}
 
 	@TestMethod

@@ -17,8 +17,10 @@ import net.teamio.taam.Taam;
 import net.teamio.taam.content.IRedstoneControlled;
 import net.teamio.taam.conveyors.OutputChuteBacklog;
 import net.teamio.taam.machines.IMachine;
+import net.teamio.taam.machines.IMachineWrapper;
+import net.teamio.taam.piping.IPipePos;
 import net.teamio.taam.piping.PipeEndRestricted;
-import net.teamio.taam.piping.PipeUtil;
+import net.teamio.taam.piping.PipeNetwork;
 import net.teamio.taam.recipes.IProcessingRecipeFluidBased;
 import net.teamio.taam.recipes.ProcessingRegistry;
 import net.teamio.taam.util.FaceBitmap;
@@ -27,7 +29,7 @@ import net.teamio.taam.util.TaamUtil;
 import java.io.IOException;
 import java.util.List;
 
-public class MachineFluidDrier implements IMachine {
+public class MachineFluidDrier implements IMachine, IPipePos {
 
 	private PipeEndRestricted pipeEndIn;
 
@@ -41,18 +43,45 @@ public class MachineFluidDrier implements IMachine {
 
 	public boolean isShutdown;
 	private byte occludedSides;
+	private World worldObj;
+	private BlockPos pos;
 
-	private static final float fromBorderOcclusion = 2f/16;
-	public static final AxisAlignedBB bbCollision = new AxisAlignedBB(0, 0, 0, 1, 1-3/16f, 1);
-	public static final AxisAlignedBB bbCoolusion = new AxisAlignedBB(fromBorderOcclusion, fromBorderOcclusion, fromBorderOcclusion, 1-fromBorderOcclusion, 1-fromBorderOcclusion, 1-fromBorderOcclusion);
+	private static final float fromBorderOcclusion = 2f / 16;
+	public static final AxisAlignedBB bbCollision = new AxisAlignedBB(0, 0, 0, 1, 1 - 3 / 16f, 1);
+	public static final AxisAlignedBB bbCoolusion = new AxisAlignedBB(fromBorderOcclusion, fromBorderOcclusion, fromBorderOcclusion, 1 - fromBorderOcclusion, 1 - fromBorderOcclusion, 1 - fromBorderOcclusion);
+	private IMachineWrapper wrapper;
 
 	public MachineFluidDrier() {
-		pipeEndIn = new PipeEndRestricted(EnumFacing.UP, Config.pl_fluid_drier_capacity, false);
+		pipeEndIn = new PipeEndRestricted(this, EnumFacing.UP, Config.pl_fluid_drier_capacity);
 		resetTimeout();
 	}
 
 	@Override
-	public void onCreated(World worldObj, BlockPos pos) {}
+	public void setWrapper(IMachineWrapper wrapper) {
+		this.wrapper = wrapper;
+	}
+
+	@Override
+	public void onCreated(World worldObj, BlockPos pos) {
+		this.worldObj = worldObj;
+		this.pos = pos;
+		PipeNetwork.NET.addPipe(pipeEndIn);
+	}
+
+	@Override
+	public void onUnload(World worldObj, BlockPos pos) {
+		PipeNetwork.NET.removePipe(pipeEndIn);
+	}
+
+	@Override
+	public IBlockAccess getWorld() {
+		return worldObj;
+	}
+
+	@Override
+	public BlockPos getPos() {
+		return pos;
+	}
 
 	private void updateOcclusion() {
 		pipeEndIn.occluded = FaceBitmap.isSideBitSet(occludedSides, EnumFacing.UP);
@@ -86,9 +115,7 @@ public class MachineFluidDrier implements IMachine {
 		chute.readFromNBT(tag.getCompoundTag("chute"));
 
 		NBTTagCompound tagIn = tag.getCompoundTag("pipeEndIn");
-		if (tagIn != null) {
-			pipeEndIn.readFromNBT(tagIn);
-		}
+		pipeEndIn.readFromNBT(tagIn);
 
 		occludedSides = tag.getByte("occludedSides");
 		updateOcclusion();
@@ -124,16 +151,11 @@ public class MachineFluidDrier implements IMachine {
 
 	@Override
 	public boolean update(World world, BlockPos pos) {
-		PipeUtil.processPipes(pipeEndIn, world, pos);
-
-		if(world.isRemote) {
+		if (world.isRemote) {
 			return false;
 		}
 
-		if(process(world, pos)) {
-			return true;
-		}
-		return false;
+		return process(world, pos);
 	}
 
 	@Override
@@ -158,7 +180,7 @@ public class MachineFluidDrier implements IMachine {
 
 		isShutdown = TaamUtil.isShutdown(world.rand, redstoneMode, redstoneHigh);
 
-		if(isShutdown) {
+		if (isShutdown) {
 			resetTimeout();
 			return true;
 		}
@@ -168,7 +190,7 @@ public class MachineFluidDrier implements IMachine {
 		 * Check blocked & fetch output inventory
 		 */
 		chute.refreshOutputInventory(world, down);
-		if(!chute.isOperable()) {
+		if (!chute.isOperable()) {
 			resetTimeout();
 			return false;
 		}
@@ -178,7 +200,7 @@ public class MachineFluidDrier implements IMachine {
 		 */
 
 		// Output the backlog. Returns true if there were items transferred or there are still items left.
-		if(chute.output(world, down)) {
+		if (chute.output(world, down)) {
 			resetTimeout();
 			return true;
 		}
@@ -189,7 +211,7 @@ public class MachineFluidDrier implements IMachine {
 
 		IProcessingRecipeFluidBased recipe = getRecipe();
 
-		if(recipe == null) {
+		if (recipe == null) {
 			resetTimeout();
 			return false;
 		}
@@ -202,7 +224,7 @@ public class MachineFluidDrier implements IMachine {
 
 		FluidStack inTank = pipeEndIn.getFluid();
 
-		if(inTank == null || inTank.amount < requiredAmount) {
+		if (inTank == null || inTank.amount < requiredAmount) {
 			resetTimeout();
 			return false;
 		}
@@ -211,7 +233,7 @@ public class MachineFluidDrier implements IMachine {
 		 * Check timeout, only if we actually can process.
 		 */
 
-		if(timeout > 0) {
+		if (timeout > 0) {
 			timeout--;
 			return true;
 		}
@@ -221,7 +243,7 @@ public class MachineFluidDrier implements IMachine {
 		 */
 
 		int consumed = pipeEndIn.removeFluid(recipe.getInputFluid());
-		if(consumed != requiredAmount) {
+		if (consumed != requiredAmount) {
 			// This should not happen.
 			Log.error("Detected inconsistency in {}. Expected fluid amount to be consumed: {} Actually consumed: {}. Fluid might have been duplicated or lost.",
 					getClass().getName(), requiredAmount, consumed);
@@ -238,23 +260,21 @@ public class MachineFluidDrier implements IMachine {
 
 	/**
 	 * Checks if there is a recipe for the current input fluid & returns it.
-	 *
-	 * @param stack
 	 */
 	private IProcessingRecipeFluidBased getRecipe() {
 		FluidStack inside = pipeEndIn.getFluid();
-		if(inside == null) {
+		if (inside == null) {
 			lastInputFluid = null;
 			matchingRecipes = null;
 			return null;
 		}
-		if(lastInputFluid == null || !lastInputFluid.isFluidEqual(inside)) {
+		if (lastInputFluid == null || !lastInputFluid.isFluidEqual(inside)) {
 			lastInputFluid = inside;
 			matchingRecipes = ProcessingRegistry.getRecipes(ProcessingRegistry.FLUIDDRIER, lastInputFluid);
 		}
-		if(matchingRecipes != null) {
-			for(IProcessingRecipeFluidBased recipe : matchingRecipes) {
-				if(recipe.inputFluidMatches(inside)) {
+		if (matchingRecipes != null) {
+			for (IProcessingRecipeFluidBased recipe : matchingRecipes) {
+				if (recipe.inputFluidMatches(inside)) {
 					return recipe;
 				}
 			}
@@ -283,7 +303,7 @@ public class MachineFluidDrier implements IMachine {
 
 	@Override
 	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-		if(capability == Taam.CAPABILITY_PIPE) {
+		if (capability == Taam.CAPABILITY_PIPE) {
 			return facing == EnumFacing.UP;
 		}
 		return false;

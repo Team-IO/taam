@@ -58,6 +58,7 @@ public interface IMachine extends ICapabilityProvider {
 	void addCollisionBoxes(AxisAlignedBB mask, List<AxisAlignedBB> list, Entity collidingEntity);
 	void addSelectionBoxes(List<AxisAlignedBB> list);
 	void addOcclusionBoxes(List<AxisAlignedBB> list);
-
+	void setWrapper(IMachineWrapper wrapper);
 	void onCreated(World worldObj, BlockPos pos);
+	void onUnload(World worldObj, BlockPos pos);
 }

@@ -56,16 +56,14 @@ public class Config {
 	public static int pl_mixer_capacity_output;
 
 	public static int pl_pipe_capacity;
+	public static int pl_pipe_max_pressure;
 	public static boolean pl_pipe_wrap_ifluidhandler;
 
 	public static int pl_pump_capacity;
 	public static int pl_pump_pressure;
-	public static int pl_pump_suction;
 
 	public static int pl_tank_capacity;
 	public static int pl_tank_suction;
-
-	public static int pl_creativewell_pressure;
 
 	public static int pl_sprayer_capacity;
 
@@ -216,16 +214,14 @@ public class Config {
 		pl_mixer_capacity_output = getIntWR("capacity_output", SECTION_PRODUCTIONLINE_MIXER, 2000, 0, Integer.MAX_VALUE, "Capacity of the output pipe end of the mixer. Does not accect recipes, only output speed & loss when breaking the block. Unit: mB");
 
 		pl_pipe_capacity = getIntWR("capacity", SECTION_PRODUCTIONLINE_PIPE, 500, 1, Integer.MAX_VALUE, "Capacity of the pipes. Higher capacity means higher loss when breaking a pipe, but also faster transfer of fluids. Unit: mB");
+		pl_pipe_max_pressure = getInt("max_pressure", SECTION_PRODUCTIONLINE_PIPE, 500, 1, Integer.MAX_VALUE, "Absolute maximum pressure a pipe can hold. Applies to both positive and negative.");
 		pl_pipe_wrap_ifluidhandler = getBoolean("wrap_ifluidhandler", SECTION_PRODUCTIONLINE_PIPE, true, "Enable or disable pipes connecting to 'regular' IFluidHandler-based machines. Setting this to false makes pipes only connect to other pipes & pipe ends in machines.");
 
 		pl_pump_capacity = getIntWR("capacity", SECTION_PRODUCTIONLINE_PUMP, 125, 1, Integer.MAX_VALUE, "Capacity of the pumps. Higher capacity means higher loss when breaking a pump, but also faster transfer of fluids. Unit: mB");
 		pl_pump_pressure = getIntWR("pressure", SECTION_PRODUCTIONLINE_PUMP, 50, 1, Integer.MAX_VALUE, "Pressure of the pumps. Higher pressure means higher output range.");
-		pl_pump_suction = getIntWR("suction", SECTION_PRODUCTIONLINE_PUMP, 50, 1, Integer.MAX_VALUE, "Suction of the pumps. Higher suction means higher input range.");
 
 		pl_tank_capacity = getIntWR("capacity", SECTION_PRODUCTIONLINE_TANK, 8000, 1, Integer.MAX_VALUE, "Capacity of the tanks. Higher capacity means higher loss when breaking a tank, but also more storage. Transfer rate is limited by connected pipe, not by the tank. Unit: mB");
 		pl_tank_suction = getIntWR("suction", SECTION_PRODUCTIONLINE_TANK, 10, 1, Integer.MAX_VALUE, "Suction of the tanks. Higher suction means higher input range. Suction on the lower end of the tank is always 1 lower than on the top, so stacked tanks always transfer down.");
-
-		pl_creativewell_pressure = getIntWR("pressure", SECTION_PRODUCTIONLINE_CREATIVEWELL, 20, 1, Integer.MAX_VALUE, "Pressure of the creative wells. Higher pressure means higher output range.");
 
 		pl_sprayer_capacity = getIntWR("capacity", SECTION_PRODUCTIONLINE_SPRAYER, 2000, 1, Integer.MAX_VALUE, "Capacity of the pipe end of the sprayer appliance. Keep in mind that lowering this too much can make some recipes impossible! Unit: mB");
 

@@ -10,6 +10,7 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.IWorldNameable;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.teamio.taam.piping.IPipePos;
 import net.teamio.taam.util.TaamUtil;
 
 import java.util.ArrayList;
@@ -23,7 +24,7 @@ import java.util.UUID;
  * @author oliverkahrmann
  *
  */
-public abstract class BaseTileEntity extends TileEntity implements IWorldNameable {
+public abstract class BaseTileEntity extends TileEntity implements IWorldNameable, IPipePos {
 
 	private UUID owner = null;
 	/**

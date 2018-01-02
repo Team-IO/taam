@@ -8,35 +8,34 @@ import net.minecraftforge.fluids.FluidStack;
  * Useful for recipe-based processing machines.
  *
  * @author Oliver Kahrmann
- *
  */
 public class PipeEndRestricted extends PipeEnd {
 
-	public PipeEndRestricted(EnumFacing side, int capacity, boolean active) {
-		super(side, capacity, active);
+	public PipeEndRestricted(IPipePos pos, EnumFacing side, int capacity) {
+		super(pos, side, capacity);
 	}
 
-	public PipeEndRestricted(EnumFacing side, PipeInfo info, boolean active) {
-		super(side, info, active);
+	public PipeEndRestricted(IPipePos pos, EnumFacing side, PipeInfo info) {
+		super(pos, side, info);
 	}
 
 	@Override
 	public int addFluid(FluidStack stack) {
 		FluidStack inside = null;
-		if(info.content.size() > 0) {
+		if (info.content.size() > 0) {
 			inside = info.content.get(0);
 
 			// Clean up 0-amount-stacks, fail-safe for any "stupid" cases
 			while (inside != null && inside.amount == 0) {
 				info.content.remove(0);
-				if(info.content.size() > 0) {
+				if (info.content.size() > 0) {
 					inside = info.content.get(0);
 				} else {
 					inside = null;
 				}
 			}
 		}
-		if(inside == null || inside.isFluidEqual(stack)) {
+		if (inside == null || inside.isFluidEqual(stack)) {
 			return info.addFluid(stack);
 		}
 		return 0;
@@ -44,7 +43,7 @@ public class PipeEndRestricted extends PipeEnd {
 
 	public FluidStack getFluid() {
 		FluidStack inside = null;
-		if(info.content.size() > 0) {
+		if (info.content.size() > 0) {
 			inside = info.content.get(0);
 		}
 		return inside;

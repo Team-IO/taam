@@ -16,7 +16,6 @@ import java.util.List;
  * implementation of said interface.
  *
  * @author Oliver Kahrmann
- *
  */
 public class PipeInfo {
 
@@ -28,13 +27,11 @@ public class PipeInfo {
 	public final int capacity;
 
 	public int pressure;
-	public int suction;
 	public int fillLevel;
 	public ArrayList<FluidStack> content;
 
 	public void writeToNBT(NBTTagCompound tag) {
 		tag.setInteger("pressure", pressure);
-		tag.setInteger("suction", suction);
 		NBTTagList list = new NBTTagList();
 		for (FluidStack stack : content) {
 			NBTTagCompound fluidTag = new NBTTagCompound();
@@ -46,7 +43,6 @@ public class PipeInfo {
 
 	public void readFromNBT(NBTTagCompound tag) {
 		pressure = tag.getInteger("pressure");
-		suction = tag.getInteger("suction");
 		NBTTagList list = tag.getTagList("content", NBT.TAG_COMPOUND);
 		content.clear();
 		if (list != null && list.tagCount() != 0) {
@@ -54,13 +50,14 @@ public class PipeInfo {
 			for (int i = 0; i < list.tagCount(); i++) {
 				NBTTagCompound fluidTag = list.getCompoundTagAt(i);
 				FluidStack stack = FluidStack.loadFluidStackFromNBT(fluidTag);
-				if(stack != null) {
+				if (stack != null) {
 					content.add(stack);
 				}
 			}
 		}
 		content.trimToSize();
 		recalculateFillLevel();
+		onUpdate();
 	}
 
 	public void writeUpdatePacket(PacketBuffer buf) {
@@ -82,7 +79,7 @@ public class PipeInfo {
 	public void recalculateFillLevel() {
 		fillLevel = 0;
 		for (FluidStack stack : content) {
-			if(stack == null) {
+			if (stack == null) {
 				continue;
 			}
 			fillLevel += stack.amount;
@@ -107,12 +104,16 @@ public class PipeInfo {
 		for (FluidStack contentStack : content) {
 			if (contentStack.isFluidEqual(stack)) {
 				contentStack.amount += insert;
+				onUpdate();
+				pressure += insert;
 				return insert;
 			}
 		}
 		FluidStack copy = stack.copy();
 		copy.amount = insert;
+		pressure += insert;
 		content.add(copy);
+		onUpdate();
 
 		return insert;
 	}
@@ -132,9 +133,11 @@ public class PipeInfo {
 				if (contentStack.amount <= 0) {
 					content.remove(i);
 				}
+				onUpdate();
 				recalculateFillLevel();
 
 				// And return the amount
+				pressure -= removeAmount;
 				return removeAmount;
 			}
 		}
@@ -157,5 +160,40 @@ public class PipeInfo {
 
 	public List<FluidStack> getFluids() {
 		return content;
+	}
+
+	public int applyPressure(int pressure, int absMaxPressure) {
+
+		//TODO: unit test this
+
+		if (pressure == 0) {
+			return 0;
+		} else if (pressure > 0) {
+			int capa = absMaxPressure - this.pressure;
+			if (capa > 0) {
+				capa = Math.min(capa, pressure);
+				this.pressure += capa;
+				onUpdate();
+				return capa;
+			} else {
+				return 0;
+			}
+		} else {
+			int capa = absMaxPressure + this.pressure;
+			if (capa > 0) {
+				capa = Math.min(capa, -pressure);
+				this.pressure -= capa;
+				onUpdate();
+				return -capa;
+			} else {
+				return 0;
+			}
+		}
+	}
+
+	/**
+	 * Override this when you need update events, e.g. for markDirty(). Default implementation does nothing.
+	 */
+	protected void onUpdate() {
 	}
 }

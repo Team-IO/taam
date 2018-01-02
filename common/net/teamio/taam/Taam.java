@@ -19,6 +19,7 @@ import net.teamio.taam.conveyors.IConveyorSlots;
 import net.teamio.taam.gui.advanced.IAdvancedMachineGUI;
 import net.teamio.taam.machines.IMachine;
 import net.teamio.taam.machines.IMachineMetaInfo;
+import net.teamio.taam.machines.IMachineWrapper;
 import net.teamio.taam.machines.MachineBlock;
 import net.teamio.taam.machines.MachineItemBlock;
 import net.teamio.taam.machines.MachineItemMultipart;
@@ -28,6 +29,7 @@ import net.teamio.taam.piping.IPipe;
 import net.teamio.taam.rendering.TankRenderInfo;
 
 import javax.annotation.Nonnull;
+import java.rmi.activation.Activator;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -603,9 +605,11 @@ public final class Taam {
 		 */
 
 		@Override
-		public IMachine createMachine() {
+		public IMachine createMachine(IMachineWrapper wrapper) {
 			try {
-				return machineClass.newInstance();
+				IMachine machine = machineClass.newInstance();
+				machine.setWrapper(wrapper);
+				return machine;
 			} catch (InstantiationException e) {
 				Log.error("Could not create machine instance. Returning null. THIS IS AN ERROR, please report!", e);
 			} catch (IllegalAccessException e) {

@@ -75,7 +75,7 @@ public class MachineItemBlock extends ItemBlock {
 			IMachineMetaInfo info = getInfo(meta);
 
 			te.meta = info;
-			te.machine = info.createMachine();
+			te.machine = info.createMachine(te);
 			te.markDirty();
 			//TODO: world.markBlockForUpdate(pos);
 

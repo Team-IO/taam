@@ -16,8 +16,12 @@ import net.teamio.taam.Log;
 import net.teamio.taam.Taam;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.machines.IMachine;
+import net.teamio.taam.machines.IMachineWrapper;
+import net.teamio.taam.piping.IPipePos;
+import net.teamio.taam.piping.PipeEnd;
 import net.teamio.taam.piping.PipeEndSharedDistinct;
 import net.teamio.taam.piping.PipeInfo;
+import net.teamio.taam.piping.PipeNetwork;
 import net.teamio.taam.piping.PipeUtil;
 import net.teamio.taam.rendering.TankRenderInfo;
 import net.teamio.taam.util.FaceBitmap;
@@ -25,10 +29,10 @@ import net.teamio.taam.util.FaceBitmap;
 import java.io.IOException;
 import java.util.List;
 
-public class MachinePump implements IMachine, IRotatable {
+public class MachinePump implements IMachine, IPipePos, IRotatable {
 
-	private final PipeEndSharedDistinct pipeEndOut;
-	private final PipeEndSharedDistinct pipeEndIn;
+	private final PipeEnd pipeEndOut;
+	private final PipeEnd pipeEndIn;
 
 	private EnumFacing direction = EnumFacing.NORTH;
 	private final PipeInfo info;
@@ -47,11 +51,11 @@ public class MachinePump implements IMachine, IRotatable {
 
 	private static final float tankBack = 6 / 16f;
 
-	public static final AxisAlignedBB[] boundsPumpTank = new AxisAlignedBB[] {
-			new AxisAlignedBB(1-tankLeft,	tankBottom, tankBack,	1-tankLeft-tankWidth,	tankTop,	tankBack+tankWidth).expand(TankRenderInfo.shrinkValue, TankRenderInfo.shrinkValue, TankRenderInfo.shrinkValue),//S
-			new AxisAlignedBB(1-tankBack,	tankBottom,	1-tankLeft, 1-tankBack-tankWidth,	tankTop,	1-tankLeft-tankWidth).expand(TankRenderInfo.shrinkValue, TankRenderInfo.shrinkValue, TankRenderInfo.shrinkValue),//W
-			new AxisAlignedBB(tankLeft,		tankBottom, 1-tankBack,	tankLeft+tankWidth,		tankTop,	1-tankBack-tankWidth).expand(TankRenderInfo.shrinkValue, TankRenderInfo.shrinkValue, TankRenderInfo.shrinkValue),//N
-			new AxisAlignedBB(tankBack,		tankBottom, tankLeft,	tankBack+tankWidth,		tankTop,	tankLeft+tankWidth).expand(TankRenderInfo.shrinkValue, TankRenderInfo.shrinkValue, TankRenderInfo.shrinkValue)//E
+	public static final AxisAlignedBB[] boundsPumpTank = new AxisAlignedBB[]{
+			new AxisAlignedBB(1 - tankLeft, tankBottom, tankBack, 1 - tankLeft - tankWidth, tankTop, tankBack + tankWidth).expand(TankRenderInfo.shrinkValue, TankRenderInfo.shrinkValue, TankRenderInfo.shrinkValue),//S
+			new AxisAlignedBB(1 - tankBack, tankBottom, 1 - tankLeft, 1 - tankBack - tankWidth, tankTop, 1 - tankLeft - tankWidth).expand(TankRenderInfo.shrinkValue, TankRenderInfo.shrinkValue, TankRenderInfo.shrinkValue),//W
+			new AxisAlignedBB(tankLeft, tankBottom, 1 - tankBack, tankLeft + tankWidth, tankTop, 1 - tankBack - tankWidth).expand(TankRenderInfo.shrinkValue, TankRenderInfo.shrinkValue, TankRenderInfo.shrinkValue),//N
+			new AxisAlignedBB(tankBack, tankBottom, tankLeft, tankBack + tankWidth, tankTop, tankLeft + tankWidth).expand(TankRenderInfo.shrinkValue, TankRenderInfo.shrinkValue, TankRenderInfo.shrinkValue)//E
 	};
 
 	private static final float fromBorderOcclusion = 2f / 16;
@@ -61,23 +65,63 @@ public class MachinePump implements IMachine, IRotatable {
 	private TankRenderInfo tankRI = new TankRenderInfo(boundsPumpTank[2]);
 
 	private byte occludedSides;
+	private World worldObj;
+	private BlockPos pos;
+	private IMachineWrapper wrapper;
 
 	public MachinePump() {
-		info = new PipeInfo(Config.pl_pump_capacity);
-		pipeEndOut = new PipeEndSharedDistinct(direction, info, true);
-		pipeEndIn = new PipeEndSharedDistinct(direction.getOpposite(), info, true);
-		pipeEndOut.setPressure(Config.pl_pump_pressure);
-		pipeEndIn.setSuction(Config.pl_pump_suction);
+		info = new PipeInfo(Config.pl_pump_capacity){
+			@Override
+			protected void onUpdate() {
+				if (wrapper == null) return;
+				wrapper.markAsDirty();
+				wrapper.sendPacket(getContentPacket());
+			}
+		};
+		pipeEndOut = new PipeEndSharedDistinct(this, direction, info);
+		pipeEndIn = new PipeEndSharedDistinct(this, direction.getOpposite(), info);
 	}
 
 	@Override
-	public void onCreated(World worldObj, BlockPos pos) {}
+	public void setWrapper(IMachineWrapper wrapper) {
+		this.wrapper = wrapper;
+	}
+
+	@Override
+	public void onCreated(World worldObj, BlockPos pos) {
+		this.worldObj = worldObj;
+		this.pos = pos;
+		PipeNetwork.NET.addPipe(pipeEndIn);
+		PipeNetwork.NET.addPipe(pipeEndOut);
+	}
+
+	@Override
+	public void onUnload(World worldObj, BlockPos pos) {
+		PipeNetwork.NET.removePipe(pipeEndIn);
+		PipeNetwork.NET.removePipe(pipeEndOut);
+	}
+
+	@Override
+	public IBlockAccess getWorld() {
+		return worldObj;
+	}
+
+	@Override
+	public BlockPos getPos() {
+		return pos;
+	}
 
 	private void updateOcclusion() {
 		pipeEndOut.occluded = FaceBitmap.isSideBitSet(occludedSides, pipeEndOut.getSide());
 		pipeEndIn.occluded = FaceBitmap.isSideBitSet(occludedSides, pipeEndIn.getSide());
 
 		tankRI.bounds = boundsPumpTank[direction.getHorizontalIndex()];
+	}
+
+	private NBTTagCompound getContentPacket() {
+		NBTTagCompound tag = new NBTTagCompound();
+		writePropertiesToNBT(tag);
+		return tag;
 	}
 
 	@Override
@@ -133,9 +177,17 @@ public class MachinePump implements IMachine, IRotatable {
 
 	@Override
 	public boolean update(World world, BlockPos pos) {
-		PipeUtil.processPipes(pipeEndOut, world, pos);
-		PipeUtil.processPipes(pipeEndIn, world, pos);
-		return true;
+		// Pump fluid
+		//int amount = PipeUtil.transferContent(pipeEndIn, pipeEndOut, Config.pl_pump_pressure);
+		// Apply excess pressure directly
+		//int left = Config.pl_pump_pressure - amount;
+		int amount = 0;
+		//if(left > 0) {
+			// Results are added to amount to mark the whole pump as dirty if a pipe end changed
+			amount -= pipeEndIn.applyPressure(-Config.pl_pump_pressure);
+			amount += pipeEndOut.applyPressure(Config.pl_pump_pressure);
+		//}
+		return amount > 0;
 	}
 
 	@Override

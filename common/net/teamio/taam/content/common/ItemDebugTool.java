@@ -25,6 +25,7 @@ import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.conveyors.TileEntityConveyor;
 import net.teamio.taam.conveyors.IConveyorApplianceHost;
 import net.teamio.taam.piping.IPipe;
+import net.teamio.taam.piping.PipeUtil;
 import net.teamio.taam.util.FluidUtils;
 
 import java.util.List;
@@ -89,6 +90,9 @@ public class ItemDebugTool extends Item {
 		boolean didSomething = false;
 
 		TileEntity te = worldIn.getTileEntity(pos);
+		if(te == null) {
+			return EnumActionResult.PASS;
+		}
 
 
 		if(te instanceof TileEntityConveyor) {
@@ -107,9 +111,9 @@ public class ItemDebugTool extends Item {
 			//IConveyorApplianceHost host = (IConveyorApplianceHost)te;
 		}
 
-		if(te instanceof IPipe) {
+		IPipe pipe = PipeUtil.getPipe(worldIn, pos, facing);
 
-			IPipe pipe = (IPipe)te;
+		if(pipe != null) {
 
 			String content = "[";
 			List<FluidStack> fs = pipe.getFluids();
@@ -120,8 +124,8 @@ public class ItemDebugTool extends Item {
 			}
 			content += "]";
 
-			text = String.format(remoteState + " %s Pipe pressure: %d suction: %d effective: %d Content: %s",
-					pipe.getClass().getName(), pipe.getPressure(), pipe.getSuction(), pipe.getPressure() - pipe.getSuction(), content);
+			text = String.format(remoteState + " %s Pipe pressure: %d  Content: %s",
+					pipe.getClass().getName(), pipe.getPressure(), content);
 
 			playerIn.addChatMessage(new TextComponentString(text));
 		}

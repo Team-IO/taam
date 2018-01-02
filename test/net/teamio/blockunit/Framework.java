@@ -3,6 +3,7 @@ package net.teamio.blockunit;
 import net.teamio.taam.content.piping.MachinePipeTest;
 import net.teamio.taam.content.piping.MachineTankTest;
 import net.teamio.taam.piping.PipeEndFluidHandlerTest;
+import net.teamio.taam.piping.PressureSimulatorTest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -130,5 +131,6 @@ public class Framework {
 		registerTestClass(PipeEndFluidHandlerTest.class);
 		registerTestClass(MachineTankTest.class);
 		registerTestClass(MachinePipeTest.class);
+		registerTestClass(PressureSimulatorTest.class);
 	}
 }

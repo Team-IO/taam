@@ -10,55 +10,29 @@ import java.util.List;
 /**
  * Base interface for a pipe. Not necessarily a tile entity, as there can be
  * multiple pipes/pipe ends per block.
- *
+ * <p>
  * Many of these methods are implemented in {@link PipeInfo} to ease
  * implementation.
  *
  * @author Oliver Kahrmann
- *
  */
 public interface IPipe {
 
 	/**
-	 * Get the pressure currently on the pipe. Effective pressure is calculated
-	 * using getPressure and getSuction.
+	 * Get the pressure currently on the pipe.
+	 * Adding fluid to a pipe increases pressure, pulling out fluid decreases it.
 	 *
-	 * @return Should be > 0 and capped internally.
+	 * @return A positive or negative integer describing the current pressure level
 	 */
 	int getPressure();
 
 	/**
-	 * Sets the pipe pressure. This method is also used by the pipe logic.
-	 *
-	 * @param pressure
-	 *            Should be > 0 and capped internally.
+	 * Applies pressure or suction without changing the pipe content.
+	 * Useful for pumps/tanks pumping dry - and for testing purposes.
+	 * @param amount
+	 * @return The real amount of pressure applied, in case an upper or lower boundary was reached.
 	 */
-	void setPressure(int pressure);
-
-	/**
-	 * Get the suction currently on the pipe. Effective pressure is calculated
-	 * using getPressure and getSuction.
-	 *
-	 * @return
-	 */
-	int getSuction();
-
-	/**
-	 * Sets the pipe suction. This method is also used by the pipe logic. Should
-	 * be > 0 and capped internally.
-	 *
-	 * @param suction
-	 */
-	void setSuction(int suction);
-
-	/**
-	 * Check if the pipe is active. On active pipes, the pressure will not be
-	 * changed by the pipe logic. Use it for parts that affect the pressure in
-	 * pipes (i.e. machines, tanks, pumps, ...).
-	 *
-	 * @return
-	 */
-	boolean isActive();
+	int applyPressure(int amount);
 
 	/**
 	 * Tries to add the given fluid to the pipe. (Does not change pressure)
@@ -72,8 +46,7 @@ public interface IPipe {
 	 * Try to remove the given fluid from the pipe (drain). (Does not change
 	 * pressure)
 	 *
-	 * @param like
-	 *            The kind and amount to remove.
+	 * @param like The kind and amount to remove.
 	 * @return the actual amount of fluid removed.
 	 */
 	int removeFluid(FluidStack like);
@@ -81,8 +54,7 @@ public interface IPipe {
 	/**
 	 * returns the amount of a specific fluid in the pipe.
 	 *
-	 * @param like
-	 *            The kind of fluid to check. Disregard like.amount.
+	 * @param like The kind of fluid to check. Disregard like.amount.
 	 * @return The amount of that fluid in the pipe.
 	 */
 	int getFluidAmount(FluidStack like);
@@ -107,15 +79,11 @@ public interface IPipe {
 	 * Ask the implementation to get all pipes this pipe is connected to
 	 * internally. Regular side-by-side connections are handled differently.
 	 *
-	 * @param world
-	 *            World of this pipe.
-	 * @param pos
-	 *            Position of this pipe.
 	 * @return An array of pipes. May return null if there are no connected
-	 *         pipes. May return a re-usable array, as this method has to be
-	 *         trimmed for performance!
+	 * pipes. May return a re-usable array, as this method has to be
+	 * trimmed for performance!
 	 */
-	IPipe[] getInternalPipes(IBlockAccess world, BlockPos pos);
+	IPipe[] getInternalPipes();
 
 	/**
 	 * Asks the pipe if it does connect on the given side.
@@ -124,4 +92,15 @@ public interface IPipe {
 	 * @return
 	 */
 	boolean isSideAvailable(EnumFacing side);
+
+	/**
+	 * Returns true if this pipe is neutral. Neutral pipes will not receive pure pressure transfer, only fluid transfer will affect connected pipes.
+	 * Used for fluid handler pipe ends so they don't drain the whole network of pressure.
+	 * @return
+	 */
+	boolean isNeutral();
+
+	BlockPos getPos();
+
+	IBlockAccess getWorld();
 }

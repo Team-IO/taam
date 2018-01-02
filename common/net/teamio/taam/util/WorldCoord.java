@@ -160,6 +160,10 @@ public class WorldCoord {
 		return x == 0 && y == 0 && z == 0;
 	}
 
+	public BlockPos pos() {
+		return new BlockPos(x, y, z);
+	}
+
 	public static void writeCoords(ByteBuf buf, WorldCoord coords) {
 		buf.writeInt(coords.world);
 		buf.writeInt(coords.x);
