@@ -423,10 +423,7 @@ public class MachineMultipart extends Multipart implements INormallyOccludingPar
 	 * IMachineWrapper implementation
 	 */
 	@Override
-	public void sendPacket(NBTTagCompound payload) {
-		if(payload != null) {
-			Log.info("Update " + meta.unlocalizedName() + " " + payload);
-		}
+	public void sendPacket() {
 		sendUpdatePacket(false);
 	}
 }

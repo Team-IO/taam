@@ -70,7 +70,7 @@ public abstract class BaseBlock extends Block {
 		}
 		TileEntity te = worldIn.getTileEntity(pos);
 		if (te != null) {
-			TaamUtil.updateBlock(worldIn, pos);
+			TaamUtil.updateBlock(worldIn, pos, true);
 			((BaseTileEntity) te).blockUpdate();
 		}
 	}

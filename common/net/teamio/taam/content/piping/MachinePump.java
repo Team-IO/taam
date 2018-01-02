@@ -75,7 +75,7 @@ public class MachinePump implements IMachine, IPipePos, IRotatable {
 			protected void onUpdate() {
 				if (wrapper == null) return;
 				wrapper.markAsDirty();
-				wrapper.sendPacket(getContentPacket());
+				wrapper.sendPacket();
 			}
 		};
 		pipeEndOut = new PipeEndSharedDistinct(this, direction, info);
@@ -116,12 +116,6 @@ public class MachinePump implements IMachine, IPipePos, IRotatable {
 		pipeEndIn.occluded = FaceBitmap.isSideBitSet(occludedSides, pipeEndIn.getSide());
 
 		tankRI.bounds = boundsPumpTank[direction.getHorizontalIndex()];
-	}
-
-	private NBTTagCompound getContentPacket() {
-		NBTTagCompound tag = new NBTTagCompound();
-		writePropertiesToNBT(tag);
-		return tag;
 	}
 
 	@Override

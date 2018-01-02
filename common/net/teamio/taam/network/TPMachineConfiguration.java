@@ -21,7 +21,7 @@ public final class TPMachineConfiguration implements IMessage {
 		public IMessage onMessage(TPMachineConfiguration message, MessageContext ctx) {
 			WorldServer world = FMLCommonHandler.instance().getMinecraftServerInstance().worldServerForDimension(message.tileEntity.world);
 			if(ctx.side == Side.SERVER) {
-				TileEntity te = world.getTileEntity(new BlockPos(message.tileEntity.x, message.tileEntity.y, message.tileEntity.z));
+				TileEntity te = world.getTileEntity(message.tileEntity.pos());
 				switch(message.mode) {
 				case ChangeBoolean:
 

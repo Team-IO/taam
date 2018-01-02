@@ -69,7 +69,7 @@ public abstract class BaseTileEntity extends TileEntity implements IWorldNameabl
 	 * server.
 	 *
 	 * @param worldUpdate
-	 *            Send update to client (notify block change / send via network)
+	 *            Send update to client (notify block change / send via network). Re-render is only requested if renderUpdate is true as well.
 	 * @param renderUpdate
 	 *            Update rendering (client only)
 	 * @param blockUpdate
@@ -81,9 +81,11 @@ public abstract class BaseTileEntity extends TileEntity implements IWorldNameabl
 		}
 		markDirty();
 		if (worldUpdate) {
-			TaamUtil.updateBlock(worldObj, pos);
+			// Server -> Client
+			TaamUtil.updateBlock(worldObj, pos, renderUpdate);
 		}
 		if (renderUpdate) {
+			// Only client?
 			worldObj.markBlockRangeForRenderUpdate(pos, pos);
 		}
 		if (blockUpdate) {

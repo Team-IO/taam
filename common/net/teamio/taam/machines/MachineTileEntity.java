@@ -108,7 +108,8 @@ public class MachineTileEntity extends BaseTileEntity implements ITickable, IMac
 	}
 
 	@Override
-	public void sendPacket(NBTTagCompound payload) {
+	public void sendPacket() {
+		updateState(true, false, false);
 		//TODO: send update packet
 	}
 }

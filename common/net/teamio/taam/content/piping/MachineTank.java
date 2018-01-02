@@ -62,7 +62,7 @@ public class MachineTank implements IMachine, IPipePos, IWorldInteractable {
 			protected void onContentsChanged() {
 				if (wrapper == null) return;
 				wrapper.markAsDirty();
-				wrapper.sendPacket(getContentPacket());
+				wrapper.sendPacket();
 			}
 		};
 		pipeEndUP = new PipeEndFluidHandler(this, tank, EnumFacing.UP);
@@ -101,12 +101,6 @@ public class MachineTank implements IMachine, IPipePos, IWorldInteractable {
 	private void updateOcclusion() {
 		pipeEndUP.occluded = FaceBitmap.isSideBitSet(occludedSides, EnumFacing.UP);
 		pipeEndDOWN.occluded = FaceBitmap.isSideBitSet(occludedSides, EnumFacing.DOWN);
-	}
-
-	private NBTTagCompound getContentPacket() {
-		NBTTagCompound tag = new NBTTagCompound();
-		writePropertiesToNBT(tag);
-		return tag;
 	}
 
 	@Override

@@ -108,7 +108,7 @@ public class MachinePipe implements IMachine, IPipe, IRenderable {
 			@Override
 			protected void onUpdate() {
 				if(wrapper == null) return;
-				wrapper.sendPacket(null);
+				wrapper.sendPacket();
 				wrapper.markAsDirty();
 			}
 		};
