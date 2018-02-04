@@ -49,6 +49,7 @@ public class TaamRecipes {
 
 		ItemStack partSieve = new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.sieve.ordinal());
 		ItemStack partRubberBand = new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.rubber_band.ordinal());
+		ItemStack partWoodenBand = new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.wooden_band.ordinal());
 		ItemStack partWoodenSupportFrame = new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.support_frame_wood.ordinal());
 		ItemStack partMetalBearing = new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.metal_bearing.ordinal());
 		ItemStack partSupportFrame = new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.support_frame.ordinal());
@@ -79,9 +80,9 @@ public class TaamRecipes {
 
 		//		conveyor1 (Wood)
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.blockProductionLine, 8, Taam.BLOCK_PRODUCTIONLINE_META.conveyor1.ordinal()),
-				"rRP", "wSw", "WsW",
+				"rBP", "wSw", "WsW",
 				'P', Blocks.PISTON,
-				'R', partRubberBand,
+				'B', partWoodenBand,
 				'w', materialWoodenBoard,
 				'S', partWoodenSupportFrame,
 				'W', "plankWood",
@@ -434,6 +435,32 @@ public class TaamRecipes {
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.rubber_band.ordinal()),
 				"RRR", "R R", "RRR",
 				'R', "materialRubber"
+		));
+		//		wooden band - with planks
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 4, Taam.ITEM_PART_META.wooden_band.ordinal()),
+				"WsW", "WSW",
+				's', "stickWood",
+				'S', "string",
+				'W', "plankWood"
+		));
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 4, Taam.ITEM_PART_META.wooden_band.ordinal()),
+				"WSW", "WsW",
+				's', "stickWood",
+				'S', "string",
+				'W', "plankWood"
+		));
+		//		wooden band - with slabs
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 2, Taam.ITEM_PART_META.wooden_band.ordinal()),
+				"WsW", "WSW",
+				's', "stickWood",
+				'S', "string",
+				'W', "slabWood"
+		));
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 2, Taam.ITEM_PART_META.wooden_band.ordinal()),
+				"WSW", "WsW",
+				's', "stickWood",
+				'S', "string",
+				'W', "slabWood"
 		));
 		//		tank
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.tank.ordinal()),
