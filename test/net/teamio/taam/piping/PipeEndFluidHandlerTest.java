@@ -1,5 +1,6 @@
 package net.teamio.taam.piping;
 
+import com.builtbroken.mc.testing.junit.AbstractTest;
 import com.builtbroken.mc.testing.junit.VoltzTestRunner;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidTank;
@@ -7,14 +8,11 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.teamio.taam.content.piping.GenericPipeTests;
 import org.junit.runner.RunWith;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-
 /**
  * Created by oliver on 2017-07-03.
  */
 @RunWith(VoltzTestRunner.class)
-public class PipeEndFluidHandlerTest {
+public class PipeEndFluidHandlerTest extends AbstractTest {
 
 	private final PipeEndFluidHandler pipeEndFluidHandler;
 	private final IFluidHandler fluidHandler;
