@@ -49,10 +49,7 @@ public abstract class ChanceBasedRecipe extends BaseProcessingRecipe {
 		} else if (!input.equals(other.input)) {
 			return false;
 		}
-		if (!Arrays.equals(output, other.output)) {
-			return false;
-		}
-		return true;
+		return Arrays.equals(output, other.output);
 	}
 
 	@Override
@@ -70,7 +67,7 @@ public abstract class ChanceBasedRecipe extends BaseProcessingRecipe {
 				}
 			}
 		}
-		return output.toArray(new ItemStack[output.size()]);
+		return output.toArray(new ItemStack[0]);
 	}
 
 }

@@ -12,7 +12,7 @@
         "inventory": [{
             "transform": "forge:default-block"
         }],
-        
+
         "direction": {
         	"up": {},
         	"down": {},
@@ -39,8 +39,7 @@
 					}
 				}
 			},
-      		"tank":			{ "model": "taam:tank.obj" },
-      		"fluid_drier":	{ "model": "taam:fluid_drier.obj" }
+      		"tank":			{ "model": "taam:tank.obj" }
         }
     }
 }

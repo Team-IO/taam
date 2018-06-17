@@ -19,7 +19,6 @@ public class ConveyorSlotsInventory extends ConveyorSlotsBase {
 	 * Creates a new {@link ConveyorSlotsInventory} instance for an
 	 * {@link IItemHandler} with all slots available.
 	 *
-	 * @param pos
 	 * @param inventory
 	 */
 	public ConveyorSlotsInventory(IItemHandler inventory) {

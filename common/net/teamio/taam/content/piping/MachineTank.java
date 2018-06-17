@@ -128,7 +128,11 @@ public class MachineTank implements IMachine, IPipePos, IWorldInteractable {
 	public void readUpdatePacket(PacketBuffer buf) {
 		try {
 			NBTTagCompound tag = buf.readNBTTagCompoundFromBuffer();
-			tank.readFromNBT(tag);
+			if(tag == null) {
+				tank.setFluid(null);
+			} else {
+				tank.readFromNBT(tag);
+			}
 			occludedSides = buf.readByte();
 			updateOcclusion();
 		} catch (IOException e) {

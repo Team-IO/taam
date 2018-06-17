@@ -26,7 +26,6 @@ import net.teamio.taam.piping.IPipePos;
 import net.teamio.taam.piping.PipeEnd;
 import net.teamio.taam.piping.PipeEndRestricted;
 import net.teamio.taam.piping.PipeNetwork;
-import net.teamio.taam.piping.PipeUtil;
 import net.teamio.taam.recipes.IProcessingRecipeFluidBased;
 import net.teamio.taam.recipes.ProcessingRegistry;
 import net.teamio.taam.util.FaceBitmap;

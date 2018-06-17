@@ -388,7 +388,7 @@ public class TaamClientProxy extends TaamCommonProxy {
 	}
 
 	/**
-	 * Original: {@link net.minecraftforge.client.model.ForgeBlockStateV1.Variant.Deserializer.get(float, float, float, float, float, float, float)}
+	 * Original: {@link net.minecraftforge.client.model.ForgeBlockStateV1.Variant.Deserializer#get(float, float, float, float, float, float, float)}
 	 *
 	 * @param tx
 	 * @param ty
@@ -408,12 +408,12 @@ public class TaamClientProxy extends TaamCommonProxy {
 	}
 
 	/**
-	 * Original: {@link net.minecraftforge.client.model.ForgeBlockStateV1.Variant.Deserializer.flipX}
+	 * Original: {@link net.minecraftforge.client.model.ForgeBlockStateV1.Variant.Deserializer#flipX}
 	 */
 	public static final TRSRTransformation flipX = new TRSRTransformation(null, null, new Vector3f(-1, 1, 1), null);
 
 	/**
-	 * Original: {@link net.minecraftforge.client.model.ForgeBlockStateV1.Variant.Deserializer.leftify(TRSRTransformation)}
+	 * Original: {@link net.minecraftforge.client.model.ForgeBlockStateV1.Variant.Deserializer#leftify(TRSRTransformation)}
 	 *
 	 * @param transform
 	 * @return
@@ -435,11 +435,11 @@ public class TaamClientProxy extends TaamCommonProxy {
 
 		public static final IModelState defaultBlockTransform;
 
-		/**
-		 * Original: {@link net.minecraftforge.client.model.ForgeBlockStateV1.Variant.Deserializer.deserialize(JsonElement, Type, JsonDeserializationContext)}
-		 *
-		 * Load the default transform for block models to rotate the models in GUI & Co accordingly.
-		 * These are the same transforms that are applied by forge when loaded from the blockstates using "forge:default-block".
+		/*
+		  Original: net.minecraftforge.client.model.ForgeBlockStateV1.Variant.Deserializer.deserialize(JsonElement, Type, JsonDeserializationContext)
+
+		  Load the default transform for block models to rotate the models in GUI & Co accordingly.
+		  These are the same transforms that are applied by forge when loaded from the block states using "forge:default-block".
 		 */
 		static {
 			TRSRTransformation thirdperson = get(0, 2.5f, 0, 75, 45, 0, 0.375f);

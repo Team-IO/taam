@@ -28,6 +28,7 @@ import net.teamio.taam.piping.IPipe;
 import net.teamio.taam.piping.PipeUtil;
 import net.teamio.taam.util.FluidUtils;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -47,16 +48,13 @@ public class ItemDebugTool extends Item {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean detailInfo) {
-		list.add(TextFormatting.DARK_GREEN + I18n.format("lore.taam.debugtool", new Object[0]));
+		list.add(TextFormatting.DARK_GREEN + I18n.format("lore.taam.debugtool"));
 		if (GuiScreen.isShiftKeyDown()) {
 			String usage = I18n.format("lore.taam.debugtool.usage");
 			//Split at literal \n in the translated text. a lot of escaping here.
-			String[] split = usage.split("\\\\n");
-			for(int i = 0;i < split.length; i++) {
-				list.add(split[i]);
-			}
+			Collections.addAll(list, usage.split("\\\\n"));
 		} else {
-			list.add(TextFormatting.DARK_PURPLE + I18n.format("lore.taam.shift", new Object[0]));
+			list.add(TextFormatting.DARK_PURPLE + I18n.format("lore.taam.shift"));
 		}
 	}
 
@@ -115,17 +113,17 @@ public class ItemDebugTool extends Item {
 
 		if(pipe != null) {
 
-			String content = "[";
+			StringBuilder content = new StringBuilder("[");
 			List<FluidStack> fs = pipe.getFluids();
 			if (fs != null) {
 				for(FluidStack fluidContent : fs) {
-					content += fluidContent.getLocalizedName() + " " + fluidContent.amount + ", ";
+					content.append(fluidContent.getLocalizedName()).append(" ").append(fluidContent.amount).append(", ");
 				}
 			}
-			content += "]";
+			content.append("]");
 
 			text = String.format(remoteState + " %s Pipe pressure: %d  Content: %s",
-					pipe.getClass().getName(), pipe.getPressure(), content);
+					pipe.getClass().getName(), pipe.getPressure(), content.toString());
 
 			playerIn.addChatMessage(new TextComponentString(text));
 		}
@@ -149,7 +147,7 @@ public class ItemDebugTool extends Item {
 			text = String.format(remoteState + " Content: %s", content);
 
 			playerIn.addChatMessage(new TextComponentString(text));
-			
+
 			didSomething = true;
 		}
 		if (didSomething) {

@@ -45,9 +45,10 @@ public class PipeInfo {
 		pressure = tag.getInteger("pressure");
 		NBTTagList list = tag.getTagList("content", NBT.TAG_COMPOUND);
 		content.clear();
-		if (list != null && list.tagCount() != 0) {
-			content.ensureCapacity(list.tagCount());
-			for (int i = 0; i < list.tagCount(); i++) {
+		int tagCount = list.tagCount();
+		if (tagCount != 0) {
+			content.ensureCapacity(tagCount);
+			for (int i = 0; i < tagCount; i++) {
 				NBTTagCompound fluidTag = list.getCompoundTagAt(i);
 				FluidStack stack = FluidStack.loadFluidStackFromNBT(fluidTag);
 				if (stack != null) {

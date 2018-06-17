@@ -11,8 +11,8 @@ import net.teamio.taam.Log;
 import net.teamio.taam.gui.util.CustomButton;
 import net.teamio.taam.gui.util.Drawable;
 
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class GuiAdvancedMachine extends GuiContainer {
@@ -50,8 +50,7 @@ public class GuiAdvancedMachine extends GuiContainer {
 	}
 
 	/**
-	 * Allow adding buttons or checkboxes externally, namely from
-	 * {@link App#initGui(GuiAdvancedMachine)}.
+	 * Allow adding buttons or checkboxes from outside this class.
 	 *
 	 * @param button
 	 */
@@ -218,9 +217,7 @@ public class GuiAdvancedMachine extends GuiContainer {
 		String localized = I18n.format(unlocalized);
 		// Split at literal \n in the translated text. a lot of escaping here.
 		String[] split = localized.split("\\\\n");
-		for (int i = 0; i < split.length; i++) {
-			textList.add(split[i]);
-		}
+		Collections.addAll(textList, split);
 
 		this.drawHoveringText(textList, mouseX - guiLeft, mouseY - guiTop);
 	}

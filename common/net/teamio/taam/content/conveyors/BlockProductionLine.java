@@ -187,7 +187,7 @@ public class BlockProductionLine extends BaseBlock {
 		}
 		return state.getValue(VARIANT) == BLOCK_PRODUCTIONLINE_META.elevator;
 	}
-	
+
 	@Override
 	public boolean isBlockSolid(IBlockAccess world, BlockPos pos, EnumFacing side) {
 		return false;
@@ -210,7 +210,7 @@ public class BlockProductionLine extends BaseBlock {
 		}
 		return false;
 	}
-	
+
 	@Override
 	public boolean hasComparatorInputOverride(IBlockState state) {
 		return true;

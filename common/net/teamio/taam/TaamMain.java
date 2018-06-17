@@ -85,6 +85,7 @@ import net.teamio.taam.piping.PipeEnd;
 import net.teamio.taam.rendering.TankRenderInfo;
 import org.apache.commons.lang3.NotImplementedException;
 
+import java.util.Collections;
 import java.util.List;
 
 
@@ -303,10 +304,7 @@ public class TaamMain {
 						if(stack.getMetadata() == Taam.ITEM_PART_META.redirector.ordinal()) {
 							String usage = I18n.format("lore.taam.redirector.usage");
 							// Split at literal \n in the translated text. a lot of escaping here.
-							String[] split = usage.split("\\\\n");
-							for (int i = 0; i < split.length; i++) {
-								lines.add(split[i]);
-							}
+							Collections.addAll(lines, usage.split("\\\\n"));
 						}
 					}
 					@Override
@@ -329,10 +327,7 @@ public class TaamMain {
 								stack.getMetadata() == Taam.BLOCK_ORE_META.gold.ordinal()) {
 							String usage = I18n.format("lore.taam.ingots.cheaty");
 							// Split at literal \n in the translated text. a lot of escaping here.
-							String[] split = usage.split("\\\\n");
-							for (int i = 0; i < split.length; i++) {
-								lines.add(split[i]);
-							}
+							Collections.addAll(lines, usage.split("\\\\n"));
 						}
 					}
 				}), Taam.ITEM_INGOT);

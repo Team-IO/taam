@@ -31,7 +31,7 @@ public class ConveyorUtil {
 
 	private static boolean tryInsert(TileEntity tileEntity, EntityItem ei) {
 		ItemStack entityItemStack = ei.getEntityItem();
-		if (entityItemStack == null || entityItemStack.stackSize == 0 || entityItemStack.getItem() == null) {
+		if (entityItemStack.stackSize == 0 || entityItemStack.getItem() == null) {
 			// We are tidy. Clean up "empty" item entities
 			ei.setDead();
 			return false;
@@ -183,9 +183,6 @@ public class ConveyorUtil {
 				break;
 			case WEST:
 				transition = highSpeedTransition[3][slot];
-				break;
-			default:
-				transition = direction;
 				break;
 		}
 		return transition;
@@ -504,14 +501,12 @@ public class ConveyorUtil {
 			appliances = applianceHost.getAppliances();
 		}
 
-		/**
-		 * Tracks if the tileEntity state needs to be updated
-		 */
+		// Tracks if the tileEntity state needs to be updated
 		boolean needsUpdate = false;
-		/**
-		 * Tracks if we need a world update (send to client)
-		 */
+
+		// Tracks if we need a world update (send to client)
 		boolean needsWorldUpdate = false;
+
 		/*
 		 * Process each slot individually, using the predefined slot order
 		 */
@@ -685,7 +680,8 @@ public class ConveyorUtil {
 	/**
 	 * Checks the configured blacklist of items that cannot be put on a conveyor by right clicking.
 	 *
-	 * @param stack
+	 * @param stack The item stack a player wants to put on a conveyor
+	 * @return true, if the item is blacklisted, or the specific meta/NBT is blacklisted.
 	 */
 	public static boolean isBlacklistedForConveyor(ItemStack stack) {
 		if (stack == null) return false;
@@ -696,6 +692,9 @@ public class ConveyorUtil {
 		// Check for name-only (taam:wrench)
 		ResourceLocation name = Item.REGISTRY.getNameForObject(item);
 		Log.debug("Checking for item {}", name);
+		if(name == null) {
+			return false;
+		}
 		if (Config.pl_conveyor_rightclick_blacklist.contains(name.toString())) {
 			return true;
 		}
