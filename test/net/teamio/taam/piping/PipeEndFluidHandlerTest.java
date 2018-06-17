@@ -1,15 +1,19 @@
 package net.teamio.taam.piping;
 
+import com.builtbroken.mc.testing.junit.VoltzTestRunner;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.teamio.blockunit.TestMethod;
-import net.teamio.blockunit.TestingHarness;
 import net.teamio.taam.content.piping.GenericPipeTests;
+import org.junit.runner.RunWith;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 /**
  * Created by oliver on 2017-07-03.
  */
+@RunWith(VoltzTestRunner.class)
 public class PipeEndFluidHandlerTest {
 
 	private final PipeEndFluidHandler pipeEndFluidHandler;
@@ -22,18 +26,15 @@ public class PipeEndFluidHandlerTest {
 		pipeEndFluidHandler = new PipeEndFluidHandler(null, fluidHandler, EnumFacing.UP);
 	}
 
-	@TestMethod
-	public void basicFunctions(TestingHarness t) {
-		t.assertEquals(CAPACITY, pipeEndFluidHandler.getCapacity());
+	public void basicFunctions() {
+		assertEquals(CAPACITY, pipeEndFluidHandler.getCapacity());
 	}
 
-	@TestMethod
-	public void getInternalPipes(TestingHarness t) {
-		t.assertNull(pipeEndFluidHandler.getInternalPipes());
+	public void getInternalPipes() {
+		assertNull(pipeEndFluidHandler.getInternalPipes());
 	}
 
-	@TestMethod
-	public void fluidAmount(TestingHarness t) {
+	public void fluidAmount() {
 		GenericPipeTests.testPipeEnd(pipeEndFluidHandler, CAPACITY, true);
 	}
 
