@@ -38,7 +38,6 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
-import net.teamio.blockunit.UnitTesterItem;
 import net.teamio.taam.Taam.FLUID_MATERIAL_META;
 import net.teamio.taam.Taam.ITEM_PART_META;
 import net.teamio.taam.content.ItemWithMetadata;
@@ -122,8 +121,6 @@ public class TaamMain {
 	 * depending on availability of multipart.
 	 */
 	public static Item itemMachine;
-
-	public static UnitTesterItem unitTesterItem;
 
 	public static CreativeTabs creativeTab;
 
@@ -292,7 +289,6 @@ public class TaamMain {
 				Taam.BLOCK_SUPPORT_BEAM
 				);
 
-		registerItem(unitTesterItem = new UnitTesterItem(), Taam.ITEM_DEBUG_UNIT_TESTER);
 		registerItem(itemDebugTool = new ItemDebugTool(), Taam.ITEM_DEBUG_TOOL);
 		registerItem(itemWrench = new ItemWrench(), Taam.ITEM_WRENCH);
 		registerItem(itemSaw = new ItemTool(Taam.ITEM_TOOL_META.saw), Taam.ITEM_TOOL + "." + Taam.ITEM_TOOL_META.saw.name());

@@ -14,6 +14,11 @@ public class Config {
 
 	public static Configuration config;
 
+	/**
+	 * Force-switch to only load default values - for use with automated tests / unit tests
+	 */
+	public static boolean load_defaults_only = false;
+
 	public static final int NUM_ORES = 5;
 	public static final boolean[] genOre = new boolean[NUM_ORES];
 	public static final int[] oreSize = new int[NUM_ORES];
@@ -111,18 +116,27 @@ public class Config {
 	};
 
 
+	/**
+	 * Initializes the configuration based on the given config file.
+	 *
+	 * @param configFile The config file - pass null to only load default values, see {@link #load_defaults_only}
+	 */
 	public static void init(File configFile) {
-
-
 		if (config == null) {
-			config = new Configuration(configFile);
+			if (configFile == null) {
+				load_defaults_only = true;
+			} else {
+				config = new Configuration(configFile);
+			}
 
 			loadConfig();
 		}
-
 	}
 
 	private static int getInt(String name, String category, int defaultValue, int minValue, int maxValue, String comment) {
+		if (load_defaults_only) {
+			return defaultValue;
+		}
 		String langKey = String.format("taam.config.%s.%s", category, name);
 		return config.getInt(name, category, defaultValue, minValue, maxValue, comment, langKey);
 	}
@@ -139,6 +153,9 @@ public class Config {
 	 * @return
 	 */
 	private static int getIntWR(String name, String category, int defaultValue, int minValue, int maxValue, String comment) {
+		if (load_defaults_only) {
+			return defaultValue;
+		}
 		String langKey = String.format("taam.config.%s.%s", category, name);
 		Property prop = config.get(category, name, defaultValue, comment, minValue, maxValue);
 		prop.setLanguageKey(langKey);
@@ -147,21 +164,33 @@ public class Config {
 	}
 
 	private static float getFloat(String name, String category, float defaultValue, float minValue, float maxValue, String comment) {
+		if (load_defaults_only) {
+			return defaultValue;
+		}
 		String langKey = String.format("taam.config.%s.%s", category, name);
 		return config.getFloat(name, category, defaultValue, minValue, maxValue, comment, langKey);
 	}
 
 	private static byte getByte(String name, String category, int defaultValue, int minValue, int maxValue, String comment) {
+		if (load_defaults_only) {
+			return (byte) defaultValue;
+		}
 		String langKey = String.format("taam.config.%s.%s", category, name);
 		return (byte) config.getInt(name, category, defaultValue, minValue, maxValue, comment, langKey);
 	}
 
 	private static boolean getBoolean(String name, String category, boolean defaultValue, String comment) {
+		if (load_defaults_only) {
+			return defaultValue;
+		}
 		String langKey = String.format("taam.config.%s.%s", category, name);
 		return config.getBoolean(name, category, defaultValue, comment, langKey);
 	}
 
 	private static String getString(String name, String category, String defaultValue, String comment) {
+		if (load_defaults_only) {
+			return defaultValue;
+		}
 		String langKey = String.format("taam.config.%s.%s", category, name);
 		return config.getString(name, category, defaultValue, comment, langKey);
 	}
@@ -178,7 +207,9 @@ public class Config {
 			oreDepositCount[i] = getInt("oreDepositCount", sectionName, oreMeta[i].gen_default_count, 0, Integer.MAX_VALUE, "Number of " + name + " ore veins per chunk");
 		}
 
-		config.getCategory(SECTION_INTEGRATION_MULTIPART).setRequiresMcRestart(true);
+		if (config != null) {
+			config.getCategory(SECTION_INTEGRATION_MULTIPART).setRequiresMcRestart(true);
+		}
 
 		debug_output = getBoolean("debug_output", Configuration.CATEGORY_GENERAL, false, "Should the Debug mode of Taam be activated? Enables some extra output to debug what is going on.");
 		debug_output_as_info = getBoolean("debug_output_as_info", Configuration.CATEGORY_GENERAL, false, "Reroute debug output to INFO level?");
@@ -242,7 +273,7 @@ public class Config {
 
 		jei_render_machines_into_gui = getBoolean("render_machines_into_gui", SECTION_INTEGRATION_JEI, true, "Enable or disable rendering the machine into the recipe display in JEI. For troubleshooting only; you should leave this enabled normally.");
 
-		if (config.hasChanged()) {
+		if (config != null && config.hasChanged()) {
 			config.save();
 		}
 	}

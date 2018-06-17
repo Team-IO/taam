@@ -34,7 +34,7 @@ public class PipeEndFluidHandlerTest {
 
 	@TestMethod
 	public void fluidAmount(TestingHarness t) {
-		GenericPipeTests.testPipeEnd(t, pipeEndFluidHandler, CAPACITY, true);
+		GenericPipeTests.testPipeEnd(pipeEndFluidHandler, CAPACITY, true);
 	}
 
 }
