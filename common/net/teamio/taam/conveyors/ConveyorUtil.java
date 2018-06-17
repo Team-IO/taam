@@ -3,10 +3,12 @@ package net.teamio.taam.conveyors;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -15,6 +17,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
+import net.teamio.taam.Config;
+import net.teamio.taam.Log;
 import net.teamio.taam.Taam;
 import net.teamio.taam.util.TaamUtil;
 
@@ -43,7 +47,7 @@ public class ConveyorUtil {
 			int slot = getSlotForRelativeCoordinates(relativeX, relativeZ);
 
 			if (slot >= 0 && slot < 9 // wrapped slot == outside x / z
-			// Then check vertical position
+					// Then check vertical position
 					&& relativeY > conveyorTE.getInsertMinY() && relativeY < conveyorTE.getInsertMaxY()) {
 
 				int previousStackSize = entityItemStack.stackSize;
@@ -95,13 +99,10 @@ public class ConveyorUtil {
 	 *
 	 * @param tileEntity
 	 * @param world
-	 * @param bounds
-	 *            Optionally give an AABB Instance to speed up the search &
-	 *            extend to unloaded chunks. Else only loaded entities are
-	 *            respected.
-	 * @param stopAtFirstMatch
-	 *            Stop processing items after the first one was added?
-	 *
+	 * @param bounds           Optionally give an AABB Instance to speed up the search &
+	 *                         extend to unloaded chunks. Else only loaded entities are
+	 *                         respected.
+	 * @param stopAtFirstMatch Stop processing items after the first one was added?
 	 */
 	public static boolean tryInsertItemsFromWorld(TileEntity tileEntity, World world, AxisAlignedBB bounds, boolean stopAtFirstMatch) {
 		if (world.isRemote) {
@@ -161,7 +162,7 @@ public class ConveyorUtil {
 			}
 		}
 		int frontOffsetY = dir.getFrontOffsetY();
-		if(frontOffsetY != 0) {
+		if (frontOffsetY != 0) {
 			// Offset by 9 is the same slot, but marks it as wrapped
 			slot += 9 * frontOffsetY;
 		}
@@ -171,21 +172,21 @@ public class ConveyorUtil {
 	public static EnumFacing getHighspeedTransition(int slot, EnumFacing direction) {
 		EnumFacing transition = direction;
 		switch (direction) {
-		case NORTH:
-			transition = highSpeedTransition[0][slot];
-			break;
-		case EAST:
-			transition = highSpeedTransition[1][slot];
-			break;
-		case SOUTH:
-			transition = highSpeedTransition[2][slot];
-			break;
-		case WEST:
-			transition = highSpeedTransition[3][slot];
-			break;
-		default:
-			transition = direction;
-			break;
+			case NORTH:
+				transition = highSpeedTransition[0][slot];
+				break;
+			case EAST:
+				transition = highSpeedTransition[1][slot];
+				break;
+			case SOUTH:
+				transition = highSpeedTransition[2][slot];
+				break;
+			case WEST:
+				transition = highSpeedTransition[3][slot];
+				break;
+			default:
+				transition = direction;
+				break;
 		}
 		return transition;
 	}
@@ -207,8 +208,8 @@ public class ConveyorUtil {
 		private int[][] rotated;
 
 		public RotatedDefinition(int one, int two, int three, int four, int five, int six, int seven,
-				int eight, int nine) {
-			int[] unrotated = new int[] { one, two, three, four, five, six, seven, eight, nine };
+		                         int eight, int nine) {
+			int[] unrotated = new int[]{one, two, three, four, five, six, seven, eight, nine};
 			calculateRotations(unrotated);
 		}
 
@@ -226,7 +227,7 @@ public class ConveyorUtil {
 
 		public int get(int slot, EnumFacing rotation) {
 			int horizontalIndex = rotation.getHorizontalIndex();
-			if(horizontalIndex < 0) {
+			if (horizontalIndex < 0) {
 				horizontalIndex = 0;
 			}
 			// Horizontal Index: S-W-N-E
@@ -240,11 +241,12 @@ public class ConveyorUtil {
 
 	/**
 	 * Rotate a specification of slot-related data.
+	 *
 	 * @param source
 	 * @return
 	 */
 	public static int[] rotate(int[] source) {
-		return new int[] {
+		return new int[]{
 				source[6], source[3], source[0],
 				source[7], source[4], source[1],
 				source[8], source[5], source[2]
@@ -256,13 +258,13 @@ public class ConveyorUtil {
 			1, 1, 1,
 			2, 2, 2,
 			3, 3, 3
-			);
+	);
 	public static final RotatedDefinition ROWS = new RotatedDefinition(
 			// Remember, this definition is inverted being left-to-right not top-down order, so NORTH is left!
 			3, 2, 1,
 			3, 2, 1,
 			3, 2, 1
-			);
+	);
 
 
 	public static double getItemPositionX(int slot) {
@@ -298,16 +300,17 @@ public class ConveyorUtil {
 
 	private static final int[][] slotOrders;
 	private static final EnumFacing[][] highSpeedTransition;
+
 	static {
 		slotOrders = new int[2][];
-		slotOrders[0] = new int[] {
+		slotOrders[0] = new int[]{
 				//North -Z to +Z (Processes line by line)
 				//West -X to +X (Processes each line in "parallel")
 				0, 1, 2,
 				3, 4, 5,
 				6, 7, 8
 		};
-		slotOrders[1] = new int[] {
+		slotOrders[1] = new int[]{
 				//South +Z to -Z (Processes line by line)
 				//East +X to -X (Processes each line in "parallel")
 				6, 7, 8,
@@ -324,22 +327,22 @@ public class ConveyorUtil {
 		 *        SOUTH
 		 */
 		highSpeedTransition = new EnumFacing[4][];
-		highSpeedTransition[0] = new EnumFacing[] {
+		highSpeedTransition[0] = new EnumFacing[]{
 				EnumFacing.EAST, EnumFacing.EAST, EnumFacing.EAST,
 				EnumFacing.NORTH, EnumFacing.NORTH, EnumFacing.NORTH,
 				EnumFacing.WEST, EnumFacing.WEST, EnumFacing.WEST
 		};
-		highSpeedTransition[1] = new EnumFacing[] {
+		highSpeedTransition[1] = new EnumFacing[]{
 				EnumFacing.SOUTH, EnumFacing.EAST, EnumFacing.NORTH,
 				EnumFacing.SOUTH, EnumFacing.EAST, EnumFacing.NORTH,
 				EnumFacing.SOUTH, EnumFacing.EAST, EnumFacing.NORTH
 		};
-		highSpeedTransition[2] = new EnumFacing[] {
+		highSpeedTransition[2] = new EnumFacing[]{
 				EnumFacing.EAST, EnumFacing.EAST, EnumFacing.EAST,
 				EnumFacing.SOUTH, EnumFacing.SOUTH, EnumFacing.SOUTH,
 				EnumFacing.WEST, EnumFacing.WEST, EnumFacing.WEST
 		};
-		highSpeedTransition[3] = new EnumFacing[] {
+		highSpeedTransition[3] = new EnumFacing[]{
 				EnumFacing.SOUTH, EnumFacing.WEST, EnumFacing.NORTH,
 				EnumFacing.SOUTH, EnumFacing.WEST, EnumFacing.NORTH,
 				EnumFacing.SOUTH, EnumFacing.WEST, EnumFacing.NORTH
@@ -355,13 +358,13 @@ public class ConveyorUtil {
 	 */
 	public static int[] getSlotOrderForDirection(EnumFacing dir) {
 		switch (dir) {
-		default:
-		case NORTH:
-		case WEST:
-			return slotOrders[0];
-		case SOUTH:
-		case EAST:
-			return slotOrders[1];
+			default:
+			case NORTH:
+			case WEST:
+				return slotOrders[0];
+			case SOUTH:
+			case EAST:
+				return slotOrders[1];
 		}
 	}
 
@@ -375,8 +378,7 @@ public class ConveyorUtil {
 	/**
 	 * Drops the item in the passed slot, exactly where it is rendered now.
 	 *
-	 * @param slot
-	 *            The slot to be dropped.
+	 * @param slot The slot to be dropped.
 	 */
 	public static void dropItem(World world, BlockPos pos, IConveyorSlots slots, int slot, boolean withVelocity) {
 		ItemWrapper slotObject = slots.getSlot(slot);
@@ -471,7 +473,7 @@ public class ConveyorUtil {
 			return null;
 		}
 		IConveyorSlots slots = TaamUtil.getCapability(Taam.CAPABILITY_CONVEYOR, tileEntity, side);
-		if(slots != null) {
+		if (slots != null) {
 			return slots;
 		}
 		if (tileEntity instanceof IConveyorSlots) {
@@ -482,17 +484,16 @@ public class ConveyorUtil {
 
 	/**
 	 * Runs the default transition logic for the items on a conveyor entity.
-	 *
+	 * <p>
 	 * Respects the supplied slot order, processes items if tileEntity
 	 * instanceof {@link IConveyorApplianceHost}.
 	 *
 	 * @param world
 	 * @param pos
 	 * @param tileEntity
-	 * @param slotOrder
-	 *            The order used when working through the slots.
+	 * @param slotOrder  The order used when working through the slots.
 	 * @return true if the state of any item changed (TIleEntity should be
-	 *         marked dirty).
+	 * marked dirty).
 	 */
 	public static boolean defaultTransition(World world, BlockPos pos, IConveyorSlots tileEntity, IConveyorApplianceHost applianceHost, int[] slotOrder) {
 		/*
@@ -648,11 +649,11 @@ public class ConveyorUtil {
 				if (wrapper.movementProgress > speedsteps) {
 					wrapper.movementProgress = 0;
 				}
-				if(world.isRemote) {
+				if (world.isRemote) {
 					wrapper.setStuck(false);
 				}
 			} else {
-				if(world.isRemote) {
+				if (world.isRemote) {
 					wrapper.setStuck(true);
 				}
 			}
@@ -669,7 +670,7 @@ public class ConveyorUtil {
 			// Take from Conveyor
 			ItemStack removed = tileEntity.removeItemAt(clickedSlot, player.inventory.getInventoryStackLimit(), false);
 			player.inventory.setInventorySlotContents(playerSlot, removed);
-		} else {
+		} else if (!isBlacklistedForConveyor(playerStack)) {
 			// Put on conveyor
 			int inserted = tileEntity.insertItemAt(playerStack, clickedSlot, false);
 			if (inserted == playerStack.stackSize) {
@@ -679,6 +680,46 @@ public class ConveyorUtil {
 				player.inventory.setInventorySlotContents(playerSlot, playerStack);
 			}
 		}
+	}
+
+	/**
+	 * Checks the configured blacklist of items that cannot be put on a conveyor by right clicking.
+	 *
+	 * @param stack
+	 */
+	public static boolean isBlacklistedForConveyor(ItemStack stack) {
+		if (stack == null) return false;
+
+		Item item = stack.getItem();
+		if (item == null) return false;
+
+		// Check for name-only (taam:wrench)
+		ResourceLocation name = Item.REGISTRY.getNameForObject(item);
+		Log.debug("Checking for item {}", name);
+		if (Config.pl_conveyor_rightclick_blacklist.contains(name.toString())) {
+			return true;
+		}
+
+		// Check for sub-type (taam:productionline@2)
+		String subType = "";
+		if (stack.getHasSubtypes()) {
+			subType += "@" + stack.getItemDamage();
+			Log.debug("Checking for item {}{}", name, subType);
+			if (Config.pl_conveyor_rightclick_blacklist.contains(name + subType)) {
+				return true;
+			}
+		}
+
+		// Check for tag compound (potion@0#{Potion:"minecraft:healing"}false)
+		if (stack.hasTagCompound()) {
+			subType += "#" + stack.getTagCompound();
+			Log.debug("Checking for item {}{}", name, subType);
+			if (Config.pl_conveyor_rightclick_blacklist.contains(name + subType)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	public static List<IConveyorAppliance> getTouchingAppliances(IConveyorApplianceHost host, IBlockAccess world, BlockPos pos) {
@@ -698,7 +739,7 @@ public class ConveyorUtil {
 	}
 
 	public static RedirectorSide getRedirectorSide(EnumFacing dir, EnumFacing hitSide, float hitX, float hitY,
-			float hitZ, boolean topOnly) {
+	                                               float hitZ, boolean topOnly) {
 		EnumFacing sideToConsider = hitSide;
 
 		if (hitSide == EnumFacing.UP) {

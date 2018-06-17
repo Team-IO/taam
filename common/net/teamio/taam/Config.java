@@ -6,6 +6,9 @@ import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Config {
 
@@ -28,11 +31,12 @@ public class Config {
 	public static int sensor_delay;
 	public static int sensor_placement_mode;
 
+
 	public static float pl_trashcan_maxfill;
 
 	public static int pl_conveyor_supportrange;
 	public static final byte[] pl_conveyor_speedsteps = new byte[3];
-
+	public static Set<String> pl_conveyor_rightclick_blacklist = new HashSet<String>();
 
 	public static byte pl_elevator_speedsteps;
 
@@ -107,12 +111,10 @@ public class Config {
 	};
 
 
-	public static void init(File configFile)
-	{
+	public static void init(File configFile) {
 
 
-		if (config == null)
-		{
+		if (config == null) {
 			config = new Configuration(configFile);
 
 			loadConfig();
@@ -127,6 +129,7 @@ public class Config {
 
 	/**
 	 * Sets needsWorldRestart
+	 *
 	 * @param name
 	 * @param category
 	 * @param defaultValue
@@ -150,7 +153,7 @@ public class Config {
 
 	private static byte getByte(String name, String category, int defaultValue, int minValue, int maxValue, String comment) {
 		String langKey = String.format("taam.config.%s.%s", category, name);
-		return (byte)config.getInt(name, category, defaultValue, minValue, maxValue, comment, langKey);
+		return (byte) config.getInt(name, category, defaultValue, minValue, maxValue, comment, langKey);
 	}
 
 	private static boolean getBoolean(String name, String category, boolean defaultValue, String comment) {
@@ -158,10 +161,14 @@ public class Config {
 		return config.getBoolean(name, category, defaultValue, comment, langKey);
 	}
 
-	private static void loadConfig()
-	{
+	private static String getString(String name, String category, String defaultValue, String comment) {
+		String langKey = String.format("taam.config.%s.%s", category, name);
+		return config.getString(name, category, defaultValue, comment, langKey);
+	}
+
+	private static void loadConfig() {
 		Taam.BLOCK_ORE_META[] oreMeta = Taam.BLOCK_ORE_META.values();
-		for(int i = 0; i < NUM_ORES; i++) {
+		for (int i = 0; i < NUM_ORES; i++) {
 			String name = oreMeta[i].config_name;
 			String sectionName = SECTION_WORLDGEN + "." + name;
 			genOre[i] = getBoolean("generate", sectionName, true, "Should Taam generate " + name + " ore in the world?");
@@ -191,6 +198,11 @@ public class Config {
 		pl_conveyor_speedsteps[0] = getByte("speedsteps_1", SECTION_PRODUCTIONLINE_CONVEYORS, 80, 1, Byte.MAX_VALUE, "Speedsteps (1/speed) for tier 1 conveyors (wooden)");
 		pl_conveyor_speedsteps[1] = getByte("speedsteps_2", SECTION_PRODUCTIONLINE_CONVEYORS, 40, 1, Byte.MAX_VALUE, "Speedsteps (1/speed) for tier 2 conveyors (aluminum)");
 		pl_conveyor_speedsteps[2] = getByte("speedsteps_3", SECTION_PRODUCTIONLINE_CONVEYORS, 5, 1, Byte.MAX_VALUE, "Speedsteps (1/speed) for tier 3 conveyors (high throughput)");
+
+		String blacklist = getString("rightclick_blacklist", SECTION_PRODUCTIONLINE_CONVEYORS, "taam:wrench;taam:productionline;taam:part@16;taam:productionline_attachable;taam:productionline_appliance", "Blacklist for items that cannot be put on a conveyor (and similar machines) by right clicking. Use this to prevent accidentally losing wrench-like items or similar use cases.");
+		pl_conveyor_rightclick_blacklist.clear();
+		pl_conveyor_rightclick_blacklist.addAll(Arrays.asList(blacklist.split(";")));
+
 
 		pl_hopper_delay = getInt("delay", SECTION_PRODUCTIONLINE_HOPPER, 8, 1, 500, "Drop Delay (ticks) for the conveyor hopper.");
 		pl_hopper_highspeed_delay = getInt("highspeed_delay", SECTION_PRODUCTIONLINE_HOPPER, 0, 1, 500, "Drop Delay (ticks) for the high-speed conveyor hopper.");
@@ -230,20 +242,17 @@ public class Config {
 
 		jei_render_machines_into_gui = getBoolean("render_machines_into_gui", SECTION_INTEGRATION_JEI, true, "Enable or disable rendering the machine into the recipe display in JEI. For troubleshooting only; you should leave this enabled normally.");
 
-		if(config.hasChanged())
-		{
+		if (config.hasChanged()) {
 			config.save();
 		}
 	}
 
 	@SubscribeEvent
-	public void onConfigChangedEvent(ConfigChangedEvent.OnConfigChangedEvent event)
-	{
-		if (event.getModID().equalsIgnoreCase(Taam.MOD_ID))
-		{
+	public void onConfigChangedEvent(ConfigChangedEvent.OnConfigChangedEvent event) {
+		if (event.getModID().equalsIgnoreCase(Taam.MOD_ID)) {
 			loadConfig();
 
-			if(multipart_load && !multipart_present) {
+			if (multipart_load && !multipart_present) {
 				Log.warn("Config has multipart enabled, but it was not found. Multipart support will not be loaded.");
 				multipart_load = false;
 			}
