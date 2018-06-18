@@ -14,25 +14,26 @@ import org.junit.runner.RunWith;
 @RunWith(VoltzTestRunner.class)
 public class PipeEndFluidHandlerTest extends AbstractTest {
 
-	private final PipeEndFluidHandler pipeEndFluidHandler;
-	private final IFluidHandler fluidHandler;
+	private PipeEndFluidHandler pipeEndFluidHandler;
+	private IFluidHandler fluidHandler;
 
 	private static final int CAPACITY = 10;
 
-	public PipeEndFluidHandlerTest() {
+	@Override
+	public void setUpForTest(String name) {
 		fluidHandler = new FluidTank(CAPACITY);
 		pipeEndFluidHandler = new PipeEndFluidHandler(null, fluidHandler, EnumFacing.UP);
 	}
 
-	public void basicFunctions() {
+	public void testBasicFunctions() {
 		assertEquals(CAPACITY, pipeEndFluidHandler.getCapacity());
 	}
 
-	public void getInternalPipes() {
+	public void testGetInternalPipes() {
 		assertNull(pipeEndFluidHandler.getInternalPipes());
 	}
 
-	public void fluidAmount() {
+	public void testFluidAmount() {
 		GenericPipeTests.testPipeEnd(pipeEndFluidHandler, CAPACITY, true);
 	}
 
