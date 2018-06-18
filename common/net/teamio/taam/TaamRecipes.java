@@ -358,7 +358,7 @@ public class TaamRecipes {
 				toolSawAnyDamage
 		));
 		//		magnetic coil
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.magnetic_coil.ordinal()),
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 4, Taam.ITEM_PART_META.magnetic_coil.ordinal()),
 				"CCC", "CIC", "CCC",
 				'C', partCopperWire,
 				'I', "ingotIron"
@@ -375,7 +375,7 @@ public class TaamRecipes {
 				'N', "nuggetIron"
 		));
 		//		support frame
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.support_frame.ordinal()),
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(TaamMain.itemPart, 6, Taam.ITEM_PART_META.support_frame.ordinal()),
 				"*A*", "A*A", "AAA",
 				'A', "ingotAluminum"));
 		//		support frame wood
