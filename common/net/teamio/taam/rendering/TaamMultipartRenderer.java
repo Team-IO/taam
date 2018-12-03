@@ -24,7 +24,7 @@ public class TaamMultipartRenderer extends MultipartSpecialRenderer<MachineMulti
 				GL11.glPushMatrix();
 				GL11.glTranslated(x, y, z);
 
-				float rotationDegrees = TaamRenderer.getRotationDegrees(part);
+				float rotationDegrees = RenderUtil.getRotationDegrees(part);
 
 				GL11.glTranslated(.5f, .5f, .5f);
 				GL11.glRotatef(rotationDegrees, 0, 1, 0);
