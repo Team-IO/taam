@@ -70,9 +70,22 @@ dependencies {
 	deobfCompile "MCMultiPart:MCMultiPart:${config.mcmultipart_version}:universal"
 	compile "mezz.jei:jei_${config.jei_mc_version}:${config.jei_version}"
 
-	testCompile 'junit:junit:4.12'
-	testCompile "com.builtbroken.codinglib:CodingLib:0.+"
-	testCompile "com.builtbroken.minecraftjunit:MinecraftJUnit:1.9.4-0.+:deobf"
+	testCompileOnly(
+			'junit:junit:4.12'
+	)
+	testImplementation(
+			'org.junit.jupiter:junit-jupiter-api:5.1.0',
+			'com.builtbroken.codinglib:CodingLib:0.+',
+			'com.builtbroken.minecraftjunit:MinecraftJUnit:1.9.4-0.+:deobf'
+	)
+	testRuntimeOnly(
+			'org.junit.jupiter:junit-jupiter-engine:5.1.0',
+			'org.junit.vintage:junit-vintage-engine:5.1.0'
+	)
+}
+
+test {
+	useJUnitPlatform()
 }
 
 jar {
