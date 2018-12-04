@@ -2,8 +2,6 @@ package net.teamio.taam.rendering;
 
 import com.google.common.base.Function;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.RenderHelper;
@@ -33,7 +31,6 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.teamio.taam.Config;
 import net.teamio.taam.Log;
 import net.teamio.taam.Taam;
-import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.content.conveyors.TileEntityConveyorElevator;
 import net.teamio.taam.content.conveyors.TileEntityConveyorItemBag;
 import net.teamio.taam.content.conveyors.TileEntityConveyorProcessor;
@@ -43,7 +40,6 @@ import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.conveyors.IConveyorSlots;
 import net.teamio.taam.conveyors.ItemWrapper;
 import net.teamio.taam.conveyors.appliances.ApplianceAligner;
-import net.teamio.taam.piping.IPipe;
 import net.teamio.taam.util.WrenchUtil;
 import org.lwjgl.opengl.GL11;
 
@@ -324,7 +320,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 				GL11.glPushMatrix();
 				GL11.glTranslated(x, y, z);
 
-				float rotationDegrees = getRotationDegrees(tileEntity);
+				float rotationDegrees = RenderUtil.getRotationDegrees(tileEntity);
 
 				GL11.glTranslated(.5f, .5f, .5f);
 				GL11.glRotatef(rotationDegrees, 0, 1, 0);
@@ -369,7 +365,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 				 * Get Rotation
 				 */
 
-				float rotationDegrees = getRotationDegrees(tileEntity);
+				float rotationDegrees = RenderUtil.getRotationDegrees(tileEntity);
 
 				GL11.glTranslatef(0.5f, 0.4f, 0.5f);
 
@@ -403,7 +399,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 			GL11.glPushMatrix();
 			GL11.glTranslated(x, y, z);
 
-			float rotationDegrees = getRotationDegrees(tileEntity);
+			float rotationDegrees = RenderUtil.getRotationDegrees(tileEntity);
 
 			GL11.glTranslated(.5f, .5f, .5f);
 			GL11.glRotatef(rotationDegrees, 0, 1, 0);
@@ -418,7 +414,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 			GL11.glPushMatrix();
 			GL11.glTranslated(x, y, z);
 
-			float rotationDegrees = getRotationDegrees(tileEntity);
+			float rotationDegrees = RenderUtil.getRotationDegrees(tileEntity);
 
 			GL11.glTranslated(.5f, .5f, .5f);
 			GL11.glRotatef(rotationDegrees, 0, 1, 0);
@@ -435,7 +431,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 			GL11.glPushMatrix();
 			GL11.glTranslated(x, y, z);
 
-			float rotationDegrees = getRotationDegrees(tileEntity);
+			float rotationDegrees = RenderUtil.getRotationDegrees(tileEntity);
 
 			GL11.glTranslated(.5f, .5f, .5f);
 			GL11.glRotatef(rotationDegrees, 0, 1, 0);
@@ -457,7 +453,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 			EnumFacing conveyorDirection = aligner.conveyorDirection;
 
 			if (aligner.clientRenderCache != null && conveyorDirection != null && direction.getAxis() != conveyorDirection.getAxis()) {
-				float rotationDegrees = getRotationDegrees(tileEntity);
+				float rotationDegrees = RenderUtil.getRotationDegrees(tileEntity);
 
 				byte conveyorSpeedsteps = aligner.conveyorSpeedsteps;
 
@@ -552,7 +548,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 			GL11.glPushMatrix();
 			GL11.glTranslated(x, y, z);
 
-			float rotationDegrees = getRotationDegrees(tileEntity);
+			float rotationDegrees = RenderUtil.getRotationDegrees(tileEntity);
 
 			GL11.glTranslated(.5f, .5f, .5f);
 			GL11.glRotatef(rotationDegrees, 0, 1, 0);
@@ -924,38 +920,6 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		RenderHelper.disableStandardItemLighting();
 
 		GlStateManager.popAttrib();
-	}
-
-	public static EnumFacing getDirection(Object tileEntity) {
-		EnumFacing direction;
-		if (tileEntity instanceof IRotatable) {
-			direction = ((IRotatable) tileEntity).getFacingDirection();
-		} else {
-			direction = EnumFacing.SOUTH;
-		}
-		return direction;
-	}
-
-	public static float getRotationDegrees(IRotatable rotatable) {
-		EnumFacing direction = rotatable.getFacingDirection();
-		return getRotationDegrees(direction);
-	}
-
-	public static float getRotationDegrees(Object tileEntity) {
-		EnumFacing direction = getDirection(tileEntity);
-		return getRotationDegrees(direction);
-	}
-
-	public static float getRotationDegrees(EnumFacing direction) {
-		float rotationDegrees = 0;
-		if (direction == EnumFacing.WEST) {
-			rotationDegrees = 270;
-		} else if (direction == EnumFacing.NORTH) {
-			rotationDegrees = 180;
-		} else if (direction == EnumFacing.EAST) {
-			rotationDegrees = 90;
-		}
-		return rotationDegrees;
 	}
 
 	public void renderConveyorItems(IConveyorSlots tileEntity, double x, double y, double z, float partialTicks, boolean oscillate) {
