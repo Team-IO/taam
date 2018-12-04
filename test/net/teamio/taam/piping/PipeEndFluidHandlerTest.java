@@ -1,40 +1,40 @@
 package net.teamio.taam.piping;
 
+import com.builtbroken.mc.testing.junit.AbstractTest;
+import com.builtbroken.mc.testing.junit.VoltzTestRunner;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.teamio.blockunit.TestMethod;
-import net.teamio.blockunit.TestingHarness;
 import net.teamio.taam.content.piping.GenericPipeTests;
+import org.junit.runner.RunWith;
 
 /**
  * Created by oliver on 2017-07-03.
  */
-public class PipeEndFluidHandlerTest {
+@RunWith(VoltzTestRunner.class)
+public class PipeEndFluidHandlerTest extends AbstractTest {
 
 	private PipeEndFluidHandler pipeEndFluidHandler;
 	private IFluidHandler fluidHandler;
 
 	private static final int CAPACITY = 10;
 
-	public PipeEndFluidHandlerTest() {
+	@Override
+	public void setUpForTest(String name) {
 		fluidHandler = new FluidTank(CAPACITY);
-		pipeEndFluidHandler = new PipeEndFluidHandler(fluidHandler, EnumFacing.UP, true);
+		pipeEndFluidHandler = new PipeEndFluidHandler(null, fluidHandler, EnumFacing.UP);
 	}
 
-	@TestMethod
-	public void basicFunctions(TestingHarness t) throws Exception {
-		t.assertEquals(CAPACITY, pipeEndFluidHandler.getCapacity());
+	public void testBasicFunctions() {
+		assertEquals(CAPACITY, pipeEndFluidHandler.getCapacity());
 	}
 
-	@TestMethod
-	public void getInternalPipes(TestingHarness t) throws Exception {
-		t.assertNull(pipeEndFluidHandler.getInternalPipes(null, null));
+	public void testGetInternalPipes() {
+		assertNull(pipeEndFluidHandler.getInternalPipes());
 	}
 
-	@TestMethod
-	public void fluidAmount(TestingHarness t) throws Exception {
-		GenericPipeTests.testPipeEnd(t, pipeEndFluidHandler, CAPACITY, true);
+	public void testFluidAmount() {
+		GenericPipeTests.testPipeEnd(pipeEndFluidHandler, CAPACITY, true);
 	}
 
 }

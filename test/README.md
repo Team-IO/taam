@@ -1,7 +1,8 @@
-Unit testing in Minecraft is tricky.
-Since most tests rely on an initialized Minecraft instance you basically have to start the whole game for the tests.
+Unit testing in this mod is implemented using a custom JUnit runner
+provided by [MinecraftJUnit](https://github.com/BuiltBrokenModding/MinecraftJUnit).
+(Not all tests use this runner, only the Minecraft-specific code.)
 
-The way it is implemented here:
-All unit tests are run with a bare essentials test framework that is called from within the game itself.
-That means, the "test" source folder is compiled into the main mod as well.
-Unit tests are invoked with the "Unit Tester" item.
+Running the tests should work out of the box.
+
+Previous renditions of testing in this mod worked by compiling the test cases with a custom written test harness,
+then running it in the actual game by using a unit test item.

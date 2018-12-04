@@ -26,9 +26,9 @@ public class ItemWithMetadata<P extends Enum<P>> extends Item {
 		public abstract void addInformation(ItemStack stack, EntityPlayer player, List<String> lines, boolean detailedInfoSetting);
 	}
 
-	private P[] metaValues;
-	protected String baseName;
-	private ItemDelegate<P> delegate;
+	private final P[] metaValues;
+	protected final String baseName;
+	private final ItemDelegate<P> delegate;
 
 	public ItemWithMetadata(String baseName, P[] metaValues, ItemDelegate<P> delegate) {
 		super();

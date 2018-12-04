@@ -24,9 +24,9 @@ import net.teamio.taam.rendering.obj.OBJModel;
 
 public class BlockLamp extends Block {
 
-	public static PropertyEnum<EnumFacing> DIRECTION = PropertyEnum.create("direction", EnumFacing.class, EnumFacing.VALUES);
-	public static PropertyBool POWERED = PropertyBool.create("powered");
-	public static PropertyBool ATTACHED = PropertyBool.create("attached");
+	public static final PropertyEnum<EnumFacing> DIRECTION = PropertyEnum.create("direction", EnumFacing.class, EnumFacing.VALUES);
+	public static final PropertyBool POWERED = PropertyBool.create("powered");
+	public static final PropertyBool ATTACHED = PropertyBool.create("attached");
 
 	/**
 	 * Hitbox "offset" depth (attaching side -> sensor front)

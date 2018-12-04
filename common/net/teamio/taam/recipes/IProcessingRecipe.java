@@ -4,13 +4,13 @@ import net.minecraft.item.ItemStack;
 
 public interface IProcessingRecipe {
 
-	public boolean inputMatches(ItemStack itemStack);
+	boolean inputMatches(ItemStack itemStack);
 
-	public ItemStack getInput();
+	ItemStack getInput();
 
-	public String getInputOreDict();
+	String getInputOreDict();
 
-	public ChancedOutput[] getOutput();
+	ChancedOutput[] getOutput();
 
-	public ItemStack[] getOutput(ItemStack input);
+	ItemStack[] getOutput(ItemStack input);
 }

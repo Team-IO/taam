@@ -14,8 +14,8 @@ import net.teamio.taam.recipes.ChancedOutput;
  */
 public class FluidDrierRecipe extends BaseProcessingRecipeFluidBased {
 
-	private ChancedOutput[] output;
-	private ItemStack outputStack;
+	private final ChancedOutput[] output;
+	private final ItemStack outputStack;
 
 	public FluidDrierRecipe(FluidStack input, ItemStack output) {
 		inputFluid = input;

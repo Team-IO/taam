@@ -53,7 +53,7 @@ import java.util.Collection;
 import java.util.EnumSet;
 import java.util.List;
 
-public class MachineMultipart extends Multipart implements INormallyOccludingPart, ITickable, ISlottedPart, ISlottedCapabilityProvider {
+public class MachineMultipart extends Multipart implements INormallyOccludingPart, ITickable, ISlottedPart, ISlottedCapabilityProvider, IMachineWrapper {
 	public IMachine machine;
 	private IMachineMetaInfo meta;
 
@@ -65,7 +65,12 @@ public class MachineMultipart extends Multipart implements INormallyOccludingPar
 
 	public MachineMultipart(IMachineMetaInfo meta) {
 		this.meta = meta;
-		machine = meta.createMachine();
+		machine = meta.createMachine(this);
+	}
+
+	@Override
+	public void markAsDirty() {
+		markDirty();
 	}
 
 	@Override
@@ -75,6 +80,33 @@ public class MachineMultipart extends Multipart implements INormallyOccludingPar
 			return;
 		}
 		machine.onCreated(getWorld(), getPos());
+	}
+
+	@Override
+	public void onRemoved() {
+		if (machine == null) {
+			Log.error("MachineMultipart at {} is missing machine instance.", getPos());
+			return;
+		}
+		machine.onUnload(getWorld(), getPos());
+	}
+
+	@Override
+	public void onLoaded() {
+		if (machine == null) {
+			Log.error("MachineMultipart at {} is missing machine instance.", getPos());
+			return;
+		}
+		machine.onCreated(getWorld(), getPos());
+	}
+
+	@Override
+	public void onUnloaded() {
+		if (machine == null) {
+			Log.error("MachineMultipart at {} is missing machine instance.", getPos());
+			return;
+		}
+		machine.onUnload(getWorld(), getPos());
 	}
 
 	@Override
@@ -160,7 +192,6 @@ public class MachineMultipart extends Multipart implements INormallyOccludingPar
 				if (!faceMicro.isFaceHollow()) {
 					occlusionField = FaceBitmap.setSideBit(occlusionField, side);
 				}
-				continue;
 				/*
 				 * Last resort: slotted occluding parts
 				 */
@@ -286,7 +317,7 @@ public class MachineMultipart extends Multipart implements INormallyOccludingPar
 		IMachineMetaInfo meta = Taam.MACHINE_META.fromId(machineID);
 		if(meta != null && meta != this.meta) {
 			this.meta = meta;
-			machine = meta.createMachine();
+			machine = meta.createMachine(this);
 			markRenderUpdate();
 		}
 		if (machine == null) {
@@ -302,7 +333,7 @@ public class MachineMultipart extends Multipart implements INormallyOccludingPar
 		IMachineMetaInfo meta = Taam.MACHINE_META.fromId(machineID);
 		if(meta != null && meta != this.meta) {
 			this.meta = meta;
-			machine = meta.createMachine();
+			machine = meta.createMachine(this);
 			markRenderUpdate();
 		}
 		if (machine == null) {
@@ -388,4 +419,11 @@ public class MachineMultipart extends Multipart implements INormallyOccludingPar
 		return slotSet;
 	}
 
+	/*
+	 * IMachineWrapper implementation
+	 */
+	@Override
+	public void sendPacket() {
+		sendUpdatePacket(false);
+	}
 }

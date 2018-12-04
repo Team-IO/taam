@@ -5,32 +5,24 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fluids.FluidStack;
+import net.teamio.taam.Config;
 
 import java.util.List;
 
 public class PipeEnd implements IPipe {
-
-	/**
-	 * One array per PipeEnd, used to optimize the
-	 * {@link IPipeTE#getPipesForSide(EnumFacing)} as usually there is only one
-	 * pipe end per side.
-	 */
-	private final IPipe[] pipeArray;
-
+	protected final IPipePos pos;
 	protected EnumFacing side;
 	public final PipeInfo info;
-	private final boolean active;
 	public boolean occluded;
 
-	public PipeEnd(EnumFacing side, PipeInfo info, boolean active) {
+	public PipeEnd(IPipePos pos, EnumFacing side, PipeInfo info) {
+		this.pos = pos;
 		this.side = side;
 		this.info = info;
-		this.active = active;
-		pipeArray = new IPipe[] { this };
 	}
 
-	public PipeEnd(EnumFacing side, int capacity, boolean active) {
-		this(side, new PipeInfo(capacity), active);
+	public PipeEnd(IPipePos pos, EnumFacing side, int capacity) {
+		this(pos, side, new PipeInfo(capacity));
 	}
 
 	public EnumFacing getSide() {
@@ -49,19 +41,9 @@ public class PipeEnd implements IPipe {
 		info.readFromNBT(tag);
 	}
 
-	public IPipe[] asPipeArray() {
-		pipeArray[0] = this;
-		return pipeArray;
-	}
-
 	/*
 	 * IPipe implementation
 	 */
-
-	@Override
-	public boolean isActive() {
-		return active;
-	}
 
 	@Override
 	public int getPressure() {
@@ -69,18 +51,8 @@ public class PipeEnd implements IPipe {
 	}
 
 	@Override
-	public void setPressure(int pressure) {
-		info.pressure = pressure;
-	}
-
-	@Override
-	public int getSuction() {
-		return info.suction;
-	}
-
-	@Override
-	public void setSuction(int suction) {
-		info.suction = suction;
+	public int applyPressure(int amount) {
+		return info.applyPressure(amount, Config.pl_pipe_max_pressure);
 	}
 
 	@Override
@@ -109,13 +81,34 @@ public class PipeEnd implements IPipe {
 	}
 
 	@Override
-	public IPipe[] getInternalPipes(IBlockAccess world, BlockPos pos) {
+	public IPipe[] getInternalPipes() {
 		return null;
 	}
 
 	@Override
 	public boolean isSideAvailable(EnumFacing side) {
 		return !occluded && this.side == side;
+	}
+
+	@Override
+	public BlockPos getPos() {
+		if (pos == null) {
+			return BlockPos.ORIGIN;
+		}
+		return pos.getPos();
+	}
+
+	@Override
+	public IBlockAccess getWorld() {
+		if (pos == null) {
+			return null;
+		}
+		return pos.getWorld();
+	}
+
+	@Override
+	public boolean isNeutral() {
+		return false;
 	}
 
 }

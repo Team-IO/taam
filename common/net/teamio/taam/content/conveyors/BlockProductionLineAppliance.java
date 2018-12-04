@@ -45,9 +45,8 @@ public class BlockProductionLineAppliance extends BlockProductionLine {
 	@Override
 	public int getMetaFromState(IBlockState state) {
 		Taam.BLOCK_PRODUCTIONLINE_APPLIANCE_META variant = state.getValue(VARIANT);
-		int meta = variant.ordinal();
 
-		return meta;
+		return variant.ordinal();
 	}
 
 	@Override

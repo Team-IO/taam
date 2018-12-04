@@ -21,9 +21,11 @@ import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.conveyors.ConveyorSlotsBase;
 import net.teamio.taam.conveyors.SlotMatrix;
 import net.teamio.taam.machines.IMachine;
+import net.teamio.taam.machines.IMachineWrapper;
+import net.teamio.taam.piping.IPipePos;
 import net.teamio.taam.piping.PipeEnd;
 import net.teamio.taam.piping.PipeEndRestricted;
-import net.teamio.taam.piping.PipeUtil;
+import net.teamio.taam.piping.PipeNetwork;
 import net.teamio.taam.recipes.IProcessingRecipeFluidBased;
 import net.teamio.taam.recipes.ProcessingRegistry;
 import net.teamio.taam.util.FaceBitmap;
@@ -32,12 +34,12 @@ import net.teamio.taam.util.TaamUtil;
 import java.io.IOException;
 import java.util.List;
 
-public class MachineMixer implements IMachine, IRotatable {
+public class MachineMixer implements IMachine, IPipePos, IRotatable {
 
 	private EnumFacing direction = EnumFacing.NORTH;
 
-	private PipeEndRestricted pipeEndIn;
-	private PipeEnd pipeEndOut;
+	private final PipeEndRestricted pipeEndIn;
+	private final PipeEnd pipeEndOut;
 
 	private FluidStack backlog;
 
@@ -65,7 +67,7 @@ public class MachineMixer implements IMachine, IRotatable {
 	/**
 	 * Conveyor Slot set for input on the sides
 	 */
-	private ConveyorSlotsBase conveyorSlots = new ConveyorSlotsBase() {
+	private final ConveyorSlotsBase conveyorSlots = new ConveyorSlotsBase() {
 
 		{
 			slotMatrix = new SlotMatrix(true, true, true, false, false, false, true, true, true);
@@ -87,19 +89,43 @@ public class MachineMixer implements IMachine, IRotatable {
 			return 0;
 		}
 	};
+	private IMachineWrapper wrapper;
 
 	@Override
 	public void onCreated(World worldObj, BlockPos pos) {
 		this.worldObj = worldObj;
 		this.pos = pos;
+		PipeNetwork.NET.addPipe(pipeEndIn);
+		PipeNetwork.NET.addPipe(pipeEndOut);
+	}
+
+	@Override
+	public void onUnload(World worldObj, BlockPos pos) {
+		PipeNetwork.NET.removePipe(pipeEndIn);
+		PipeNetwork.NET.removePipe(pipeEndOut);
+	}
+
+	@Override
+	public IBlockAccess getWorld() {
+		return worldObj;
+	}
+
+	@Override
+	public BlockPos getPos() {
+		return pos;
 	}
 
 	public MachineMixer() {
-		pipeEndOut = new PipeEnd(direction, Config.pl_mixer_capacity_output, false);
-		pipeEndIn = new PipeEndRestricted(direction.getOpposite(), Config.pl_mixer_capacity_input, false);
+		pipeEndOut = new PipeEnd(this, direction, Config.pl_mixer_capacity_output);
+		pipeEndIn = new PipeEndRestricted(this, direction.getOpposite(), Config.pl_mixer_capacity_input);
 
 		updateOcclusion();
 		resetTimeout();
+	}
+
+	@Override
+	public void setWrapper(IMachineWrapper wrapper) {
+		this.wrapper = wrapper;
 	}
 
 	private void updateOcclusion() {
@@ -193,10 +219,7 @@ public class MachineMixer implements IMachine, IRotatable {
 			}
 			return true;
 		}
-		PipeUtil.processPipes(pipeEndIn, world, pos);
-		PipeUtil.processPipes(pipeEndOut, world, pos);
-		//TODO: only true if actually updated... Awaiting pipe network logic
-		return true;
+		return false;
 	}
 
 	@Override
@@ -277,8 +300,8 @@ public class MachineMixer implements IMachine, IRotatable {
 	 *
 	 * @param stack
 	 * @return true if there is a recipe available, false if not. Also returns
-	 *         false if there is no input fluid. Does not check for the amount
-	 *         of fluid, so {@link #process(ItemStack, boolean)} may still fail.
+	 * false if there is no input fluid. Does not check for the amount
+	 * of fluid, so {@link #process(ItemStack, boolean)} may still fail.
 	 */
 	private IProcessingRecipeFluidBased getRecipe(ItemStack stack) {
 		FluidStack inside = pipeEndIn.getFluid();
@@ -327,8 +350,8 @@ public class MachineMixer implements IMachine, IRotatable {
 
 		isShutdown = TaamUtil.isShutdown(TaamUtil.RANDOM, redstoneMode, redstoneHigh);
 
-		if(isShutdown) {
-			if(!simulate) resetTimeout();
+		if (isShutdown) {
+			if (!simulate) resetTimeout();
 			return 0;
 		}
 
@@ -340,7 +363,7 @@ public class MachineMixer implements IMachine, IRotatable {
 		IProcessingRecipeFluidBased recipe = getRecipe(stack);
 
 		if (recipe == null) {
-			if(!simulate) resetTimeout();
+			if (!simulate) resetTimeout();
 			return 0;
 		}
 
@@ -351,7 +374,7 @@ public class MachineMixer implements IMachine, IRotatable {
 		FluidStack inputFluid = recipe.getInputFluid();
 		int amount = pipeEndIn.getFluidAmount(inputFluid);
 		if (amount < inputFluid.amount) {
-			if(!simulate) resetTimeout();
+			if (!simulate) resetTimeout();
 			return 0;
 		}
 
@@ -359,8 +382,8 @@ public class MachineMixer implements IMachine, IRotatable {
 		 * Check timeout, only if we actually can process.
 		 */
 
-		if(timeout > 0) {
-			if(!simulate) timeout--;
+		if (timeout > 0) {
+			if (!simulate) timeout--;
 			return 0;
 		}
 
@@ -371,7 +394,7 @@ public class MachineMixer implements IMachine, IRotatable {
 		amount = simulate ? pipeEndIn.getFluidAmount(inputFluid) : pipeEndIn.removeFluid(inputFluid);
 		if (amount != inputFluid.amount) {
 			// Not enough, back into the pipe.
-			if(!simulate) {
+			if (!simulate) {
 				int reinserted = pipeEndIn.addFluid(new FluidStack(inputFluid, amount));
 				if (reinserted != amount) {
 					// This should not happen!
@@ -388,7 +411,7 @@ public class MachineMixer implements IMachine, IRotatable {
 		 */
 		FluidStack outputFluid = recipe.getOutputFluid(stack, inputFluid);
 
-		if(!simulate) backlog = outputFluid.copy();
+		if (!simulate) backlog = outputFluid.copy();
 
 		return recipe.getInput().stackSize;
 	}

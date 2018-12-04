@@ -1,38 +1,43 @@
 package net.teamio.taam.content.piping;
 
+import com.builtbroken.mc.testing.junit.AbstractTest;
+import com.builtbroken.mc.testing.junit.VoltzTestRunner;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
-import net.teamio.blockunit.TestMethod;
-import net.teamio.blockunit.TestingHarness;
 import net.teamio.taam.Config;
 import net.teamio.taam.Taam;
+import org.junit.runner.RunWith;
 
 /**
  * Created by oliver on 2017-07-03.
  */
-public class MachinePipeTest {
+@RunWith(VoltzTestRunner.class)
+public class MachinePipeTest extends AbstractTest {
 
-	@TestMethod
-	public void testPipeImplementation(TestingHarness t) {
+	@Override
+	public void setUpForEntireClass() {
+		Config.init(null);
+	}
+
+	public void testPipeImplementation() {
 
 		MachinePipe pipe = new MachinePipe();
 
-		GenericPipeTests.testPipeEnd(t, pipe, Config.pl_pipe_capacity, false);
+		GenericPipeTests.testPipeEnd(pipe, Config.pl_pipe_capacity, false);
 	}
 
-	@TestMethod
-	public void testSerializePipeContent(TestingHarness t) {
+	public void testSerializePipeContent() {
 
 		MachinePipe pipe = new MachinePipe();
 
 		int fillAmount = Config.pl_pipe_capacity / 2;
 
 		int amount = pipe.addFluid(new FluidStack(FluidRegistry.WATER, fillAmount));
-		t.assertEquals(fillAmount, amount);
+		assertEquals(fillAmount, amount);
 		amount = pipe.getFluidAmount(new FluidStack(FluidRegistry.WATER, 0));
-		t.assertEquals(fillAmount, amount);
+		assertEquals(fillAmount, amount);
 
 		// Write to NBT
 		NBTTagCompound tag = new NBTTagCompound();
@@ -43,7 +48,7 @@ public class MachinePipeTest {
 
 		// Check amount
 		amount = pipe.getFluidAmount(new FluidStack(FluidRegistry.WATER, 0));
-		t.assertEquals(fillAmount, amount);
+		assertEquals(fillAmount, amount);
 
 		// Read into new pipe
 		pipe = new MachinePipe();
@@ -51,20 +56,19 @@ public class MachinePipeTest {
 
 		// Check amount
 		amount = pipe.getFluidAmount(new FluidStack(FluidRegistry.WATER, 0));
-		t.assertEquals(fillAmount, amount);
+		assertEquals(fillAmount, amount);
 	}
 
-	@TestMethod
-	public void testCapabilitySides(TestingHarness t) {
+	public void testCapabilitySides() {
 
 		MachinePipe pipe = new MachinePipe();
 
-		t.assertNotNull(pipe.getCapability(Taam.CAPABILITY_PIPE, EnumFacing.UP));
-		t.assertNotNull(pipe.getCapability(Taam.CAPABILITY_PIPE, EnumFacing.DOWN));
-		t.assertNotNull(pipe.getCapability(Taam.CAPABILITY_PIPE, EnumFacing.NORTH));
-		t.assertNotNull(pipe.getCapability(Taam.CAPABILITY_PIPE, EnumFacing.SOUTH));
-		t.assertNotNull(pipe.getCapability(Taam.CAPABILITY_PIPE, EnumFacing.WEST));
-		t.assertNotNull(pipe.getCapability(Taam.CAPABILITY_PIPE, EnumFacing.EAST));
+		assertNotNull(pipe.getCapability(Taam.CAPABILITY_PIPE, EnumFacing.UP));
+		assertNotNull(pipe.getCapability(Taam.CAPABILITY_PIPE, EnumFacing.DOWN));
+		assertNotNull(pipe.getCapability(Taam.CAPABILITY_PIPE, EnumFacing.NORTH));
+		assertNotNull(pipe.getCapability(Taam.CAPABILITY_PIPE, EnumFacing.SOUTH));
+		assertNotNull(pipe.getCapability(Taam.CAPABILITY_PIPE, EnumFacing.WEST));
+		assertNotNull(pipe.getCapability(Taam.CAPABILITY_PIPE, EnumFacing.EAST));
 	}
 
 }

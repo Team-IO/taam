@@ -9,6 +9,7 @@ import net.teamio.taam.Log;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -117,7 +118,7 @@ public final class ProcessingRegistryEntry {
 			}
 		}
 
-		return actualMatches.toArray(new IProcessingRecipe[actualMatches.size()]);
+		return actualMatches.toArray(new IProcessingRecipe[0]);
 	}
 
 	/**
@@ -291,19 +292,13 @@ public final class ProcessingRegistryEntry {
 	public List<IProcessingRecipe> getAllRecipes() {
 		Set<IProcessingRecipe> recipes = new HashSet<IProcessingRecipe>();
 		for(IProcessingRecipe[] list : this.recipes.values()) {
-			for(IProcessingRecipe recipe : list) {
-				recipes.add(recipe);
-			}
+			Collections.addAll(recipes, list);
 		}
 		for(IProcessingRecipe[] list : recipesFluid.values()) {
-			for(IProcessingRecipe recipe : list) {
-				recipes.add(recipe);
-			}
+			Collections.addAll(recipes, list);
 		}
 		for(IProcessingRecipe[] list : recipesOreDict.values()) {
-			for(IProcessingRecipe recipe : list) {
-				recipes.add(recipe);
-			}
+			Collections.addAll(recipes, list);
 		}
 		return new ArrayList<IProcessingRecipe>(recipes);
 	}

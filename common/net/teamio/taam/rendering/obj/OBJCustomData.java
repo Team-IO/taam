@@ -80,8 +80,8 @@ public class OBJCustomData
 		}
 	}
 	
-	protected static BiMap<String, Keys> keyNameMap = HashBiMap.create(Keys.values().length);
-	public EnumMap<Keys, Pair<Boolean, Boolean>> processUVData = Maps.<Keys, Pair<Boolean, Boolean>>newEnumMap(Keys.class);
+	protected static final BiMap<String, Keys> keyNameMap = HashBiMap.create(Keys.values().length);
+	public EnumMap<Keys, Pair<Boolean, Boolean>> processUVData = Maps.newEnumMap(Keys.class);
 	protected GroupConfigHandler groupConfigHandler = new GroupConfigHandler();
 	protected boolean useFullAtlas = false;
 	public boolean hasProcessed = false;
@@ -330,7 +330,7 @@ public class OBJCustomData
 	public static class GroupConfigBuilder
 	{
 		private String name;
-		private Map<String, Boolean> visMap = Maps.newHashMap();
+		private final Map<String, Boolean> visMap = Maps.newHashMap();
 		private boolean alwaysActive = false;
 		
 		private GroupConfigBuilder(ImmutableList<String> groupNames)
@@ -472,7 +472,7 @@ public class OBJCustomData
 	{
 		public static final String DEFAULT_CONFIG_NAME = "OBJModel.Default.Config.Key";
 		private String name = DEFAULT_CONFIG_NAME;
-		private Map<String, Boolean> visMap;
+		private final Map<String, Boolean> visMap;
 		private boolean alwaysActive = false;
 		
 		protected GroupConfig(String name, Map<String, Boolean> visMap)

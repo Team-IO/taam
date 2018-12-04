@@ -18,9 +18,12 @@ import java.util.List;
  * Dummy machine used instead of thousands of null-checks
  *
  * @author Oliver Kahrmann
- *
  */
 public class MachineDummy implements IMachine {
+
+	@Override
+	public void setWrapper(IMachineWrapper wrapper) {
+	}
 
 	@Override
 	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
@@ -89,5 +92,9 @@ public class MachineDummy implements IMachine {
 	@Override
 	public void onCreated(World worldObj, BlockPos pos) {
 		Log.error("Dummy entity created on load. This means machine creation code is flawed. THIS IS AN ERROR! Report to author!", pos);
+	}
+
+	@Override
+	public void onUnload(World worldObj, BlockPos pos) {
 	}
 }

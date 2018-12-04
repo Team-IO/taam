@@ -33,7 +33,7 @@ public final class ProcessingRegistry {
 		// Util Class
 	}
 
-	private static Map<Integer, ProcessingRegistryEntry> entries;
+	private static final Map<Integer, ProcessingRegistryEntry> entries;
 
 	private static int count = 0;
 

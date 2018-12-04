@@ -10,10 +10,10 @@ import net.teamio.taam.util.TaamUtil;
 import org.lwjgl.opengl.GL11;
 
 public class GuiConveyorSmallInventory<T extends ICapabilityProvider & IWorldNameable> extends GuiContainer {
-	ResourceLocation bg = new ResourceLocation("textures/gui/container/hopper.png");
+	final ResourceLocation bg = new ResourceLocation("textures/gui/container/hopper.png");
 
-	private T tileEntity;
-	private InventoryPlayer inventoryPlayer;
+	private final T tileEntity;
+	private final InventoryPlayer inventoryPlayer;
 
 	public GuiConveyorSmallInventory(InventoryPlayer inventoryPlayer, T tileEntity, EnumFacing side) {
 		super(new ContainerConveyorSmallInventory(inventoryPlayer, tileEntity, side));

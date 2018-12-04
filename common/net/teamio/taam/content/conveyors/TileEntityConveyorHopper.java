@@ -38,8 +38,8 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IRedston
 
 	private boolean pulseWasSent = false;
 
-	private ItemStackHandler itemHandler;
-	private ConveyorSlotsInventory conveyorSlots;
+	private final ItemStackHandler itemHandler;
+	private final ConveyorSlotsInventory conveyorSlots;
 
 	public TileEntityConveyorHopper() {
 		this(false);

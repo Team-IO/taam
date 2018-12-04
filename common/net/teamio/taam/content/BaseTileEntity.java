@@ -1,15 +1,21 @@
 package net.teamio.taam.content;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.IWorldNameable;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.teamio.taam.piping.IPipePos;
 import net.teamio.taam.util.TaamUtil;
 
 import java.util.ArrayList;
@@ -23,7 +29,7 @@ import java.util.UUID;
  * @author oliverkahrmann
  *
  */
-public abstract class BaseTileEntity extends TileEntity implements IWorldNameable {
+public abstract class BaseTileEntity extends TileEntity implements IWorldNameable, IPipePos {
 
 	private UUID owner = null;
 	/**
@@ -36,11 +42,6 @@ public abstract class BaseTileEntity extends TileEntity implements IWorldNameabl
 			return new ArrayList<String>(14);
 		}
 	};
-
-	@Override
-	public void onLoad() {
-		super.onLoad();
-	}
 
 	public void setOwner(EntityPlayer player) {
 		if (player == null) {
@@ -73,7 +74,7 @@ public abstract class BaseTileEntity extends TileEntity implements IWorldNameabl
 	 * server.
 	 *
 	 * @param worldUpdate
-	 *            Send update to client (notify block change / send via network)
+	 *            Send update to client (notify block change / send via network). Re-render is only requested if renderUpdate is true as well.
 	 * @param renderUpdate
 	 *            Update rendering (client only)
 	 * @param blockUpdate
@@ -85,9 +86,11 @@ public abstract class BaseTileEntity extends TileEntity implements IWorldNameabl
 		}
 		markDirty();
 		if (worldUpdate) {
-			TaamUtil.updateBlock(worldObj, pos);
+			// Server -> Client
+			TaamUtil.updateBlock(worldObj, pos, renderUpdate);
 		}
 		if (renderUpdate) {
+			// Only client?
 			worldObj.markBlockRangeForRenderUpdate(pos, pos);
 		}
 		if (blockUpdate) {
@@ -96,16 +99,13 @@ public abstract class BaseTileEntity extends TileEntity implements IWorldNameabl
 	}
 
 	/**
-	 * Called inside
-	 * {@link BaseBlock#onNeighborBlockChange(net.minecraft.world.World, net.minecraft.util.BlockPos, net.minecraft.block.state.IBlockState, net.minecraft.block.Block)}
-	 * . (On server side)
+	 * Called inside {@link BaseBlock#neighborChanged(IBlockState, World, BlockPos, Block)}. (On server side)
 	 */
 	public void blockUpdate() {
 	}
 
 	/**
-	 * Called within
-	 * {@link BaseBlock#getActualState(net.minecraft.block.state.IBlockState, net.minecraft.world.IBlockAccess, net.minecraft.util.BlockPos)}
+	 * Called within {@link BaseBlock#getActualState(IBlockState, IBlockAccess, BlockPos)}
 	 * to update render state in the tile entity.
 	 */
 	public void renderUpdate() {

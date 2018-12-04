@@ -7,7 +7,7 @@ import net.minecraft.util.IStringSerializable;
 import java.util.List;
 
 public interface IMachineMetaInfo extends IStringSerializable {
-	IMachine createMachine();
+	IMachine createMachine(IMachineWrapper wrapper);
 
 	int metaData();
 

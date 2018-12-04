@@ -8,7 +8,7 @@ import net.teamio.taam.Log;
 import net.teamio.taam.Taam;
 import net.teamio.taam.content.BaseTileEntity;
 
-public class MachineTileEntity extends BaseTileEntity implements ITickable {
+public class MachineTileEntity extends BaseTileEntity implements ITickable, IMachineWrapper {
 
 	public IMachine machine;
 	public IMachineMetaInfo meta;
@@ -19,7 +19,12 @@ public class MachineTileEntity extends BaseTileEntity implements ITickable {
 
 	public MachineTileEntity(IMachineMetaInfo meta) {
 		this.meta = meta;
-		machine = meta.createMachine();
+		machine = meta.createMachine(this);
+	}
+
+	@Override
+	public void markAsDirty() {
+		markDirty();
 	}
 
 	@Override
@@ -29,6 +34,15 @@ public class MachineTileEntity extends BaseTileEntity implements ITickable {
 			return;
 		}
 		machine.onCreated(worldObj, pos);
+	}
+
+	@Override
+	public void onChunkUnload() {
+		if (machine == null) {
+			Log.error("MachineTileEntity at {} is missing machine instance.", getPos());
+			return;
+		}
+		machine.onUnload(worldObj, pos);
 	}
 
 	@Override
@@ -65,7 +79,7 @@ public class MachineTileEntity extends BaseTileEntity implements ITickable {
 		IMachineMetaInfo meta = Taam.MACHINE_META.fromId(machineID);
 		if (meta != null && this.meta != meta) {
 			this.meta = meta;
-			machine = meta.createMachine();
+			machine = meta.createMachine(this);
 			updateState(false, true, false);
 		}
 		if (machine == null) {
@@ -93,4 +107,9 @@ public class MachineTileEntity extends BaseTileEntity implements ITickable {
 		return machine.getCapability(capability, facing);
 	}
 
+	@Override
+	public void sendPacket() {
+		updateState(true, false, false);
+		//TODO: send update packet
+	}
 }

@@ -49,12 +49,20 @@ public final class TaamUtil {
 	 * @param world
 	 * @param pos
 	 */
-	public static void updateBlock(World world, BlockPos pos) {
+	public static void updateBlock(World world, BlockPos pos, boolean reRender) {
 		if (world.isRemote) {
 			return;
 		}
 		IBlockState state = world.getBlockState(pos);
-		world.notifyBlockUpdate(pos, state, state, 3);
+		/*
+		 * Flag documentation from world.markAndNotifyBlock:
+		 * Flag 1 will cause a block update.
+		 * Flag 2 will send the change to clients (you almost always want this).
+		 * Flag 4 prevents the block from being re-rendered, if this is a client
+		 * world.
+		 * Flags can be added together.
+		 */
+		world.notifyBlockUpdate(pos, state, state, reRender ? 3 : 7);
 	}
 
 	/**
@@ -275,7 +283,7 @@ public final class TaamUtil {
 		if (inventory.hasCustomName()) {
 			return inventory.getDisplayName().getFormattedText();
 		}
-		return I18n.format(inventory.getDisplayName().getFormattedText(), new Object[0]);
+		return I18n.format(inventory.getDisplayName().getFormattedText());
 	}
 
 	public static <T> T getCapability(Capability<T> capability, TileEntity tileEntity, EnumFacing side) {

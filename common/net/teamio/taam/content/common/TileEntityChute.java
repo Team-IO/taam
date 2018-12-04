@@ -30,7 +30,7 @@ public class TileEntityChute extends BaseTileEntity implements IRotatable, ITick
 	private EnumFacing direction = EnumFacing.NORTH;
 	private final FluidHandlerOutputOnly wrappedHandler = new FluidHandlerOutputOnly();
 	
-	private ConveyorSlotsBase conveyorSlots = new ConveyorSlotsBase() {
+	private final ConveyorSlotsBase conveyorSlots = new ConveyorSlotsBase() {
 		
 		@Override
 		public int insertItemAt(ItemStack stack, int slot, boolean simulate) {

@@ -17,9 +17,12 @@ import net.teamio.taam.Taam;
 import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IRenderable;
 import net.teamio.taam.machines.IMachine;
+import net.teamio.taam.machines.IMachineWrapper;
 import net.teamio.taam.piping.IPipe;
+import net.teamio.taam.piping.IPipePos;
 import net.teamio.taam.piping.PipeEndFluidHandler;
 import net.teamio.taam.piping.PipeInfo;
+import net.teamio.taam.piping.PipeNetwork;
 import net.teamio.taam.piping.PipeUtil;
 import net.teamio.taam.util.FaceBitmap;
 import net.teamio.taam.util.FluidUtils;
@@ -28,60 +31,61 @@ import java.util.List;
 
 public class MachinePipe implements IMachine, IPipe, IRenderable {
 
-	public static final float pipeWidth = 4/16f;
+	public static final float pipeWidth = 4 / 16f;
 	public static final float fromBorder = (1f - pipeWidth) / 2;
 
-	public static final float flangeWidth = 7.25f/16f;
-	public static final float flangeSize = 2/16f;
+	public static final float flangeWidth = 7.25f / 16f;
+	public static final float flangeSize = 2 / 16f;
 	public static final float fromBorderFlange = (1f - flangeWidth) / 2;
 
-	public static final float baseplateWidth = 15/16f;
-	public static final float baseplateSize = 2/16f;
+	public static final float baseplateWidth = 15 / 16f;
+	public static final float baseplateSize = 2 / 16f;
 	public static final float fromBorderBaseplate = (1f - baseplateWidth) / 2;
 
-	public static AxisAlignedBB bbCenter = new AxisAlignedBB(
+	public static final AxisAlignedBB bbCenter = new AxisAlignedBB(
 			fromBorder, fromBorder, fromBorder,
-			1-fromBorder, 1-fromBorder, 1-fromBorder);
+			1 - fromBorder, 1 - fromBorder, 1 - fromBorder);
 	public static final AxisAlignedBB[] bbFaces = new AxisAlignedBB[6];
 	public static final AxisAlignedBB[] bbFlanges = new AxisAlignedBB[6];
-	public static AxisAlignedBB bbBaseplate = new AxisAlignedBB(
+	public static final AxisAlignedBB bbBaseplate = new AxisAlignedBB(
 			fromBorderBaseplate, 0, fromBorderBaseplate,
-			1-fromBorderBaseplate, baseplateSize, 1-fromBorderBaseplate);
+			1 - fromBorderBaseplate, baseplateSize, 1 - fromBorderBaseplate);
 
 	/**
-	 * pipearray for {@link #getInternalPipes(IBlockAccess, BlockPos)}.
+	 * pipearray for {@link #getInternalPipes()}.
 	 */
 	private static final IPipe[] internalPipes = new IPipe[6];
 
 	static {
-		bbFaces[EnumFacing.EAST.ordinal()]	= new AxisAlignedBB(1-fromBorder,	fromBorder,		fromBorder,
-																1,				1-fromBorder,	1-fromBorder);
-		bbFaces[EnumFacing.WEST.ordinal()]	= new AxisAlignedBB(0,				fromBorder,		fromBorder,
-																fromBorder,		1-fromBorder,	1-fromBorder);
-		bbFaces[EnumFacing.SOUTH.ordinal()]	= new AxisAlignedBB(fromBorder,		fromBorder,		1-fromBorder,
-																1-fromBorder,	1-fromBorder,	1);
-		bbFaces[EnumFacing.NORTH.ordinal()]	= new AxisAlignedBB(fromBorder,		fromBorder,		0,
-																1-fromBorder,	1-fromBorder,	fromBorder);
-		bbFaces[EnumFacing.UP.ordinal()]	= new AxisAlignedBB(fromBorder,		1-fromBorder,	fromBorder,
-																1-fromBorder,	1,				1-fromBorder);
-		bbFaces[EnumFacing.DOWN.ordinal()]	= new AxisAlignedBB(fromBorder,		0,				fromBorder,
-																1-fromBorder,	fromBorder,		1-fromBorder);
+		bbFaces[EnumFacing.EAST.ordinal()] = new AxisAlignedBB(1 - fromBorder, fromBorder, fromBorder,
+				1, 1 - fromBorder, 1 - fromBorder);
+		bbFaces[EnumFacing.WEST.ordinal()] = new AxisAlignedBB(0, fromBorder, fromBorder,
+				fromBorder, 1 - fromBorder, 1 - fromBorder);
+		bbFaces[EnumFacing.SOUTH.ordinal()] = new AxisAlignedBB(fromBorder, fromBorder, 1 - fromBorder,
+				1 - fromBorder, 1 - fromBorder, 1);
+		bbFaces[EnumFacing.NORTH.ordinal()] = new AxisAlignedBB(fromBorder, fromBorder, 0,
+				1 - fromBorder, 1 - fromBorder, fromBorder);
+		bbFaces[EnumFacing.UP.ordinal()] = new AxisAlignedBB(fromBorder, 1 - fromBorder, fromBorder,
+				1 - fromBorder, 1, 1 - fromBorder);
+		bbFaces[EnumFacing.DOWN.ordinal()] = new AxisAlignedBB(fromBorder, 0, fromBorder,
+				1 - fromBorder, fromBorder, 1 - fromBorder);
 
-		bbFlanges[EnumFacing.EAST.ordinal()]	= new AxisAlignedBB(1-flangeSize,		fromBorderFlange,	fromBorderFlange,
-																	1,					1-fromBorderFlange,	1-fromBorderFlange);
-		bbFlanges[EnumFacing.WEST.ordinal()]	= new AxisAlignedBB(0,					fromBorderFlange,	fromBorderFlange,
-																	flangeSize,			1-fromBorderFlange,	1-fromBorderFlange);
-		bbFlanges[EnumFacing.SOUTH.ordinal()]	= new AxisAlignedBB(fromBorderFlange,	fromBorderFlange,	1-flangeSize,
-																	1-fromBorderFlange,	1-fromBorderFlange,	1);
-		bbFlanges[EnumFacing.NORTH.ordinal()]	= new AxisAlignedBB(fromBorderFlange,	fromBorderFlange,	0,
-																	1-fromBorderFlange,	1-fromBorderFlange,	flangeSize);
-		bbFlanges[EnumFacing.UP.ordinal()]	= new AxisAlignedBB(fromBorderFlange,		1-flangeSize,		fromBorderFlange,
-																	1-fromBorderFlange,	1,					1-fromBorderFlange);
-		bbFlanges[EnumFacing.DOWN.ordinal()]	= new AxisAlignedBB(fromBorderFlange,	0,					fromBorderFlange,
-																	1-fromBorderFlange,	flangeSize,			1-fromBorderFlange);
+		bbFlanges[EnumFacing.EAST.ordinal()] = new AxisAlignedBB(1 - flangeSize, fromBorderFlange, fromBorderFlange,
+				1, 1 - fromBorderFlange, 1 - fromBorderFlange);
+		bbFlanges[EnumFacing.WEST.ordinal()] = new AxisAlignedBB(0, fromBorderFlange, fromBorderFlange,
+				flangeSize, 1 - fromBorderFlange, 1 - fromBorderFlange);
+		bbFlanges[EnumFacing.SOUTH.ordinal()] = new AxisAlignedBB(fromBorderFlange, fromBorderFlange, 1 - flangeSize,
+				1 - fromBorderFlange, 1 - fromBorderFlange, 1);
+		bbFlanges[EnumFacing.NORTH.ordinal()] = new AxisAlignedBB(fromBorderFlange, fromBorderFlange, 0,
+				1 - fromBorderFlange, 1 - fromBorderFlange, flangeSize);
+		bbFlanges[EnumFacing.UP.ordinal()] = new AxisAlignedBB(fromBorderFlange, 1 - flangeSize, fromBorderFlange,
+				1 - fromBorderFlange, 1, 1 - fromBorderFlange);
+		bbFlanges[EnumFacing.DOWN.ordinal()] = new AxisAlignedBB(fromBorderFlange, 0, fromBorderFlange,
+				1 - fromBorderFlange, flangeSize, 1 - fromBorderFlange);
 	}
 
 	private final PipeInfo info;
+	private IMachineWrapper wrapper;
 	/**
 	 * Bitmap containing the surrounding pipes Runtime-only, required for
 	 * rendering. This is updated in the {@link #renderUpdate(IBlockAccess, BlockPos)} method, called from
@@ -96,13 +100,60 @@ public class MachinePipe implements IMachine, IPipe, IRenderable {
 	private byte occludedSides;
 
 	private PipeEndFluidHandler[] adjacentFluidHandlers;
+	private World worldObj;
+	private BlockPos pos;
 
 	public MachinePipe() {
-		info = new PipeInfo(Config.pl_pipe_capacity);
+		info = new PipeInfo(Config.pl_pipe_capacity){
+			@Override
+			protected void onUpdate() {
+				if(wrapper == null) return;
+				wrapper.sendPacket();
+				wrapper.markAsDirty();
+			}
+		};
 	}
 
 	@Override
-	public void onCreated(World worldObj, BlockPos pos) {}
+	public void setWrapper(IMachineWrapper wrapper) {
+		this.wrapper = wrapper;
+	}
+
+	@Override
+	public void onCreated(World worldObj, BlockPos pos) {
+		this.worldObj = worldObj;
+		this.pos = pos;
+		PipeNetwork.NET.addPipe(this);
+		if (Config.pl_pipe_wrap_ifluidhandler && adjacentFluidHandlers != null) {
+			//TODO: move all this fluidhandler wrapping to network scanning
+			for (EnumFacing side : EnumFacing.VALUES) {
+				// Check for pipes
+				int sideIdx = side.ordinal();
+				if(adjacentFluidHandlers[sideIdx] != null) {
+					PipeNetwork.NET.addPipe(adjacentFluidHandlers[sideIdx]);
+				}
+			}
+		}
+	}
+
+	@Override
+	public void onUnload(World worldObj, BlockPos pos) {
+		PipeNetwork.NET.removePipe(this);
+		if (adjacentFluidHandlers != null) {
+			for (EnumFacing side : EnumFacing.VALUES) {
+				// Check for pipes
+				int sideIdx = side.ordinal();
+				if(adjacentFluidHandlers[sideIdx] != null) {
+					PipeNetwork.NET.removePipe(adjacentFluidHandlers[sideIdx]);
+				}
+			}
+		}
+	}
+
+	@Override
+	public boolean update(World world, BlockPos pos) {
+		return false;
+	}
 
 	@Override
 	public List<String> getVisibleParts() {
@@ -139,7 +190,7 @@ public class MachinePipe implements IMachine, IPipe, IRenderable {
 		adjacentPipes = 0;
 		for (EnumFacing side : EnumFacing.VALUES) {
 			// Side occluded? Skip.
-			if(FaceBitmap.isSideBitSet(occludedSides, side)) {
+			if (FaceBitmap.isSideBitSet(occludedSides, side)) {
 				continue;
 			}
 			IPipe pipeOnSide = PipeUtil.getConnectedPipe(world, pos, side);
@@ -147,7 +198,7 @@ public class MachinePipe implements IMachine, IPipe, IRenderable {
 				adjacentPipes = FaceBitmap.setSideBit(adjacentPipes, side);
 				continue;
 			}
-			if(Config.pl_pipe_wrap_ifluidhandler) {
+			if (Config.pl_pipe_wrap_ifluidhandler) {
 				if (FluidUtils.getFluidHandler(world, pos.offset(side), side.getOpposite()) != null) {
 					adjacentPipes = FaceBitmap.setSideBit(adjacentPipes, side);
 				}
@@ -162,10 +213,10 @@ public class MachinePipe implements IMachine, IPipe, IRenderable {
 		// Check surrounding blocks for IFluidHandler implementations that don't use the pipe system
 		// and create wrappers accordingly
 		boolean wrappersRequired = false;
-		if(Config.pl_pipe_wrap_ifluidhandler) {
+		if (Config.pl_pipe_wrap_ifluidhandler) {
 			for (EnumFacing side : EnumFacing.VALUES) {
 				// Side occluded? Skip.
-				if(FaceBitmap.isSideBitSet(occludedSides, side)) {
+				if (FaceBitmap.isSideBitSet(occludedSides, side)) {
 					continue;
 				}
 				// Check for pipes
@@ -173,24 +224,31 @@ public class MachinePipe implements IMachine, IPipe, IRenderable {
 				IPipe pipeOnSide = PipeUtil.getConnectedPipe(world, pos, side);
 				// if there is no pipe, check for an IFluidHandler to wrap
 				if (pipeOnSide == null) {
-					IFluidHandler fh = FluidUtils.getFluidHandler(world, pos.offset(side), side.getOpposite());
+					BlockPos posOnSide = pos.offset(side);
+					IFluidHandler fh = FluidUtils.getFluidHandler(world, posOnSide, side.getOpposite());
 					if (fh != null) {
 						wrappersRequired = true;
 						// Fluid handler here, we need a wrapper.
 						if (adjacentFluidHandlers == null) {
 							adjacentFluidHandlers = new PipeEndFluidHandler[6];
-							adjacentFluidHandlers[sideIdx] = new PipeEndFluidHandler(fh, side.getOpposite(), false);
+							adjacentFluidHandlers[sideIdx] = new PipeEndFluidHandler(new IPipePos.Constant(world, posOnSide), fh, side.getOpposite());
 						} else {
 							// Not yet known or a different TileEntity, we need a new wrapper.
 							if (adjacentFluidHandlers[sideIdx] == null
 									|| adjacentFluidHandlers[sideIdx].getFluidHandler() != fh) {
-								adjacentFluidHandlers[sideIdx] = new PipeEndFluidHandler(fh, side.getOpposite(), false);
+								if(adjacentFluidHandlers[sideIdx] != null) {
+									PipeNetwork.NET.removePipe(adjacentFluidHandlers[sideIdx]);
+								}
+								//TODO: check if pos is still the same? Do we bother?
+								adjacentFluidHandlers[sideIdx] = new PipeEndFluidHandler(new IPipePos.Constant(world, posOnSide), fh, side.getOpposite());
+								PipeNetwork.NET.addPipe(adjacentFluidHandlers[sideIdx]);
 							}
 						}
 					}
 				} else {
 					// We have a regular pipe there, no need for a wrapper
 					if (adjacentFluidHandlers != null) {
+						PipeNetwork.NET.removePipe(adjacentFluidHandlers[sideIdx]);
 						adjacentFluidHandlers[sideIdx] = null;
 					}
 				}
@@ -200,22 +258,6 @@ public class MachinePipe implements IMachine, IPipe, IRenderable {
 		if (!wrappersRequired) {
 			adjacentFluidHandlers = null;
 		}
-	}
-
-	@Override
-	public boolean update(World world, BlockPos pos) {
-		// Process "this"
-		PipeUtil.processPipes(this, world, pos);
-		// Process the fluid handlers for adjecent non-pipe-machines (implementing IFluidHandler)
-		if (Config.pl_pipe_wrap_ifluidhandler && adjacentFluidHandlers != null) {
-			for (EnumFacing side : EnumFacing.VALUES) {
-				PipeEndFluidHandler handler = adjacentFluidHandlers[side.ordinal()];
-				if (handler != null) {
-					PipeUtil.processPipes(handler, world, pos.offset(side));
-				}
-			}
-		}
-		return true;
 	}
 
 	@Override
@@ -313,7 +355,6 @@ public class MachinePipe implements IMachine, IPipe, IRenderable {
 
 	@Override
 	public int addFluid(FluidStack stack) {
-		//TODO: markDirty();
 		return info.addFluid(stack);
 	}
 
@@ -328,39 +369,24 @@ public class MachinePipe implements IMachine, IPipe, IRenderable {
 	}
 
 	@Override
-	public void setPressure(int pressure) {
-		info.pressure = pressure;
+	public int applyPressure(int pressure) {
+		return info.applyPressure(pressure, Config.pl_pipe_max_pressure);
 	}
 
 	@Override
-	public void setSuction(int suction) {
-		info.suction = suction;
-	}
-
-	@Override
-	public int getSuction() {
-		return info.suction;
-	}
-
-	@Override
-	public boolean isActive() {
-		return false;
-	}
-
-	@Override
-	public IPipe[] getInternalPipes(IBlockAccess world, BlockPos pos) {
-		if(!Config.pl_pipe_wrap_ifluidhandler || adjacentFluidHandlers == null) {
+	public IPipe[] getInternalPipes() {
+		if (!Config.pl_pipe_wrap_ifluidhandler || adjacentFluidHandlers == null) {
 			return null;
 		}
 
 		for (EnumFacing side : EnumFacing.values()) {
 			int sideIdx = side.ordinal();
-			if(isSideAvailable(side)) {
+			if (isSideAvailable(side)) {
 				// If there is no "regular" pipe on that side
-				IPipe pipeOnSide = PipeUtil.getConnectedPipe(world, pos, side);
+				IPipe pipeOnSide = PipeUtil.getConnectedPipe(getWorld(), getPos(), side);
 				if (pipeOnSide == null) {
 					// Check for fluid handler wrappers
-					if(adjacentFluidHandlers[sideIdx] != null) {
+					if (adjacentFluidHandlers[sideIdx] != null) {
 						internalPipes[sideIdx] = adjacentFluidHandlers[sideIdx];
 						continue;
 					}
@@ -385,6 +411,21 @@ public class MachinePipe implements IMachine, IPipe, IRenderable {
 	public boolean isSideAvailable(EnumFacing side) {
 		return !FaceBitmap.isSideBitSet(occludedSides, side);
 		//TODO: Check disabled sides once available
+	}
+
+	@Override
+	public BlockPos getPos() {
+		return pos;
+	}
+
+	@Override
+	public IBlockAccess getWorld() {
+		return worldObj;
+	}
+
+	@Override
+	public boolean isNeutral() {
+		return false;
 	}
 
 }

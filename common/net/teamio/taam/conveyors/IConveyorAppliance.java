@@ -3,6 +3,8 @@ package net.teamio.taam.conveyors;
 import net.minecraft.util.EnumFacing;
 import net.teamio.taam.content.IRotatable;
 
+import javax.annotation.Nonnull;
+
 public interface IConveyorAppliance extends IRotatable {
 
 	/**
@@ -19,22 +21,20 @@ public interface IConveyorAppliance extends IRotatable {
 	 *         appliance host was changed an needs to be communicated to clients
 	 *         or saved to disk. (TileEntity will be marked as dirty)
 	 */
-	public boolean processItem(IConveyorApplianceHost host, int slot, ItemWrapper wrapper);
+	boolean processItem(IConveyorApplianceHost host, int slot, ItemWrapper wrapper);
 
 	/**
 	 * Allows the appliance to override the direction a slot travels next.
-	 * 
-	 * Don't call {@link IConveyorApplianceHost#getNextSlot(int)} on
-	 * {@code host} inside this method!
-	 * 
-	 * Never return null!
-	 * 
-	 * @param host
-	 * @param slot
-	 * @param wrapper
-	 * @param beforeOverride
+	 *
+	 * Don't call any {@link IConveyorSlots#getNextSlot(int)} (if available) inside this method!
+	 *
+	 * @param host The host tile entity for this conveyor appliance.
+	 * @param slot The slot currently being processed for which the next slot needs to be determined.
+	 * @param wrapper The current content of the slot.
+	 * @param beforeOverride The original next slot direction as determined by the host.
 	 * @return either the direction passed in to {@code beforeOverride} or a
 	 *         changed direction. Never return null!
 	 */
-	public EnumFacing overrideNextSlot(IConveyorApplianceHost host, int slot, ItemWrapper wrapper, EnumFacing beforeOverride);
+	@Nonnull
+	EnumFacing overrideNextSlot(IConveyorApplianceHost host, int slot, ItemWrapper wrapper, EnumFacing beforeOverride);
 }

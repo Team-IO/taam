@@ -14,7 +14,7 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 /**
  * Coordinates for a block inside a world. Includes the dimension ID. Used for
  * routing over the network.
- * 
+ *
  * @author Oliver Kahrmann
  *
  */
@@ -113,16 +113,7 @@ public class WorldCoord {
 		if (world != other.world) {
 			return false;
 		}
-		if (x != other.x) {
-			return false;
-		}
-		if (y != other.y) {
-			return false;
-		}
-		if (z != other.z) {
-			return false;
-		}
-		return true;
+		return x == other.x && z == other.z;
 	}
 
 	public WorldCoord set(WorldCoord coords) {
@@ -158,6 +149,10 @@ public class WorldCoord {
 
 	public boolean isZero() {
 		return x == 0 && y == 0 && z == 0;
+	}
+
+	public BlockPos pos() {
+		return new BlockPos(x, y, z);
 	}
 
 	public static void writeCoords(ByteBuf buf, WorldCoord coords) {

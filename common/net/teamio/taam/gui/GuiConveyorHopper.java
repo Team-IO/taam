@@ -11,10 +11,10 @@ import net.teamio.taam.util.TaamUtil;
 import org.lwjgl.opengl.GL11;
 
 public class GuiConveyorHopper extends GuiContainer {
-	ResourceLocation bg = new ResourceLocation("textures/gui/container/hopper.png");
+	final ResourceLocation bg = new ResourceLocation("textures/gui/container/hopper.png");
 
-	private TileEntityConveyorHopper tileEntity;
-	private InventoryPlayer inventoryPlayer;
+	private final TileEntityConveyorHopper tileEntity;
+	private final InventoryPlayer inventoryPlayer;
 
 	private GuiButtonExt cbIgnoreRedstone;
 	private GuiCheckBox cbEject;

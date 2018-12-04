@@ -38,7 +38,6 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
-import net.teamio.blockunit.UnitTesterItem;
 import net.teamio.taam.Taam.FLUID_MATERIAL_META;
 import net.teamio.taam.Taam.ITEM_PART_META;
 import net.teamio.taam.content.ItemWithMetadata;
@@ -86,6 +85,7 @@ import net.teamio.taam.piping.PipeEnd;
 import net.teamio.taam.rendering.TankRenderInfo;
 import org.apache.commons.lang3.NotImplementedException;
 
+import java.util.Collections;
 import java.util.List;
 
 
@@ -123,8 +123,6 @@ public class TaamMain {
 	 */
 	public static Item itemMachine;
 
-	public static UnitTesterItem unitTesterItem;
-
 	public static CreativeTabs creativeTab;
 
 	public static BlockLamp blockLamp;
@@ -143,11 +141,11 @@ public class TaamMain {
 	public static FluidMaterial[] fluidsMaterial;
 	public static BlockFluidFinite[] blocksFluidMaterial;
 
-	public static DamageSource ds_processed = new DamageSource("taam.processed").setDamageBypassesArmor();
-	public static DamageSource ds_shredded = new DamageSource("taam.shredded").setDamageBypassesArmor();
-	public static DamageSource ds_ground = new DamageSource("taam.ground").setDamageBypassesArmor();
-	public static DamageSource ds_crushed = new DamageSource("taam.crushed").setDamageBypassesArmor();
-	public static DamageSource ds_reconfigured = new DamageSource("taam.reconfigured").setDamageIsAbsolute();
+	public static final DamageSource ds_processed = new DamageSource("taam.processed").setDamageBypassesArmor();
+	public static final DamageSource ds_shredded = new DamageSource("taam.shredded").setDamageBypassesArmor();
+	public static final DamageSource ds_ground = new DamageSource("taam.ground").setDamageBypassesArmor();
+	public static final DamageSource ds_crushed = new DamageSource("taam.crushed").setDamageBypassesArmor();
+	public static final DamageSource ds_reconfigured = new DamageSource("taam.reconfigured").setDamageIsAbsolute();
 
 	public static SoundEvent soundSipAh;
 
@@ -292,7 +290,6 @@ public class TaamMain {
 				Taam.BLOCK_SUPPORT_BEAM
 				);
 
-		registerItem(unitTesterItem = new UnitTesterItem(), Taam.ITEM_DEBUG_UNIT_TESTER);
 		registerItem(itemDebugTool = new ItemDebugTool(), Taam.ITEM_DEBUG_TOOL);
 		registerItem(itemWrench = new ItemWrench(), Taam.ITEM_WRENCH);
 		registerItem(itemSaw = new ItemTool(Taam.ITEM_TOOL_META.saw), Taam.ITEM_TOOL + "." + Taam.ITEM_TOOL_META.saw.name());
@@ -305,12 +302,9 @@ public class TaamMain {
 					public void addInformation(ItemStack stack, EntityPlayer player, List<String> lines,
 							boolean detailedInfoSetting) {
 						if(stack.getMetadata() == Taam.ITEM_PART_META.redirector.ordinal()) {
-							String usage = I18n.format("lore.taam.redirector.usage", new Object[0]);
+							String usage = I18n.format("lore.taam.redirector.usage");
 							// Split at literal \n in the translated text. a lot of escaping here.
-							String[] split = usage.split("\\\\n");
-							for (int i = 0; i < split.length; i++) {
-								lines.add(split[i]);
-							}
+							Collections.addAll(lines, usage.split("\\\\n"));
 						}
 					}
 					@Override
@@ -331,12 +325,9 @@ public class TaamMain {
 							boolean detailedInfoSetting) {
 						if(stack.getMetadata() == Taam.BLOCK_ORE_META.iron.ordinal() ||
 								stack.getMetadata() == Taam.BLOCK_ORE_META.gold.ordinal()) {
-							String usage = I18n.format("lore.taam.ingots.cheaty", new Object[0]);
+							String usage = I18n.format("lore.taam.ingots.cheaty");
 							// Split at literal \n in the translated text. a lot of escaping here.
-							String[] split = usage.split("\\\\n");
-							for (int i = 0; i < split.length; i++) {
-								lines.add(split[i]);
-							}
+							Collections.addAll(lines, usage.split("\\\\n"));
 						}
 					}
 				}), Taam.ITEM_INGOT);
@@ -584,6 +575,12 @@ public class TaamMain {
 
 		network = NetworkRegistry.INSTANCE.newSimpleChannel(Taam.CHANNEL_NAME);
 		proxy.registerPackets(network);
+
+
+		/*
+		Early registration of model loader
+		 */
+		proxy.registerModelLoader();
 	}
 
 	@EventHandler

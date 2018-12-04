@@ -75,11 +75,6 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements IRotatabl
 	}
 
 	@Override
-	public void updateContainingBlockInfo() {
-		super.updateContainingBlockInfo();
-	}
-
-	@Override
 	public List<String> getVisibleParts() {
 		return parts;
 	}

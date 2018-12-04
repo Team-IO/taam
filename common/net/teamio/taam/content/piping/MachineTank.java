@@ -20,7 +20,10 @@ import net.teamio.taam.Log;
 import net.teamio.taam.Taam;
 import net.teamio.taam.content.IWorldInteractable;
 import net.teamio.taam.machines.IMachine;
+import net.teamio.taam.machines.IMachineWrapper;
+import net.teamio.taam.piping.IPipePos;
 import net.teamio.taam.piping.PipeEndFluidHandler;
+import net.teamio.taam.piping.PipeNetwork;
 import net.teamio.taam.piping.PipeUtil;
 import net.teamio.taam.rendering.TankRenderInfo;
 import net.teamio.taam.util.FaceBitmap;
@@ -28,18 +31,18 @@ import net.teamio.taam.util.FaceBitmap;
 import java.io.IOException;
 import java.util.List;
 
-public class MachineTank implements IMachine, IWorldInteractable {
+public class MachineTank implements IMachine, IPipePos, IWorldInteractable {
 
 	public static final float b_basePlate = 2f / 16;
 	public static final float b_border = 1.5f / 16;
 	public static final float b_occlusion = 2f / 16;
 
 	public static final AxisAlignedBB bbTankContent = new AxisAlignedBB(
-			b_border,   b_basePlate, b_border,
-			1-b_border, 1,		   1-b_border
-			).expand(TankRenderInfo.shrinkValue, TankRenderInfo.shrinkValue, TankRenderInfo.shrinkValue);
-	public static final AxisAlignedBB bbTank = new AxisAlignedBB(b_border, 0, b_border, 1-b_border, 1, 1-b_border);
-	public static final AxisAlignedBB bbCoolusion = new AxisAlignedBB(b_occlusion, b_occlusion, b_occlusion, 1-b_occlusion, 1-b_occlusion, 1-b_occlusion);
+			b_border, b_basePlate, b_border,
+			1 - b_border, 1, 1 - b_border
+	).expand(TankRenderInfo.shrinkValue, TankRenderInfo.shrinkValue, TankRenderInfo.shrinkValue);
+	public static final AxisAlignedBB bbTank = new AxisAlignedBB(b_border, 0, b_border, 1 - b_border, 1, 1 - b_border);
+	public static final AxisAlignedBB bbCoolusion = new AxisAlignedBB(b_occlusion, b_occlusion, b_occlusion, 1 - b_occlusion, 1 - b_occlusion, 1 - b_occlusion);
 
 	private final PipeEndFluidHandler pipeEndUP;
 	private final PipeEndFluidHandler pipeEndDOWN;
@@ -51,25 +54,48 @@ public class MachineTank implements IMachine, IWorldInteractable {
 
 	private World worldObj;
 	private BlockPos pos;
+	private IMachineWrapper wrapper;
 
 	public MachineTank() {
 		tank = new FluidTank(Config.pl_tank_capacity) {
 			@Override
 			protected void onContentsChanged() {
-				//TODO: Mark Dirty
+				if (wrapper == null) return;
+				wrapper.markAsDirty();
+				wrapper.sendPacket();
 			}
 		};
-		pipeEndUP = new PipeEndFluidHandler(tank, EnumFacing.UP, true);
-		pipeEndDOWN = new PipeEndFluidHandler(tank, EnumFacing.DOWN, true);
-		pipeEndUP.setSuction(Config.pl_tank_suction);
-		// Suction on lower end of the tank is always 1 lower than on the top, so stacked tanks always transfer down.
-		pipeEndDOWN.setSuction(Config.pl_tank_suction - 1);
+		pipeEndUP = new PipeEndFluidHandler(this, tank, EnumFacing.UP);
+		pipeEndDOWN = new PipeEndFluidHandler(this, tank, EnumFacing.DOWN);
+	}
+
+	@Override
+	public void setWrapper(IMachineWrapper wrapper) {
+		this.wrapper = wrapper;
 	}
 
 	@Override
 	public void onCreated(World worldObj, BlockPos pos) {
 		this.worldObj = worldObj;
 		this.pos = pos;
+		PipeNetwork.NET.addPipe(pipeEndUP);
+		PipeNetwork.NET.addPipe(pipeEndDOWN);
+	}
+
+	@Override
+	public void onUnload(World worldObj, BlockPos pos) {
+		PipeNetwork.NET.removePipe(pipeEndUP);
+		PipeNetwork.NET.removePipe(pipeEndDOWN);
+	}
+
+	@Override
+	public IBlockAccess getWorld() {
+		return worldObj;
+	}
+
+	@Override
+	public BlockPos getPos() {
+		return pos;
 	}
 
 	private void updateOcclusion() {
@@ -102,7 +128,11 @@ public class MachineTank implements IMachine, IWorldInteractable {
 	public void readUpdatePacket(PacketBuffer buf) {
 		try {
 			NBTTagCompound tag = buf.readNBTTagCompoundFromBuffer();
-			tank.readFromNBT(tag);
+			if(tag == null) {
+				tank.setFluid(null);
+			} else {
+				tank.readFromNBT(tag);
+			}
 			occludedSides = buf.readByte();
 			updateOcclusion();
 		} catch (IOException e) {
@@ -123,9 +153,7 @@ public class MachineTank implements IMachine, IWorldInteractable {
 
 	@Override
 	public boolean update(World world, BlockPos pos) {
-		PipeUtil.processPipes(pipeEndUP, world, pos);
-		PipeUtil.processPipes(pipeEndDOWN, world, pos);
-		return true;
+		return false;
 	}
 
 	@Override
@@ -165,7 +193,7 @@ public class MachineTank implements IMachine, IWorldInteractable {
 		if (capability == Taam.CAPABILITY_PIPE) {
 			return facing.getAxis() == Axis.Y;
 		}
-		if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+		if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
 			return facing.getAxis() == Axis.Y;
 		}
 		if (capability == Taam.CAPABILITY_RENDER_TANK) {
@@ -186,7 +214,7 @@ public class MachineTank implements IMachine, IWorldInteractable {
 				return null;
 			}
 		}
-		if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing.getAxis() == Axis.Y) {
+		if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing.getAxis() == Axis.Y) {
 			return (T) tank;
 		}
 		if (capability == Taam.CAPABILITY_RENDER_TANK) {
@@ -202,7 +230,7 @@ public class MachineTank implements IMachine, IWorldInteractable {
 
 	@Override
 	public boolean onBlockActivated(World world, EntityPlayer player, EnumHand hand, boolean hasWrench, EnumFacing side,
-			float hitX, float hitY, float hitZ) {
+	                                float hitX, float hitY, float hitZ) {
 		boolean didSomething = PipeUtil.defaultPlayerInteraction(player, tank);
 
 		if (didSomething) {

@@ -9,7 +9,7 @@ public class FilterSlot extends HidableSlot {
     public static final IInventory emptyInventory = new InventoryBasic("[Null]", true, 0);
 	
     public final ItemFilterCustomizable filter;
-    public int index;
+    public final int index;
     
     public FilterSlot(ItemFilterCustomizable filter, int index, int xPosition, int yPosition) {
 		super(emptyInventory, index, xPosition, yPosition);
