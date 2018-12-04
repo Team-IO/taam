@@ -1,5 +1,6 @@
 Unit testing in this mod is implemented using a custom JUnit runner
 provided by [MinecraftJUnit](https://github.com/BuiltBrokenModding/MinecraftJUnit).
+(Not all tests use this runner, only the Minecraft-specific code.)
 
 Running the tests should work out of the box.
 
