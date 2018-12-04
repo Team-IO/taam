@@ -3,9 +3,8 @@ package net.teamio.taam.rendering;
 import net.minecraft.util.EnumFacing;
 import net.teamio.taam.content.IRotatable;
 import org.junit.Test;
-import org.junit.runners.Parameterized;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Created by oliver on 2018-12-03.
@@ -13,49 +12,49 @@ import static org.junit.Assert.*;
 public class RenderUtilTest {
 
 	@Test
-	public void getRotationDegrees_West270() {
+	public void getRotationDegreesForWestReturns270() {
 		float result = RenderUtil.getRotationDegrees(EnumFacing.WEST);
 		assertEquals(270, result, 0.0000000001f);
 	}
 
 	@Test
-	public void getRotationDegrees_North180() {
+	public void getRotationDegreesForNorthReturns180() {
 		float result = RenderUtil.getRotationDegrees(EnumFacing.NORTH);
 		assertEquals(180, result, 0.0000000001f);
 	}
 
 	@Test
-	public void getRotationDegrees_East90() {
+	public void getRotationDegreesForEastReturns90() {
 		float result = RenderUtil.getRotationDegrees(EnumFacing.EAST);
 		assertEquals(90, result, 0.0000000001f);
 	}
 
 	@Test
-	public void getRotationDegrees_South0() {
+	public void getRotationDegreesForSouthReturns0() {
 		float result = RenderUtil.getRotationDegrees(EnumFacing.SOUTH);
 		assertEquals(0, result, 0.0000000001f);
 	}
 
 	@Test
-	public void getRotationDegrees_NullFacing() {
+	public void getRotationDegreesForNullFacingReturns0() {
 		float result = RenderUtil.getRotationDegrees((EnumFacing) null);
 		assertEquals(0, result, 0.0000000001f);
 	}
 
 	@Test
-	public void getRotationDegrees_NullRotatable() {
+	public void getRotationDegreesForNullIRotatableReturns0() {
 		float result = RenderUtil.getRotationDegrees((IRotatable) null);
 		assertEquals(0, result, 0.0000000001f);
 	}
 
 	@Test
-	public void getRotationDegrees_NullObject() {
+	public void getRotationDegreesForNullObjectReturns0() {
 		float result = RenderUtil.getRotationDegrees((Object) null);
 		assertEquals(0, result, 0.0000000001f);
 	}
 
 	@Test
-	public void getRotationDegrees_Object() {
+	public void getRotationDegreesForObject() {
 		float result = RenderUtil.getRotationDegrees((Object) new IRotatable() {
 
 			@Override
@@ -76,7 +75,7 @@ public class RenderUtilTest {
 	}
 
 	@Test
-	public void getRotationDegrees_Rotatable() {
+	public void getRotationDegreesForIRotatable() {
 		float result = RenderUtil.getRotationDegrees(new IRotatable() {
 
 			@Override
