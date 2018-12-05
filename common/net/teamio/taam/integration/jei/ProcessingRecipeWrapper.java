@@ -1,11 +1,6 @@
 package net.teamio.taam.integration.jei;
 
-import java.util.List;
-
-import org.lwjgl.opengl.GL11;
-
 import com.google.common.collect.Lists;
-
 import mezz.jei.api.recipe.IRecipeWrapper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -15,6 +10,9 @@ import net.minecraftforge.oredict.OreDictionary;
 import net.teamio.taam.recipes.ChanceBasedRecipe;
 import net.teamio.taam.recipes.ChancedOutput;
 import net.teamio.taam.recipes.IProcessingRecipe;
+import org.lwjgl.opengl.GL11;
+
+import java.util.List;
 
 public class ProcessingRecipeWrapper implements IRecipeWrapper {
 

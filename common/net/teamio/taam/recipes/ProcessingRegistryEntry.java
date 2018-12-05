@@ -1,19 +1,20 @@
 package net.teamio.taam.recipes;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.oredict.OreDictionary;
 import net.teamio.taam.Log;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public final class ProcessingRegistryEntry {
 	public final Map<Item, IProcessingRecipe[]> recipes;
@@ -117,7 +118,7 @@ public final class ProcessingRegistryEntry {
 			}
 		}
 
-		return actualMatches.toArray(new IProcessingRecipe[actualMatches.size()]);
+		return actualMatches.toArray(new IProcessingRecipe[0]);
 	}
 
 	/**
@@ -291,19 +292,13 @@ public final class ProcessingRegistryEntry {
 	public List<IProcessingRecipe> getAllRecipes() {
 		Set<IProcessingRecipe> recipes = new HashSet<IProcessingRecipe>();
 		for(IProcessingRecipe[] list : this.recipes.values()) {
-			for(IProcessingRecipe recipe : list) {
-				recipes.add(recipe);
-			}
+			Collections.addAll(recipes, list);
 		}
 		for(IProcessingRecipe[] list : recipesFluid.values()) {
-			for(IProcessingRecipe recipe : list) {
-				recipes.add(recipe);
-			}
+			Collections.addAll(recipes, list);
 		}
 		for(IProcessingRecipe[] list : recipesOreDict.values()) {
-			for(IProcessingRecipe recipe : list) {
-				recipes.add(recipe);
-			}
+			Collections.addAll(recipes, list);
 		}
 		return new ArrayList<IProcessingRecipe>(recipes);
 	}

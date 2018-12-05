@@ -17,11 +17,11 @@ import net.teamio.taam.content.IRotatable;
 
 public class TileEntitySensor extends BaseTileEntity implements IRotatable, ITickable {
 
-	private float offLength = 1.5f;
-	private float offLeft = 1.5f;
-	private float offRight = 1.5f;
-	private int blind = 1;
-	private float down = 2.5f;
+	private final float offLength = 1.5f;
+	private final float offLeft = 1.5f;
+	private final float offRight = 1.5f;
+	private final int blind = 1;
+	private final float down = 2.5f;
 
 	private boolean powering = false;
 

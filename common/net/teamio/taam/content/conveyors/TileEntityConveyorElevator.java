@@ -39,7 +39,7 @@ public class TileEntityConveyorElevator extends BaseTileEntity implements ITicka
 		UP,
 		DOWN;
 
-		private static ElevatorDirection[] next = {
+		private static final ElevatorDirection[] next = {
 				DOWN,
 				UP,
 		};
@@ -54,7 +54,7 @@ public class TileEntityConveyorElevator extends BaseTileEntity implements ITicka
 		ENTER,
 		EXIT;
 
-		private static ElevatorMode[] next = {
+		private static final ElevatorMode[] next = {
 				ENTER,
 				EXIT,
 				PASS,
@@ -183,7 +183,7 @@ public class TileEntityConveyorElevator extends BaseTileEntity implements ITicka
 		// as we depend on the status of the next slot
 		int[] slotOrder = ConveyorUtil.getSlotOrderForDirection(EnumFacing.UP);
 		if (ConveyorUtil.defaultTransition(worldObj, pos, conveyorSlots, null, slotOrder)) {
-			updateState(false, false, false);
+			markDirty();
 		}
 	}
 

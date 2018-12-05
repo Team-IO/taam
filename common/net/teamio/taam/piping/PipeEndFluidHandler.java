@@ -6,39 +6,29 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
+import net.teamio.taam.Config;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Pipe end, used in machines to connect to a pipe "network". This delegates any
  * addFluid or getFluids to the IFluidHandler used when creating this pipe end.
  *
- * @author Oliver Kahrmann
+ * Always has pressure 0, it remains "neutral".
  *
+ * @author Oliver Kahrmann
  */
 public class PipeEndFluidHandler implements IPipe {
-	/**
-	 * One array per PipeEnd, used to optimize the
-	 * {@link IPipeTE#getPipesForSide(EnumFacing)} as usually there is only one
-	 * pipe end per side.
-	 */
-	private final IPipe[] pipeArray;
-
+	protected final IPipePos pos;
 	private EnumFacing side;
-	private IFluidHandler fluidHandler;
-	private int pressure;
-	private int suction;
-	private boolean active;
+	private final IFluidHandler fluidHandler;
 	public boolean occluded;
 
-	public PipeEndFluidHandler(IFluidHandler fluidHandler, EnumFacing side, boolean active) {
+	public PipeEndFluidHandler(IPipePos pos, IFluidHandler fluidHandler, EnumFacing side) {
+		this.pos = pos;
 		this.fluidHandler = fluidHandler;
 		this.side = side;
-		this.active = active;
-		pipeArray = new IPipe[] { this };
-	}
-
-	public IPipe[] asPipeArray() {
-		pipeArray[0] = this;
-		return pipeArray;
 	}
 
 	public IFluidHandler getFluidHandler() {
@@ -65,22 +55,35 @@ public class PipeEndFluidHandler implements IPipe {
 
 	@Override
 	public int addFluid(FluidStack stack) {
-		return fluidHandler.fill(stack, true);
+		if(stack == null || stack.amount == 0) {
+			return 0;
+		}
+		if(fluidHandler.fill(stack, false) == 0) {
+			return 0;
+		} else {
+			return fluidHandler.fill(stack, true);
+		}
 	}
 
 	@Override
 	public int removeFluid(FluidStack like) {
+		if(like == null || like.amount == 0) {
+			return 0;
+		}
 		FluidStack drained = fluidHandler.drain(like, true);
 		return drained == null ? 0 : drained.amount;
 	}
 
 	@Override
 	public int getFluidAmount(FluidStack like) {
+		if(like == null) {
+			return 0;
+		}
 		IFluidTankProperties[] tankInfo = fluidHandler.getTankProperties();
 		int amount = 0;
 		for (IFluidTankProperties tank : tankInfo) {
 			FluidStack contents = tank.getContents();
-			if(contents != null && contents.isFluidEqual(like)) {
+			if (contents != null && contents.isFluidEqual(like)) {
 				amount += contents.amount;
 			}
 		}
@@ -88,47 +91,56 @@ public class PipeEndFluidHandler implements IPipe {
 	}
 
 	@Override
-	public FluidStack[] getFluids() {
+	public List<FluidStack> getFluids() {
 		IFluidTankProperties[] tankInfo = fluidHandler.getTankProperties();
-		FluidStack[] content = new FluidStack[tankInfo.length];
+		ArrayList<FluidStack> content = new ArrayList<FluidStack>(tankInfo.length);
 		for (int i = 0; i < tankInfo.length; i++) {
-			content[i] = tankInfo[i].getContents();
+			FluidStack inTank = tankInfo[i].getContents();
+			if (inTank != null) {
+				content.add(inTank);
+			}
 		}
 		return content;
 	}
 
 	@Override
 	public int getPressure() {
-		return pressure;
+		return 0;
 	}
 
 	@Override
-	public void setPressure(int pressure) {
-		this.pressure = pressure;
+	public int applyPressure(int amount) {
+		return 0;
 	}
 
 	@Override
-	public void setSuction(int suction) {
-		this.suction = suction;
-	}
-
-	@Override
-	public int getSuction() {
-		return suction;
-	}
-
-	@Override
-	public boolean isActive() {
-		return active;
-	}
-
-	@Override
-	public IPipe[] getInternalPipes(IBlockAccess world, BlockPos pos) {
+	public IPipe[] getInternalPipes() {
 		return null;
 	}
 
 	@Override
 	public boolean isSideAvailable(EnumFacing side) {
 		return !occluded && this.side == side;
+	}
+
+	@Override
+	public BlockPos getPos() {
+		if (pos == null) {
+			return BlockPos.ORIGIN;
+		}
+		return pos.getPos();
+	}
+
+	@Override
+	public IBlockAccess getWorld() {
+		if (pos == null) {
+			return null;
+		}
+		return pos.getWorld();
+	}
+
+	@Override
+	public boolean isNeutral() {
+		return true;
 	}
 }

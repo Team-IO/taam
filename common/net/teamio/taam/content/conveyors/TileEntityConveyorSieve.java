@@ -1,10 +1,6 @@
 package net.teamio.taam.content.conveyors;
 
-import java.util.Collections;
-import java.util.List;
-
 import com.google.common.collect.Lists;
-
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
@@ -34,6 +30,9 @@ import net.teamio.taam.network.TPMachineConfiguration;
 import net.teamio.taam.util.InventoryUtils;
 import net.teamio.taam.util.TaamUtil;
 import net.teamio.taam.util.WorldCoord;
+
+import java.util.Collections;
+import java.util.List;
 
 public class TileEntityConveyorSieve extends BaseTileEntity implements IRotatable, IWorldInteractable, IRedstoneControlled, ITickable, IRenderable {
 
@@ -73,11 +72,6 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements IRotatabl
 	@Override
 	public String getName() {
 		return "tile.taam.productionline.sieve.name";
-	}
-
-	@Override
-	public void updateContainingBlockInfo() {
-		super.updateContainingBlockInfo();
 	}
 
 	@Override

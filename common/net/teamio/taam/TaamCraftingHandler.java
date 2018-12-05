@@ -16,7 +16,7 @@ public class TaamCraftingHandler {
 			if(craftMatrix.getStackInSlot(i) != null)
 			{
 				ItemStack j = craftMatrix.getStackInSlot(i);
-				if(j.getItem() != null && isDamageCrafting(j))
+				if(j != null && j.getItem() != null && isDamageCrafting(j))
 				{
 					if(j.getItemDamage() + 1 < j.getItem().getMaxDamage()) {
 						ItemStack k = new ItemStack(j.getItem(), 2, j.getItemDamage() + 1);

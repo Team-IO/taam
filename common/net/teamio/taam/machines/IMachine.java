@@ -1,7 +1,5 @@
 package net.teamio.taam.machines;
 
-import java.util.List;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
@@ -13,6 +11,8 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.teamio.taam.util.FaceBitmap;
+
+import java.util.List;
 
 public interface IMachine extends ICapabilityProvider {
 	void writePropertiesToNBT(NBTTagCompound tag);
@@ -29,8 +29,9 @@ public interface IMachine extends ICapabilityProvider {
 	 *
 	 * @param world
 	 * @param pos
+	 * @return true if state changed & the TileEntity/Multipart needs to be marked as dirty.
 	 */
-	void update(World world, BlockPos pos);
+	boolean update(World world, BlockPos pos);
 
 	/**
 	 * Called when a neighbor block changes, or for multiparts, a part in the
@@ -57,4 +58,7 @@ public interface IMachine extends ICapabilityProvider {
 	void addCollisionBoxes(AxisAlignedBB mask, List<AxisAlignedBB> list, Entity collidingEntity);
 	void addSelectionBoxes(List<AxisAlignedBB> list);
 	void addOcclusionBoxes(List<AxisAlignedBB> list);
+	void setWrapper(IMachineWrapper wrapper);
+	void onCreated(World worldObj, BlockPos pos);
+	void onUnload(World worldObj, BlockPos pos);
 }

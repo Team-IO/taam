@@ -22,7 +22,7 @@
         },
         "variant": {
         	"conveyor1": {
-        		"model": "taam:conveyor.obj",
+        		"model": "taam:conveyor_wood.obj",
 	        	"custom": {
 					"groupConfigs": {
 						"0_Conveyor_base": {

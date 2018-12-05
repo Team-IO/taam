@@ -1,13 +1,13 @@
 package net.teamio.taam.content;
 
-import java.util.List;
-
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.util.List;
 
 /**
  * Generic item class for items with metadata variants, defined in an enumeration.
@@ -26,9 +26,9 @@ public class ItemWithMetadata<P extends Enum<P>> extends Item {
 		public abstract void addInformation(ItemStack stack, EntityPlayer player, List<String> lines, boolean detailedInfoSetting);
 	}
 
-	private P[] metaValues;
-	protected String baseName;
-	private ItemDelegate<P> delegate;
+	private final P[] metaValues;
+	protected final String baseName;
+	private final ItemDelegate<P> delegate;
 
 	public ItemWithMetadata(String baseName, P[] metaValues, ItemDelegate<P> delegate) {
 		super();

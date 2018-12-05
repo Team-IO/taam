@@ -29,7 +29,7 @@ public class ItemFilterCustomizable implements IItemFilter {
 	public boolean isExcluding() {
 		return excluding;
 	}
-	
+
 	/**
 	 * Check NBT? Applies only in {@link FilterMode#Exact}.
 	 */
@@ -43,10 +43,10 @@ public class ItemFilterCustomizable implements IItemFilter {
 	 */
 	public FilterMode mode = FilterMode.Exact;
 
-	public static enum FilterMode {
+	public enum FilterMode {
 		Exact, OreDict, Mod;
-		
-		private static FilterMode[] nextModes = {
+
+		private static final FilterMode[] nextModes = {
 				OreDict, Mod, Exact
 		};
 
@@ -72,7 +72,7 @@ public class ItemFilterCustomizable implements IItemFilter {
 		}
 		return false;
 	}
-	
+
 	public boolean isItemStackMatching(ItemStack filterEntry, ItemStack stack) {
 		if (stack == null) {
 			Log.error("Matching null item stack. Result: false, this should not happen!");
@@ -99,7 +99,7 @@ public class ItemFilterCustomizable implements IItemFilter {
 				return false;
 			}
 			return true;
-		case Mod:
+			case Mod:
 			return TaamUtil.isModMatch(stack, filterEntry);
 		case OreDict:
 			return TaamUtil.isOreDictMatch(stack, filterEntry);

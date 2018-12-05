@@ -1,7 +1,5 @@
 package net.teamio.taam.content.conveyors;
 
-import java.util.List;
-
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
@@ -27,6 +25,8 @@ import net.teamio.taam.conveyors.appliances.ApplianceSprayer;
 import net.teamio.taam.rendering.obj.OBJModel;
 import net.teamio.taam.util.TaamUtil;
 
+import java.util.List;
+
 public class BlockProductionLineAppliance extends BlockProductionLine {
 
 	public static final PropertyEnum<Taam.BLOCK_PRODUCTIONLINE_APPLIANCE_META> VARIANT = PropertyEnum.create("variant", Taam.BLOCK_PRODUCTIONLINE_APPLIANCE_META.class);
@@ -45,9 +45,8 @@ public class BlockProductionLineAppliance extends BlockProductionLine {
 	@Override
 	public int getMetaFromState(IBlockState state) {
 		Taam.BLOCK_PRODUCTIONLINE_APPLIANCE_META variant = state.getValue(VARIANT);
-		int meta = variant.ordinal();
 
-		return meta;
+		return variant.ordinal();
 	}
 
 	@Override

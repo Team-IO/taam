@@ -1,10 +1,5 @@
 package net.teamio.taam.recipes;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
@@ -13,6 +8,11 @@ import net.teamio.taam.recipes.impl.FluidDrierRecipe;
 import net.teamio.taam.recipes.impl.GrinderRecipe;
 import net.teamio.taam.recipes.impl.MixerRecipe;
 import net.teamio.taam.recipes.impl.SprayerRecipe;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Registry for all processing machines. Provides indexed access to all recipes.
@@ -33,7 +33,7 @@ public final class ProcessingRegistry {
 		// Util Class
 	}
 
-	private static Map<Integer, ProcessingRegistryEntry> entries;
+	private static final Map<Integer, ProcessingRegistryEntry> entries;
 
 	private static int count = 0;
 

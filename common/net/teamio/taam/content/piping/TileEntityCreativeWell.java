@@ -16,9 +16,11 @@ import net.teamio.taam.Taam;
 import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IWorldInteractable;
 import net.teamio.taam.piping.PipeEnd;
-import net.teamio.taam.piping.PipeUtil;
+import net.teamio.taam.piping.PipeNetwork;
 import net.teamio.taam.util.FluidHandlerCreative;
 import net.teamio.taam.util.FluidUtils;
+
+import javax.annotation.Nonnull;
 
 public class TileEntityCreativeWell extends BaseTileEntity implements ITickable, IWorldInteractable {
 
@@ -31,12 +33,12 @@ public class TileEntityCreativeWell extends BaseTileEntity implements ITickable,
 		pipeEnds = new PipeEnd[6];
 		for (EnumFacing side : EnumFacing.VALUES) {
 			int index = side.ordinal();
-			pipeEnds[index] = new PipeEnd(side, capacity, true);
-			pipeEnds[index].setPressure(Config.pl_creativewell_pressure);
+			pipeEnds[index] = new PipeEnd(this, side, capacity);
 		}
 		fluidHandler = new FluidHandlerCreative();
 	}
 
+	@Nonnull
 	@Override
 	public String getName() {
 		return "tile.taam.machines.creativewell.name";
@@ -46,17 +48,31 @@ public class TileEntityCreativeWell extends BaseTileEntity implements ITickable,
 	public void update() {
 		for (EnumFacing side : EnumFacing.VALUES) {
 			int index = side.ordinal();
-			if(fluidHandler.template != null) {
+			if (fluidHandler.template != null) {
 				pipeEnds[index].addFluid(fluidHandler.template);
 			}
-			PipeUtil.processPipes(pipeEnds[index], worldObj, pos);
 		}
+	}
 
+	@Override
+	public void onLoad() {
+		for (EnumFacing side : EnumFacing.VALUES) {
+			int index = side.ordinal();
+			PipeNetwork.NET.addPipe(pipeEnds[index]);
+		}
+	}
+
+	@Override
+	public void onChunkUnload() {
+		for (EnumFacing side : EnumFacing.VALUES) {
+			int index = side.ordinal();
+			PipeNetwork.NET.removePipe(pipeEnds[index]);
+		}
 	}
 
 	@Override
 	protected void writePropertiesToNBT(NBTTagCompound tag) {
-		if(fluidHandler.template != null) {
+		if (fluidHandler.template != null) {
 			NBTTagCompound fluidTag = new NBTTagCompound();
 			fluidHandler.template.writeToNBT(fluidTag);
 			tag.setTag("fluid", fluidTag);
@@ -66,35 +82,32 @@ public class TileEntityCreativeWell extends BaseTileEntity implements ITickable,
 	@Override
 	protected void readPropertiesFromNBT(NBTTagCompound tag) {
 		NBTTagCompound fluidTag = tag.getCompoundTag("fluid");
-		if(fluidTag == null) {
-			fluidHandler.template = null;
-		} else {
-			fluidHandler.template = FluidStack.loadFluidStackFromNBT(fluidTag);
-		}
+		fluidHandler.template = FluidStack.loadFluidStackFromNBT(fluidTag);
 	}
 
 	@Override
-	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-		if(capability == Taam.CAPABILITY_PIPE) {
+	public boolean hasCapability(@Nonnull Capability<?> capability, @Nonnull EnumFacing facing) {
+		if (capability == Taam.CAPABILITY_PIPE) {
 			return true;
 		}
-		if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+		if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
 			return true;
 		}
-		return false;
+		return super.hasCapability(capability, facing);
 	}
 
+	@Nonnull
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-		if(capability == Taam.CAPABILITY_PIPE) {
+	public <T> T getCapability(@Nonnull Capability<T> capability, @Nonnull EnumFacing facing) {
+		if (capability == Taam.CAPABILITY_PIPE) {
 			int index = facing.ordinal();
 			return (T) pipeEnds[index];
 		}
-		if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+		if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
 			return (T) fluidHandler;
 		}
-		return null;
+		return super.getCapability(capability, facing);
 	}
 
 	/*
@@ -103,13 +116,13 @@ public class TileEntityCreativeWell extends BaseTileEntity implements ITickable,
 
 	@Override
 	public boolean onBlockActivated(World world, EntityPlayer player, EnumHand hand, boolean hasWrench, EnumFacing side,
-			float hitX, float hitY, float hitZ) {
+	                                float hitX, float hitY, float hitZ) {
 		ItemStack stack = player.inventory.getStackInSlot(player.inventory.currentItem);
-		if(stack == null) {
+		if (stack == null) {
 			fluidHandler.template = null;
 		} else {
 			fluidHandler.template = FluidUtils.getFluidFromItem(stack);
-			if(fluidHandler.template != null) {
+			if (fluidHandler.template != null) {
 				fluidHandler.template.amount = capacity;
 				Log.debug("Set creative well fluid to " + fluidHandler.template);
 			}

@@ -20,8 +20,8 @@ public abstract class OutputChute {
 		canDrop = TaamUtil.canDropIntoWorld(world, pos);
 	}
 
-	public boolean isOperable() {
-		return canDrop || outputInventory != null;
+	public boolean isBlocked() {
+		return !canDrop && outputInventory == null;
 	}
 
 	/**

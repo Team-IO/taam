@@ -1,7 +1,5 @@
 package net.teamio.taam.gui;
 
-import org.lwjgl.opengl.GL11;
-
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -10,12 +8,13 @@ import net.minecraftforge.fml.client.config.GuiButtonExt;
 import net.minecraftforge.fml.client.config.GuiCheckBox;
 import net.teamio.taam.content.conveyors.TileEntityConveyorHopper;
 import net.teamio.taam.util.TaamUtil;
+import org.lwjgl.opengl.GL11;
 
 public class GuiConveyorHopper extends GuiContainer {
-	ResourceLocation bg = new ResourceLocation("textures/gui/container/hopper.png");
+	final ResourceLocation bg = new ResourceLocation("textures/gui/container/hopper.png");
 
-	private TileEntityConveyorHopper tileEntity;
-	private InventoryPlayer inventoryPlayer;
+	private final TileEntityConveyorHopper tileEntity;
+	private final InventoryPlayer inventoryPlayer;
 
 	private GuiButtonExt cbIgnoreRedstone;
 	private GuiCheckBox cbEject;

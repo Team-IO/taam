@@ -1,7 +1,5 @@
 package net.teamio.taam.machines;
 
-import java.util.List;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
@@ -16,6 +14,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.teamio.taam.content.IRotatable;
+
+import java.util.List;
 
 public class MachineItemBlock extends ItemBlock {
 
@@ -75,7 +75,7 @@ public class MachineItemBlock extends ItemBlock {
 			IMachineMetaInfo info = getInfo(meta);
 
 			te.meta = info;
-			te.machine = info.createMachine();
+			te.machine = info.createMachine(te);
 			te.markDirty();
 			//TODO: world.markBlockForUpdate(pos);
 

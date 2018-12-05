@@ -17,9 +17,13 @@ repositories {
 		name 'amadornes Maven, for MCMultipart'
 		url "http://maven.amadornes.com/"
 	}
-	maven { 
-		url "http://dvs1.progwml6.com/files/maven" 
-	} 
+	maven {
+		url "http://dvs1.progwml6.com/files/maven"
+	}
+	maven {
+		name="bbm"
+		url="http://api.dmodoomsirius.me/"
+	}
 }
 
 ext.configFile = file "build.properties"
@@ -56,7 +60,7 @@ sourceSets {
 	}
 	test {
 		java {
-		   srcDir 'test'
+			srcDir 'test'
 		}
 	}
 }
@@ -65,6 +69,23 @@ dependencies {
 	//compile 'com.mod-buildcraft:buildcraft:6.0.8:dev'
 	deobfCompile "MCMultiPart:MCMultiPart:${config.mcmultipart_version}:universal"
 	compile "mezz.jei:jei_${config.jei_mc_version}:${config.jei_version}"
+
+	testCompileOnly(
+			'junit:junit:4.12'
+	)
+	testImplementation(
+			'org.junit.jupiter:junit-jupiter-api:5.1.0',
+			'com.builtbroken.codinglib:CodingLib:0.+',
+			'com.builtbroken.minecraftjunit:MinecraftJUnit:1.9.4-0.+:deobf'
+	)
+	testRuntimeOnly(
+			'org.junit.jupiter:junit-jupiter-engine:5.1.0',
+			'org.junit.vintage:junit-vintage-engine:5.1.0'
+	)
+}
+
+test {
+	useJUnitPlatform()
 }
 
 jar {
@@ -117,7 +138,7 @@ task cleanupMtl <<
 		String currentLine
 		while((currentLine = reader.readLine()) != null) {
 			if(isValidMtlLine(currentLine)) {
-				content.add(currentLine);
+				content.add(currentLine)
 			}
 		}
 		reader.close()
@@ -130,7 +151,7 @@ task cleanupMtl <<
 	}
 }
 
-boolean isValidMtlLine(String line) {
+static boolean isValidMtlLine(String line) {
 	if(
 	line.startsWith('illum') ||
 	line.startsWith('Ns') ||
@@ -138,7 +159,7 @@ boolean isValidMtlLine(String line) {
 	line.startsWith('Ks') ||
 	line.startsWith('Ke')
 	) {
-		return false;
+		return false
 	}
-	return true;
+	return true
 }

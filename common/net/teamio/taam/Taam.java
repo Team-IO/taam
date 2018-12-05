@@ -1,10 +1,5 @@
 package net.teamio.taam;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -24,6 +19,7 @@ import net.teamio.taam.conveyors.IConveyorSlots;
 import net.teamio.taam.gui.advanced.IAdvancedMachineGUI;
 import net.teamio.taam.machines.IMachine;
 import net.teamio.taam.machines.IMachineMetaInfo;
+import net.teamio.taam.machines.IMachineWrapper;
 import net.teamio.taam.machines.MachineBlock;
 import net.teamio.taam.machines.MachineItemBlock;
 import net.teamio.taam.machines.MachineItemMultipart;
@@ -33,6 +29,11 @@ import net.teamio.taam.piping.IPipe;
 import net.teamio.taam.rendering.TankRenderInfo;
 
 import javax.annotation.Nonnull;
+import java.rmi.activation.Activator;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public final class Taam {
 	private Taam() {
@@ -110,13 +111,10 @@ public final class Taam {
 	public static final String BLOCK_PRODUCTIONLINE = "productionline";
 	public static final String BLOCK_PRODUCTIONLINE_ATTACHABLE = "productionline_attachable";
 	public static final String BLOCK_PRODUCTIONLINE_APPLIANCE = "productionline_appliance";
-	public static final String BLOCK_LOGISTICS = "logistics";
-	public static final String BLOCK_SLIDINGDOOR = "slidingdoor";
 	public static final String BLOCK_SENSOR_MOTION = "sensor.motion";
 	public static final String BLOCK_SENSOR_MINECT = "sensor.minect";
 	public static final String BLOCK_ORE = "ore";
 	public static final String BLOCK_CONCRETE = "concrete";
-	public static final String BLOCK_MAGNET_RAIL = "magnet_rail";
 	public static final String BLOCK_SUPPORT_BEAM = "support_beam";
 
 	/**
@@ -127,31 +125,31 @@ public final class Taam {
 	public static final String BLOCK_MACHINE_WRAPPER = "machine";
 
 	public enum BLOCK_ORE_META implements IStringSerializable {
-		/*0*/copper		(true, true, "Copper",		14, 7, 0, 59),
-		/*1*/tin		(true, true, "Tin",			13, 7, 0, 59),
-		/*2*/aluminum	(true, true, "Aluminum",	2,  3,  0, 59),
-		/*3*/bauxite	(false, true, "Bauxite",	35, 10, 0, 128),  //No Ingot
-		/*4*/kaolinite	(false, true, "Kaolinite", 	35, 5, 0, 100), //No Ingot
+		/*0*/copper(true, true, "Copper", 14, 7, 0, 59),
+		/*1*/tin(true, true, "Tin", 13, 7, 0, 59),
+		/*2*/aluminum(true, true, "Aluminum", 2, 3, 0, 59),
+		/*3*/bauxite(false, true, "Bauxite", 35, 10, 0, 128),  //No Ingot
+		/*4*/kaolinite(false, true, "Kaolinite", 35, 5, 0, 100), //No Ingot
 		// Reserved for future use as blocks
-		/*5*/reserved1	(false, false),
-		/*6*/reserved2	(false, false),
-		/*7*/reserved3	(false, false),
-		/*8*/reserved4	(false, false),
-		/*9*/reserved5	(false, false),
-		/*10*/reserved6	(false, false),
-		/*11*/reserved7	(false, false),
-		/*12*/reserved8	(false, false),
-		/*13*/reserved9	(false, false),
+		/*5*/reserved1(false, false),
+		/*6*/reserved2(false, false),
+		/*7*/reserved3(false, false),
+		/*8*/reserved4(false, false),
+		/*9*/reserved5(false, false),
+		/*10*/reserved6(false, false),
+		/*11*/reserved7(false, false),
+		/*12*/reserved8(false, false),
+		/*13*/reserved9(false, false),
 		/*14*/reserved10(false, false),
 		/*15*/reserved11(false, false),
 
 		//Vanilla requires only the "custom" stuff
-		/*16*/gold		(false, true),
-		/*17*/iron		(false, true),
-		/*18*/coal		(false, true),
+		/*16*/gold(false, true),
+		/*17*/iron(false, true),
+		/*18*/coal(false, true),
 
 		// Non-Ore stuff
-		/*19*/stone		(false, true),
+		/*19*/stone(false, true),
 		;
 
 		public final boolean ore, ingot, dust;
@@ -373,32 +371,16 @@ public final class Taam {
 		}
 	}
 
-	public static final String MULTIPART_MULTINET_CABLE = "multinet.cable";
-	public static final String MULTIPART_MULTINET_MULTITRONIX = "multinet.multitronix";
-
-	public static final String ITEM_MULTINET_CABLE = "cable";
+	public static final String ITEM_DEBUG_UNIT_TESTER = "unit_tester";
 	public static final String ITEM_DEBUG_TOOL = "debugger";
 	public static final String ITEM_WRENCH = "wrench";
-	public static final String ITEM_MULTINET_MULTITRONIX = "multitronix";
 	public static final String ITEM_MATERIAL = "material";
 	public static final String ITEM_PART = "part";
 	public static final String ITEM_TOOL = "tool";
 	public static final String ITEM_INGOT = "ingot";
 	public static final String ITEM_DUST = "dust";
-	public static final String ITEM_LOGISTICS_CART = "logistics_cart";
 
-	public enum ITEM_LOGISTICS_CART_META {
-		basic;
 
-		public static String[] valuesAsString() {
-			Enum<?>[] valuesAsEnum = values();
-			String[] valuesAsString = new String[valuesAsEnum.length];
-			for (int i = 0; i < valuesAsEnum.length; i++) {
-				valuesAsString[i] = valuesAsEnum[i].name();
-			}
-			return valuesAsString;
-		}
-	}
 
 	public enum ITEM_TOOL_META {
 		saw;
@@ -471,7 +453,8 @@ public final class Taam {
 		metal_bearing,
 		copper_wire,
 		sieve,
-		redirector;
+		redirector,
+		wooden_band;
 
 		public static String[] valuesAsString() {
 			Enum<?>[] valuesAsEnum = values();
@@ -486,13 +469,10 @@ public final class Taam {
 	public static final String TILEENTITY_SENSOR = "taam.sensor";
 	public static final String TILEENTITY_CHUTE = "taam.chute";
 	public static final String TILEENTITY_CREATIVECACHE = "taam.creativecache";
-	public static final String TILEENTITY_SLIDINGDOOR = "taam.slidingdoor";
 
 	public static final String TILEENTITY_CONVEYOR = "taam.conveyor";
 	public static final String TILEENTITY_CONVEYOR_HOPPER = "taam.conveyor_hopper";
 	public static final String TILEENTITY_CONVEYOR_PROCESSOR = "taam.conveyor_processor";
-	public static final String TILEENTITY_LOGISTICS_STATION = "taam.logistics_station";
-	public static final String TILEENTITY_LOGISTICS_MANAGER = "taam.logistics_manager";
 	public static final String TILEENTITY_CONVEYOR_ITEMBAG = "taam.itembag";
 	public static final String TILEENTITY_CONVEYOR_TRASHCAN = "taam.trashcan";
 	public static final String TILEENTITY_CONVEYOR_SIEVE = "taam.sieve";
@@ -504,8 +484,6 @@ public final class Taam {
 	public static final String TILEENTITY_APPLIANCE_ALIGNER = "taam.appliance.aligner";
 
 	public static final String TILEENTITY_MACHINE_WRAPPER = "taam.machine_wrapper";
-
-	public static final String ENTITY_LOGISTICS_CART = "taam.logistics_manager";
 
 	public enum FLUID_DYE_META {
 		black,
@@ -546,7 +524,7 @@ public final class Taam {
 		public final int viscosity;
 		public final int density;
 
-		private FLUID_MATERIAL_META(String registryName, int viscosity, int density) {
+		FLUID_MATERIAL_META(String registryName, int viscosity, int density) {
 			this.registryName = registryName;
 			this.viscosity = viscosity;
 			this.density = density;
@@ -603,9 +581,11 @@ public final class Taam {
 		 */
 
 		@Override
-		public IMachine createMachine() {
+		public IMachine createMachine(IMachineWrapper wrapper) {
 			try {
-				return machineClass.newInstance();
+				IMachine machine = machineClass.newInstance();
+				machine.setWrapper(wrapper);
+				return machine;
 			} catch (InstantiationException e) {
 				Log.error("Could not create machine instance. Returning null. THIS IS AN ERROR, please report!", e);
 			} catch (IllegalAccessException e) {
@@ -645,7 +625,7 @@ public final class Taam {
 		 * Static stuff
 		 */
 
-		private static Map<String, MACHINE_META> nameToInstanceMap = new HashMap<String, MACHINE_META>();
+		private static final Map<String, MACHINE_META> nameToInstanceMap = new HashMap<String, MACHINE_META>();
 
 		static {
 			for (MACHINE_META value : values()) {

@@ -1,7 +1,5 @@
 package net.teamio.taam.content.conveyors;
 
-import java.util.List;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -34,6 +32,8 @@ import net.teamio.taam.conveyors.RedirectorSide;
 import net.teamio.taam.util.InventoryUtils;
 import net.teamio.taam.util.TaamUtil;
 import net.teamio.taam.util.WrenchUtil;
+
+import java.util.List;
 
 public class TileEntityConveyor extends BaseTileEntity implements IRotatable, IConveyorApplianceHost, IWorldInteractable, ITickable, IRenderable {
 
@@ -271,7 +271,7 @@ public class TileEntityConveyor extends BaseTileEntity implements IRotatable, IC
 		 */
 
 		if (ConveyorUtil.tryInsertItemsFromWorld(this, worldObj, null, false)) {
-			updateState(false, false, false);
+			markDirty();
 		}
 
 		/*
@@ -283,7 +283,7 @@ public class TileEntityConveyor extends BaseTileEntity implements IRotatable, IC
 		// as we depend on the status of the next slot
 		int[] slotOrder = ConveyorUtil.getSlotOrderForDirection(direction);
 		if (ConveyorUtil.defaultTransition(worldObj, pos, conveyorSlots, this, slotOrder)) {
-			updateState(false, false, false);
+			markDirty();
 		}
 	}
 

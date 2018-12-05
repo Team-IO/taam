@@ -1,7 +1,5 @@
 package net.teamio.taam.content.common;
 
-import java.util.List;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -14,6 +12,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.teamio.taam.Taam;
+
+import java.util.List;
 
 public class BlockBuilding extends Block {
 

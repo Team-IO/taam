@@ -1,7 +1,5 @@
 package net.teamio.taam.content.common;
 
-import java.util.List;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
@@ -27,7 +25,11 @@ import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.conveyors.TileEntityConveyor;
 import net.teamio.taam.conveyors.IConveyorApplianceHost;
 import net.teamio.taam.piping.IPipe;
+import net.teamio.taam.piping.PipeUtil;
 import net.teamio.taam.util.FluidUtils;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Debug Tool, currently used for debugging conveyors.
@@ -46,16 +48,13 @@ public class ItemDebugTool extends Item {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean detailInfo) {
-		list.add(TextFormatting.DARK_GREEN + I18n.format("lore.taam.debugtool", new Object[0]));
+		list.add(TextFormatting.DARK_GREEN + I18n.format("lore.taam.debugtool"));
 		if (GuiScreen.isShiftKeyDown()) {
-			String usage = I18n.format("lore.taam.debugtool.usage", new Object[0]);
+			String usage = I18n.format("lore.taam.debugtool.usage");
 			//Split at literal \n in the translated text. a lot of escaping here.
-			String[] split = usage.split("\\\\n");
-			for(int i = 0;i < split.length; i++) {
-				list.add(split[i]);
-			}
+			Collections.addAll(list, usage.split("\\\\n"));
 		} else {
-			list.add(TextFormatting.DARK_PURPLE + I18n.format("lore.taam.shift", new Object[0]));
+			list.add(TextFormatting.DARK_PURPLE + I18n.format("lore.taam.shift"));
 		}
 	}
 
@@ -89,6 +88,9 @@ public class ItemDebugTool extends Item {
 		boolean didSomething = false;
 
 		TileEntity te = worldIn.getTileEntity(pos);
+		if(te == null) {
+			return EnumActionResult.PASS;
+		}
 
 
 		if(te instanceof TileEntityConveyor) {
@@ -107,19 +109,21 @@ public class ItemDebugTool extends Item {
 			//IConveyorApplianceHost host = (IConveyorApplianceHost)te;
 		}
 
-		if(te instanceof IPipe) {
+		IPipe pipe = PipeUtil.getPipe(worldIn, pos, facing);
 
-			IPipe pipe = (IPipe)te;
+		if(pipe != null) {
 
-			String content = "[";
-			FluidStack[] fs = pipe.getFluids();
-			for(FluidStack fluidContent : fs) {
-				content += fluidContent.getLocalizedName() + " " + fluidContent.amount + ", ";
+			StringBuilder content = new StringBuilder("[");
+			List<FluidStack> fs = pipe.getFluids();
+			if (fs != null) {
+				for(FluidStack fluidContent : fs) {
+					content.append(fluidContent.getLocalizedName()).append(" ").append(fluidContent.amount).append(", ");
+				}
 			}
-			content += "]";
+			content.append("]");
 
-			text = String.format(remoteState + " %s Pipe pressure: %d suction: %d effective: %d Content: %s",
-					pipe.getClass().getName(), pipe.getPressure(), pipe.getSuction(), pipe.getPressure() - pipe.getSuction(), content);
+			text = String.format(remoteState + " %s Pipe pressure: %d  Content: %s",
+					pipe.getClass().getName(), pipe.getPressure(), content.toString());
 
 			playerIn.addChatMessage(new TextComponentString(text));
 		}
@@ -143,7 +147,7 @@ public class ItemDebugTool extends Item {
 			text = String.format(remoteState + " Content: %s", content);
 
 			playerIn.addChatMessage(new TextComponentString(text));
-			
+
 			didSomething = true;
 		}
 		if (didSomething) {

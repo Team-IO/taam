@@ -1,9 +1,6 @@
 package net.teamio.taam.content.common;
 
-import java.util.List;
-
 import com.google.common.base.Predicate;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -17,6 +14,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.teamio.taam.Taam;
 import net.teamio.taam.Taam.BLOCK_ORE_META;
+
+import java.util.List;
 
 public class BlockOre extends Block {
 

@@ -20,10 +20,13 @@ import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.conveyors.IConveyorApplianceHost;
 import net.teamio.taam.conveyors.ItemWrapper;
 import net.teamio.taam.piping.PipeEndFluidHandler;
+import net.teamio.taam.piping.PipeNetwork;
 import net.teamio.taam.piping.PipeUtil;
 import net.teamio.taam.recipes.IProcessingRecipeFluidBased;
 import net.teamio.taam.recipes.ProcessingRegistry;
 import net.teamio.taam.rendering.TankRenderInfo;
+
+import javax.annotation.Nonnull;
 
 public class ApplianceSprayer extends ATileEntityAppliance implements ITickable, IWorldInteractable {
 
@@ -32,9 +35,9 @@ public class ApplianceSprayer extends ATileEntityAppliance implements ITickable,
 	public static final float b_basePlate = 2f / 16f;
 
 	public static final AxisAlignedBB bounds_sprayer_tank = new AxisAlignedBB(
-			b_tankBorder,	b_basePlate,	b_tankBorder,
-			1-b_tankBorder,	1-4f/16,		1-b_tankBorderSprayer
-			).expand(TankRenderInfo.shrinkValue, TankRenderInfo.shrinkValue, TankRenderInfo.shrinkValue);
+			b_tankBorder, b_basePlate, b_tankBorder,
+			1 - b_tankBorder, 1 - 4f / 16, 1 - b_tankBorderSprayer
+	).expand(TankRenderInfo.shrinkValue, TankRenderInfo.shrinkValue, TankRenderInfo.shrinkValue);
 
 	private final FluidTank tank;
 	private final PipeEndFluidHandler pipeEnd;
@@ -50,9 +53,22 @@ public class ApplianceSprayer extends ATileEntityAppliance implements ITickable,
 				updateState(true, false, false);
 			}
 		};
-		pipeEnd = new PipeEndFluidHandler(tank, direction.getOpposite(), false);
+		pipeEnd = new PipeEndFluidHandler(this, tank, direction.getOpposite());
 	}
 
+	@Override
+	public void onLoad() {
+		PipeNetwork.NET.addPipe(pipeEnd);
+		super.onLoad();
+	}
+
+	@Override
+	public void onChunkUnload() {
+		PipeNetwork.NET.removePipe(pipeEnd);
+		super.onChunkUnload();
+	}
+
+	@Nonnull
 	@Override
 	public String getName() {
 		return "tile.taam.productionline_appliance.sprayer.name";
@@ -62,30 +78,30 @@ public class ApplianceSprayer extends ATileEntityAppliance implements ITickable,
 	 * Checks if there is a recipe for the current input fluid and the provided
 	 * item stack.
 	 *
-	 * @param stack
+	 * @param stack Input item stack to be checked together with the current input fluid.
 	 * @return true if there is a recipe available, false if not. Also returns
-	 *         false if there is no input fluid. Does not check for the amount
-	 *         of fluid, so {@link #processItem(IConveyorApplianceHost, int, ItemWrapper)} may still fail.
+	 * false if there is no input fluid. Does not check for the amount
+	 * of fluid, so {@link #processItem(IConveyorApplianceHost, int, ItemWrapper)} may still fail.
 	 */
 	private IProcessingRecipeFluidBased getRecipe(ItemStack stack) {
 		FluidStack inside = tank.getFluid();
 
 		// If we have no remembered fluid, or a new fluid (empty tank is considered "same"), fetch new fluid
-		if(inside != null) {
-			if(lastInputFluid == null || !lastInputFluid.isFluidEqual(inside)) {
+		if (inside != null) {
+			if (lastInputFluid == null || !lastInputFluid.isFluidEqual(inside)) {
 				lastInputFluid = inside;
 			}
 		}
 
-		if(lastInputFluid == null) {
+		if (lastInputFluid == null) {
 			return null;
 		}
-		if(matchingRecipes == null) {
+		if (matchingRecipes == null) {
 			matchingRecipes = ProcessingRegistry.getRecipes(ProcessingRegistry.SPRAYER, lastInputFluid);
 		}
-		if(matchingRecipes != null) {
-			for(IProcessingRecipeFluidBased recipe : matchingRecipes) {
-				if(recipe.inputMatches(stack)) {
+		if (matchingRecipes != null) {
+			for (IProcessingRecipeFluidBased recipe : matchingRecipes) {
+				if (recipe.inputMatches(stack)) {
 					return recipe;
 				}
 			}
@@ -99,7 +115,6 @@ public class ApplianceSprayer extends ATileEntityAppliance implements ITickable,
 
 	@Override
 	public void update() {
-		PipeUtil.processPipes(pipeEnd, worldObj, pos);
 	}
 
 	@Override
@@ -109,9 +124,7 @@ public class ApplianceSprayer extends ATileEntityAppliance implements ITickable,
 		pipeEnd.setSide(direction.getOpposite());
 
 		NBTTagCompound tagTank = tag.getCompoundTag("tank");
-		if (tagTank != null) {
-			tank.readFromNBT(tagTank);
-		}
+		tank.readFromNBT(tagTank);
 	}
 
 	@Override
@@ -148,7 +161,7 @@ public class ApplianceSprayer extends ATileEntityAppliance implements ITickable,
 
 		IProcessingRecipeFluidBased recipe = getRecipe(wrapper.itemStack);
 
-		if(recipe == null) {
+		if (recipe == null) {
 			wrapper.unblock();
 			return true;
 		}
@@ -161,7 +174,7 @@ public class ApplianceSprayer extends ATileEntityAppliance implements ITickable,
 		result.stackSize = wrapper.itemStack.stackSize;
 
 		// Fix for re-coloring to the same color (Output == Input)
-		if(result.isItemEqual(wrapper.itemStack)) {
+		if (result.isItemEqual(wrapper.itemStack)) {
 			wrapper.unblock();
 			return true;
 		}
@@ -174,7 +187,7 @@ public class ApplianceSprayer extends ATileEntityAppliance implements ITickable,
 
 		FluidStack inTank = tank.getFluid();
 
-		if(inTank == null || inTank.amount < requiredAmount) {
+		if (inTank == null || inTank.amount < requiredAmount) {
 			wrapper.block();
 			return true;
 		}
@@ -184,7 +197,7 @@ public class ApplianceSprayer extends ATileEntityAppliance implements ITickable,
 		 */
 
 		inTank.amount -= requiredAmount;
-		if(inTank.amount == 0) {
+		if (inTank.amount == 0) {
 			tank.setFluid(null);
 		}
 
@@ -195,7 +208,7 @@ public class ApplianceSprayer extends ATileEntityAppliance implements ITickable,
 		wrapper.itemStack = result;
 		wrapper.unblock();
 
-		updateState(false, false, false);
+		markDirty();
 		//TODO: Particles
 
 		return true;
@@ -203,7 +216,7 @@ public class ApplianceSprayer extends ATileEntityAppliance implements ITickable,
 
 	@Override
 	public EnumFacing overrideNextSlot(IConveyorApplianceHost host, int slot, ItemWrapper wrapper,
-			EnumFacing beforeOverride) {
+	                                   EnumFacing beforeOverride) {
 		return beforeOverride;
 	}
 
@@ -226,10 +239,10 @@ public class ApplianceSprayer extends ATileEntityAppliance implements ITickable,
 
 	@Override
 	public boolean onBlockActivated(World world, EntityPlayer player, EnumHand hand, boolean hasWrench, EnumFacing side,
-			float hitX, float hitY, float hitZ) {
+	                                float hitX, float hitY, float hitZ) {
 		boolean didSomething = PipeUtil.defaultPlayerInteraction(player, getTank());
 
-		if(didSomething) {
+		if (didSomething) {
 			updateState(true, false, false);
 		}
 		return didSomething;
@@ -241,32 +254,33 @@ public class ApplianceSprayer extends ATileEntityAppliance implements ITickable,
 	}
 
 	@Override
-	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-		if(capability == Taam.CAPABILITY_PIPE) {
+	public boolean hasCapability(@Nonnull Capability<?> capability, @Nonnull EnumFacing facing) {
+		if (capability == Taam.CAPABILITY_PIPE) {
 			return facing == pipeEnd.getSide();
 		}
-		if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+		if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
 			return facing == direction.getOpposite();
 		}
 		if (capability == Taam.CAPABILITY_RENDER_TANK) {
 			return true;
 		}
-		return false;
+		return super.hasCapability(capability, facing);
 	}
 
+	@Nonnull
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-		if(capability == Taam.CAPABILITY_PIPE && facing == pipeEnd.getSide()) {
+	public <T> T getCapability(@Nonnull Capability<T> capability, @Nonnull EnumFacing facing) {
+		if (capability == Taam.CAPABILITY_PIPE && facing == pipeEnd.getSide()) {
 			return (T) pipeEnd;
 		}
-		if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing == direction.getOpposite()) {
+		if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && facing == direction.getOpposite()) {
 			return (T) tank;
 		}
 		if (capability == Taam.CAPABILITY_RENDER_TANK) {
 			tankRI.setInfo(tank);
 			return (T) tankRI.asArray();
 		}
-		return null;
+		return super.getCapability(capability, facing);
 	}
 }

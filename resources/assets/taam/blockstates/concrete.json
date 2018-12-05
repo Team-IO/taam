@@ -9,6 +9,7 @@
         "variant=black": { "model": "taam:concrete.black" },
         "variant=black_chiseled": { "model": "taam:concrete.black_chiseled" },
         "variant=warn1": { "model": "taam:concrete.warn1" },
-        "variant=warn2": { "model": "taam:concrete.warn2" }
+        "variant=warn2": { "model": "taam:concrete.warn2" },
+        "inventory": { "model": "taam:concrete.rough" } // Fix for loading errors before variant registration (Not required for actual rendering)
     }
 }

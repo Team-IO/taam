@@ -1,7 +1,6 @@
 package net.teamio.taam.gui.util;
 
 import com.google.common.base.Function;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraftforge.fml.client.config.GuiUtils;
@@ -25,7 +24,7 @@ public class CustomButton extends GuiButton {
 	public Function<CustomButton, Boolean> eventHandler;
 
 	public Drawable image;
-	public int textPadding = 2;
+	public final int textPadding = 2;
 	public boolean trimText = true;
 	/**
 	 * 0: Above

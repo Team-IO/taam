@@ -1,7 +1,5 @@
 package net.teamio.taam.content.common;
 
-import org.apache.commons.lang3.ArrayUtils;
-
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -24,6 +22,7 @@ import net.teamio.taam.util.FluidHandlerOutputOnly;
 import net.teamio.taam.util.FluidUtils;
 import net.teamio.taam.util.InventoryUtils;
 import net.teamio.taam.util.TaamUtil;
+import org.apache.commons.lang3.ArrayUtils;
 
 public class TileEntityChute extends BaseTileEntity implements IRotatable, ITickable {
 
@@ -31,7 +30,7 @@ public class TileEntityChute extends BaseTileEntity implements IRotatable, ITick
 	private EnumFacing direction = EnumFacing.NORTH;
 	private final FluidHandlerOutputOnly wrappedHandler = new FluidHandlerOutputOnly();
 	
-	private ConveyorSlotsBase conveyorSlots = new ConveyorSlotsBase() {
+	private final ConveyorSlotsBase conveyorSlots = new ConveyorSlotsBase() {
 		
 		@Override
 		public int insertItemAt(ItemStack stack, int slot, boolean simulate) {

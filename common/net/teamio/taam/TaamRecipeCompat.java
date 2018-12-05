@@ -1,14 +1,12 @@
 package net.teamio.taam;
 
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 import net.teamio.taam.recipes.ChancedOutput;
 import net.teamio.taam.recipes.ProcessingRegistry;
 import net.teamio.taam.recipes.impl.CrusherRecipe;
 import net.teamio.taam.util.InventoryUtils;
-import net.teamio.taam.util.TaamUtil;
 
 import java.util.ArrayList;
 import java.util.List;

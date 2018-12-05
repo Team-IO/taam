@@ -10,10 +10,12 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.teamio.taam.TaamMain;
 import net.teamio.taam.network.TPAdvancedGuiAppData;
 
+import javax.annotation.Nonnull;
+
 public abstract class App implements IWorldNameable {
 
 	public final ContainerAdvancedMachine container;
-	public int appContainerId;
+	public final int appContainerId;
 	/**
 	 * The first slot that belongs to this app. Set by the
 	 * {@link ContainerAdvancedMachine}. Used for enabling & disabling slots
@@ -26,12 +28,12 @@ public abstract class App implements IWorldNameable {
 	 * that can be disabled. Set after {@link #setupSlots()}
 	 */
 	public int slotCount;
-	
+
 	protected String name;
 
 	@SideOnly(Side.CLIENT)
 	public AppGui gui;
-	
+
 	public App(ContainerAdvancedMachine container) {
 		this.container = container;
 		appContainerId = container.register(this);
@@ -52,22 +54,24 @@ public abstract class App implements IWorldNameable {
 	}
 
 	public abstract void onPacket(NBTTagCompound tag);
-	
+
 	/*
 	 * IWorldNameable implementation
 	 */
 
 
+	@Nonnull
 	@Override
 	public String getName() {
 		return name;
 	}
-	
+
 	@Override
 	public boolean hasCustomName() {
 		return false;
 	}
-	
+
+	@Nonnull
 	@Override
 	public ITextComponent getDisplayName() {
 		return new TextComponentTranslation(getName());
