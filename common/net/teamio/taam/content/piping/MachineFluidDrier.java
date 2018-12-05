@@ -125,13 +125,13 @@ public class MachineFluidDrier implements IMachine, IPipePos {
 	public void writeUpdatePacket(PacketBuffer buf) {
 		NBTTagCompound tag = new NBTTagCompound();
 		writePropertiesToNBT(tag);
-		buf.writeNBTTagCompoundToBuffer(tag);
+		buf.writeCompoundTag(tag);
 	}
 
 	@Override
 	public void readUpdatePacket(PacketBuffer buf) {
 		try {
-			NBTTagCompound tag = buf.readNBTTagCompoundFromBuffer();
+			NBTTagCompound tag = buf.readCompoundTag();
 			readPropertiesFromNBT(tag);
 		} catch (IOException e) {
 			Log.error(getClass().getSimpleName()

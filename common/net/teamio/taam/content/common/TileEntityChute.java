@@ -75,8 +75,8 @@ public class TileEntityChute extends BaseTileEntity implements IRotatable, ITick
 	@Override
 	public void update() {
 		// Skip item insertion if there is a solid block / other chute above us
-		if (isConveyorVersion || !worldObj.isSideSolid(pos.up(), EnumFacing.DOWN, false)) {
-			ConveyorUtil.tryInsertItemsFromWorld(this, worldObj, null, false);
+		if (isConveyorVersion || !world.isSideSolid(pos.up(), EnumFacing.DOWN, false)) {
+			ConveyorUtil.tryInsertItemsFromWorld(this, world, null, false);
 		}
 	}
 
@@ -129,7 +129,7 @@ public class TileEntityChute extends BaseTileEntity implements IRotatable, ITick
 	}
 
 	private TileEntity getTarget() {
-		return worldObj.getTileEntity(pos.down());
+		return world.getTileEntity(pos.down());
 	}
 	
 	private IItemHandler getDropItemHandler() {
@@ -138,12 +138,12 @@ public class TileEntityChute extends BaseTileEntity implements IRotatable, ITick
 			@Override
 			public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
 				if(canDrop()) {
-					if(!simulate && !worldObj.isRemote) {
-						EntityItem item = new EntityItem(worldObj, pos.getX() + 0.5, pos.getY() - 0.3, pos.getZ() + 0.5, stack);
+					if(!simulate && !world.isRemote) {
+						EntityItem item = new EntityItem(world, pos.getX() + 0.5, pos.getY() - 0.3, pos.getZ() + 0.5, stack);
 						item.motionX = 0;
 						item.motionY = 0;
 						item.motionZ = 0;
-						worldObj.spawnEntityInWorld(item);
+						world.spawnEntity(item);
 					}
 					return null;
 				}
@@ -196,7 +196,7 @@ public class TileEntityChute extends BaseTileEntity implements IRotatable, ITick
 	}
 
 	private boolean canDrop() {
-		return TaamUtil.canDropIntoWorld(worldObj, pos.down());
+		return TaamUtil.canDropIntoWorld(world, pos.down());
 	}
 
 	/*

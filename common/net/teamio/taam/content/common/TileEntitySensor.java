@@ -55,10 +55,10 @@ public class TileEntitySensor extends BaseTileEntity implements IRotatable, ITic
 
 	private void setBlockMeta() {
 		// Set block metadata according to rotation
-		IBlockState blockState = worldObj.getBlockState(pos);
+		IBlockState blockState = world.getBlockState(pos);
 		EnumFacing dir = blockState.getValue(BlockSensor.DIRECTION);
 		if(dir != direction) {
-			worldObj.setBlockState(pos, blockState.withProperty(BlockSensor.DIRECTION, direction));
+			world.setBlockState(pos, blockState.withProperty(BlockSensor.DIRECTION, direction));
 			markDirty();
 		}
 	}
@@ -131,7 +131,7 @@ public class TileEntitySensor extends BaseTileEntity implements IRotatable, ITic
 			tickOn--;
 			found = true;
 		} else {
-			for(Object obj : worldObj.loadedEntityList) {
+			for(Object obj : world.loadedEntityList) {
 				Entity ent = (Entity)obj;
 
 				if(isDetectedEntityType(ent) && isEntityWithinBoundingBox(bb, ent)) {
@@ -146,7 +146,7 @@ public class TileEntitySensor extends BaseTileEntity implements IRotatable, ITic
 
 		if(found != powering) {
 			powering = found;
-			BaseBlock.updateBlocksAround(worldObj, pos);
+			BaseBlock.updateBlocksAround(world, pos);
 		}
 	}
 
@@ -177,7 +177,7 @@ public class TileEntitySensor extends BaseTileEntity implements IRotatable, ITic
 	@Override
 	public EnumFacing getNextFacingDirection() {
 		for(EnumFacing nextDir = EnumFacing.getFront(direction.ordinal() + 1); nextDir != direction; nextDir = EnumFacing.getFront(nextDir.ordinal() + 1)) {
-			if(TaamMain.blockSensor.canPlaceBlockOnSide(worldObj, pos, nextDir)) {
+			if(TaamMain.blockSensor.canPlaceBlockOnSide(world, pos, nextDir)) {
 				return nextDir;
 			}
 		}

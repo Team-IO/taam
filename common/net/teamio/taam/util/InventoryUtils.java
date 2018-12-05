@@ -156,7 +156,7 @@ public final class InventoryUtils {
 			item.motionY = world.rand.nextGaussian() * 0.05 + 0.2F;
 			item.motionZ = world.rand.nextGaussian() * 0.05;
 		}
-		world.spawnEntityInWorld(item);
+		world.spawnEntity(item);
 		return item;
 	}
 
@@ -293,8 +293,8 @@ public final class InventoryUtils {
 			return;
 		}
 		if (!player.inventory.addItemStackToInventory(stack)) {
-			if (!player.worldObj.isRemote) {
-				dropItem(stack, player.worldObj, x, y, z);
+			if (!player.world.isRemote) {
+				dropItem(stack, player.world, x, y, z);
 			}
 		} else if (player instanceof EntityPlayerMP) {
 			((EntityPlayerMP) player).sendContainerToPlayer(player.inventoryContainer);

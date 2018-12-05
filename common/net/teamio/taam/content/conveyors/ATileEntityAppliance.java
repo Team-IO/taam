@@ -35,7 +35,7 @@ public abstract class ATileEntityAppliance extends BaseTileEntity implements ICo
 		EnumFacing dir = direction;
 		for(int i = 0; i < 3; i++) {
 			dir = dir.rotateY();
-			TileEntity te = worldObj.getTileEntity(pos.offset(dir));
+			TileEntity te = world.getTileEntity(pos.offset(dir));
 			if(te instanceof IConveyorApplianceHost) {
 				return dir;
 			}

@@ -128,7 +128,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		if (target != null && (pos = target.getBlockPos()) != null) {
 			EntityPlayer player = event.getPlayer();
 			boolean playerHasDebugTool = WrenchUtil.playerHasDebugTool(player);
-			World world = player.worldObj;
+			World world = player.world;
 			TileEntity te = world.getTileEntity(pos);
 
 			try {

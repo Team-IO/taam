@@ -33,7 +33,7 @@ public class MachineTileEntity extends BaseTileEntity implements ITickable, IMac
 			Log.error("MachineTileEntity at {} is missing machine instance.", getPos());
 			return;
 		}
-		machine.onCreated(worldObj, pos);
+		machine.onCreated(world, pos);
 	}
 
 	@Override
@@ -42,7 +42,7 @@ public class MachineTileEntity extends BaseTileEntity implements ITickable, IMac
 			Log.error("MachineTileEntity at {} is missing machine instance.", getPos());
 			return;
 		}
-		machine.onUnload(worldObj, pos);
+		machine.onUnload(world, pos);
 	}
 
 	@Override
@@ -56,7 +56,7 @@ public class MachineTileEntity extends BaseTileEntity implements ITickable, IMac
 			// DO NOT LOG, this will definitely lead to log spamming.
 			return;
 		}
-		if(machine.update(worldObj, pos)) {
+		if(machine.update(world, pos)) {
 			markDirty();
 		}
 	}

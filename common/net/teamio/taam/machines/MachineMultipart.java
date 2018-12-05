@@ -329,7 +329,7 @@ public class MachineMultipart extends Multipart implements INormallyOccludingPar
 
 	@Override
 	public void readUpdatePacket(PacketBuffer buf) {
-		String machineID = buf.readStringFromBuffer(30);
+		String machineID = buf.readString(30);
 		IMachineMetaInfo meta = Taam.MACHINE_META.fromId(machineID);
 		if(meta != null && meta != this.meta) {
 			this.meta = meta;

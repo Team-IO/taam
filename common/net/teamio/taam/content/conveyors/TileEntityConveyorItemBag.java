@@ -40,7 +40,7 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable {
 
 	@Override
 	public void blockUpdate() {
-		if(worldObj != null && worldObj.isRemote) {
+		if(world != null && world.isRemote) {
 			/*
 			 * Fill display calculation is only needed on the client..
 			 */

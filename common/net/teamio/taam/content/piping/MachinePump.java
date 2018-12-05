@@ -142,14 +142,14 @@ public class MachinePump implements IMachine, IPipePos, IRotatable {
 	public void writeUpdatePacket(PacketBuffer buf) {
 		NBTTagCompound tag = new NBTTagCompound();
 		writePropertiesToNBT(tag);
-		buf.writeNBTTagCompoundToBuffer(tag);
+		buf.writeCompoundTag(tag);
 		buf.writeByte(occludedSides);
 	}
 
 	@Override
 	public void readUpdatePacket(PacketBuffer buf) {
 		try {
-			NBTTagCompound tag = buf.readNBTTagCompoundFromBuffer();
+			NBTTagCompound tag = buf.readCompoundTag();
 			readPropertiesFromNBT(tag);
 			occludedSides = buf.readByte();
 			updateOcclusion();

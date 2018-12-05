@@ -72,7 +72,7 @@ public class ItemDebugTool extends Item {
 		String text = String.format(remoteState + " RS: %b Side: %s Weak: %d Strong: %d",
 				state.canProvidePower(), facing.toString(), state.getWeakPower(worldIn, pos, facing), state.getStrongPower(worldIn, pos, facing));
 
-		playerIn.addChatMessage(new TextComponentString(text));
+		playerIn.sendStatusMessage(new TextComponentString(text));
 
 		EnumFacing oppSide = facing.getOpposite();
 
@@ -83,7 +83,7 @@ public class ItemDebugTool extends Item {
 		text = String.format(remoteState + " Indirectly Powered: %d",
 				worldIn.isBlockIndirectlyGettingPowered(pos));
 
-		playerIn.addChatMessage(new TextComponentString(text));
+		playerIn.sendStatusMessage(new TextComponentString(text));
 
 		boolean didSomething = false;
 
@@ -101,7 +101,7 @@ public class ItemDebugTool extends Item {
 			text = String.format(remoteState + " Conveyor facing %s. isEnd: %b isBegin: %b",
 					tec.getFacingDirection().toString(), tec.isEnd, tec.isBegin);
 
-			playerIn.addChatMessage(new TextComponentString(text));
+			playerIn.sendStatusMessage(new TextComponentString(text));
 
 		}
 
@@ -125,7 +125,7 @@ public class ItemDebugTool extends Item {
 			text = String.format(remoteState + " %s Pipe pressure: %d  Content: %s",
 					pipe.getClass().getName(), pipe.getPressure(), content.toString());
 
-			playerIn.addChatMessage(new TextComponentString(text));
+			playerIn.sendStatusMessage(new TextComponentString(text));
 		}
 
 		IFluidHandler fh = FluidUtils.getFluidHandler(te, facing);
@@ -146,7 +146,7 @@ public class ItemDebugTool extends Item {
 
 			text = String.format(remoteState + " Content: %s", content);
 
-			playerIn.addChatMessage(new TextComponentString(text));
+			playerIn.sendStatusMessage(new TextComponentString(text));
 
 			didSomething = true;
 		}

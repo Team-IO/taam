@@ -75,7 +75,7 @@ public class WorldCoord {
 	}
 
 	public WorldClient getWorldClient() {
-		WorldClient worldClient = Minecraft.getMinecraft().theWorld;
+		WorldClient worldClient = Minecraft.getMinecraft().world;
 		if (worldClient.provider.getDimension() == world) {
 			return worldClient;
 		}

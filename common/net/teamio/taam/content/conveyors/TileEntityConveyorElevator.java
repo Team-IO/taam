@@ -155,7 +155,7 @@ public class TileEntityConveyorElevator extends BaseTileEntity implements ITicka
 
 	private void updateAdjecents() {
 		// Check UP
-		TileEntity te = worldObj.getTileEntity(pos.offset(EnumFacing.UP));
+		TileEntity te = world.getTileEntity(pos.offset(EnumFacing.UP));
 		if (te instanceof TileEntityConveyorElevator) {
 			isTop = ((TileEntityConveyorElevator) te).getFacingDirection().getAxis() != this.direction.getAxis();
 		} else {
@@ -163,7 +163,7 @@ public class TileEntityConveyorElevator extends BaseTileEntity implements ITicka
 		}
 
 		// Check DOWN
-		te = worldObj.getTileEntity(pos.offset(EnumFacing.DOWN));
+		te = world.getTileEntity(pos.offset(EnumFacing.DOWN));
 		if (te instanceof TileEntityConveyorElevator) {
 			isBottom = ((TileEntityConveyorElevator) te).getFacingDirection().getAxis() != this.direction.getAxis();
 		} else {
@@ -182,7 +182,7 @@ public class TileEntityConveyorElevator extends BaseTileEntity implements ITicka
 		// one conveyor,
 		// as we depend on the status of the next slot
 		int[] slotOrder = ConveyorUtil.getSlotOrderForDirection(EnumFacing.UP);
-		if (ConveyorUtil.defaultTransition(worldObj, pos, conveyorSlots, null, slotOrder)) {
+		if (ConveyorUtil.defaultTransition(world, pos, conveyorSlots, null, slotOrder)) {
 			markDirty();
 		}
 	}
@@ -204,8 +204,8 @@ public class TileEntityConveyorElevator extends BaseTileEntity implements ITicka
 			direction = EnumFacing.NORTH;
 		}
 
-		escalation = ElevatorDirection.values()[MathHelper.clamp_int(tag.getInteger("escalation"), 0, 1)];
-		mode = ElevatorMode.values()[MathHelper.clamp_int(tag.getInteger("mode"), 0, 2)];
+		escalation = ElevatorDirection.values()[MathHelper.clamp(tag.getInteger("escalation"), 0, 1)];
+		mode = ElevatorMode.values()[MathHelper.clamp(tag.getInteger("mode"), 0, 2)];
 	}
 
 	@Override
@@ -272,9 +272,9 @@ public class TileEntityConveyorElevator extends BaseTileEntity implements ITicka
 			this.direction = EnumFacing.NORTH;
 		}
 		updateState(false, true, true);
-		worldObj.notifyBlockOfStateChange(pos, blockType);
+		world.notifyBlockOfStateChange(pos, blockType);
 		if (blockType != null) {
-			blockType.onNeighborChange(worldObj, pos, pos);
+			blockType.onNeighborChange(world, pos, pos);
 		}
 	}
 

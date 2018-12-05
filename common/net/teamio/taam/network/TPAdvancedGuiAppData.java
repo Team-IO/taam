@@ -23,7 +23,7 @@ public class TPAdvancedGuiAppData implements IMessage {
 			// route message to the open container of the player
 			Container container;
 			if (ctx.side == Side.CLIENT) {
-				container = Minecraft.getMinecraft().thePlayer.openContainer;
+				container = Minecraft.getMinecraft().player.openContainer;
 			} else {
 				container = ctx.getServerHandler().playerEntity.openContainer;
 			}
@@ -65,7 +65,7 @@ public class TPAdvancedGuiAppData implements IMessage {
 		PacketBuffer packetBuffer = new PacketBuffer(buf);
 		try {
 			appContainerId = packetBuffer.readInt();
-			tag = packetBuffer.readNBTTagCompoundFromBuffer();
+			tag = packetBuffer.readCompoundTag();
 		} catch (IOException e) {
 			Log.error("Error reading network packet", e);
 		} finally {
@@ -77,7 +77,7 @@ public class TPAdvancedGuiAppData implements IMessage {
 	public void toBytes(ByteBuf buf) {
 		PacketBuffer packetBuffer = new PacketBuffer(buf);
 		packetBuffer.writeInt(appContainerId);
-		packetBuffer.writeNBTTagCompoundToBuffer(tag);
+		packetBuffer.writeCompoundTag(tag);
 	}
 
 }

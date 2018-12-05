@@ -124,7 +124,7 @@ public class MachineBlock extends BaseBlock implements ITileEntityProvider {
 	}
 
 	public IMachineMetaInfo getInfo(int meta) {
-		int ordinal = MathHelper.clamp_int(meta, 0, values.length);
+		int ordinal = MathHelper.clamp(meta, 0, values.length);
 		return values[ordinal];
 	}
 
@@ -195,7 +195,7 @@ public class MachineBlock extends BaseBlock implements ITileEntityProvider {
 	@Override
 	public AxisAlignedBB getSelectedBoundingBox(IBlockState state, World worldIn, BlockPos pos) {
 		// Get player position + look vector
-		EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
+		EntityPlayerSP player = Minecraft.getMinecraft().player;
 		Vec3d eyes = player.getPositionEyes(0);
 		Vec3d look = player.getLook(0);
 		float reach = Minecraft.getMinecraft().playerController.getBlockReachDistance();

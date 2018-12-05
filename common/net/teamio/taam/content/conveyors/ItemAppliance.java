@@ -38,7 +38,7 @@ public class ItemAppliance extends ItemBlock {
 	}
 
 	public IConveyorApplianceMetaInfo getInfo(int meta) {
-		int ordinal = MathHelper.clamp_int(meta, 0, values.length);
+		int ordinal = MathHelper.clamp(meta, 0, values.length);
 		return values[ordinal];
 	}
 

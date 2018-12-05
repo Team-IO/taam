@@ -230,7 +230,7 @@ public class ConveyorUtil {
 			// Horizontal Index: S-W-N-E
 			int[] slots = rotated[horizontalIndex];
 
-			slot = MathHelper.clamp_int(slot, 0, 8);
+			slot = MathHelper.clamp(slot, 0, 8);
 
 			return slots[slot];
 		}
@@ -401,7 +401,7 @@ public class ConveyorUtil {
 					item.motionY = 0;
 					item.motionZ = 0;
 				}
-				world.spawnEntityInWorld(item);
+				world.spawnEntity(item);
 			}
 		}
 

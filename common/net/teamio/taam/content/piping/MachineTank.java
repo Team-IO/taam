@@ -120,14 +120,14 @@ public class MachineTank implements IMachine, IPipePos, IWorldInteractable {
 	public void writeUpdatePacket(PacketBuffer buf) {
 		NBTTagCompound tag = new NBTTagCompound();
 		tank.writeToNBT(tag);
-		buf.writeNBTTagCompoundToBuffer(tag);
+		buf.writeCompoundTag(tag);
 		buf.writeByte(occludedSides);
 	}
 
 	@Override
 	public void readUpdatePacket(PacketBuffer buf) {
 		try {
-			NBTTagCompound tag = buf.readNBTTagCompoundFromBuffer();
+			NBTTagCompound tag = buf.readCompoundTag();
 			if(tag == null) {
 				tank.setFluid(null);
 			} else {

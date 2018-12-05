@@ -31,7 +31,7 @@ public class MachineItemMultipart extends ItemMultiPart {
 	}
 
 	public IMachineMetaInfo getInfo(int meta) {
-		int ordinal = MathHelper.clamp_int(meta, 0, values.length);
+		int ordinal = MathHelper.clamp(meta, 0, values.length);
 		return values[ordinal];
 	}
 

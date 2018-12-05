@@ -29,7 +29,7 @@ public class ConveyorSlotsStandard extends ConveyorSlotsBase implements INBTSeri
 
 	@Override
 	public int insertItemAt(ItemStack item, int slot, boolean simulate) {
-		slot = MathHelper.clamp_int(slot, 0, 8);
+		slot = MathHelper.clamp(slot, 0, 8);
 		if(!isSlotAvailable(slot)) {
 			return 0;
 		}
@@ -42,7 +42,7 @@ public class ConveyorSlotsStandard extends ConveyorSlotsBase implements INBTSeri
 
 	@Override
 	public ItemStack removeItemAt(int slot, int amount, boolean simulate) {
-		slot = MathHelper.clamp_int(slot, 0, 8);
+		slot = MathHelper.clamp(slot, 0, 8);
 		if(!isSlotAvailable(slot)) {
 			return null;
 		}
@@ -71,7 +71,7 @@ public class ConveyorSlotsStandard extends ConveyorSlotsBase implements INBTSeri
 
 	@Override
 	public ItemWrapper getSlot(int slot) {
-		slot = MathHelper.clamp_int(slot, 0, 8);
+		slot = MathHelper.clamp(slot, 0, 8);
 		if(isSlotAvailable(slot)) {
 			return slots[slot];
 		}

@@ -110,7 +110,7 @@ public class TileEntityCreativeCache extends BaseTileEntity implements IInventor
 	}
 
 	@Override
-	public boolean isUseableByPlayer(EntityPlayer player) {
+	public boolean isUsableByPlayer(EntityPlayer player) {
 		return true;
 	}
 

@@ -159,7 +159,7 @@ public class TileEntityConveyor extends BaseTileEntity implements IRotatable, IC
 
 	@Override
 	public void blockUpdate() {
-		if (worldObj != null) {
+		if (world != null) {
 			updateApplianceCache();
 		}
 	}
@@ -168,7 +168,7 @@ public class TileEntityConveyor extends BaseTileEntity implements IRotatable, IC
 	@SideOnly(Side.CLIENT)
 	public void renderUpdate() {
 		// Check in front
-		TileEntity te = worldObj.getTileEntity(pos.offset(direction));
+		TileEntity te = world.getTileEntity(pos.offset(direction));
 
 		if (te instanceof TileEntityConveyor) {
 			TileEntityConveyor next = (TileEntityConveyor) te;
@@ -182,7 +182,7 @@ public class TileEntityConveyor extends BaseTileEntity implements IRotatable, IC
 
 		// Check behind
 		EnumFacing inverse = direction.getOpposite();
-		te = worldObj.getTileEntity(pos.offset(inverse));
+		te = world.getTileEntity(pos.offset(inverse));
 		if (te instanceof TileEntityConveyor) {
 			TileEntityConveyor next = (TileEntityConveyor) te;
 			renderBegin = next.speedLevel != speedLevel;
@@ -198,7 +198,7 @@ public class TileEntityConveyor extends BaseTileEntity implements IRotatable, IC
 			renderRight = true;
 		} else {
 			inverse = direction.rotateY();
-			te = worldObj.getTileEntity(pos.offset(inverse));
+			te = world.getTileEntity(pos.offset(inverse));
 
 			if (te instanceof TileEntityConveyor) {
 				TileEntityConveyor next = (TileEntityConveyor) te;
@@ -216,7 +216,7 @@ public class TileEntityConveyor extends BaseTileEntity implements IRotatable, IC
 			renderLeft = true;
 		} else {
 			inverse = direction.rotateYCCW();
-			te = worldObj.getTileEntity(pos.offset(inverse));
+			te = world.getTileEntity(pos.offset(inverse));
 
 			if (te instanceof TileEntityConveyor) {
 				TileEntityConveyor next = (TileEntityConveyor) te;
@@ -232,8 +232,8 @@ public class TileEntityConveyor extends BaseTileEntity implements IRotatable, IC
 		// Check above
 		// Render supports if above face is solid or there is a conveyor machine
 		// there.
-		renderAbove = worldObj.isSideSolid(pos.offset(EnumFacing.UP), EnumFacing.DOWN)
-				|| ConveyorUtil.getSlots(worldObj.getTileEntity(pos.offset(EnumFacing.UP)), EnumFacing.DOWN) != null;
+		renderAbove = world.isSideSolid(pos.offset(EnumFacing.UP), EnumFacing.DOWN)
+				|| ConveyorUtil.getSlots(world.getTileEntity(pos.offset(EnumFacing.UP)), EnumFacing.DOWN) != null;
 
 		updateApplianceCache();
 	}
@@ -270,7 +270,7 @@ public class TileEntityConveyor extends BaseTileEntity implements IRotatable, IC
 		 * Find items laying on the conveyor.
 		 */
 
-		if (ConveyorUtil.tryInsertItemsFromWorld(this, worldObj, null, false)) {
+		if (ConveyorUtil.tryInsertItemsFromWorld(this, world, null, false)) {
 			markDirty();
 		}
 
@@ -282,7 +282,7 @@ public class TileEntityConveyor extends BaseTileEntity implements IRotatable, IC
 		// one conveyor,
 		// as we depend on the status of the next slot
 		int[] slotOrder = ConveyorUtil.getSlotOrderForDirection(direction);
-		if (ConveyorUtil.defaultTransition(worldObj, pos, conveyorSlots, this, slotOrder)) {
+		if (ConveyorUtil.defaultTransition(world, pos, conveyorSlots, this, slotOrder)) {
 			markDirty();
 		}
 	}
@@ -353,9 +353,9 @@ public class TileEntityConveyor extends BaseTileEntity implements IRotatable, IC
 		}
 		conveyorSlots.rotation = direction;
 		updateState(false, true, true);
-		worldObj.notifyBlockOfStateChange(pos, blockType);
+		world.notifyBlockOfStateChange(pos, blockType);
 		if (blockType != null) {
-			blockType.onNeighborChange(worldObj, pos, pos);
+			blockType.onNeighborChange(world, pos, pos);
 		}
 	}
 
@@ -384,7 +384,7 @@ public class TileEntityConveyor extends BaseTileEntity implements IRotatable, IC
 
 	public void updateApplianceCache() {
 		if (speedLevel == 1) {
-			applianceCache = ConveyorUtil.getTouchingAppliances(this, worldObj, pos);
+			applianceCache = ConveyorUtil.getTouchingAppliances(this, world, pos);
 		} else {
 			applianceCache = null;
 		}

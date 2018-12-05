@@ -81,20 +81,20 @@ public abstract class BaseTileEntity extends TileEntity implements IWorldNameabl
 	 *            Notify neighbor blocks (block update)
 	 */
 	public final void updateState(boolean worldUpdate, boolean renderUpdate, boolean blockUpdate) {
-		if (worldObj == null) {
+		if (world == null) {
 			return;
 		}
 		markDirty();
 		if (worldUpdate) {
 			// Server -> Client
-			TaamUtil.updateBlock(worldObj, pos, renderUpdate);
+			TaamUtil.updateBlock(world, pos, renderUpdate);
 		}
 		if (renderUpdate) {
 			// Only client?
-			worldObj.markBlockRangeForRenderUpdate(pos, pos);
+			world.markBlockRangeForRenderUpdate(pos, pos);
 		}
 		if (blockUpdate) {
-			worldObj.notifyNeighborsOfStateChange(pos, blockType);
+			world.notifyNeighborsOfStateChange(pos, blockType);
 		}
 	}
 

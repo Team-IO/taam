@@ -137,7 +137,7 @@ public class ItemFilterCustomizable implements IItemFilter {
 		// Basic Config
 		excluding = nbt.getBoolean("excluding");
 		int mode = nbt.getInteger("mode");
-		this.mode = FilterMode.values()[MathHelper.clamp_int(mode, 0, FilterMode.values().length - 1)];
+		this.mode = FilterMode.values()[MathHelper.clamp(mode, 0, FilterMode.values().length - 1)];
 		checkNBT = nbt.getBoolean("checkNBT");
 		checkMeta = nbt.getBoolean("checkMeta");
 		// Filter Entries

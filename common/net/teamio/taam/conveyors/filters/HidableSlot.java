@@ -16,11 +16,11 @@ public class HidableSlot extends Slot {
 
 	public void setEnabled(boolean enable) {
 		if (enable) {
-			this.xDisplayPosition = xPosBackup;
-			this.yDisplayPosition = yPosBackup;
+			this.xPos = xPosBackup;
+			this.yPos = yPosBackup;
 		} else {
-			this.xDisplayPosition = -500;
-			this.yDisplayPosition = -500;
+			this.xPos = -500;
+			this.yPos = -500;
 		}
 	}
 

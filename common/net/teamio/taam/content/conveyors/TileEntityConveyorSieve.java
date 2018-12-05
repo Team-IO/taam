@@ -89,13 +89,13 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements IRotatabl
 		boolean needsUpdate = false;
 		boolean needsWorldUpdate = false;
 
-		if(ConveyorUtil.tryInsertItemsFromWorld(this, worldObj, null, false)) {
+		if(ConveyorUtil.tryInsertItemsFromWorld(this, world, null, false)) {
 			needsUpdate = true;
 		}
 
-		boolean redstoneHigh = worldObj.isBlockIndirectlyGettingPowered(pos) > 0;
+		boolean redstoneHigh = world.isBlockIndirectlyGettingPowered(pos) > 0;
 
-		boolean newShutdown = TaamUtil.isShutdown(worldObj.rand, redstoneMode, redstoneHigh);
+		boolean newShutdown = TaamUtil.isShutdown(world.rand, redstoneMode, redstoneHigh);
 
 
 		if(isShutdown != newShutdown) {
@@ -121,7 +121,7 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements IRotatabl
 			 * Move items already on the conveyor
 			 */
 
-			if(ConveyorUtil.defaultTransition(worldObj, pos, conveyorSlots, null, slotOrder)) {
+			if(ConveyorUtil.defaultTransition(world, pos, conveyorSlots, null, slotOrder)) {
 				needsUpdate = true;
 			}
 		}
@@ -136,8 +136,8 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements IRotatabl
 		BlockPos down = pos.down();
 
 		// If we are blocked below, act as a conveyor.
-		IItemHandler outputInventory = InventoryUtils.getInventory(worldObj, down, EnumFacing.UP);
-		if(outputInventory == null && !TaamUtil.canDropIntoWorld(worldObj, down)) {
+		IItemHandler outputInventory = InventoryUtils.getInventory(world, down, EnumFacing.UP);
+		if(outputInventory == null && !TaamUtil.canDropIntoWorld(world, down)) {
 			return false;
 		}
 
@@ -166,12 +166,12 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements IRotatabl
 	private boolean tryOutput(ItemWrapper wrapper, IItemHandler outputInventory) {
 		if(outputInventory == null) {
 			// Output to world
-			if(!worldObj.isRemote && wrapper.itemStack != null) {
-				EntityItem item = new EntityItem(worldObj, pos.getX() + 0.5, pos.getY() - 0.3, pos.getZ() + 0.5, wrapper.itemStack);
+			if(!world.isRemote && wrapper.itemStack != null) {
+				EntityItem item = new EntityItem(world, pos.getX() + 0.5, pos.getY() - 0.3, pos.getZ() + 0.5, wrapper.itemStack);
 				item.motionX = 0;
 				item.motionY = 0;
 				item.motionZ = 0;
-				worldObj.spawnEntityInWorld(item);
+				world.spawnEntity(item);
 				wrapper.itemStack = null;
 			}
 			return true;
@@ -244,9 +244,9 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements IRotatabl
 		}
 		conveyorSlots.rotation = direction;
 		updateState(false, true, true);
-		worldObj.notifyBlockOfStateChange(pos, blockType);
+		world.notifyBlockOfStateChange(pos, blockType);
 		if(blockType != null) {
-			blockType.onNeighborChange(worldObj, pos, pos);
+			blockType.onNeighborChange(world, pos, pos);
 		}
 	}
 
@@ -291,7 +291,7 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements IRotatabl
 	@Override
 	public void setRedstoneMode(byte mode) {
 		redstoneMode = mode;
-		if(worldObj.isRemote) {
+		if(world.isRemote) {
 			TPMachineConfiguration config = TPMachineConfiguration.newChangeInteger(new WorldCoord(this), (byte)1, redstoneMode);
 			TaamMain.network.sendToServer(config);
 		} else {
