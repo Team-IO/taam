@@ -19,9 +19,9 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.IRegistry;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.client.model.IPerspectiveAwareModel;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
+import net.minecraftforge.client.model.PerspectiveMapWrapper;
 import net.minecraftforge.client.model.SimpleModelState;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.model.IModelState;
@@ -30,7 +30,7 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
-import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.teamio.taam.content.conveyors.TileEntityConveyor;
@@ -110,9 +110,9 @@ public class TaamClientProxy extends TaamCommonProxy {
 		 * Ores, Ingots, Dusts
 		 */
 
-		Item itemOre = GameRegistry.findItem(Taam.MOD_ID, Taam.BLOCK_ORE);
-		Item itemIngot = GameRegistry.findItem(Taam.MOD_ID, Taam.ITEM_INGOT);
-		Item itemDust = GameRegistry.findItem(Taam.MOD_ID, Taam.ITEM_DUST);
+		Item itemOre = ForgeRegistries.ITEMS.getValue(new ResourceLocation(Taam.MOD_ID, Taam.BLOCK_ORE));
+		Item itemIngot = ForgeRegistries.ITEMS.getValue(new ResourceLocation(Taam.MOD_ID, Taam.ITEM_INGOT));
+		Item itemDust = ForgeRegistries.ITEMS.getValue(new ResourceLocation(Taam.MOD_ID, Taam.ITEM_DUST));
 
 		ModelBakery.registerItemVariants(itemOre, new ResourceLocation(Taam.MOD_ID, "ore.impossible"));
 		ModelBakery.registerItemVariants(itemIngot, new ResourceLocation(Taam.MOD_ID, "ingot.impossible"));
@@ -151,7 +151,7 @@ public class TaamClientProxy extends TaamCommonProxy {
 		 * Concrete
 		 */
 
-		Item itemToRegister = GameRegistry.findItem(Taam.MOD_ID, Taam.BLOCK_CONCRETE);
+		Item itemToRegister = ForgeRegistries.ITEMS.getValue(new ResourceLocation(Taam.MOD_ID, Taam.BLOCK_CONCRETE));
 
 		for (Taam.BLOCK_CONCRETE_META meta : Taam.BLOCK_CONCRETE_META.values()) {
 			int metaInt = meta.ordinal();
@@ -193,14 +193,14 @@ public class TaamClientProxy extends TaamCommonProxy {
 
 		for (Taam.FLUID_DYE_META meta : Taam.FLUID_DYE_META.values()) {
 			String metaName = meta.name();
-			itemToRegister = GameRegistry.findItem(Taam.MOD_ID, "fluid.dye." + metaName);
+			itemToRegister = ForgeRegistries.ITEMS.getValue(new ResourceLocation(Taam.MOD_ID, "fluid.dye." + metaName));
 			ModelBakery.registerItemVariants(itemToRegister, new ResourceLocation(Taam.MOD_ID, "fluid.dye." + metaName));
 			modelMesher.register(itemToRegister, 0, new ModelResourceLocation(Taam.MOD_ID + ":fluid.dye." + metaName, "inventory"));
 		}
 
 		for (Taam.FLUID_MATERIAL_META meta : Taam.FLUID_MATERIAL_META.values()) {
 			String metaName = meta.name();
-			itemToRegister = GameRegistry.findItem(Taam.MOD_ID, "fluid.material." + metaName);
+			itemToRegister = ForgeRegistries.ITEMS.getValue(new ResourceLocation(Taam.MOD_ID, "fluid.material." + metaName));
 			ModelBakery.registerItemVariants(itemToRegister, new ResourceLocation(Taam.MOD_ID, "fluid.material." + metaName));
 			modelMesher.register(itemToRegister, 0, new ModelResourceLocation(Taam.MOD_ID + ":fluid.material." + metaName, "inventory"));
 		}
@@ -266,7 +266,7 @@ public class TaamClientProxy extends TaamCommonProxy {
 	 */
 	private void registerItemOBJSingleMeta(ItemModelMesher modelMesher, String itemId, int metaValue, String modelFile) {
 		// Find item to register
-		Item item = GameRegistry.findItem(Taam.MOD_ID, itemId);
+		Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(Taam.MOD_ID, itemId));
 
 		// Create & remember model location
 		final ModelResourceLocation resourceLocation = new ModelResourceLocation(Taam.MOD_ID + ":" + modelFile, "inventory");
@@ -431,7 +431,7 @@ public class TaamClientProxy extends TaamCommonProxy {
 	 *
 	 * @author Oliver Kahrmann
 	 */
-	public static class ItemAwareOBJBakedModel implements IPerspectiveAwareModel {
+	public static class ItemAwareOBJBakedModel implements IBakedModel {
 
 		public static final IModelState defaultBlockTransform;
 
@@ -467,7 +467,7 @@ public class TaamClientProxy extends TaamCommonProxy {
 		@Override
 		public Pair<? extends IBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType) {
 			// Use forge default block transform
-			return IPerspectiveAwareModel.MapWrapper.handlePerspective(this, defaultBlockTransform, cameraTransformType);
+			return PerspectiveMapWrapper.handlePerspective(this, defaultBlockTransform, cameraTransformType);
 		}
 
 		/*

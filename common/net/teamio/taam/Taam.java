@@ -22,14 +22,12 @@ import net.teamio.taam.machines.IMachineMetaInfo;
 import net.teamio.taam.machines.IMachineWrapper;
 import net.teamio.taam.machines.MachineBlock;
 import net.teamio.taam.machines.MachineItemBlock;
-import net.teamio.taam.machines.MachineItemMultipart;
-import net.teamio.taam.machines.MachineMultipart;
+import net.teamio.taam.integration.mcmultipart.MachineMultipart;
 import net.teamio.taam.machines.MachineTileEntity;
 import net.teamio.taam.piping.IPipe;
 import net.teamio.taam.rendering.TankRenderInfo;
 
 import javax.annotation.Nonnull;
-import java.rmi.activation.Activator;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -545,7 +543,7 @@ public final class Taam {
 	 * <p>
 	 * {@link MachineBlock} + {@link MachineTileEntity} -> Wrapper block & TE if multipart is not available.
 	 * <p>
-	 * {@link MachineItemBlock} -> Item for the wrapper block, mutually exclusive with {@link MachineItemMultipart}.
+	 * {@link MachineItemBlock} -> Item for the wrapper block, mutually exclusive with FIXME not anymore MachineItemMultipart.
 	 * Only one of them is used, depending on availability of multipart.
 	 * <p>
 	 * {@link MachineMultipart} -> Multipart wrapper for all these machines.

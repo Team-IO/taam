@@ -1,31 +1,17 @@
 package net.teamio.taam;
 
-import mcmultipart.capabilities.ISlottedCapabilityProvider;
-import mcmultipart.multipart.IMultipart;
-import mcmultipart.multipart.IMultipartContainer;
-import mcmultipart.multipart.IPartFactory.IAdvancedPartFactory;
-import mcmultipart.multipart.ISlottedPart;
-import mcmultipart.multipart.MultipartHelper;
-import mcmultipart.multipart.MultipartRegistry;
-import mcmultipart.multipart.PartSlot;
 import net.minecraft.item.Item;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.teamio.taam.machines.IMachineMetaInfo;
-import net.teamio.taam.machines.MachineItemMultipart;
-import net.teamio.taam.machines.MachineMultipart;
 
 public class MultipartHandler {
 
 	public static void registerMultipartStuff() {
 
-		MultipartRegistry.registerPartFactory(new IAdvancedPartFactory() {
+		/*MultipartRegistry.registerPartFactory(new IAdvancedPartFactory() {
 			@Override
 			public IMultipart createPart(ResourceLocation type, NBTTagCompound tag) {
 				IMachineMetaInfo meta = Taam.MACHINE_META.fromId(type.getResourcePath());
@@ -41,15 +27,16 @@ public class MultipartHandler {
 				multipart.readUpdatePacket(buf);
 				return multipart;
 			}
-		}, Taam.MACHINE_META.valuesAsString());
+		}, Taam.MACHINE_META.valuesAsString());*/
 	}
 
 	public static Item createMultipartItem(IMachineMetaInfo[] meta) {
-		return new MachineItemMultipart(meta);
+		return null;
+		//return new MachineItemMultipart(meta);
 	}
 
 	public static <T> T getCapabilityForCenter(Capability<T> capability, IBlockAccess world, BlockPos pos, EnumFacing facing) {
-		IMultipartContainer container = MultipartHelper.getPartContainer(world, pos);
+		/*IMultipartContainer container = MultipartHelper.getPartContainer(world, pos);
 		if(container == null) {
 			return null;
 		}
@@ -68,6 +55,7 @@ public class MultipartHandler {
 				return capProvider.getCapability(capability, facing);
 		}
 		// Fallback, ask the container
-		return container.getCapability(capability, PartSlot.CENTER, facing);
+		return container.getCapability(capability, PartSlot.CENTER, facing);*/
+		return null;
 	}
 }

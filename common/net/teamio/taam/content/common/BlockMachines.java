@@ -7,11 +7,11 @@ import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -24,8 +24,6 @@ import net.teamio.taam.Taam.BLOCK_MACHINES_META;
 import net.teamio.taam.content.BaseBlock;
 import net.teamio.taam.content.piping.TileEntityCreativeWell;
 import net.teamio.taam.rendering.obj.OBJModel;
-
-import java.util.List;
 
 public class BlockMachines extends BaseBlock {
 
@@ -40,7 +38,7 @@ public class BlockMachines extends BaseBlock {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public BlockRenderLayer getBlockLayer() {
+	public BlockRenderLayer getRenderLayer() {
 		return BlockRenderLayer.CUTOUT;
 	}
 
@@ -88,15 +86,15 @@ public class BlockMachines extends BaseBlock {
 			i = 0;
 		}
 
-		return super.getUnlocalizedName() + "." + values[i].name();
+		return super.getTranslationKey() + "." + values[i].name();
 	}
 
+
 	@Override
-	@SideOnly(Side.CLIENT)
-	public void getSubBlocks(Item item, CreativeTabs creativeTab, List<ItemStack> list) {
+	public void getSubBlocks(CreativeTabs itemIn, NonNullList<ItemStack> items) {
 		BLOCK_MACHINES_META[] values = Taam.BLOCK_MACHINES_META.values();
 		for (int i = 0; i < values.length; i++) {
-			list.add(new ItemStack(item, 1, i));
+			items.add(new ItemStack(this, 1, i));
 		}
 	}
 

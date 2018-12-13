@@ -30,8 +30,8 @@ public class ConveyorUtil {
 	public static final double oneThird = 1 / 3.0;
 
 	private static boolean tryInsert(TileEntity tileEntity, EntityItem ei) {
-		ItemStack entityItemStack = ei.getEntityItem();
-		if (entityItemStack.stackSize == 0 || entityItemStack.getItem() == null) {
+		ItemStack entityItemStack = ei.getItem();
+		if (entityItemStack.getCount() == 0 || entityItemStack.getItem() == null) {
 			// We are tidy. Clean up "empty" item entities
 			ei.setDead();
 			return false;
@@ -50,7 +50,7 @@ public class ConveyorUtil {
 					// Then check vertical position
 					&& relativeY > conveyorTE.getInsertMinY() && relativeY < conveyorTE.getInsertMaxY()) {
 
-				int previousStackSize = entityItemStack.stackSize;
+				int previousStackSize = entityItemStack.getCount();
 
 				// Insert into conveyor at the determined slot
 				int added = conveyorTE.insertItemAt(entityItemStack, slot, false);
@@ -60,8 +60,8 @@ public class ConveyorUtil {
 					ei.setDead();
 					return true;
 				} else if (added > 0) {
-					entityItemStack.stackSize = previousStackSize - added;
-					ei.setEntityItemStack(entityItemStack);
+					entityItemStack.setCount(previousStackSize - added);
+					ei.setItem(entityItemStack);
 					return true;
 				}
 			}
@@ -83,7 +83,7 @@ public class ConveyorUtil {
 					// If the instance is still the same, it was not changed by
 					// the itemHandler > nothing inserted.
 					if (notInserted != entityItemStack) {
-						ei.setEntityItemStack(notInserted);
+						ei.setItem(notInserted);
 						return true;
 					}
 				}
@@ -143,13 +143,13 @@ public class ConveyorUtil {
 
 	public static int getNextSlotUnwrapped(int slot, EnumFacing dir) {
 		// X-Offset skips whole rows
-		int frontOffsetX = dir.getFrontOffsetX();
+		int frontOffsetX = dir.getXOffset();
 		if (frontOffsetX != 0) {
 			slot += frontOffsetX * 3;
 		}
 		// Z-Offset translates only regular,
 		// but certain ones skip to the next row
-		int frontOffsetZ = dir.getFrontOffsetZ();
+		int frontOffsetZ = dir.getZOffset();
 		if (frontOffsetZ != 0) {
 			int col = slot % 3;
 			col += frontOffsetZ;
@@ -161,7 +161,7 @@ public class ConveyorUtil {
 				slot += frontOffsetZ;
 			}
 		}
-		int frontOffsetY = dir.getFrontOffsetY();
+		int frontOffsetY = dir.getYOffset();
 		if (frontOffsetY != 0) {
 			// Offset by 9 is the same slot, but marks it as wrapped
 			slot += 9 * frontOffsetY;
@@ -271,7 +271,7 @@ public class ConveyorUtil {
 
 	public static double getItemPositionX(int slot, double progress, EnumFacing dir) {
 		double x = getItemPositionX(slot);
-		x += dir.getFrontOffsetX() * progress * oneThird;
+		x += dir.getXOffset() * progress * oneThird;
 		return x;
 	}
 
@@ -282,7 +282,7 @@ public class ConveyorUtil {
 
 	public static double getItemPositionZ(int slot, double progress, EnumFacing dir) {
 		double z = getItemPositionZ(slot);
-		z += dir.getFrontOffsetZ() * progress * oneThird;
+		z += dir.getZOffset() * progress * oneThird;
 		return z;
 	}
 
@@ -393,9 +393,9 @@ public class ConveyorUtil {
 				EntityItem item = new EntityItem(world, posX, posY, posZ, slotObject.itemStack);
 				if (withVelocity) {
 					float speed = (Byte.MAX_VALUE - speedsteps) * 0.0019f;
-					item.motionX = direction.getFrontOffsetX() * speed;
-					item.motionY = direction.getFrontOffsetY() * speed;
-					item.motionZ = direction.getFrontOffsetZ() * speed;
+					item.motionX = direction.getXOffset() * speed;
+					item.motionY = direction.getYOffset() * speed;
+					item.motionZ = direction.getZOffset() * speed;
 				} else {
 					item.motionX = 0;
 					item.motionY = 0;
@@ -413,10 +413,12 @@ public class ConveyorUtil {
 
 		int transferred = nextBlock.insertItemAt(slotObject.itemStack.copy(), nextSlot, false);
 		if (transferred > 0) {
-			slotObject.itemStack.stackSize -= transferred;
-			if (slotObject.itemStack.stackSize <= 0) {
+			int count = slotObject.itemStack.getCount() - transferred;
+			if (count <= 0) {
 				// Stack moved completely
 				slotObject.itemStack = null;
+			} else {
+				slotObject.itemStack.setCount(count);
 			}
 			// Something moved
 			return true;
@@ -449,13 +451,13 @@ public class ConveyorUtil {
 				slotObject.unblock();
 				slotObject.resetMovement();
 			}
-			return item.stackSize;
+			return item.getCount();
 		} else if (slotObject.itemStack.isItemEqual(item)) {
-			int availableSpace = slotObject.itemStack.getMaxStackSize() - slotObject.itemStack.stackSize;
+			int availableSpace = slotObject.itemStack.getMaxStackSize() - slotObject.itemStack.getCount();
 			if (availableSpace > 0) {
-				availableSpace = Math.min(availableSpace, item.stackSize);
+				availableSpace = Math.min(availableSpace, item.getCount());
 				if (!simulate) {
-					slotObject.itemStack.stackSize += availableSpace;
+					slotObject.itemStack.setCount(slotObject.itemStack.getCount() + availableSpace);
 				}
 				return availableSpace;
 			}
@@ -668,10 +670,10 @@ public class ConveyorUtil {
 		} else if (!isBlacklistedForConveyor(playerStack)) {
 			// Put on conveyor
 			int inserted = tileEntity.insertItemAt(playerStack, clickedSlot, false);
-			if (inserted == playerStack.stackSize) {
+			if (inserted == playerStack.getCount()) {
 				player.inventory.setInventorySlotContents(playerSlot, null);
 			} else {
-				playerStack.stackSize -= inserted;
+				playerStack.setCount(playerStack.getCount() - inserted);
 				player.inventory.setInventorySlotContents(playerSlot, playerStack);
 			}
 		}

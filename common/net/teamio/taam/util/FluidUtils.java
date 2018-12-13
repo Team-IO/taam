@@ -8,7 +8,6 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.wrappers.FluidHandlerWrapper;
 
 public final class FluidUtils {
 	private FluidUtils() {
@@ -41,11 +40,6 @@ public final class FluidUtils {
 			return null;
 		}
 		IFluidHandler fluidHandler = tileEntity.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side);
-
-		// Wrapper for the old fluid handlers for now - once the old system is removed, this can be removed as well.
-		if(fluidHandler == null && tileEntity instanceof net.minecraftforge.fluids.IFluidHandler) {
-			fluidHandler = new FluidHandlerWrapper((net.minecraftforge.fluids.IFluidHandler)tileEntity, side);
-		}
 
 		// Fallback if someone directly implemented the capability interface - not recommended, this is just for compatibility
 		if(fluidHandler == null && tileEntity instanceof IFluidHandler) {

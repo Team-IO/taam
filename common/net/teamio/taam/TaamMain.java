@@ -34,6 +34,7 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -78,7 +79,6 @@ import net.teamio.taam.gui.GuiHandler;
 import net.teamio.taam.gui.advanced.IAdvancedMachineGUI;
 import net.teamio.taam.machines.MachineBlock;
 import net.teamio.taam.machines.MachineItemBlock;
-import net.teamio.taam.machines.MachineItemMultipart;
 import net.teamio.taam.machines.MachineTileEntity;
 import net.teamio.taam.piping.IPipe;
 import net.teamio.taam.piping.PipeEnd;
@@ -118,7 +118,7 @@ public class TaamMain {
 	 */
 	public static MachineBlock blockMachine;
 	/**
-	 * Either {@link MachineItemBlock} or {@link MachineItemMultipart},
+	 * Either {@link MachineItemBlock} or old, FIXME not anymore MachineItemMultipart,
 	 * depending on availability of multipart.
 	 */
 	public static Item itemMachine;
@@ -155,17 +155,17 @@ public class TaamMain {
 	}
 
 	private static void registerBlock(Block block, String name) {
-		block.setUnlocalizedName(Taam.MOD_ID + "." + name);
+		block.setTranslationKey(Taam.MOD_ID + "." + name);
 		block.setCreativeTab(creativeTab);
 		block.setRegistryName(name);
-		GameRegistry.register(block);
+		ForgeRegistries.BLOCKS.register(block);
 	}
 
 	private static void registerItem(Item item, String name) {
-		item.setUnlocalizedName(Taam.MOD_ID + "." + name);
+		item.setTranslationKey(Taam.MOD_ID + "." + name);
 		item.setCreativeTab(creativeTab);
 		item.setRegistryName(name);
-		GameRegistry.register(item);
+		ForgeRegistries.ITEMS.register(item);
 	}
 
 	@EventHandler
@@ -198,17 +198,10 @@ public class TaamMain {
 
 		Config.init(event.getSuggestedConfigurationFile());
 		creativeTab = new CreativeTabs(Taam.MOD_ID) {
-
 			@Override
 			@SideOnly(Side.CLIENT)
-			public ItemStack getIconItemStack() {
+			public ItemStack createIcon() {
 				return new ItemStack(blockProductionLine, 1, 1);
-			}
-
-			@Override
-			@SideOnly(Side.CLIENT)
-			public Item getTabIconItem() {
-				return null;
 			}
 		};
 
@@ -567,7 +560,7 @@ public class TaamMain {
 
 		soundSipAh = new SoundEvent(Taam.SOUND_SIP_AH);
 		soundSipAh.setRegistryName(Taam.SOUND_SIP_AH);
-		GameRegistry.register(soundSipAh);
+		ForgeRegistries.SOUND_EVENTS.register(soundSipAh);
 
 		/*
 		 * Network
