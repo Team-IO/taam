@@ -198,7 +198,7 @@ public class GuiAdvancedMachine extends GuiContainer {
 			int halfWidth = xSize / 2;
 
 			String name = machineContainer.machine.getDisplayName().getFormattedText();
-			drawCenteredString(fontRendererObj, name, halfWidth, 10, 0xFFFFFF);
+			drawCenteredString(fontRenderer, name, halfWidth, 10, 0xFFFFFF);
 		} else {
 			machineContainer.activeApp.gui.drawForeground(this, mouseX, mouseY);
 		}

@@ -23,13 +23,13 @@ public class ItemWrapper implements INBTSerializable<NBTTagCompound>{
 
 	public ItemStack itemStack;
 	public byte movementProgress;
-	
+
 	@SideOnly(Side.CLIENT)
 	private boolean stuck;
 
 	public ItemWrapper() {
 	}
-	
+
 	public ItemWrapper(ItemStack itemStack) {
 		this.itemStack = itemStack;
 	}
@@ -42,12 +42,12 @@ public class ItemWrapper implements INBTSerializable<NBTTagCompound>{
 		if (itemStack == null) {
 			return 0;
 		}
-		return itemStack.stackSize;
+		return itemStack.getCount();
 	}
 
 	public void setStackSize(int stackSize) {
 		if (itemStack != null) {
-			itemStack.stackSize = stackSize;
+			itemStack.setCount(stackSize);
 		}
 	}
 
@@ -95,11 +95,11 @@ public class ItemWrapper implements INBTSerializable<NBTTagCompound>{
 			movementProgress = 0;
 		}
 	}
-	
+
 	/**
 	 * Sets a client-side flag used for rendering. Stuck wrappers are not
 	 * interpolated in between game ticks to prevent stuttering.
-	 * 
+	 *
 	 * @param value
 	 */
 	@SideOnly(Side.CLIENT)
@@ -110,7 +110,7 @@ public class ItemWrapper implements INBTSerializable<NBTTagCompound>{
 	/**
 	 * Gets a client-side flag used for rendering. Stuck wrappers are not
 	 * interpolated in between game ticks to prevent stuttering.
-	 * 
+	 *
 	 * @return
 	 */
 	@SideOnly(Side.CLIENT)
@@ -121,10 +121,10 @@ public class ItemWrapper implements INBTSerializable<NBTTagCompound>{
 	/**
 	 * Checks whether the client-side rendering shall be interpolated in between
 	 * game ticks.
-	 * 
+	 *
 	 * Checks if the wrapper is neither stuck (client-side flag), blocked nor
 	 * empty. (Last one especially for highlight box rendering)
-	 * 
+	 *
 	 * @return
 	 */
 	@SideOnly(Side.CLIENT)
@@ -150,7 +150,7 @@ public class ItemWrapper implements INBTSerializable<NBTTagCompound>{
 
 	@Override
 	public void deserializeNBT(NBTTagCompound nbt) {
-		itemStack = ItemStack.loadItemStackFromNBT(nbt);
+		itemStack = new ItemStack(nbt);
 		movementProgress = nbt.getByte("move");
 	}
 

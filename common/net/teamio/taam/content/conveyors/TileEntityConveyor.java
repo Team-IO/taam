@@ -298,7 +298,7 @@ public class TileEntityConveyor extends BaseTileEntity implements IRotatable, IC
 
 	@Override
 	protected void readPropertiesFromNBT(NBTTagCompound tag) {
-		direction = EnumFacing.getFront(tag.getInteger("direction"));
+		direction = EnumFacing.byIndex(tag.getInteger("direction"));
 		if (direction == EnumFacing.UP || direction == EnumFacing.DOWN) {
 			direction = EnumFacing.NORTH;
 		}
@@ -311,10 +311,10 @@ public class TileEntityConveyor extends BaseTileEntity implements IRotatable, IC
 
 	@Override
 	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-		if(capability == Taam.CAPABILITY_CONVEYOR) {
+		if (capability == Taam.CAPABILITY_CONVEYOR) {
 			return true;
 		}
-		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+		if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
 			return true;
 		}
 		return super.hasCapability(capability, facing);
@@ -323,10 +323,10 @@ public class TileEntityConveyor extends BaseTileEntity implements IRotatable, IC
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-		if(capability == Taam.CAPABILITY_CONVEYOR) {
+		if (capability == Taam.CAPABILITY_CONVEYOR) {
 			return (T) conveyorSlots;
 		}
-		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+		if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
 			return (T) conveyorSlots.getItemHandler(facing);
 		}
 		return super.getCapability(capability, facing);
@@ -353,7 +353,7 @@ public class TileEntityConveyor extends BaseTileEntity implements IRotatable, IC
 		}
 		conveyorSlots.rotation = direction;
 		updateState(false, true, true);
-		world.notifyBlockOfStateChange(pos, blockType);
+		world.notifyNeighborsRespectDebug(pos, blockType, true);
 		if (blockType != null) {
 			blockType.onNeighborChange(world, pos, pos);
 		}
@@ -400,7 +400,7 @@ public class TileEntityConveyor extends BaseTileEntity implements IRotatable, IC
 	 */
 	@Override
 	public boolean onBlockActivated(World world, EntityPlayer player, EnumHand hand, boolean hasWrench, EnumFacing side,
-			float hitX, float hitY, float hitZ) {
+	                                float hitX, float hitY, float hitZ) {
 		ItemStack held = player.getHeldItem(hand);
 		if (speedLevel == 1 && held != null && held.getItem() == TaamMain.itemPart
 				&& held.getMetadata() == Taam.ITEM_PART_META.redirector.ordinal()) {
@@ -409,8 +409,8 @@ public class TileEntityConveyor extends BaseTileEntity implements IRotatable, IC
 			if (redirectorSide == RedirectorSide.Left) {
 				if (!redirectorLeft) {
 					setRedirectorLeft(true);
-					if(!player.capabilities.isCreativeMode) {
-						held.stackSize--;
+					if (!player.capabilities.isCreativeMode) {
+						held.setCount(held.getCount() - 1);
 					}
 					return true;
 				}
@@ -418,8 +418,8 @@ public class TileEntityConveyor extends BaseTileEntity implements IRotatable, IC
 			} else if (redirectorSide == RedirectorSide.Right) {
 				if (!redirectorRight) {
 					setRedirectorRight(true);
-					if(!player.capabilities.isCreativeMode) {
-						held.stackSize--;
+					if (!player.capabilities.isCreativeMode) {
+						held.setCount(held.getCount() - 1);
 					}
 					return true;
 				}

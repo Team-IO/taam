@@ -8,7 +8,6 @@ import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -67,11 +66,11 @@ public class BlockLamp extends Block {
 
 	@Override
 	public IBlockState getStateFromMeta(int meta) {
-		return getDefaultState().withProperty(DIRECTION, EnumFacing.getFront(meta & 7)).withProperty(POWERED, (meta & 8) != 0).withProperty(ATTACHED, false);
+		return getDefaultState().withProperty(DIRECTION, EnumFacing.byIndex(meta & 7)).withProperty(POWERED, (meta & 8) != 0).withProperty(ATTACHED, false);
 	}
 
 	@Override
-	public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, World worldIn, BlockPos pos) {
+	public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
 		return null;
 	}
 
@@ -176,9 +175,9 @@ public class BlockLamp extends Block {
 	}
 
 	@Override
-	public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn) {
+	public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
 
-		boolean isOn = state.getValue(POWERED);
+		boolean isOn = worldIn.getBlockState(pos).getValue(POWERED);
 
 		boolean powered = worldIn.isBlockPowered(pos);
 
@@ -197,7 +196,7 @@ public class BlockLamp extends Block {
 	}
 
 	@Override
-	public boolean isBlockSolid(IBlockAccess worldIn, BlockPos pos, EnumFacing side) {
+	public boolean causesSuffocation(IBlockState state) {
 		return false;
 	}
 
@@ -208,7 +207,7 @@ public class BlockLamp extends Block {
 
 	@Override
 	public boolean isFullCube(IBlockState state) {
-		// Required false to prevent suffocation
+		// Required false to prevent suffocation (not actually, causesSuffocation is overridden above)
 		return false;
 	}
 

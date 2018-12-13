@@ -145,7 +145,7 @@ public class ItemFilterCustomizable implements IItemFilter {
 			NBTTagCompound entryTag = nbt.getCompoundTag("entry" + i);
 			ItemStack entry;
 			if (entryTag.getBoolean("defined")) {
-				entry = ItemStack.loadItemStackFromNBT(entryTag);
+				entry = new ItemStack(entryTag);
 			} else {
 				entry = null;
 			}

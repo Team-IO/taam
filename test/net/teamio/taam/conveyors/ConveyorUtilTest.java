@@ -6,8 +6,7 @@ import net.minecraft.init.Items;
 import net.minecraft.init.PotionTypes;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionUtils;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.teamio.taam.Config;
 import net.teamio.taam.Taam;
 import net.teamio.taam.TaamMain;
@@ -26,13 +25,16 @@ public class ConveyorUtilTest extends AbstractTest {
 
 	@Override
 	public void setUpForEntireClass() {
-		GameRegistry.register(TaamMain.itemWrench = new ItemWrench(), new ResourceLocation(Taam.MOD_ID, Taam.ITEM_WRENCH));
+		TaamMain.itemWrench = new ItemWrench();
+		ForgeRegistries.ITEMS.register(TaamMain.itemWrench.setRegistryName(Taam.MOD_ID, Taam.ITEM_WRENCH));
 
-		GameRegistry.register(TaamMain.blockProductionLine = new BlockProductionLine(), new ResourceLocation(Taam.MOD_ID, Taam.BLOCK_PRODUCTIONLINE));
-		GameRegistry.register(new ItemProductionLine(TaamMain.blockProductionLine, Taam.BLOCK_PRODUCTIONLINE_META.valuesAsString()), new ResourceLocation(Taam.MOD_ID, Taam.BLOCK_PRODUCTIONLINE));
+		TaamMain.blockProductionLine = new BlockProductionLine();
+		ForgeRegistries.BLOCKS.register(TaamMain.blockProductionLine.setRegistryName(Taam.MOD_ID, Taam.BLOCK_PRODUCTIONLINE));
+		ForgeRegistries.ITEMS.register(new ItemProductionLine(TaamMain.blockProductionLine, Taam.BLOCK_PRODUCTIONLINE_META.valuesAsString()).setRegistryName(Taam.MOD_ID, Taam.BLOCK_PRODUCTIONLINE));
 
-		GameRegistry.register(TaamMain.blockProductionLineAppliance = new BlockProductionLineAppliance(), new ResourceLocation(Taam.MOD_ID, Taam.BLOCK_PRODUCTIONLINE_APPLIANCE));
-		GameRegistry.register(new ItemAttachable(TaamMain.blockProductionLineAppliance, Taam.BLOCK_PRODUCTIONLINE_APPLIANCE_META.valuesAsString()), new ResourceLocation(Taam.MOD_ID, Taam.BLOCK_PRODUCTIONLINE_APPLIANCE));
+		TaamMain.blockProductionLineAppliance = new BlockProductionLineAppliance();
+		ForgeRegistries.BLOCKS.register(TaamMain.blockProductionLineAppliance.setRegistryName(Taam.MOD_ID, Taam.BLOCK_PRODUCTIONLINE_APPLIANCE));
+		ForgeRegistries.ITEMS.register(new ItemAttachable(TaamMain.blockProductionLineAppliance, Taam.BLOCK_PRODUCTIONLINE_APPLIANCE_META.valuesAsString()).setRegistryName(Taam.MOD_ID, Taam.BLOCK_PRODUCTIONLINE_APPLIANCE));
 
 		Config.init(null);
 		Config.debug_output_as_info = true;

@@ -231,7 +231,7 @@ public final class ProcessingRegistryEntry {
 		}
 		String keyOreDict = recipe.getInputOreDict();
 
-		Log.debug("Registering item  recipe for machine {}: {}->{}", machineName, key == null ? keyOreDict : key.getUnlocalizedName(), recipe);
+		Log.debug("Registering item  recipe for machine {}: {}->{}", machineName, key == null ? keyOreDict : key.getRegistryName(), recipe);
 
 		IProcessingRecipe[] matches;
 

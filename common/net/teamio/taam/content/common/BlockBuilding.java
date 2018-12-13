@@ -7,13 +7,9 @@ import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.util.NonNullList;
 import net.teamio.taam.Taam;
-
-import java.util.List;
 
 public class BlockBuilding extends Block {
 
@@ -60,15 +56,14 @@ public class BlockBuilding extends Block {
 			i = 0;
 		}
 
-		return super.getUnlocalizedName() + "." + values[i].name();
+		return super.getTranslationKey() + "." + values[i].name();
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public void getSubBlocks(Item item, CreativeTabs creativeTab, List<ItemStack> list) {
+	public void getSubBlocks(CreativeTabs itemIn, NonNullList<ItemStack> items) {
 		Taam.BLOCK_CONCRETE_META[] values = Taam.BLOCK_CONCRETE_META.values();
 		for (int i = 0; i < values.length; i++) {
-			list.add(new ItemStack(item, 1, i));
+			items.add(new ItemStack(this, 1, i));
 		}
 	}
 

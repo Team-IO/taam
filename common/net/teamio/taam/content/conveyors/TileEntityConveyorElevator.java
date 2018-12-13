@@ -199,7 +199,7 @@ public class TileEntityConveyorElevator extends BaseTileEntity implements ITicka
 	protected void readPropertiesFromNBT(NBTTagCompound tag) {
 		conveyorSlots.deserializeNBT(tag.getTagList("items", NBT.TAG_COMPOUND));
 
-		direction = EnumFacing.getFront(tag.getInteger("direction"));
+		direction = EnumFacing.byIndex(tag.getInteger("direction"));
 		if (direction == EnumFacing.UP || direction == EnumFacing.DOWN) {
 			direction = EnumFacing.NORTH;
 		}
@@ -272,7 +272,7 @@ public class TileEntityConveyorElevator extends BaseTileEntity implements ITicka
 			this.direction = EnumFacing.NORTH;
 		}
 		updateState(false, true, true);
-		world.notifyBlockOfStateChange(pos, blockType);
+		world.notifyNeighborsRespectDebug(pos, blockType, true);
 		if (blockType != null) {
 			blockType.onNeighborChange(world, pos, pos);
 		}

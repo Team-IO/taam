@@ -98,7 +98,8 @@ public class TaamClientProxy extends TaamCommonProxy {
 
 		// If we load multipart, register multipart things, too
 		if (Config.multipart_load) {
-			MultipartHandlerClient.registerRenderStuff();
+			// TODO this config needs to be respected in the mc multipart integration, not here
+			//MultipartHandlerClient.registerRenderStuff();
 		}
 
 		// Receive event for Client Ticks

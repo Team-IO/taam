@@ -2,18 +2,17 @@ package net.teamio.taam.integration.jei;
 
 import com.google.common.collect.Lists;
 import mezz.jei.api.ingredients.IIngredients;
+import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeWrapper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.oredict.OreDictionary;
 import net.teamio.taam.recipes.ChanceBasedRecipe;
 import net.teamio.taam.recipes.ChancedOutput;
 import net.teamio.taam.recipes.IProcessingRecipe;
 import org.lwjgl.opengl.GL11;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ProcessingRecipeWrapper implements IRecipeWrapper {
@@ -24,7 +23,6 @@ public class ProcessingRecipeWrapper implements IRecipeWrapper {
 		this.recipe = recipe;
 	}
 
-	@Override
 	public List<ItemStack> getInputs() {
 		ItemStack input = recipe.getInput();
 		if (input == null) {
@@ -38,7 +36,6 @@ public class ProcessingRecipeWrapper implements IRecipeWrapper {
 		return Lists.newArrayList(input);
 	}
 
-	@Override
 	public List<ItemStack> getOutputs() {
 		List<ItemStack> outputs = Lists.newArrayList();
 		ChancedOutput[] output = recipe.getOutput();
@@ -53,21 +50,8 @@ public class ProcessingRecipeWrapper implements IRecipeWrapper {
 
 	@Override
 	public void getIngredients(IIngredients ingredients) {
-		List<List<ItemStack>> list = new ArrayList<List<ItemStack>>(1);
-		list.add(getInputs());
-		ingredients.setInputLists(ItemStack.class, list);
-
-		ingredients.setOutputs(ItemStack.class, getOutputs());
-	}
-
-	@Override
-	public List<FluidStack> getFluidInputs() {
-		return null;
-	}
-
-	@Override
-	public List<FluidStack> getFluidOutputs() {
-		return null;
+		ingredients.setInputs(VanillaTypes.ITEM, getInputs());
+		ingredients.setOutputs(VanillaTypes.ITEM, getOutputs());
 	}
 
 	@Override
@@ -81,7 +65,7 @@ public class ProcessingRecipeWrapper implements IRecipeWrapper {
 		}
 		GL11.glPushMatrix();
 		GL11.glScaled(0.5, 0.5, 1);
-		FontRenderer fontRendererObj = minecraft.fontRendererObj;
+		FontRenderer fontRendererObj = minecraft.fontRenderer;
 
 		for(int i = 0; i < output.length; i++) {
 			int r = i % ProcessingCategory.MAX_ROWS;
@@ -90,10 +74,6 @@ public class ProcessingRecipeWrapper implements IRecipeWrapper {
 			fontRendererObj.drawString(display + "%", (83 + c*18)*2, (3 + r*18)*2, 0x00AAAA00);
 		}
 		GL11.glPopMatrix();
-	}
-
-	@Override
-	public void drawAnimations(Minecraft minecraft, int recipeWidth, int recipeHeight) {
 	}
 
 	@Override

@@ -10,11 +10,10 @@ import net.minecraftforge.common.util.INBTSerializable;
  * does not reference any other inventory. This implementation will allow
  * insertion & removal & returns the slot if it is marked available by the slot
  * matrix.
- *
+ * <p>
  * This implementation does not mark the slots as moving.
  *
  * @author Oliver Kahrmann
- *
  */
 public class ConveyorSlotsStandard extends ConveyorSlotsBase implements INBTSerializable<NBTTagList> {
 
@@ -22,7 +21,7 @@ public class ConveyorSlotsStandard extends ConveyorSlotsBase implements INBTSeri
 
 	public ConveyorSlotsStandard() {
 		slots = new ItemWrapper[9];
-		for(int i = 0; i < 9; i++) {
+		for (int i = 0; i < 9; i++) {
 			slots[i] = new ItemWrapper(null);
 		}
 	}
@@ -30,11 +29,11 @@ public class ConveyorSlotsStandard extends ConveyorSlotsBase implements INBTSeri
 	@Override
 	public int insertItemAt(ItemStack item, int slot, boolean simulate) {
 		slot = MathHelper.clamp(slot, 0, 8);
-		if(!isSlotAvailable(slot)) {
+		if (!isSlotAvailable(slot)) {
 			return 0;
 		}
 		int count = ConveyorUtil.insertItemAt(this, item, slot, simulate);
-		if(count > 0) {
+		if (count > 0) {
 			onChangeHook();
 		}
 		return count;
@@ -43,15 +42,15 @@ public class ConveyorSlotsStandard extends ConveyorSlotsBase implements INBTSeri
 	@Override
 	public ItemStack removeItemAt(int slot, int amount, boolean simulate) {
 		slot = MathHelper.clamp(slot, 0, 8);
-		if(!isSlotAvailable(slot)) {
+		if (!isSlotAvailable(slot)) {
 			return null;
 		}
 		ItemWrapper wrapper = slots[slot];
 		ItemStack removed = wrapper.itemStack;
-		if(removed == null) {
+		if (removed == null) {
 			return null;
-		} else if(amount >= removed.stackSize) {
-			if(simulate) {
+		} else if (amount >= removed.getCount()) {
+			if (simulate) {
 				removed = removed.copy();
 			} else {
 				wrapper.itemStack = null;
@@ -60,9 +59,9 @@ public class ConveyorSlotsStandard extends ConveyorSlotsBase implements INBTSeri
 			return removed;
 		} else {
 			removed = removed.copy();
-			removed.stackSize = amount;
-			if(!simulate && amount > 0) {
-				wrapper.itemStack.stackSize -= amount;
+			removed.setCount(amount);
+			if (!simulate && amount > 0) {
+				wrapper.itemStack.setCount(wrapper.itemStack.getCount() - amount);
 				onChangeHook();
 			}
 			return removed;
@@ -72,7 +71,7 @@ public class ConveyorSlotsStandard extends ConveyorSlotsBase implements INBTSeri
 	@Override
 	public ItemWrapper getSlot(int slot) {
 		slot = MathHelper.clamp(slot, 0, 8);
-		if(isSlotAvailable(slot)) {
+		if (isSlotAvailable(slot)) {
 			return slots[slot];
 		}
 		return ItemWrapper.EMPTY;
@@ -98,8 +97,8 @@ public class ConveyorSlotsStandard extends ConveyorSlotsBase implements INBTSeri
 			for (int i = 0; i < count; i++) {
 				slots[i].deserializeNBT(nbt.getCompoundTagAt(i));
 			}
-			if(count < slots.length) {
-				for(int i = count; i < slots.length; i++) {
+			if (count < slots.length) {
+				for (int i = count; i < slots.length; i++) {
 					slots[i].itemStack = null;
 				}
 			}

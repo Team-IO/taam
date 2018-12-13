@@ -2,6 +2,7 @@ package net.teamio.taam.content.common;
 
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -19,6 +20,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.teamio.taam.util.WrenchUtil;
 
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
@@ -33,15 +35,15 @@ public class ItemWrench extends Item {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean detailInfo) {
+	public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
 
-		list.add(TextFormatting.DARK_GREEN + I18n.format("lore.taam.wrench"));
+		tooltip.add(TextFormatting.DARK_GREEN + I18n.format("lore.taam.wrench"));
 		if (!GuiScreen.isShiftKeyDown()) {
-			list.add(TextFormatting.DARK_PURPLE + I18n.format("lore.taam.shift"));
+			tooltip.add(TextFormatting.DARK_PURPLE + I18n.format("lore.taam.shift"));
 		} else {
 			String usage = I18n.format("lore.taam.wrench.usage");
 			//Split at literal \n in the translated text. a lot of escaping here.
-			Collections.addAll(list, usage.split("\\\\n"));
+			Collections.addAll(tooltip, usage.split("\\\\n"));
 		}
 	}
 
@@ -71,11 +73,11 @@ public class ItemWrench extends Item {
 	}
 
 	@Override
-	public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+	public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 		// This call is for vanilla blocks (mainly stairs). Chests & Furnace etc cannot be called by this.
 		// TODO: how to bypass the clicked tileentity?
 		// The productionline blocks do not use this call here, they are handled in the corresponding block class itself.
 		// This is done, so that wrenches from other mods can be supported eventually.
-		return WrenchUtil.wrenchBlock(worldIn, pos, playerIn, hand, facing, hitX, hitY, hitZ);
+		return WrenchUtil.wrenchBlock(worldIn, pos, player, hand, facing, hitX, hitY, hitZ);
 	}
 }

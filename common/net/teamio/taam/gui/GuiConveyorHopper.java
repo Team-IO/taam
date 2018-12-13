@@ -30,8 +30,8 @@ public class GuiConveyorHopper extends GuiContainer {
 
 	@Override
 	protected void drawGuiContainerForegroundLayer(int param1, int param2) {
-		fontRendererObj.drawString(TaamUtil.getTranslatedName(tileEntity), 8, 6, 0x404040);
-		fontRendererObj.drawString(TaamUtil.getTranslatedName(inventoryPlayer), 8, ySize - 96 + 2, 0x404040);
+		fontRenderer.drawString(TaamUtil.getTranslatedName(tileEntity), 8, 6, 0x404040);
+		fontRenderer.drawString(TaamUtil.getTranslatedName(inventoryPlayer), 8, ySize - 96 + 2, 0x404040);
 	}
 
 	@Override

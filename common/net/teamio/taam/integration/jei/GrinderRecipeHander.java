@@ -13,11 +13,6 @@ public class GrinderRecipeHander implements IRecipeHandler<GrinderRecipe> {
 	}
 
 	@Override
-	public String getRecipeCategoryUid() {
-		return getRecipeCategoryUid(null);
-	}
-
-	@Override
 	public String getRecipeCategoryUid(GrinderRecipe revipe) {
 		return Taam.INTEGRATION_JEI_CAT_GRINDER;
 	}

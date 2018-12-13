@@ -1,12 +1,15 @@
 package net.teamio.taam.content;
 
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 /**
@@ -23,7 +26,7 @@ public class ItemWithMetadata<P extends Enum<P>> extends Item {
 	public abstract static class ItemDelegate<T extends Enum<T>> {
 		public abstract boolean isValidMetadata(T meta);
 
-		public abstract void addInformation(ItemStack stack, EntityPlayer player, List<String> lines, boolean detailedInfoSetting);
+		public abstract void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn);
 	}
 
 	private final P[] metaValues;
@@ -41,31 +44,30 @@ public class ItemWithMetadata<P extends Enum<P>> extends Item {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void addInformation(ItemStack stack, EntityPlayer player, List<String> lines, boolean detailedInfoSetting) {
+	public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
 		if(delegate != null) {
-			delegate.addInformation(stack, player, lines, detailedInfoSetting);
+			delegate.addInformation(stack, worldIn, tooltip, flagIn);
 		}
 	}
 
 	@Override
-	public String getUnlocalizedName(ItemStack itemStack) {
-		int i = itemStack.getItemDamage();
+	public String getTranslationKey(ItemStack stack) {
+		int i = stack.getItemDamage();
 
 		if (i < 0 || i >= metaValues.length) {
 			i = 0;
 		}
 
-		return this.getUnlocalizedName() + "." + metaValues[i].name();
+		return this.getTranslationKey() + "." + metaValues[i].name();
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public void getSubItems(Item item, CreativeTabs creativeTab, List<ItemStack> list) {
+	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
 		for (int i = 0; i < metaValues.length; i++) {
 			if(!isValidMetadata(i)) {
 				continue;
 			}
-			list.add(new ItemStack(item, 1, i));
+			items.add(new ItemStack(this, 1, i));
 		}
 	}
 

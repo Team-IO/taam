@@ -169,10 +169,10 @@ public class MachineTank implements IMachine, IPipePos, IWorldInteractable {
 
 	@Override
 	public void addCollisionBoxes(AxisAlignedBB mask, List<AxisAlignedBB> list, Entity collidingEntity) {
-		if (mask.intersectsWith(bbTank)) {
+		if (mask.intersects(bbTank)) {
 			list.add(bbTank);
 		}
-		if (mask.intersectsWith(MachinePipe.bbBaseplate)) {
+		if (mask.intersects(MachinePipe.bbBaseplate)) {
 			list.add(MachinePipe.bbBaseplate);
 		}
 	}

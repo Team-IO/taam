@@ -19,6 +19,8 @@ import net.teamio.taam.content.BaseBlock;
 import net.teamio.taam.content.MaterialMachinesTransparent;
 import net.teamio.taam.rendering.obj.OBJModel;
 
+import javax.annotation.Nullable;
+
 public class BlockSensor extends BaseBlock {
 
 	public static final PropertyEnum<EnumFacing> DIRECTION = PropertyEnum.create("direction", EnumFacing.class, EnumFacing.VALUES);
@@ -62,11 +64,12 @@ public class BlockSensor extends BaseBlock {
 
 	@Override
 	public IBlockState getStateFromMeta(int meta) {
-		return getDefaultState().withProperty(DIRECTION, EnumFacing.getFront(meta));
+		return getDefaultState().withProperty(DIRECTION, EnumFacing.byIndex(meta));
 	}
 
+	@Nullable
 	@Override
-	public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, World worldIn, BlockPos pos) {
+	public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
 		return null;
 	}
 
@@ -165,15 +168,14 @@ public class BlockSensor extends BaseBlock {
 		return te == null ? 0 : te.getRedstoneLevel();
 	}
 
-
 	@Override
-	public boolean isBlockSolid(IBlockAccess worldIn, BlockPos pos, EnumFacing side) {
+	public boolean causesSuffocation(IBlockState state) {
 		return false;
 	}
 
 	@Override
 	public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state) {
-		worldIn.notifyNeighborsOfStateChange(pos, this);
+		worldIn.notifyNeighborsOfStateChange(pos, this, true);
 	}
 
 	@Override

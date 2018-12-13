@@ -171,7 +171,7 @@ public class ApplianceSprayer extends ATileEntityAppliance implements ITickable,
 		 */
 
 		ItemStack result = recipe.getOutput(wrapper.itemStack)[0];
-		result.stackSize = wrapper.itemStack.stackSize;
+		result.setCount(wrapper.itemStack.getCount());
 
 		// Fix for re-coloring to the same color (Output == Input)
 		if (result.isItemEqual(wrapper.itemStack)) {
@@ -183,7 +183,7 @@ public class ApplianceSprayer extends ATileEntityAppliance implements ITickable,
 		 * Check fluid requirements
 		 */
 
-		int requiredAmount = wrapper.itemStack.stackSize * recipe.getInputFluid().amount;
+		int requiredAmount = wrapper.itemStack.getCount() * recipe.getInputFluid().amount;
 
 		FluidStack inTank = tank.getFluid();
 

@@ -1,10 +1,12 @@
 package net.teamio.taam.conveyors;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IStringSerializable;
+import net.minecraft.world.World;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 /**
@@ -24,7 +26,7 @@ public interface IConveyorApplianceMetaInfo extends IStringSerializable  {
 
 	String unlocalizedName();
 
-	void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced);
+	void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn);
 
 
 }

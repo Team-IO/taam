@@ -41,7 +41,7 @@ public class TileEntityCreativeCache extends BaseTileEntity implements IInventor
 	protected void readPropertiesFromNBT(NBTTagCompound tag) {
 		NBTTagCompound templateTag = tag.getCompoundTag("template");
 		if(templateTag != null) {
-			template = ItemStack.loadItemStackFromNBT(templateTag);
+			template = new ItemStack(templateTag);
 		} else {
 			template = null;
 		}
@@ -69,6 +69,12 @@ public class TileEntityCreativeCache extends BaseTileEntity implements IInventor
 	 * IInventory implementation
 	 */
 
+
+	@Override
+	public boolean isEmpty() {
+		return template == null;
+	}
+
 	@Override
 	public int getSizeInventory() {
 		return 1;
@@ -88,7 +94,7 @@ public class TileEntityCreativeCache extends BaseTileEntity implements IInventor
 			return null;
 		}
 		ItemStack clone = template.copy();
-		clone.stackSize = Math.min(amount, clone.getMaxStackSize());
+		clone.setCount(Math.min(amount, clone.getMaxStackSize()));
 		return clone;
 	}
 

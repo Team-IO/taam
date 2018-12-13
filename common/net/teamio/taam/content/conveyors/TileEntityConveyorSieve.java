@@ -93,7 +93,7 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements IRotatabl
 			needsUpdate = true;
 		}
 
-		boolean redstoneHigh = world.isBlockIndirectlyGettingPowered(pos) > 0;
+		boolean redstoneHigh = world.getRedstonePowerFromNeighbors(pos) > 0;
 
 		boolean newShutdown = TaamUtil.isShutdown(world.rand, redstoneMode, redstoneHigh);
 
@@ -192,7 +192,7 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements IRotatabl
 
 	@Override
 	protected void readPropertiesFromNBT(NBTTagCompound tag) {
-		direction = EnumFacing.getFront(tag.getInteger("direction"));
+		direction = EnumFacing.byIndex(tag.getInteger("direction"));
 		if(direction == EnumFacing.UP || direction == EnumFacing.DOWN) {
 			direction = EnumFacing.NORTH;
 		}
@@ -244,7 +244,7 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements IRotatabl
 		}
 		conveyorSlots.rotation = direction;
 		updateState(false, true, true);
-		world.notifyBlockOfStateChange(pos, blockType);
+		world.notifyNeighborsRespectDebug(pos, blockType, true);
 		if(blockType != null) {
 			blockType.onNeighborChange(world, pos, pos);
 		}

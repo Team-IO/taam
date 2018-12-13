@@ -269,7 +269,7 @@ public final class TaamUtil {
 	public static boolean isModMatch(ItemStack stack1, ItemStack stack2) {
 		ResourceLocation regName1 = stack1.getItem().getRegistryName();
 		ResourceLocation regName2 = stack2.getItem().getRegistryName();
-		return regName1.getResourceDomain().equals(regName2.getResourceDomain());
+		return regName1.getNamespace().equals(regName2.getNamespace());
 	}
 
 	/**

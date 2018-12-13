@@ -296,13 +296,13 @@ public class MachinePipe implements IMachine, IPipe, IRenderable {
 
 	@Override
 	public void addCollisionBoxes(AxisAlignedBB mask, List<AxisAlignedBB> list, Entity collidingEntity) {
-		if (mask.intersectsWith(bbCenter)) {
+		if (mask.intersects(bbCenter)) {
 			list.add(bbCenter);
 		}
 		for (EnumFacing side : EnumFacing.VALUES) {
 			if (isSideConnected(side)) {
 				AxisAlignedBB box = bbFaces[side.ordinal()];
-				if (mask.intersectsWith(box)) {
+				if (mask.intersects(box)) {
 					list.add(box);
 				}
 			}

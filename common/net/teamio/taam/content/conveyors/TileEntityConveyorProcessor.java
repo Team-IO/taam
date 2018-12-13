@@ -111,12 +111,12 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements IReds
 
 		if(!isCoolingDown()) {
 			ItemStack stack = itemHandler.getStackInSlot(0);
-			if(stack == null || stack.stackSize < stack.getMaxStackSize()) {
+			if(stack == null || stack.getCount() < stack.getMaxStackSize()) {
 				ConveyorUtil.tryInsertItemsFromWorld(this, world, null, false);
 			}
 		}
 
-		boolean redstoneHigh = world.isBlockIndirectlyGettingPowered(pos) > 0;
+		boolean redstoneHigh = world.getRedstonePowerFromNeighbors(pos) > 0;
 
 		boolean newShutdown = TaamUtil.isShutdown(world.rand, redstoneMode, redstoneHigh);
 
@@ -312,7 +312,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements IReds
 		// redstoneMode = tag.getByte("redstoneMode");
 		timeout = tag.getInteger("timeout");
 		isShutdown = tag.getBoolean("isShutdown");
-		direction = EnumFacing.getFront(tag.getInteger("direction"));
+		direction = EnumFacing.byIndex(tag.getInteger("direction"));
 		if (direction == EnumFacing.UP || direction == EnumFacing.DOWN) {
 			direction = EnumFacing.NORTH;
 		}

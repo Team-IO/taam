@@ -68,7 +68,7 @@ public class ContainerConveyorSmallInventory extends Container {
 				}
 			}
 
-			if (stackInSlot == null || stackInSlot.stackSize == 0) {
+			if (stackInSlot == null || stackInSlot.getCount() == 0) {
 				slot.putStack(null);
 			} else {
 				slot.onSlotChanged();

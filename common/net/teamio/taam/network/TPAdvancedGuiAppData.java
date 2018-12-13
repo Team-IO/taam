@@ -25,7 +25,7 @@ public class TPAdvancedGuiAppData implements IMessage {
 			if (ctx.side == Side.CLIENT) {
 				container = Minecraft.getMinecraft().player.openContainer;
 			} else {
-				container = ctx.getServerHandler().playerEntity.openContainer;
+				container = ctx.getServerHandler().player.openContainer;
 			}
 			if (container instanceof ContainerAdvancedMachine) {
 				ContainerAdvancedMachine containerAdvanced = (ContainerAdvancedMachine) container;
@@ -50,7 +50,7 @@ public class TPAdvancedGuiAppData implements IMessage {
 
 	/**
 	 * Create a new packet with given tag and app container id.
-	 * 
+	 *
 	 * @param tag
 	 * @param appContainerId
 	 */

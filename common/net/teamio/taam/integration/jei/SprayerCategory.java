@@ -8,7 +8,6 @@ import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.BlankRecipeCategory;
 import mezz.jei.api.recipe.IRecipeWrapper;
-import mezz.jei.util.Log;
 import mezz.jei.util.Translator;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -22,6 +21,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
 import net.teamio.taam.Config;
+import net.teamio.taam.Log;
 import net.teamio.taam.Taam;
 import net.teamio.taam.TaamMain;
 import net.teamio.taam.recipes.IProcessingRecipe;
@@ -49,6 +49,11 @@ public class SprayerCategory extends BlankRecipeCategory {
 		renderStackSprayer = new ItemStack(TaamMain.blockProductionLineAppliance, 1, Taam.BLOCK_PRODUCTIONLINE_APPLIANCE_META.sprayer.metaData());
 	}
 
+	@Override
+	public String getModName() {
+		return Taam.MOD_NAME;
+	}
+
 	@Nonnull
 	@Override
 	public String getUid() {
@@ -69,7 +74,7 @@ public class SprayerCategory extends BlankRecipeCategory {
 
 	@Override
 	public void drawExtras(Minecraft minecraft) {
-		if(Config.jei_render_machines_into_gui) {
+		if (Config.jei_render_machines_into_gui) {
 			TextureManager texturemanager = minecraft.renderEngine;
 			texturemanager.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 
@@ -93,37 +98,32 @@ public class SprayerCategory extends BlankRecipeCategory {
 			GL11.glPopMatrix();
 		}
 		{
-			FontRenderer fontRendererObj = minecraft.fontRendererObj;
+			FontRenderer fontRendererObj = minecraft.fontRenderer;
 
 			GL11.glPushMatrix();
 
 			GL11.glScaled(.5, .5, 1);
 
 			String display = Translator.translateToLocalFormatted(Taam.INTEGRATION_JEI_LORE_INTERNAL_CAPACITY, Config.pl_sprayer_capacity);
-			fontRendererObj.drawString(display, 24*2, 3*2, 0x00555555, false);
+			fontRendererObj.drawString(display, 24 * 2, 3 * 2, 0x00555555, false);
 
 			GL11.glPopMatrix();
 		}
 	}
 
 	@Override
-	public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull IRecipeWrapper recipeWrapper) {
-		setRecipe(recipeLayout, recipeWrapper, null);
-	}
-
-	@Override
 	public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull IRecipeWrapper recipeWrapper, @Nonnull IIngredients ingredients) {
-		if(!(recipeWrapper instanceof ProcessingRecipeWrapper)) {
+		if (!(recipeWrapper instanceof ProcessingRecipeWrapper)) {
 			Log.error("RecipeWrapper type unknown: {}", recipeWrapper);
 			return;
 		}
-		ProcessingRecipeWrapper processingWrapper = (ProcessingRecipeWrapper)recipeWrapper;
+		ProcessingRecipeWrapper processingWrapper = (ProcessingRecipeWrapper) recipeWrapper;
 		IProcessingRecipe proRec = processingWrapper.recipe;
-		if(!(proRec instanceof SprayerRecipe)) {
+		if (!(proRec instanceof SprayerRecipe)) {
 			Log.error("Recipe type unknown: {}", proRec);
 			return;
 		}
-		SprayerRecipe recipe = (SprayerRecipe)proRec;
+		SprayerRecipe recipe = (SprayerRecipe) proRec;
 		FluidStack inputFluid = recipe.getInputFluid();
 		ItemStack input = recipe.getInput();
 		ItemStack output = recipe.getOutputStack();

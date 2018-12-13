@@ -51,7 +51,7 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable {
 			for(int i = 0; i < itemHandler.getSlots(); i++) {
 				ItemStack stack = itemHandler.getStackInSlot(i);
 				if(stack != null && stack.getItem() != null && stack.getMaxStackSize() > 0) {
-					float singleFillFactor = stack.stackSize / (float)stack.getMaxStackSize();
+					float singleFillFactor = stack.getCount() / (float)stack.getMaxStackSize();
 					fillPercent += singleFillFactor * stackFactor;
 				}
 			}
@@ -82,7 +82,7 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable {
 		if(itemTag != null) {
 			itemHandler.deserializeNBT(itemTag);
 		}
-		direction = EnumFacing.getFront(tag.getInteger("direction"));
+		direction = EnumFacing.byIndex(tag.getInteger("direction"));
 		conveyorSlots.rotation = direction;
 		blockUpdate();
 	}

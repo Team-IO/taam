@@ -24,8 +24,8 @@ public class GuiConveyorSmallInventory<T extends ICapabilityProvider & IWorldNam
 
 	@Override
 	protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-		fontRendererObj.drawString(TaamUtil.getTranslatedName(tileEntity), 8, 6, 0x404040);
-		fontRendererObj.drawString(TaamUtil.getTranslatedName(inventoryPlayer), 8, ySize - 96 + 2, 0x404040);
+		fontRenderer.drawString(TaamUtil.getTranslatedName(tileEntity), 8, 6, 0x404040);
+		fontRenderer.drawString(TaamUtil.getTranslatedName(inventoryPlayer), 8, ySize - 96 + 2, 0x404040);
 	}
 
 	@Override

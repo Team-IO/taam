@@ -2,9 +2,6 @@ package net.teamio.taam.integration.jei;
 
 import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.gui.IDrawable;
-import mezz.jei.api.gui.IRecipeLayout;
-import mezz.jei.api.ingredients.IIngredients;
-import mezz.jei.api.recipe.IRecipeWrapper;
 import mezz.jei.util.Translator;
 import net.minecraft.util.ResourceLocation;
 import net.teamio.taam.Taam;
@@ -22,6 +19,11 @@ public class GrinderCategory extends ProcessingCategory {
 	public GrinderCategory(IGuiHelper guiHelper) {
 		ResourceLocation bgLocation = new ResourceLocation("taam", "textures/gui/processors.png");
 		background = guiHelper.createDrawable(bgLocation, 0, 63, 162, 62);
+	}
+
+	@Override
+	public String getModName() {
+		return Taam.MOD_NAME;
 	}
 
 	@Nonnull

@@ -34,6 +34,7 @@ import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.content.MaterialMachinesTransparent;
 import net.teamio.taam.rendering.obj.OBJModel;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -89,7 +90,7 @@ public class MachineBlock extends BaseBlock implements ITileEntityProvider {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public BlockRenderLayer getBlockLayer() {
+	public BlockRenderLayer getRenderLayer() {
 		return BlockRenderLayer.CUTOUT;
 	}
 
@@ -146,7 +147,7 @@ public class MachineBlock extends BaseBlock implements ITileEntityProvider {
 	};
 
 	@Override
-	public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox, java.util.List<AxisAlignedBB> collidingBoxes, Entity entityIn) {
+	public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean isActualState) {
 		MachineTileEntity tileEntity = (MachineTileEntity)worldIn.getTileEntity(pos);
 
 		List<AxisAlignedBB> tempList = this.tempList.get();
@@ -199,7 +200,7 @@ public class MachineBlock extends BaseBlock implements ITileEntityProvider {
 		Vec3d eyes = player.getPositionEyes(0);
 		Vec3d look = player.getLook(0);
 		float reach = Minecraft.getMinecraft().playerController.getBlockReachDistance();
-		Vec3d dest = eyes.addVector(look.xCoord * reach, look.yCoord * reach, look.zCoord * reach);
+		Vec3d dest = eyes.add(look.x * reach, look.y * reach, look.z * reach);
 
 		// in that method, we update the closestBB
 		collisionRayTrace(state, worldIn, pos, eyes, dest);

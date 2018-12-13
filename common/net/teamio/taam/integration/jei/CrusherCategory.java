@@ -20,6 +20,11 @@ public class CrusherCategory extends ProcessingCategory {
 		background = guiHelper.createDrawable(bgLocation, 0, 0, 162, 62);
 	}
 
+	@Override
+	public String getModName() {
+		return Taam.MOD_NAME;
+	}
+
 	@Nonnull
 	@Override
 	public String getTitle() {

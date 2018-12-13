@@ -4,8 +4,8 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemMultiTexture;
@@ -17,6 +17,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
@@ -85,6 +86,7 @@ import net.teamio.taam.piping.PipeEnd;
 import net.teamio.taam.rendering.TankRenderInfo;
 import org.apache.commons.lang3.NotImplementedException;
 
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
@@ -292,12 +294,11 @@ public class TaamMain {
 				new ItemDelegate<Taam.ITEM_PART_META>() {
 					@Override
 					@SideOnly(Side.CLIENT)
-					public void addInformation(ItemStack stack, EntityPlayer player, List<String> lines,
-							boolean detailedInfoSetting) {
+					public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
 						if(stack.getMetadata() == Taam.ITEM_PART_META.redirector.ordinal()) {
 							String usage = I18n.format("lore.taam.redirector.usage");
 							// Split at literal \n in the translated text. a lot of escaping here.
-							Collections.addAll(lines, usage.split("\\\\n"));
+							Collections.addAll(tooltip, usage.split("\\\\n"));
 						}
 					}
 					@Override
@@ -314,13 +315,12 @@ public class TaamMain {
 
 					@Override
 					@SideOnly(Side.CLIENT)
-					public void addInformation(ItemStack stack, EntityPlayer player, List<String> lines,
-							boolean detailedInfoSetting) {
+					public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
 						if(stack.getMetadata() == Taam.BLOCK_ORE_META.iron.ordinal() ||
 								stack.getMetadata() == Taam.BLOCK_ORE_META.gold.ordinal()) {
 							String usage = I18n.format("lore.taam.ingots.cheaty");
 							// Split at literal \n in the translated text. a lot of escaping here.
-							Collections.addAll(lines, usage.split("\\\\n"));
+							Collections.addAll(tooltip, usage.split("\\\\n"));
 						}
 					}
 				}), Taam.ITEM_INGOT);
@@ -334,8 +334,7 @@ public class TaamMain {
 
 					@Override
 					@SideOnly(Side.CLIENT)
-					public void addInformation(ItemStack stack, EntityPlayer player, List<String> lines,
-							boolean detailedInfoSetting) {
+					public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
 					}
 				}), Taam.ITEM_DUST);
 
@@ -383,13 +382,14 @@ public class TaamMain {
 		/*
 		 * Either Multipart or regular items
 		 */
-		if(Config.multipart_load && Config.multipart_register_items) {
+		// FIXME validate if we need this item stunt for MCMuplipart2
+		/*if(Config.multipart_load && Config.multipart_register_items) {
 			// Multipart Item
 			itemMachine = MultipartHandler.createMultipartItem(machine_meta_values);
-		} else {
+		} else {*/
 			// Regular item, places a wrapper block
 			itemMachine = new MachineItemBlock(blockMachine, machine_meta_values);
-		}
+		//}
 		registerItem(itemMachine, Taam.BLOCK_MACHINE_WRAPPER);
 
 		/*

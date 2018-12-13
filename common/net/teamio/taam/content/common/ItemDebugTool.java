@@ -3,6 +3,7 @@ package net.teamio.taam.content.common;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -28,6 +29,7 @@ import net.teamio.taam.piping.IPipe;
 import net.teamio.taam.piping.PipeUtil;
 import net.teamio.taam.util.FluidUtils;
 
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
@@ -47,22 +49,22 @@ public class ItemDebugTool extends Item {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean detailInfo) {
-		list.add(TextFormatting.DARK_GREEN + I18n.format("lore.taam.debugtool"));
+	public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
+		tooltip.add(TextFormatting.DARK_GREEN + I18n.format("lore.taam.debugtool"));
 		if (GuiScreen.isShiftKeyDown()) {
 			String usage = I18n.format("lore.taam.debugtool.usage");
 			//Split at literal \n in the translated text. a lot of escaping here.
-			Collections.addAll(list, usage.split("\\\\n"));
+			Collections.addAll(tooltip, usage.split("\\\\n"));
 		} else {
-			list.add(TextFormatting.DARK_PURPLE + I18n.format("lore.taam.shift"));
+			tooltip.add(TextFormatting.DARK_PURPLE + I18n.format("lore.taam.shift"));
 		}
 	}
 
 	@Override
-	public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+	public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 		if(!Config.debug_output)
 		{
-			worldIn.playSound(playerIn, pos, TaamMain.soundSipAh, SoundCategory.BLOCKS, 1f, 1f);
+			worldIn.playSound(player, pos, TaamMain.soundSipAh, SoundCategory.BLOCKS, 1f, 1f);
 			// return EnumActionResult.SUCCESS;
 		}
 		char remoteState = worldIn.isRemote ? 'C' : 'S';
@@ -72,18 +74,19 @@ public class ItemDebugTool extends Item {
 		String text = String.format(remoteState + " RS: %b Side: %s Weak: %d Strong: %d",
 				state.canProvidePower(), facing.toString(), state.getWeakPower(worldIn, pos, facing), state.getStrongPower(worldIn, pos, facing));
 
-		playerIn.sendStatusMessage(new TextComponentString(text));
+		player.sendStatusMessage(new TextComponentString(text), false);
 
 		EnumFacing oppSide = facing.getOpposite();
 
 		text = String.format(remoteState + " RS: %b Opposite Side: %s Weak: %d Strong: %d",
 				state.canProvidePower(), oppSide.toString(), state.getWeakPower(worldIn, pos, oppSide), state.getStrongPower(worldIn, pos, oppSide));
 
+		player.sendStatusMessage(new TextComponentString(text), false);
 
-		text = String.format(remoteState + " Indirectly Powered: %d",
-				worldIn.isBlockIndirectlyGettingPowered(pos));
+		text = String.format(remoteState + " Powered: %d",
+				worldIn.isBlockPowered(pos));
 
-		playerIn.sendStatusMessage(new TextComponentString(text));
+		player.sendStatusMessage(new TextComponentString(text), false);
 
 		boolean didSomething = false;
 
@@ -101,7 +104,7 @@ public class ItemDebugTool extends Item {
 			text = String.format(remoteState + " Conveyor facing %s. isEnd: %b isBegin: %b",
 					tec.getFacingDirection().toString(), tec.isEnd, tec.isBegin);
 
-			playerIn.sendStatusMessage(new TextComponentString(text));
+			player.sendStatusMessage(new TextComponentString(text), false);
 
 		}
 
@@ -125,7 +128,7 @@ public class ItemDebugTool extends Item {
 			text = String.format(remoteState + " %s Pipe pressure: %d  Content: %s",
 					pipe.getClass().getName(), pipe.getPressure(), content.toString());
 
-			playerIn.sendStatusMessage(new TextComponentString(text));
+			player.sendStatusMessage(new TextComponentString(text), false);
 		}
 
 		IFluidHandler fh = FluidUtils.getFluidHandler(te, facing);
@@ -146,7 +149,7 @@ public class ItemDebugTool extends Item {
 
 			text = String.format(remoteState + " Content: %s", content);
 
-			playerIn.sendStatusMessage(new TextComponentString(text));
+			player.sendStatusMessage(new TextComponentString(text), false);
 
 			didSomething = true;
 		}

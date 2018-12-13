@@ -43,18 +43,18 @@ public class ConveyorSlotsItemHandler implements IItemHandlerModifiable {
 
 	@Override
 	public ItemStack insertItem(int unused, ItemStack stack, boolean simulate) {
-		if (stack == null || stack.stackSize == 0 || !slots.isSlotAvailable(slot)) {
+		if (stack == null || stack.getCount() == 0 || !slots.isSlotAvailable(slot)) {
 			return null;
 		}
 		int amount = slots.insertItemAt(stack, slot, simulate);
-		if (amount == stack.stackSize) {
+		if (amount == stack.getCount()) {
 			onChangeHook();
 			return null;
 		}
 		ItemStack didNotFit = stack.copy();
 		if(amount > 0) {
 			onChangeHook();
-			didNotFit.stackSize -= amount;
+			didNotFit.setCount(didNotFit.getCount() - amount);
 		}
 		return didNotFit;
 	}
@@ -65,7 +65,7 @@ public class ConveyorSlotsItemHandler implements IItemHandlerModifiable {
 			return null;
 		}
 		ItemStack removed = slots.removeItemAt(slot, amount, simulate);
-		if(removed != null && removed.stackSize > 0) {
+		if(removed != null && removed.getCount() > 0) {
 			onChangeHook();
 		}
 		return removed;
@@ -80,4 +80,8 @@ public class ConveyorSlotsItemHandler implements IItemHandlerModifiable {
 		slots.getSlot(slot).itemStack = stack;
 	}
 
+	@Override
+	public int getSlotLimit(int slot) {
+		return 64;
+	}
 }

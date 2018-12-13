@@ -176,7 +176,7 @@ public class MachineFluidDrier implements IMachine, IPipePos {
 		 * Check redstone level
 		 */
 
-		boolean redstoneHigh = world.isBlockIndirectlyGettingPowered(pos) > 0;
+		boolean redstoneHigh = world.getRedstonePowerFromNeighbors(pos) > 0;
 
 		isShutdown = TaamUtil.isShutdown(world.rand, redstoneMode, redstoneHigh);
 
@@ -284,7 +284,7 @@ public class MachineFluidDrier implements IMachine, IPipePos {
 
 	@Override
 	public void addCollisionBoxes(AxisAlignedBB mask, List<AxisAlignedBB> list, Entity collidingEntity) {
-		if (mask.intersectsWith(bbCollision)) {
+		if (mask.intersects(bbCollision)) {
 			list.add(bbCollision);
 		}
 	}

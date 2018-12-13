@@ -41,7 +41,7 @@ public class TileEntitySensor extends BaseTileEntity implements IRotatable, ITic
 	public TileEntitySensor(EnumFacing rotation) {
 		direction = rotation;
 	}
-	
+
 	@Override
 	public String getName() {
 		return "tile.taam.sensor.name";
@@ -159,9 +159,9 @@ public class TileEntitySensor extends BaseTileEntity implements IRotatable, ITic
 	private static boolean isEntityWithinBoundingBox(AxisAlignedBB bb, Entity ent) {
 		AxisAlignedBB entityBounds = ent.getEntityBoundingBox();
 		if(entityBounds == null) {
-			return bb.isVecInside(ent.getPositionVector());
+			return bb.contains(ent.getPositionVector());
 		}
-		return entityBounds.intersectsWith(bb);
+		return entityBounds.intersects(bb);
 	}
 
 	@Override
@@ -176,7 +176,7 @@ public class TileEntitySensor extends BaseTileEntity implements IRotatable, ITic
 
 	@Override
 	public EnumFacing getNextFacingDirection() {
-		for(EnumFacing nextDir = EnumFacing.getFront(direction.ordinal() + 1); nextDir != direction; nextDir = EnumFacing.getFront(nextDir.ordinal() + 1)) {
+		for(EnumFacing nextDir = EnumFacing.byIndex(direction.ordinal() + 1); nextDir != direction; nextDir = EnumFacing.byIndex(nextDir.ordinal() + 1)) {
 			if(TaamMain.blockSensor.canPlaceBlockOnSide(world, pos, nextDir)) {
 				return nextDir;
 			}

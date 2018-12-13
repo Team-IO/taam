@@ -23,22 +23,22 @@ import net.teamio.taam.conveyors.ConveyorSlotsBase;
 public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements IWorldInteractable {
 
 	public float fillLevel;
-	
+
 	private final ConveyorSlotsBase conveyorSlots = new ConveyorSlotsBase() {
-		
+
 		{
 			// Use default attachable slot matrix
 			slotMatrix = SLOT_MATRIX;
 			rotation = direction;
 		}
-		
+
 		@Override
 		public int insertItemAt(ItemStack stack, int slot, boolean simulate) {
-			float added = stack.stackSize / (float)stack.getMaxStackSize();
+			float added = stack.getCount() / (float)stack.getMaxStackSize();
 			if(fillLevel + added < Config.pl_trashcan_maxfill) {
 				fillLevel += added;
 				updateState(true, false, false);
-				return stack.stackSize;
+				return stack.getCount();
 			}
 			return 0;
 		}
@@ -48,12 +48,12 @@ public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements
 			return null;
 		}
 	};
-	
+
 	private final IItemHandler itemHandler = new IItemHandler() {
-		
+
 		@Override
 		public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
-			float added = stack.stackSize / (float)stack.getMaxStackSize();
+			float added = stack.getCount() / (float)stack.getMaxStackSize();
 			if(fillLevel + added < Config.pl_trashcan_maxfill) {
 				fillLevel += added;
 				updateState(true, true, false);
@@ -61,17 +61,22 @@ public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements
 			}
 			return stack;
 		}
-		
+
 		@Override
 		public ItemStack getStackInSlot(int slot) {
 			return null;
 		}
-		
+
 		@Override
 		public int getSlots() {
 			return 1;
 		}
-		
+
+		@Override
+		public int getSlotLimit(int slot) {
+			return 64;
+		}
+
 		@Override
 		public ItemStack extractItem(int slot, int amount, boolean simulate) {
 			return null;
@@ -80,7 +85,7 @@ public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements
 
 	public TileEntityConveyorTrashCan() {
 	}
-	
+
 	@Override
 	public String getName() {
 		return "tile.taam.productionline_attachable.trashcan.name";
@@ -95,7 +100,7 @@ public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements
 	@Override
 	protected void readPropertiesFromNBT(NBTTagCompound tag) {
 		fillLevel = tag.getFloat("fillLevel");
-		direction = EnumFacing.getFront(tag.getInteger("direction"));
+		direction = EnumFacing.byIndex(tag.getInteger("direction"));
 		conveyorSlots.rotation = direction;
 	}
 
@@ -126,11 +131,11 @@ public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements
 		fillLevel = 0;
 		updateState(true, true, false);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see net.teamio.taam.content.conveyors.ATileEntityAttachable#setFacingDirection(net.minecraft.util.EnumFacing)
-	 * 
+	 *
 	 * Overridden because of slots rotation
 	 */
 	@Override

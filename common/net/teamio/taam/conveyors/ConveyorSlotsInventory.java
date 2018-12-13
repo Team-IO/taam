@@ -40,13 +40,13 @@ public class ConveyorSlotsInventory extends ConveyorSlotsBase {
 
 	@Override
 	public int insertItemAt(ItemStack item, int slot, boolean simulate) {
-		if (item == null || item.stackSize == 0) {
+		if (item == null || item.getCount() == 0) {
 			return 0;
 		}
 		ItemStack notAdded = ItemHandlerHelper.insertItemStacked(inventory, item, simulate);
-		int added = item.stackSize;
+		int added = item.getCount();
 		if(notAdded != null)
-			added -= notAdded.stackSize;
+			added -= notAdded.getCount();
 		return added;
 	}
 

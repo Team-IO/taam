@@ -78,7 +78,7 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IRedston
 		boolean isShutdown = false;
 
 
-		boolean redstoneHigh = world.isBlockIndirectlyGettingPowered(pos) > 0;
+		boolean redstoneHigh = world.getRedstonePowerFromNeighbors(pos) > 0;
 		boolean isPulsing = false;
 
 		// Redstone. Other criteria?
@@ -120,7 +120,7 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IRedston
 			}
 			for(int i = 0; i < itemHandler.getSlots(); i++) {
 				ItemStack stack = itemHandler.extractItem(i, wholeStack ? 64 : 1, false);
-				if(stack == null || stack.stackSize == 0) {
+				if(stack == null || stack.getCount() == 0) {
 					continue;
 				}
 
@@ -148,15 +148,15 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IRedston
 			for(int i = 0; i < itemHandler.getSlots(); i++) {
 				// Simulate extracting first to see if there is anything in there
 				ItemStack stack = itemHandler.extractItem(i,  wholeStack ? 64 : 1, true);
-				if(stack != null && stack.stackSize != 0) {
+				if(stack != null && stack.getCount() != 0) {
 					/*
 					 * -----------
 					 */
 					ItemStack unableToInsert = ItemHandlerHelper.insertItemStacked(targetHandler, stack, false);
 
-					int amount = stack.stackSize;
+					int amount = stack.getCount();
 					if(unableToInsert != null) {
-						amount -= unableToInsert.stackSize;
+						amount -= unableToInsert.getCount();
 					}
 					// If we fit anything, decrease inventory accordingly
 					if(amount > 0) {
@@ -230,7 +230,7 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IRedston
 		redstoneMode = tag.getByte("redstoneMode");
 
 		pulseWasSent = tag.getBoolean("pulseWasSent");
-		direction = EnumFacing.getFront(tag.getInteger("direction"));
+		direction = EnumFacing.byIndex(tag.getInteger("direction"));
 		if(direction == EnumFacing.UP || direction == EnumFacing.DOWN) {
 			direction = EnumFacing.NORTH;
 		}
