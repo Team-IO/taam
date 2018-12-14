@@ -5,10 +5,7 @@ import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.IJeiHelpers;
 import mezz.jei.api.IModRegistry;
 import mezz.jei.api.JEIPlugin;
-import net.minecraft.item.ItemStack;
 import net.teamio.taam.Log;
-import net.teamio.taam.Taam;
-import net.teamio.taam.TaamMain;
 import net.teamio.taam.recipes.ProcessingRegistry;
 import net.teamio.taam.recipes.ProcessingRegistryEntry;
 
@@ -30,7 +27,7 @@ public class TaamJEIPlugin extends BlankModPlugin {
 				new SprayerCategory(guiHelper)
 				);
 
-		registry.addRecipeCategoryCraftingItem(
+		/*registry.addRecipeCategoryCraftingItem(
 				new ItemStack(TaamMain.blockProductionLine, 1, Taam.BLOCK_PRODUCTIONLINE_META.grinder.ordinal()),
 				Taam.INTEGRATION_JEI_CAT_GRINDER);
 		registry.addRecipeCategoryCraftingItem(
@@ -44,7 +41,7 @@ public class TaamJEIPlugin extends BlankModPlugin {
 				Taam.INTEGRATION_JEI_CAT_MIXER);
 		registry.addRecipeCategoryCraftingItem(
 				new ItemStack(TaamMain.blockProductionLineAppliance, 1, Taam.BLOCK_PRODUCTIONLINE_APPLIANCE_META.sprayer.metaData()),
-				Taam.INTEGRATION_JEI_CAT_SPRAYER);
+				Taam.INTEGRATION_JEI_CAT_SPRAYER);*/
 
 		registry.addRecipeHandlers(
 				new GrinderRecipeHander(),

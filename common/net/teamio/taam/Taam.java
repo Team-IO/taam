@@ -466,24 +466,24 @@ public final class Taam {
 		}
 	}
 
-	public static final String TILEENTITY_SENSOR = "taam.sensor";
-	public static final String TILEENTITY_CHUTE = "taam.chute";
-	public static final String TILEENTITY_CREATIVECACHE = "taam.creativecache";
+	public static final String TILEENTITY_SENSOR = "sensor";
+	public static final String TILEENTITY_CHUTE = "chute";
+	public static final String TILEENTITY_CREATIVECACHE = "creativecache";
 
-	public static final String TILEENTITY_CONVEYOR = "taam.conveyor";
-	public static final String TILEENTITY_CONVEYOR_HOPPER = "taam.conveyor_hopper";
-	public static final String TILEENTITY_CONVEYOR_PROCESSOR = "taam.conveyor_processor";
-	public static final String TILEENTITY_CONVEYOR_ITEMBAG = "taam.itembag";
-	public static final String TILEENTITY_CONVEYOR_TRASHCAN = "taam.trashcan";
-	public static final String TILEENTITY_CONVEYOR_SIEVE = "taam.sieve";
-	public static final String TILEENTITY_CONVEYOR_ELEVATOR = "taam.elevator";
+	public static final String TILEENTITY_CONVEYOR = "conveyor";
+	public static final String TILEENTITY_CONVEYOR_HOPPER = "conveyor_hopper";
+	public static final String TILEENTITY_CONVEYOR_PROCESSOR = "conveyor_processor";
+	public static final String TILEENTITY_CONVEYOR_ITEMBAG = "itembag";
+	public static final String TILEENTITY_CONVEYOR_TRASHCAN = "trashcan";
+	public static final String TILEENTITY_CONVEYOR_SIEVE = "sieve";
+	public static final String TILEENTITY_CONVEYOR_ELEVATOR = "elevator";
 
-	public static final String TILEENTITY_CREATIVEWELL = "taam.creativewell";
+	public static final String TILEENTITY_CREATIVEWELL = "creativewell";
 
-	public static final String TILEENTITY_APPLIANCE_SPRAYER = "taam.appliance.sprayer";
-	public static final String TILEENTITY_APPLIANCE_ALIGNER = "taam.appliance.aligner";
+	public static final String TILEENTITY_APPLIANCE_SPRAYER = "appliance.sprayer";
+	public static final String TILEENTITY_APPLIANCE_ALIGNER = "appliance.aligner";
 
-	public static final String TILEENTITY_MACHINE_WRAPPER = "taam.machine_wrapper";
+	public static final String TILEENTITY_MACHINE_WRAPPER = "machine_wrapper";
 
 	public enum FLUID_DYE_META {
 		black,
