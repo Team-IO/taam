@@ -311,8 +311,6 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 
 	@Override
 	public void render(TileEntity te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
-		super.render(te, x, y, z, partialTicks, destroyStage, alpha);
-
 		if (Config.render_tank_content) {
 			TankRenderInfo[] tankRI = te.getCapability(Taam.CAPABILITY_RENDER_TANK, null);
 
