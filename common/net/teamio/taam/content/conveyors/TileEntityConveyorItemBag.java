@@ -12,8 +12,8 @@ import net.teamio.taam.conveyors.ConveyorSlotsInventory;
 /**
  * Conveyor Item Bag.
  * Non-Ticking TE
- * @author founderio
  *
+ * @author founderio
  */
 public class TileEntityConveyorItemBag extends ATileEntityAttachable {
 
@@ -23,10 +23,18 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable {
 	public float fillPercent;
 
 	public TileEntityConveyorItemBag() {
-		itemHandler = new ItemStackHandler(5);
+		itemHandler = new ItemStackHandler(5) {
+			@Override
+			protected void onContentsChanged(int slot) {
+				renderUpdate();
+				updateState(true, false, false);
+			}
+		};
+
 		conveyorSlots = new ConveyorSlotsInventory(itemHandler, SLOT_MATRIX) {
 			@Override
 			public void onChangeHook() {
+				renderUpdate();
 				updateState(true, false, false);
 			}
 		};
@@ -40,7 +48,7 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable {
 
 	@Override
 	public void blockUpdate() {
-		if(world != null && world.isRemote) {
+		if (world != null && world.isRemote) {
 			/*
 			 * Fill display calculation is only needed on the client..
 			 */
@@ -48,10 +56,10 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable {
 			float stackFactor = 1f / itemHandler.getSlots();
 			fillPercent = 0;
 
-			for(int i = 0; i < itemHandler.getSlots(); i++) {
+			for (int i = 0; i < itemHandler.getSlots(); i++) {
 				ItemStack stack = itemHandler.getStackInSlot(i);
-				if(stack != null && stack.getItem() != null && stack.getMaxStackSize() > 0) {
-					float singleFillFactor = stack.stackSize / (float)stack.getMaxStackSize();
+				if (stack != null && stack.getItem() != null && stack.getMaxStackSize() > 0) {
+					float singleFillFactor = stack.stackSize / (float) stack.getMaxStackSize();
 					fillPercent += singleFillFactor * stackFactor;
 				}
 			}
@@ -79,9 +87,7 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable {
 	@Override
 	protected void readPropertiesFromNBT(NBTTagCompound tag) {
 		NBTTagCompound itemTag = tag.getCompoundTag("items");
-		if(itemTag != null) {
-			itemHandler.deserializeNBT(itemTag);
-		}
+		itemHandler.deserializeNBT(itemTag);
 		direction = EnumFacing.getFront(tag.getInteger("direction"));
 		conveyorSlots.rotation = direction;
 		blockUpdate();
@@ -101,10 +107,10 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-		if(capability == Taam.CAPABILITY_CONVEYOR) {
+		if (capability == Taam.CAPABILITY_CONVEYOR) {
 			return (T) conveyorSlots;
 		}
-		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+		if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
 			return (T) itemHandler;
 		}
 		return super.getCapability(capability, facing);

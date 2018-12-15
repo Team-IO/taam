@@ -7,18 +7,18 @@ import net.minecraftforge.fluids.capability.IFluidTankProperties;
 /**
  * Creative fluid handler that spawns infinite amounts of a given FluidStack.
  * Does not allow filling.
- * 
- * @author Oliver Kahrmann
  *
+ * @author Oliver Kahrmann
  */
 public class FluidHandlerCreative implements IFluidHandler {
 
 	public FluidStack template;
 
-	private final IFluidTankProperties[] tankProperties = new IFluidTankProperties[] { new IFluidTankProperties() {
+	private final IFluidTankProperties[] tankProperties = new IFluidTankProperties[]{new IFluidTankProperties() {
 
 		@Override
 		public FluidStack getContents() {
+			if (template == null) return null;
 			return template.copy();
 		}
 
@@ -46,7 +46,7 @@ public class FluidHandlerCreative implements IFluidHandler {
 		public boolean canDrain() {
 			return true;
 		}
-	} };
+	}};
 
 	@Override
 	public IFluidTankProperties[] getTankProperties() {

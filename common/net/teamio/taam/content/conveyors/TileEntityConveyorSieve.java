@@ -61,6 +61,7 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements IRotatabl
 			public EnumFacing getNextSlot(int slot) {
 				return direction;
 			}
+
 			@Override
 			public void onChangeHook() {
 				updateState(true, false, false);
@@ -89,7 +90,7 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements IRotatabl
 		boolean needsUpdate = false;
 		boolean needsWorldUpdate = false;
 
-		if(ConveyorUtil.tryInsertItemsFromWorld(this, world, null, false)) {
+		if (ConveyorUtil.tryInsertItemsFromWorld(this, world, null, false)) {
 			needsUpdate = true;
 		}
 
@@ -98,12 +99,12 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements IRotatabl
 		boolean newShutdown = TaamUtil.isShutdown(world.rand, redstoneMode, redstoneHigh);
 
 
-		if(isShutdown != newShutdown) {
+		if (isShutdown != newShutdown) {
 			isShutdown = newShutdown;
 			needsUpdate = true;
 		}
 
-		if(!isShutdown) {
+		if (!isShutdown) {
 
 			// process from movement direction backward to keep slot order inside one conveyor,
 			// as we depend on the status of the next slot
@@ -112,7 +113,7 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements IRotatabl
 			/*
 			 * Process sieving
 			 */
-			if(processSieve(slotOrder)) {
+			if (processSieve(slotOrder)) {
 				needsUpdate = true;
 				needsWorldUpdate = true;
 			}
@@ -121,12 +122,12 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements IRotatabl
 			 * Move items already on the conveyor
 			 */
 
-			if(ConveyorUtil.defaultTransition(world, pos, conveyorSlots, null, slotOrder)) {
+			if (ConveyorUtil.defaultTransition(world, pos, conveyorSlots, null, slotOrder)) {
 				needsUpdate = true;
 			}
 		}
 
-		if(needsUpdate) {
+		if (needsUpdate) {
 			updateState(needsWorldUpdate, false, false);
 		}
 	}
@@ -137,23 +138,23 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements IRotatabl
 
 		// If we are blocked below, act as a conveyor.
 		IItemHandler outputInventory = InventoryUtils.getInventory(world, down, EnumFacing.UP);
-		if(outputInventory == null && !TaamUtil.canDropIntoWorld(world, down)) {
+		if (outputInventory == null && !TaamUtil.canDropIntoWorld(world, down)) {
 			return false;
 		}
 
-		for(int index = 0; index < slotOrder.length; index++) {
+		for (int index = 0; index < slotOrder.length; index++) {
 
 			int slot = slotOrder[index];
 
 			ItemWrapper wrapper = conveyorSlots.getSlot(slot);
 
-			if(wrapper.isEmpty()) {
+			if (wrapper.isEmpty()) {
 				continue;
 			}
-			if(wrapper.itemStack.getItem() instanceof ItemBlock) {
+			if (wrapper.itemStack.getItem() instanceof ItemBlock) {
 				wrapper.unblock();
 			} else {
-				if(isShutdown || !tryOutput(wrapper, outputInventory)) {
+				if (isShutdown || !tryOutput(wrapper, outputInventory)) {
 					// No force block. if something is already moving, there is probably a reason...
 					// Yes, sieves may miss an item by doing that.
 					wrapper.block();
@@ -164,9 +165,9 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements IRotatabl
 	}
 
 	private boolean tryOutput(ItemWrapper wrapper, IItemHandler outputInventory) {
-		if(outputInventory == null) {
+		if (outputInventory == null) {
 			// Output to world
-			if(!world.isRemote && wrapper.itemStack != null) {
+			if (!world.isRemote && wrapper.itemStack != null) {
 				EntityItem item = new EntityItem(world, pos.getX() + 0.5, pos.getY() - 0.3, pos.getZ() + 0.5, wrapper.itemStack);
 				item.motionX = 0;
 				item.motionY = 0;
@@ -177,7 +178,7 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements IRotatabl
 			return true;
 		}
 		// Output to inventory
-		if(wrapper.itemStack == null) {
+		if (wrapper.itemStack == null) {
 			return true;
 		}
 		wrapper.itemStack = ItemHandlerHelper.insertItemStacked(outputInventory, wrapper.itemStack, false);
@@ -193,7 +194,7 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements IRotatabl
 	@Override
 	protected void readPropertiesFromNBT(NBTTagCompound tag) {
 		direction = EnumFacing.getFront(tag.getInteger("direction"));
-		if(direction == EnumFacing.UP || direction == EnumFacing.DOWN) {
+		if (direction == EnumFacing.UP || direction == EnumFacing.DOWN) {
 			direction = EnumFacing.NORTH;
 		}
 		conveyorSlots.rotation = direction;
@@ -202,10 +203,10 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements IRotatabl
 
 	@Override
 	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-		if(capability == Taam.CAPABILITY_CONVEYOR) {
+		if (capability == Taam.CAPABILITY_CONVEYOR) {
 			return true;
 		}
-		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+		if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
 			return true;
 		}
 		return super.hasCapability(capability, facing);
@@ -214,10 +215,10 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements IRotatabl
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-		if(capability == Taam.CAPABILITY_CONVEYOR) {
+		if (capability == Taam.CAPABILITY_CONVEYOR) {
 			return (T) conveyorSlots;
 		}
-		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+		if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
 			return (T) conveyorSlots.getItemHandler(facing);
 		}
 		return super.getCapability(capability, facing);
@@ -234,18 +235,18 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements IRotatabl
 
 	@Override
 	public void setFacingDirection(EnumFacing direction) {
-		if(this.direction == direction) {
+		if (this.direction == direction) {
 			// Only update if necessary
 			return;
 		}
 		this.direction = direction;
-		if(direction == EnumFacing.UP || direction == EnumFacing.DOWN) {
+		if (direction == EnumFacing.UP || direction == EnumFacing.DOWN) {
 			this.direction = EnumFacing.NORTH;
 		}
 		conveyorSlots.rotation = direction;
 		updateState(false, true, true);
 		world.notifyBlockOfStateChange(pos, blockType);
-		if(blockType != null) {
+		if (blockType != null) {
 			blockType.onNeighborChange(world, pos, pos);
 		}
 	}
@@ -261,8 +262,8 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements IRotatabl
 
 	@Override
 	public boolean onBlockActivated(World world, EntityPlayer player, EnumHand hand, boolean hasWrench, EnumFacing side,
-			float hitX, float hitY, float hitZ) {
-		if(side != EnumFacing.UP) {
+	                                float hitX, float hitY, float hitZ) {
+		if (side != EnumFacing.UP) {
 			return false;
 		}
 		ConveyorUtil.defaultPlayerInteraction(player, conveyorSlots, hitX, hitZ);
@@ -291,8 +292,8 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements IRotatabl
 	@Override
 	public void setRedstoneMode(byte mode) {
 		redstoneMode = mode;
-		if(world.isRemote) {
-			TPMachineConfiguration config = TPMachineConfiguration.newChangeInteger(new WorldCoord(this), (byte)1, redstoneMode);
+		if (world.isRemote) {
+			TPMachineConfiguration config = TPMachineConfiguration.newChangeInteger(new WorldCoord(this), (byte) 1, redstoneMode);
 			TaamMain.network.sendToServer(config);
 		} else {
 			markDirty();
