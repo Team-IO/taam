@@ -8,7 +8,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.teamio.taam.Log;
 import net.teamio.taam.Taam;
 import net.teamio.taam.util.FluidUtils;
@@ -145,25 +145,24 @@ public final class PipeUtil {
 		Log.debug("Beginning fluid interaction.");
 		ItemStack playerStack = player.inventory.getCurrentItem();
 		ItemStack handlingStack = playerStack;
-		if (handlingStack == null) {
+		if (InventoryUtils.isEmpty(handlingStack)) {
 			return false;
 		}
-		boolean isPartialStack = false;
 		if (handlingStack.getCount() > 1) {
-			isPartialStack = true;
 			handlingStack = InventoryUtils.copyStack(handlingStack, 1);
 		}
 
-		IFluidHandler itemFH = FluidUtils.getFluidHandlerForItem(handlingStack);
+		IFluidHandlerItem itemFH = FluidUtils.getFluidHandlerForItem(handlingStack);
 
 		boolean success = false;
+		boolean modifyInventory = !player.capabilities.isCreativeMode;
 
 		if (itemFH != null) {
 			FluidStack inTank = tank.getFluid();
 			if (inTank != null) {
 				Log.debug("Attempting to fill {}x{} into item.", inTank.amount, inTank.getFluid());
 				// Fill into the item
-				int fill = itemFH.fill(inTank, true);
+				int fill = itemFH.fill(inTank, modifyInventory);
 				Log.debug("Filled {} into item.", fill);
 				if (fill > 0) {
 					// Drain from the tank
@@ -181,7 +180,7 @@ public final class PipeUtil {
 						FluidStack toDrain = inTank.copy();
 						toDrain.amount = capa - inTank.amount;
 						// Drain maximum of that from the item
-						FluidStack drain = itemFH.drain(toDrain, true);
+						FluidStack drain = itemFH.drain(toDrain, modifyInventory);
 						if (drain != null && drain.amount > 0) {
 							Log.debug("Drained {}x{} from item.", drain.amount, drain.getFluid());
 							// Fill into the tank
@@ -199,7 +198,7 @@ public final class PipeUtil {
 			} else {
 				Log.debug("Attempting to drain anything from item.");
 				// Drain maximum of tank capacity from the item
-				FluidStack drain = itemFH.drain(tank.getCapacity(), true);
+				FluidStack drain = itemFH.drain(tank.getCapacity(), modifyInventory);
 				if (drain != null && drain.amount > 0) {
 					Log.debug("Drained {}x{} from item.", drain.amount, drain.getFluid());
 					// Fill into the tank
@@ -215,9 +214,14 @@ public final class PipeUtil {
 			}
 		}
 
-		if (success && isPartialStack) {
-			playerStack = InventoryUtils.adjustCount(playerStack, -1);
-			InventoryUtils.tryDropToInventory(player, handlingStack, player.getPosition());
+		if (success && modifyInventory) {
+			// Adjust stack that was clicked
+			playerStack.setCount(playerStack.getCount() - 1);
+			// Drop empty or filled container into inventory
+			handlingStack = itemFH.getContainer();
+			if(!InventoryUtils.isEmpty(handlingStack)) {
+				InventoryUtils.tryDropToInventory(player, handlingStack, player.getPosition());
+			}
 		}
 		return success;
 	}
