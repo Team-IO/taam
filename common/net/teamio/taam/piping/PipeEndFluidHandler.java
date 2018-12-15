@@ -6,7 +6,6 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
-import net.teamio.taam.Config;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -128,7 +127,7 @@ public class PipeEndFluidHandler implements IPipe {
 		if (pos == null) {
 			return BlockPos.ORIGIN;
 		}
-		return pos.getPos();
+		return pos.getPipePos();
 	}
 
 	@Override
@@ -136,7 +135,7 @@ public class PipeEndFluidHandler implements IPipe {
 		if (pos == null) {
 			return null;
 		}
-		return pos.getWorld();
+		return pos.getPipeWorld();
 	}
 
 	@Override

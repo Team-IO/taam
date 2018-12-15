@@ -89,12 +89,12 @@ public class MachineTank implements IMachine, IPipePos, IWorldInteractable {
 	}
 
 	@Override
-	public IBlockAccess getWorld() {
+	public IBlockAccess getPipeWorld() {
 		return worldObj;
 	}
 
 	@Override
-	public BlockPos getPos() {
+	public BlockPos getPipePos() {
 		return pos;
 	}
 
