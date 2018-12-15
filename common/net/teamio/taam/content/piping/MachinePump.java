@@ -101,12 +101,12 @@ public class MachinePump implements IMachine, IPipePos, IRotatable {
 	}
 
 	@Override
-	public IBlockAccess getWorld() {
+	public IBlockAccess getPipeWorld() {
 		return worldObj;
 	}
 
 	@Override
-	public BlockPos getPos() {
+	public BlockPos getPipePos() {
 		return pos;
 	}
 
