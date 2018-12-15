@@ -8,6 +8,7 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.teamio.taam.Config;
 import net.teamio.taam.Taam;
+import net.teamio.taam.TestUtil;
 import org.junit.runner.RunWith;
 
 /**
@@ -19,6 +20,7 @@ public class MachinePipeTest extends AbstractTest {
 	@Override
 	public void setUpForEntireClass() {
 		Config.init(null);
+		TestUtil.registerCapabilities();
 	}
 
 	public void testPipeImplementation() {

@@ -497,7 +497,20 @@ public class TaamMain {
 		/*
 		 * Capabilities
 		 */
+		registerCapabilities();
+		validateCapabilities();
 
+		network = NetworkRegistry.INSTANCE.newSimpleChannel(Taam.CHANNEL_NAME);
+		proxy.registerPackets(network);
+
+
+		/*
+		Early registration of model loader
+		 */
+		proxy.registerModelLoader();
+	}
+
+	public static void registerCapabilities() {
 		CapabilityManager.INSTANCE.register(IPipe.class, new Capability.IStorage<IPipe>() {
 
 			@Override
@@ -556,10 +569,12 @@ public class TaamMain {
 			public void readNBT(Capability<IAdvancedMachineGUI> capability, IAdvancedMachineGUI instance, EnumFacing side, NBTBase nbt) {
 			}
 		}, IAdvancedMachineGUI.class);
+	}
 
-		/*
-		 * Check if registry of capabilities was successful
-		 */
+	/**
+	 * Check if registry of capabilities was successful
+	 */
+	public static void validateCapabilities() {
 		if (Taam.CAPABILITY_PIPE == null) {
 			throw new RuntimeException("Registering a capability failed (Taam.CAPABILITY_PIPE - IPipe) - field was null after registry.");
 		}
@@ -572,19 +587,6 @@ public class TaamMain {
 		if (Taam.CAPABILITY_ADVANCED_GUI == null) {
 			throw new RuntimeException("Registering a capability failed (Taam.CAPABILITY_ADVANCED_GUI - IAdvancedMachineGUI) - field was null after registry.");
 		}
-
-		/*
-		 * Network
-		 */
-
-		network = NetworkRegistry.INSTANCE.newSimpleChannel(Taam.CHANNEL_NAME);
-		proxy.registerPackets(network);
-
-
-		/*
-		Early registration of model loader
-		 */
-		proxy.registerModelLoader();
 	}
 
 	@SubscribeEvent

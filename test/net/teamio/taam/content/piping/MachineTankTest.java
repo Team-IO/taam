@@ -8,9 +8,9 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.teamio.taam.TestUtil;
 import net.teamio.taam.Config;
 import net.teamio.taam.Taam;
+import net.teamio.taam.TestUtil;
 import net.teamio.taam.piping.IPipe;
 import org.junit.runner.RunWith;
 
@@ -22,8 +22,7 @@ public class MachineTankTest extends AbstractTest {
 	@Override
 	public void setUpForEntireClass() {
 		Config.init(null);
-		CapabilityFluidHandler.register();
-		CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY = TestUtil.getCapability(IFluidHandler.class);
+		TestUtil.registerCapabilities();
 	}
 
 	public void testFluidHandlerPipeHandlerInterop() {
