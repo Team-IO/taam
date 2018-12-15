@@ -80,7 +80,11 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 
 	public static final ResourceLocation conveyorTextures = new ResourceLocation("Taam", "blocks/conveyor");
 
-	public static boolean failureFreeBlockHightlight = true;
+	/**
+	 * This field is used to stop rendering block highlight operations on the first exception.
+	 * This is used to prevent the game being unresponsive due to continuous exceptions being written to the log.
+	 */
+	public static boolean failureFreeBlockHighlight = true;
 
 	/**
 	 * Function for fetching texture sprites.
@@ -121,7 +125,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 	@SubscribeEvent
 	public void onDrawBlockHighlight(DrawBlockHighlightEvent event) {
 		// If we crash, turn of Block Highlight drawing to prevent getting locked out of a world
-		if (!failureFreeBlockHightlight) {
+		if (!failureFreeBlockHighlight) {
 			return;
 		}
 		RayTraceResult target = event.getTarget();
@@ -157,7 +161,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 						EnumFacing dir = cte.getNextSlot(slot);
 
 						// General Position of the slot
-						double x = pos.getX() + Math.floor(slot / 3) * ConveyorUtil.oneThird;
+						double x = pos.getX() + Math.floor(slot / 3f) * ConveyorUtil.oneThird;
 						double y = pos.getY() + cte.getVerticalPosition(slot);
 						double z = pos.getZ() + slot % 3 * ConveyorUtil.oneThird;
 
@@ -200,7 +204,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 
 			} catch (Exception e) {
 				Log.error("Error drawing block highlight for a tile entity. Disabling block highlight drawing to prevent you from crashing - This is an error, please report!", e);
-				failureFreeBlockHightlight = false;
+				failureFreeBlockHighlight = false;
 			}
 		}
 	}
@@ -480,7 +484,6 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 
 				for (int i = 0; i < 4; i++) {
 					ItemWrapper wrapper = aligner.clientRenderCache[i];
-					int rotateDown = 0;
 					if (wrapper == null) {
 						continue;
 					}
@@ -488,7 +491,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 						aligner.clientRenderCache[i] = null;
 						continue;
 					}
-					rotateDown = wrapper.movementProgress;
+					int rotateDown = wrapper.movementProgress;
 					if (rotateDown > conveyorSpeedsteps / 2) {
 						rotateDown = conveyorSpeedsteps - rotateDown;
 					}
@@ -526,8 +529,8 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 					GL11.glTranslated(-size / 2, 0, -size / 2);
 
 					// Flip down
-					GL11.glRotated((15 / animFrames) * rotateSide, 0, 1, 0);
-					GL11.glRotated(-(90 / animFrames) * rotateDown, 1, 0, 0);
+					GL11.glRotated((15f / animFrames) * rotateSide, 0, 1, 0);
+					GL11.glRotated(-(90f / animFrames) * rotateDown, 1, 0, 0);
 					GlStateManager.disableLighting();
 					GlStateManager.disableTexture2D();
 
