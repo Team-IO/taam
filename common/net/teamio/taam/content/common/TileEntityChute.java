@@ -38,14 +38,14 @@ public class TileEntityChute extends BaseTileEntity implements IRotatable, ITick
 
 			ItemStack notAdded = ItemHandlerHelper.insertItemStacked(target, stack, simulate);
 			int added = stack.getCount();
-			if(notAdded != null)
+			if(!InventoryUtils.isEmpty(notAdded))
 				added -= notAdded.getCount();
 			return added;
 		}
 
 		@Override
 		public ItemStack removeItemAt(int slot, int amount, boolean simulate) {
-			return null;
+			return ItemStack.EMPTY;
 		}
 
 		@Override
@@ -145,14 +145,14 @@ public class TileEntityChute extends BaseTileEntity implements IRotatable, ITick
 						item.motionZ = 0;
 						world.spawnEntity(item);
 					}
-					return null;
+					return ItemStack.EMPTY;
 				}
 				return stack;
 			}
 
 			@Override
 			public ItemStack getStackInSlot(int slot) {
-				return null;
+				return ItemStack.EMPTY;
 			}
 
 			@Override
@@ -167,7 +167,7 @@ public class TileEntityChute extends BaseTileEntity implements IRotatable, ITick
 
 			@Override
 			public ItemStack extractItem(int slot, int amount, boolean simulate) {
-				return null;
+				return ItemStack.EMPTY;
 			}
 		};
 	}

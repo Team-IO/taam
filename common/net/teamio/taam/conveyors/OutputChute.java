@@ -66,7 +66,7 @@ public abstract class OutputChute {
 			// Output to world
 			for(int i = 0; i < backlog.length; i++) {
 				ItemStack itemStack = backlog[i];
-				if(itemStack == null) {
+				if(InventoryUtils.isEmpty(itemStack)) {
 					continue;
 				}
 				EntityItem item = new EntityItem(world, entX, entY, entZ, itemStack);
@@ -75,7 +75,7 @@ public abstract class OutputChute {
 				item.motionZ = 0;
 				world.spawnEntity(item);
 				wasAble = true;
-				backlog[i] = null;
+				backlog[i] = ItemStack.EMPTY;
 			}
 
 			hasOutputLeft = false;
@@ -83,11 +83,11 @@ public abstract class OutputChute {
 			// Output to inventory
 			for(int i = 0; i < backlog.length; i++) {
 				ItemStack itemStack = backlog[i];
-				if(itemStack == null) {
+				if(InventoryUtils.isEmpty(itemStack)) {
 					continue;
 				}
 				backlog[i] = ItemHandlerHelper.insertItemStacked(outputInventory, itemStack, false);
-				if(backlog[i] == null) {
+				if(backlog[i] == ItemStack.EMPTY) {
 					wasAble = true;
 				} else {
 					hasOutputLeft = true;
