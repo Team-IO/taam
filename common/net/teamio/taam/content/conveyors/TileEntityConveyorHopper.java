@@ -74,7 +74,6 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IRedston
 		ConveyorUtil.tryInsertItemsFromWorld(this, worldObj, null, true);
 
 
-
 		boolean isShutdown = false;
 
 
@@ -82,31 +81,31 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IRedston
 		boolean isPulsing = false;
 
 		// Redstone. Other criteria?
-		if(redstoneMode == IRedstoneControlled.MODE_ACTIVE_ON_HIGH && !redstoneHigh) {
+		if (redstoneMode == IRedstoneControlled.MODE_ACTIVE_ON_HIGH && !redstoneHigh) {
 			isShutdown = true;
-		} else if(redstoneMode == IRedstoneControlled.MODE_ACTIVE_ON_LOW && redstoneHigh) {
+		} else if (redstoneMode == IRedstoneControlled.MODE_ACTIVE_ON_LOW && redstoneHigh) {
 			isShutdown = true;
-		} else if(redstoneMode == IRedstoneControlled.MODE_ACTIVE_ON_HIGH_PULSE) {
+		} else if (redstoneMode == IRedstoneControlled.MODE_ACTIVE_ON_HIGH_PULSE) {
 			// Pulse, send Item on high edge.
 			isShutdown = !(!pulseWasSent && redstoneHigh);
 			isPulsing = true;
-		} else if(redstoneMode == IRedstoneControlled.MODE_ACTIVE_ON_LOW_PULSE) {
+		} else if (redstoneMode == IRedstoneControlled.MODE_ACTIVE_ON_LOW_PULSE) {
 			// Pulse, send Item on low edge.
 			isShutdown = !(pulseWasSent && !redstoneHigh);
 			isPulsing = true;
-		} else if(redstoneMode > 4 || redstoneMode < 0) {
+		} else if (redstoneMode > 4 || redstoneMode < 0) {
 			isShutdown = worldObj.rand.nextBoolean();
 		}
 
 		pulseWasSent = redstoneHigh;
 
-		if(isShutdown) {
+		if (isShutdown) {
 			return;
 		}
 
-		if(isPulsing) {
+		if (isPulsing) {
 			timeout = 0;
-		} else if(isCoolingDown()) {
+		} else if (isCoolingDown()) {
 			timeout--;
 			return;
 		}
@@ -114,13 +113,13 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IRedston
 		boolean somethingEjected = false;
 		boolean wholeStack = highSpeed && stackMode;
 
-		if(eject) {
-			if(!TaamUtil.canDropIntoWorld(worldObj, pos.down())) {
+		if (eject) {
+			if (!TaamUtil.canDropIntoWorld(worldObj, pos.down())) {
 				return;
 			}
-			for(int i = 0; i < itemHandler.getSlots(); i++) {
+			for (int i = 0; i < itemHandler.getSlots(); i++) {
 				ItemStack stack = itemHandler.extractItem(i, wholeStack ? 64 : 1, false);
-				if(stack == null || stack.stackSize == 0) {
+				if (stack == null || stack.stackSize == 0) {
 					continue;
 				}
 
@@ -141,31 +140,31 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IRedston
 
 			TileEntity ent = worldObj.getTileEntity(pos.down());
 			IItemHandler targetHandler = InventoryUtils.getInventory(ent, EnumFacing.UP);
-			if(targetHandler == null) {
+			if (targetHandler == null) {
 				return;
 			}
 
-			for(int i = 0; i < itemHandler.getSlots(); i++) {
+			for (int i = 0; i < itemHandler.getSlots(); i++) {
 				// Simulate extracting first to see if there is anything in there
-				ItemStack stack = itemHandler.extractItem(i,  wholeStack ? 64 : 1, true);
-				if(stack != null && stack.stackSize != 0) {
+				ItemStack stack = itemHandler.extractItem(i, wholeStack ? 64 : 1, true);
+				if (stack != null && stack.stackSize != 0) {
 					/*
 					 * -----------
 					 */
 					ItemStack unableToInsert = ItemHandlerHelper.insertItemStacked(targetHandler, stack, false);
 
 					int amount = stack.stackSize;
-					if(unableToInsert != null) {
+					if (unableToInsert != null) {
 						amount -= unableToInsert.stackSize;
 					}
 					// If we fit anything, decrease inventory accordingly
-					if(amount > 0) {
-						itemHandler.extractItem(i,  wholeStack ? 64 : 1, false);
+					if (amount > 0) {
+						itemHandler.extractItem(i, wholeStack ? 64 : 1, false);
 						somethingEjected = true;
 						break;
 					}
 					// In linear mode, we only look at the front most stack that has items
-					if(linearMode) {
+					if (linearMode) {
 						break;
 					}
 
@@ -174,8 +173,8 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IRedston
 		}
 		boolean changed = false;
 
-		if(somethingEjected) {
-			if(highSpeed && !(stackMode && Config.pl_hopper_stackmode_normal_speed)) {
+		if (somethingEjected) {
+			if (highSpeed && !(stackMode && Config.pl_hopper_stackmode_normal_speed)) {
 				timeout += Config.pl_hopper_highspeed_delay;
 			} else {
 				timeout += Config.pl_hopper_delay;
@@ -184,16 +183,16 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IRedston
 		}
 
 		// Move Items to the front in linear mode
-		if(linearMode) {
-			for(int i = 0; i < itemHandler.getSlots() - 1; i++) {
-				if(itemHandler.getStackInSlot(i) == null) {
+		if (linearMode) {
+			for (int i = 0; i < itemHandler.getSlots() - 1; i++) {
+				if (itemHandler.getStackInSlot(i) == null) {
 					itemHandler.setStackInSlot(i, itemHandler.getStackInSlot(i + 1));
 					itemHandler.setStackInSlot(i + 1, null);
 					changed = true;
 				}
 			}
 		}
-		if(changed) {
+		if (changed) {
 			markDirty();
 		}
 	}
@@ -219,7 +218,7 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IRedston
 	@Override
 	protected void readPropertiesFromNBT(NBTTagCompound tag) {
 		NBTTagCompound itemTag = tag.getCompoundTag("items");
-		if(itemTag != null) {
+		if (itemTag != null) {
 			itemHandler.deserializeNBT(itemTag);
 		}
 		highSpeed = tag.getBoolean("highSpeed");
@@ -231,17 +230,17 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IRedston
 
 		pulseWasSent = tag.getBoolean("pulseWasSent");
 		direction = EnumFacing.getFront(tag.getInteger("direction"));
-		if(direction == EnumFacing.UP || direction == EnumFacing.DOWN) {
+		if (direction == EnumFacing.UP || direction == EnumFacing.DOWN) {
 			direction = EnumFacing.NORTH;
 		}
 	}
 
 	@Override
 	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+		if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
 			return true;
 		}
-		if(capability == Taam.CAPABILITY_CONVEYOR) {
+		if (capability == Taam.CAPABILITY_CONVEYOR) {
 			return true;
 		}
 		return super.hasCapability(capability, facing);
@@ -250,10 +249,10 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IRedston
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+		if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
 			return (T) itemHandler;
 		}
-		if(capability == Taam.CAPABILITY_CONVEYOR) {
+		if (capability == Taam.CAPABILITY_CONVEYOR) {
 			return (T) conveyorSlots;
 		}
 		return super.getCapability(capability, facing);
@@ -277,8 +276,8 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IRedston
 
 	public void setEject(boolean eject) {
 		this.eject = eject;
-		if(worldObj.isRemote) {
-			TPMachineConfiguration config = TPMachineConfiguration.newChangeBoolean(new WorldCoord(this), (byte)1, eject);
+		if (worldObj.isRemote) {
+			TPMachineConfiguration config = TPMachineConfiguration.newChangeBoolean(new WorldCoord(this), (byte) 1, eject);
 			TaamMain.network.sendToServer(config);
 		} else {
 			markDirty();
@@ -291,8 +290,8 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IRedston
 
 	public void setStackMode(boolean stackMode) {
 		this.stackMode = stackMode;
-		if(worldObj.isRemote) {
-			TPMachineConfiguration config = TPMachineConfiguration.newChangeBoolean(new WorldCoord(this), (byte)2, stackMode);
+		if (worldObj.isRemote) {
+			TPMachineConfiguration config = TPMachineConfiguration.newChangeBoolean(new WorldCoord(this), (byte) 2, stackMode);
 			TaamMain.network.sendToServer(config);
 		} else {
 			markDirty();
@@ -306,8 +305,8 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IRedston
 
 	public void setLinearMode(boolean linearMode) {
 		this.linearMode = linearMode;
-		if(worldObj.isRemote) {
-			TPMachineConfiguration config = TPMachineConfiguration.newChangeBoolean(new WorldCoord(this), (byte)3, linearMode);
+		if (worldObj.isRemote) {
+			TPMachineConfiguration config = TPMachineConfiguration.newChangeBoolean(new WorldCoord(this), (byte) 3, linearMode);
 			TaamMain.network.sendToServer(config);
 		} else {
 			markDirty();
@@ -331,8 +330,8 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IRedston
 	@Override
 	public void setRedstoneMode(byte mode) {
 		redstoneMode = mode;
-		if(worldObj.isRemote) {
-			TPMachineConfiguration config = TPMachineConfiguration.newChangeInteger(new WorldCoord(this), (byte)1, redstoneMode);
+		if (worldObj.isRemote) {
+			TPMachineConfiguration config = TPMachineConfiguration.newChangeInteger(new WorldCoord(this), (byte) 1, redstoneMode);
 			TaamMain.network.sendToServer(config);
 		} else {
 			markDirty();
@@ -355,7 +354,7 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IRedston
 
 	@Override
 	public void setFacingDirection(EnumFacing direction) {
-		if(this.direction != direction) {
+		if (this.direction != direction) {
 			// Only update if necessary
 			this.direction = direction;
 			updateState(false, true, false);
