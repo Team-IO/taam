@@ -23,10 +23,18 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable {
 	public float fillPercent;
 
 	public TileEntityConveyorItemBag() {
-		itemHandler = new ItemStackHandler(5);
+		itemHandler = new ItemStackHandler(5) {
+			@Override
+			protected void onContentsChanged(int slot) {
+				renderUpdate();
+				updateState(true, false, false);
+			}
+		};
+
 		conveyorSlots = new ConveyorSlotsInventory(itemHandler, SLOT_MATRIX) {
 			@Override
 			public void onChangeHook() {
+				renderUpdate();
 				updateState(true, false, false);
 			}
 		};
@@ -40,6 +48,11 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable {
 
 	@Override
 	public void blockUpdate() {
+		renderUpdate();
+	}
+
+	@Override
+	public void renderUpdate() {
 		if (worldObj != null && worldObj.isRemote) {
 			/*
 			 * Fill display calculation is only needed on the client..
