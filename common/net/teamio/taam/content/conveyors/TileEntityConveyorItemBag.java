@@ -8,6 +8,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import net.teamio.taam.Taam;
 import net.teamio.taam.conveyors.ConveyorSlotsInventory;
+import net.teamio.taam.util.InventoryUtils;
 
 /**
  * Conveyor Item Bag.
@@ -50,7 +51,7 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable {
 
 			for(int i = 0; i < itemHandler.getSlots(); i++) {
 				ItemStack stack = itemHandler.getStackInSlot(i);
-				if(stack != null && stack.getItem() != null && stack.getMaxStackSize() > 0) {
+				if(!InventoryUtils.isEmpty(stack) && stack.getMaxStackSize() > 0) {
 					float singleFillFactor = stack.getCount() / (float)stack.getMaxStackSize();
 					fillPercent += singleFillFactor * stackFactor;
 				}

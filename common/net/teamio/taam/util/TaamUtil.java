@@ -24,6 +24,7 @@ import net.teamio.taam.conveyors.IConveyorApplianceHost;
 import net.teamio.taam.conveyors.IConveyorSlots;
 import org.apache.commons.lang3.ArrayUtils;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Random;
 
@@ -266,7 +267,10 @@ public final class TaamUtil {
 	 * @param stack2
 	 * @return
 	 */
-	public static boolean isModMatch(ItemStack stack1, ItemStack stack2) {
+	public static boolean isModMatch(@Nullable ItemStack stack1, @Nullable ItemStack stack2) {
+		if (InventoryUtils.isEmpty(stack1)) return InventoryUtils.isEmpty(stack2);
+		if (InventoryUtils.isEmpty(stack2)) return false;
+
 		ResourceLocation regName1 = stack1.getItem().getRegistryName();
 		ResourceLocation regName2 = stack2.getItem().getRegistryName();
 		return regName1.getNamespace().equals(regName2.getNamespace());

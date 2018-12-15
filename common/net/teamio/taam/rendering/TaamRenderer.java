@@ -40,6 +40,7 @@ import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.conveyors.IConveyorSlots;
 import net.teamio.taam.conveyors.ItemWrapper;
 import net.teamio.taam.conveyors.appliances.ApplianceAligner;
+import net.teamio.taam.util.InventoryUtils;
 import net.teamio.taam.util.WrenchUtil;
 import org.lwjgl.opengl.GL11;
 
@@ -132,7 +133,6 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 			TileEntity te = world.getTileEntity(pos);
 
 			try {
-				playerHasDebugTool = true;
 				if (playerHasDebugTool) {
 					TaamRendererDebug.renderTEDebug(te, player, target.sideHit, event.getPartialTicks());
 				}
@@ -162,7 +162,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 						double z = pos.getZ() + slot % 3 * ConveyorUtil.oneThird;
 
 
-						if (wrapper.itemStack == null && player.getHeldItemMainhand() != null) {
+						if (wrapper.isEmpty() && !InventoryUtils.isEmpty(player.getHeldItemMainhand())) {
 							drawSelectionBoundingBox(player, event.getPartialTicks(), 4, 1, 1, 1, 1, new AxisAlignedBB(x, y, z,
 									x + ConveyorUtil.oneThird, y + 0.1d, z + ConveyorUtil.oneThird));
 						} else {
@@ -174,7 +174,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 							drawSlotInfo(player, x, y, z, slot, cte.getMovementDirection(), event.getPartialTicks());
 						}
 
-						if (wrapper.itemStack != null) {
+						if (!wrapper.isEmpty()) {
 							float progress = wrapper.movementProgress;
 
 							if (wrapper.isRenderingInterpolated()) {
@@ -348,7 +348,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 			TileEntityConveyorProcessor processor = (TileEntityConveyorProcessor) te;
 			ItemStack processingStack = processor.getRenderStack();
 
-			if (processingStack != null && processingStack.getCount() > 0 && processingStack.getItem() != null) {
+			if (!InventoryUtils.isEmpty(processingStack)) {
 				IBakedModel model = ri.getItemModelMesher().getItemModel(processingStack);
 
 				GL11.glPushMatrix();
@@ -532,7 +532,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 					GlStateManager.disableTexture2D();
 
 					// Render bit
-					RenderGlobal.drawSelectionBoundingBox(new AxisAlignedBB(0, 0, 0, size, 0.8/3, size), 30, 80, 80, 255);
+					RenderGlobal.drawSelectionBoundingBox(new AxisAlignedBB(0, 0, 0, size, 0.8 / 3, size), 30, 80, 80, 255);
 
 					GlStateManager.popMatrix();
 				}
@@ -941,12 +941,13 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 			float speedsteps = tileEntity.getSpeedsteps();
 
 			for (int slot = 0; slot < 9; slot++) {
+				//TODO:Check early if any wrapper is non-empty and skip rendering altogether
 				ItemWrapper wrapper = tileEntity.getSlot(slot);
 
-				ItemStack itemStack;
-				if (wrapper == null || wrapper.isEmpty() || (itemStack = wrapper.itemStack) == null) {
+				if (wrapper == null || wrapper.isEmpty()) {
 					continue;
 				}
+				ItemStack itemStack = wrapper.itemStack;
 
 				int movementProgress = wrapper.movementProgress;
 				if (movementProgress < 0) {

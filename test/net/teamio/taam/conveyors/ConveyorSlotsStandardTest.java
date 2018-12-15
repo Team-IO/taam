@@ -25,7 +25,7 @@ public class ConveyorSlotsStandardTest extends AbstractTest {
 
 		for (int sl = 0; sl < 9; sl++) {
 			// Nothing retained
-			assertNull(slots.slots[sl].itemStack);
+			assertTrue(slots.slots[sl].isEmpty());
 		}
 	}
 

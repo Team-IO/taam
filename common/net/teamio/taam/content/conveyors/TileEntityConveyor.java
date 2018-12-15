@@ -402,8 +402,7 @@ public class TileEntityConveyor extends BaseTileEntity implements IRotatable, IC
 	public boolean onBlockActivated(World world, EntityPlayer player, EnumHand hand, boolean hasWrench, EnumFacing side,
 	                                float hitX, float hitY, float hitZ) {
 		ItemStack held = player.getHeldItem(hand);
-		if (speedLevel == 1 && held != null && held.getItem() == TaamMain.itemPart
-				&& held.getMetadata() == Taam.ITEM_PART_META.redirector.ordinal()) {
+		if (speedLevel == 1 && InventoryUtils.isItem(held, TaamMain.itemPart, Taam.ITEM_PART_META.redirector.ordinal())) {
 			RedirectorSide redirectorSide = ConveyorUtil.getRedirectorSide(direction, side, hitX, hitY, hitZ, false);
 			Log.debug("Tried placing redirector on side: {}", redirectorSide);
 			if (redirectorSide == RedirectorSide.Left) {

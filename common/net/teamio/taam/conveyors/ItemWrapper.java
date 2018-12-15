@@ -7,14 +7,17 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.teamio.taam.util.InventoryUtils;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
  * Wrapper for item stacks on the conveyor system. Keeps track of movement,
  * processing and blocking.
  *
  * @author oliverkahrmann
  */
-public class ItemWrapper implements INBTSerializable<NBTTagCompound>{
-	public static final ItemWrapper EMPTY = new ItemWrapper(null) {
+public class ItemWrapper implements INBTSerializable<NBTTagCompound> {
+	public static final ItemWrapper EMPTY = new ItemWrapper(ItemStack.EMPTY) {
 		@Override
 		public boolean isEmpty() {
 			return true;
@@ -31,24 +34,22 @@ public class ItemWrapper implements INBTSerializable<NBTTagCompound>{
 	}
 
 	public ItemWrapper(ItemStack itemStack) {
-		this.itemStack = itemStack;
+		this.itemStack = InventoryUtils.guardAgainstNull(itemStack);
 	}
 
 	public boolean isEmpty() {
-		return itemStack == null;
+		return InventoryUtils.isEmpty(itemStack);
 	}
 
 	public int getStackSize() {
-		if (itemStack == null) {
+		if (InventoryUtils.isEmpty(itemStack)) {
 			return 0;
 		}
 		return itemStack.getCount();
 	}
 
 	public void setStackSize(int stackSize) {
-		if (itemStack != null) {
-			itemStack.setCount(stackSize);
-		}
+		itemStack = InventoryUtils.setCount(itemStack, stackSize);
 	}
 
 	public boolean isBlocked() {
@@ -121,7 +122,7 @@ public class ItemWrapper implements INBTSerializable<NBTTagCompound>{
 	/**
 	 * Checks whether the client-side rendering shall be interpolated in between
 	 * game ticks.
-	 *
+	 * <p>
 	 * Checks if the wrapper is neither stuck (client-side flag), blocked nor
 	 * empty. (Last one especially for highlight box rendering)
 	 *
@@ -142,7 +143,7 @@ public class ItemWrapper implements INBTSerializable<NBTTagCompound>{
 	public NBTTagCompound serializeNBT() {
 		NBTTagCompound tag = new NBTTagCompound();
 		tag.setByte("move", movementProgress);
-		if (itemStack != null) {
+		if (!InventoryUtils.isEmpty(itemStack)) {
 			itemStack.writeToNBT(tag);
 		}
 		return tag;
@@ -163,13 +164,16 @@ public class ItemWrapper implements INBTSerializable<NBTTagCompound>{
 	/**
 	 * Executes a deep-copy of this ItemWrapper.
 	 *
-	 * @return An exact copy of this ItemWrapper, including an exact copy of its
-	 *         contents.
+	 * @return An exact copy of this ItemWrapper, including an exact copy of its contents.
 	 */
+	@Nonnull
 	public ItemWrapper copy() {
-		ItemWrapper clone = new ItemWrapper(
-				InventoryUtils.copyStack(itemStack, getStackSize()));
+		ItemWrapper clone = new ItemWrapper(InventoryUtils.copyStack(itemStack, getStackSize()));
 		clone.movementProgress = movementProgress;
 		return clone;
+	}
+
+	public void setStack(@Nullable ItemStack stack) {
+		itemStack = InventoryUtils.guardAgainstNull(stack);
 	}
 }

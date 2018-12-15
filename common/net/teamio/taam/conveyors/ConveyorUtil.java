@@ -20,6 +20,7 @@ import net.minecraftforge.items.ItemHandlerHelper;
 import net.teamio.taam.Config;
 import net.teamio.taam.Log;
 import net.teamio.taam.Taam;
+import net.teamio.taam.util.InventoryUtils;
 import net.teamio.taam.util.TaamUtil;
 
 import java.util.ArrayList;
@@ -31,7 +32,7 @@ public class ConveyorUtil {
 
 	private static boolean tryInsert(TileEntity tileEntity, EntityItem ei) {
 		ItemStack entityItemStack = ei.getItem();
-		if (entityItemStack.getCount() == 0 || entityItemStack.getItem() == null) {
+		if (InventoryUtils.isEmpty(entityItemStack)) {
 			// We are tidy. Clean up "empty" item entities
 			ei.setDead();
 			return false;
@@ -60,7 +61,7 @@ public class ConveyorUtil {
 					ei.setDead();
 					return true;
 				} else if (added > 0) {
-					entityItemStack.setCount(previousStackSize - added);
+					entityItemStack = InventoryUtils.setCount(entityItemStack, previousStackSize - added);
 					ei.setItem(entityItemStack);
 					return true;
 				}
@@ -75,7 +76,7 @@ public class ConveyorUtil {
 					ItemStack notInserted = ItemHandlerHelper.insertItemStacked(itemHandler, entityItemStack, false);
 
 					// Update item entity
-					if (notInserted == null) {
+					if (InventoryUtils.isEmpty(notInserted)) {
 						ei.setDead();
 						return true;
 					}
@@ -389,7 +390,7 @@ public class ConveyorUtil {
 			double posY = pos.getY() + 0.5f;
 			double posZ = pos.getZ() + getItemPositionZ(slot, progress, direction);
 
-			if (slotObject.itemStack != null) {
+			if (!InventoryUtils.isEmpty(slotObject.itemStack)) {
 				EntityItem item = new EntityItem(world, posX, posY, posZ, slotObject.itemStack);
 				if (withVelocity) {
 					float speed = (Byte.MAX_VALUE - speedsteps) * 0.0019f;
@@ -405,7 +406,7 @@ public class ConveyorUtil {
 			}
 		}
 
-		slotObject.itemStack = null;
+		slotObject.itemStack = ItemStack.EMPTY;
 	}
 
 	public static boolean transferSlot(IConveyorSlots tileEntity, int slot, IConveyorSlots nextBlock, int nextSlot) {
@@ -413,13 +414,7 @@ public class ConveyorUtil {
 
 		int transferred = nextBlock.insertItemAt(slotObject.itemStack.copy(), nextSlot, false);
 		if (transferred > 0) {
-			int count = slotObject.itemStack.getCount() - transferred;
-			if (count <= 0) {
-				// Stack moved completely
-				slotObject.itemStack = null;
-			} else {
-				slotObject.itemStack.setCount(count);
-			}
+			slotObject.itemStack = InventoryUtils.adjustCount(slotObject.itemStack, -transferred);
 			// Something moved
 			return true;
 		}
@@ -431,10 +426,10 @@ public class ConveyorUtil {
 
 		ItemWrapper slotObject = tileEntity.getSlot(slot);
 		ItemWrapper nextSlotObject = tileEntity.getSlot(nextSlot);
-		if (nextSlotObject.itemStack == null) {
+		if (nextSlotObject.isEmpty()) {
 			nextSlotObject.itemStack = slotObject.itemStack;
 
-			slotObject.itemStack = null;
+			slotObject.itemStack = ItemStack.EMPTY;
 
 			// Something moved
 			return true;
@@ -445,19 +440,19 @@ public class ConveyorUtil {
 
 	public static int insertItemAt(IConveyorSlots tileEntity, ItemStack item, int slot, boolean simulate) {
 		ItemWrapper slotObject = tileEntity.getSlot(slot);
-		if (slotObject.itemStack == null) {
+		if (InventoryUtils.isEmpty(slotObject.itemStack)) {
 			if (!simulate) {
 				slotObject.itemStack = item.copy();
 				slotObject.unblock();
 				slotObject.resetMovement();
 			}
 			return item.getCount();
-		} else if (slotObject.itemStack.isItemEqual(item)) {
+		} else if (InventoryUtils.canStack(slotObject.itemStack, item)) {
 			int availableSpace = slotObject.itemStack.getMaxStackSize() - slotObject.itemStack.getCount();
 			if (availableSpace > 0) {
 				availableSpace = Math.min(availableSpace, item.getCount());
 				if (!simulate) {
-					slotObject.itemStack.setCount(slotObject.itemStack.getCount() + availableSpace);
+					slotObject.itemStack = InventoryUtils.adjustCount(slotObject.itemStack, availableSpace);
 				}
 				return availableSpace;
 			}
@@ -607,7 +602,7 @@ public class ConveyorUtil {
 				}
 			} else {
 				ItemWrapper nextWrapper = tileEntity.getSlot(nextSlot);
-				nextSlotFree = nextWrapper.itemStack == null;
+				nextSlotFree = nextWrapper.isEmpty();
 				nextSlotMovable = !nextWrapper.isBlocked();
 				nextSlotProgress = nextWrapper.movementProgress;
 				wrappedIsSameDirection = tileEntity.getNextSlot(nextSlot) == nextSlotDir;
@@ -627,7 +622,7 @@ public class ConveyorUtil {
 						} else {
 							somethingTransferred = transferSlot(tileEntity, slot, nextSlot);
 						}
-						if (!somethingTransferred || wrapper.itemStack != null) {
+						if (!somethingTransferred || !wrapper.isEmpty()) {
 							// Nothing did transfer, or something is left (itemStack not null)
 							nextSlotFree = false;
 							nextSlotMovable = false;
@@ -663,19 +658,15 @@ public class ConveyorUtil {
 		int clickedSlot = getSlotForRelativeCoordinates(hitX, hitZ);
 		int playerSlot = player.inventory.currentItem;
 		ItemStack playerStack = player.inventory.getCurrentItem();
-		if (playerStack == null) {
+		if (InventoryUtils.isEmpty(playerStack)) {
 			// Take from Conveyor
 			ItemStack removed = tileEntity.removeItemAt(clickedSlot, player.inventory.getInventoryStackLimit(), false);
-			player.inventory.setInventorySlotContents(playerSlot, removed);
+			player.inventory.setInventorySlotContents(playerSlot, InventoryUtils.guardAgainstNull(removed));
 		} else if (!isBlacklistedForConveyor(playerStack)) {
 			// Put on conveyor
 			int inserted = tileEntity.insertItemAt(playerStack, clickedSlot, false);
-			if (inserted == playerStack.getCount()) {
-				player.inventory.setInventorySlotContents(playerSlot, null);
-			} else {
-				playerStack.setCount(playerStack.getCount() - inserted);
-				player.inventory.setInventorySlotContents(playerSlot, playerStack);
-			}
+			playerStack = InventoryUtils.adjustCount(playerStack, -inserted);
+			player.inventory.setInventorySlotContents(playerSlot, playerStack);
 		}
 	}
 
@@ -686,15 +677,12 @@ public class ConveyorUtil {
 	 * @return true, if the item is blacklisted, or the specific meta/NBT is blacklisted.
 	 */
 	public static boolean isBlacklistedForConveyor(ItemStack stack) {
-		if (stack == null) return false;
-
-		Item item = stack.getItem();
-		if (item == null) return false;
+		if (InventoryUtils.isEmpty(stack)) return false;
 
 		// Check for name-only (taam:wrench)
-		ResourceLocation name = Item.REGISTRY.getNameForObject(item);
+		ResourceLocation name = Item.REGISTRY.getNameForObject(stack.getItem());
 		Log.debug("Checking for item {}", name);
-		if(name == null) {
+		if (name == null) {
 			return false;
 		}
 		if (Config.pl_conveyor_rightclick_blacklist.contains(name.toString())) {

@@ -116,10 +116,8 @@ public abstract class BaseBlock extends Block {
 			if (itemHandler != null) {
 				for (int index = 0; index < itemHandler.getSlots(); index++) {
 					ItemStack itemstack = itemHandler.getStackInSlot(index);
-
-					if (itemstack != null && itemstack.getCount() > 0 && itemstack.getItem() != null) {
-						InventoryUtils.dropItem(itemstack, worldIn, pos);
-					}
+					// dropItem checks for null/empty stacks
+					InventoryUtils.dropItem(itemstack, worldIn, pos);
 				}
 			}
 		}

@@ -23,6 +23,7 @@ import net.teamio.taam.gui.advanced.ContainerAdvancedMachine;
 import net.teamio.taam.gui.advanced.IAdvancedMachineGUI;
 import net.teamio.taam.gui.advanced.apps.AlignerSettings;
 import net.teamio.taam.gui.advanced.apps.RedstoneMode;
+import net.teamio.taam.util.InventoryUtils;
 
 import javax.annotation.Nonnull;
 
@@ -167,7 +168,7 @@ public class ApplianceAligner extends ATileEntityAppliance implements IWorldInte
 	@Override
 	public EnumFacing overrideNextSlot(IConveyorApplianceHost host, int slot, ItemWrapper wrapper,
 			EnumFacing beforeOverride) {
-		if(wrapper.itemStack == null) {
+		if(InventoryUtils.isEmpty(wrapper.itemStack)) {
 			return beforeOverride;
 		}
 

@@ -4,6 +4,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.util.INBTSerializable;
+import net.teamio.taam.util.InventoryUtils;
 
 /**
  * Standard implementation of a slot set that has actual items in its slots and
@@ -22,7 +23,7 @@ public class ConveyorSlotsStandard extends ConveyorSlotsBase implements INBTSeri
 	public ConveyorSlotsStandard() {
 		slots = new ItemWrapper[9];
 		for (int i = 0; i < 9; i++) {
-			slots[i] = new ItemWrapper(null);
+			slots[i] = new ItemWrapper(ItemStack.EMPTY);
 		}
 	}
 
@@ -47,8 +48,8 @@ public class ConveyorSlotsStandard extends ConveyorSlotsBase implements INBTSeri
 		}
 		ItemWrapper wrapper = slots[slot];
 		ItemStack removed = wrapper.itemStack;
-		if (removed == null) {
-			return null;
+		if (InventoryUtils.isEmpty(removed)) {
+			return ItemStack.EMPTY;
 		} else if (amount >= removed.getCount()) {
 			if (simulate) {
 				removed = removed.copy();
@@ -58,10 +59,9 @@ public class ConveyorSlotsStandard extends ConveyorSlotsBase implements INBTSeri
 			}
 			return removed;
 		} else {
-			removed = removed.copy();
-			removed.setCount(amount);
+			removed = InventoryUtils.setCount(removed.copy(), amount);
 			if (!simulate && amount > 0) {
-				wrapper.itemStack.setCount(wrapper.itemStack.getCount() - amount);
+				wrapper.setStackSize(wrapper.getStackSize() - amount);
 				onChangeHook();
 			}
 			return removed;
@@ -99,7 +99,7 @@ public class ConveyorSlotsStandard extends ConveyorSlotsBase implements INBTSeri
 			}
 			if (count < slots.length) {
 				for (int i = count; i < slots.length; i++) {
-					slots[i].itemStack = null;
+					slots[i].itemStack = ItemStack.EMPTY;
 				}
 			}
 		}

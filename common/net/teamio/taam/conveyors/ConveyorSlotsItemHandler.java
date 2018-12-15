@@ -3,6 +3,7 @@ package net.teamio.taam.conveyors;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.items.IItemHandlerModifiable;
+import net.teamio.taam.util.InventoryUtils;
 
 public class ConveyorSlotsItemHandler implements IItemHandlerModifiable {
 
@@ -38,23 +39,23 @@ public class ConveyorSlotsItemHandler implements IItemHandlerModifiable {
 		if (slots.isSlotAvailable(slot)) {
 			return slots.getSlot(slot).itemStack;
 		}
-		return null;
+		return ItemStack.EMPTY;
 	}
 
 	@Override
 	public ItemStack insertItem(int unused, ItemStack stack, boolean simulate) {
-		if (stack == null || stack.getCount() == 0 || !slots.isSlotAvailable(slot)) {
-			return null;
+		if (InventoryUtils.isEmpty(stack)) {
+			return ItemStack.EMPTY;
 		}
 		int amount = slots.insertItemAt(stack, slot, simulate);
 		if (amount == stack.getCount()) {
 			onChangeHook();
-			return null;
+			return ItemStack.EMPTY;
 		}
 		ItemStack didNotFit = stack.copy();
 		if(amount > 0) {
 			onChangeHook();
-			didNotFit.setCount(didNotFit.getCount() - amount);
+			didNotFit = InventoryUtils.adjustCount(didNotFit, -amount);
 		}
 		return didNotFit;
 	}
@@ -62,10 +63,10 @@ public class ConveyorSlotsItemHandler implements IItemHandlerModifiable {
 	@Override
 	public ItemStack extractItem(int unused, int amount, boolean simulate) {
 		if (amount == 0 || !slots.isSlotAvailable(slot)) {
-			return null;
+			return ItemStack.EMPTY;
 		}
 		ItemStack removed = slots.removeItemAt(slot, amount, simulate);
-		if(removed != null && removed.getCount() > 0) {
+		if(!InventoryUtils.isEmpty(removed)) {
 			onChangeHook();
 		}
 		return removed;
@@ -77,7 +78,7 @@ public class ConveyorSlotsItemHandler implements IItemHandlerModifiable {
 			throw new RuntimeException("setStackInSlot called on unavailable slot, cannot comply. SORRY! This is a bug, report it to the mod further up the call stack!");
 		}
 		onChangeHook();
-		slots.getSlot(slot).itemStack = stack;
+		slots.getSlot(slot).setStack(stack);
 	}
 
 	@Override

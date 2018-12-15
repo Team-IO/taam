@@ -216,7 +216,7 @@ public final class PipeUtil {
 		}
 
 		if (success && isPartialStack) {
-			playerStack.setCount(playerStack.getCount() - 1);
+			playerStack = InventoryUtils.adjustCount(playerStack, -1);
 			InventoryUtils.tryDropToInventory(player, handlingStack, player.getPosition());
 		}
 		return success;
