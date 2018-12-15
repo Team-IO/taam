@@ -80,7 +80,8 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable {
 	@Override
 	protected void readPropertiesFromNBT(NBTTagCompound tag) {
 		itemHandler.deserializeNBT(tag.getCompoundTag("items"));
-		conveyorSlots.rotation = EnumFacing.byIndex(tag.getInteger("direction"));;
+		direction = EnumFacing.byIndex(tag.getInteger("direction"));
+		conveyorSlots.rotation = direction;
 		blockUpdate();
 	}
 
