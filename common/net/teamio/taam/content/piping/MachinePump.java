@@ -51,10 +51,10 @@ public class MachinePump implements IMachine, IPipePos, IRotatable {
 	private static final float tankBack = 6 / 16f;
 
 	public static final AxisAlignedBB[] boundsPumpTank = new AxisAlignedBB[]{
-			new AxisAlignedBB(1 - tankLeft, tankBottom, tankBack, 1 - tankLeft - tankWidth, tankTop, tankBack + tankWidth).expand(TankRenderInfo.shrinkValue, TankRenderInfo.shrinkValue, TankRenderInfo.shrinkValue),//S
-			new AxisAlignedBB(1 - tankBack, tankBottom, 1 - tankLeft, 1 - tankBack - tankWidth, tankTop, 1 - tankLeft - tankWidth).expand(TankRenderInfo.shrinkValue, TankRenderInfo.shrinkValue, TankRenderInfo.shrinkValue),//W
-			new AxisAlignedBB(tankLeft, tankBottom, 1 - tankBack, tankLeft + tankWidth, tankTop, 1 - tankBack - tankWidth).expand(TankRenderInfo.shrinkValue, TankRenderInfo.shrinkValue, TankRenderInfo.shrinkValue),//N
-			new AxisAlignedBB(tankBack, tankBottom, tankLeft, tankBack + tankWidth, tankTop, tankLeft + tankWidth).expand(TankRenderInfo.shrinkValue, TankRenderInfo.shrinkValue, TankRenderInfo.shrinkValue)//E
+			new AxisAlignedBB(1 - tankLeft, tankBottom, tankBack, 1 - tankLeft - tankWidth, tankTop, tankBack + tankWidth).grow(TankRenderInfo.shrinkValue, TankRenderInfo.shrinkValue, TankRenderInfo.shrinkValue),//S
+			new AxisAlignedBB(1 - tankBack, tankBottom, 1 - tankLeft, 1 - tankBack - tankWidth, tankTop, 1 - tankLeft - tankWidth).grow(TankRenderInfo.shrinkValue, TankRenderInfo.shrinkValue, TankRenderInfo.shrinkValue),//W
+			new AxisAlignedBB(tankLeft, tankBottom, 1 - tankBack, tankLeft + tankWidth, tankTop, 1 - tankBack - tankWidth).grow(TankRenderInfo.shrinkValue, TankRenderInfo.shrinkValue, TankRenderInfo.shrinkValue),//N
+			new AxisAlignedBB(tankBack, tankBottom, tankLeft, tankBack + tankWidth, tankTop, tankLeft + tankWidth).grow(TankRenderInfo.shrinkValue, TankRenderInfo.shrinkValue, TankRenderInfo.shrinkValue)//E
 	};
 
 	private static final float fromBorderOcclusion = 2f / 16;
