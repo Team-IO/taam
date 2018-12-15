@@ -19,17 +19,17 @@ public interface IPipePos {
 		}
 
 		@Override
-		public BlockPos getPos() {
+		public BlockPos getPipePos() {
 			return pos;
 		}
 
 		@Override
-		public IBlockAccess getWorld() {
+		public IBlockAccess getPipeWorld() {
 			return world;
 		}
 	}
 
-	BlockPos getPos();
+	BlockPos getPipePos();
 
-	IBlockAccess getWorld();
+	IBlockAccess getPipeWorld();
 }

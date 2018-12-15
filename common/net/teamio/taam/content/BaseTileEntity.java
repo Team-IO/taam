@@ -27,7 +27,6 @@ import java.util.UUID;
  * network updates and saving to/loading from disk.
  *
  * @author oliverkahrmann
- *
  */
 public abstract class BaseTileEntity extends TileEntity implements IWorldNameable, IPipePos {
 
@@ -49,6 +48,24 @@ public abstract class BaseTileEntity extends TileEntity implements IWorldNameabl
 		} else {
 			owner = player.getUniqueID();
 		}
+	}
+
+	/**
+	 * Separate method as due to obfuscation issues we cannot use getPos from TileEntity
+	 * @return
+	 */
+	@Override
+	public BlockPos getPipePos() {
+		return pos;
+	}
+
+	/**
+	 * Separate method as due to obfuscation issues we cannot use getWorld from TileEntity
+	 * @return
+	 */
+	@Override
+	public IBlockAccess getPipeWorld() {
+		return getWorld();
 	}
 
 	public void setOwner(UUID owner) {
@@ -73,12 +90,9 @@ public abstract class BaseTileEntity extends TileEntity implements IWorldNameabl
 	 * Updates block info & marks the containing block for update when on the
 	 * server.
 	 *
-	 * @param worldUpdate
-	 *            Send update to client (notify block change / send via network). Re-render is only requested if renderUpdate is true as well.
-	 * @param renderUpdate
-	 *            Update rendering (client only)
-	 * @param blockUpdate
-	 *            Notify neighbor blocks (block update)
+	 * @param worldUpdate  Send update to client (notify block change / send via network). Re-render is only requested if renderUpdate is true as well.
+	 * @param renderUpdate Update rendering (client only)
+	 * @param blockUpdate  Notify neighbor blocks (block update, also notifies observers)
 	 */
 	public final void updateState(boolean worldUpdate, boolean renderUpdate, boolean blockUpdate) {
 		if (worldObj == null) {
@@ -187,7 +201,7 @@ public abstract class BaseTileEntity extends TileEntity implements IWorldNameabl
 	 * @param tag
 	 */
 	private void readPropertiesFromNBTInternal(NBTTagCompound tag) {
-		if(tag.getBoolean("owner")) {
+		if (tag.getBoolean("owner")) {
 			owner = tag.getUniqueId("owner");
 		} else {
 			owner = null;
