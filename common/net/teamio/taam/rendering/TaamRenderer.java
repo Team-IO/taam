@@ -2,12 +2,12 @@ package net.teamio.taam.rendering;
 
 import com.google.common.base.Function;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -40,6 +40,7 @@ import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.conveyors.IConveyorSlots;
 import net.teamio.taam.conveyors.ItemWrapper;
 import net.teamio.taam.conveyors.appliances.ApplianceAligner;
+import net.teamio.taam.util.InventoryUtils;
 import net.teamio.taam.util.WrenchUtil;
 import org.lwjgl.opengl.GL11;
 
@@ -79,7 +80,11 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 
 	public static final ResourceLocation conveyorTextures = new ResourceLocation("Taam", "blocks/conveyor");
 
-	public static boolean failureFreeBlockHightlight = true;
+	/**
+	 * This field is used to stop rendering block highlight operations on the first exception.
+	 * This is used to prevent the game being unresponsive due to continuous exceptions being written to the log.
+	 */
+	public static boolean failureFreeBlockHighlight = true;
 
 	/**
 	 * Function for fetching texture sprites.
@@ -120,7 +125,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 	@SubscribeEvent
 	public void onDrawBlockHighlight(DrawBlockHighlightEvent event) {
 		// If we crash, turn of Block Highlight drawing to prevent getting locked out of a world
-		if (!failureFreeBlockHightlight) {
+		if (!failureFreeBlockHighlight) {
 			return;
 		}
 		RayTraceResult target = event.getTarget();
@@ -128,11 +133,10 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		if (target != null && (pos = target.getBlockPos()) != null) {
 			EntityPlayer player = event.getPlayer();
 			boolean playerHasDebugTool = WrenchUtil.playerHasDebugTool(player);
-			World world = player.worldObj;
+			World world = player.world;
 			TileEntity te = world.getTileEntity(pos);
 
 			try {
-				playerHasDebugTool = true;
 				if (playerHasDebugTool) {
 					TaamRendererDebug.renderTEDebug(te, player, target.sideHit, event.getPartialTicks());
 				}
@@ -148,8 +152,8 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 						}
 
 						Vec3d hitVec = target.hitVec;
-						int slot = ConveyorUtil.getSlotForRelativeCoordinates(hitVec.xCoord - pos.getX(),
-								hitVec.zCoord - pos.getZ());
+						int slot = ConveyorUtil.getSlotForRelativeCoordinates(hitVec.x - pos.getX(),
+								hitVec.z - pos.getZ());
 
 
 						ItemWrapper wrapper = cte.getSlot(slot);
@@ -157,12 +161,12 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 						EnumFacing dir = cte.getNextSlot(slot);
 
 						// General Position of the slot
-						double x = pos.getX() + Math.floor(slot / 3) * ConveyorUtil.oneThird;
+						double x = pos.getX() + Math.floor(slot / 3f) * ConveyorUtil.oneThird;
 						double y = pos.getY() + cte.getVerticalPosition(slot);
 						double z = pos.getZ() + slot % 3 * ConveyorUtil.oneThird;
 
 
-						if (wrapper.itemStack == null && player.getHeldItemMainhand() != null) {
+						if (wrapper.isEmpty() && !InventoryUtils.isEmpty(player.getHeldItemMainhand())) {
 							drawSelectionBoundingBox(player, event.getPartialTicks(), 4, 1, 1, 1, 1, new AxisAlignedBB(x, y, z,
 									x + ConveyorUtil.oneThird, y + 0.1d, z + ConveyorUtil.oneThird));
 						} else {
@@ -174,7 +178,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 							drawSlotInfo(player, x, y, z, slot, cte.getMovementDirection(), event.getPartialTicks());
 						}
 
-						if (wrapper.itemStack != null) {
+						if (!wrapper.isEmpty()) {
 							float progress = wrapper.movementProgress;
 
 							if (wrapper.isRenderingInterpolated()) {
@@ -187,9 +191,9 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 							progress *= ConveyorUtil.oneThird / cte.getSpeedsteps();
 
 							// Apply movement of the item
-							x += dir.getFrontOffsetX() * progress;
-							z += dir.getFrontOffsetZ() * progress;
-							y += dir.getFrontOffsetY() * progress * 3;
+							x += dir.getXOffset() * progress;
+							z += dir.getZOffset() * progress;
+							y += dir.getYOffset() * progress * 3;
 
 							drawSelectionBoundingBox(player, event.getPartialTicks(), 4, 1, 1, 1, 1, new AxisAlignedBB(x, y, z,
 									x + ConveyorUtil.oneThird, y + ConveyorUtil.oneThird, z + ConveyorUtil.oneThird));
@@ -200,7 +204,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 
 			} catch (Exception e) {
 				Log.error("Error drawing block highlight for a tile entity. Disabling block highlight drawing to prevent you from crashing - This is an error, please report!", e);
-				failureFreeBlockHightlight = false;
+				failureFreeBlockHighlight = false;
 			}
 		}
 	}
@@ -287,7 +291,6 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 
 		GlStateManager.enableBlend();
 		GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-		GlStateManager.color(colorR, colorG, colorB, colorA);
 		GL11.glLineWidth(lineWidth);
 		// For whatever reason, we need to enable, THEN disable. Otherwise color gets somewhat garbled..
 		GlStateManager.enableTexture2D();
@@ -300,7 +303,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 
 		GL11.glTranslated(-d0, -d1, -d2);
 
-		RenderGlobal.drawSelectionBoundingBox(box.expand(boundingBoxExpand, boundingBoxExpand, boundingBoxExpand));
+		RenderGlobal.drawSelectionBoundingBox(box.expand(boundingBoxExpand, boundingBoxExpand, boundingBoxExpand), colorR, colorG, colorB, colorA);
 
 		GlStateManager.depthMask(true);
 		GlStateManager.enableTexture2D();
@@ -311,16 +314,15 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 	}
 
 	@Override
-	public void renderTileEntityAt(TileEntity tileEntity, double x, double y, double z, float partialTicks, int destroyStage) {
-
+	public void render(TileEntity te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
 		if (Config.render_tank_content) {
-			TankRenderInfo[] tankRI = tileEntity.getCapability(Taam.CAPABILITY_RENDER_TANK, null);
+			TankRenderInfo[] tankRI = te.getCapability(Taam.CAPABILITY_RENDER_TANK, null);
 
 			if (tankRI != null) {
 				GL11.glPushMatrix();
 				GL11.glTranslated(x, y, z);
 
-				float rotationDegrees = RenderUtil.getRotationDegrees(tileEntity);
+				float rotationDegrees = RenderUtil.getRotationDegrees(te);
 
 				GL11.glTranslated(.5f, .5f, .5f);
 				GL11.glRotatef(rotationDegrees, 0, 1, 0);
@@ -333,12 +335,12 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 			}
 		}
 
-		IConveyorSlots conveyorSlots = tileEntity.getCapability(Taam.CAPABILITY_CONVEYOR, EnumFacing.UP);
+		IConveyorSlots conveyorSlots = te.getCapability(Taam.CAPABILITY_CONVEYOR, EnumFacing.UP);
 		if (conveyorSlots != null) {
 			boolean oscillate = false;
 
-			if (tileEntity instanceof TileEntityConveyorSieve) {
-				oscillate = !((TileEntityConveyorSieve) tileEntity).isShutdown;
+			if (te instanceof TileEntityConveyorSieve) {
+				oscillate = !((TileEntityConveyorSieve) te).isShutdown;
 			}
 
 			if (Config.render_items) {
@@ -346,11 +348,11 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 			}
 		}
 
-		if (Config.render_items && tileEntity instanceof TileEntityConveyorProcessor) {
-			TileEntityConveyorProcessor processor = (TileEntityConveyorProcessor) tileEntity;
+		if (Config.render_items && te instanceof TileEntityConveyorProcessor) {
+			TileEntityConveyorProcessor processor = (TileEntityConveyorProcessor) te;
 			ItemStack processingStack = processor.getRenderStack();
 
-			if (processingStack != null && processingStack.stackSize > 0 && processingStack.getItem() != null) {
+			if (!InventoryUtils.isEmpty(processingStack)) {
 				IBakedModel model = ri.getItemModelMesher().getItemModel(processingStack);
 
 				GL11.glPushMatrix();
@@ -365,7 +367,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 				 * Get Rotation
 				 */
 
-				float rotationDegrees = RenderUtil.getRotationDegrees(tileEntity);
+				float rotationDegrees = RenderUtil.getRotationDegrees(te);
 
 				GL11.glTranslatef(0.5f, 0.4f, 0.5f);
 
@@ -395,65 +397,65 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 			}
 		}
 
-		if (tileEntity instanceof TileEntityConveyorSieve) {
+		if (te instanceof TileEntityConveyorSieve) {
 			GL11.glPushMatrix();
 			GL11.glTranslated(x, y, z);
 
-			float rotationDegrees = RenderUtil.getRotationDegrees(tileEntity);
+			float rotationDegrees = RenderUtil.getRotationDegrees(te);
 
 			GL11.glTranslated(.5f, .5f, .5f);
 			GL11.glRotatef(rotationDegrees, 0, 1, 0);
 			GL11.glTranslated(-.5f, -.5f, -.5f);
 
-			renderSieveMesh(((TileEntityConveyorSieve) tileEntity).isShutdown);
+			renderSieveMesh(((TileEntityConveyorSieve) te).isShutdown);
 
 			GL11.glPopMatrix();
 		}
 
-		if (tileEntity instanceof TileEntityConveyorItemBag) {
+		if (te instanceof TileEntityConveyorItemBag) {
 			GL11.glPushMatrix();
 			GL11.glTranslated(x, y, z);
 
-			float rotationDegrees = RenderUtil.getRotationDegrees(tileEntity);
+			float rotationDegrees = RenderUtil.getRotationDegrees(te);
 
 			GL11.glTranslated(.5f, .5f, .5f);
 			GL11.glRotatef(rotationDegrees, 0, 1, 0);
 			GL11.glTranslated(-.5f, -.5f, -.5f);
 
-			float fillFactor = ((TileEntityConveyorItemBag) tileEntity).fillPercent;
+			float fillFactor = ((TileEntityConveyorItemBag) te).fillPercent;
 
 			renderBagFilling(fillFactor);
 
 			GL11.glPopMatrix();
 		}
 
-		if (tileEntity instanceof TileEntityConveyorTrashCan) {
+		if (te instanceof TileEntityConveyorTrashCan) {
 			GL11.glPushMatrix();
 			GL11.glTranslated(x, y, z);
 
-			float rotationDegrees = RenderUtil.getRotationDegrees(tileEntity);
+			float rotationDegrees = RenderUtil.getRotationDegrees(te);
 
 			GL11.glTranslated(.5f, .5f, .5f);
 			GL11.glRotatef(rotationDegrees, 0, 1, 0);
 			GL11.glTranslated(-.5f, -.5f, -.5f);
 
-			float fillFactor = ((TileEntityConveyorTrashCan) tileEntity).fillLevel / Config.pl_trashcan_maxfill;
+			float fillFactor = ((TileEntityConveyorTrashCan) te).fillLevel / Config.pl_trashcan_maxfill;
 
 			renderBagFilling(fillFactor);
 
 			GL11.glPopMatrix();
 		}
 
-		if (tileEntity instanceof ApplianceAligner) {
+		if (te instanceof ApplianceAligner) {
 
 
-			ApplianceAligner aligner = (ApplianceAligner) tileEntity;
+			ApplianceAligner aligner = (ApplianceAligner) te;
 
 			EnumFacing direction = aligner.getFacingDirection();
 			EnumFacing conveyorDirection = aligner.conveyorDirection;
 
 			if (aligner.clientRenderCache != null && conveyorDirection != null && direction.getAxis() != conveyorDirection.getAxis()) {
-				float rotationDegrees = RenderUtil.getRotationDegrees(tileEntity);
+				float rotationDegrees = RenderUtil.getRotationDegrees(te);
 
 				byte conveyorSpeedsteps = aligner.conveyorSpeedsteps;
 
@@ -472,17 +474,16 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 
 				GL11.glTranslated(x, y, z);
 
-				GL11.glTranslated(direction.getFrontOffsetX(), direction.getFrontOffsetY() + 0.06, direction.getFrontOffsetZ());
+				GL11.glTranslated(direction.getXOffset(), direction.getYOffset() + 0.06, direction.getZOffset());
 
 				GL11.glTranslated(.5f, .5f, .5f);
 				GL11.glRotatef(rotationDegrees, 0, 1, 0);
 
 				// Offset to the correct position in conveyor direction
-				GL11.glTranslated(conveyorDirection.getFrontOffsetX() * offset - size / 2, 0, conveyorDirection.getFrontOffsetZ() * offset - size / 2);
+				GL11.glTranslated(conveyorDirection.getXOffset() * offset - size / 2, 0, conveyorDirection.getZOffset() * offset - size / 2);
 
 				for (int i = 0; i < 4; i++) {
 					ItemWrapper wrapper = aligner.clientRenderCache[i];
-					int rotateDown = 0;
 					if (wrapper == null) {
 						continue;
 					}
@@ -490,7 +491,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 						aligner.clientRenderCache[i] = null;
 						continue;
 					}
-					rotateDown = wrapper.movementProgress;
+					int rotateDown = wrapper.movementProgress;
 					if (rotateDown > conveyorSpeedsteps / 2) {
 						rotateDown = conveyorSpeedsteps - rotateDown;
 					}
@@ -516,7 +517,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 					GlStateManager.pushMatrix();
 
 					// Offset to the correct position in aligner direction, left/right to conveyor
-					GL11.glTranslated(direction.getFrontOffsetX() * forwardBackward, 0, direction.getFrontOffsetZ() * forwardBackward);
+					GL11.glTranslated(direction.getXOffset() * forwardBackward, 0, direction.getZOffset() * forwardBackward);
 
 					// Rotate correctly
 					GL11.glTranslated(size / 2, 0, size / 2);
@@ -528,13 +529,13 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 					GL11.glTranslated(-size / 2, 0, -size / 2);
 
 					// Flip down
-					GL11.glRotated((15 / animFrames) * rotateSide, 0, 1, 0);
-					GL11.glRotated(-(90 / animFrames) * rotateDown, 1, 0, 0);
+					GL11.glRotated((15f / animFrames) * rotateSide, 0, 1, 0);
+					GL11.glRotated(-(90f / animFrames) * rotateDown, 1, 0, 0);
 					GlStateManager.disableLighting();
 					GlStateManager.disableTexture2D();
 
 					// Render bit
-					RenderGlobal.drawOutlinedBoundingBox(new AxisAlignedBB(0, 0, 0, size, 0.8 / 3, size), 30, 80, 80, 255);
+					RenderGlobal.drawSelectionBoundingBox(new AxisAlignedBB(0, 0, 0, size, 0.8 / 3, size), 30, 80, 80, 255);
 
 					GlStateManager.popMatrix();
 				}
@@ -544,18 +545,18 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 			}
 		}
 
-		if (tileEntity instanceof TileEntityConveyorElevator) {
+		if (te instanceof TileEntityConveyorElevator) {
 			GL11.glPushMatrix();
 			GL11.glTranslated(x, y, z);
 
-			float rotationDegrees = RenderUtil.getRotationDegrees(tileEntity);
+			float rotationDegrees = RenderUtil.getRotationDegrees(te);
 
 			GL11.glTranslated(.5f, .5f, .5f);
 			GL11.glRotatef(rotationDegrees, 0, 1, 0);
 			GL11.glTranslated(-.5f, -.5f, -.5f);
 
 
-			TileEntityConveyorElevator.ElevatorDirection escalation = ((TileEntityConveyorElevator) tileEntity).escalation;
+			TileEntityConveyorElevator.ElevatorDirection escalation = ((TileEntityConveyorElevator) te).escalation;
 
 			renderElevator(escalation, partialTicks);
 
@@ -577,7 +578,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 
 
 		Tessellator tessellator = Tessellator.getInstance();
-		VertexBuffer vertexbuffer = tessellator.getBuffer();
+		BufferBuilder vertexbuffer = tessellator.getBuffer();
 
 		final float margin = 0.02f;
 		final float margin2 = 0.03f;
@@ -638,7 +639,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		 */
 		TextureAtlasSprite sprite = textureGetter.apply(fluid.getStill());
 
-		VertexBuffer renderer = Tessellator.getInstance().getBuffer();
+		BufferBuilder renderer = Tessellator.getInstance().getBuffer();
 
 		renderer.begin(7, DefaultVertexFormats.POSITION_TEX_NORMAL);
 		bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
@@ -725,7 +726,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		 */
 
 		TextureAtlasSprite sprite = textureGetter.apply(conveyorTextures);
-		VertexBuffer renderer = Tessellator.getInstance().getBuffer();
+		BufferBuilder renderer = Tessellator.getInstance().getBuffer();
 
 		renderer.begin(7, DefaultVertexFormats.POSITION_TEX_NORMAL);
 		bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
@@ -833,7 +834,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		 */
 
 		TextureAtlasSprite sprite = textureGetter.apply(conveyorTextures);
-		VertexBuffer renderer = Tessellator.getInstance().getBuffer();
+		BufferBuilder renderer = Tessellator.getInstance().getBuffer();
 
 		renderer.begin(7, DefaultVertexFormats.POSITION_TEX_NORMAL);
 		bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
@@ -928,60 +929,74 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		/*
 		 * Check if the block actually wants rendering
 		 */
-		if (tileEntity.shouldRenderItemsDefault()) {
+		if (!tileEntity.shouldRenderItemsDefault()) return;
+
+		// Check early if any wrapper is non-empty and skip rendering altogether
+		boolean allEmpty = true;
+		for (int slot = 0; slot < 9; slot++) {
+			ItemWrapper wrapper = tileEntity.getSlot(slot);
+
+			if (wrapper != null && !wrapper.isEmpty()) {
+				allEmpty = false;
+				break;
+			}
+		}
+		if (allEmpty) return;
+
+		// Render items on conveyor slots
+
+		GL11.glPushMatrix();
+		GL11.glTranslated(x, y, z);
+
+		setupDefaultGL();
+
+		bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+		float posYOffset = 0.15f;
+		if (oscillate) {
+			posYOffset += (float) (rotSin * 0.04);
+		}
+		float speedsteps = tileEntity.getSpeedsteps();
+
+		for (int slot = 0; slot < 9; slot++) {
+			ItemWrapper wrapper = tileEntity.getSlot(slot);
+
+			if (wrapper == null || wrapper.isEmpty()) {
+				continue;
+			}
+			ItemStack itemStack = wrapper.itemStack;
+
+			int movementProgress = wrapper.movementProgress;
+			if (movementProgress < 0) {
+				movementProgress = 0;
+			}
+
+			EnumFacing renderDirection = tileEntity.getNextSlot(slot);
+
+			float progress = movementProgress;
+			if (wrapper.isRenderingInterpolated()) {
+				progress += partialTicks;
+			} else {
+				// Interpolation since last frame already advanced to almost 1, so we prevent stutter by "skipping ahead"
+				progress += 1;
+			}
+			progress /= speedsteps;
+			float posX = (float) ConveyorUtil.getItemPositionX(slot, progress, renderDirection);
+			float posZ = (float) ConveyorUtil.getItemPositionZ(slot, progress, renderDirection);
+			float posY = tileEntity.getVerticalPosition(slot) + renderDirection.getYOffset() * progress;
 
 			GL11.glPushMatrix();
-			GL11.glTranslated(x, y, z);
+			GL11.glTranslatef(posX, posYOffset + posY, posZ);
+			GL11.glScalef(itemScaleFactor, itemScaleFactor, itemScaleFactor);
 
-			setupDefaultGL();
-
-			bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-			float posYOffset = 0.15f;
-			if (oscillate) {
-				posYOffset += (float) (rotSin * 0.04);
-			}
-			float speedsteps = tileEntity.getSpeedsteps();
-
-			for (int slot = 0; slot < 9; slot++) {
-				ItemWrapper wrapper = tileEntity.getSlot(slot);
-
-				ItemStack itemStack;
-				if (wrapper == null || wrapper.isEmpty() || (itemStack = wrapper.itemStack) == null) {
-					continue;
-				}
-
-				int movementProgress = wrapper.movementProgress;
-				if (movementProgress < 0) {
-					movementProgress = 0;
-				}
-
-				EnumFacing renderDirection = tileEntity.getNextSlot(slot);
-
-				float progress = movementProgress;
-				if (wrapper.isRenderingInterpolated()) {
-					progress += partialTicks;
-				} else {
-					// Interpolation since last frame already advanced to almost 1, so we prevent stutter by "skipping ahead"
-					progress += 1;
-				}
-				progress /= speedsteps;
-				float posX = (float) ConveyorUtil.getItemPositionX(slot, progress, renderDirection);
-				float posZ = (float) ConveyorUtil.getItemPositionZ(slot, progress, renderDirection);
-				float posY = tileEntity.getVerticalPosition(slot) + renderDirection.getFrontOffsetY() * progress;
-
-				GL11.glPushMatrix();
-				GL11.glTranslatef(posX, posYOffset + posY, posZ);
-				GL11.glScalef(itemScaleFactor, itemScaleFactor, itemScaleFactor);
-
-				IBakedModel model = ri.getItemModelMesher().getItemModel(itemStack);
-				ri.renderItem(itemStack, model);
-
-				GL11.glPopMatrix();
-			}
-			tearDownDefaultGL();
+			IBakedModel model = ri.getItemModelMesher().getItemModel(itemStack);
+			ri.renderItem(itemStack, model);
 
 			GL11.glPopMatrix();
 		}
+		tearDownDefaultGL();
+
+		GL11.glPopMatrix();
+
 
 	}
 }

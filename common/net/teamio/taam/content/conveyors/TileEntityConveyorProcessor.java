@@ -105,20 +105,20 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements IReds
 
 	@Override
 	public void update() {
-		if(worldObj.isRemote) {
+		if(world.isRemote) {
 			return;
 		}
 
 		if(!isCoolingDown()) {
 			ItemStack stack = itemHandler.getStackInSlot(0);
-			if(stack == null || stack.stackSize < stack.getMaxStackSize()) {
-				ConveyorUtil.tryInsertItemsFromWorld(this, worldObj, null, false);
+			if(stack == null || stack.getCount() < stack.getMaxStackSize()) {
+				ConveyorUtil.tryInsertItemsFromWorld(this, world, null, false);
 			}
 		}
 
-		boolean redstoneHigh = worldObj.isBlockIndirectlyGettingPowered(pos) > 0;
+		boolean redstoneHigh = world.getRedstonePowerFromNeighbors(pos) > 0;
 
-		boolean newShutdown = TaamUtil.isShutdown(worldObj.rand, redstoneMode, redstoneHigh);
+		boolean newShutdown = TaamUtil.isShutdown(world.rand, redstoneMode, redstoneHigh);
 
 		boolean needsUpdate = false;
 
@@ -144,7 +144,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements IReds
 				}
 			}
 
-			if(Config.pl_processor_hurt && worldObj.rand.nextFloat() < Config.pl_processor_hurt_chance) {
+			if(Config.pl_processor_hurt && world.rand.nextFloat() < Config.pl_processor_hurt_chance) {
 				hurtEntities();
 			}
 		}
@@ -159,7 +159,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements IReds
 		int x = pos.getX();
 		int y = pos.getY();
 		int z = pos.getZ();
-		List<EntityLivingBase> entitites = worldObj.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(x, y, z, x + 1, y + 1, z + 1));
+		List<EntityLivingBase> entitites = world.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(x, y, z, x + 1, y + 1, z + 1));
 		for(EntityLivingBase living : entitites) {
 			hurtEntity(living);
 		}
@@ -196,7 +196,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements IReds
 		/*
 		 * Check blocked & fetch output inventory
 		 */
-		chute.refreshOutputInventory(worldObj, down);
+		chute.refreshOutputInventory(world, down);
 		if(chute.isBlocked()) {
 			return ProcessResult.NoOperation;
 		}
@@ -205,7 +205,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements IReds
 		 * Output Backlog
 		 */
 		// Output the backlog. Returns true if there were items transferred or there are still items left.
-		if(chute.output(worldObj, down)) {
+		if(chute.output(world, down)) {
 			return ProcessResult.Output;
 		}
 
@@ -312,7 +312,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements IReds
 		// redstoneMode = tag.getByte("redstoneMode");
 		timeout = tag.getInteger("timeout");
 		isShutdown = tag.getBoolean("isShutdown");
-		direction = EnumFacing.getFront(tag.getInteger("direction"));
+		direction = EnumFacing.byIndex(tag.getInteger("direction"));
 		if (direction == EnumFacing.UP || direction == EnumFacing.DOWN) {
 			direction = EnumFacing.NORTH;
 		}
@@ -363,7 +363,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements IReds
 	@Override
 	public void setRedstoneMode(byte mode) {
 		redstoneMode = mode;
-		if(worldObj.isRemote) {
+		if(world.isRemote) {
 			TPMachineConfiguration config = TPMachineConfiguration.newChangeInteger(new WorldCoord(this), (byte)1, redstoneMode);
 			TaamMain.network.sendToServer(config);
 		} else {

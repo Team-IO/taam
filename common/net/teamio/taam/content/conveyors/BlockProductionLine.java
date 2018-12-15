@@ -8,12 +8,12 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.inventory.Container;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -34,8 +34,6 @@ import net.teamio.taam.content.MaterialMachinesTransparent;
 import net.teamio.taam.content.common.TileEntityChute;
 import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.rendering.obj.OBJModel;
-
-import java.util.List;
 
 public class BlockProductionLine extends BaseBlock {
 
@@ -102,21 +100,20 @@ public class BlockProductionLine extends BaseBlock {
 			i = 0;
 		}
 
-		return super.getUnlocalizedName() + "." + values[i].name();
+		return super.getTranslationKey() + "." + values[i].name();
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public BlockRenderLayer getBlockLayer() {
+	public BlockRenderLayer getRenderLayer() {
 		return BlockRenderLayer.CUTOUT;
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public void getSubBlocks(Item item, CreativeTabs creativeTab, List<ItemStack> list) {
+	public void getSubBlocks(CreativeTabs itemIn, NonNullList<ItemStack> items) {
 		Enum<?>[] values = Taam.BLOCK_PRODUCTIONLINE_META.values();
 		for (int i = 0; i < values.length; i++) {
-			list.add(new ItemStack(item, 1, i));
+			items.add(new ItemStack(this, 1, i));
 		}
 	}
 
@@ -189,7 +186,7 @@ public class BlockProductionLine extends BaseBlock {
 	}
 
 	@Override
-	public boolean isBlockSolid(IBlockAccess world, BlockPos pos, EnumFacing side) {
+	public boolean causesSuffocation(IBlockState state) {
 		return false;
 	}
 

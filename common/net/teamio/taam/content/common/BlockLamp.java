@@ -66,11 +66,11 @@ public class BlockLamp extends Block {
 
 	@Override
 	public IBlockState getStateFromMeta(int meta) {
-		return getDefaultState().withProperty(DIRECTION, EnumFacing.getFront(meta & 7)).withProperty(POWERED, (meta & 8) != 0).withProperty(ATTACHED, false);
+		return getDefaultState().withProperty(DIRECTION, EnumFacing.byIndex(meta & 7)).withProperty(POWERED, (meta & 8) != 0).withProperty(ATTACHED, false);
 	}
 
 	@Override
-	public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, World worldIn, BlockPos pos) {
+	public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
 		return null;
 	}
 
@@ -175,9 +175,9 @@ public class BlockLamp extends Block {
 	}
 
 	@Override
-	public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn) {
+	public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
 
-		boolean isOn = state.getValue(POWERED);
+		boolean isOn = worldIn.getBlockState(pos).getValue(POWERED);
 
 		boolean powered = worldIn.isBlockPowered(pos);
 
@@ -196,7 +196,7 @@ public class BlockLamp extends Block {
 	}
 
 	@Override
-	public boolean isBlockSolid(IBlockAccess worldIn, BlockPos pos, EnumFacing side) {
+	public boolean causesSuffocation(IBlockState state) {
 		return false;
 	}
 
@@ -207,7 +207,7 @@ public class BlockLamp extends Block {
 
 	@Override
 	public boolean isFullCube(IBlockState state) {
-		// Required false to prevent suffocation
+		// Required false to prevent suffocation (not actually, causesSuffocation is overridden above)
 		return false;
 	}
 
@@ -217,8 +217,9 @@ public class BlockLamp extends Block {
 		return false;
 	}
 
+
 	@Override
-	public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ,
+	public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ,
 			int meta, EntityLivingBase placer) {
 		return getDefaultState().withProperty(DIRECTION, facing).withProperty(POWERED, isInverted).withProperty(ATTACHED, false);
 	}

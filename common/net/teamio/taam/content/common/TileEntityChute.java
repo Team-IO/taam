@@ -29,17 +29,17 @@ public class TileEntityChute extends BaseTileEntity implements IRotatable, ITick
 	public boolean isConveyorVersion = false;
 	private EnumFacing direction = EnumFacing.NORTH;
 	private final FluidHandlerOutputOnly wrappedHandler = new FluidHandlerOutputOnly();
-	
+
 	private final ConveyorSlotsBase conveyorSlots = new ConveyorSlotsBase() {
-		
+
 		@Override
 		public int insertItemAt(ItemStack stack, int slot, boolean simulate) {
 			IItemHandler target = getTargetItemHandler();
 
 			ItemStack notAdded = ItemHandlerHelper.insertItemStacked(target, stack, simulate);
-			int added = stack.stackSize;
+			int added = stack.getCount();
 			if(notAdded != null)
-				added -= notAdded.stackSize;
+				added -= notAdded.getCount();
 			return added;
 		}
 
@@ -47,7 +47,7 @@ public class TileEntityChute extends BaseTileEntity implements IRotatable, ITick
 		public ItemStack removeItemAt(int slot, int amount, boolean simulate) {
 			return null;
 		}
-		
+
 		@Override
 		public double getInsertMaxY() {
 			return isConveyorVersion ? 0.9 : 1.3;
@@ -75,8 +75,8 @@ public class TileEntityChute extends BaseTileEntity implements IRotatable, ITick
 	@Override
 	public void update() {
 		// Skip item insertion if there is a solid block / other chute above us
-		if (isConveyorVersion || !worldObj.isSideSolid(pos.up(), EnumFacing.DOWN, false)) {
-			ConveyorUtil.tryInsertItemsFromWorld(this, worldObj, null, false);
+		if (isConveyorVersion || !world.isSideSolid(pos.up(), EnumFacing.DOWN, false)) {
+			ConveyorUtil.tryInsertItemsFromWorld(this, world, null, false);
 		}
 	}
 
@@ -92,7 +92,7 @@ public class TileEntityChute extends BaseTileEntity implements IRotatable, ITick
 	protected void readPropertiesFromNBT(NBTTagCompound tag) {
 		isConveyorVersion = tag.getBoolean("isConveyorVersion");
 		if (isConveyorVersion) {
-			direction = EnumFacing.getFront(tag.getInteger("direction"));
+			direction = EnumFacing.byIndex(tag.getInteger("direction"));
 			if (direction.getAxis() == Axis.Y) {
 				direction = EnumFacing.NORTH;
 			}
@@ -129,37 +129,42 @@ public class TileEntityChute extends BaseTileEntity implements IRotatable, ITick
 	}
 
 	private TileEntity getTarget() {
-		return worldObj.getTileEntity(pos.down());
+		return world.getTileEntity(pos.down());
 	}
-	
+
 	private IItemHandler getDropItemHandler() {
 		return new IItemHandler() {
-			
+
 			@Override
 			public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
 				if(canDrop()) {
-					if(!simulate && !worldObj.isRemote) {
-						EntityItem item = new EntityItem(worldObj, pos.getX() + 0.5, pos.getY() - 0.3, pos.getZ() + 0.5, stack);
+					if(!simulate && !world.isRemote) {
+						EntityItem item = new EntityItem(world, pos.getX() + 0.5, pos.getY() - 0.3, pos.getZ() + 0.5, stack);
 						item.motionX = 0;
 						item.motionY = 0;
 						item.motionZ = 0;
-						worldObj.spawnEntityInWorld(item);
+						world.spawnEntity(item);
 					}
 					return null;
 				}
 				return stack;
 			}
-			
+
 			@Override
 			public ItemStack getStackInSlot(int slot) {
 				return null;
 			}
-			
+
 			@Override
 			public int getSlots() {
 				return 1;
 			}
-			
+
+			@Override
+			public int getSlotLimit(int slot) {
+				return 64;
+			}
+
 			@Override
 			public ItemStack extractItem(int slot, int amount, boolean simulate) {
 				return null;
@@ -178,7 +183,7 @@ public class TileEntityChute extends BaseTileEntity implements IRotatable, ITick
 		}
 		return handler;
 	}
-	
+
 
 	private IFluidHandler getTargetFluidHandler() {
 		TileEntity target = getTarget();
@@ -196,7 +201,7 @@ public class TileEntityChute extends BaseTileEntity implements IRotatable, ITick
 	}
 
 	private boolean canDrop() {
-		return TaamUtil.canDropIntoWorld(worldObj, pos.down());
+		return TaamUtil.canDropIntoWorld(world, pos.down());
 	}
 
 	/*

@@ -2,7 +2,6 @@ package net.teamio.taam.network;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -19,7 +18,7 @@ public final class TPMachineConfiguration implements IMessage {
 
 		@Override
 		public IMessage onMessage(TPMachineConfiguration message, MessageContext ctx) {
-			WorldServer world = FMLCommonHandler.instance().getMinecraftServerInstance().worldServerForDimension(message.tileEntity.world);
+			WorldServer world = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(message.tileEntity.world);
 			if(ctx.side == Side.SERVER) {
 				TileEntity te = world.getTileEntity(message.tileEntity.pos());
 				switch(message.mode) {

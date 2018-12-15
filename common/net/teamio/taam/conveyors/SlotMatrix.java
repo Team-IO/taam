@@ -38,7 +38,7 @@ public class SlotMatrix {
 	 * @return
 	 */
 	public boolean isSlotAvailable(int slot) {
-		slot = MathHelper.clamp_int(slot, 0, 8);
+		slot = MathHelper.clamp(slot, 0, 8);
 
 		return unrotated[slot];
 	}
@@ -63,7 +63,7 @@ public class SlotMatrix {
 		// Horizontal Index: S-W-N-E
 		boolean[] slots = rotated[rotation.getHorizontalIndex()];
 
-		slot = MathHelper.clamp_int(slot, 0, 8);
+		slot = MathHelper.clamp(slot, 0, 8);
 
 		return slots[slot];
 	}

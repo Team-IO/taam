@@ -158,7 +158,7 @@ public class MachineMixer implements IMachine, IPipePos, IRotatable {
 
 	@Override
 	public void readPropertiesFromNBT(NBTTagCompound tag) {
-		direction = EnumFacing.getFront(tag.getInteger("direction"));
+		direction = EnumFacing.byIndex(tag.getInteger("direction"));
 		if (direction == EnumFacing.UP || direction == EnumFacing.DOWN) {
 			direction = EnumFacing.NORTH;
 		}
@@ -185,13 +185,13 @@ public class MachineMixer implements IMachine, IPipePos, IRotatable {
 	public void writeUpdatePacket(PacketBuffer buf) {
 		NBTTagCompound tag = new NBTTagCompound();
 		writePropertiesToNBT(tag);
-		buf.writeNBTTagCompoundToBuffer(tag);
+		buf.writeCompoundTag(tag);
 	}
 
 	@Override
 	public void readUpdatePacket(PacketBuffer buf) {
 		try {
-			NBTTagCompound tag = buf.readNBTTagCompoundFromBuffer();
+			NBTTagCompound tag = buf.readCompoundTag();
 			readPropertiesFromNBT(tag);
 		} catch (IOException e) {
 			Log.error(getClass().getSimpleName()
@@ -235,15 +235,15 @@ public class MachineMixer implements IMachine, IPipePos, IRotatable {
 
 	@Override
 	public void addCollisionBoxes(AxisAlignedBB mask, List<AxisAlignedBB> list, Entity collidingEntity) {
-		if (mask.intersectsWith(bounds)) {
+		if (mask.intersects(bounds)) {
 			list.add(bounds);
 		}
 		if (direction.getAxis() == Axis.X) {
-			if (mask.intersectsWith(boundsPipeX)) {
+			if (mask.intersects(boundsPipeX)) {
 				list.add(boundsPipeX);
 			}
 		} else {
-			if (mask.intersectsWith(boundsPipeZ)) {
+			if (mask.intersects(boundsPipeZ)) {
 				list.add(boundsPipeZ);
 			}
 		}
@@ -346,7 +346,7 @@ public class MachineMixer implements IMachine, IPipePos, IRotatable {
 		 */
 
 		//TODO: move process() to the update method & save one stack in an internal inventory
-		boolean redstoneHigh = worldObj != null && worldObj.isBlockIndirectlyGettingPowered(pos) > 0;
+		boolean redstoneHigh = worldObj != null && worldObj.getRedstonePowerFromNeighbors(pos) > 0;
 
 		isShutdown = TaamUtil.isShutdown(TaamUtil.RANDOM, redstoneMode, redstoneHigh);
 
@@ -413,7 +413,7 @@ public class MachineMixer implements IMachine, IPipePos, IRotatable {
 
 		if (!simulate) backlog = outputFluid.copy();
 
-		return recipe.getInput().stackSize;
+		return recipe.getInput().getCount();
 	}
 
 	/*

@@ -50,7 +50,7 @@ public class ContainerAdvancedMachine extends Container {
 		}
 		this.machine = machine;
 		this.player = player;
-		isRemote = player.worldObj.isRemote;
+		isRemote = player.world.isRemote;
 		
 		bindPlayerInventory(player.inventory);
 		

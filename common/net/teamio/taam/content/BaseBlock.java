@@ -60,7 +60,7 @@ public abstract class BaseBlock extends Block {
 	public abstract boolean canBlockStay(World worldIn, BlockPos pos, IBlockState state);
 
 	@Override
-	public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn) {
+	public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
 		if (!canBlockStay(worldIn, pos, state)) {
 
 			TaamUtil.breakBlockInWorld(worldIn, pos, state);
@@ -116,10 +116,8 @@ public abstract class BaseBlock extends Block {
 			if (itemHandler != null) {
 				for (int index = 0; index < itemHandler.getSlots(); index++) {
 					ItemStack itemstack = itemHandler.getStackInSlot(index);
-
-					if (itemstack != null && itemstack.stackSize > 0 && itemstack.getItem() != null) {
-						InventoryUtils.dropItem(itemstack, worldIn, pos);
-					}
+					// dropItem checks for null/empty stacks
+					InventoryUtils.dropItem(itemstack, worldIn, pos);
 				}
 			}
 		}
@@ -133,7 +131,7 @@ public abstract class BaseBlock extends Block {
 	}
 
 	@Override
-	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
+	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 
 		TileEntity te = worldIn.getTileEntity(pos);
 		IWorldInteractable interactable = null;
@@ -149,13 +147,13 @@ public abstract class BaseBlock extends Block {
 			// All world interaction (perform action, open gui, etc.) is
 			// handled within the entity
 			boolean playerHasWrench = WrenchUtil.playerHasWrenchInHand(playerIn, hand);
-			boolean intercepted = interactable.onBlockActivated(worldIn, playerIn, hand, playerHasWrench, side, hitX, hitY, hitZ);
+			boolean intercepted = interactable.onBlockActivated(worldIn, playerIn, hand, playerHasWrench, facing, hitX, hitY, hitZ);
 			if (intercepted) {
 				return true;
 			}
 		}
 
-		if (WrenchUtil.wrenchBlock(worldIn, pos, playerIn, hand, side, hitX, hitY, hitZ) == EnumActionResult.SUCCESS) {
+		if (WrenchUtil.wrenchBlock(worldIn, pos, playerIn, hand, facing, hitX, hitY, hitZ) == EnumActionResult.SUCCESS) {
 			return true;
 		}
 
@@ -282,13 +280,13 @@ public abstract class BaseBlock extends Block {
 	 */
 	public static void updateBlocksAround(World world, BlockPos pos) {
 		Block blockType = world.getBlockState(pos).getBlock();
-		world.notifyNeighborsOfStateChange(pos, blockType);
-		world.notifyNeighborsOfStateChange(pos.west(), blockType);
-		world.notifyNeighborsOfStateChange(pos.east(), blockType);
-		world.notifyNeighborsOfStateChange(pos.down(), blockType);
-		world.notifyNeighborsOfStateChange(pos.up(), blockType);
-		world.notifyNeighborsOfStateChange(pos.north(), blockType);
-		world.notifyNeighborsOfStateChange(pos.south(), blockType);
+		world.notifyNeighborsOfStateChange(pos, blockType, true);
+		world.notifyNeighborsOfStateChange(pos.west(), blockType, false);
+		world.notifyNeighborsOfStateChange(pos.east(), blockType, false);
+		world.notifyNeighborsOfStateChange(pos.down(), blockType, false);
+		world.notifyNeighborsOfStateChange(pos.up(), blockType, false);
+		world.notifyNeighborsOfStateChange(pos.north(), blockType, false);
+		world.notifyNeighborsOfStateChange(pos.south(), blockType, false);
 	}
 
 }

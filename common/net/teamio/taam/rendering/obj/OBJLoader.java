@@ -21,7 +21,7 @@ import java.util.Set;
  * If you need more control over accepted resources - extend the class, and register a new instance with ModelLoaderRegistry.
  *
  * Replacement for the original OBJLoader. Hacky workaround.
- * 
+ *
  * @author shadekiller666
  * https://github.com/shadekiller666/MinecraftForge/tree/1.9_OBJLoader/src/main/java/net/minecraftforge/client/model/obj
  *
@@ -46,25 +46,25 @@ public enum OBJLoader implements ICustomModelLoader {
 
 	@Override
 	public boolean accepts(ResourceLocation modelLocation) {
-		return this.enabledDomains.contains(modelLocation.getResourceDomain())
-				&& modelLocation.getResourcePath().endsWith(".obj");
+		return this.enabledDomains.contains(modelLocation.getNamespace())
+				&& modelLocation.getPath().endsWith(".obj");
 	}
 
 	@Override
 	public IModel loadModel(ResourceLocation modelLocation) throws Exception {
-		ResourceLocation file = new ResourceLocation(modelLocation.getResourceDomain(),
-				modelLocation.getResourcePath());
+		ResourceLocation file = new ResourceLocation(modelLocation.getNamespace(),
+				modelLocation.getPath());
 		if (!this.cache.containsKey(file)) {
 			IResource resource = null;
 			try {
 				resource = manager.getResource(file);
 			} catch (FileNotFoundException e) {
-				if (modelLocation.getResourcePath().startsWith("models/block/"))
-					resource = manager.getResource(new ResourceLocation(file.getResourceDomain(),
-							"models/item/" + file.getResourcePath().substring("models/block/".length())));
-				else if (modelLocation.getResourcePath().startsWith("models/item/"))
-					resource = manager.getResource(new ResourceLocation(file.getResourceDomain(),
-							"models/block/" + file.getResourcePath().substring("models/item/".length())));
+				if (modelLocation.getPath().startsWith("models/block/"))
+					resource = manager.getResource(new ResourceLocation(file.getNamespace(),
+							"models/item/" + file.getPath().substring("models/block/".length())));
+				else if (modelLocation.getPath().startsWith("models/item/"))
+					resource = manager.getResource(new ResourceLocation(file.getNamespace(),
+							"models/block/" + file.getPath().substring("models/item/".length())));
 				else
 					throw e;
 			}

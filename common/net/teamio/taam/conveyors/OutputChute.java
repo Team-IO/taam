@@ -73,7 +73,7 @@ public abstract class OutputChute {
 				item.motionX = 0;
 				item.motionY = 0;
 				item.motionZ = 0;
-				world.spawnEntityInWorld(item);
+				world.spawnEntity(item);
 				wasAble = true;
 				backlog[i] = null;
 			}

@@ -27,13 +27,11 @@ public class WrenchUtil {
 	 * Returns true if the player is holding a wrench in his mainhand hand.
 	 *
 	 * @param player
-	 * @return
+	 * @return // TODO: Change to playerHoldsWrench(player) and playerHoldsWrench(player, hand)
 	 */
 	public static boolean playerHasWrenchInHand(EntityPlayer player, EnumHand hand) {
 		ItemStack held = player.getHeldItem(hand);
-		if(held == null) {
-			return false;
-		}
+		if (InventoryUtils.isEmpty(held)) return false;
 		//TODO: Check other wrench types once supported
 		return held.getItem() == TaamMain.itemWrench;
 	}
@@ -42,31 +40,28 @@ public class WrenchUtil {
 		return playerHasDebugToolInMainhand(player) || playerHasDebugToolInOffhand(player);
 	}
 
+	// TODO: Change to playerHoldsDebugTool(player) and playerHoldsDebugTool(player, hand)
 	public static boolean playerHasDebugToolInMainhand(EntityPlayer player) {
 		ItemStack held = player.getHeldItemMainhand();
-		if (held == null) {
-			return false;
-		}
+		if (InventoryUtils.isEmpty(held)) return false;
 		return held.getItem() == TaamMain.itemDebugTool;
 	}
 
 	public static boolean playerHasDebugToolInOffhand(EntityPlayer player) {
 		ItemStack held = player.getHeldItemOffhand();
-		if (held == null) {
-			return false;
-		}
+		if (InventoryUtils.isEmpty(held)) return false;
 		return held.getItem() == TaamMain.itemDebugTool;
 	}
 
 	public static EnumActionResult wrenchBlock(World world, BlockPos pos, EntityPlayer player, EnumHand hand,
-			EnumFacing side, float hitX, float hitY, float hitZ) {
+	                                           EnumFacing side, float hitX, float hitY, float hitZ) {
 		Log.debug("Checking for wrench activity.");
 
 		boolean playerHasWrenchInMainhand = WrenchUtil.playerHasWrenchInHand(player, EnumHand.MAIN_HAND);
 		boolean playerHasWrench = playerHasWrenchInMainhand || (player.isSneaking() && WrenchUtil.playerHasWrenchInHand(player, EnumHand.OFF_HAND));
 		Log.debug("Player has wrench: " + playerHasWrench);
 
-		if(!playerHasWrench) {
+		if (!playerHasWrench) {
 			Log.debug("Player has no wrench, skipping.");
 			return EnumActionResult.PASS;
 		}

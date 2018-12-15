@@ -2,7 +2,6 @@ package net.teamio.taam.conveyors;
 
 import com.builtbroken.mc.testing.junit.AbstractTest;
 import com.builtbroken.mc.testing.junit.VoltzTestRunner;
-import junit.framework.TestCase;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import org.junit.runner.RunWith;
@@ -26,7 +25,7 @@ public class ConveyorSlotsStandardTest extends AbstractTest {
 
 		for (int sl = 0; sl < 9; sl++) {
 			// Nothing retained
-			assertNull(slots.slots[sl].itemStack);
+			assertTrue(slots.slots[sl].isEmpty());
 		}
 	}
 
@@ -40,7 +39,7 @@ public class ConveyorSlotsStandardTest extends AbstractTest {
 			// Simulated item transferred
 			assertEquals(expected, amount);
 			// Stack retained
-			assertEquals(expected, slots.slots[sl].itemStack.stackSize);
+			assertEquals(expected, slots.slots[sl].itemStack.getCount());
 			assertEquals(Items.STICK, slots.slots[sl].itemStack.getItem());
 		}
 	}
@@ -54,7 +53,7 @@ public class ConveyorSlotsStandardTest extends AbstractTest {
 		// Item is different, amount unchanged
 		assertEquals(0, amount);
 		// Old content unchanged
-		assertEquals(1, slots.slots[0].itemStack.stackSize);
+		assertEquals(1, slots.slots[0].itemStack.getCount());
 		assertEquals(Items.STICK, slots.slots[0].itemStack.getItem());
 	}
 

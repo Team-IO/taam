@@ -8,7 +8,7 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.wrappers.FluidHandlerWrapper;
+import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 
 public final class FluidUtils {
 	private FluidUtils() {
@@ -16,41 +16,35 @@ public final class FluidUtils {
 	}
 
 	public static FluidStack getFluidFromItem(ItemStack stack) {
-		if(stack == null) {
+		if (stack == null) {
 			return null;
 		}
 		IFluidHandler fluidHandler = getFluidHandlerForItem(stack);
-		if(fluidHandler == null) {
+		if (fluidHandler == null) {
 			return null;
 		}
 		return fluidHandler.drain(Integer.MAX_VALUE, false);
 	}
 
-	public static IFluidHandler getFluidHandlerForItem(ItemStack stack) {
-		return stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, EnumFacing.UP);
+	public static IFluidHandlerItem getFluidHandlerForItem(ItemStack stack) {
+		return stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, EnumFacing.UP);
 	}
 
 	public static IFluidHandler getFluidHandler(IBlockAccess world, BlockPos pos, EnumFacing side) {
 		return getFluidHandler(world.getTileEntity(pos), side);
 	}
 
-	// Deprecation because of the net.minecraftforge.fluids.IFluidHandler
-	@SuppressWarnings("deprecation")
 	public static IFluidHandler getFluidHandler(ICapabilityProvider tileEntity, EnumFacing side) {
 		if (tileEntity == null) {
 			return null;
 		}
 		IFluidHandler fluidHandler = tileEntity.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side);
-
-		// Wrapper for the old fluid handlers for now - once the old system is removed, this can be removed as well.
-		if(fluidHandler == null && tileEntity instanceof net.minecraftforge.fluids.IFluidHandler) {
-			fluidHandler = new FluidHandlerWrapper((net.minecraftforge.fluids.IFluidHandler)tileEntity, side);
-		}
+		if (fluidHandler != null) return fluidHandler;
 
 		// Fallback if someone directly implemented the capability interface - not recommended, this is just for compatibility
-		if(fluidHandler == null && tileEntity instanceof IFluidHandler) {
-			fluidHandler = (IFluidHandler)tileEntity;
+		if (tileEntity instanceof IFluidHandler) {
+			return (IFluidHandler) tileEntity;
 		}
-		return fluidHandler;
+		return null;
 	}
 }

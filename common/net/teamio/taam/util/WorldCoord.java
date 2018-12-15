@@ -16,7 +16,6 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
  * routing over the network.
  *
  * @author Oliver Kahrmann
- *
  */
 public class WorldCoord {
 	public int world;
@@ -52,7 +51,7 @@ public class WorldCoord {
 	}
 
 	public int[] toData() {
-		return new int[] { world, x, y, z };
+		return new int[]{world, x, y, z};
 	}
 
 	public void writeToNBT(NBTTagCompound tag) {
@@ -71,11 +70,11 @@ public class WorldCoord {
 	}
 
 	public WorldServer getWorldServer() {
-		return FMLCommonHandler.instance().getMinecraftServerInstance().worldServerForDimension(world);
+		return FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(world);
 	}
 
 	public WorldClient getWorldClient() {
-		WorldClient worldClient = Minecraft.getMinecraft().theWorld;
+		WorldClient worldClient = Minecraft.getMinecraft().world;
 		if (worldClient.provider.getDimension() == world) {
 			return worldClient;
 		}
@@ -83,8 +82,7 @@ public class WorldCoord {
 	}
 
 	public WorldCoord getDirectionalOffset(EnumFacing direction) {
-		return new WorldCoord(world, x + direction.getFrontOffsetX(), y + direction.getFrontOffsetY(),
-				z + direction.getFrontOffsetZ());
+		return new WorldCoord(world, x + direction.getXOffset(), y + direction.getYOffset(), z + direction.getZOffset());
 	}
 
 	@Override

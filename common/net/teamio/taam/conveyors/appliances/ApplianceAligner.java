@@ -23,6 +23,7 @@ import net.teamio.taam.gui.advanced.ContainerAdvancedMachine;
 import net.teamio.taam.gui.advanced.IAdvancedMachineGUI;
 import net.teamio.taam.gui.advanced.apps.AlignerSettings;
 import net.teamio.taam.gui.advanced.apps.RedstoneMode;
+import net.teamio.taam.util.InventoryUtils;
 
 import javax.annotation.Nonnull;
 
@@ -60,7 +61,7 @@ public class ApplianceAligner extends ATileEntityAppliance implements IWorldInte
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void renderUpdate() {
-		TileEntity te = worldObj.getTileEntity(pos.offset(direction));
+		TileEntity te = world.getTileEntity(pos.offset(direction));
 		if(te instanceof IConveyorApplianceHost) {
 			IConveyorApplianceHost host = (IConveyorApplianceHost) te;
 			IConveyorSlots slots = host.getSlots();
@@ -167,7 +168,7 @@ public class ApplianceAligner extends ATileEntityAppliance implements IWorldInte
 	@Override
 	public EnumFacing overrideNextSlot(IConveyorApplianceHost host, int slot, ItemWrapper wrapper,
 			EnumFacing beforeOverride) {
-		if(wrapper.itemStack == null) {
+		if(InventoryUtils.isEmpty(wrapper.itemStack)) {
 			return beforeOverride;
 		}
 
@@ -242,7 +243,7 @@ public class ApplianceAligner extends ATileEntityAppliance implements IWorldInte
 		}
 
 		// On the client, update the rendering information
-		if(worldObj.isRemote) {
+		if(world.isRemote) {
 			if(clientRenderCache == null) {
 				clientRenderCache = new ItemWrapper[4];
 			}

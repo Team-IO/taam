@@ -7,7 +7,7 @@ buildscript {
 		}
 	}
 	dependencies {
-		classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
+		classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
 	}
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
@@ -18,10 +18,11 @@ repositories {
 		url "http://maven.amadornes.com/"
 	}
 	maven {
+		name 'for JEI'
 		url "http://dvs1.progwml6.com/files/maven"
 	}
 	maven {
-		name="bbm"
+		name="bbm, for MinecraftJUnit"
 		url="http://api.dmodoomsirius.me/"
 	}
 }
@@ -67,7 +68,7 @@ sourceSets {
 
 dependencies {
 	//compile 'com.mod-buildcraft:buildcraft:6.0.8:dev'
-	deobfCompile "MCMultiPart:MCMultiPart:${config.mcmultipart_version}:universal"
+	deobfCompile "MCMultiPart2:MCMultiPart:${config.mcmultipart_version}"
 	compile "mezz.jei:jei_${config.jei_mc_version}:${config.jei_version}"
 
 	testCompileOnly(
@@ -76,7 +77,7 @@ dependencies {
 	testImplementation(
 			'org.junit.jupiter:junit-jupiter-api:5.1.0',
 			'com.builtbroken.codinglib:CodingLib:0.+',
-			'com.builtbroken.minecraftjunit:MinecraftJUnit:1.9.4-0.+:deobf'
+			'com.builtbroken.minecraftjunit:MinecraftJUnit:1.12.2-0.+:deobf'
 	)
 	testRuntimeOnly(
 			'org.junit.jupiter:junit-jupiter-engine:5.1.0',

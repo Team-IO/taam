@@ -1,9 +1,8 @@
 package net.teamio.taam;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.ItemModelMesher;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
@@ -18,10 +17,11 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.IRegistry;
 import net.minecraftforge.client.event.ModelBakeEvent;
+import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.client.model.IPerspectiveAwareModel;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
+import net.minecraftforge.client.model.PerspectiveMapWrapper;
 import net.minecraftforge.client.model.SimpleModelState;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.model.IModelState;
@@ -30,7 +30,7 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
-import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.teamio.taam.content.conveyors.TileEntityConveyor;
@@ -52,10 +52,8 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3f;
-import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings("deprecation")
 @SideOnly(Side.CLIENT)
 public class TaamClientProxy extends TaamCommonProxy {
 
@@ -63,7 +61,7 @@ public class TaamClientProxy extends TaamCommonProxy {
 
 	public static TaamRenderer taamRenderer;
 
-	private final List<ModelResourceLocation> locationsToReplace = new ArrayList<ModelResourceLocation>();
+	private static final List<ModelResourceLocation> locationsToReplace = Lists.newArrayList();
 
 	@Override
 	public void registerPackets(SimpleNetworkWrapper network) {
@@ -98,21 +96,29 @@ public class TaamClientProxy extends TaamCommonProxy {
 
 		// If we load multipart, register multipart things, too
 		if (Config.multipart_load) {
-			MultipartHandlerClient.registerRenderStuff();
+			// TODO this config needs to be respected in the mc multipart integration, not here
+			//MultipartHandlerClient.registerRenderStuff();
 		}
 
 		// Receive event for Client Ticks
 		MinecraftForge.EVENT_BUS.register(taamRenderer);
 
-		ItemModelMesher modelMesher = Minecraft.getMinecraft().getRenderItem().getItemModelMesher();
+
+	}
+
+	@SideOnly(Side.CLIENT)
+	@SubscribeEvent
+	public void registerModels(ModelRegistryEvent event) {
+		//ItemModelMesher modelMesher = Minecraft.getMinecraft().getRenderItem().getItemModelMesher();
 
 		/*
 		 * Ores, Ingots, Dusts
 		 */
 
-		Item itemOre = GameRegistry.findItem(Taam.MOD_ID, Taam.BLOCK_ORE);
-		Item itemIngot = GameRegistry.findItem(Taam.MOD_ID, Taam.ITEM_INGOT);
-		Item itemDust = GameRegistry.findItem(Taam.MOD_ID, Taam.ITEM_DUST);
+		Item itemOre = ForgeRegistries.ITEMS.getValue(new ResourceLocation(Taam.MOD_ID, Taam.BLOCK_ORE));
+		Item itemIngot = ForgeRegistries.ITEMS.getValue(new ResourceLocation(Taam.MOD_ID, Taam.ITEM_INGOT));
+		Item itemDust = ForgeRegistries.ITEMS.getValue(new ResourceLocation(Taam.MOD_ID, Taam.ITEM_DUST));
+
 
 		ModelBakery.registerItemVariants(itemOre, new ResourceLocation(Taam.MOD_ID, "ore.impossible"));
 		ModelBakery.registerItemVariants(itemIngot, new ResourceLocation(Taam.MOD_ID, "ingot.impossible"));
@@ -122,27 +128,24 @@ public class TaamClientProxy extends TaamCommonProxy {
 			int metaInt = meta.ordinal();
 			String metaName = meta.name();
 			if (meta.ore) {
-				ModelBakery.registerItemVariants(itemOre, new ResourceLocation(Taam.MOD_ID, "ore." + metaName));
-				modelMesher.register(itemOre, metaInt,
+				ModelLoader.setCustomModelResourceLocation(itemOre, metaInt,
 						new ModelResourceLocation(Taam.MOD_ID + ":ore." + metaName, "inventory"));
 			} else {
-				modelMesher.register(itemOre, metaInt,
+				ModelLoader.setCustomModelResourceLocation(itemOre, metaInt,
 						new ModelResourceLocation(Taam.MOD_ID + ":ore.impossible", "inventory"));
 			}
 			if (meta.ingot) {
-				ModelBakery.registerItemVariants(itemIngot, new ResourceLocation(Taam.MOD_ID, "ingot." + metaName));
-				modelMesher.register(itemIngot, metaInt,
+				ModelLoader.setCustomModelResourceLocation(itemIngot, metaInt,
 						new ModelResourceLocation(Taam.MOD_ID + ":ingot." + metaName, "inventory"));
 			} else {
-				modelMesher.register(itemIngot, metaInt,
+				ModelLoader.setCustomModelResourceLocation(itemIngot, metaInt,
 						new ModelResourceLocation(Taam.MOD_ID + ":ingot.impossible", "inventory"));
 			}
 			if (meta.dust) {
-				ModelBakery.registerItemVariants(itemDust, new ResourceLocation(Taam.MOD_ID, "dust." + metaName));
-				modelMesher.register(itemDust, meta.ordinal(),
+				ModelLoader.setCustomModelResourceLocation(itemDust, meta.ordinal(),
 						new ModelResourceLocation(Taam.MOD_ID + ":dust." + metaName, "inventory"));
 			} else {
-				modelMesher.register(itemDust, meta.ordinal(),
+				ModelLoader.setCustomModelResourceLocation(itemDust, meta.ordinal(),
 						new ModelResourceLocation(Taam.MOD_ID + ":dust.impossible", "inventory"));
 			}
 		}
@@ -151,13 +154,12 @@ public class TaamClientProxy extends TaamCommonProxy {
 		 * Concrete
 		 */
 
-		Item itemToRegister = GameRegistry.findItem(Taam.MOD_ID, Taam.BLOCK_CONCRETE);
+		Item itemToRegister = ForgeRegistries.ITEMS.getValue(new ResourceLocation(Taam.MOD_ID, Taam.BLOCK_CONCRETE));
 
 		for (Taam.BLOCK_CONCRETE_META meta : Taam.BLOCK_CONCRETE_META.values()) {
 			int metaInt = meta.ordinal();
 			String metaName = meta.name();
-			ModelBakery.registerItemVariants(itemToRegister, new ResourceLocation(Taam.MOD_ID, "concrete." + metaName));
-			modelMesher.register(itemToRegister, metaInt,
+			ModelLoader.setCustomModelResourceLocation(itemToRegister, metaInt,
 					new ModelResourceLocation(Taam.MOD_ID + ":concrete." + metaName, "inventory"));
 		}
 
@@ -170,8 +172,8 @@ public class TaamClientProxy extends TaamCommonProxy {
 		for (Taam.ITEM_MATERIAL_META meta : Taam.ITEM_MATERIAL_META.values()) {
 			int metaInt = meta.ordinal();
 			String metaName = meta.name();
-			ModelBakery.registerItemVariants(itemToRegister, new ResourceLocation(Taam.MOD_ID, "material." + metaName));
-			modelMesher.register(itemToRegister, metaInt, new ModelResourceLocation(Taam.MOD_ID + ":material." + metaName, "inventory"));
+			ModelLoader.setCustomModelResourceLocation(itemToRegister, metaInt,
+					new ModelResourceLocation(Taam.MOD_ID + ":material." + metaName, "inventory"));
 		}
 
 		/*
@@ -183,8 +185,8 @@ public class TaamClientProxy extends TaamCommonProxy {
 		for (Taam.ITEM_PART_META meta : Taam.ITEM_PART_META.values()) {
 			int metaInt = meta.ordinal();
 			String metaName = meta.name();
-			ModelBakery.registerItemVariants(itemToRegister, new ResourceLocation(Taam.MOD_ID, "part." + metaName));
-			modelMesher.register(itemToRegister, metaInt, new ModelResourceLocation(Taam.MOD_ID + ":part." + metaName, "inventory"));
+			ModelLoader.setCustomModelResourceLocation(itemToRegister, metaInt,
+					new ModelResourceLocation(Taam.MOD_ID + ":part." + metaName, "inventory"));
 		}
 
 		/*
@@ -193,64 +195,65 @@ public class TaamClientProxy extends TaamCommonProxy {
 
 		for (Taam.FLUID_DYE_META meta : Taam.FLUID_DYE_META.values()) {
 			String metaName = meta.name();
-			itemToRegister = GameRegistry.findItem(Taam.MOD_ID, "fluid.dye." + metaName);
-			ModelBakery.registerItemVariants(itemToRegister, new ResourceLocation(Taam.MOD_ID, "fluid.dye." + metaName));
-			modelMesher.register(itemToRegister, 0, new ModelResourceLocation(Taam.MOD_ID + ":fluid.dye." + metaName, "inventory"));
+			itemToRegister = ForgeRegistries.ITEMS.getValue(new ResourceLocation(Taam.MOD_ID, "fluid.dye." + metaName));
+			ModelLoader.setCustomModelResourceLocation(itemToRegister, 0,
+					new ModelResourceLocation(Taam.MOD_ID + ":fluid.dye." + metaName, "inventory"));
 		}
 
 		for (Taam.FLUID_MATERIAL_META meta : Taam.FLUID_MATERIAL_META.values()) {
 			String metaName = meta.name();
-			itemToRegister = GameRegistry.findItem(Taam.MOD_ID, "fluid.material." + metaName);
-			ModelBakery.registerItemVariants(itemToRegister, new ResourceLocation(Taam.MOD_ID, "fluid.material." + metaName));
-			modelMesher.register(itemToRegister, 0, new ModelResourceLocation(Taam.MOD_ID + ":fluid.material." + metaName, "inventory"));
+			itemToRegister = ForgeRegistries.ITEMS.getValue(new ResourceLocation(Taam.MOD_ID, "fluid.material." + metaName));
+			ModelLoader.setCustomModelResourceLocation(itemToRegister, 0,
+					new ModelResourceLocation(Taam.MOD_ID + ":fluid.material." + metaName, "inventory"));
 		}
 
 		/*
 		 * Other Items
 		 */
 
-		registerItemDefault(modelMesher, TaamMain.itemWrench, 0, Taam.MOD_ID + ":wrench");
-		registerItemDefault(modelMesher, TaamMain.itemSaw, 0, Taam.MOD_ID + ":tool.saw");
-		registerItemDefault(modelMesher, TaamMain.itemDebugTool, 0, Taam.MOD_ID + ":debugger");
+		registerItemDefault(TaamMain.itemWrench, 0, Taam.MOD_ID + ":wrench");
+		registerItemDefault(TaamMain.itemSaw, 0, Taam.MOD_ID + ":tool.saw");
+		registerItemDefault(TaamMain.itemDebugTool, 0, Taam.MOD_ID + ":debugger");
 
 		/*
 		 * OBJ Models
 		 */
 
-		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_SENSOR, 0, "sensor.obj");
-		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_SUPPORT_BEAM, 0, "support_beam.obj");
-		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_LAMP, 0, "industrial_lamp.obj");
-		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_LAMP_INVERTED, 0, "industrial_lamp.obj");
+		registerItemOBJSingleMeta(Taam.BLOCK_SENSOR, 0, "sensor.obj");
+		registerItemOBJSingleMeta(Taam.BLOCK_SUPPORT_BEAM, 0, "support_beam.obj");
+		registerItemOBJSingleMeta(Taam.BLOCK_LAMP, 0, "industrial_lamp.obj");
+		registerItemOBJSingleMeta(Taam.BLOCK_LAMP_INVERTED, 0, "industrial_lamp.obj");
 
-		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_MACHINES, Taam.BLOCK_MACHINES_META.chute.ordinal(), "chute.obj");
-		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_MACHINES, Taam.BLOCK_MACHINES_META.creativecache.ordinal(), "creative_cache.obj");
-		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_MACHINES, Taam.BLOCK_MACHINES_META.creativewell.ordinal(), "creative_well.obj");
+		registerItemOBJSingleMeta(Taam.BLOCK_MACHINES, Taam.BLOCK_MACHINES_META.chute.ordinal(), "chute.obj");
+		registerItemOBJSingleMeta(Taam.BLOCK_MACHINES, Taam.BLOCK_MACHINES_META.creativecache.ordinal(), "creative_cache.obj");
+		registerItemOBJSingleMeta(Taam.BLOCK_MACHINES, Taam.BLOCK_MACHINES_META.creativewell.ordinal(), "creative_well.obj");
 
-		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_PRODUCTIONLINE_APPLIANCE, Taam.BLOCK_PRODUCTIONLINE_APPLIANCE_META.sprayer.ordinal(), "sprayer.obj");
-		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_PRODUCTIONLINE_APPLIANCE, Taam.BLOCK_PRODUCTIONLINE_APPLIANCE_META.aligner.ordinal(), "appliance_aligner.obj");
+		registerItemOBJSingleMeta(Taam.BLOCK_PRODUCTIONLINE_APPLIANCE, Taam.BLOCK_PRODUCTIONLINE_APPLIANCE_META.sprayer.ordinal(), "sprayer.obj");
+		registerItemOBJSingleMeta(Taam.BLOCK_PRODUCTIONLINE_APPLIANCE, Taam.BLOCK_PRODUCTIONLINE_APPLIANCE_META.aligner.ordinal(), "appliance_aligner.obj");
 
-		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_MACHINE_WRAPPER, Taam.MACHINE_META.pipe.ordinal(), "pipes.obj");
-		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_MACHINE_WRAPPER, Taam.MACHINE_META.tank.ordinal(), "tank.obj");
-		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_MACHINE_WRAPPER, Taam.MACHINE_META.pump.ordinal(), "pump.obj");
-		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_MACHINE_WRAPPER, Taam.MACHINE_META.mixer.ordinal(), "mixer.obj");
-		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_MACHINE_WRAPPER, Taam.MACHINE_META.fluid_drier.ordinal(), "fluid_drier.obj");
+		registerItemOBJSingleMeta(Taam.BLOCK_MACHINE_WRAPPER, Taam.MACHINE_META.pipe.ordinal(), "pipes.obj");
+		registerItemOBJSingleMeta(Taam.BLOCK_MACHINE_WRAPPER, Taam.MACHINE_META.tank.ordinal(), "tank.obj");
+		registerItemOBJSingleMeta(Taam.BLOCK_MACHINE_WRAPPER, Taam.MACHINE_META.pump.ordinal(), "pump.obj");
+		registerItemOBJSingleMeta(Taam.BLOCK_MACHINE_WRAPPER, Taam.MACHINE_META.mixer.ordinal(), "mixer.obj");
+		registerItemOBJSingleMeta(Taam.BLOCK_MACHINE_WRAPPER, Taam.MACHINE_META.fluid_drier.ordinal(), "fluid_drier.obj");
 
-		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE, Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META.itembag.ordinal(), "itembag.obj");
-		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE, Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META.trashcan.ordinal(), "trashcan.obj");
+		registerItemOBJSingleMeta(Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE, Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META.itembag.ordinal(), "itembag.obj");
+		registerItemOBJSingleMeta(Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE, Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META.trashcan.ordinal(), "trashcan.obj");
 
 
-		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_PRODUCTIONLINE, Taam.BLOCK_PRODUCTIONLINE_META.conveyor1.ordinal(), "conveyor_wood.obj");
-		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_PRODUCTIONLINE, Taam.BLOCK_PRODUCTIONLINE_META.conveyor2.ordinal(), "conveyor_alu.obj");
-		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_PRODUCTIONLINE, Taam.BLOCK_PRODUCTIONLINE_META.conveyor3.ordinal(), "conveyor_hs.obj");
+		registerItemOBJSingleMeta(Taam.BLOCK_PRODUCTIONLINE, Taam.BLOCK_PRODUCTIONLINE_META.conveyor1.ordinal(), "conveyor_wood.obj");
+		registerItemOBJSingleMeta(Taam.BLOCK_PRODUCTIONLINE, Taam.BLOCK_PRODUCTIONLINE_META.conveyor2.ordinal(), "conveyor_alu.obj");
+		registerItemOBJSingleMeta(Taam.BLOCK_PRODUCTIONLINE, Taam.BLOCK_PRODUCTIONLINE_META.conveyor3.ordinal(), "conveyor_hs.obj");
 
-		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_PRODUCTIONLINE, Taam.BLOCK_PRODUCTIONLINE_META.chute.ordinal(), "conveyor_chute.obj");
-		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_PRODUCTIONLINE, Taam.BLOCK_PRODUCTIONLINE_META.crusher.ordinal(), "conveyor_processor_crusher.obj");
-		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_PRODUCTIONLINE, Taam.BLOCK_PRODUCTIONLINE_META.grinder.ordinal(), "conveyor_processor_grinder.obj");
-		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_PRODUCTIONLINE, Taam.BLOCK_PRODUCTIONLINE_META.shredder.ordinal(), "conveyor_processor_shredder.obj");
-		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_PRODUCTIONLINE, Taam.BLOCK_PRODUCTIONLINE_META.hopper.ordinal(), "conveyor_hopper.obj");
-		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_PRODUCTIONLINE, Taam.BLOCK_PRODUCTIONLINE_META.hopper_hs.ordinal(), "conveyor_hopper_hs.obj");
-		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_PRODUCTIONLINE, Taam.BLOCK_PRODUCTIONLINE_META.sieve.ordinal(), "conveyor_sieve.obj");
-		registerItemOBJSingleMeta(modelMesher, Taam.BLOCK_PRODUCTIONLINE, Taam.BLOCK_PRODUCTIONLINE_META.elevator.ordinal(), "conveyor_elevator_int.obj");
+		registerItemOBJSingleMeta(Taam.BLOCK_PRODUCTIONLINE, Taam.BLOCK_PRODUCTIONLINE_META.chute.ordinal(), "conveyor_chute.obj");
+		registerItemOBJSingleMeta(Taam.BLOCK_PRODUCTIONLINE, Taam.BLOCK_PRODUCTIONLINE_META.crusher.ordinal(), "conveyor_processor_crusher.obj");
+		registerItemOBJSingleMeta(Taam.BLOCK_PRODUCTIONLINE, Taam.BLOCK_PRODUCTIONLINE_META.grinder.ordinal(), "conveyor_processor_grinder.obj");
+		registerItemOBJSingleMeta(Taam.BLOCK_PRODUCTIONLINE, Taam.BLOCK_PRODUCTIONLINE_META.shredder.ordinal(), "conveyor_processor_shredder.obj");
+		registerItemOBJSingleMeta(Taam.BLOCK_PRODUCTIONLINE, Taam.BLOCK_PRODUCTIONLINE_META.hopper.ordinal(), "conveyor_hopper.obj");
+		registerItemOBJSingleMeta(Taam.BLOCK_PRODUCTIONLINE, Taam.BLOCK_PRODUCTIONLINE_META.hopper_hs.ordinal(), "conveyor_hopper_hs.obj");
+		registerItemOBJSingleMeta(Taam.BLOCK_PRODUCTIONLINE, Taam.BLOCK_PRODUCTIONLINE_META.sieve.ordinal(), "conveyor_sieve.obj");
+		registerItemOBJSingleMeta(Taam.BLOCK_PRODUCTIONLINE, Taam.BLOCK_PRODUCTIONLINE_META.elevator.ordinal(), "conveyor_elevator_int.obj");
+
 	}
 
 	/**
@@ -259,21 +262,18 @@ public class TaamClientProxy extends TaamCommonProxy {
 	 * <p>
 	 * Specific for items using OBJ models.
 	 *
-	 * @param modelMesher
 	 * @param itemId
 	 * @param metaValue
 	 * @param modelFile
 	 */
-	private void registerItemOBJSingleMeta(ItemModelMesher modelMesher, String itemId, int metaValue, String modelFile) {
+	private static void registerItemOBJSingleMeta(String itemId, int metaValue, String modelFile) {
 		// Find item to register
-		Item item = GameRegistry.findItem(Taam.MOD_ID, itemId);
+		Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(Taam.MOD_ID, itemId));
 
 		// Create & remember model location
 		final ModelResourceLocation resourceLocation = new ModelResourceLocation(Taam.MOD_ID + ":" + modelFile, "inventory");
 		locationsToReplace.add(resourceLocation);
 
-		// Register the variant
-		modelMesher.register(item, metaValue, resourceLocation);
 		// Register the model location
 		ModelLoader.setCustomModelResourceLocation(item, metaValue, resourceLocation);
 	}
@@ -283,13 +283,12 @@ public class TaamClientProxy extends TaamCommonProxy {
 	 * <p>
 	 * Default rendering, not for OBJ models.
 	 *
-	 * @param modelMesher
 	 * @param item
 	 * @param meta
 	 * @param name
 	 */
-	private static void registerItemDefault(ItemModelMesher modelMesher, Item item, int meta, String name) {
-		modelMesher.register(item, meta, new ModelResourceLocation(name, "inventory"));
+	private static void registerItemDefault(Item item, int meta, String name) {
+		ModelLoader.setCustomModelResourceLocation(item, meta, new ModelResourceLocation(name, "inventory"));
 	}
 
 	@SubscribeEvent
@@ -431,7 +430,7 @@ public class TaamClientProxy extends TaamCommonProxy {
 	 *
 	 * @author Oliver Kahrmann
 	 */
-	public static class ItemAwareOBJBakedModel implements IPerspectiveAwareModel {
+	public static class ItemAwareOBJBakedModel implements IBakedModel {
 
 		public static final IModelState defaultBlockTransform;
 
@@ -467,7 +466,7 @@ public class TaamClientProxy extends TaamCommonProxy {
 		@Override
 		public Pair<? extends IBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType) {
 			// Use forge default block transform
-			return IPerspectiveAwareModel.MapWrapper.handlePerspective(this, defaultBlockTransform, cameraTransformType);
+			return PerspectiveMapWrapper.handlePerspective(this, defaultBlockTransform, cameraTransformType);
 		}
 
 		/*

@@ -11,7 +11,6 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.teamio.taam.Taam;
-import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.piping.IPipe;
 import org.lwjgl.opengl.GL11;
 
@@ -63,7 +62,7 @@ public final class TaamRendererDebug {
 		TaamRenderer.drawSelectionBoundingBox(player, partialTicks, 8, 0, 1, 0, 1,
 				new AxisAlignedBB(pos.offset(facing)));
 
-		FontRenderer fontRendererObj = Minecraft.getMinecraft().fontRendererObj;
+		FontRenderer fontRendererObj = Minecraft.getMinecraft().fontRenderer;
 
 		int fillLevel = 0;
 
@@ -90,7 +89,7 @@ public final class TaamRendererDebug {
 			GL11.glTranslated(pos.getX(), pos.getY(), pos.getZ());
 
 			//GL11.glTranslated(.5f, .5f, .5f);
-			GL11.glTranslated(.5f + facing.getFrontOffsetX(), .5f + facing.getFrontOffsetY(), .5f + facing.getFrontOffsetZ());
+			GL11.glTranslated(.5f + facing.getXOffset(), .5f + facing.getYOffset(), .5f + facing.getZOffset());
 
 			double playerRot = Math.floor((player.getRotationYawHead() + 45) / 90f) * 90;
 			double pitch = Math.floor((player.rotationPitch + 45) / 90f) * 90;

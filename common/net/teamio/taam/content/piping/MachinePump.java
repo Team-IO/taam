@@ -22,7 +22,6 @@ import net.teamio.taam.piping.PipeEnd;
 import net.teamio.taam.piping.PipeEndSharedDistinct;
 import net.teamio.taam.piping.PipeInfo;
 import net.teamio.taam.piping.PipeNetwork;
-import net.teamio.taam.piping.PipeUtil;
 import net.teamio.taam.rendering.TankRenderInfo;
 import net.teamio.taam.util.FaceBitmap;
 
@@ -127,7 +126,7 @@ public class MachinePump implements IMachine, IPipePos, IRotatable {
 
 	@Override
 	public void readPropertiesFromNBT(NBTTagCompound tag) {
-		direction = EnumFacing.getFront(tag.getInteger("direction"));
+		direction = EnumFacing.byIndex(tag.getInteger("direction"));
 		if (direction == EnumFacing.UP || direction == EnumFacing.DOWN) {
 			direction = EnumFacing.NORTH;
 		}
@@ -142,14 +141,14 @@ public class MachinePump implements IMachine, IPipePos, IRotatable {
 	public void writeUpdatePacket(PacketBuffer buf) {
 		NBTTagCompound tag = new NBTTagCompound();
 		writePropertiesToNBT(tag);
-		buf.writeNBTTagCompoundToBuffer(tag);
+		buf.writeCompoundTag(tag);
 		buf.writeByte(occludedSides);
 	}
 
 	@Override
 	public void readUpdatePacket(PacketBuffer buf) {
 		try {
-			NBTTagCompound tag = buf.readNBTTagCompoundFromBuffer();
+			NBTTagCompound tag = buf.readCompoundTag();
 			readPropertiesFromNBT(tag);
 			occludedSides = buf.readByte();
 			updateOcclusion();
@@ -197,10 +196,10 @@ public class MachinePump implements IMachine, IPipePos, IRotatable {
 
 	@Override
 	public void addCollisionBoxes(AxisAlignedBB mask, List<AxisAlignedBB> list, Entity collidingEntity) {
-		if (mask.intersectsWith(boundsPump)) {
+		if (mask.intersects(boundsPump)) {
 			list.add(boundsPump);
 		}
-		if (mask.intersectsWith(MachinePipe.bbBaseplate)) {
+		if (mask.intersects(MachinePipe.bbBaseplate)) {
 			list.add(MachinePipe.bbBaseplate);
 		}
 	}

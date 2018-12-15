@@ -55,11 +55,12 @@ public class CustomButton extends GuiButton {
 		mouseDown = false;
 	}
 
+
 	@Override
-	public void drawButton(Minecraft mc, int mouseX, int mouseY) {
+	public void drawButton(Minecraft mc, int mouseX, int mouseY, float partialTicks) {
 		if (visible) {
-			hovered = mouseX >= xPosition && mouseY >= yPosition && mouseX < xPosition + width
-					&& mouseY < yPosition + height;
+			hovered = mouseX >= x && mouseY >= y && mouseX < x + width
+					&& mouseY < y + height;
 			int hoverState = getHoverState(hovered);
 
 			if (hoverState == 2 && mouseDown) {
@@ -67,7 +68,7 @@ public class CustomButton extends GuiButton {
 			}
 
 			GuiUtils.drawContinuousTexturedBox(GuiAdvancedMachine.guiTexture,
-					xPosition, yPosition,//x y
+					x, y,//x y
 					baseTextureU, baseTextureV + hoverState * baseTextureHeight,//u v
 					width, height,//width height
 					baseTextureHeight, baseTextureHeight, // texture width height
@@ -88,16 +89,16 @@ public class CustomButton extends GuiButton {
 				}
 
 				String buttonText = displayString;
-				int strWidth = mc.fontRendererObj.getStringWidth(buttonText);
+				int strWidth = mc.fontRenderer.getStringWidth(buttonText);
 
 				boolean doEllipsis = trimText && textHorizontalAlignment > 0 && textHorizontalAlignment < 4;
 
 				if(doEllipsis) {
-					int ellipsisWidth = mc.fontRendererObj.getStringWidth("...");
+					int ellipsisWidth = mc.fontRenderer.getStringWidth("...");
 
 					if (strWidth > width - textPadding && strWidth > ellipsisWidth) {
 						strWidth = width - textPadding - ellipsisWidth;
-						buttonText = mc.fontRendererObj.trimStringToWidth(buttonText, strWidth).trim() + "...";
+						buttonText = mc.fontRenderer.trimStringToWidth(buttonText, strWidth).trim() + "...";
 					}
 				}
 
@@ -144,11 +145,11 @@ public class CustomButton extends GuiButton {
 					break;
 				}
 
-				drawString(mc.fontRendererObj, buttonText, xPosition + pressOffset + leftOffset, yPosition + pressOffset + topOffset, color);
+				drawString(mc.fontRenderer, buttonText, x + pressOffset + leftOffset, y + pressOffset + topOffset, color);
 			}
 
 			if(image != null) {
-				image.drawCentered(xPosition + width / 2 + pressOffset, yPosition + height / 2 + pressOffset);
+				image.drawCentered(x + width / 2 + pressOffset, y + height / 2 + pressOffset);
 			}
 		}
 	}

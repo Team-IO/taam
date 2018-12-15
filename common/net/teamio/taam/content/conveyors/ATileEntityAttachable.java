@@ -30,7 +30,7 @@ public abstract class ATileEntityAttachable extends BaseTileEntity implements IR
 		EnumFacing dir = direction;
 		for (int i = 0; i < 3; i++) {
 			dir = dir.rotateY();
-			if (TaamUtil.canAttach(worldObj, pos, dir)) {
+			if (TaamUtil.canAttach(world, pos, dir)) {
 				return dir;
 			}
 		}

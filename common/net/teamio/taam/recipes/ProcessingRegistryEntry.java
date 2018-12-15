@@ -6,6 +6,7 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.oredict.OreDictionary;
 import net.teamio.taam.Log;
+import net.teamio.taam.util.InventoryUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,6 +41,7 @@ public final class ProcessingRegistryEntry {
 	 * @return
 	 */
 	public IProcessingRecipe getRecipe(ItemStack input) {
+		if (InventoryUtils.isEmpty(input)) return null;
 
 		IProcessingRecipe[] matches = recipes.get(input.getItem());
 
@@ -84,6 +86,7 @@ public final class ProcessingRegistryEntry {
 	 * @return
 	 */
 	public IProcessingRecipe[] getRecipes(ItemStack input) {
+		if (InventoryUtils.isEmpty(input)) return new IProcessingRecipe[0];
 		ArrayList<IProcessingRecipe> actualMatches = new ArrayList<IProcessingRecipe>();
 
 		IProcessingRecipe[] matches = recipes.get(input.getItem());
@@ -178,7 +181,7 @@ public final class ProcessingRegistryEntry {
 	 * {@link IProcessingRecipe} are indexed for input item or ore dictionary
 	 * name. All recipes can then be searched using
 	 * {@link #getRecipe(ItemStack)}.
-	 *
+	 * <p>
 	 * Special handling: {@link IProcessingRecipeFluidBased} will be indexed for
 	 * input fluid and can be searched using {@link #getRecipe(FluidStack)}.
 	 *
@@ -193,7 +196,7 @@ public final class ProcessingRegistryEntry {
 		Item key = null;
 		{
 			ItemStack inputStack = recipe.getInput();
-			if (inputStack != null) {
+			if (!InventoryUtils.isEmpty(inputStack)) {
 				key = inputStack.getItem();
 			}
 		}
@@ -225,13 +228,13 @@ public final class ProcessingRegistryEntry {
 		Item key = null;
 		{
 			ItemStack inputStack = recipe.getInput();
-			if (inputStack != null) {
+			if (!InventoryUtils.isEmpty(inputStack)) {
 				key = inputStack.getItem();
 			}
 		}
 		String keyOreDict = recipe.getInputOreDict();
 
-		Log.debug("Registering item  recipe for machine {}: {}->{}", machineName, key == null ? keyOreDict : key.getUnlocalizedName(), recipe);
+		Log.debug("Registering item  recipe for machine {}: {}->{}", machineName, key == null ? keyOreDict : key.getRegistryName(), recipe);
 
 		IProcessingRecipe[] matches;
 
@@ -291,13 +294,13 @@ public final class ProcessingRegistryEntry {
 
 	public List<IProcessingRecipe> getAllRecipes() {
 		Set<IProcessingRecipe> recipes = new HashSet<IProcessingRecipe>();
-		for(IProcessingRecipe[] list : this.recipes.values()) {
+		for (IProcessingRecipe[] list : this.recipes.values()) {
 			Collections.addAll(recipes, list);
 		}
-		for(IProcessingRecipe[] list : recipesFluid.values()) {
+		for (IProcessingRecipe[] list : recipesFluid.values()) {
 			Collections.addAll(recipes, list);
 		}
-		for(IProcessingRecipe[] list : recipesOreDict.values()) {
+		for (IProcessingRecipe[] list : recipesOreDict.values()) {
 			Collections.addAll(recipes, list);
 		}
 		return new ArrayList<IProcessingRecipe>(recipes);

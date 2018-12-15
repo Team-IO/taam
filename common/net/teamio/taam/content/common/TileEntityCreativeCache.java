@@ -11,14 +11,18 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IWorldInteractable;
+import net.teamio.taam.util.InventoryUtils;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class TileEntityCreativeCache extends BaseTileEntity implements IInventory, IWorldInteractable {
 
-	private ItemStack template = null;
+	private ItemStack template = ItemStack.EMPTY;
 
-	public void setTemplate(ItemStack stack) {
-		if(stack == null) {
-			template = null;
+	public void setTemplate(@Nullable ItemStack stack) {
+		if (InventoryUtils.isEmpty(stack)) {
+			template = ItemStack.EMPTY;
 		} else {
 			template = stack.copy();
 		}
@@ -30,7 +34,7 @@ public class TileEntityCreativeCache extends BaseTileEntity implements IInventor
 
 	@Override
 	protected void writePropertiesToNBT(NBTTagCompound tag) {
-		if(template != null) {
+		if (!InventoryUtils.isEmpty(template)) {
 			NBTTagCompound templateTag = new NBTTagCompound();
 			template.writeToNBT(templateTag);
 			tag.setTag("template", templateTag);
@@ -40,22 +44,18 @@ public class TileEntityCreativeCache extends BaseTileEntity implements IInventor
 	@Override
 	protected void readPropertiesFromNBT(NBTTagCompound tag) {
 		NBTTagCompound templateTag = tag.getCompoundTag("template");
-		if(templateTag != null) {
-			template = ItemStack.loadItemStackFromNBT(templateTag);
+		if (templateTag != null) {
+			template = new ItemStack(templateTag);
 		} else {
-			template = null;
+			template = ItemStack.EMPTY;
 		}
 	}
 
 	@Override
 	public boolean onBlockActivated(World world, EntityPlayer player, EnumHand hand, boolean hasWrench, EnumFacing side,
-			float hitX, float hitY, float hitZ) {
+	                                float hitX, float hitY, float hitZ) {
 		ItemStack stack = player.inventory.getStackInSlot(player.inventory.currentItem);
-		if(stack == null) {
-			template = null;
-		} else {
-			template = stack.copy();
-		}
+		setTemplate(stack);
 		updateState(true, false, true);
 		return true;
 	}
@@ -69,33 +69,40 @@ public class TileEntityCreativeCache extends BaseTileEntity implements IInventor
 	 * IInventory implementation
 	 */
 
+
+	@Override
+	public boolean isEmpty() {
+		return InventoryUtils.isEmpty(template);
+	}
+
 	@Override
 	public int getSizeInventory() {
 		return 1;
 	}
 
 	@Override
+	@Nonnull
 	public ItemStack getStackInSlot(int slot) {
-		if(template == null) {
-			return null;
+		if (InventoryUtils.isEmpty(template)) {
+			return ItemStack.EMPTY;
 		}
 		return template.copy();
 	}
 
 	@Override
+	@Nonnull
 	public ItemStack decrStackSize(int slot, int amount) {
-		if(template == null) {
-			return null;
+		if (InventoryUtils.isEmpty(template)) {
+			return ItemStack.EMPTY;
 		}
-		ItemStack clone = template.copy();
-		clone.stackSize = Math.min(amount, clone.getMaxStackSize());
-		return clone;
+		return InventoryUtils.setCount(template.copy(), Math.min(amount, template.getMaxStackSize()));
 	}
 
 	@Override
+	@Nonnull
 	public ItemStack removeStackFromSlot(int slot) {
-		if(template == null) {
-			return null;
+		if (InventoryUtils.isEmpty(template)) {
+			return ItemStack.EMPTY;
 		}
 		return template.copy();
 	}
@@ -110,7 +117,7 @@ public class TileEntityCreativeCache extends BaseTileEntity implements IInventor
 	}
 
 	@Override
-	public boolean isUseableByPlayer(EntityPlayer player) {
+	public boolean isUsableByPlayer(EntityPlayer player) {
 		return true;
 	}
 

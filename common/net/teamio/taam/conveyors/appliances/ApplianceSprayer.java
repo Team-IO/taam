@@ -25,6 +25,7 @@ import net.teamio.taam.piping.PipeUtil;
 import net.teamio.taam.recipes.IProcessingRecipeFluidBased;
 import net.teamio.taam.recipes.ProcessingRegistry;
 import net.teamio.taam.rendering.TankRenderInfo;
+import net.teamio.taam.util.InventoryUtils;
 
 import javax.annotation.Nonnull;
 
@@ -142,7 +143,7 @@ public class ApplianceSprayer extends ATileEntityAppliance implements ITickable,
 
 	@Override
 	public boolean processItem(IConveyorApplianceHost conveyor, int slot, ItemWrapper wrapper) {
-		if (wrapper.itemStack == null) {
+		if (InventoryUtils.isEmpty(wrapper.itemStack)) {
 			return false;
 		}
 
@@ -171,7 +172,7 @@ public class ApplianceSprayer extends ATileEntityAppliance implements ITickable,
 		 */
 
 		ItemStack result = recipe.getOutput(wrapper.itemStack)[0];
-		result.stackSize = wrapper.itemStack.stackSize;
+		result = InventoryUtils.setCount(result, wrapper.itemStack.getCount());
 
 		// Fix for re-coloring to the same color (Output == Input)
 		if (result.isItemEqual(wrapper.itemStack)) {
@@ -183,7 +184,7 @@ public class ApplianceSprayer extends ATileEntityAppliance implements ITickable,
 		 * Check fluid requirements
 		 */
 
-		int requiredAmount = wrapper.itemStack.stackSize * recipe.getInputFluid().amount;
+		int requiredAmount = wrapper.itemStack.getCount() * recipe.getInputFluid().amount;
 
 		FluidStack inTank = tank.getFluid();
 
@@ -205,7 +206,7 @@ public class ApplianceSprayer extends ATileEntityAppliance implements ITickable,
 		 * Replace input stack with output
 		 */
 
-		wrapper.itemStack = result;
+		wrapper.setStack(result);
 		wrapper.unblock();
 
 		markDirty();

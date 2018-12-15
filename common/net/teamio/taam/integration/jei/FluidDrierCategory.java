@@ -5,9 +5,9 @@ import mezz.jei.api.gui.IDrawable;
 import mezz.jei.api.gui.IGuiFluidStackGroup;
 import mezz.jei.api.gui.IGuiItemStackGroup;
 import mezz.jei.api.gui.IRecipeLayout;
+import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.BlankRecipeCategory;
 import mezz.jei.api.recipe.IRecipeWrapper;
-import mezz.jei.util.Log;
 import mezz.jei.util.Translator;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -21,6 +21,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
 import net.teamio.taam.Config;
+import net.teamio.taam.Log;
 import net.teamio.taam.Taam;
 import net.teamio.taam.TaamMain;
 import net.teamio.taam.recipes.IProcessingRecipe;
@@ -47,6 +48,11 @@ public class FluidDrierCategory extends BlankRecipeCategory {
 		renderStackFluidDrier = new ItemStack(TaamMain.itemMachine, 1, Taam.MACHINE_META.fluid_drier.metaData());
 	}
 
+	@Override
+	public String getModName() {
+		return Taam.MOD_NAME;
+	}
+
 	@Nonnull
 	@Override
 	public String getUid() {
@@ -67,7 +73,7 @@ public class FluidDrierCategory extends BlankRecipeCategory {
 
 	@Override
 	public void drawExtras(Minecraft minecraft) {
-		if(Config.jei_render_machines_into_gui) {
+		if (Config.jei_render_machines_into_gui) {
 			TextureManager texturemanager = minecraft.renderEngine;
 			texturemanager.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 
@@ -91,32 +97,32 @@ public class FluidDrierCategory extends BlankRecipeCategory {
 			GL11.glPopMatrix();
 		}
 		{
-			FontRenderer fontRendererObj = minecraft.fontRendererObj;
+			FontRenderer fontRendererObj = minecraft.fontRenderer;
 
 			GL11.glPushMatrix();
 
 			GL11.glScaled(.5, .5, 1);
 
 			String display = Translator.translateToLocalFormatted(Taam.INTEGRATION_JEI_LORE_INTERNAL_CAPACITY, Config.pl_fluid_drier_capacity);
-			fontRendererObj.drawString(display, 24*2, 3*2, 0x00555555, false);
+			fontRendererObj.drawString(display, 24 * 2, 3 * 2, 0x00555555, false);
 
 			GL11.glPopMatrix();
 		}
 	}
 
 	@Override
-	public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull IRecipeWrapper recipeWrapper) {
-		if(!(recipeWrapper instanceof ProcessingRecipeWrapper)) {
+	public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull IRecipeWrapper recipeWrapper, @Nonnull IIngredients ingredients) {
+		if (!(recipeWrapper instanceof ProcessingRecipeWrapper)) {
 			Log.error("RecipeWrapper type unknown: {}", recipeWrapper);
 			return;
 		}
-		ProcessingRecipeWrapper processingWrapper = (ProcessingRecipeWrapper)recipeWrapper;
+		ProcessingRecipeWrapper processingWrapper = (ProcessingRecipeWrapper) recipeWrapper;
 		IProcessingRecipe proRec = processingWrapper.recipe;
-		if(!(proRec instanceof FluidDrierRecipe)) {
+		if (!(proRec instanceof FluidDrierRecipe)) {
 			Log.error("Recipe type unknown: {}", proRec);
 			return;
 		}
-		FluidDrierRecipe recipe = (FluidDrierRecipe)proRec;
+		FluidDrierRecipe recipe = (FluidDrierRecipe) proRec;
 		FluidStack input = recipe.getInputFluid();
 		ItemStack output = recipe.getOutputStack();
 
@@ -129,5 +135,4 @@ public class FluidDrierCategory extends BlankRecipeCategory {
 		guiItemStacks.init(slotOutput, false, 71, 42);
 		guiItemStacks.set(slotOutput, output);
 	}
-
 }

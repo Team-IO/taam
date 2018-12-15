@@ -1,11 +1,12 @@
 package net.teamio.taam;
 
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.teamio.taam.content.common.BlockOre;
@@ -17,19 +18,18 @@ import net.teamio.taam.content.piping.MachineTank;
 import net.teamio.taam.conveyors.IConveyorApplianceMetaInfo;
 import net.teamio.taam.conveyors.IConveyorSlots;
 import net.teamio.taam.gui.advanced.IAdvancedMachineGUI;
+import net.teamio.taam.integration.mcmultipart.MachineMultipart;
 import net.teamio.taam.machines.IMachine;
 import net.teamio.taam.machines.IMachineMetaInfo;
 import net.teamio.taam.machines.IMachineWrapper;
 import net.teamio.taam.machines.MachineBlock;
 import net.teamio.taam.machines.MachineItemBlock;
-import net.teamio.taam.machines.MachineItemMultipart;
-import net.teamio.taam.machines.MachineMultipart;
 import net.teamio.taam.machines.MachineTileEntity;
 import net.teamio.taam.piping.IPipe;
 import net.teamio.taam.rendering.TankRenderInfo;
 
 import javax.annotation.Nonnull;
-import java.rmi.activation.Activator;
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -352,7 +352,7 @@ public final class Taam {
 		}
 
 		@Override
-		public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
+		public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
 			// So far, no additional info
 		}
 	}
@@ -466,24 +466,24 @@ public final class Taam {
 		}
 	}
 
-	public static final String TILEENTITY_SENSOR = "taam.sensor";
-	public static final String TILEENTITY_CHUTE = "taam.chute";
-	public static final String TILEENTITY_CREATIVECACHE = "taam.creativecache";
+	public static final String TILEENTITY_SENSOR = "sensor";
+	public static final String TILEENTITY_CHUTE = "chute";
+	public static final String TILEENTITY_CREATIVECACHE = "creativecache";
 
-	public static final String TILEENTITY_CONVEYOR = "taam.conveyor";
-	public static final String TILEENTITY_CONVEYOR_HOPPER = "taam.conveyor_hopper";
-	public static final String TILEENTITY_CONVEYOR_PROCESSOR = "taam.conveyor_processor";
-	public static final String TILEENTITY_CONVEYOR_ITEMBAG = "taam.itembag";
-	public static final String TILEENTITY_CONVEYOR_TRASHCAN = "taam.trashcan";
-	public static final String TILEENTITY_CONVEYOR_SIEVE = "taam.sieve";
-	public static final String TILEENTITY_CONVEYOR_ELEVATOR = "taam.elevator";
+	public static final String TILEENTITY_CONVEYOR = "conveyor";
+	public static final String TILEENTITY_CONVEYOR_HOPPER = "conveyor_hopper";
+	public static final String TILEENTITY_CONVEYOR_PROCESSOR = "conveyor_processor";
+	public static final String TILEENTITY_CONVEYOR_ITEMBAG = "itembag";
+	public static final String TILEENTITY_CONVEYOR_TRASHCAN = "trashcan";
+	public static final String TILEENTITY_CONVEYOR_SIEVE = "sieve";
+	public static final String TILEENTITY_CONVEYOR_ELEVATOR = "elevator";
 
-	public static final String TILEENTITY_CREATIVEWELL = "taam.creativewell";
+	public static final String TILEENTITY_CREATIVEWELL = "creativewell";
 
-	public static final String TILEENTITY_APPLIANCE_SPRAYER = "taam.appliance.sprayer";
-	public static final String TILEENTITY_APPLIANCE_ALIGNER = "taam.appliance.aligner";
+	public static final String TILEENTITY_APPLIANCE_SPRAYER = "appliance.sprayer";
+	public static final String TILEENTITY_APPLIANCE_ALIGNER = "appliance.aligner";
 
-	public static final String TILEENTITY_MACHINE_WRAPPER = "taam.machine_wrapper";
+	public static final String TILEENTITY_MACHINE_WRAPPER = "machine_wrapper";
 
 	public enum FLUID_DYE_META {
 		black,
@@ -545,7 +545,7 @@ public final class Taam {
 	 * <p>
 	 * {@link MachineBlock} + {@link MachineTileEntity} -> Wrapper block & TE if multipart is not available.
 	 * <p>
-	 * {@link MachineItemBlock} -> Item for the wrapper block, mutually exclusive with {@link MachineItemMultipart}.
+	 * {@link MachineItemBlock} -> Item for the wrapper block, mutually exclusive with FIXME not anymore MachineItemMultipart.
 	 * Only one of them is used, depending on availability of multipart.
 	 * <p>
 	 * {@link MachineMultipart} -> Multipart wrapper for all these machines.
@@ -605,7 +605,7 @@ public final class Taam {
 		}
 
 		@Override
-		public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
+		public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
 			if (info != null) {
 				Collections.addAll(tooltip, info);
 			}

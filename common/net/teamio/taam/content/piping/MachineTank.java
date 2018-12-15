@@ -120,14 +120,14 @@ public class MachineTank implements IMachine, IPipePos, IWorldInteractable {
 	public void writeUpdatePacket(PacketBuffer buf) {
 		NBTTagCompound tag = new NBTTagCompound();
 		tank.writeToNBT(tag);
-		buf.writeNBTTagCompoundToBuffer(tag);
+		buf.writeCompoundTag(tag);
 		buf.writeByte(occludedSides);
 	}
 
 	@Override
 	public void readUpdatePacket(PacketBuffer buf) {
 		try {
-			NBTTagCompound tag = buf.readNBTTagCompoundFromBuffer();
+			NBTTagCompound tag = buf.readCompoundTag();
 			if(tag == null) {
 				tank.setFluid(null);
 			} else {
@@ -169,10 +169,10 @@ public class MachineTank implements IMachine, IPipePos, IWorldInteractable {
 
 	@Override
 	public void addCollisionBoxes(AxisAlignedBB mask, List<AxisAlignedBB> list, Entity collidingEntity) {
-		if (mask.intersectsWith(bbTank)) {
+		if (mask.intersects(bbTank)) {
 			list.add(bbTank);
 		}
-		if (mask.intersectsWith(MachinePipe.bbBaseplate)) {
+		if (mask.intersects(MachinePipe.bbBaseplate)) {
 			list.add(MachinePipe.bbBaseplate);
 		}
 	}
