@@ -9,14 +9,15 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
@@ -41,19 +42,13 @@ import java.util.List;
 
 public class MachineBlock extends BaseBlock implements ITileEntityProvider {
 
-	private final IMachineMetaInfo[] values;
-
 	public static final PropertyEnum<Taam.MACHINE_META> VARIANT = PropertyEnum.create("variant", Taam.MACHINE_META.class);
 	public static final PropertyEnum<EnumFacing> DIRECTION = PropertyEnum.create("direction", EnumFacing.class);
 
 	private AxisAlignedBB closestBB;
 
-	public MachineBlock(IMachineMetaInfo[] values) {
+	public MachineBlock() {
 		super(MaterialMachinesTransparent.INSTANCE);
-		if (values == null || values.length == 0) {
-			throw new IllegalArgumentException("Specified meta values were null or empty");
-		}
-		this.values = values;
 		setHardness(3.5f);
 		setSoundType(SoundType.METAL);
 		this.setHarvestLevel("pickaxe", 1);
@@ -61,19 +56,18 @@ public class MachineBlock extends BaseBlock implements ITileEntityProvider {
 
 	@Override
 	public int getMetaFromState(IBlockState state) {
-		// No meta for this block
-		return 0;
+		Taam.MACHINE_META meta = state.getValue(VARIANT);
+		return meta.ordinal();
 	}
 
 	@Override
 	public IBlockState getStateFromMeta(int meta) {
-		// No meta for this block
-		return getDefaultState().withProperty(VARIANT, (Taam.MACHINE_META)getInfo(meta));
+		return getDefaultState().withProperty(VARIANT, MachineTileEntity.getInfo(meta));
 	}
 
 	@Override
 	protected BlockStateContainer createBlockState() {
-		return new ExtendedBlockState(this, new IProperty[] { DIRECTION, VARIANT }, new IUnlistedProperty[]{ OBJModel.OBJProperty.instance });
+		return new ExtendedBlockState(this, new IProperty[]{DIRECTION, VARIANT}, new IUnlistedProperty[]{OBJModel.OBJProperty.instance});
 	}
 
 	@Override
@@ -97,8 +91,8 @@ public class MachineBlock extends BaseBlock implements ITileEntityProvider {
 	@Override
 	public boolean rotateBlock(World worldObj, BlockPos pos, EnumFacing axis) {
 		MachineTileEntity te = (MachineTileEntity) worldObj.getTileEntity(pos);
-		if(te.machine instanceof IRotatable) {
-			IRotatable rotatable = (IRotatable)te.machine;
+		if (te.machine instanceof IRotatable) {
+			IRotatable rotatable = (IRotatable) te.machine;
 			rotatable.setFacingDirection(rotatable.getNextFacingDirection());
 			worldObj.markBlockRangeForRenderUpdate(pos, pos);
 			te.markDirty();
@@ -110,23 +104,18 @@ public class MachineBlock extends BaseBlock implements ITileEntityProvider {
 	@Override
 	public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
 		MachineTileEntity te = (MachineTileEntity) worldIn.getTileEntity(pos);
-		Taam.MACHINE_META vari = (Taam.MACHINE_META)te.meta;
-		if(vari == null) {
+		Taam.MACHINE_META vari = (Taam.MACHINE_META) te.meta;
+		if (vari == null) {
 			Log.warn("Replacing NULL variant with 'pipe' to avoid crashes. {}", pos);
 			vari = MACHINE_META.pipe;
 		}
 		IBlockState newState;
-		if(te.machine instanceof IRotatable) {
-			newState = state.withProperty(DIRECTION, ((IRotatable)te.machine).getFacingDirection()).withProperty(VARIANT, vari);
+		if (te.machine instanceof IRotatable) {
+			newState = state.withProperty(DIRECTION, ((IRotatable) te.machine).getFacingDirection()).withProperty(VARIANT, vari);
 		} else {
 			newState = state.withProperty(DIRECTION, EnumFacing.DOWN).withProperty(VARIANT, vari);
 		}
 		return te.machine.getExtendedState(newState, worldIn, pos);
-	}
-
-	public IMachineMetaInfo getInfo(int meta) {
-		int ordinal = MathHelper.clamp(meta, 0, values.length);
-		return values[ordinal];
 	}
 
 	@Override
@@ -148,27 +137,27 @@ public class MachineBlock extends BaseBlock implements ITileEntityProvider {
 
 	@Override
 	public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean isActualState) {
-		MachineTileEntity tileEntity = (MachineTileEntity)worldIn.getTileEntity(pos);
+		MachineTileEntity tileEntity = (MachineTileEntity) worldIn.getTileEntity(pos);
 
 		List<AxisAlignedBB> tempList = this.tempList.get();
 		tempList.clear();
 
 		tileEntity.machine.addCollisionBoxes(entityBox.offset(-pos.getX(), -pos.getY(), -pos.getZ()), tempList, entityIn);
-		for(int i = 0; i < tempList.size(); i++) {
+		for (int i = 0; i < tempList.size(); i++) {
 			collidingBoxes.add(tempList.get(i).offset(pos.getX(), pos.getY(), pos.getZ()));
 		}
 	}
 
 	@Override
 	public RayTraceResult collisionRayTrace(IBlockState blockState, World worldIn, BlockPos pos, Vec3d start,
-			Vec3d end) {
+	                                        Vec3d end) {
 		start = start.subtract(pos.getX(), pos.getY(), pos.getZ());
 		end = end.subtract(pos.getX(), pos.getY(), pos.getZ());
 
 		List<AxisAlignedBB> tempList = this.tempList.get();
 		tempList.clear();
 
-		MachineTileEntity tileEntity = (MachineTileEntity)worldIn.getTileEntity(pos);
+		MachineTileEntity tileEntity = (MachineTileEntity) worldIn.getTileEntity(pos);
 		tileEntity.machine.addSelectionBoxes(tempList);
 
 		RayTraceResult closestHit = null;
@@ -211,6 +200,12 @@ public class MachineBlock extends BaseBlock implements ITileEntityProvider {
 			return new AxisAlignedBB(pos, pos.add(1, 1, 1));
 		}
 		return closestBB.offset(pos.getX(), pos.getY(), pos.getZ());
+	}
+
+	@Override
+	public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
+		return super.getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, meta, placer, hand)
+				.withProperty(VARIANT, MachineTileEntity.getInfo(meta));
 	}
 
 }

@@ -393,25 +393,13 @@ public class TaamMain {
 
 		Taam.MACHINE_META[] machine_meta_values = Taam.MACHINE_META.values();
 		/*
-		 * Wrapper block for machines if multipart is not available
+		 * Wrapper block for machines
 		 */
 		registerBlock(
-				blockMachine = new MachineBlock(machine_meta_values),
+				blockMachine = new MachineBlock(),
 				Taam.BLOCK_MACHINE_WRAPPER
 		);
-
-		/*
-		 * Either Multipart or regular items
-		 */
-		// FIXME validate if we need this item stunt for MCMuplipart2
-		/*if(Config.multipart_load && Config.multipart_register_items) {
-			// Multipart Item
-			itemMachine = MultipartHandler.createMultipartItem(machine_meta_values);
-		} else {*/
-		// Regular item, places a wrapper block
-		itemMachine = new MachineItemBlock(blockMachine, machine_meta_values);
-		//}
-		registerItem(itemMachine, Taam.BLOCK_MACHINE_WRAPPER);
+		registerItem(itemMachine = new MachineItemBlock(blockMachine), Taam.BLOCK_MACHINE_WRAPPER);
 
 		/*
 		 * Worldgen
