@@ -179,11 +179,19 @@ curseforge {
 	apiKey = getProperty('curseforge.apikey')
 	project {
 		id = '238424'
-		changelog = file('build/changelog.md')
+		changelog = {
+			File f = file('build/changelog.md')
+			if (f.exists()) {
+				return f.readLines().join("\n")
+			}
+			return ""
+		}
 		changelogType = 'markdown'
 		releaseType = "${config.release_type}"
 		FilenameFilter filter = { dir, filename -> filename.contains("${config.mc_version}-${config.mod_version}.jar") }
-		mainArtifact(jar.destinationDir.listFiles(filter).first()) {
+		mainArtifact({
+			jar.destinationDir.listFiles(filter).first()
+		}) {
 			displayName = "${config.mod_version} for MC ${config.mc_version}"
 		}
 
@@ -209,10 +217,16 @@ githubRelease {
 	targetCommitish "${config.release_branch}"
 	releaseName "${config.mod_version} for MC ${config.mc_version}"
 	body {
-		return file('build/changelog.md').readLines().join("\n")
+		File f = file('build/changelog.md')
+		if (f.exists()) {
+			return f.readLines().join("\n")
+		}
+		return ""
 	}
 	draft false // set this to true for testing
 	prerelease "${config.release_type}" == "alpha" || "${config.release_type}" == "beta"
 	FilenameFilter filter = { dir, filename -> filename.contains("${config.mc_version}-${config.mod_version}.jar") }
-	releaseAssets = jar.destinationDir.listFiles(filter).first()
+	releaseAssets = {
+		jar.destinationDir.listFiles(filter).first()
+	}
 }
