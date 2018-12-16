@@ -28,7 +28,7 @@ import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
-import net.minecraftforge.fml.common.FMLLog;
+import net.teamio.taam.Log;
 import org.apache.commons.lang3.builder.StandardToStringStyle;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.tuple.Pair;
@@ -121,11 +121,13 @@ public class OBJModel implements IModel {
 		builder.put(ModelLoader.White.LOCATION.toString(), ModelLoader.White.INSTANCE);
 		TextureAtlasSprite missing = bakedTextureGetter.apply(new ResourceLocation("missingno"));
 		for (Map.Entry<String, Material> e : this.matLib.materials.entrySet()) {
-			if (e.getValue().getTexture().getTextureLocation().getPath().startsWith("#")) {
-				FMLLog.severe("OBJLoader: Unresolved texture '%s' for obj model '%s'", e.getValue().getTexture().getTextureLocation().getPath(), modelLocation);
+			Material value = e.getValue();
+			String texturePath = value.getTexture().getTextureLocation().getPath();
+			if (texturePath.charAt(0) == '#') {
+				Log.error("OBJLoader: Unresolved texture '{} for obj model {}", texturePath, modelLocation);
 				builder.put(e.getKey(), missing);
 			} else {
-				builder.put(e.getKey(), bakedTextureGetter.apply(e.getValue().getTexture().getTextureLocation()));
+				builder.put(e.getKey(), bakedTextureGetter.apply(value.getTexture().getTextureLocation()));
 			}
 		}
 		builder.put("missingno", missing);
@@ -133,7 +135,7 @@ public class OBJModel implements IModel {
 		boolean allFalse = this.customData.allProcessUVValuesFalse();
 		boolean outOfBounds = this.customData.hasUVsOutOfBounds();
 		if (allFalse && outOfBounds) {
-			FMLLog.severe("OBJLoader: Model '%s' has UVs ('vt') out of bounds 0..1! It may not render as expected!", this.modelLocation);
+			Log.error("OBJLoader: Model {} has UVs ('vt') out of bounds 0..1! It may not render as expected!", this.modelLocation);
 		}
 
 		return new OBJBakedModel(this, state, format, builder.build());
@@ -235,7 +237,7 @@ public class OBJModel implements IModel {
 						material = this.materialLibrary.getMaterial(Material.WHITE_NAME);
 					else material = this.materialLibrary.getMaterial(data);
 					if (material == null) {
-						FMLLog.severe("OBJLoader: Model '%s' tried to use a material that wasn't defined in its .mtl file, a plain white texture will be used instead!", objFrom);
+						Log.error("OBJLoader: Model {} tried to use a material that wasn't defined in its .mtl file, a plain white texture will be used instead!", objFrom);
 						material = this.materialLibrary.getMaterial(Material.WHITE_NAME);
 					}
 					usemtlCounter++;
@@ -265,7 +267,7 @@ public class OBJModel implements IModel {
 				} else if (key.equalsIgnoreCase("f")) {
 					String[][] splitSlash = new String[splitData.length][];
 					if (splitData.length > 4)
-						FMLLog.warning("OBJModel.Parser: found a face 'f' with more than 4 vertices, only the first 4 of these vertices will be rendered!");
+						Log.warn("OBJModel.Parser: found a face 'f' with more than 4 vertices, only the first 4 of these vertices will be rendered!");
 
 					int vert = 0;
 					int texCoord = 0;
@@ -352,7 +354,7 @@ public class OBJModel implements IModel {
 				} else {
 					if (!unknownObjectCommands.contains(key)) {
 						unknownObjectCommands.add(key);
-						FMLLog.info("OBJLoader.Parser: command '%s' (model: '%s') is not currently supported, skipping", key, objFrom);
+						Log.info("OBJLoader.Parser: command {} (model: {}) is not currently supported, skipping", key, objFrom);
 					}
 				}
 			}
@@ -406,7 +408,7 @@ public class OBJModel implements IModel {
 						if (this.materials.containsKey(repPath)) {
 							replacement.setPath(this.materials.get(repPath).getTexture().getPath());
 						} else {
-							FMLLog.warning("OBJModel.MaterialLibrary: Tried to set the texture path for material '%s' to the texture path of a non-existant material '%s', the original texture will be used.", e.getKey(), repPath);
+							Log.warn("OBJModel.MaterialLibrary: Tried to set the texture path for material {} to the texture path of a non-existant material {}, the original texture will be used.", e.getKey(), repPath);
 						}
 					} else {
 						replacement.setPath(repPath);
@@ -507,7 +509,7 @@ public class OBJModel implements IModel {
 							hasSetColor = true;
 							material.setColor(color);
 						} else {
-							FMLLog.info("OBJModel: A color has already been defined for material '%s' in '%s'. The color defined by key '%s' will not be applied!", material.getName(), new ResourceLocation(domain, path).toString(), key);
+							Log.info("OBJModel: A color has already been defined for material {} in {}. The color defined by key {} will not be applied!", material.getName(), new ResourceLocation(domain, path).toString(), key);
 						}
 					} else if (key.equalsIgnoreCase("map_Ka") || key.equalsIgnoreCase("map_Kd") || key.equalsIgnoreCase("map_Ks")) {
 						if (key.equalsIgnoreCase("map_Kd") || !hasSetTexture) {
@@ -523,7 +525,7 @@ public class OBJModel implements IModel {
 								material.setTexture(texture);
 							}
 						} else {
-							FMLLog.info("OBJModel: A texture has already been defined for material '%s' in '%s'. The texture defined by key '%s' will not be applied!", material.getName(), new ResourceLocation(domain, path).toString(), key);
+							Log.info("OBJModel: A texture has already been defined for material {} in {}. The texture defined by key {} will not be applied!", material.getName(), new ResourceLocation(domain, path).toString(), key);
 						}
 					} else if (key.equalsIgnoreCase("d") || key.equalsIgnoreCase("Tr")) {
 						String[] splitData = WHITE_SPACE.split(data);
@@ -532,7 +534,7 @@ public class OBJModel implements IModel {
 					} else {
 						if (!unknownMaterialCommands.contains(key)) {
 							unknownMaterialCommands.add(key);
-							FMLLog.info("OBJLoader.MaterialLibrary: key '%s' (model: '%s') is not currently supported, skipping", key, new ResourceLocation(domain, path));
+							Log.info("OBJLoader.MaterialLibrary: key {} (model: {}) is not currently supported, skipping", key, new ResourceLocation(domain, path));
 						}
 					}
 				}
@@ -544,8 +546,8 @@ public class OBJModel implements IModel {
 		public static final String WHITE_NAME = "OBJModel.White.Texture.Name";
 		public static final String DEFAULT_NAME = "OBJModel.Default.Texture.Name";
 		private Vector4f color;
-		private Texture texture = Texture.WHITE;
-		private String name = DEFAULT_NAME;
+		private Texture texture;
+		private String name;
 
 		public Material() {
 			this(new Vector4f(1f, 1f, 1f, 1f));
@@ -611,25 +613,23 @@ public class OBJModel implements IModel {
 
 	//TODO: evaluate the usefulness of having an entire class for this... currently no way to change position/scale/rotation
 	public static class Texture {
-		public static final Texture WHITE = new Texture("builtin/white", new Vector2f(0, 0), new Vector2f(1, 1), 0);
+		public static final Texture WHITE = new Texture("builtin/white", new Vector2f(1, 1), 0);
 		private String path;
-		private Vector2f position;
 		private Vector2f scale;
 		private float rotation;
 
 		public Texture(String path) {
-			this(path, new Vector2f(0, 0), new Vector2f(1, 1), 0);
+			this(path, new Vector2f(1, 1), 0);
 		}
 
-		public Texture(String path, Vector2f position, Vector2f scale, float rotation) {
+		public Texture(String path, Vector2f scale, float rotation) {
 			this.path = path;
-			this.position = position;
 			this.scale = scale;
 			this.rotation = rotation;
 		}
 
 		protected static Texture copyFrom(Texture texture) {
-			return new Texture(texture.path, texture.position, texture.scale, texture.rotation);
+			return new Texture(texture.path, texture.scale, texture.rotation);
 		}
 
 		public ResourceLocation getTextureLocation() {
@@ -642,14 +642,6 @@ public class OBJModel implements IModel {
 
 		public String getPath() {
 			return this.path;
-		}
-
-		protected void setPosition(Vector2f position) {
-			this.position = position;
-		}
-
-		public Vector2f getPosition() {
-			return this.position;
 		}
 
 		protected void setScale(Vector2f scale) {
@@ -672,7 +664,6 @@ public class OBJModel implements IModel {
 		public String toString() {
 			ToStringBuilder build = new ToStringBuilder(this, STYLE);
 			build.append("Location", this.path);
-			build.append("Position", this.position);
 			build.append("Scale", this.scale);
 			build.append("Rotation", this.rotation);
 			return build.toString();
