@@ -133,7 +133,7 @@ public abstract class BaseBlock extends Block {
 					redirectorCount++;
 				}
 				if (redirectorCount > 0) {
-					InventoryUtils.dropItem(new ItemStack(TaamMain.itemPart, redirectorCount, Taam.ITEM_PART_META.redirector.ordinal()), worldIn, pos);
+					InventoryUtils.dropItem(new ItemStack(TaamMain.itemPart, redirectorCount, Taam.ITEM_PART_META.redirector.ordinal()), worldIn, pos, true);
 				}
 			}
 
@@ -142,7 +142,7 @@ public abstract class BaseBlock extends Block {
 				for (int index = 0; index < itemHandler.getSlots(); index++) {
 					ItemStack itemstack = itemHandler.getStackInSlot(index);
 					// dropItem checks for null/empty stacks
-					InventoryUtils.dropItem(itemstack, worldIn, pos);
+					InventoryUtils.dropItem(itemstack, worldIn, pos, true);
 				}
 			}
 		}

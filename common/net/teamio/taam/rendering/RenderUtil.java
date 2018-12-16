@@ -21,6 +21,7 @@ public final class RenderUtil {
 	 * @return 0, 90, 180 or 270 degrees as float. Defaults to 0 degrees.
 	 */
 	public static float getRotationDegrees(EnumFacing direction) {
+		if (direction == null) return 0;
 		float rotationDegrees;
 		switch (direction) {
 			case WEST:

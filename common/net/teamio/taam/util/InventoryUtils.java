@@ -52,6 +52,16 @@ import javax.annotation.Nullable;
  * the LGPL.
  */
 public final class InventoryUtils {
+
+	/**
+	 * Tag for reading/writing stack sizes of more than 127 to NBT.
+	 */
+	public static final String QUANTITY_TAG = "Quantity";
+	/**
+	 * Tag for reading/writing the slot ID of item stacks to NBT.
+	 */
+	public static final String SLOT_TAG = "Slot";
+
 	private InventoryUtils() {
 		// Util Class
 	}
@@ -63,7 +73,7 @@ public final class InventoryUtils {
 	/**
 	 * Checks if the given stack is empty. ({@literal null} or {{@link ItemStack#isEmpty()}} == true)
 	 *
-	 * @param stack
+	 * @param stack The stack to be checked, may be null.
 	 * @return true if the stack is null or empty
 	 * @author Oliver Kahrmann
 	 */
@@ -137,8 +147,8 @@ public final class InventoryUtils {
 	 * Null and empty stacks can be stacked together, but not with non-empty stacks.
 	 * Does not check the max stack size, only if the items are compatible.
 	 *
-	 * @param stack1
-	 * @param stack2
+	 * @param stack1 The first stack to be checked, may be null.
+	 * @param stack2 The second stack to be checked, may be null.
 	 * @return true if the two stack can be safely stacked into one.
 	 * @author Oliver Kahrmann
 	 */
@@ -160,7 +170,7 @@ public final class InventoryUtils {
 	/**
 	 * Copies an itemstack with a new quantity
 	 *
-	 * @param stack    The original item stack. If an empty stack is passed in, an empty stack is returned.
+	 * @param stack    The original item stack. If an empty/null stack is passed in, an empty stack is returned.
 	 * @param quantity The new quantity.
 	 * @return A new item stack with the given quantity, or ItemStack.EMPTY if stack was
 	 * null or empty
@@ -175,30 +185,15 @@ public final class InventoryUtils {
 	}
 
 	/**
-	 * Drop an item into the world, using random motion.
-	 * <p>
-	 * Does NOT check world.isRemote!
-	 *
-	 * @param stack
-	 * @param world
-	 * @param pos
-	 * @return
-	 * @author Oliver Kahrmann
-	 */
-	public static EntityItem dropItem(ItemStack stack, World world, BlockPos pos) {
-		return dropItem(stack, world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, true);
-	}
-
-	/**
 	 * Drop an item into the world, optionally using random motion.
 	 * <p>
 	 * Does NOT check world.isRemote!
 	 *
-	 * @param stack
-	 * @param world
-	 * @param pos
-	 * @param randomMotion
-	 * @return
+	 * @param stack        An item stack to be dropped as an {@link EntityItem}
+	 * @param world        The destination world
+	 * @param pos          Destination coordinates for the entity. 0.5 is added to each coordinate to spawn in the middle of the block.
+	 * @param randomMotion Enable random motion like in vanilla code. Pass false to spawn the item without motion.
+	 * @return The spawned EntityItem or null, if the given stack was empty.
 	 * @author Oliver Kahrmann
 	 */
 	public static EntityItem dropItem(ItemStack stack, World world, BlockPos pos, boolean randomMotion) {
@@ -206,38 +201,20 @@ public final class InventoryUtils {
 	}
 
 	/**
-	 * Drop an item into the world, using random motion.
-	 * <p>
-	 * Does NOT check world.isRemote!
-	 *
-	 * @param stack
-	 * @param world
-	 * @param x
-	 * @param y
-	 * @param z
-	 * @return
-	 * @author Oliver Kahrmann
-	 */
-	public static EntityItem dropItem(ItemStack stack, World world, double x, double y, double z) {
-		return dropItem(stack, world, x, y, z, true);
-	}
-
-	/**
 	 * Drop an item into the world, optionally using random motion.
 	 * <p>
 	 * Does NOT check world.isRemote!
 	 *
-	 * @param stack
-	 * @param world
-	 * @param x
-	 * @param y
-	 * @param z
-	 * @param randomMotion
-	 * @return
+	 * @param stack        An item stack to be dropped as an {@link EntityItem}
+	 * @param world        The destination world
+	 * @param x            Destination coordinates for the entity
+	 * @param y            Destination coordinates for the entity
+	 * @param z            Destination coordinates for the entity
+	 * @param randomMotion Enable random motion like in vanilla code. Pass false to spawn the item without motion.
+	 * @return The spawned EntityItem or null, if the given stack was empty.
 	 * @author Oliver Kahrmann based on code by Chicken-Bones
 	 */
-	public static EntityItem dropItem(ItemStack stack, World world, double x, double y, double z,
-	                                  boolean randomMotion) {
+	public static EntityItem dropItem(@Nullable ItemStack stack, World world, double x, double y, double z, boolean randomMotion) {
 		if (isEmpty(stack)) return null;
 
 		EntityItem item = new EntityItem(world, x, y, z, stack);
@@ -333,7 +310,7 @@ public final class InventoryUtils {
 
 		if (!player.inventory.addItemStackToInventory(stack)) {
 			if (!player.world.isRemote) {
-				dropItem(stack, player.world, x, y, z);
+				dropItem(stack, player.world, x, y, z, true);
 			}
 		} else if (player instanceof EntityPlayerMP) {
 			((EntityPlayerMP) player).sendContainerToPlayer(player.inventoryContainer);
@@ -361,14 +338,14 @@ public final class InventoryUtils {
 			if (!isEmpty(items[i])) {
 				NBTTagCompound tag = new NBTTagCompound();
 				if (!sequential) {
-					tag.setShort("Slot", (short) i);
+					tag.setShort(SLOT_TAG, (short) i);
 				}
 				items[i].writeToNBT(tag);
 
 				if (maxQuantity > Short.MAX_VALUE)
-					tag.setInteger("Quantity", items[i].getCount());
+					tag.setInteger(QUANTITY_TAG, items[i].getCount());
 				else if (maxQuantity > Byte.MAX_VALUE)
-					tag.setShort("Quantity", (short) items[i].getCount());
+					tag.setShort(QUANTITY_TAG, (short) items[i].getCount());
 
 				tagList.appendTag(tag);
 			}
@@ -400,13 +377,13 @@ public final class InventoryUtils {
 			if (sequential) {
 				slot = i;
 			} else {
-				slot = tag.getShort("Slot");
+				slot = tag.getShort(SLOT_TAG);
 			}
 			items[slot] = new ItemStack(tag);
-			if (tag.hasKey("Quantity", Constants.NBT.TAG_SHORT))
-				items[slot].setCount(tag.getShort("Quantity"));
-			else if (tag.hasKey("Quantity", Constants.NBT.TAG_INT))
-				items[slot].setCount(tag.getInteger("Quantity"));
+			if (tag.hasKey(QUANTITY_TAG, Constants.NBT.TAG_SHORT))
+				items[slot].setCount(tag.getShort(QUANTITY_TAG));
+			else if (tag.hasKey(QUANTITY_TAG, Constants.NBT.TAG_INT))
+				items[slot].setCount(tag.getInteger(QUANTITY_TAG));
 		}
 		for (int i = 0; i < items.length; i++) {
 			if (isEmpty(items[i])) {

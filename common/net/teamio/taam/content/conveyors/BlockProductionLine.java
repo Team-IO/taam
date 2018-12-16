@@ -228,9 +228,11 @@ public class BlockProductionLine extends BaseBlock {
 	public boolean canPlaceBlockAt(World world, BlockPos pos) {
 		TileEntity ent = world.getTileEntity(pos);
 
-		EnumFacing myDir = null;
+		EnumFacing myDir;
 		if (ent instanceof TileEntityConveyor) {
 			myDir = ((TileEntityConveyor) ent).getFacingDirection();
+		} else {
+			myDir = null;
 		}
 		return canBlockStay(world, pos, myDir);
 	}

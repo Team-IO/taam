@@ -96,7 +96,6 @@ public class Config {
 	public static final String SECTION_PRODUCTIONLINE_PIPE = SECTION_PRODUCTIONLINE + ".pipe";
 	public static final String SECTION_PRODUCTIONLINE_PUMP = SECTION_PRODUCTIONLINE + ".pump";
 	public static final String SECTION_PRODUCTIONLINE_TANK = SECTION_PRODUCTIONLINE + ".tank";
-	public static final String SECTION_PRODUCTIONLINE_CREATIVEWELL = SECTION_PRODUCTIONLINE + ".creativewell";
 	public static final String SECTION_PRODUCTIONLINE_CONVEYORS = SECTION_PRODUCTIONLINE + ".conveyors";
 	public static final String SECTION_PRODUCTIONLINE_SIEVE = SECTION_PRODUCTIONLINE + ".sieve";
 	public static final String SECTION_PRODUCTIONLINE_ELEVATOR = SECTION_PRODUCTIONLINE + ".elevator";
@@ -137,7 +136,7 @@ public class Config {
 		if (load_defaults_only) {
 			return defaultValue;
 		}
-		String langKey = String.format("taam.config.%s.%s", category, name);
+		String langKey = getLangKey(name, category);
 		return config.getInt(name, category, defaultValue, minValue, maxValue, comment, langKey);
 	}
 
@@ -156,7 +155,7 @@ public class Config {
 		if (load_defaults_only) {
 			return defaultValue;
 		}
-		String langKey = String.format("taam.config.%s.%s", category, name);
+		String langKey = getLangKey(name, category);
 		Property prop = config.get(category, name, defaultValue, comment, minValue, maxValue);
 		prop.setLanguageKey(langKey);
 		prop.setRequiresWorldRestart(true);
@@ -167,7 +166,7 @@ public class Config {
 		if (load_defaults_only) {
 			return defaultValue;
 		}
-		String langKey = String.format("taam.config.%s.%s", category, name);
+		String langKey = getLangKey(name, category);
 		return config.getFloat(name, category, defaultValue, minValue, maxValue, comment, langKey);
 	}
 
@@ -175,7 +174,7 @@ public class Config {
 		if (load_defaults_only) {
 			return (byte) defaultValue;
 		}
-		String langKey = String.format("taam.config.%s.%s", category, name);
+		String langKey = getLangKey(name, category);
 		return (byte) config.getInt(name, category, defaultValue, minValue, maxValue, comment, langKey);
 	}
 
@@ -183,7 +182,7 @@ public class Config {
 		if (load_defaults_only) {
 			return defaultValue;
 		}
-		String langKey = String.format("taam.config.%s.%s", category, name);
+		String langKey = getLangKey(name, category);
 		return config.getBoolean(name, category, defaultValue, comment, langKey);
 	}
 
@@ -191,8 +190,12 @@ public class Config {
 		if (load_defaults_only) {
 			return defaultValue;
 		}
-		String langKey = String.format("taam.config.%s.%s", category, name);
+		String langKey = getLangKey(name, category);
 		return config.getString(name, category, defaultValue, comment, langKey);
+	}
+
+	private static String getLangKey(String name, String category) {
+		return String.format("taam.config.%s.%s", category, name);
 	}
 
 	private static void loadConfig() {
