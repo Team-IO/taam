@@ -13,7 +13,7 @@ public class OutputChuteBacklog extends OutputChute {
 
 	public void writeToNBT(NBTTagCompound tag) {
 		if (backlog != null) {
-			tag.setTag("backlog", InventoryUtils.writeItemStacksToTagSequential(backlog));
+			tag.setTag("backlog", InventoryUtils.writeItemStacksToTag(backlog, 64, true));
 		}
 	}
 
@@ -24,7 +24,7 @@ public class OutputChuteBacklog extends OutputChute {
 		}
 		NBTTagList tagList = tag.getTagList("backlog", NBT.TAG_COMPOUND);
 		backlog = new ItemStack[tagList.tagCount()];
-		InventoryUtils.readItemStacksFromTagSequential(backlog, tagList);
+		InventoryUtils.readItemStacksFromTag(backlog, tagList, true);
 	}
 
 	@Override

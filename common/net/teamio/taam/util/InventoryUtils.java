@@ -24,7 +24,6 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTPrimitive;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
@@ -32,6 +31,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -77,6 +77,7 @@ public final class InventoryUtils {
 	 *
 	 * @param stack Any stack, including null
 	 * @return ItemStack.EMPTY or a valid stack.
+	 * @author Oliver Kahrmann
 	 */
 	@Nonnull
 	public static ItemStack guardAgainstNull(@Nullable ItemStack stack) {
@@ -163,7 +164,7 @@ public final class InventoryUtils {
 	 * @param quantity The new quantity.
 	 * @return A new item stack with the given quantity, or ItemStack.EMPTY if stack was
 	 * null or empty
-	 * @author Chicken-Bones
+	 * @author Oliver Kahrmann based on code by Chicken-Bones
 	 */
 	public static ItemStack copyStack(@Nullable ItemStack stack, int quantity) {
 		if (isEmpty(stack)) return ItemStack.EMPTY;
@@ -233,7 +234,7 @@ public final class InventoryUtils {
 	 * @param z
 	 * @param randomMotion
 	 * @return
-	 * @author Chicken-Bones, Oliver Kahrmann
+	 * @author Oliver Kahrmann based on code by Chicken-Bones
 	 */
 	public static EntityItem dropItem(ItemStack stack, World world, double x, double y, double z,
 	                                  boolean randomMotion) {
@@ -294,49 +295,6 @@ public final class InventoryUtils {
 	}
 
 	/**
-	 * NBT item loading function with support for stack sizes > 32K.
-	 * <p>
-	 * Items are loaded with the slot index, so make sure the array is sized big
-	 * enough to fit all slots. Otherwise use
-	 * {@link #readItemStacksFromTagSequential(ItemStack[], NBTTagList)} where
-	 * the slot index is not read.
-	 *
-	 * @param items   An appropriately sized array for the loaded items.
-	 * @param tagList
-	 * @author Chicken-Bones
-	 */
-	public static void readItemStacksFromTag(ItemStack[] items, NBTTagList tagList) {
-		for (int i = 0; i < tagList.tagCount(); i++) {
-			NBTTagCompound tag = tagList.getCompoundTagAt(i);
-			int b = tag.getShort("Slot");
-			items[b] = new ItemStack(tag);
-			if (tag.hasKey("Quantity"))
-				items[b].setCount(((NBTPrimitive) tag.getTag("Quantity")).getInt());
-		}
-	}
-
-	/**
-	 * NBT item loading function with support for stack sizes > 32K. Reads the
-	 * {@link ItemStack}s without checking the slot ID. Useful for internal
-	 * lists.
-	 *
-	 * @param items
-	 * @param tagList
-	 * @author Oliver Kahrmann, based on
-	 * {@link #readItemStacksFromTag(ItemStack[], NBTTagList)}
-	 * @author Chicken-Bones
-	 */
-	public static void readItemStacksFromTagSequential(ItemStack[] items, NBTTagList tagList) {
-		for (int i = 0; i < tagList.tagCount(); i++) {
-			NBTTagCompound tag = tagList.getCompoundTagAt(i);
-			int b = tag.getShort("Slot");
-			items[b] = new ItemStack(tag);
-			if (tag.hasKey("Quantity"))
-				items[b].setCount(((NBTPrimitive) tag.getTag("Quantity")).getInt());
-		}
-	}
-
-	/**
 	 * Tries to drop an item into a player inventory or drops it at the
 	 * specified coordinates.
 	 * <p>
@@ -383,37 +341,28 @@ public final class InventoryUtils {
 	}
 
 	/**
-	 * NBT item saving function. Uses the default
-	 * {@link #writeItemStacksToTag(ItemStack[], int)} and assumes maxQuantity
-	 * 64.
-	 *
-	 * @param items The array of item stacks to be written. May contain null
-	 *              values, but not BE null.
-	 * @return A new tag list containing the serialized item stacks.
-	 * @author Chicken-Bones
-	 */
-	public static NBTTagList writeItemStacksToTag(ItemStack[] items) {
-		return writeItemStacksToTag(items, 64);
-	}
-
-	/**
 	 * NBT item saving function with support for stack sizes > 32K.
+	 * ItemStacks only write a byte of data, so max 127 items per stack.
 	 * <p>
 	 * Items are saved with their slot index, so null stacks can be skipped.
 	 *
 	 * @param items       The array of item stacks to be written. May contain null
 	 *                    values, but not BE null.
 	 * @param maxQuantity Determines if the stack size has to be written separately, and
-	 *                    which data type is used.
+	 *                    which data type is used. Careful, too small values result in data loss.
+	 * @param sequential  If sequential, the slot number is not written. Empty stacks are simply skipped.
+	 *                    Useful for internal arrays where the exact position is less important than the order.
 	 * @return A new tag list containing the serialized item stacks.
-	 * @author Chicken-Bones
+	 * @author Oliver Kahrmann, based on code by Chicken-Bones
 	 */
-	public static NBTTagList writeItemStacksToTag(ItemStack[] items, int maxQuantity) {
+	public static NBTTagList writeItemStacksToTag(ItemStack[] items, int maxQuantity, boolean sequential) {
 		NBTTagList tagList = new NBTTagList();
 		for (int i = 0; i < items.length; i++) {
 			if (!isEmpty(items[i])) {
 				NBTTagCompound tag = new NBTTagCompound();
-				tag.setShort("Slot", (short) i);
+				if (!sequential) {
+					tag.setShort("Slot", (short) i);
+				}
 				items[i].writeToNBT(tag);
 
 				if (maxQuantity > Short.MAX_VALUE)
@@ -428,54 +377,41 @@ public final class InventoryUtils {
 	}
 
 	/**
-	 * NBT item saving function
+	 * NBT item loading function with support for stack sizes > 32K.
+	 * ItemStacks only write a byte of data, so max 127 items per stack.
 	 * <p>
-	 * Writes the itemStacks without adding the slot ID. Useful for internal
-	 * lists. Uses the default
-	 * {@link #writeItemStacksToTagSequential(ItemStack[], int)} and assumes
-	 * maxQuantity 64.
-	 *
-	 * @param items The array of item stacks to be written. May contain null
-	 *              values, but not BE null.
-	 * @return A new tag list containing the serialized item stacks.
-	 * @author Oliver Kahrmann, based on
-	 * {@link #writeItemStacksToTag(ItemStack[])}
-	 */
-	public static NBTTagList writeItemStacksToTagSequential(ItemStack[] items) {
-		return writeItemStacksToTagSequential(items, 64);
-	}
-
-	/**
-	 * NBT item saving function with support for stack sizes > 32K
+	 * Items are loaded with the slot index, so make sure the array is sized big
+	 * enough to fit all slots. Otherwise use the sequential flag where
+	 * the slot index is not read.
 	 * <p>
-	 * Writes the itemStacks without adding the slot ID. Useful for internal
-	 * lists.
+	 * Empty spots and invalid stacks in the items array are replaced with ItemStack.EMPTY.
 	 *
-	 * @param items       The array of item stacks to be written. May contain null
-	 *                    values, but not BE null.
-	 * @param maxQuantity Determines if the stack size has to be written separately, and
-	 *                    which data type is used.
-	 * @return A new tag list containing the serialized item stacks.
-	 * @author Oliver Kahrmann, based on
-	 * {@link #writeItemStacksToTag(ItemStack[], int)}
-	 * @author Oliver Kahrmann, based on
-	 * {@link #writeItemStacksToTag(ItemStack[])}
+	 * @param items      An appropriately sized array for the loaded items.
+	 *                   You can use the tag count of the list for sequentially written tags.
+	 * @param tagList    The NBT list to read from
+	 * @param sequential Read the entries sequentially, ignoring a slot number if present.
+	 *                   Useful for internal lists.
+	 * @author Oliver Kahrmann, based on code by Chicken-Bones
 	 */
-	public static NBTTagList writeItemStacksToTagSequential(ItemStack[] items, int maxQuantity) {
-		NBTTagList tagList = new NBTTagList();
+	public static void readItemStacksFromTag(ItemStack[] items, NBTTagList tagList, boolean sequential) {
+		for (int i = 0; i < tagList.tagCount(); i++) {
+			NBTTagCompound tag = tagList.getCompoundTagAt(i);
+			int slot;
+			if (sequential) {
+				slot = i;
+			} else {
+				slot = tag.getShort("Slot");
+			}
+			items[slot] = new ItemStack(tag);
+			if (tag.hasKey("Quantity", Constants.NBT.TAG_SHORT))
+				items[slot].setCount(tag.getShort("Quantity"));
+			else if (tag.hasKey("Quantity", Constants.NBT.TAG_INT))
+				items[slot].setCount(tag.getInteger("Quantity"));
+		}
 		for (int i = 0; i < items.length; i++) {
-			if (!isEmpty(items[i])) {
-				NBTTagCompound tag = new NBTTagCompound();
-				items[i].writeToNBT(tag);
-
-				if (maxQuantity > Short.MAX_VALUE)
-					tag.setInteger("Quantity", items[i].getCount());
-				else if (maxQuantity > Byte.MAX_VALUE)
-					tag.setShort("Quantity", (short) items[i].getCount());
-
-				tagList.appendTag(tag);
+			if (isEmpty(items[i])) {
+				items[i] = ItemStack.EMPTY;
 			}
 		}
-		return tagList;
 	}
 }
