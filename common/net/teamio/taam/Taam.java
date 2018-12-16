@@ -73,7 +73,11 @@ public final class Taam {
 	 * Network channel name
 	 */
 	public static final String CHANNEL_NAME = "TAAM";
-
+	/**
+	 * Class name for the GUI factory (used for the config GUI)
+	 * Factory class: {@link net.teamio.taam.gui.GuiFactory}
+	 * Config GUI class: {@link net.teamio.taam.gui.ModGuiConfig}
+	 */
 	public static final String GUI_FACTORY_CLASS = "net.teamio.taam.gui.GuiFactory";
 
 	/*

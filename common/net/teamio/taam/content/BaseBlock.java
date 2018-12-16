@@ -19,6 +19,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import net.teamio.taam.Log;
 import net.teamio.taam.Taam;
 import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.common.TileEntityChute;
@@ -35,6 +36,25 @@ import net.teamio.taam.util.WrenchUtil;
 
 import java.util.List;
 
+/**
+ * BaseBlock is the superclass for all blocks with tile entities in Taam.
+ * It is configured for easier rendering
+ * <ul>
+ * <li>not a full block, not opaque
+ * <li>handles metadata of dropped items
+ * <li>handle OBJModel block state via {@link #getExtendedState}
+ * (requires unlisted state to be added to subclasses' block state)
+ * </ul>
+ * <p>
+ * and for handling the tile entities
+ * <ul>
+ * <li>set the owner of a tile entity when placed
+ * <li>handle breaking of unsupported blocks (canBlockStay)
+ * <li>drop items in tile entity inventory when broken
+ * <li>support rotation via {@link WrenchUtil#rotateBlock}
+ * <li>support world interaction via {@link IWorldInteractable} on the tile entity
+ * </ul>
+ */
 public abstract class BaseBlock extends Block {
 
 	/**
@@ -51,10 +71,15 @@ public abstract class BaseBlock extends Block {
 	public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer,
 	                            ItemStack stack) {
 		// Update Owner
-		if (placer instanceof EntityPlayer) {
-			BaseTileEntity te = (BaseTileEntity) worldIn.getTileEntity(pos);
-			te.setOwner((EntityPlayer) placer);
+		if (!(placer instanceof EntityPlayer)) {
+			return;
 		}
+		BaseTileEntity te = (BaseTileEntity) worldIn.getTileEntity(pos);
+		if (te == null) {
+			Log.error("Tile entity was null at position {} in world {}, expected instance of {}", pos, worldIn.provider.getDimension(), BaseTileEntity.class.getName());
+			return;
+		}
+		te.setOwner((EntityPlayer) placer);
 	}
 
 	public abstract boolean canBlockStay(World worldIn, BlockPos pos, IBlockState state);
@@ -166,14 +191,6 @@ public abstract class BaseBlock extends Block {
 			return true;
 		}
 		return false;
-
-//		if (worldIn.isRemote) {
-//			return te instanceof IWorldInteractable || te instanceof TileEntityConveyorHopper
-//					|| te instanceof TileEntityConveyorItemBag;
-//		} else {
-
-
-//		}
 	}
 
 	@Override
@@ -275,8 +292,8 @@ public abstract class BaseBlock extends Block {
 	 * <p>
 	 * Useful when working with redstone.
 	 *
-	 * @param world
-	 * @param pos
+	 * @param world The world
+	 * @param pos   The origin block aroung which the updates should occur.
 	 */
 	public static void updateBlocksAround(World world, BlockPos pos) {
 		Block blockType = world.getBlockState(pos).getBlock();

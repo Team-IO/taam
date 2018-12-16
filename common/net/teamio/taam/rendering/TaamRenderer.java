@@ -1,6 +1,5 @@
 package net.teamio.taam.rendering;
 
-import com.google.common.base.Function;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
@@ -44,9 +43,11 @@ import net.teamio.taam.util.InventoryUtils;
 import net.teamio.taam.util.WrenchUtil;
 import org.lwjgl.opengl.GL11;
 
+import javax.annotation.Nonnull;
 import javax.vecmath.Vector2f;
 import javax.vecmath.Vector3f;
 import java.util.Random;
+import java.util.function.Function;
 
 public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 
@@ -60,16 +61,16 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 	 * Rotation counter, currently only used for calculating
 	 * {@link TaamRenderer#rotSin}.
 	 */
-	private float rot = 0;
+	private float rot;
 	/**
 	 * Rotation counter, currently unused, was used for blinking the motion
 	 * sensor light.
 	 */
-	private float rot_sensor = 0;
+	private float rot_sensor;
 	/**
 	 * sin(rot), used for animating the conveyor sieve.
 	 */
-	public static double rotSin = 0;
+	public static double rotSin;
 
 	/**
 	 * Value used for expanding the rendered selection boxes below. Value is
@@ -89,12 +90,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 	/**
 	 * Function for fetching texture sprites.
 	 */
-	public static final Function<ResourceLocation, TextureAtlasSprite> textureGetter = new Function<ResourceLocation, TextureAtlasSprite>() {
-		@Override
-		public TextureAtlasSprite apply(ResourceLocation location) {
-			return Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString());
-		}
-	};
+	public static final Function<ResourceLocation, TextureAtlasSprite> textureGetter = location -> Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString());
 
 	/*
 	 * Vertex infos from exported .obj file
@@ -159,17 +155,22 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 			new ObjFace(new int[]{12, 11, 17, 16}, new int[]{8, 9, 10, 4}, 5)
 	};
 
+	/**
+	 * Holder for static object faces.
+	 * This is used for dynamic rendering of object models.
+	 * The values are extracted from an exported .obj file.
+	 */
 	public static class ObjFace {
 		public final int[] vertexIndexes;
 		public final int[] textureIndexes;
 		public final int normalIndex;
 
 		/**
-		 * @param vertexIndexes
-		 * @param textureIndexes
-		 * @param normalIndex
+		 * @param vertexIndexes  The sequence of vertex indices in render order. Should have a length of 4, matching to textureIndices.
+		 * @param textureIndexes The sequence of texture indices in render order. Should have a length of 4, matching to vertexIndexes.
+		 * @param normalIndex    The normal index for this face, to be looked up in an associated array of normal vectors.
 		 */
-		public ObjFace(int[] vertexIndexes, int[] textureIndexes, int normalIndex) {
+		public ObjFace(@Nonnull int[] vertexIndexes, @Nonnull int[] textureIndexes, int normalIndex) {
 			this.vertexIndexes = vertexIndexes;
 			this.textureIndexes = textureIndexes;
 			this.normalIndex = normalIndex;
@@ -179,9 +180,9 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 
 	/**
 	 * Executed each client tick to update the animated values. Client tick,
-	 * because that is fixed timing, so not framerate dependent.
+	 * because that is fixed timing, so not frame rate dependent.
 	 *
-	 * @param event
+	 * @param event client tick event, called once per game tick
 	 */
 	@SubscribeEvent
 	public void onClientTick(TickEvent.ClientTickEvent event) {
@@ -199,9 +200,9 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 	 * Draw custom highlight boxes on conveyor machines with default movement.
 	 * (e.g. conveyors themselves or the conveyor sieve)
 	 * <p>
-	 * The hightlight box will be drawn around the slot aimed at.
+	 * The highlight box will be drawn around the slot aimed at.
 	 *
-	 * @param event
+	 * @param event draw block highlight event, called when the user directly looks at a block
 	 */
 	@SubscribeEvent
 	public void onDrawBlockHighlight(DrawBlockHighlightEvent event) {

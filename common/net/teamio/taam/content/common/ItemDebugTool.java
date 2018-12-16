@@ -36,7 +36,6 @@ import java.util.List;
  * Debug Tool, currently used for debugging conveyors.
  *
  * @author founderio
- *
  */
 public class ItemDebugTool extends Item {
 
@@ -61,8 +60,7 @@ public class ItemDebugTool extends Item {
 
 	@Override
 	public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-		if(!Config.debug_output)
-		{
+		if (!Config.debug_output) {
 			worldIn.playSound(player, pos, TaamMain.soundSipAh, SoundCategory.BLOCKS, 1f, 1f);
 			// return EnumActionResult.SUCCESS;
 		}
@@ -90,44 +88,46 @@ public class ItemDebugTool extends Item {
 		boolean didSomething = false;
 
 		TileEntity te = worldIn.getTileEntity(pos);
-		if(te == null) {
+		if (te == null) {
 			return EnumActionResult.PASS;
 		}
 
 
-		if(te instanceof TileEntityConveyor) {
+		if (te instanceof TileEntityConveyor) {
 			didSomething = true;
 			TileEntityConveyor tec = (TileEntityConveyor) te;
 			tec.updateContainingBlockInfo();
 
-			text = String.format(remoteState + " Conveyor facing %s. isEnd: %b isBegin: %b",
-					tec.getFacingDirection().toString(), tec.isEnd, tec.isBegin);
+			text = String.format("%s Conveyor facing %s. isEnd: %b isBegin: %b",
+					remoteState, tec.getFacingDirection().toString(), tec.isEnd, tec.isBegin);
 
 			player.sendStatusMessage(new TextComponentString(text), false);
 
 		}
 
 		//if(te instanceof IConveyorApplianceHost) {
-			//IConveyorApplianceHost host = (IConveyorApplianceHost)te;
+		//IConveyorApplianceHost host = (IConveyorApplianceHost)te;
 		//}
 
 		IPipe pipe = PipeUtil.getPipe(worldIn, pos, facing);
 
-		if(pipe != null) {
+		if (pipe != null) {
 
-			StringBuilder content = new StringBuilder("[");
+			StringBuilder content = new StringBuilder(remoteState)
+					.append(' ')
+					.append(pipe.getClass().getName())
+					.append(" Pipe pressure: ")
+					.append(pipe.getPressure())
+					.append(" Content: [");
 			List<FluidStack> fs = pipe.getFluids();
 			if (fs != null) {
-				for(FluidStack fluidContent : fs) {
-					content.append(fluidContent.getLocalizedName()).append(" ").append(fluidContent.amount).append(", ");
+				for (FluidStack fluidContent : fs) {
+					content.append(fluidContent.getLocalizedName()).append(' ').append(fluidContent.amount).append(", ");
 				}
 			}
 			content.append("]");
 
-			text = String.format(remoteState + " %s Pipe pressure: %d  Content: %s",
-					pipe.getClass().getName(), pipe.getPressure(), content.toString());
-
-			player.sendStatusMessage(new TextComponentString(text), false);
+			player.sendStatusMessage(new TextComponentString(content.toString()), false);
 		}
 
 		IFluidHandler fh = FluidUtils.getFluidHandler(te, facing);
