@@ -27,9 +27,30 @@ public class ItemWithMetadata<P extends Enum<P>> extends Item {
 	private final ItemDelegate<P> delegate;
 
 	public abstract static class ItemDelegate<T extends Enum<T>> {
-		public abstract boolean isValidMetadata(T meta);
+		/**
+		 * Callback to exclude metadata values from the sub-items.
+		 * The default implementation does not exclude anything (returns true).
+		 *
+		 * @param meta The metadata as given in the constructor of the item class.
+		 * @return true, if the given metadata value should be included.
+		 */
+		public boolean isValidMetadata(T meta) {
+			return true;
+		}
 
-		public abstract void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn);
+		/**
+		 * Callback to add information to the item tooltip.
+		 * The default implementation does not add any information.
+		 *
+		 * @param stack   The stack being investigated
+		 * @param worldIn The current world
+		 * @param tooltip The tooltip that is built
+		 * @param flagIn  Additional flags, as defined in {@link Item#addInformation}
+		 */
+		@SideOnly(Side.CLIENT)
+		public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
+			// Default implementation does not add information
+		}
 	}
 
 	public ItemWithMetadata(String baseName, P[] metaValues, ItemDelegate<P> delegate) {

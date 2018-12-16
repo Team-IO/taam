@@ -33,7 +33,7 @@ For *nix systems, run this in the terminal:
 
 Installed Gradle versions should also work fine, but we require at least Gradle 4.6 for the JUnit integration.
 
-## Some info on the internal structure:
+## Some info on the internal structure
 ### Branches
 The master branch currently points to the latest released version for MC 1.12.2. Every supported minecraft version has their own branch.
 

@@ -44,7 +44,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 import net.teamio.taam.Taam.FLUID_MATERIAL_META;
-import net.teamio.taam.Taam.ITEM_PART_META;
 import net.teamio.taam.content.ItemWithMetadata;
 import net.teamio.taam.content.ItemWithMetadata.ItemDelegate;
 import net.teamio.taam.content.common.BlockBuilding;
@@ -85,7 +84,6 @@ import net.teamio.taam.machines.MachineBlock;
 import net.teamio.taam.machines.MachineItemBlock;
 import net.teamio.taam.machines.MachineTileEntity;
 import net.teamio.taam.piping.IPipe;
-import net.teamio.taam.piping.PipeEnd;
 import net.teamio.taam.rendering.TankRenderInfo;
 import org.apache.commons.lang3.NotImplementedException;
 
@@ -321,11 +319,6 @@ public class TaamMain {
 							Collections.addAll(tooltip, usage.split("\\\\n"));
 						}
 					}
-
-					@Override
-					public boolean isValidMetadata(ITEM_PART_META meta) {
-						return true;
-					}
 				}), Taam.ITEM_PART);
 		registerItem(itemIngot = new ItemWithMetadata<Taam.BLOCK_ORE_META>("ingot", Taam.BLOCK_ORE_META.values(),
 				new ItemDelegate<Taam.BLOCK_ORE_META>() {
@@ -351,11 +344,6 @@ public class TaamMain {
 					@Override
 					public boolean isValidMetadata(Taam.BLOCK_ORE_META meta) {
 						return meta.dust;
-					}
-
-					@Override
-					@SideOnly(Side.CLIENT)
-					public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
 					}
 				}), Taam.ITEM_DUST);
 
@@ -503,26 +491,30 @@ public class TaamMain {
 
 			@Override
 			public NBTBase writeNBT(Capability<IPipe> capability, IPipe instance, EnumFacing side) {
+				// This is not a capability that can be saved to NBT
 				return null;
 			}
 
 			@Override
 			public void readNBT(Capability<IPipe> capability, IPipe instance, EnumFacing side, NBTBase nbt) {
+				// This is not a capability that can be saved to NBT
 			}
 
-		}, PipeEnd.class);
+		}, () -> null);
 		CapabilityManager.INSTANCE.register(TankRenderInfo[].class, new Capability.IStorage<TankRenderInfo[]>() {
 
 			@Override
 			public NBTBase writeNBT(Capability<TankRenderInfo[]> capability, TankRenderInfo[] instance, EnumFacing side) {
+				// This is not a capability that can be saved to NBT
 				return null;
 			}
 
 			@Override
 			public void readNBT(Capability<TankRenderInfo[]> capability, TankRenderInfo[] instance, EnumFacing side, NBTBase nbt) {
+				// This is not a capability that can be saved to NBT
 			}
 
-		}, TankRenderInfo[].class);
+		}, () -> new TankRenderInfo[0]);
 
 		CapabilityManager.INSTANCE.register(IConveyorSlots.class, new Capability.IStorage<IConveyorSlots>() {
 
@@ -544,19 +536,21 @@ public class TaamMain {
 
 			}
 
-		}, ConveyorSlotsStandard.class);
+		}, ConveyorSlotsStandard::new);
 
 		CapabilityManager.INSTANCE.register(IAdvancedMachineGUI.class, new Capability.IStorage<IAdvancedMachineGUI>() {
 
 			@Override
 			public NBTBase writeNBT(Capability<IAdvancedMachineGUI> capability, IAdvancedMachineGUI instance, EnumFacing side) {
+				// This is not a capability that can be saved to NBT
 				return null;
 			}
 
 			@Override
 			public void readNBT(Capability<IAdvancedMachineGUI> capability, IAdvancedMachineGUI instance, EnumFacing side, NBTBase nbt) {
+				// This is not a capability that can be saved to NBT
 			}
-		}, IAdvancedMachineGUI.class);
+		}, () -> null);
 	}
 
 	/**
@@ -564,16 +558,16 @@ public class TaamMain {
 	 */
 	public static void validateCapabilities() {
 		if (Taam.CAPABILITY_PIPE == null) {
-			throw new RuntimeException("Registering a capability failed (Taam.CAPABILITY_PIPE - IPipe) - field was null after registry.");
+			throw new IllegalStateException("Registering a capability failed (Taam.CAPABILITY_PIPE - IPipe) - field was null after registry.");
 		}
 		if (Taam.CAPABILITY_RENDER_TANK == null) {
-			throw new RuntimeException("Registering a capability failed (Taam.CAPABILITY_RENDER_TANK - TankRenderInfo[]) - field was null after registry.");
+			throw new IllegalStateException("Registering a capability failed (Taam.CAPABILITY_RENDER_TANK - TankRenderInfo[]) - field was null after registry.");
 		}
 		if (Taam.CAPABILITY_CONVEYOR == null) {
-			throw new RuntimeException("Registering a capability failed (Taam.CAPABILITY_CONVEYOR - IConveyorSlots) - field was null after registry.");
+			throw new IllegalStateException("Registering a capability failed (Taam.CAPABILITY_CONVEYOR - IConveyorSlots) - field was null after registry.");
 		}
 		if (Taam.CAPABILITY_ADVANCED_GUI == null) {
-			throw new RuntimeException("Registering a capability failed (Taam.CAPABILITY_ADVANCED_GUI - IAdvancedMachineGUI) - field was null after registry.");
+			throw new IllegalStateException("Registering a capability failed (Taam.CAPABILITY_ADVANCED_GUI - IAdvancedMachineGUI) - field was null after registry.");
 		}
 	}
 

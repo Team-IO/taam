@@ -36,10 +36,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * This is the main constants class for Taam.
+ * It also includes references to the capabilities in use and holds additional metadata in enums.
+ */
 public final class Taam {
-	private Taam() {
-		//Util Class
-	}
 
 	/*
 	 * Capabilities
@@ -575,5 +576,9 @@ public final class Taam {
 		public static String[] valuesAsString() {
 			return TaamUtil.enumValuesAsString(values());
 		}
+	}
+
+	private Taam() {
+		//Util Class
 	}
 }
