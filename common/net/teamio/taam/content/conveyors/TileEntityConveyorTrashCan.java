@@ -45,7 +45,7 @@ public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements
 
 		@Override
 		public ItemStack removeItemAt(int slot, int amount, boolean simulate) {
-			return null;
+			return ItemStack.EMPTY;
 		}
 	};
 
@@ -57,14 +57,14 @@ public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements
 			if(fillLevel + added < Config.pl_trashcan_maxfill) {
 				fillLevel += added;
 				updateState(true, true, false);
-				return null;
+				return ItemStack.EMPTY;
 			}
 			return stack;
 		}
 
 		@Override
 		public ItemStack getStackInSlot(int slot) {
-			return null;
+			return ItemStack.EMPTY;
 		}
 
 		@Override
@@ -79,7 +79,7 @@ public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements
 
 		@Override
 		public ItemStack extractItem(int slot, int amount, boolean simulate) {
-			return null;
+			return ItemStack.EMPTY;
 		}
 	};
 

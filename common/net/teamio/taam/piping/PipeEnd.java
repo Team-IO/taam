@@ -95,7 +95,7 @@ public class PipeEnd implements IPipe {
 		if (pos == null) {
 			return BlockPos.ORIGIN;
 		}
-		return pos.getPos();
+		return pos.getPipePos();
 	}
 
 	@Override
@@ -103,7 +103,7 @@ public class PipeEnd implements IPipe {
 		if (pos == null) {
 			return null;
 		}
-		return pos.getWorld();
+		return pos.getPipeWorld();
 	}
 
 	@Override

@@ -40,7 +40,7 @@ public class MachineTank implements IMachine, IPipePos, IWorldInteractable {
 	public static final AxisAlignedBB bbTankContent = new AxisAlignedBB(
 			b_border, b_basePlate, b_border,
 			1 - b_border, 1, 1 - b_border
-	).expand(TankRenderInfo.shrinkValue, TankRenderInfo.shrinkValue, TankRenderInfo.shrinkValue);
+	).grow(TankRenderInfo.shrinkValue, TankRenderInfo.shrinkValue, TankRenderInfo.shrinkValue);
 	public static final AxisAlignedBB bbTank = new AxisAlignedBB(b_border, 0, b_border, 1 - b_border, 1, 1 - b_border);
 	public static final AxisAlignedBB bbCoolusion = new AxisAlignedBB(b_occlusion, b_occlusion, b_occlusion, 1 - b_occlusion, 1 - b_occlusion, 1 - b_occlusion);
 
@@ -89,12 +89,12 @@ public class MachineTank implements IMachine, IPipePos, IWorldInteractable {
 	}
 
 	@Override
-	public IBlockAccess getWorld() {
+	public IBlockAccess getPipeWorld() {
 		return worldObj;
 	}
 
 	@Override
-	public BlockPos getPos() {
+	public BlockPos getPipePos() {
 		return pos;
 	}
 

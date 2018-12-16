@@ -78,7 +78,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements IReds
 			}
 		};
 		this.mode = mode;
-		if(mode == Grinder) {
+		if (mode == Grinder) {
 			timeout = Config.pl_processor_grinder_timeout;
 		} else {
 			timeout = Config.pl_processor_crusher_timeout;
@@ -88,14 +88,14 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements IReds
 	@Override
 	public String getName() {
 		switch (mode) {
-		case Shredder:
-			return "tile.taam.productionline.shredder.name";
-		case Grinder:
-			return "tile.taam.productionline.grinder.name";
-		case Crusher:
-			return "tile.taam.productionline.crusher.name";
-		default:
-			return "tile.taam.productionline.invalid.name";
+			case Shredder:
+				return "tile.taam.productionline.shredder.name";
+			case Grinder:
+				return "tile.taam.productionline.grinder.name";
+			case Crusher:
+				return "tile.taam.productionline.crusher.name";
+			default:
+				return "tile.taam.productionline.invalid.name";
 		}
 	}
 
@@ -105,13 +105,13 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements IReds
 
 	@Override
 	public void update() {
-		if(world.isRemote) {
+		if (world.isRemote) {
 			return;
 		}
 
-		if(!isCoolingDown()) {
+		if (!isCoolingDown()) {
 			ItemStack stack = itemHandler.getStackInSlot(0);
-			if(stack == null || stack.getCount() < stack.getMaxStackSize()) {
+			if (InventoryUtils.isEmpty(stack) || stack.getCount() < stack.getMaxStackSize()) {
 				ConveyorUtil.tryInsertItemsFromWorld(this, world, null, false);
 			}
 		}
@@ -122,21 +122,21 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements IReds
 
 		boolean needsUpdate = false;
 
-		if(isShutdown != newShutdown) {
+		if (isShutdown != newShutdown) {
 			isShutdown = newShutdown;
 			needsUpdate = true;
 		}
 
-		if(!isShutdown) {
+		if (!isShutdown) {
 
-			if(mode == Shredder) {
-				if(processShredder()) {
-					itemHandler.setStackInSlot(0, null);
+			if (mode == Shredder) {
+				if (processShredder()) {
+					itemHandler.setStackInSlot(0, ItemStack.EMPTY);
 					needsUpdate = true;
 				}
 			} else {
 				ProcessResult processResult = processOther();
-				if(processResult == ProcessResult.Processed) {
+				if (processResult == ProcessResult.Processed) {
 					itemHandler.extractItem(0, 1, false);
 					needsUpdate = true;
 				} else if (processResult == ProcessResult.Output) {
@@ -144,12 +144,12 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements IReds
 				}
 			}
 
-			if(Config.pl_processor_hurt && world.rand.nextFloat() < Config.pl_processor_hurt_chance) {
+			if (Config.pl_processor_hurt && world.rand.nextFloat() < Config.pl_processor_hurt_chance) {
 				hurtEntities();
 			}
 		}
 
-		if(needsUpdate) {
+		if (needsUpdate) {
 			updateState(true, false, false);
 		}
 
@@ -160,26 +160,26 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements IReds
 		int y = pos.getY();
 		int z = pos.getZ();
 		List<EntityLivingBase> entitites = world.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(x, y, z, x + 1, y + 1, z + 1));
-		for(EntityLivingBase living : entitites) {
+		for (EntityLivingBase living : entitites) {
 			hurtEntity(living);
 		}
 	}
 
 	private void hurtEntity(EntityLivingBase living) {
 		DamageSource ds;
-		switch(mode) {
-		default:
-			ds = TaamMain.ds_processed;
-			break;
-		case Shredder:
-			ds = TaamMain.ds_shredded;
-			break;
-		case Grinder:
-			ds = TaamMain.ds_ground;
-			break;
-		case Crusher:
-			ds = TaamMain.ds_crushed;
-			break;
+		switch (mode) {
+			default:
+				ds = TaamMain.ds_processed;
+				break;
+			case Shredder:
+				ds = TaamMain.ds_shredded;
+				break;
+			case Grinder:
+				ds = TaamMain.ds_ground;
+				break;
+			case Crusher:
+				ds = TaamMain.ds_crushed;
+				break;
 		}
 		living.attackEntityFrom(ds, 5);
 	}
@@ -197,7 +197,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements IReds
 		 * Check blocked & fetch output inventory
 		 */
 		chute.refreshOutputInventory(world, down);
-		if(chute.isBlocked()) {
+		if (chute.isBlocked()) {
 			return ProcessResult.NoOperation;
 		}
 
@@ -205,32 +205,32 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements IReds
 		 * Output Backlog
 		 */
 		// Output the backlog. Returns true if there were items transferred or there are still items left.
-		if(chute.output(world, down)) {
+		if (chute.output(world, down)) {
 			return ProcessResult.Output;
 		}
 
 		// If output finished, continue processing.
-		if(isCoolingDown()) {
+		if (isCoolingDown()) {
 			timeout--;
 			return ProcessResult.NoOperation;
 		}
 
 		ItemStack input = itemHandler.getStackInSlot(0);
 
-		if(input == null) {
+		if (InventoryUtils.isEmpty(input)) {
 			recipe = null;
 			return ProcessResult.NoOperation;
 		}
 
-		if(recipe == null || !input.isItemEqual(cachedInput)) {
+		if (recipe == null || !input.isItemEqual(cachedInput)) {
 			recipe = getRecipe(input);
 			cachedInput = input;
 		}
 
-		if(recipe != null) {
+		if (recipe != null) {
 			chute.backlog = recipe.getOutput(input);
 
-			if(mode == Grinder) {
+			if (mode == Grinder) {
 				timeout += Config.pl_processor_grinder_timeout;
 			} else {
 				timeout += Config.pl_processor_crusher_timeout;
@@ -244,14 +244,14 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements IReds
 
 	private boolean processShredder() {
 
-		if(isCoolingDown()) {
+		if (isCoolingDown()) {
 			timeout--;
 			return false;
 		}
 
 		ItemStack input = itemHandler.getStackInSlot(0);
 
-		if(input == null) {
+		if (InventoryUtils.isEmpty(input)) {
 			return false;
 		}
 		timeout += Config.pl_processor_shredder_timeout;
@@ -270,15 +270,15 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements IReds
 
 	private IProcessingRecipe getRecipe(ItemStack input) {
 		int machine;
-		switch(mode) {
-		case Crusher:
-			machine = ProcessingRegistry.CRUSHER;
-			break;
-		case Grinder:
-			machine = ProcessingRegistry.GRINDER;
-			break;
-		default:
-			return null;
+		switch (mode) {
+			case Crusher:
+				machine = ProcessingRegistry.CRUSHER;
+				break;
+			case Grinder:
+				machine = ProcessingRegistry.GRINDER;
+				break;
+			default:
+				return null;
 		}
 
 		return ProcessingRegistry.getRecipe(machine, input);
@@ -301,10 +301,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements IReds
 
 	@Override
 	protected void readPropertiesFromNBT(NBTTagCompound tag) {
-		NBTTagCompound itemTag = tag.getCompoundTag("items");
-		if(itemTag != null) {
-			itemHandler.deserializeNBT(itemTag);
-		}
+		itemHandler.deserializeNBT(tag.getCompoundTag("items"));
 
 		chute.readFromNBT(tag.getCompoundTag("chute"));
 
@@ -320,10 +317,10 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements IReds
 
 	@Override
 	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-		if(capability == Taam.CAPABILITY_CONVEYOR) {
+		if (capability == Taam.CAPABILITY_CONVEYOR) {
 			return true;
 		}
-		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+		if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
 			return facing.getAxis() == EnumFacing.Axis.Y;
 		}
 		return super.hasCapability(capability, facing);
@@ -332,11 +329,11 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements IReds
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-		if(capability == Taam.CAPABILITY_CONVEYOR) {
+		if (capability == Taam.CAPABILITY_CONVEYOR) {
 			return (T) conveyorSlots;
 		}
-		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-			if(facing == EnumFacing.UP) {
+		if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+			if (facing == EnumFacing.UP) {
 				return (T) itemHandler;
 			} else {
 				// This is to prevent hoppers from doing weird things... (#244)
@@ -363,8 +360,8 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements IReds
 	@Override
 	public void setRedstoneMode(byte mode) {
 		redstoneMode = mode;
-		if(world.isRemote) {
-			TPMachineConfiguration config = TPMachineConfiguration.newChangeInteger(new WorldCoord(this), (byte)1, redstoneMode);
+		if (world.isRemote) {
+			TPMachineConfiguration config = TPMachineConfiguration.newChangeInteger(new WorldCoord(this), (byte) 1, redstoneMode);
 			TaamMain.network.sendToServer(config);
 		} else {
 			markDirty();
@@ -377,27 +374,27 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements IReds
 
 	@Override
 	public boolean onBlockActivated(World world, EntityPlayer player, EnumHand hand, boolean hasWrench, EnumFacing side,
-			float hitX, float hitY, float hitZ) {
-		if(side != EnumFacing.UP) {
+	                                float hitX, float hitY, float hitZ) {
+		if (side != EnumFacing.UP) {
 			return false;
 		}
-		if(!isShutdown) {
+		if (!isShutdown) {
 			hurtEntity(player);
 			return true;
 		}
 		int playerSlot = player.inventory.currentItem;
 		ItemStack playerStack = player.inventory.getCurrentItem();
-		if(playerStack == null) {
+		if (InventoryUtils.isEmpty(playerStack)) {
 			// Take from Processor
 			ItemStack taken = itemHandler.extractItem(0, player.inventory.getInventoryStackLimit(), false);
-			if(taken != null) {
+			if (!InventoryUtils.isEmpty(taken)) {
 				player.inventory.setInventorySlotContents(playerSlot, taken);
 			}
 		} else {
-			if(mode != Shredder) {
+			if (mode != Shredder) {
 				// Put into processor
 				ItemStack notInserted = itemHandler.insertItem(0, playerStack, false);
-				if(notInserted != playerStack) {
+				if (notInserted != playerStack) {
 					player.inventory.setInventorySlotContents(playerSlot, notInserted);
 				}
 			}
@@ -407,13 +404,13 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements IReds
 
 	@Override
 	public boolean onBlockHit(World world, EntityPlayer player, boolean hasWrench) {
-		if(hasWrench) {
+		if (hasWrench) {
 			ItemStack taken = itemHandler.getStackInSlot(0);
-			if(taken != null) {
+			if (!InventoryUtils.isEmpty(taken)) {
 				InventoryUtils.tryDropToInventory(player, taken, .5, .5, .5);
-				itemHandler.setStackInSlot(0, null);
+				itemHandler.setStackInSlot(0, ItemStack.EMPTY);
 			}
-		} else if(!isShutdown) {
+		} else if (!isShutdown) {
 			hurtEntity(player);
 		}
 		return true;
@@ -435,7 +432,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements IReds
 
 	@Override
 	public void setFacingDirection(EnumFacing direction) {
-		if(this.direction != direction) {
+		if (this.direction != direction) {
 			// Only update if necessary
 			this.direction = direction;
 			updateState(false, true, false);

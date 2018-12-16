@@ -10,6 +10,7 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
+import net.teamio.taam.util.InventoryUtils;
 
 public class ContainerConveyorSmallInventory extends Container {
 	protected final IItemHandler tileEntity;
@@ -47,29 +48,29 @@ public class ContainerConveyorSmallInventory extends Container {
 
 	@Override
 	public ItemStack transferStackInSlot(EntityPlayer player, int slotID) {
-		ItemStack stack = null;
+		ItemStack stack = ItemStack.EMPTY;
 		Slot slot = inventorySlots.get(slotID);
 
 		// null checks and checks if the item can be stacked (maxStackSize > 1)
 		if (slot != null && slot.getHasStack()) {
 			ItemStack stackInSlot = slot.getStack();
-			if (stackInSlot != null) {
+			if (!InventoryUtils.isEmpty(stackInSlot)) {
 				stack = stackInSlot.copy();
 
 				// merges the item into player inventory since its in the tileEntity
 				if (slotID < tileEntity.getSlots()) {
 					if (!mergeItemStack(stackInSlot, tileEntity.getSlots(), inventorySlots.size(), true)) {
-						return null;
+						return ItemStack.EMPTY;
 					}
 				}
 				// merge into tileEntity inventory, since it is in player's inventory
 				else if (!mergeItemStack(stackInSlot, 0, tileEntity.getSlots(), false)) {
-					return null;
+					return ItemStack.EMPTY;
 				}
 			}
 
-			if (stackInSlot == null || stackInSlot.getCount() == 0) {
-				slot.putStack(null);
+			if (InventoryUtils.isEmpty(stackInSlot)) {
+				slot.putStack(ItemStack.EMPTY);
 			} else {
 				slot.onSlotChanged();
 			}

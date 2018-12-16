@@ -112,7 +112,6 @@ public class BlockProductionLineAttachable extends BlockProductionLine {
 
 	@Override
 	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-		//TODO: Optimize
 		float minY, maxY, minX,maxX, minZ, maxZ;
 		minY = 0f;
 		maxY = 0.5f;
