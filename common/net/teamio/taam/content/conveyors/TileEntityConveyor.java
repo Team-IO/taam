@@ -387,7 +387,7 @@ public class TileEntityConveyor extends BaseTileEntity implements IRotatable, IC
 
 	public void updateApplianceCache() {
 		if (speedLevel == 1) {
-			applianceCache = ConveyorUtil.getTouchingAppliances(this, world, pos);
+			applianceCache = ConveyorUtil.getTouchingAppliances(world, pos);
 		} else {
 			applianceCache = null;
 		}
@@ -406,7 +406,7 @@ public class TileEntityConveyor extends BaseTileEntity implements IRotatable, IC
 	                                float hitX, float hitY, float hitZ) {
 		ItemStack held = player.getHeldItem(hand);
 		if (speedLevel == 1 && InventoryUtils.isItem(held, TaamMain.itemPart, Taam.ITEM_PART_META.redirector.ordinal())) {
-			RedirectorSide redirectorSide = ConveyorUtil.getRedirectorSide(direction, side, hitX, hitY, hitZ, false);
+			RedirectorSide redirectorSide = ConveyorUtil.getRedirectorSide(direction, side, hitX, hitZ, false);
 			Log.debug("Tried placing redirector on side: {}", redirectorSide);
 			if (redirectorSide == RedirectorSide.Left) {
 				if (!redirectorLeft) {
@@ -438,7 +438,7 @@ public class TileEntityConveyor extends BaseTileEntity implements IRotatable, IC
 		if (playerHasWrench) {
 			boolean playerIsSneaking = player.isSneaking() && playerHasWrenchInMainhand;
 			if (playerIsSneaking) {
-				RedirectorSide redirectorSide = ConveyorUtil.getRedirectorSide(direction, side, hitX, hitY, hitZ, false);
+				RedirectorSide redirectorSide = ConveyorUtil.getRedirectorSide(direction, side, hitX, hitZ, false);
 				Log.debug("Tried disassembling redirector on side: {}", redirectorSide);
 				if (redirectorSide == RedirectorSide.Left) {
 					if (redirectorLeft) {

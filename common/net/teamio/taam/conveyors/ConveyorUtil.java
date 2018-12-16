@@ -109,10 +109,11 @@ public class ConveyorUtil {
 
 	/**
 	 * Tries to insert item entities from the world into an entity. Respects the
-	 * conveyor system.
+	 * conveyor system and item handlers.
 	 *
-	 * @param tileEntity
-	 * @param world
+	 * @param tileEntity       A tile entity that should expose conveyor or item handler capabilities,
+	 *                         otherwise this method is an immense waste of processing power
+	 * @param world            The world in which to look for items
 	 * @param bounds           Optionally give an AABB Instance to speed up the search &
 	 *                         extend to unloaded chunks. Else only loaded entities are
 	 *                         respected.
@@ -129,8 +130,8 @@ public class ConveyorUtil {
 		if (bounds != null) {
 			entities = world.getEntitiesWithinAABB(EntityItem.class, bounds);
 		}
-		for (int i = 0; i < entities.size(); i++) {
-			Entity ent = (Entity) entities.get(i);
+		for (Object entity : entities) {
+			Entity ent = (Entity) entity;
 
 			if (ent instanceof EntityItem) {
 				EntityItem ei = (EntityItem) ent;
@@ -254,8 +255,8 @@ public class ConveyorUtil {
 	/**
 	 * Rotate a specification of slot-related data.
 	 *
-	 * @param source
-	 * @return
+	 * @param source An array with 9 integers, e.g. a slot order array
+	 * @return A new array with the 9 integers rotated by 90 degrees counter clockwise (North->West)
 	 */
 	public static int[] rotate(int[] source) {
 		return new int[]{
@@ -267,7 +268,8 @@ public class ConveyorUtil {
 
 
 	public static double getItemPositionX(int slot) {
-		double x = Math.floor(slot / 3) + 0.5;
+		int row = slot / 3;
+		double x = row + 0.5;
 		return x * oneThird;
 	}
 
@@ -352,8 +354,8 @@ public class ConveyorUtil {
 	 * Returns the ideal order to process slots on a conveyor. (Always from
 	 * front to back, but lanes are not in a guaranteed order!)
 	 *
-	 * @param dir
-	 * @return
+	 * @param dir Direction of the conveyor movement
+	 * @return An array containing slot indices
 	 */
 	public static int[] getSlotOrderForDirection(EnumFacing dir) {
 		switch (dir) {
@@ -483,9 +485,9 @@ public class ConveyorUtil {
 	 * Respects the supplied slot order, processes items if tileEntity
 	 * instanceof {@link IConveyorApplianceHost}.
 	 *
-	 * @param world
-	 * @param pos
-	 * @param tileEntity
+	 * @param world      The world we are working in
+	 * @param pos        World position of the machine containing the processed slots
+	 * @param tileEntity The conveyor slots reference that is to be updated
 	 * @param slotOrder  The order used when working through the slots.
 	 * @return true if the state of any item changed (TIleEntity should be
 	 * marked dirty).
@@ -499,18 +501,13 @@ public class ConveyorUtil {
 			appliances = applianceHost.getAppliances();
 		}
 
-		// Tracks if the tileEntity state needs to be updated
-		boolean needsUpdate = false;
-
-		// Tracks if we need a world update (send to client)
-		boolean needsWorldUpdate = false;
+		// Tracks if we changed the content of the machine, thus marking the machine dirty
+		boolean contentUpdated = false;
 
 		/*
 		 * Process each slot individually, using the predefined slot order
 		 */
-		for (int index = 0; index < slotOrder.length; index++) {
-
-			int slot = slotOrder[index];
+		for (int slot : slotOrder) {
 
 			ItemWrapper wrapper = tileEntity.getSlot(slot);
 
@@ -530,7 +527,7 @@ public class ConveyorUtil {
 				// Let each appliance process the item
 				for (IConveyorAppliance appliance : appliances) {
 					if (appliance.processItem(applianceHost, slot, wrapper)) {
-						needsWorldUpdate = true;
+						contentUpdated = true;
 					}
 				}
 			}
@@ -545,11 +542,7 @@ public class ConveyorUtil {
 
 			byte speedsteps = tileEntity.getSpeedsteps();
 
-			boolean slotWrapped = false;
-			boolean nextSlotFree = false;
-			boolean nextSlotMovable = false;
 			int nextSlotProgress = 0;
-			boolean wrappedIsSameDirection = true;
 
 			IConveyorSlots nextBlock = null;
 
@@ -559,17 +552,22 @@ public class ConveyorUtil {
 
 			EnumFacing nextSlotDir = tileEntity.getNextSlot(slot);
 			int nextSlot = getNextSlotUnwrapped(slot, nextSlotDir);
+			boolean nextSlotFree;
+			boolean nextSlotMovable;
 
 			/*
 			 * Check if we need to wrap & stept to next block
 			 */
 
+			boolean slotWrapped;
 			if (nextSlot < 0) {
 				nextSlot += 9;
 				slotWrapped = true;
 			} else if (nextSlot > 8) {
 				nextSlot -= 9;
 				slotWrapped = true;
+			} else {
+				slotWrapped = false;
 			}
 
 			// Check the condition of the next slot
@@ -589,7 +587,7 @@ public class ConveyorUtil {
 					// Move it to next block
 					ItemWrapper nextWrapper = nextBlock.getSlot(nextSlot);
 					nextSlotFree = nextWrapper.isEmpty();
-					wrappedIsSameDirection = nextBlock.getNextSlot(nextSlot) == nextSlotDir;
+					boolean wrappedIsSameDirection = nextBlock.getNextSlot(nextSlot) == nextSlotDir;
 					nextSlotMovable = nextBlock.canSlotMove(nextSlot) && (wrappedIsSameDirection || nextSlotDir.getAxis() == Axis.Y);
 					nextSlotProgress = nextWrapper.movementProgress;
 					byte nextSpeedSteps = nextBlock.getSpeedsteps();
@@ -606,7 +604,6 @@ public class ConveyorUtil {
 				nextSlotFree = nextWrapper.isEmpty();
 				nextSlotMovable = !nextWrapper.isBlocked();
 				nextSlotProgress = nextWrapper.movementProgress;
-				wrappedIsSameDirection = tileEntity.getNextSlot(nextSlot) == nextSlotDir;
 			}
 
 			// Check transition to next slot
@@ -615,7 +612,7 @@ public class ConveyorUtil {
 					if (slotWrapped && (nextBlock == null || !nextBlock.isSlotAvailable(nextSlot))) {
 						// No next block, drop it.
 						dropItem(world, pos, tileEntity, slot, true);
-						needsUpdate = true;
+						contentUpdated = true;
 					} else {
 						boolean somethingTransferred;
 						if (slotWrapped) {
@@ -623,21 +620,20 @@ public class ConveyorUtil {
 						} else {
 							somethingTransferred = transferSlot(tileEntity, slot, nextSlot);
 						}
-						if (!somethingTransferred || !wrapper.isEmpty()) {
+						if (somethingTransferred) {
+							contentUpdated = true;
+						} else if (!wrapper.isEmpty()) {
 							// Nothing did transfer, or something is left (itemStack not null)
 							nextSlotFree = false;
 							nextSlotMovable = false;
 						}
-						needsUpdate = somethingTransferred;
 					}
 				}
 			}
 			/*
-			 * If we can progress (next slot is empty or far enough away), step
-			 * forward
+			 * If we can progress (next slot is empty or far enough away), step forward
 			 */
-			if (nextSlotFree
-					|| nextSlotMovable && wrapper.movementProgress < nextSlotProgress) {
+			if (nextSlotFree || nextSlotMovable && wrapper.movementProgress < nextSlotProgress) {
 				wrapper.movementProgress++;
 				if (wrapper.movementProgress > speedsteps) {
 					wrapper.movementProgress = 0;
@@ -651,8 +647,7 @@ public class ConveyorUtil {
 				}
 			}
 		}
-		// TODO: needsUpdate -> markDirty ??
-		return needsWorldUpdate;
+		return contentUpdated;
 	}
 
 	public static void defaultPlayerInteraction(EntityPlayer player, IConveyorSlots tileEntity, float hitX, float hitZ) {
@@ -715,8 +710,8 @@ public class ConveyorUtil {
 		return false;
 	}
 
-	public static List<IConveyorAppliance> getTouchingAppliances(IConveyorApplianceHost host, IBlockAccess world, BlockPos pos) {
-		List<IConveyorAppliance> appliances = new ArrayList<IConveyorAppliance>();
+	public static List<IConveyorAppliance> getTouchingAppliances(IBlockAccess world, BlockPos pos) {
+		List<IConveyorAppliance> appliances = new ArrayList<>();
 
 		for (EnumFacing direction : EnumFacing.VALUES) {
 			TileEntity te = world.getTileEntity(pos.offset(direction));
@@ -731,8 +726,7 @@ public class ConveyorUtil {
 		return appliances;
 	}
 
-	public static RedirectorSide getRedirectorSide(EnumFacing dir, EnumFacing hitSide, float hitX, float hitY,
-	                                               float hitZ, boolean topOnly) {
+	public static RedirectorSide getRedirectorSide(EnumFacing dir, EnumFacing hitSide, float hitX, float hitZ, boolean topOnly) {
 		EnumFacing sideToConsider = hitSide;
 
 		if (hitSide == EnumFacing.UP) {
