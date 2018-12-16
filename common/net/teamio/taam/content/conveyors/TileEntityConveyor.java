@@ -33,6 +33,8 @@ import net.teamio.taam.util.InventoryUtils;
 import net.teamio.taam.util.TaamUtil;
 import net.teamio.taam.util.WrenchUtil;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 
 public class TileEntityConveyor extends BaseTileEntity implements IRotatable, IConveyorApplianceHost, IWorldInteractable, ITickable, IRenderable {
@@ -310,7 +312,7 @@ public class TileEntityConveyor extends BaseTileEntity implements IRotatable, IC
 	}
 
 	@Override
-	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+	public boolean hasCapability(@Nonnull Capability<?> capability, EnumFacing facing) {
 		if (capability == Taam.CAPABILITY_CONVEYOR) {
 			return true;
 		}
@@ -322,7 +324,8 @@ public class TileEntityConveyor extends BaseTileEntity implements IRotatable, IC
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+	@Nullable
+	public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
 		if (capability == Taam.CAPABILITY_CONVEYOR) {
 			return (T) conveyorSlots;
 		}

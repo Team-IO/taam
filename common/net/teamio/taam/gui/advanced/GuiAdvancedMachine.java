@@ -40,9 +40,9 @@ public class GuiAdvancedMachine extends GuiContainer {
 	public static final Drawable iconDontCheckNBT = new Drawable(guiTexture, 155, 30, 10, 10);
 
 
-	final int buttonSpace = 60;
-	final int buttonSize = 40;
-	final int buttonsPerRow = 4;
+	private final int buttonSpace = 60;
+	private final int buttonSize = 40;
+	private final int buttonsPerRow = 4;
 
 	public GuiAdvancedMachine(ContainerAdvancedMachine inventorySlotsIn) {
 		super(inventorySlotsIn);

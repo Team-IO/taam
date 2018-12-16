@@ -28,10 +28,6 @@ public class BlockProductionLineAppliance extends BlockProductionLine {
 	public static final PropertyEnum<Taam.BLOCK_PRODUCTIONLINE_APPLIANCE_META> VARIANT = PropertyEnum.create("variant", Taam.BLOCK_PRODUCTIONLINE_APPLIANCE_META.class);
 	public static final PropertyEnum<EnumFacing> DIRECTION = PropertyEnum.create("direction", EnumFacing.class, EnumFacing.HORIZONTALS);
 
-	public BlockProductionLineAppliance() {
-		super();
-	}
-
 	@Override
 	protected BlockStateContainer createBlockState() {
 		return new ExtendedBlockState(this, new IProperty[] { DIRECTION, VARIANT },

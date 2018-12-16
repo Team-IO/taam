@@ -154,6 +154,9 @@ public class TaamMain {
 
 	public static SoundEvent soundSipAh;
 
+	private static final List<Item> registeredItems = Lists.newArrayList();
+	private static final List<Block> registeredBlocks = Lists.newArrayList();
+
 	private static void registerBlock(Block block, ItemBlock item, String name) {
 		registerBlock(block, name);
 		registerItem(item, name);
@@ -175,14 +178,11 @@ public class TaamMain {
 		// ForgeRegistries.ITEMS.register(item); -> see registerItems(event)
 	}
 
-	private static final List<Item> registeredItems = Lists.newArrayList();
-
 	@SubscribeEvent
 	public void registerItems(final RegistryEvent.Register<Item> event) {
 		event.getRegistry().registerAll(registeredItems.toArray(new Item[0]));
 	}
 
-	private static final List<Block> registeredBlocks = Lists.newArrayList();
 
 	@SubscribeEvent
 	public void registerBlocks(final RegistryEvent.Register<Block> event) {

@@ -161,17 +161,16 @@ public final class InventoryUtils {
 	 *
 	 * @param stack    The original item stack. If an empty stack is passed in, an empty stack is returned.
 	 * @param quantity The new quantity.
-	 * @return A new item stack with the given quantity, or ItemStack.empty if stack was
+	 * @return A new item stack with the given quantity, or ItemStack.EMPTY if stack was
 	 * null or empty
 	 * @author Chicken-Bones
 	 */
 	public static ItemStack copyStack(@Nullable ItemStack stack, int quantity) {
-		if (isEmpty(stack))
-			return ItemStack.EMPTY;
+		if (isEmpty(stack)) return ItemStack.EMPTY;
 
-		stack = stack.copy();
-		stack.setCount(quantity);
-		return stack;
+		ItemStack copy = stack.copy();
+		copy.setCount(quantity);
+		return copy;
 	}
 
 	/**

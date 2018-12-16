@@ -96,6 +96,87 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		}
 	};
 
+	/*
+	 * Vertex infos from exported .obj file
+	 * These are used in renderSieveMesh
+	 */
+	final Vector3f[] sieve_vertices = new Vector3f[]{
+			new Vector3f(0.9375f, 0.49f, 0.0625f),
+			new Vector3f(0.9375f, 0.52f, 0.0625f),
+			new Vector3f(0.0625f, 0.49f, 0.0625f),
+			new Vector3f(0.5000f, 0.49f, 0.0625f),
+			new Vector3f(0.0625f, 0.52f, 0.0625f),
+			new Vector3f(0.5000f, 0.52f, 0.0625f),
+			new Vector3f(0.9375f, 0.45f, 0.9375f),
+			new Vector3f(0.9375f, 0.47f, 0.5000f),
+			new Vector3f(0.9375f, 0.50f, 0.5000f),
+			new Vector3f(0.9375f, 0.48f, 0.9375f),
+			new Vector3f(0.0625f, 0.45f, 0.9375f),
+			new Vector3f(0.0625f, 0.47f, 0.5000f),
+			new Vector3f(0.5000f, 0.45f, 0.9375f),
+			new Vector3f(0.5000f, 0.47f, 0.5000f),
+			new Vector3f(0.5000f, 0.50f, 0.5000f),
+			new Vector3f(0.0625f, 0.50f, 0.5000f),
+			new Vector3f(0.0625f, 0.48f, 0.9375f),
+			new Vector3f(0.5000f, 0.48f, 0.9375f)
+	};
+	final Vector2f[] sieve_tex = new Vector2f[]{
+			new Vector2f(0.000000f, 0.359375f),
+			new Vector2f(0.058594f, 0.359375f),
+			new Vector2f(0.058594f, 0.417969f),
+			new Vector2f(0.000000f, 0.417969f),
+			new Vector2f(0.003906f, 0.355469f),
+			new Vector2f(0.003906f, 0.417969f),
+			new Vector2f(0.000000f, 0.355469f),
+			new Vector2f(0.000000f, 0.414062f),
+			new Vector2f(0.062500f, 0.414062f),
+			new Vector2f(0.062500f, 0.417969f)
+	};
+	final Vector3f[] sieve_normals = new Vector3f[]{
+			new Vector3f(0.000000f, -0.99900f, -0.0457f),
+			new Vector3f(0.000000f, 0.000000f, -1.00000f),
+			new Vector3f(0.000000f, 0.999000f, 0.045700f),
+			new Vector3f(1.000000f, 0.000000f, 0.000000f),
+			new Vector3f(-1.00000f, 0.00000f, 0.00000f),
+			new Vector3f(0.000000f, 0.000000f, 1.000000f)
+	};
+	final ObjFace[] sieve_faces = new ObjFace[]{
+			new ObjFace(new int[]{8, 14, 4, 1}, new int[]{1, 2, 3, 4}, 1),
+			new ObjFace(new int[]{1, 4, 6, 2}, new int[]{5, 6, 4, 7}, 2),
+			new ObjFace(new int[]{9, 2, 6, 15}, new int[]{1, 4, 3, 2}, 3),
+			new ObjFace(new int[]{8, 1, 2, 9}, new int[]{8, 9, 10, 4}, 4),
+			new ObjFace(new int[]{12, 3, 4, 14}, new int[]{1, 4, 3, 2}, 1),
+			new ObjFace(new int[]{3, 5, 6, 4}, new int[]{5, 7, 4, 6}, 2),
+			new ObjFace(new int[]{16, 15, 6, 5}, new int[]{1, 2, 3, 4}, 3),
+			new ObjFace(new int[]{12, 16, 5, 3}, new int[]{8, 4, 10, 9}, 5),
+			new ObjFace(new int[]{8, 7, 13, 14}, new int[]{1, 4, 3, 2}, 1),
+			new ObjFace(new int[]{7, 10, 18, 13}, new int[]{5, 7, 4, 6}, 6),
+			new ObjFace(new int[]{9, 15, 18, 10}, new int[]{1, 2, 3, 4}, 3),
+			new ObjFace(new int[]{8, 9, 10, 7}, new int[]{8, 4, 10, 9}, 4),
+			new ObjFace(new int[]{12, 14, 13, 11}, new int[]{1, 2, 3, 4}, 1),
+			new ObjFace(new int[]{11, 13, 18, 17}, new int[]{5, 6, 4, 7}, 6),
+			new ObjFace(new int[]{16, 17, 18, 15}, new int[]{1, 4, 3, 2}, 3),
+			new ObjFace(new int[]{12, 11, 17, 16}, new int[]{8, 9, 10, 4}, 5)
+	};
+
+	public static class ObjFace {
+		public final int[] vertexIndexes;
+		public final int[] textureIndexes;
+		public final int normalIndex;
+
+		/**
+		 * @param vertexIndexes
+		 * @param textureIndexes
+		 * @param normalIndex
+		 */
+		public ObjFace(int[] vertexIndexes, int[] textureIndexes, int normalIndex) {
+			this.vertexIndexes = vertexIndexes;
+			this.textureIndexes = textureIndexes;
+			this.normalIndex = normalIndex;
+		}
+
+	}
+
 	/**
 	 * Executed each client tick to update the animated values. Client tick,
 	 * because that is fixed timing, so not framerate dependent.
@@ -766,68 +847,6 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		tearDownDefaultGL();
 	}
 
-	/*
-	 * Vertex infos from exported .obj file
-	 */
-	final Vector3f[] sieve_vertices = new Vector3f[]{
-			new Vector3f(0.9375f, 0.49f, 0.0625f),
-			new Vector3f(0.9375f, 0.52f, 0.0625f),
-			new Vector3f(0.0625f, 0.49f, 0.0625f),
-			new Vector3f(0.5000f, 0.49f, 0.0625f),
-			new Vector3f(0.0625f, 0.52f, 0.0625f),
-			new Vector3f(0.5000f, 0.52f, 0.0625f),
-			new Vector3f(0.9375f, 0.45f, 0.9375f),
-			new Vector3f(0.9375f, 0.47f, 0.5000f),
-			new Vector3f(0.9375f, 0.50f, 0.5000f),
-			new Vector3f(0.9375f, 0.48f, 0.9375f),
-			new Vector3f(0.0625f, 0.45f, 0.9375f),
-			new Vector3f(0.0625f, 0.47f, 0.5000f),
-			new Vector3f(0.5000f, 0.45f, 0.9375f),
-			new Vector3f(0.5000f, 0.47f, 0.5000f),
-			new Vector3f(0.5000f, 0.50f, 0.5000f),
-			new Vector3f(0.0625f, 0.50f, 0.5000f),
-			new Vector3f(0.0625f, 0.48f, 0.9375f),
-			new Vector3f(0.5000f, 0.48f, 0.9375f)
-	};
-	final Vector2f[] sieve_tex = new Vector2f[]{
-			new Vector2f(0.000000f, 0.359375f),
-			new Vector2f(0.058594f, 0.359375f),
-			new Vector2f(0.058594f, 0.417969f),
-			new Vector2f(0.000000f, 0.417969f),
-			new Vector2f(0.003906f, 0.355469f),
-			new Vector2f(0.003906f, 0.417969f),
-			new Vector2f(0.000000f, 0.355469f),
-			new Vector2f(0.000000f, 0.414062f),
-			new Vector2f(0.062500f, 0.414062f),
-			new Vector2f(0.062500f, 0.417969f)
-	};
-	final Vector3f[] sieve_normals = new Vector3f[]{
-			new Vector3f(0.000000f, -0.99900f, -0.0457f),
-			new Vector3f(0.000000f, 0.000000f, -1.00000f),
-			new Vector3f(0.000000f, 0.999000f, 0.045700f),
-			new Vector3f(1.000000f, 0.000000f, 0.000000f),
-			new Vector3f(-1.00000f, 0.00000f, 0.00000f),
-			new Vector3f(0.000000f, 0.000000f, 1.000000f)
-	};
-	final ObjFace[] sieve_faces = new ObjFace[]{
-			new ObjFace(new int[]{8, 14, 4, 1}, new int[]{1, 2, 3, 4}, 1),
-			new ObjFace(new int[]{1, 4, 6, 2}, new int[]{5, 6, 4, 7}, 2),
-			new ObjFace(new int[]{9, 2, 6, 15}, new int[]{1, 4, 3, 2}, 3),
-			new ObjFace(new int[]{8, 1, 2, 9}, new int[]{8, 9, 10, 4}, 4),
-			new ObjFace(new int[]{12, 3, 4, 14}, new int[]{1, 4, 3, 2}, 1),
-			new ObjFace(new int[]{3, 5, 6, 4}, new int[]{5, 7, 4, 6}, 2),
-			new ObjFace(new int[]{16, 15, 6, 5}, new int[]{1, 2, 3, 4}, 3),
-			new ObjFace(new int[]{12, 16, 5, 3}, new int[]{8, 4, 10, 9}, 5),
-			new ObjFace(new int[]{8, 7, 13, 14}, new int[]{1, 4, 3, 2}, 1),
-			new ObjFace(new int[]{7, 10, 18, 13}, new int[]{5, 7, 4, 6}, 6),
-			new ObjFace(new int[]{9, 15, 18, 10}, new int[]{1, 2, 3, 4}, 3),
-			new ObjFace(new int[]{8, 9, 10, 7}, new int[]{8, 4, 10, 9}, 4),
-			new ObjFace(new int[]{12, 14, 13, 11}, new int[]{1, 2, 3, 4}, 1),
-			new ObjFace(new int[]{11, 13, 18, 17}, new int[]{5, 6, 4, 7}, 6),
-			new ObjFace(new int[]{16, 17, 18, 15}, new int[]{1, 4, 3, 2}, 3),
-			new ObjFace(new int[]{12, 11, 17, 16}, new int[]{8, 9, 10, 4}, 5)
-	};
-
 	public void renderSieveMesh(boolean shutDown) {
 		/*
 		 * Prepare rendering
@@ -872,24 +891,6 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		Tessellator.getInstance().draw();
 
 		tearDownDefaultGL();
-	}
-
-	public static class ObjFace {
-		public final int[] vertexIndexes;
-		public final int[] textureIndexes;
-		public final int normalIndex;
-
-		/**
-		 * @param vertexIndexes
-		 * @param textureIndexes
-		 * @param normalIndex
-		 */
-		public ObjFace(int[] vertexIndexes, int[] textureIndexes, int normalIndex) {
-			this.vertexIndexes = vertexIndexes;
-			this.textureIndexes = textureIndexes;
-			this.normalIndex = normalIndex;
-		}
-
 	}
 
 	/**

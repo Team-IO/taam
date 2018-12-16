@@ -30,6 +30,19 @@ public class ConveyorUtil {
 
 	public static final double oneThird = 1 / 3.0;
 
+	public static final RotatedDefinition LANES = new RotatedDefinition(
+			// Remember, this definition is inverted being left-to-right not top-down order, so NORTH is left!
+			1, 1, 1,
+			2, 2, 2,
+			3, 3, 3
+	);
+	public static final RotatedDefinition ROWS = new RotatedDefinition(
+			// Remember, this definition is inverted being left-to-right not top-down order, so NORTH is left!
+			3, 2, 1,
+			3, 2, 1,
+			3, 2, 1
+	);
+
 	private static boolean tryInsert(TileEntity tileEntity, EntityItem ei) {
 		ItemStack entityItemStack = ei.getItem();
 		if (InventoryUtils.isEmpty(entityItemStack)) {
@@ -133,13 +146,13 @@ public class ConveyorUtil {
 	}
 
 	public static int getNextSlot(int slot, EnumFacing dir) {
-		slot = getNextSlotUnwrapped(slot, dir);
-		if (slot < 0) {
-			slot += 9;
-		} else if (slot > 8) {
-			slot -= 9;
+		int nextslot = getNextSlotUnwrapped(slot, dir);
+		if (nextslot < 0) {
+			nextslot += 9;
+		} else if (nextslot > 8) {
+			nextslot -= 9;
 		}
-		return slot;
+		return nextslot;
 	}
 
 	public static int getNextSlotUnwrapped(int slot, EnumFacing dir) {
@@ -231,9 +244,7 @@ public class ConveyorUtil {
 			// Horizontal Index: S-W-N-E
 			int[] slots = rotated[horizontalIndex];
 
-			slot = MathHelper.clamp(slot, 0, 8);
-
-			return slots[slot];
+			return slots[MathHelper.clamp(slot, 0, 8)];
 		}
 	}
 
@@ -250,19 +261,6 @@ public class ConveyorUtil {
 				source[8], source[5], source[2]
 		};
 	}
-
-	public static final RotatedDefinition LANES = new RotatedDefinition(
-			// Remember, this definition is inverted being left-to-right not top-down order, so NORTH is left!
-			1, 1, 1,
-			2, 2, 2,
-			3, 3, 3
-	);
-	public static final RotatedDefinition ROWS = new RotatedDefinition(
-			// Remember, this definition is inverted being left-to-right not top-down order, so NORTH is left!
-			3, 2, 1,
-			3, 2, 1,
-			3, 2, 1
-	);
 
 
 	public static double getItemPositionX(int slot) {

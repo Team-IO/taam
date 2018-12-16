@@ -24,6 +24,7 @@ import net.teamio.taam.conveyors.IConveyorApplianceHost;
 import net.teamio.taam.conveyors.IConveyorSlots;
 import org.apache.commons.lang3.ArrayUtils;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Random;
@@ -243,11 +244,11 @@ public final class TaamUtil {
 	/**
 	 * Compares if the two given items tacks have a common ore dictionary name.
 	 *
-	 * @param stack1
-	 * @param stack2
-	 * @return
+	 * @param stack1 The first stack, may not be null
+	 * @param stack2 The second stack, may not be null
+	 * @return True if the stacks have at least one common ore dictionary name
 	 */
-	public static boolean isOreDictMatch(ItemStack stack1, ItemStack stack2) {
+	public static boolean isOreDictMatch(@Nonnull ItemStack stack1, @Nonnull ItemStack stack2) {
 		int[] ids1 = OreDictionary.getOreIDs(stack1);
 		int[] ids2 = OreDictionary.getOreIDs(stack2);
 
@@ -260,12 +261,12 @@ public final class TaamUtil {
 	}
 
 	/**
-	 * Compares if the two given itemstacks are from the same mod. (a.k.a.
-	 * sharing the same domain)
+	 * Compares if the two given itemstacks are from the same mod.
+	 * (a.k.a. sharing the same domain)
 	 *
-	 * @param stack1
-	 * @param stack2
-	 * @return
+	 * @param stack1 The first stack, may be null
+	 * @param stack2 The second stack, may be null
+	 * @return True if both stack come from the same mod (based on item registry names)
 	 */
 	public static boolean isModMatch(@Nullable ItemStack stack1, @Nullable ItemStack stack2) {
 		if (InventoryUtils.isEmpty(stack1)) return InventoryUtils.isEmpty(stack2);
@@ -302,5 +303,13 @@ public final class TaamUtil {
 			return MultipartHandler.getCapabilityForCenter(capability, tileEntity.getWorld(), tileEntity.getPos(), side);
 		}
 		return null;
+	}
+
+	public static String[] enumValuesAsString(Enum<?>[] valuesAsEnum) {
+		String[] valuesAsString = new String[valuesAsEnum.length];
+		for (int i = 0; i < valuesAsEnum.length; i++) {
+			valuesAsString[i] = valuesAsEnum[i].name();
+		}
+		return valuesAsString;
 	}
 }

@@ -67,6 +67,7 @@ public class GuiConveyorHopper extends GuiContainer {
 			break;
 		default:
 			appendage = "Wonky";
+			break;
 		}
 
 

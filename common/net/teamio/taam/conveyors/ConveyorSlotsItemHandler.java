@@ -75,7 +75,7 @@ public class ConveyorSlotsItemHandler implements IItemHandlerModifiable {
 	@Override
 	public void setStackInSlot(int unused, ItemStack stack) {
 		if (!slots.isSlotAvailable(slot)) {
-			throw new RuntimeException("setStackInSlot called on unavailable slot, cannot comply. SORRY! This is a bug, report it to the mod further up the call stack!");
+			throw new IllegalArgumentException("setStackInSlot called on unavailable slot, cannot comply. SORRY! This is a bug, report it to the mod further up the call stack!");
 		}
 		onChangeHook();
 		slots.getSlot(slot).setStack(stack);

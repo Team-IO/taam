@@ -16,6 +16,9 @@ import java.io.IOException;
 
 public class TPAdvancedGuiAppData implements IMessage {
 
+	public NBTTagCompound tag;
+	public int appContainerId;
+
 	public static final class Handler implements IMessageHandler<TPAdvancedGuiAppData, IMessage> {
 
 		@Override
@@ -36,11 +39,7 @@ public class TPAdvancedGuiAppData implements IMessage {
 			}
 			return null;
 		}
-
 	}
-
-	public NBTTagCompound tag;
-	public int appContainerId;
 
 	/**
 	 * Constructor for serialization

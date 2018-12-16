@@ -5,15 +5,10 @@ import net.minecraft.util.EnumFacing;
 /**
  * Abstract class for implementing inside a conveyor-like machine, as the
  * movementDirection is overridden.
- * 
- * @author Oliver Kahrmann
  *
+ * @author Oliver Kahrmann
  */
 public abstract class ConveyorSlotsMoving extends ConveyorSlotsStandard {
-
-	public ConveyorSlotsMoving() {
-		super();
-	}
 
 	@Override
 	public boolean shouldRenderItemsDefault() {

@@ -24,7 +24,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.teamio.taam.Config;
 import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.conveyors.TileEntityConveyor;
-import net.teamio.taam.conveyors.IConveyorApplianceHost;
 import net.teamio.taam.piping.IPipe;
 import net.teamio.taam.piping.PipeUtil;
 import net.teamio.taam.util.FluidUtils;
@@ -108,9 +107,9 @@ public class ItemDebugTool extends Item {
 
 		}
 
-		if(te instanceof IConveyorApplianceHost) {
+		//if(te instanceof IConveyorApplianceHost) {
 			//IConveyorApplianceHost host = (IConveyorApplianceHost)te;
-		}
+		//}
 
 		IPipe pipe = PipeUtil.getPipe(worldIn, pos, facing);
 

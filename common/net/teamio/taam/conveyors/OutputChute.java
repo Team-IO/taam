@@ -12,8 +12,8 @@ import net.teamio.taam.util.TaamUtil;
 
 public abstract class OutputChute {
 
-	IItemHandler outputInventory;
-	boolean canDrop;
+	protected IItemHandler outputInventory;
+	protected boolean canDrop;
 
 	public void refreshOutputInventory(World world, BlockPos pos) {
 		outputInventory = InventoryUtils.getInventory(world, pos, EnumFacing.UP);
@@ -30,7 +30,7 @@ public abstract class OutputChute {
 	 * @param world
 	 * @param pos
 	 * @return Returns true if there were items transferred or there are still
-	 *         items left.
+	 * items left.
 	 */
 	public abstract boolean output(World world, BlockPos pos);
 
@@ -38,35 +38,28 @@ public abstract class OutputChute {
 	 * Tries to output into the outputInventory, or drop down into the world
 	 *
 	 * @param world
-	 * @param oututPosition
-	 *            Position to output to, usually one block below the chute.
-	 * @param outputInventory
-	 *            Output inventory. If null, will output to world.
-	 * @param backlog
-	 *            The items to output.
-	 * @param maxOutput
-	 *            Maximum number of items to output. If 0, will attempt to
-	 *            output all items in the backlog. Currently not implemented.
+	 * @param oututPosition   Position to output to, usually one block below the chute.
+	 * @param outputInventory Output inventory. If null, will output to world.
+	 * @param backlog         The items to output.
 	 * @return true if it was able to output items, or unable but still has
-	 *         items left.
+	 * items left.
 	 */
-	public static boolean chuteMechanicsOutput(World world, BlockPos oututPosition, IItemHandler outputInventory, ItemStack[] backlog, int maxOutput) {
-		if(backlog == null) {
+	public static boolean chuteMechanicsOutput(World world, BlockPos oututPosition, IItemHandler outputInventory, ItemStack[] backlog) {
+		if (backlog == null) {
 			return false;
 		}
 
-		//TODO: implement maxOutput!
 		boolean wasAble = false;
 		boolean hasOutputLeft = false;
-		if(outputInventory == null) {
+		if (outputInventory == null) {
 			double entX = oututPosition.getX() + 0.5;
 			double entY = oututPosition.getY() + 0.7;
 			double entZ = oututPosition.getZ() + 0.5;
 
 			// Output to world
-			for(int i = 0; i < backlog.length; i++) {
+			for (int i = 0; i < backlog.length; i++) {
 				ItemStack itemStack = backlog[i];
-				if(InventoryUtils.isEmpty(itemStack)) {
+				if (InventoryUtils.isEmpty(itemStack)) {
 					continue;
 				}
 				EntityItem item = new EntityItem(world, entX, entY, entZ, itemStack);
@@ -81,13 +74,13 @@ public abstract class OutputChute {
 			hasOutputLeft = false;
 		} else {
 			// Output to inventory
-			for(int i = 0; i < backlog.length; i++) {
+			for (int i = 0; i < backlog.length; i++) {
 				ItemStack itemStack = backlog[i];
-				if(InventoryUtils.isEmpty(itemStack)) {
+				if (InventoryUtils.isEmpty(itemStack)) {
 					continue;
 				}
 				backlog[i] = ItemHandlerHelper.insertItemStacked(outputInventory, itemStack, false);
-				if(backlog[i] == ItemStack.EMPTY) {
+				if (backlog[i] == ItemStack.EMPTY) {
 					wasAble = true;
 				} else {
 					hasOutputLeft = true;

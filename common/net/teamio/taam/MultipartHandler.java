@@ -9,6 +9,8 @@ import net.teamio.taam.machines.IMachineMetaInfo;
 
 public class MultipartHandler {
 
+	// TODO: Remove this once MCMultipart2 support is complete
+
 	public static void registerMultipartStuff() {
 
 		/*MultipartRegistry.registerPartFactory(new IAdvancedPartFactory() {

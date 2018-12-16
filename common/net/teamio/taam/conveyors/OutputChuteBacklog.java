@@ -29,7 +29,7 @@ public class OutputChuteBacklog extends OutputChute {
 
 	@Override
 	public boolean output(World world, BlockPos pos) {
-		boolean somethingLeft = chuteMechanicsOutput(world, pos, outputInventory, backlog, 0);
+		boolean somethingLeft = chuteMechanicsOutput(world, pos, outputInventory, backlog);
 		if (!somethingLeft) {
 			backlog = null;
 		}

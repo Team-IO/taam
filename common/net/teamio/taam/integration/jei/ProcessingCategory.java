@@ -3,7 +3,7 @@ package net.teamio.taam.integration.jei;
 import mezz.jei.api.gui.IGuiItemStackGroup;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.ingredients.IIngredients;
-import mezz.jei.api.recipe.BlankRecipeCategory;
+import mezz.jei.api.recipe.IRecipeCategory;
 import mezz.jei.api.recipe.IRecipeWrapper;
 import net.minecraft.item.ItemStack;
 import net.teamio.taam.Log;
@@ -13,15 +13,12 @@ import net.teamio.taam.recipes.IProcessingRecipe;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public abstract class ProcessingCategory extends BlankRecipeCategory {
+public abstract class ProcessingCategory implements IRecipeCategory {
 
 	public static final int slotInput = 0;
 	public static final int slotOutput = 1;
 
 	public static final int MAX_ROWS = 3;
-
-	public ProcessingCategory() {
-	}
 
 	@Override
 	public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull IRecipeWrapper recipeWrapper, @Nonnull IIngredients ingredients) {

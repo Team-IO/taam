@@ -5,7 +5,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -29,7 +28,7 @@ import net.teamio.taam.util.InventoryUtils;
 
 import javax.annotation.Nonnull;
 
-public class ApplianceSprayer extends ATileEntityAppliance implements ITickable, IWorldInteractable {
+public class ApplianceSprayer extends ATileEntityAppliance implements IWorldInteractable {
 
 	public static final float b_tankBorder = 1.5f / 16f;
 	public static final float b_tankBorderSprayer = b_tankBorder + 4f / 16f;
@@ -112,10 +111,6 @@ public class ApplianceSprayer extends ATileEntityAppliance implements ITickable,
 
 	public FluidTank getTank() {
 		return tank;
-	}
-
-	@Override
-	public void update() {
 	}
 
 	@Override

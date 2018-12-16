@@ -19,16 +19,16 @@ import java.util.List;
  */
 public class PipeInfo {
 
-	public PipeInfo(int capacity) {
-		this.capacity = capacity;
-		content = new ArrayList<FluidStack>();
-	}
-
 	public final int capacity;
 
 	public int pressure;
 	public int fillLevel;
 	public final ArrayList<FluidStack> content;
+
+	public PipeInfo(int capacity) {
+		this.capacity = capacity;
+		content = new ArrayList<FluidStack>();
+	}
 
 	public void writeToNBT(NBTTagCompound tag) {
 		tag.setInteger("pressure", pressure);
@@ -196,5 +196,6 @@ public class PipeInfo {
 	 * Override this when you need update events, e.g. for markDirty(). Default implementation does nothing.
 	 */
 	protected void onUpdate() {
+		// Default implementation
 	}
 }

@@ -18,6 +18,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.teamio.taam.piping.IPipePos;
 import net.teamio.taam.util.TaamUtil;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -35,12 +36,7 @@ public abstract class BaseTileEntity extends TileEntity implements IWorldNameabl
 	 * ThreadLocal storage for the list of visible parts (required due to some
 	 * concurrency issues, See issue #194)
 	 */
-	public static final ThreadLocal<List<String>> visibleParts = new ThreadLocal<List<String>>() {
-		@Override
-		protected List<String> initialValue() {
-			return new ArrayList<String>(14);
-		}
-	};
+	public static final ThreadLocal<List<String>> visibleParts = ThreadLocal.withInitial(() -> new ArrayList<>(14));
 
 	public void setOwner(EntityPlayer player) {
 		if (player == null) {
@@ -52,7 +48,8 @@ public abstract class BaseTileEntity extends TileEntity implements IWorldNameabl
 
 	/**
 	 * Separate method as due to obfuscation issues we cannot use getPos from TileEntity
-	 * @return
+	 *
+	 * @return the BlockPos of this entity
 	 */
 	@Override
 	public BlockPos getPipePos() {
@@ -61,7 +58,8 @@ public abstract class BaseTileEntity extends TileEntity implements IWorldNameabl
 
 	/**
 	 * Separate method as due to obfuscation issues we cannot use getWorld from TileEntity
-	 * @return
+	 *
+	 * @return the world instance related to this entity
 	 */
 	@Override
 	public IBlockAccess getPipeWorld() {
@@ -114,15 +112,19 @@ public abstract class BaseTileEntity extends TileEntity implements IWorldNameabl
 
 	/**
 	 * Called inside {@link BaseBlock#neighborChanged(IBlockState, World, BlockPos, Block, BlockPos)}. (On server side)
+	 * Override as needed.
 	 */
 	public void blockUpdate() {
+		// Default implementation
 	}
 
 	/**
 	 * Called within {@link BaseBlock#getActualState(IBlockState, IBlockAccess, BlockPos)}
 	 * to update render state in the tile entity.
+	 * Override as needed.
 	 */
 	public void renderUpdate() {
+		// Default implementation
 	}
 
 	/*
@@ -144,13 +146,14 @@ public abstract class BaseTileEntity extends TileEntity implements IWorldNameabl
 		return new SPacketUpdateTileEntity(getPos(), getBlockMetadata(), nbt);
 	}
 
+	@Nonnull
 	@Override
 	public NBTTagCompound getUpdateTag() {
 		return writeToNBT(new NBTTagCompound());
 	}
 
 	@Override
-	public void handleUpdateTag(NBTTagCompound tag) {
+	public void handleUpdateTag(@Nonnull NBTTagCompound tag) {
 		readFromNBT(tag);
 	}
 
@@ -158,6 +161,7 @@ public abstract class BaseTileEntity extends TileEntity implements IWorldNameabl
 	 * NBT
 	 */
 
+	@Nonnull
 	@Override
 	public NBTTagCompound writeToNBT(NBTTagCompound tag) {
 		super.writeToNBT(tag);
@@ -177,7 +181,7 @@ public abstract class BaseTileEntity extends TileEntity implements IWorldNameabl
 	 * Internal, writes common properties to NBT & calls the write method on the
 	 * subclass.
 	 *
-	 * @param tag
+	 * @param tag The destination tag, properties are written directly into this tag
 	 */
 	private void writePropertiesToNBTInternal(NBTTagCompound tag) {
 		if (owner != null) {
@@ -190,7 +194,7 @@ public abstract class BaseTileEntity extends TileEntity implements IWorldNameabl
 	/**
 	 * Write-method for subclasses to store their properties easily.
 	 *
-	 * @param tag
+	 * @param tag The destination tag, properties are written directly into this tag
 	 */
 	protected abstract void writePropertiesToNBT(NBTTagCompound tag);
 
@@ -198,7 +202,7 @@ public abstract class BaseTileEntity extends TileEntity implements IWorldNameabl
 	 * Internal, reads common properties from NBT & calls the read method on the
 	 * subclass.
 	 *
-	 * @param tag
+	 * @param tag The source tag, properties are read directly from this tag
 	 */
 	private void readPropertiesFromNBTInternal(NBTTagCompound tag) {
 		if (tag.getBoolean("owner")) {
@@ -212,7 +216,7 @@ public abstract class BaseTileEntity extends TileEntity implements IWorldNameabl
 	/**
 	 * Write-method for subclasses to read their properties easily.
 	 *
-	 * @param tag
+	 * @param tag The source tag, properties are read directly from this tag
 	 */
 	protected abstract void readPropertiesFromNBT(NBTTagCompound tag);
 

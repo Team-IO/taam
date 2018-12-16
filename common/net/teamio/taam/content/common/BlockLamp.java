@@ -31,7 +31,7 @@ public class BlockLamp extends Block {
 	/**
 	 * Hitbox "offset" depth (attaching side -> sensor front)
 	 */
-	private static final float depth = 2/16f;
+	private static final float depth = 2 / 16f;
 	/**
 	 * Hitbox "offset" width (block side -> sensor base)
 	 */
@@ -39,7 +39,7 @@ public class BlockLamp extends Block {
 	/**
 	 * Hitbox "offset" height (block bottom/top -> sensor base)
 	 */
-	private static final float height = 6/16f;
+	private static final float height = 6 / 16f;
 
 	public final boolean isInverted;
 
@@ -53,8 +53,8 @@ public class BlockLamp extends Block {
 
 	@Override
 	protected BlockStateContainer createBlockState() {
-		return new ExtendedBlockState(this, new IProperty[] { DIRECTION, POWERED, ATTACHED },
-				new IUnlistedProperty[] { OBJModel.OBJProperty.instance });
+		return new ExtendedBlockState(this, new IProperty[]{DIRECTION, POWERED, ATTACHED},
+				new IUnlistedProperty[]{OBJModel.OBJProperty.instance});
 	}
 
 	@Override
@@ -81,69 +81,69 @@ public class BlockLamp extends Block {
 		EnumFacing dir = state.getValue(DIRECTION);
 		float minX, minY, minZ, maxX, maxY, maxZ;
 		switch (dir) {
-		case DOWN:
-			minX = width;
-			maxX = 1f - width;
-			minY = 1f - depth;
-			maxY = 1f;
-			minZ = height;
-			maxZ = 1f - height;
-			break;
-		case UP:
-			minX = width;
-			maxX = 1f - width;
-			minY = 0f;
-			maxY = depth;
-			minZ = height;
-			maxZ = 1f - height;
-			break;
-		case NORTH:
-			minX = width;
-			maxX = 1f - width;
-			maxY = 1f - height;
-			minY = height;
-			minZ = 1f - depth;
-			maxZ = 1f;
-			break;
-		case SOUTH:
-			minX = width;
-			maxX = 1f - width;
-			maxY = 1f - height;
-			minY = height;
-			minZ = 0f;
-			maxZ = depth;
-			break;
-		case WEST:
-			minX = 1f - depth;
-			maxX = 1f;
-			maxY = 1f - height;
-			minY = height;
-			minZ = width;
-			maxZ = 1f - width;
-			break;
-		case EAST:
-			minX = 0f;
-			maxX = depth;
-			maxY = 1f - height;
-			minY = height;
-			minZ = width;
-			maxZ = 1f - width;
-			break;
-		default:
-			minX = 0;
-			maxX = 1;
-			minY = 0;
-			maxY = 1;
-			minZ = 0;
-			maxZ = 1;
-			break;
+			case DOWN:
+				minX = width;
+				maxX = 1f - width;
+				minY = 1f - depth;
+				maxY = 1f;
+				minZ = height;
+				maxZ = 1f - height;
+				break;
+			case UP:
+				minX = width;
+				maxX = 1f - width;
+				minY = 0f;
+				maxY = depth;
+				minZ = height;
+				maxZ = 1f - height;
+				break;
+			case NORTH:
+				minX = width;
+				maxX = 1f - width;
+				maxY = 1f - height;
+				minY = height;
+				minZ = 1f - depth;
+				maxZ = 1f;
+				break;
+			case SOUTH:
+				minX = width;
+				maxX = 1f - width;
+				maxY = 1f - height;
+				minY = height;
+				minZ = 0f;
+				maxZ = depth;
+				break;
+			case WEST:
+				minX = 1f - depth;
+				maxX = 1f;
+				maxY = 1f - height;
+				minY = height;
+				minZ = width;
+				maxZ = 1f - width;
+				break;
+			case EAST:
+				minX = 0f;
+				maxX = depth;
+				maxY = 1f - height;
+				minY = height;
+				minZ = width;
+				maxZ = 1f - width;
+				break;
+			default:
+				minX = 0;
+				maxX = 1;
+				minY = 0;
+				maxY = 1;
+				minZ = 0;
+				maxZ = 1;
+				break;
 		}
 		boolean attached = isAttached(source, pos, dir);
-		if(attached) {
+		if (attached) {
 			minY -= 0.25f;
 			maxY -= 0.25f;
 		}
-		return new AxisAlignedBB(minX,minY,minZ, maxX, maxY,maxZ);
+		return new AxisAlignedBB(minX, minY, minZ, maxX, maxY, maxZ);
 	}
 
 	@Override
@@ -181,11 +181,11 @@ public class BlockLamp extends Block {
 
 		boolean powered = worldIn.isBlockPowered(pos);
 
-		if(isInverted) {
+		if (isInverted) {
 			powered = !powered;
 		}
 
-		if(isOn != powered) {
+		if (isOn != powered) {
 			worldIn.setBlockState(pos, state.withProperty(POWERED, powered), 2);
 		}
 	}
@@ -220,7 +220,7 @@ public class BlockLamp extends Block {
 
 	@Override
 	public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ,
-			int meta, EntityLivingBase placer) {
+	                                        int meta, EntityLivingBase placer) {
 		return getDefaultState().withProperty(DIRECTION, facing).withProperty(POWERED, isInverted).withProperty(ATTACHED, false);
 	}
 
@@ -266,14 +266,14 @@ public class BlockLamp extends Block {
 		IBlockState state = world.getBlockState(pos);
 		EnumFacing currentDirection = state.getValue(DIRECTION);
 		EnumFacing previousRotation = currentDirection;
-		for(int i = 0; i < 6; i++) {
+		for (int i = 0; i < 6; i++) {
 			state = state.cycleProperty(DIRECTION);
 			currentDirection = state.getValue(DIRECTION);
-			if(canPlaceBlockOnSide(world, pos, currentDirection)) {
+			if (canPlaceBlockOnSide(world, pos, currentDirection)) {
 				break;
 			}
 		}
-		if(currentDirection != previousRotation) {
+		if (currentDirection != previousRotation) {
 			world.setBlockState(pos, state, 2);
 			return true;
 		}

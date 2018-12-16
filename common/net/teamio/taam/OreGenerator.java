@@ -26,8 +26,9 @@ public class OreGenerator implements IWorldGenerator {
 		public final int maxDepositCount;
 		// For Debug Purposes
 		public final Taam.BLOCK_ORE_META ore;
+
 		public GenerationInfo(Taam.BLOCK_ORE_META ore, WorldGenMinable gen, int generateAbove,
-				int generateBelow, int maxDepositCount) {
+		                      int generateBelow, int maxDepositCount) {
 			this.ore = ore;
 			this.gen = gen;
 			this.generateAbove = generateAbove;
@@ -36,7 +37,7 @@ public class OreGenerator implements IWorldGenerator {
 		}
 	}
 
-	List<GenerationInfo> gens;
+	public List<GenerationInfo> gens;
 
 	public OreGenerator() {
 		reloadGenerationInfo();
@@ -44,11 +45,9 @@ public class OreGenerator implements IWorldGenerator {
 
 
 	@SubscribeEvent
-	public void onConfigChangedEvent(ConfigChangedEvent.OnConfigChangedEvent event)
-	{
+	public void onConfigChangedEvent(ConfigChangedEvent.OnConfigChangedEvent event) {
 		// Reload when the config changes to apply it BEFORE restart.
-		if (event.getModID().equalsIgnoreCase(Taam.MOD_ID))
-		{
+		if (event.getModID().equalsIgnoreCase(Taam.MOD_ID)) {
 			reloadGenerationInfo();
 		}
 	}
@@ -59,13 +58,13 @@ public class OreGenerator implements IWorldGenerator {
 		Predicate<IBlockState> stone = new Predicate<IBlockState>() {
 
 			@Override
-			public boolean apply(IBlockState input){
+			public boolean apply(IBlockState input) {
 				return input != null && input.getBlock() == Blocks.STONE;
 			}
 		};
 		Taam.BLOCK_ORE_META[] oreMeta = Taam.BLOCK_ORE_META.values();
-		for(int i = 0; i < Config.NUM_ORES; i++) {
-			if(Config.genOre[i]) {
+		for (int i = 0; i < Config.NUM_ORES; i++) {
+			if (Config.genOre[i]) {
 				Log.info("Enabling {} generation", oreMeta[i].config_name);
 				gens.add(new GenerationInfo(oreMeta[i],
 						new WorldGenMinable(BLOCK_ORE_META.getOre(oreMeta[i]), Config.oreSize[i], stone),
@@ -79,27 +78,29 @@ public class OreGenerator implements IWorldGenerator {
 	@Override
 	public void generate(Random random, int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator, IChunkProvider chunkProvider) {
 		switch (world.provider.getDimension()) {
-		case -1:
-			generateNether(world, random, chunkX * 16, chunkZ * 16);
-			break;
-		default:
-		case 0:
-			generateSurface(world, random, chunkX * 16, chunkZ * 16);
-			break;
-		case 1:
-			generateEnd(world, random, chunkX * 16, chunkZ * 16);
-			break;
+			case -1:
+				generateNether(world, random, chunkX * 16, chunkZ * 16);
+				break;
+			default:
+			case 0:
+				generateSurface(world, random, chunkX * 16, chunkZ * 16);
+				break;
+			case 1:
+				generateEnd(world, random, chunkX * 16, chunkZ * 16);
+				break;
 		}
 	}
 
 	private void generateEnd(World world, Random random, int i, int j) {
+		// Not generating anything in the end at the moment
 	}
 
 	private void generateNether(World world, Random random, int i, int j) {
+		// Not generating anything in the nether at the moment
 	}
 
 	private void generateSurface(World world, Random random, int i, int j) {
-		for(GenerationInfo gen : gens) {
+		for (GenerationInfo gen : gens) {
 			Log.debug("Generating {} {} times.", gen.ore.config_name, gen.maxDepositCount);
 			for (int k = 0; k < gen.maxDepositCount; k++) {
 				int firstBlockXCoord = i + random.nextInt(16);

@@ -26,14 +26,10 @@ public class BlockProductionLineAttachable extends BlockProductionLine {
 	public static final PropertyEnum<Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META> VARIANT = PropertyEnum.create("variant", Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META.class);
 	public static final PropertyEnum<EnumFacing> DIRECTION = PropertyEnum.create("direction", EnumFacing.class, EnumFacing.HORIZONTALS);
 
-	public BlockProductionLineAttachable() {
-		super();
-	}
-
 	@Override
 	protected BlockStateContainer createBlockState() {
-		return new ExtendedBlockState(this, new IProperty[] { DIRECTION, VARIANT },
-				new IUnlistedProperty[] { OBJModel.OBJProperty.instance });
+		return new ExtendedBlockState(this, new IProperty[]{DIRECTION, VARIANT},
+				new IUnlistedProperty[]{OBJModel.OBJProperty.instance});
 	}
 
 	@Override
@@ -57,7 +53,7 @@ public class BlockProductionLineAttachable extends BlockProductionLine {
 
 		// Let the tile entity update anything that is required for rendering
 		ATileEntityAttachable te = (ATileEntityAttachable) worldIn.getTileEntity(pos);
-		if(te.getWorld().isRemote) {
+		if (te.getWorld().isRemote) {
 			te.renderUpdate();
 		}
 
@@ -68,7 +64,7 @@ public class BlockProductionLineAttachable extends BlockProductionLine {
 		// Add rotation to state
 		EnumFacing dir = te.getFacingDirection();
 		// Safety net for incorrect information to prevent crash
-		if(dir.getAxis() == EnumFacing.Axis.Y) {
+		if (dir.getAxis() == EnumFacing.Axis.Y) {
 			dir = EnumFacing.NORTH;
 		}
 		return state.withProperty(DIRECTION, dir);
@@ -98,25 +94,30 @@ public class BlockProductionLineAttachable extends BlockProductionLine {
 		Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META variant = state
 				.getValue(VARIANT);
 		switch (variant) {
-		case itembag:
-			// Item Bag
-			return new TileEntityConveyorItemBag();
-		case trashcan:
-			// Trash Can
-			return new TileEntityConveyorTrashCan();
-		default:
-			Log.error("Was not able to create a TileEntity for " + getClass().getName());
-			return null;
+			case itembag:
+				// Item Bag
+				return new TileEntityConveyorItemBag();
+			case trashcan:
+				// Trash Can
+				return new TileEntityConveyorTrashCan();
+			default:
+				Log.error("Was not able to create a TileEntity for " + getClass().getName());
+				return null;
 		}
 	}
 
 	@Override
 	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-		float minY, maxY, minX,maxX, minZ, maxZ;
+		float minY;
+		float maxY;
+		float minX;
+		float maxX;
+		float minZ;
+		float maxZ;
 		minY = 0f;
 		maxY = 0.5f;
 		TileEntity te = source.getTileEntity(pos);
-		if(state.getBlock() != this || !(te instanceof IRotatable)) {
+		if (state.getBlock() != this || !(te instanceof IRotatable)) {
 			minX = 0;
 			maxX = 1;
 			minZ = 0;
@@ -124,34 +125,34 @@ public class BlockProductionLineAttachable extends BlockProductionLine {
 		} else {
 			EnumFacing facing = ((IRotatable) te).getFacingDirection();
 			switch (facing) {
-			default:
-			case NORTH:
-				minX = 0;
-				maxX = 1;
-				minZ = 0;
-				maxZ = 0.35f;
-				break;
-			case SOUTH:
-				minX = 0;
-				maxX = 1;
-				minZ = 0.65f;
-				maxZ = 1;
-				break;
-			case EAST:
-				minX = 0.65f;
-				maxX = 1;
-				minZ = 0;
-				maxZ = 1;
-				break;
-			case WEST:
-				minX = 0;
-				maxX = 0.35f;
-				minZ = 0;
-				maxZ = 1;
-				break;
+				default:
+				case NORTH:
+					minX = 0;
+					maxX = 1;
+					minZ = 0;
+					maxZ = 0.35f;
+					break;
+				case SOUTH:
+					minX = 0;
+					maxX = 1;
+					minZ = 0.65f;
+					maxZ = 1;
+					break;
+				case EAST:
+					minX = 0.65f;
+					maxX = 1;
+					minZ = 0;
+					maxZ = 1;
+					break;
+				case WEST:
+					minX = 0;
+					maxX = 0.35f;
+					minZ = 0;
+					maxZ = 1;
+					break;
 			}
 		}
-		return new AxisAlignedBB(minX,minY,minZ, maxX, maxY,maxZ);
+		return new AxisAlignedBB(minX, minY, minZ, maxX, maxY, maxZ);
 	}
 
 	@Override

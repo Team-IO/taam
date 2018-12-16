@@ -128,7 +128,7 @@ public class MachineTank implements IMachine, IPipePos, IWorldInteractable {
 	public void readUpdatePacket(PacketBuffer buf) {
 		try {
 			NBTTagCompound tag = buf.readCompoundTag();
-			if(tag == null) {
+			if (tag == null) {
 				tank.setFluid(null);
 			} else {
 				tank.readFromNBT(tag);
@@ -231,12 +231,7 @@ public class MachineTank implements IMachine, IPipePos, IWorldInteractable {
 	@Override
 	public boolean onBlockActivated(World world, EntityPlayer player, EnumHand hand, boolean hasWrench, EnumFacing side,
 	                                float hitX, float hitY, float hitZ) {
-		boolean didSomething = PipeUtil.defaultPlayerInteraction(player, tank);
-
-		if (didSomething) {
-			// TODO: updateState(true, false, false);
-		}
-		return didSomething;
+		return PipeUtil.defaultPlayerInteraction(player, tank);
 	}
 
 	@Override

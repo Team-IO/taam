@@ -8,15 +8,6 @@ import net.teamio.taam.gui.advanced.GuiAdvancedMachine;
 
 public class CustomButton extends GuiButton {
 
-	public CustomButton(int id, int xPos, int yPos, int width, int height,
-			String displayString) {
-		super(id, xPos, yPos, width, height, displayString);
-	}
-
-	public CustomButton(int id, int xPos, int yPos, String displayString) {
-		super(id, xPos, yPos, baseTextureHeight, baseTextureHeight, displayString);
-	}
-
 	static final int baseTextureHeight = 16;
 	static final int baseTextureU = 177;
 	static final int baseTextureV = 0;
@@ -42,6 +33,15 @@ public class CustomButton extends GuiButton {
 	 * 4: Beside, Right
 	 */
 	public int textHorizontalAlignment = 2;
+
+	public CustomButton(int id, int xPos, int yPos, int width, int height,
+	                    String displayString) {
+		super(id, xPos, yPos, width, height, displayString);
+	}
+
+	public CustomButton(int id, int xPos, int yPos, String displayString) {
+		super(id, xPos, yPos, baseTextureHeight, baseTextureHeight, displayString);
+	}
 
 	@Override
 	public boolean mousePressed(Minecraft mc, int mouseX, int mouseY) {
@@ -93,7 +93,7 @@ public class CustomButton extends GuiButton {
 
 				boolean doEllipsis = trimText && textHorizontalAlignment > 0 && textHorizontalAlignment < 4;
 
-				if(doEllipsis) {
+				if (doEllipsis) {
 					int ellipsisWidth = mc.fontRenderer.getStringWidth("...");
 
 					if (strWidth > width - textPadding && strWidth > ellipsisWidth) {
@@ -107,48 +107,48 @@ public class CustomButton extends GuiButton {
 				int leftOffset;
 				int topOffset;
 
-				switch(textHorizontalAlignment) {
-				case 0:
-					leftOffset = -strWidth - textPadding;
-					break;
-				case 1:
-					leftOffset = textPadding;
-					break;
-				default:
-				case 2:
-					leftOffset = (width - strWidth) / 2;
-					break;
-				case 3:
-					leftOffset = width - strWidth - textPadding;
-					break;
-				case 4:
-					leftOffset = width + textPadding;
-					break;
+				switch (textHorizontalAlignment) {
+					case 0:
+						leftOffset = -strWidth - textPadding;
+						break;
+					case 1:
+						leftOffset = textPadding;
+						break;
+					default:
+					case 2:
+						leftOffset = (width - strWidth) / 2;
+						break;
+					case 3:
+						leftOffset = width - strWidth - textPadding;
+						break;
+					case 4:
+						leftOffset = width + textPadding;
+						break;
 				}
 
-				switch(textVerticalAlignment) {
-				case 0:
-					topOffset = -textHeight - textPadding;
-					break;
-				case 1:
-					topOffset = textPadding;
-					break;
-				default:
-				case 2:
-					topOffset = (height - textHeight) / 2;
-					break;
-				case 3:
-					topOffset = height - textHeight - textPadding;
-					break;
-				case 4:
-					topOffset = height + textPadding;
-					break;
+				switch (textVerticalAlignment) {
+					case 0:
+						topOffset = -textHeight - textPadding;
+						break;
+					case 1:
+						topOffset = textPadding;
+						break;
+					default:
+					case 2:
+						topOffset = (height - textHeight) / 2;
+						break;
+					case 3:
+						topOffset = height - textHeight - textPadding;
+						break;
+					case 4:
+						topOffset = height + textPadding;
+						break;
 				}
 
 				drawString(mc.fontRenderer, buttonText, x + pressOffset + leftOffset, y + pressOffset + topOffset, color);
 			}
 
-			if(image != null) {
+			if (image != null) {
 				image.drawCentered(x + width / 2 + pressOffset, y + height / 2 + pressOffset);
 			}
 		}

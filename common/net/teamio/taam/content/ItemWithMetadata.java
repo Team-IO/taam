@@ -14,24 +14,23 @@ import java.util.List;
 
 /**
  * Generic item class for items with metadata variants, defined in an enumeration.
- *
+ * <p>
  * Passes metadata validation and information texts to a delegate.
  *
- * @author Oliver Kahrmann
- *
  * @param <P> The enumeration type.
+ * @author Oliver Kahrmann
  */
 public class ItemWithMetadata<P extends Enum<P>> extends Item {
+
+	private final P[] metaValues;
+	protected final String baseName;
+	private final ItemDelegate<P> delegate;
 
 	public abstract static class ItemDelegate<T extends Enum<T>> {
 		public abstract boolean isValidMetadata(T meta);
 
 		public abstract void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn);
 	}
-
-	private final P[] metaValues;
-	protected final String baseName;
-	private final ItemDelegate<P> delegate;
 
 	public ItemWithMetadata(String baseName, P[] metaValues, ItemDelegate<P> delegate) {
 		super();
@@ -45,7 +44,7 @@ public class ItemWithMetadata<P extends Enum<P>> extends Item {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
-		if(delegate != null) {
+		if (delegate != null) {
 			delegate.addInformation(stack, worldIn, tooltip, flagIn);
 		}
 	}
@@ -64,7 +63,7 @@ public class ItemWithMetadata<P extends Enum<P>> extends Item {
 	@Override
 	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
 		for (int i = 0; i < metaValues.length; i++) {
-			if(!isValidMetadata(i)) {
+			if (!isValidMetadata(i)) {
 				continue;
 			}
 			items.add(new ItemStack(this, 1, i));
@@ -72,8 +71,8 @@ public class ItemWithMetadata<P extends Enum<P>> extends Item {
 	}
 
 	public boolean isValidMetadata(int meta) {
-		if(meta >= 0 && meta < metaValues.length) {
-			if(delegate == null) {
+		if (meta >= 0 && meta < metaValues.length) {
+			if (delegate == null) {
 				return true;
 			}
 			return delegate.isValidMetadata(metaValues[meta]);
