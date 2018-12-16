@@ -19,7 +19,7 @@ import java.util.Random;
 
 public class OreGenerator implements IWorldGenerator {
 
-	List<GenerationInfo> gens;
+	public List<GenerationInfo> gens;
 
 	public static class GenerationInfo {
 		public final WorldGenMinable gen;
