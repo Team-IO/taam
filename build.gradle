@@ -180,7 +180,7 @@ static boolean isValidMtlLine(String line) {
 
 curseforge {
 	// Store this in $GRADLE_USER_HOME/gradle.properties
-	apiKey = getProperty('curseforge.apikey')
+	apiKey = findProperty('curseforge.apikey') ?: "unset"
 	project {
 		id = '238424'
 		changelog = {
@@ -215,7 +215,8 @@ curseforge {
 
 githubRelease {
 	// Store this in $GRADLE_USER_HOME/gradle.properties
-	token getProperty('github.token').toString()
+	def tk = findProperty('github.token') ?: "unset"
+	token tk.toString()
 	owner "Team-IO"
 	repo "taam"
 	tagName "${config.mc_version}-${config.mod_version}" // by default this is set to "v${project.version}"
