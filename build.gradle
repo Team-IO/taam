@@ -186,12 +186,14 @@ curseforge {
 		changelog = {
 			File f = file('build/changelog.md')
 			if (f.exists()) {
-				return f.readLines().join("\n")
+				return "https://github.com/Team-IO/taam/releases/tag/${config.mc_version}-${config.mod_version}\n"
+				+ f.readLines().join("\n")
 			}
-			return ""
+			return "https://github.com/Team-IO/taam/releases/tag/${config.mc_version}-${config.mod_version}"
 		}
 		changelogType = 'markdown'
 		releaseType = "${config.release_type}"
+		addGameVersion "${config.mc_version}"
 		FilenameFilter filter = { dir, filename -> filename.contains("${config.mc_version}-${config.mod_version}.jar") }
 		mainArtifact({
 			jar.destinationDir.listFiles(filter).first()
