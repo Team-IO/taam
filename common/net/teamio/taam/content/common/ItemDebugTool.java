@@ -28,6 +28,7 @@ import net.teamio.taam.piping.IPipe;
 import net.teamio.taam.piping.PipeUtil;
 import net.teamio.taam.util.FluidUtils;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
@@ -58,30 +59,31 @@ public class ItemDebugTool extends Item {
 		}
 	}
 
+	@Nonnull
 	@Override
 	public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 		if (!Config.debug_output) {
 			worldIn.playSound(player, pos, TaamMain.soundSipAh, SoundCategory.BLOCKS, 1f, 1f);
 			// return EnumActionResult.SUCCESS;
 		}
-		char remoteState = worldIn.isRemote ? 'C' : 'S';
+		String remoteState = worldIn.isRemote ? "Client" : "Server";
 
 		IBlockState state = worldIn.getBlockState(pos);
 
-		String text = String.format(remoteState + " RS: %b Side: %s Weak: %d Strong: %d",
-				state.canProvidePower(), facing.toString(), state.getWeakPower(worldIn, pos, facing), state.getStrongPower(worldIn, pos, facing));
+		String text = String.format("%s RS: %b Side: %s Weak: %d Strong: %d",
+				remoteState, state.canProvidePower(), facing.toString(), state.getWeakPower(worldIn, pos, facing), state.getStrongPower(worldIn, pos, facing));
 
 		player.sendStatusMessage(new TextComponentString(text), false);
 
 		EnumFacing oppSide = facing.getOpposite();
 
-		text = String.format(remoteState + " RS: %b Opposite Side: %s Weak: %d Strong: %d",
-				state.canProvidePower(), oppSide.toString(), state.getWeakPower(worldIn, pos, oppSide), state.getStrongPower(worldIn, pos, oppSide));
+		text = String.format("%s RS: %b Opposite Side: %s Weak: %d Strong: %d",
+				remoteState, state.canProvidePower(), oppSide.toString(), state.getWeakPower(worldIn, pos, oppSide), state.getStrongPower(worldIn, pos, oppSide));
 
 		player.sendStatusMessage(new TextComponentString(text), false);
 
-		text = String.format(remoteState + " Powered: %d",
-				worldIn.isBlockPowered(pos));
+		text = String.format("%s Powered: %b",
+				remoteState, worldIn.isBlockPowered(pos));
 
 		player.sendStatusMessage(new TextComponentString(text), false);
 
@@ -125,7 +127,7 @@ public class ItemDebugTool extends Item {
 					content.append(fluidContent.getLocalizedName()).append(' ').append(fluidContent.amount).append(", ");
 				}
 			}
-			content.append("]");
+			content.append(']');
 
 			player.sendStatusMessage(new TextComponentString(content.toString()), false);
 		}
@@ -135,20 +137,23 @@ public class ItemDebugTool extends Item {
 		if (fh != null) {
 
 			IFluidTankProperties[] ti = fh.getTankProperties();
-			String content = "";
+			StringBuilder content = new StringBuilder(remoteState)
+					.append(" Content: [");
 			if (ti.length > 0) {
 				int capacity = ti[0].getCapacity();
 				FluidStack contents = ti[0].getContents();
 				if (contents == null) {
-					content = "Nothing 0/" + capacity;
+					content.append("Nothing 0/").append(capacity);
 				} else {
-					content = contents.getLocalizedName() + " " + contents.amount + "/" + capacity;
+					content.append(contents.getLocalizedName()).append(' ')
+							.append(contents.amount).append('/').append(capacity);
 				}
+			} else {
+				content.append("No Tanks Present");
 			}
+			content.append(']');
 
-			text = String.format(remoteState + " Content: %s", content);
-
-			player.sendStatusMessage(new TextComponentString(text), false);
+			player.sendStatusMessage(new TextComponentString(content.toString()), false);
 
 			didSomething = true;
 		}

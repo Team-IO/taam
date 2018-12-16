@@ -690,21 +690,24 @@ public class ConveyorUtil {
 			return true;
 		}
 
+		// Early bail to avoid using a string builder
+		if (!stack.getHasSubtypes() && !stack.hasTagCompound()) return false;
+
 		// Check for sub-type (taam:productionline@2)
-		String subType = "";
+		StringBuilder subType = new StringBuilder(name.toString());
 		if (stack.getHasSubtypes()) {
-			subType += "@" + stack.getItemDamage();
-			Log.debug("Checking for item {}{}", name, subType);
-			if (Config.pl_conveyor_rightclick_blacklist.contains(name + subType)) {
+			subType.append('@').append(stack.getItemDamage());
+			Log.debug("Checking for item {}", subType);
+			if (Config.pl_conveyor_rightclick_blacklist.contains(subType.toString())) {
 				return true;
 			}
 		}
 
-		// Check for tag compound (potion@0#{Potion:"minecraft:healing"}false)
+		// Check for tag compound (potion@0#{Potion:"minecraft:healing"})
 		if (stack.hasTagCompound()) {
-			subType += "#" + stack.getTagCompound();
-			Log.debug("Checking for item {}{}", name, subType);
-			if (Config.pl_conveyor_rightclick_blacklist.contains(name + subType)) {
+			subType.append('#').append(stack.getTagCompound());
+			Log.debug("Checking for item {}", subType);
+			if (Config.pl_conveyor_rightclick_blacklist.contains(subType.toString())) {
 				return true;
 			}
 		}
