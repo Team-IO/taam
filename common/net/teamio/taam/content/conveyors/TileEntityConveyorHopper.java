@@ -154,11 +154,11 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IRedston
 						somethingEjected = true;
 						break;
 					}
-					// In linear mode, we only look at the front most stack that has items
-					if (linearMode) {
-						break;
-					}
+				}
 
+				// In linear mode, we only look at the front most stack that has items
+				if (linearMode) {
+					break;
 				}
 			}
 		}
