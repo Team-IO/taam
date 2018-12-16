@@ -78,35 +78,37 @@ public class OreGenerator implements IWorldGenerator {
 	@Override
 	public void generate(Random random, int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator, IChunkProvider chunkProvider) {
 		switch (world.provider.getDimension()) {
-			case -1:
-				generateNether(world, random, chunkX * 16, chunkZ * 16);
-				break;
 			default:
 			case 0:
 				generateSurface(world, random, chunkX * 16, chunkZ * 16);
 				break;
+			case -1:
+				//generateNether(world, random, chunkX * 16, chunkZ * 16);
+				break;
 			case 1:
-				generateEnd(world, random, chunkX * 16, chunkZ * 16);
+				//generateEnd(world, random, chunkX * 16, chunkZ * 16);
 				break;
 		}
 	}
 
-	private void generateEnd(World world, Random random, int i, int j) {
+	/*private void generateEnd(World world, Random random, int i, int j) {
 		// Not generating anything in the end at the moment
 	}
 
 	private void generateNether(World world, Random random, int i, int j) {
 		// Not generating anything in the nether at the moment
-	}
+	}*/
 
 	private void generateSurface(World world, Random random, int i, int j) {
+		BlockPos.MutableBlockPos firstBlock = new BlockPos.MutableBlockPos();
+		Log.debug("Generating {} surface ores at x{} z{}", gens.size(), i, j);
 		for (GenerationInfo gen : gens) {
-			Log.debug("Generating {} {} times.", gen.ore.config_name, gen.maxDepositCount);
 			for (int k = 0; k < gen.maxDepositCount; k++) {
 				int firstBlockXCoord = i + random.nextInt(16);
 				int firstBlockYCoord = gen.generateAbove + random.nextInt(gen.generateBelow - gen.generateAbove);
 				int firstBlockZCoord = j + random.nextInt(16);
-				gen.gen.generate(world, random, new BlockPos(firstBlockXCoord, firstBlockYCoord, firstBlockZCoord));
+				firstBlock.setPos(firstBlockXCoord, firstBlockYCoord, firstBlockZCoord);
+				gen.gen.generate(world, random, firstBlock);
 			}
 		}
 	}
