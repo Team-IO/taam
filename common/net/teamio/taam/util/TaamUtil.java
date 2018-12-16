@@ -273,6 +273,7 @@ public final class TaamUtil {
 
 		ResourceLocation regName1 = stack1.getItem().getRegistryName();
 		ResourceLocation regName2 = stack2.getItem().getRegistryName();
+		if (regName1 == null || regName2 == null) return false;
 		return regName1.getNamespace().equals(regName2.getNamespace());
 	}
 
