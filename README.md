@@ -21,13 +21,13 @@ Taam uses a fairly simple implementation of ForgeGradle. To build a ready-to-use
 
 For Windows systems, run this in the console:
 
-```
+```bat
 gradlew.bat build
 ```
 
 For *nix systems, run this in the terminal:
 
-```
+```sh
 ./gradlew build
 ```
 
