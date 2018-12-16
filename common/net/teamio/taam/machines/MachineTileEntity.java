@@ -21,7 +21,7 @@ public class MachineTileEntity extends BaseTileEntity implements ITickable, IMac
 
 	public static Taam.MACHINE_META getInfo(int meta) {
 		Taam.MACHINE_META[] values = Taam.MACHINE_META.values();
-		int ordinal = MathHelper.clamp(meta, 0, values.length);
+		int ordinal = MathHelper.clamp(meta, 0, values.length - 1);
 		return values[ordinal];
 	}
 

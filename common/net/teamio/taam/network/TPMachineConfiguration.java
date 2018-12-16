@@ -101,13 +101,13 @@ public final class TPMachineConfiguration implements IMessage {
 	@Override
 	public void fromBytes(ByteBuf buf) {
 		int modeOrd = buf.readInt();
-		//TODO: Check Range
-		mode = Action.values()[modeOrd];
+		Action[] values = Action.values();
+		mode = values[MathHelper.clamp(modeOrd, 0, values.length - 1)];
 		tileEntity = WorldCoord.readCoords(buf);
-		switch(mode) {
-		case ChangeBoolean:
-			id = buf.readByte();
-			boolValue = buf.readBoolean();
+		switch (mode) {
+			case ChangeBoolean:
+				id = buf.readByte();
+				boolValue = buf.readBoolean();
 			break;
 		default:
 		case ChangeInteger:
@@ -121,10 +121,10 @@ public final class TPMachineConfiguration implements IMessage {
 	public void toBytes(ByteBuf buf) {
 		buf.writeInt(mode.ordinal());
 		WorldCoord.writeCoords(buf, tileEntity);
-		switch(mode) {
-		case ChangeBoolean:
-			buf.writeByte(id);
-			buf.writeBoolean(boolValue);
+		switch (mode) {
+			case ChangeBoolean:
+				buf.writeByte(id);
+				buf.writeBoolean(boolValue);
 			break;
 		default:
 		case ChangeInteger:

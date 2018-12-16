@@ -28,7 +28,7 @@ public class MachineItemBlock extends ItemBlock {
 
 	@Override
 	public int getMetadata(int damage) {
-		return MathHelper.clamp(damage, 0, Taam.MACHINE_META.values().length);
+		return MathHelper.clamp(damage, 0, Taam.MACHINE_META.values().length - 1);
 	}
 
 	@Override

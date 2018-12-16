@@ -7,7 +7,6 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -17,8 +16,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.conveyors.IConveyorApplianceMetaInfo;
 import net.teamio.taam.util.TaamUtil;
@@ -41,7 +38,7 @@ public class ItemAppliance extends ItemBlock {
 	}
 
 	public IConveyorApplianceMetaInfo getInfo(int meta) {
-		int ordinal = MathHelper.clamp(meta, 0, values.length);
+		int ordinal = MathHelper.clamp(meta, 0, values.length - 1);
 		return values[ordinal];
 	}
 
