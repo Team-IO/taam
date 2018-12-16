@@ -19,6 +19,7 @@ buildscript {
 plugins {
 	id "com.github.breadmoirai.github-release" version "2.2.1"
 	id 'com.matthewprenger.cursegradle' version "1.1.2"
+	id "jacoco"
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
 
@@ -102,6 +103,13 @@ dependencies {
 test {
 	useJUnitPlatform()
 }
+
+jacocoTestReport {
+	reports {
+		xml.enabled true
+	}
+}
+check.dependsOn jacocoTestReport
 
 jar {
 	// Exclude Gimp files
