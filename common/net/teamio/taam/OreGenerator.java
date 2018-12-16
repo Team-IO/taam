@@ -19,6 +19,8 @@ import java.util.Random;
 
 public class OreGenerator implements IWorldGenerator {
 
+	List<GenerationInfo> gens;
+
 	public static class GenerationInfo {
 		public final WorldGenMinable gen;
 		public final int generateAbove;
@@ -36,8 +38,6 @@ public class OreGenerator implements IWorldGenerator {
 			this.maxDepositCount = maxDepositCount;
 		}
 	}
-
-	public List<GenerationInfo> gens;
 
 	public OreGenerator() {
 		reloadGenerationInfo();

@@ -23,9 +23,6 @@ import java.util.List;
 
 public class MachineMultipart implements IMultipart {
 
-	public MachineMultipart() {
-	}
-
 	@Override
 	public Block getBlock() {
 		return TaamMain.blockMachine;

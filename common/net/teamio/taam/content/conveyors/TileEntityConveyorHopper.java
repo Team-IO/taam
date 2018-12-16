@@ -119,22 +119,16 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IRedston
 			}
 			for (int i = 0; i < itemHandler.getSlots(); i++) {
 				ItemStack stack = itemHandler.extractItem(i, wholeStack ? 64 : 1, false);
-				if (InventoryUtils.isEmpty(stack)) {
-					continue;
+				if (!InventoryUtils.isEmpty(stack)) {
+					EntityItem item = new EntityItem(world, pos.getX() + 0.5, pos.getY() - 0.3, pos.getZ() + 0.5, stack);
+					item.motionX = 0;
+					item.motionY = 0;
+					item.motionZ = 0;
+					world.spawnEntity(item);
+
+					somethingEjected = true;
+					break;
 				}
-
-				/*
-				 * -----------
-				 */
-
-				EntityItem item = new EntityItem(world, pos.getX() + 0.5, pos.getY() - 0.3, pos.getZ() + 0.5, stack);
-				item.motionX = 0;
-				item.motionY = 0;
-				item.motionZ = 0;
-				world.spawnEntity(item);
-
-				somethingEjected = true;
-				break;
 			}
 		} else {
 
@@ -148,9 +142,6 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IRedston
 				// Simulate extracting first to see if there is anything in there
 				ItemStack stack = itemHandler.extractItem(i, wholeStack ? 64 : 1, true);
 				if (!InventoryUtils.isEmpty(stack)) {
-					/*
-					 * -----------
-					 */
 					ItemStack unableToInsert = ItemHandlerHelper.insertItemStacked(targetHandler, stack, false);
 
 					int amount = stack.getCount();

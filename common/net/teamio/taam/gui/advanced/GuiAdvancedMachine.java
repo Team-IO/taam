@@ -71,7 +71,7 @@ public class GuiAdvancedMachine extends GuiContainer {
 
 
 		int buttonsPerRow = this.buttonsPerRow;
-		if(buttonsPerRow > machineContainer.registeredApps.size()) {
+		if (buttonsPerRow > machineContainer.registeredApps.size()) {
 			buttonsPerRow = machineContainer.registeredApps.size();
 		}
 
@@ -146,18 +146,20 @@ public class GuiAdvancedMachine extends GuiContainer {
 
 	@Override
 	protected void actionPerformed(GuiButton button) {
+		if (button == null) return;
+
 		if (button instanceof AppButton) {
 			App app = ((AppButton) button).app;
 			switchApp(app);
 		} else if (button instanceof CustomButton) {
 			CustomButton cButton = (CustomButton) button;
-			if(cButton.eventHandler == null) {
+			if (cButton.eventHandler == null) {
 				Log.warn("Skipping button handler, as it is null.");
 			} else {
 				cButton.eventHandler.apply(cButton);
 			}
 		} else {
-			// TODO: do we even handle non-custom buttons?
+			Log.warn("Unknown button class found: {} This may be an error", button.getClass());
 		}
 	}
 

@@ -83,9 +83,6 @@ public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements
 		}
 	};
 
-	public TileEntityConveyorTrashCan() {
-	}
-
 	@Override
 	public String getName() {
 		return "tile.taam.productionline_attachable.trashcan.name";

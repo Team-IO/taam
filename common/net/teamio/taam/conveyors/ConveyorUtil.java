@@ -186,6 +186,9 @@ public class ConveyorUtil {
 	public static EnumFacing getHighspeedTransition(int slot, EnumFacing direction) {
 		EnumFacing transition = direction;
 		switch (direction) {
+			default:
+				// No transition, direction unchanged
+				break;
 			case NORTH:
 				transition = highSpeedTransition[0][slot];
 				break;

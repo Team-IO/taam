@@ -90,10 +90,6 @@ public final class TPMachineConfiguration implements IMessage {
 		return pack;
 	}
 
-	public TPMachineConfiguration() {
-		// Serialization only.
-	}
-
 	private WorldCoord tileEntity;
 	private boolean boolValue;
 	private int intValue;
