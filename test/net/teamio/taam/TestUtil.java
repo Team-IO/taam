@@ -1,19 +1,23 @@
 package net.teamio.taam;
 
+import com.builtbroken.mc.testing.junit.AbstractTest;
+import com.builtbroken.mc.testing.junit.VoltzTestRunner;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.teamio.taam.piping.IPipe;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import java.lang.reflect.Field;
 import java.util.Map;
 
 /**
- * Utility methods for unit test scenarios
+ * Utility methods for unit test scenarios and a test to verify these actually do what they should do.
  */
-public final class TestUtil {
-
-	private TestUtil() {
-		// Utility Class
-	}
+@RunWith(VoltzTestRunner.class)
+public final class TestUtil extends AbstractTest {
 
 	@SuppressWarnings("unchecked")
 	public static <T> Capability<T> getCapability(Class<T> capabilityClass) {
@@ -34,6 +38,25 @@ public final class TestUtil {
 		} catch (IllegalAccessException e) {
 			throw new IllegalStateException("Failed to read field 'providers' from CapabilityManager");
 		}
+	}
+
+	public static void registerCapabilities() {
+		if (CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY == null) {
+			CapabilityFluidHandler.register();
+
+			TaamMain.registerCapabilities();
+
+			CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY = TestUtil.getCapability(IFluidHandler.class);
+			Taam.CAPABILITY_PIPE = TestUtil.getCapability(IPipe.class);
+		}
+	}
+
+	@Test
+	public void testRegisteredCapabilities() {
+		registerCapabilities();
+
+		assertNotNull(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY);
+		assertNotNull(Taam.CAPABILITY_PIPE);
 	}
 
 }

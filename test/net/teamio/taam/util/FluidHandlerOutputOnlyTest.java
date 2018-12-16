@@ -6,7 +6,6 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.annotation.Nullable;
@@ -60,13 +59,13 @@ public class FluidHandlerOutputOnlyTest extends AbstractTest {
 	}
 
 	public void testDrain_maxDrain() {
-		handlerOutputOnly.drain( 300, true);
+		handlerOutputOnly.drain(300, true);
 
 		assertEquals(0, hd.amountRequested);
 		assertFalse(hd.doFlag);
 
 
-		handlerOutputOnly.drain( 200, false);
+		handlerOutputOnly.drain(200, false);
 
 		assertEquals(0, hd.amountRequested);
 		assertFalse(hd.doFlag);

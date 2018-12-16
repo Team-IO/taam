@@ -485,7 +485,28 @@ public class TaamMain {
 		/*
 		 * Capabilities
 		 */
+		registerCapabilities();
+		validateCapabilities();
 
+		/*
+		 * Sounds
+		 */
+
+		soundSipAh = new SoundEvent(Taam.SOUND_SIP_AH);
+		soundSipAh.setRegistryName(Taam.SOUND_SIP_AH);
+		GameRegistry.register(soundSipAh);
+
+		network = NetworkRegistry.INSTANCE.newSimpleChannel(Taam.CHANNEL_NAME);
+		proxy.registerPackets(network);
+
+
+		/*
+		Early registration of model loader
+		 */
+		proxy.registerModelLoader();
+	}
+
+	public static void registerCapabilities() {
 		CapabilityManager.INSTANCE.register(IPipe.class, new Capability.IStorage<IPipe>() {
 
 			@Override
@@ -544,11 +565,13 @@ public class TaamMain {
 			public void readNBT(Capability<IAdvancedMachineGUI> capability, IAdvancedMachineGUI instance, EnumFacing side, NBTBase nbt) {
 			}
 		}, IAdvancedMachineGUI.class);
+	}
 
-		/*
-		 * Check if registry of capabilities was successful
-		 */
-		if(Taam.CAPABILITY_PIPE == null) {
+	/**
+	 * Check if registry of capabilities was successful
+	 */
+	public static void validateCapabilities() {
+		if (Taam.CAPABILITY_PIPE == null) {
 			throw new RuntimeException("Registering a capability failed (Taam.CAPABILITY_PIPE - IPipe) - field was null after registry.");
 		}
 		if(Taam.CAPABILITY_RENDER_TANK == null) {
@@ -560,27 +583,6 @@ public class TaamMain {
 		if(Taam.CAPABILITY_ADVANCED_GUI == null) {
 			throw new RuntimeException("Registering a capability failed (Taam.CAPABILITY_ADVANCED_GUI - IAdvancedMachineGUI) - field was null after registry.");
 		}
-
-		/*
-		 * Sounds
-		 */
-
-		soundSipAh = new SoundEvent(Taam.SOUND_SIP_AH);
-		soundSipAh.setRegistryName(Taam.SOUND_SIP_AH);
-		GameRegistry.register(soundSipAh);
-
-		/*
-		 * Network
-		 */
-
-		network = NetworkRegistry.INSTANCE.newSimpleChannel(Taam.CHANNEL_NAME);
-		proxy.registerPackets(network);
-
-
-		/*
-		Early registration of model loader
-		 */
-		proxy.registerModelLoader();
 	}
 
 	@EventHandler
