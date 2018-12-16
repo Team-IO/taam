@@ -5,10 +5,20 @@ buildscript {
 			name = "forge"
 			url = "http://files.minecraftforge.net/maven"
 		}
+		maven {
+			url "https://plugins.gradle.org/m2/"
+		}
 	}
 	dependencies {
 		classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
+		// Used for com.github.breadmoirai.github-release:
+		classpath 'com.squareup.okhttp3:okhttp:3.12.0'
+		classpath 'com.j256.simplemagic:simplemagic:1.14'
 	}
+}
+plugins {
+	id "com.github.breadmoirai.github-release" version "2.2.1"
+	id 'com.matthewprenger.cursegradle' version "1.1.2"
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
 
@@ -38,6 +48,10 @@ version = config.mod_version
 group = config.mod_group
 archivesBaseName = "${config.mod_name}-${config.mc_version}"
 
+sourceCompatibility = targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
+compileJava {
+	sourceCompatibility = targetCompatibility = '1.8'
+}
 
 if(System.env.BUILD_NUMBER)
 	version = "${config.mod_version}.b${System.env.BUILD_NUMBER}"
@@ -162,4 +176,63 @@ static boolean isValidMtlLine(String line) {
 		return false
 	}
 	return true
+}
+
+curseforge {
+	// Store this in $GRADLE_USER_HOME/gradle.properties
+	apiKey = getProperty('curseforge.apikey')
+	project {
+		id = '238424'
+		changelog = {
+			File f = file('build/changelog.md')
+			if (f.exists()) {
+				return "https://github.com/Team-IO/taam/releases/tag/${config.mc_version}-${config.mod_version}\n"
+				+ f.readLines().join("\n")
+			}
+			return "https://github.com/Team-IO/taam/releases/tag/${config.mc_version}-${config.mod_version}"
+		}
+		changelogType = 'markdown'
+		releaseType = "${config.release_type}"
+		addGameVersion "${config.mc_version}"
+		FilenameFilter filter = { dir, filename -> filename.contains("${config.mc_version}-${config.mod_version}.jar") }
+		mainArtifact({
+			jar.destinationDir.listFiles(filter).first()
+		}) {
+			displayName = "${config.mod_version} for MC ${config.mc_version}"
+		}
+
+		relations {
+			optionalDependency 'jei'
+			optionalDependency 'mcmultipart'
+		}
+	}
+	options {
+		// debug = false - set this to true for testing
+
+		// Don't recompile, we only want to publish!
+		forgeGradleIntegration = false
+	}
+}
+
+githubRelease {
+	// Store this in $GRADLE_USER_HOME/gradle.properties
+	token getProperty('github.token').toString()
+	owner "Team-IO"
+	repo "taam"
+	tagName "${config.mc_version}-${config.mod_version}" // by default this is set to "v${project.version}"
+	targetCommitish "${config.release_branch}"
+	releaseName "${config.mod_version} for MC ${config.mc_version}"
+	body {
+		File f = file('build/changelog.md')
+		if (f.exists()) {
+			return f.readLines().join("\n")
+		}
+		return ""
+	}
+	draft false // set this to true for testing
+	prerelease "${config.release_type}" == "alpha" || "${config.release_type}" == "beta"
+	FilenameFilter filter = { dir, filename -> filename.contains("${config.mc_version}-${config.mod_version}.jar") }
+	releaseAssets = {
+		jar.destinationDir.listFiles(filter).first()
+	}
 }

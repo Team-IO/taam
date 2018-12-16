@@ -79,7 +79,11 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 
 	public static final ResourceLocation conveyorTextures = new ResourceLocation("Taam", "blocks/conveyor");
 
-	public static boolean failureFreeBlockHightlight = true;
+	/**
+	 * This field is used to stop rendering block highlight operations on the first exception.
+	 * This is used to prevent the game being unresponsive due to continuous exceptions being written to the log.
+	 */
+	public static boolean failureFreeBlockHighlight = true;
 
 	/**
 	 * Function for fetching texture sprites.
@@ -120,7 +124,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 	@SubscribeEvent
 	public void onDrawBlockHighlight(DrawBlockHighlightEvent event) {
 		// If we crash, turn of Block Highlight drawing to prevent getting locked out of a world
-		if (!failureFreeBlockHightlight) {
+		if (!failureFreeBlockHighlight) {
 			return;
 		}
 		RayTraceResult target = event.getTarget();
@@ -157,7 +161,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 						EnumFacing dir = cte.getNextSlot(slot);
 
 						// General Position of the slot
-						double x = pos.getX() + Math.floor(slot / 3) * ConveyorUtil.oneThird;
+						double x = pos.getX() + Math.floor(slot / 3f) * ConveyorUtil.oneThird;
 						double y = pos.getY() + cte.getVerticalPosition(slot);
 						double z = pos.getZ() + slot % 3 * ConveyorUtil.oneThird;
 
@@ -200,7 +204,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 
 			} catch (Exception e) {
 				Log.error("Error drawing block highlight for a tile entity. Disabling block highlight drawing to prevent you from crashing - This is an error, please report!", e);
-				failureFreeBlockHightlight = false;
+				failureFreeBlockHighlight = false;
 			}
 		}
 	}
@@ -481,7 +485,6 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 
 				for (int i = 0; i < 4; i++) {
 					ItemWrapper wrapper = aligner.clientRenderCache[i];
-					int rotateDown = 0;
 					if (wrapper == null) {
 						continue;
 					}
@@ -489,7 +492,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 						aligner.clientRenderCache[i] = null;
 						continue;
 					}
-					rotateDown = wrapper.movementProgress;
+					int rotateDown = wrapper.movementProgress;
 					if (rotateDown > conveyorSpeedsteps / 2) {
 						rotateDown = conveyorSpeedsteps - rotateDown;
 					}
@@ -527,8 +530,8 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 					GL11.glTranslated(-size / 2, 0, -size / 2);
 
 					// Flip down
-					GL11.glRotated((15 / animFrames) * rotateSide, 0, 1, 0);
-					GL11.glRotated(-(90 / animFrames) * rotateDown, 1, 0, 0);
+					GL11.glRotated((15f / animFrames) * rotateSide, 0, 1, 0);
+					GL11.glRotated(-(90f / animFrames) * rotateDown, 1, 0, 0);
 					GlStateManager.disableLighting();
 					GlStateManager.disableTexture2D();
 
@@ -927,60 +930,74 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		/*
 		 * Check if the block actually wants rendering
 		 */
-		if (tileEntity.shouldRenderItemsDefault()) {
+		if (!tileEntity.shouldRenderItemsDefault()) return;
+
+		// Check early if any wrapper is non-empty and skip rendering altogether
+		boolean allEmpty = true;
+		for (int slot = 0; slot < 9; slot++) {
+			ItemWrapper wrapper = tileEntity.getSlot(slot);
+
+			if (wrapper != null && !wrapper.isEmpty()) {
+				allEmpty = false;
+				break;
+			}
+		}
+		if (allEmpty) return;
+
+		// Render items on conveyor slots
+
+		GL11.glPushMatrix();
+		GL11.glTranslated(x, y, z);
+
+		setupDefaultGL();
+
+		bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+		float posYOffset = 0.15f;
+		if (oscillate) {
+			posYOffset += (float) (rotSin * 0.04);
+		}
+		float speedsteps = tileEntity.getSpeedsteps();
+
+		for (int slot = 0; slot < 9; slot++) {
+			ItemWrapper wrapper = tileEntity.getSlot(slot);
+
+			if (wrapper == null || wrapper.isEmpty()) {
+				continue;
+			}
+			ItemStack itemStack = wrapper.itemStack;
+
+			int movementProgress = wrapper.movementProgress;
+			if (movementProgress < 0) {
+				movementProgress = 0;
+			}
+
+			EnumFacing renderDirection = tileEntity.getNextSlot(slot);
+
+			float progress = movementProgress;
+			if (wrapper.isRenderingInterpolated()) {
+				progress += partialTicks;
+			} else {
+				// Interpolation since last frame already advanced to almost 1, so we prevent stutter by "skipping ahead"
+				progress += 1;
+			}
+			progress /= speedsteps;
+			float posX = (float) ConveyorUtil.getItemPositionX(slot, progress, renderDirection);
+			float posZ = (float) ConveyorUtil.getItemPositionZ(slot, progress, renderDirection);
+			float posY = tileEntity.getVerticalPosition(slot) + renderDirection.getFrontOffsetY() * progress;
 
 			GL11.glPushMatrix();
-			GL11.glTranslated(x, y, z);
+			GL11.glTranslatef(posX, posYOffset + posY, posZ);
+			GL11.glScalef(itemScaleFactor, itemScaleFactor, itemScaleFactor);
 
-			setupDefaultGL();
-
-			bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-			float posYOffset = 0.15f;
-			if (oscillate) {
-				posYOffset += (float) (rotSin * 0.04);
-			}
-			float speedsteps = tileEntity.getSpeedsteps();
-
-			for (int slot = 0; slot < 9; slot++) {
-				ItemWrapper wrapper = tileEntity.getSlot(slot);
-
-				ItemStack itemStack;
-				if (wrapper == null || wrapper.isEmpty() || (itemStack = wrapper.itemStack) == null) {
-					continue;
-				}
-
-				int movementProgress = wrapper.movementProgress;
-				if (movementProgress < 0) {
-					movementProgress = 0;
-				}
-
-				EnumFacing renderDirection = tileEntity.getNextSlot(slot);
-
-				float progress = movementProgress;
-				if (wrapper.isRenderingInterpolated()) {
-					progress += partialTicks;
-				} else {
-					// Interpolation since last frame already advanced to almost 1, so we prevent stutter by "skipping ahead"
-					progress += 1;
-				}
-				progress /= speedsteps;
-				float posX = (float) ConveyorUtil.getItemPositionX(slot, progress, renderDirection);
-				float posZ = (float) ConveyorUtil.getItemPositionZ(slot, progress, renderDirection);
-				float posY = tileEntity.getVerticalPosition(slot) + renderDirection.getFrontOffsetY() * progress;
-
-				GL11.glPushMatrix();
-				GL11.glTranslatef(posX, posYOffset + posY, posZ);
-				GL11.glScalef(itemScaleFactor, itemScaleFactor, itemScaleFactor);
-
-				IBakedModel model = ri.getItemModelMesher().getItemModel(itemStack);
-				ri.renderItem(itemStack, model);
-
-				GL11.glPopMatrix();
-			}
-			tearDownDefaultGL();
+			IBakedModel model = ri.getItemModelMesher().getItemModel(itemStack);
+			ri.renderItem(itemStack, model);
 
 			GL11.glPopMatrix();
 		}
+		tearDownDefaultGL();
+
+		GL11.glPopMatrix();
+
 
 	}
 }
