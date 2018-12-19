@@ -433,8 +433,8 @@ public class TileEntityConveyor extends BaseTileEntity implements IRotatable, IC
 
 		//TODO: Cleanup, move to base block with the rest of the hand logic
 
-		boolean playerHasWrenchInMainhand = WrenchUtil.playerHasWrenchInHand(player, EnumHand.MAIN_HAND);
-		boolean playerHasWrench = playerHasWrenchInMainhand || (player.isSneaking() && WrenchUtil.playerHasWrenchInHand(player, EnumHand.OFF_HAND));
+		boolean playerHasWrenchInMainhand = WrenchUtil.playerHoldsWrench(player, EnumHand.MAIN_HAND);
+		boolean playerHasWrench = playerHasWrenchInMainhand || (player.isSneaking() && WrenchUtil.playerHoldsWrench(player, EnumHand.OFF_HAND));
 		if (playerHasWrench) {
 			boolean playerIsSneaking = player.isSneaking() && playerHasWrenchInMainhand;
 			if (playerIsSneaking) {

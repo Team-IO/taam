@@ -12,6 +12,24 @@ import net.teamio.taam.network.TPAdvancedGuiAppData;
 
 import javax.annotation.Nonnull;
 
+/**
+ * An app for the advanced GUI.
+ * Wraps screen-like elements that can be switched seamlessly
+ * when using {@link ContainerAdvancedMachine} and {@link GuiAdvancedMachine}.
+ * Switch apps using {@link AppButton}.
+ * <p>
+ * Machines have to expose the {@link net.teamio.taam.Taam#CAPABILITY_ADVANCED_GUI}
+ * which allows them to set up the supported apps.
+ * Use The mod GUI ID {@literal 2} to open an advanced GUI screen, e.g. (in onBlockActivated):
+ * {@code player.openGui(TaamMain.instance, 2, world, pos.getX(), pos.getY(), pos.getZ());}
+ * <p>
+ * Subclassing: Create an {@link AppGui} instance (subclass) in {@link #createGui()}.
+ * Implement your custom features in the {@link App} subclass, communicated with the GUI on your own terms,
+ * then use {@link #sendPacket(NBTTagCompound)} and {@link #onPacket(NBTTagCompound)}
+ * to communicate with the backend instance of your app.
+ *
+ * @author Oliver Kahrmann
+ */
 public abstract class App implements IWorldNameable {
 
 	public final ContainerAdvancedMachine container;

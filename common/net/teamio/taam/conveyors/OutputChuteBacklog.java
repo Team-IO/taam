@@ -8,6 +8,17 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.teamio.taam.util.InventoryUtils;
 
+/**
+ * Implementation of the output chute logic that has an internal backlog of items.
+ * This is useful for processing machines, as they can directly put their backlog in here.
+ * <p>
+ * The backlog array is automatically set to null once output is complete.
+ * <p>
+ * Use writeToNBT/readFromNBT to store the backlog. Only the 'backlog' tag is used,
+ * so you can re-utilize the same tag compound used for the rest of a machine.
+ *
+ * @author Oliver Kahrmann
+ */
 public class OutputChuteBacklog extends OutputChute {
 	public ItemStack[] backlog;
 

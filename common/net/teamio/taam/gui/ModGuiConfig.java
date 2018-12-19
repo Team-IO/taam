@@ -10,6 +10,12 @@ import net.teamio.taam.Taam;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Config GUI implementation for Taam.
+ * See {@link GuiFactory}.
+ *
+ * @author Oliver Kahrmann
+ */
 public class ModGuiConfig extends GuiConfig {
 
 	public ModGuiConfig(GuiScreen guiScreen) {
@@ -19,7 +25,7 @@ public class ModGuiConfig extends GuiConfig {
 	}
 
 	private static List<IConfigElement> getElements() {
-		List<IConfigElement> elements = new ArrayList<IConfigElement>();
+		List<IConfigElement> elements = new ArrayList<>();
 		// Create config elements for all sections mentioned in Config
 		for (String category : Config.guiSections) {
 			ConfigElement cfgEl = new ConfigElement(Config.config.getCategory(category));

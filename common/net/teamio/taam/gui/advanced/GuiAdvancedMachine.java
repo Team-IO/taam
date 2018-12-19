@@ -17,6 +17,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Gui class for the advanced gui.
+ * Handles communication with a {@link ContainerAdvancedMachine} and handles custom button classes.
+ * Currently supported: {@link AppButton}, {@link CustomButton}, {@link FilterSlot}.
+ * Regular {@link GuiButton} instances don't work, as they only have a button ID and we don't have any matching logic in this gui class.
+ * <p>
+ * Also draws the home screen and the app buttons when no app is active.
+ *
+ * @author Oliver Kahrmann
+ */
 public class GuiAdvancedMachine extends GuiContainer {
 
 	public static final ResourceLocation guiTexture = new ResourceLocation("taam", "textures/gui/advanced.png");
@@ -230,7 +240,7 @@ public class GuiAdvancedMachine extends GuiContainer {
 		this.drawHoveringText(text, mouseX - guiLeft, mouseY - guiTop);
 	}
 
-	private static final List<String> textList = new ArrayList<String>();
+	private static final List<String> textList = new ArrayList<>();
 
 	public void drawTooltipTranslated(String unlocalized, int mouseX, int mouseY) {
 		textList.clear();

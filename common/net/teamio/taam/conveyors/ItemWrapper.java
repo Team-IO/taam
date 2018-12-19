@@ -14,7 +14,7 @@ import javax.annotation.Nullable;
  * Wrapper for item stacks on the conveyor system. Keeps track of movement,
  * processing and blocking.
  *
- * @author oliverkahrmann
+ * @author Oliver Kahrmann
  */
 public class ItemWrapper implements INBTSerializable<NBTTagCompound> {
 	public static final ItemWrapper EMPTY = new ItemWrapper(ItemStack.EMPTY) {

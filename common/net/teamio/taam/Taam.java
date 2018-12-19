@@ -32,9 +32,9 @@ import net.teamio.taam.util.TaamUtil;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * This is the main constants class for Taam.
@@ -231,10 +231,6 @@ public final class Taam {
 			this.config_name = config_name;
 		}
 
-		public static String[] valuesAsString() {
-			return TaamUtil.enumValuesAsString(values());
-		}
-
 		@Nonnull
 		@Override
 		public String getName() {
@@ -279,10 +275,6 @@ public final class Taam {
 		creativecache,
 		creativewell;
 
-		public static String[] valuesAsString() {
-			return TaamUtil.enumValuesAsString(values());
-		}
-
 		@Nonnull
 		@Override
 		public String getName() {
@@ -308,10 +300,6 @@ public final class Taam {
 		chute,
 		elevator;
 
-		public static String[] valuesAsString() {
-			return TaamUtil.enumValuesAsString(values());
-		}
-
 		@Nonnull
 		@Override
 		public String getName() {
@@ -323,10 +311,6 @@ public final class Taam {
 		itembag,
 		trashcan;
 
-		public static String[] valuesAsString() {
-			return TaamUtil.enumValuesAsString(values());
-		}
-
 		@Nonnull
 		@Override
 		public String getName() {
@@ -337,10 +321,6 @@ public final class Taam {
 	public enum BLOCK_PRODUCTIONLINE_APPLIANCE_META implements IConveyorApplianceMetaInfo {
 		sprayer,
 		aligner;
-
-		public static String[] valuesAsString() {
-			return TaamUtil.enumValuesAsString(values());
-		}
 
 		@Nonnull
 		@Override
@@ -371,11 +351,7 @@ public final class Taam {
 	}
 
 	public enum ITEM_TOOL_META {
-		saw;
-
-		public static String[] valuesAsString() {
-			return TaamUtil.enumValuesAsString(values());
-		}
+		saw
 	}
 
 	public enum ITEM_MATERIAL_META {
@@ -407,11 +383,7 @@ public final class Taam {
 		pigment_lightBlue,
 		pigment_magenta,
 		pigment_orange,
-		pigment_white;
-
-		public static String[] valuesAsString() {
-			return TaamUtil.enumValuesAsString(values());
-		}
+		pigment_white
 	}
 
 	public enum ITEM_PART_META {
@@ -432,11 +404,7 @@ public final class Taam {
 		copper_wire,
 		sieve,
 		redirector,
-		wooden_band;
-
-		public static String[] valuesAsString() {
-			return TaamUtil.enumValuesAsString(values());
-		}
+		wooden_band
 	}
 
 	public enum FLUID_DYE_META {
@@ -455,11 +423,7 @@ public final class Taam {
 		lightBlue,
 		magenta,
 		orange,
-		white;
-
-		public static String[] valuesAsString() {
-			return TaamUtil.enumValuesAsString(values());
-		}
+		white
 	}
 
 	public enum FLUID_MATERIAL_META {
@@ -475,10 +439,6 @@ public final class Taam {
 			this.registryName = registryName;
 			this.viscosity = viscosity;
 			this.density = density;
-		}
-
-		public static String[] valuesAsString() {
-			return TaamUtil.enumValuesAsString(values());
 		}
 	}
 
@@ -565,7 +525,7 @@ public final class Taam {
 		 * Static stuff
 		 */
 
-		private static final Map<String, MACHINE_META> nameToInstanceMap = new HashMap<>();
+		private static final Map<String, MACHINE_META> nameToInstanceMap = new ConcurrentHashMap<>();
 
 		static {
 			for (MACHINE_META value : values()) {
@@ -575,10 +535,6 @@ public final class Taam {
 
 		public static IMachineMetaInfo fromId(String id) {
 			return nameToInstanceMap.get(id);
-		}
-
-		public static String[] valuesAsString() {
-			return TaamUtil.enumValuesAsString(values());
 		}
 	}
 

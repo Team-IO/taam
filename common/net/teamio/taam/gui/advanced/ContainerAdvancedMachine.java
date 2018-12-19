@@ -5,6 +5,7 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.teamio.taam.Log;
@@ -12,10 +13,18 @@ import net.teamio.taam.conveyors.filters.HidableSlot;
 import net.teamio.taam.network.TPAdvancedGuiAppData;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Container for the advanced GUI. Used with {@link GuiAdvancedMachine}.
+ * Handles registration of {@link App}s and allows them to communicate between backend and frontend
+ * (see {@link App#sendPacket(NBTTagCompound)} and {@link App#onPacket(NBTTagCompound)}.
+ *
+ * @author Oliver Kahrmann
+ */
 public class ContainerAdvancedMachine extends Container {
 
 	public final IAdvancedMachineGUI machine;
@@ -33,7 +42,7 @@ public class ContainerAdvancedMachine extends Container {
 	/**
 	 * Internal list of registered apps.
 	 */
-	private final List<App> apps = new ArrayList<App>();
+	private final List<App> apps = new ArrayList<>();
 	/**
 	 * Public, unmodifiable access to the registered apps.
 	 */
@@ -68,9 +77,9 @@ public class ContainerAdvancedMachine extends Container {
 	/**
 	 * {@link #addSlotToContainer(Slot)} for access from apps.
 	 *
-	 * @param slot
+	 * @param slot The slot to add
 	 */
-	public void addSlot(Slot slot) {
+	public void addSlot(@Nonnull Slot slot) {
 		addSlotToContainer(slot);
 	}
 
@@ -91,7 +100,7 @@ public class ContainerAdvancedMachine extends Container {
 	}
 
 	@Override
-	public boolean canInteractWith(EntityPlayer playerIn) {
+	public boolean canInteractWith(@Nonnull EntityPlayer playerIn) {
 		return true;
 	}
 
@@ -118,10 +127,10 @@ public class ContainerAdvancedMachine extends Container {
 	 * {@link App#App(ContainerAdvancedMachine)}. You do not need to call this
 	 * yourself.
 	 *
-	 * @param app
-	 * @return
+	 * @param app A new app that is not already registered.
+	 * @return A free app ID
 	 */
-	public int register(App app) {
+	public int register(@Nonnull App app) {
 		apps.add(app);
 		return nextAppId++;
 	}
@@ -129,9 +138,9 @@ public class ContainerAdvancedMachine extends Container {
 	/**
 	 * Switches apps & updates slot visibility where possible.
 	 *
-	 * @param app
+	 * @param app The app to switch for. Pass null to hide all hidable slots.
 	 */
-	public void switchApp(App app) {
+	public void switchApp(@Nullable App app) {
 		this.activeApp = app;
 		for (Slot slot : inventorySlots) {
 			if (slot instanceof HidableSlot) {

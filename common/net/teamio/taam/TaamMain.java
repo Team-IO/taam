@@ -85,8 +85,10 @@ import net.teamio.taam.machines.MachineItemBlock;
 import net.teamio.taam.machines.MachineTileEntity;
 import net.teamio.taam.piping.IPipe;
 import net.teamio.taam.rendering.TankRenderInfo;
+import net.teamio.taam.util.TaamUtil;
 import org.apache.commons.lang3.NotImplementedException;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
@@ -218,6 +220,7 @@ public class TaamMain {
 
 		Config.init(event.getSuggestedConfigurationFile());
 		creativeTab = new CreativeTabs(Taam.MOD_ID) {
+			@Nonnull
 			@Override
 			@SideOnly(Side.CLIENT)
 			public ItemStack createIcon() {
@@ -263,19 +266,19 @@ public class TaamMain {
 
 		registerBlock(
 				blockMachines = new BlockMachines(),
-				new ItemMultiTexture(blockMachines, blockMachines, Taam.BLOCK_MACHINES_META.valuesAsString()),
+				new ItemMultiTexture(blockMachines, blockMachines, TaamUtil.enumValuesAsString(Taam.BLOCK_MACHINES_META.values())),
 				Taam.BLOCK_MACHINES
 		);
 
 		registerBlock(
 				blockProductionLine = new BlockProductionLine(),
-				new ItemProductionLine(blockProductionLine, Taam.BLOCK_PRODUCTIONLINE_META.valuesAsString()),
+				new ItemProductionLine(blockProductionLine, TaamUtil.enumValuesAsString(Taam.BLOCK_PRODUCTIONLINE_META.values())),
 				Taam.BLOCK_PRODUCTIONLINE
 		);
 
 		registerBlock(
 				blockProductionLineAttachable = new BlockProductionLineAttachable(),
-				new ItemAttachable(blockProductionLineAttachable, Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META.valuesAsString()),
+				new ItemAttachable(blockProductionLineAttachable, TaamUtil.enumValuesAsString(Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META.values())),
 				Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE
 		);
 
@@ -287,7 +290,7 @@ public class TaamMain {
 
 		registerBlock(
 				blockOre = new BlockOre(),
-				new ItemMultiTexture(blockOre, blockOre, Taam.BLOCK_ORE_META.valuesAsString()),
+				new ItemMultiTexture(blockOre, blockOre, TaamUtil.enumValuesAsString(Taam.BLOCK_ORE_META.values())),
 				Taam.BLOCK_ORE
 		);
 
@@ -307,8 +310,8 @@ public class TaamMain {
 		registerItem(itemWrench = new ItemWrench(), Taam.ITEM_WRENCH);
 		registerItem(itemSaw = new ItemTool(Taam.ITEM_TOOL_META.saw), Taam.ITEM_TOOL + "." + Taam.ITEM_TOOL_META.saw.name());
 
-		registerItem(itemMaterial = new ItemWithMetadata<Taam.ITEM_MATERIAL_META>("material", Taam.ITEM_MATERIAL_META.values(), null), Taam.ITEM_MATERIAL);
-		registerItem(itemPart = new ItemWithMetadata<Taam.ITEM_PART_META>("part", Taam.ITEM_PART_META.values(),
+		registerItem(itemMaterial = new ItemWithMetadata<>("material", Taam.ITEM_MATERIAL_META.values(), null), Taam.ITEM_MATERIAL);
+		registerItem(itemPart = new ItemWithMetadata<>("part", Taam.ITEM_PART_META.values(),
 				new ItemDelegate<Taam.ITEM_PART_META>() {
 					@Override
 					@SideOnly(Side.CLIENT)
@@ -320,7 +323,7 @@ public class TaamMain {
 						}
 					}
 				}), Taam.ITEM_PART);
-		registerItem(itemIngot = new ItemWithMetadata<Taam.BLOCK_ORE_META>("ingot", Taam.BLOCK_ORE_META.values(),
+		registerItem(itemIngot = new ItemWithMetadata<>("ingot", Taam.BLOCK_ORE_META.values(),
 				new ItemDelegate<Taam.BLOCK_ORE_META>() {
 					@Override
 					public boolean isValidMetadata(Taam.BLOCK_ORE_META meta) {
@@ -339,7 +342,7 @@ public class TaamMain {
 					}
 				}), Taam.ITEM_INGOT);
 
-		registerItem(itemDust = new ItemWithMetadata<Taam.BLOCK_ORE_META>("dust", Taam.BLOCK_ORE_META.values(),
+		registerItem(itemDust = new ItemWithMetadata<>("dust", Taam.BLOCK_ORE_META.values(),
 				new ItemDelegate<Taam.BLOCK_ORE_META>() {
 					@Override
 					public boolean isValidMetadata(Taam.BLOCK_ORE_META meta) {
@@ -379,7 +382,6 @@ public class TaamMain {
 			MultipartHandler.registerMultipartStuff();
 		}
 
-		Taam.MACHINE_META[] machine_meta_values = Taam.MACHINE_META.values();
 		/*
 		 * Wrapper block for machines
 		 */
@@ -402,6 +404,7 @@ public class TaamMain {
 		 * Fluids
 		 */
 
+		//TODO: Move this to the config
 		boolean registerFluidBlocks = true;
 
 		Taam.FLUID_DYE_META[] fluidsDyeValues = Taam.FLUID_DYE_META.values();
@@ -415,8 +418,9 @@ public class TaamMain {
 
 			if (registerFluidBlocks) {
 				BlockFluidClassic fluidBlock = new BlockFluidClassic(fluidsDye[i], Material.WATER) {
+					@SuppressWarnings("deprecation") // Deprecation: overriding/implementing is fine
 					@Override
-					public boolean shouldSideBeRendered(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
+					public boolean shouldSideBeRendered(@Nonnull IBlockState state, IBlockAccess world, BlockPos pos, @Nonnull EnumFacing side) {
 						IBlockState neighbor = world.getBlockState(pos.offset(side));
 						// Force rendering if there is a different block adjacent, not only a different material
 						if (neighbor.getBlock() != this) {
@@ -446,8 +450,9 @@ public class TaamMain {
 
 			if (registerFluidBlocks) {
 				BlockFluidFinite fluidBlock = new BlockFluidFinite(fluidsMaterial[i], Material.WATER) {
+					@SuppressWarnings("deprecation") // Deprecation: overriding/implementing is fine
 					@Override
-					public boolean shouldSideBeRendered(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
+					public boolean shouldSideBeRendered(@Nonnull IBlockState state, IBlockAccess world, BlockPos pos, @Nonnull EnumFacing side) {
 						IBlockState neighbor = world.getBlockState(pos.offset(side));
 						// Force rendering if there is a different block adjacent, not only a different material
 						if (neighbor.getBlock() != this) {

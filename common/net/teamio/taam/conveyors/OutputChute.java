@@ -10,6 +10,17 @@ import net.minecraftforge.items.ItemHandlerHelper;
 import net.teamio.taam.util.InventoryUtils;
 import net.teamio.taam.util.TaamUtil;
 
+import javax.annotation.Nullable;
+
+/**
+ * A generic implementation of output chute logic that delegates the actual output to a subclass.
+ * It automatically handles inventory and blockage detection.
+ * <p>
+ * A default implementation of the output logic designed for an array of item stacks (the backlog)
+ * is provided in {@link #chuteMechanicsOutput(World, BlockPos, IItemHandler, ItemStack[])}.
+ *
+ * @author Oliver Kahrmann
+ */
 public abstract class OutputChute {
 
 	protected IItemHandler outputInventory;
@@ -27,24 +38,22 @@ public abstract class OutputChute {
 	/**
 	 * Output the chute content.
 	 *
-	 * @param world
-	 * @param pos
-	 * @return Returns true if there were items transferred or there are still
-	 * items left.
+	 * @param world The destination world for output in item form
+	 * @param pos   Position to output to, usually one block below the chute.
+	 * @return true if it was able to output items, or unable but still has items left.
 	 */
 	public abstract boolean output(World world, BlockPos pos);
 
 	/**
 	 * Tries to output into the outputInventory, or drop down into the world
 	 *
-	 * @param world
-	 * @param oututPosition   Position to output to, usually one block below the chute.
+	 * @param world           The destination world for output in item form
+	 * @param outputPosition  Position to output to, usually one block below the chute.
 	 * @param outputInventory Output inventory. If null, will output to world.
-	 * @param backlog         The items to output.
-	 * @return true if it was able to output items, or unable but still has
-	 * items left.
+	 * @param backlog         The items to output. If null, nothing is done.
+	 * @return true if it was able to output items, or unable but still has items left.
 	 */
-	public static boolean chuteMechanicsOutput(World world, BlockPos oututPosition, IItemHandler outputInventory, ItemStack[] backlog) {
+	public static boolean chuteMechanicsOutput(World world, BlockPos outputPosition, @Nullable IItemHandler outputInventory, @Nullable ItemStack[] backlog) {
 		if (backlog == null) {
 			return false;
 		}
@@ -52,9 +61,9 @@ public abstract class OutputChute {
 		boolean wasAble = false;
 		boolean hasOutputLeft = false;
 		if (outputInventory == null) {
-			double entX = oututPosition.getX() + 0.5;
-			double entY = oututPosition.getY() + 0.7;
-			double entZ = oututPosition.getZ() + 0.5;
+			double entX = outputPosition.getX() + 0.5;
+			double entY = outputPosition.getY() + 0.7;
+			double entZ = outputPosition.getZ() + 0.5;
 
 			// Output to world
 			for (int i = 0; i < backlog.length; i++) {

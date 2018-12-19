@@ -171,7 +171,7 @@ public abstract class BaseBlock extends Block {
 		if (interactable != null) {
 			// All world interaction (perform action, open gui, etc.) is
 			// handled within the entity
-			boolean playerHasWrench = WrenchUtil.playerHasWrenchInHand(playerIn, hand);
+			boolean playerHasWrench = WrenchUtil.playerHoldsWrench(playerIn, hand);
 			boolean intercepted = interactable.onBlockActivated(worldIn, playerIn, hand, playerHasWrench, facing, hitX, hitY, hitZ);
 			if (intercepted) {
 				return true;
@@ -210,7 +210,7 @@ public abstract class BaseBlock extends Block {
 			if (interactable != null) {
 				// All world interaction (perform action, open gui, etc.) is
 				// handled within the entity
-				boolean playerHasWrench = WrenchUtil.playerHasWrenchInHand(playerIn, EnumHand.MAIN_HAND);
+				boolean playerHasWrench = WrenchUtil.playerHoldsWrench(playerIn, EnumHand.MAIN_HAND);
 				interactable.onBlockHit(worldIn, playerIn, playerHasWrench);
 			}
 		}

@@ -12,6 +12,8 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 import net.teamio.taam.util.InventoryUtils;
 
+import javax.annotation.Nonnull;
+
 public class ContainerConveyorSmallInventory extends Container {
 	protected final IItemHandler tileEntity;
 
@@ -30,7 +32,7 @@ public class ContainerConveyorSmallInventory extends Container {
 	}
 
 	@Override
-	public boolean canInteractWith(EntityPlayer player) {
+	public boolean canInteractWith(@Nonnull EntityPlayer player) {
 		return true;
 	}
 
@@ -46,6 +48,7 @@ public class ContainerConveyorSmallInventory extends Container {
 		}
 	}
 
+	@Nonnull
 	@Override
 	public ItemStack transferStackInSlot(EntityPlayer player, int slotID) {
 		ItemStack stack = ItemStack.EMPTY;

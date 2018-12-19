@@ -14,6 +14,11 @@ import net.teamio.taam.gui.advanced.ContainerAdvancedMachine;
 import net.teamio.taam.gui.advanced.GuiAdvancedMachine;
 import net.teamio.taam.gui.advanced.IAdvancedMachineGUI;
 
+/**
+ * Gui handler for the machine GUIs in Taam
+ *
+ * @author Oliver Kahrmann
+ */
 public class GuiHandler implements IGuiHandler {
 
 	@Override
@@ -56,7 +61,7 @@ public class GuiHandler implements IGuiHandler {
 				}
 
 				if (tileEntity instanceof BaseTileEntity) {
-					return new GuiConveyorSmallInventory<BaseTileEntity>(player.inventory, (BaseTileEntity) tileEntity, EnumFacing.UP);
+					return new GuiConveyorSmallInventory<>(player.inventory, (BaseTileEntity) tileEntity, EnumFacing.UP);
 				}
 				break;
 			case 1:// Entity

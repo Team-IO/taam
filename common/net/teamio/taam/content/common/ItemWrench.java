@@ -8,7 +8,6 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -18,8 +17,10 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.teamio.taam.TaamMain;
 import net.teamio.taam.util.WrenchUtil;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
@@ -49,13 +50,13 @@ public class ItemWrench extends Item {
 
 	@Override
 	public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player, Entity entity) {
-		if(player.isSneaking() && entity instanceof EntityLivingBase) {
-			EntityLivingBase entLiving = (EntityLivingBase)entity;
+		if (player.isSneaking() && entity instanceof EntityLivingBase) {
+			EntityLivingBase entLiving = (EntityLivingBase) entity;
 			entLiving.rotationYawHead = (entLiving.rotationYawHead + 180) % 360f;
 		} else {
 			entity.rotationYaw = (entity.rotationYaw + 180) % 360f;
 		}
-		entity.attackEntityFrom(new EntityDamageSource("taam.reconfigured", player), 3f);
+		entity.attackEntityFrom(TaamMain.ds_reconfigured, 3f);
 		return true;
 	}
 
@@ -72,6 +73,7 @@ public class ItemWrench extends Item {
 		return true;
 	}
 
+	@Nonnull
 	@Override
 	public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 		// This call is for vanilla blocks (mainly stairs). Chests & Furnace etc cannot be called by this.
