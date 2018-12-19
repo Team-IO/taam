@@ -1,6 +1,5 @@
 package net.teamio.taam.gui.advanced.apps;
 
-import com.google.common.base.Function;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
@@ -26,7 +25,6 @@ import org.lwjgl.opengl.GL11;
 public class AlignerSettingsGui extends AppGui {
 
 	public static final Drawable icon = new Drawable(new ResourceLocation("minecraft", "textures/items/stick.png"), 0, 0, 16, 16, 32, 32, 16, 16);
-	public static final ResourceLocation tex_machine_config = new ResourceLocation("taam", "textures/gui/machine_config.png");
 
 	private final CustomButton[] cbExcluding;
 	private final CustomButton[] cbMode;
@@ -70,15 +68,11 @@ public class AlignerSettingsGui extends AppGui {
 			cbExcluding[i] = new CustomButton(i, leftOff, verticalOffset + i * ySpace + 19, 10, 10, "Excluding");
 			cbExcluding[i].image = GuiAdvancedMachine.iconCheckbox;
 			cbExcluding[i].textHorizontalAlignment = 4;
-			cbExcluding[i].eventHandler = new Function<CustomButton, Boolean>() {
-
-				@Override
-				public Boolean apply(CustomButton input) {
-					ItemFilterCustomizable filter = app.aligner.filters[input.id];
-					filter.setExcluding(!filter.isExcluding());
-					onSettingsChange();
-					return true;
-				}
+			cbExcluding[i].eventHandler = input -> {
+				ItemFilterCustomizable filter = app.aligner.filters[input.id];
+				filter.setExcluding(!filter.isExcluding());
+				onSettingsChange();
+				return true;
 			};
 			gui.addButton(cbExcluding[i]);
 
@@ -87,15 +81,11 @@ public class AlignerSettingsGui extends AppGui {
 			 */
 			cbMode[i] = new CustomButton(i, buttonOffset, verticalOffset + i * ySpace + 2, 14, 14, null);
 			cbMode[i].image = GuiAdvancedMachine.iconMatchExact;
-			cbMode[i].eventHandler = new Function<CustomButton, Boolean>() {
-
-				@Override
-				public Boolean apply(CustomButton input) {
-					ItemFilterCustomizable filter = app.aligner.filters[input.id];
-					filter.mode = FilterMode.getNext(filter.mode);
-					onSettingsChange();
-					return true;
-				}
+			cbMode[i].eventHandler = input -> {
+				ItemFilterCustomizable filter = app.aligner.filters[input.id];
+				filter.mode = FilterMode.getNext(filter.mode);
+				onSettingsChange();
+				return true;
 			};
 			gui.addButton(cbMode[i]);
 
@@ -104,15 +94,11 @@ public class AlignerSettingsGui extends AppGui {
 			 */
 			cbCheckMeta[i] = new CustomButton(i, buttonOffset + 14, verticalOffset + i * ySpace - 3, 12, 12, null);
 			cbCheckMeta[i].image = GuiAdvancedMachine.iconCheckMeta;
-			cbCheckMeta[i].eventHandler = new Function<CustomButton, Boolean>() {
-
-				@Override
-				public Boolean apply(CustomButton input) {
-					ItemFilterCustomizable filter = app.aligner.filters[input.id];
-					filter.checkMeta = !filter.checkMeta;
-					onSettingsChange();
-					return true;
-				}
+			cbCheckMeta[i].eventHandler = input -> {
+				ItemFilterCustomizable filter = app.aligner.filters[input.id];
+				filter.checkMeta = !filter.checkMeta;
+				onSettingsChange();
+				return true;
 			};
 			gui.addButton(cbCheckMeta[i]);
 
@@ -121,15 +107,11 @@ public class AlignerSettingsGui extends AppGui {
 			 */
 			cbCheckNBT[i] = new CustomButton(i, buttonOffset + 14, verticalOffset + i * ySpace - 3 + 12, 12, 12, null);
 			cbCheckNBT[i].image = GuiAdvancedMachine.iconDontCheckNBT;
-			cbCheckNBT[i].eventHandler = new Function<CustomButton, Boolean>() {
-
-				@Override
-				public Boolean apply(CustomButton input) {
-					ItemFilterCustomizable filter = app.aligner.filters[input.id];
-					filter.checkNBT = !filter.checkNBT;
-					onSettingsChange();
-					return true;
-				}
+			cbCheckNBT[i].eventHandler = input -> {
+				ItemFilterCustomizable filter = app.aligner.filters[input.id];
+				filter.checkNBT = !filter.checkNBT;
+				onSettingsChange();
+				return true;
 			};
 			gui.addButton(cbCheckNBT[i]);
 

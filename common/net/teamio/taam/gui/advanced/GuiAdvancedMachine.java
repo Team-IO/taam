@@ -12,6 +12,7 @@ import net.teamio.taam.conveyors.filters.FilterSlot;
 import net.teamio.taam.gui.util.CustomButton;
 import net.teamio.taam.gui.util.Drawable;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -22,7 +23,7 @@ public class GuiAdvancedMachine extends GuiContainer {
 
 	protected final ContainerAdvancedMachine machineContainer;
 
-	private final List<AppButton> appButtons = new ArrayList<AppButton>();
+	private final List<AppButton> appButtons = new ArrayList<>();
 	private AppButton homeButton;
 
 	public static final Drawable iconCheckbox = new Drawable(guiTexture, 144, 0, 10, 10);
@@ -41,9 +42,9 @@ public class GuiAdvancedMachine extends GuiContainer {
 	public static final Drawable iconDontCheckNBT = new Drawable(guiTexture, 155, 30, 10, 10);
 
 
-	private final int buttonSpace = 60;
-	private final int buttonSize = 40;
-	private final int buttonsPerRow = 4;
+	private static final int buttonSpace = 60;
+	private static final int buttonSize = 40;
+	private static final int buttonsPerRow = 4;
 
 	public GuiAdvancedMachine(ContainerAdvancedMachine inventorySlotsIn) {
 		super(inventorySlotsIn);
@@ -53,9 +54,11 @@ public class GuiAdvancedMachine extends GuiContainer {
 	/**
 	 * Allow adding buttons or checkboxes from outside this class.
 	 *
-	 * @param button
+	 * @param button any {@link GuiButton} instance that is handled. Currently supported: {@link AppButton}, {@link CustomButton}, {@link FilterSlot}.
+	 *               Regular {@link GuiButton} instances don't work, as they only have a button ID and we don't have any matching logic in this gui class.
 	 */
-	public <T extends GuiButton> T addButton(T button) {
+	@Nonnull
+	public <T extends GuiButton> T addButton(@Nonnull T button) {
 		return super.addButton(button);
 	}
 
@@ -71,7 +74,7 @@ public class GuiAdvancedMachine extends GuiContainer {
 		this.guiTop /= 2;
 
 
-		int buttonsPerRow = this.buttonsPerRow;
+		int buttonsPerRow = GuiAdvancedMachine.buttonsPerRow;
 		if (buttonsPerRow > machineContainer.registeredApps.size()) {
 			buttonsPerRow = machineContainer.registeredApps.size();
 		}
@@ -122,7 +125,7 @@ public class GuiAdvancedMachine extends GuiContainer {
 	 * Switches to the given app. Updates the GUI & relays the switch to the
 	 * container below.
 	 *
-	 * @param app
+	 * @param app the target application. Displays the home screen when null is passed.
 	 */
 	public void switchApp(App app) {
 		if (app == null) {
@@ -237,7 +240,7 @@ public class GuiAdvancedMachine extends GuiContainer {
 		String[] split = localized.split("\\\\n");
 		Collections.addAll(textList, split);
 
-		this.drawHoveringText(textList, mouseX - guiLeft, mouseY - guiTop);
+		drawTooltip(textList, mouseX, mouseY);
 	}
 
 }

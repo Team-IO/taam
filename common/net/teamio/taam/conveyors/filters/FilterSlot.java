@@ -13,7 +13,8 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.client.config.GuiUtils;
 import net.teamio.taam.util.InventoryUtils;
 
-import java.util.Arrays;
+import javax.annotation.Nonnull;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -39,26 +40,24 @@ public class FilterSlot extends GuiButton {
 		}
 
 		ItemStack itemStack = filter.getEntries()[index];
-		boolean hasItemInHand = !InventoryUtils.isEmpty(mc.player.inventory.getItemStack());
+		boolean emptyHanded = InventoryUtils.isEmpty(mc.player.inventory.getItemStack());
 
-		if (!InventoryUtils.isEmpty(itemStack)) {
-			if (hovered) {
-				List<String> tooltip = getItemToolTip(mc, itemStack);
-				if (hasItemInHand) {
-					tooltip.add(0, "Click to replace filter");
-				} else {
-					tooltip.add(0, "Click to remove filter");
-				}
-				tooltip.add(1, "");
+		if (InventoryUtils.isEmpty(itemStack)) {
+			if (!emptyHanded) {
+				GuiUtils.drawHoveringText(Collections.singletonList("Click to set filter"), mouseX, mouseY, screen.width, screen.height, 300, mc.fontRenderer);
+			}
+		} else {
+			List<String> tooltip = getItemToolTip(mc, itemStack);
+			if (emptyHanded) {
+				tooltip.add(0, "Click to remove filter");
+			} else {
+				tooltip.add(0, "Click to replace filter");
+			}
+			tooltip.add(1, "");
 
-				FontRenderer font = itemStack.getItem().getFontRenderer(itemStack);
-				if (font == null) font = mc.fontRenderer;
-				GuiUtils.drawHoveringText(itemStack, tooltip, mouseX, mouseY, screen.width, screen.height, 300, font);
-			}
-		} else if (hovered) {
-			if (hasItemInHand) {
-				GuiUtils.drawHoveringText(Arrays.asList("Click to set filter"), mouseX, mouseY, screen.width, screen.height, 300, mc.fontRenderer);
-			}
+			FontRenderer font = itemStack.getItem().getFontRenderer(itemStack);
+			if (font == null) font = mc.fontRenderer;
+			GuiUtils.drawHoveringText(itemStack, tooltip, mouseX, mouseY, screen.width, screen.height, 300, font);
 		}
 
 		GlStateManager.disableLighting();
@@ -66,7 +65,7 @@ public class FilterSlot extends GuiButton {
 	}
 
 	@Override
-	public void drawButton(Minecraft mc, int mouseX, int mouseY, float partialTicks) {
+	public void drawButton(@Nonnull Minecraft mc, int mouseX, int mouseY, float partialTicks) {
 		if (!visible) return;
 
 		RenderHelper.enableGUIStandardItemLighting();
@@ -104,9 +103,9 @@ public class FilterSlot extends GuiButton {
 
 		for (int i = 0; i < list.size(); ++i) {
 			if (i == 0) {
-				list.set(i, itemStack.getRarity().color + (String) list.get(i));
+				list.set(i, itemStack.getRarity().color + list.get(i));
 			} else {
-				list.set(i, TextFormatting.GRAY + (String) list.get(i));
+				list.set(i, TextFormatting.GRAY + list.get(i));
 			}
 		}
 

@@ -11,6 +11,7 @@ import net.teamio.taam.Log;
 import net.teamio.taam.conveyors.filters.HidableSlot;
 import net.teamio.taam.network.TPAdvancedGuiAppData;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -141,6 +142,7 @@ public class ContainerAdvancedMachine extends Container {
 		}
 	}
 
+	@Nonnull
 	@Override
 	public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
 		// Advanced machine GUIs currently can't shift click, this prevents an infinite loop

@@ -26,7 +26,10 @@ public class AlignerSettings extends App {
 	}
 
 	@Override
-	public void setupSlots() {}
+	public void setupSlots() {
+		// Currently no slots - the filter slots are handled as buttons,
+		// as 1.12 introduced ItemStack.EMPTY and broke the fake slot implementation used before.
+	}
 
 	@Override
 	public void onPacket(NBTTagCompound tag) {
