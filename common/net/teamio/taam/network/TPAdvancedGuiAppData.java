@@ -67,8 +67,6 @@ public class TPAdvancedGuiAppData implements IMessage {
 			tag = packetBuffer.readCompoundTag();
 		} catch (IOException e) {
 			Log.error("Error reading network packet", e);
-		} finally {
-			packetBuffer.release();
 		}
 	}
 
