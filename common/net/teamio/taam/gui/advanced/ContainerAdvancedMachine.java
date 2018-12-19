@@ -4,6 +4,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.teamio.taam.Log;
@@ -19,7 +20,7 @@ public class ContainerAdvancedMachine extends Container {
 	public final IAdvancedMachineGUI machine;
 	public final boolean isRemote;
 	public final EntityPlayer player;
-	
+
 	/**
 	 * The app that is active in the GUI. Only for rendering & GUI purposes, all
 	 * other logic is handled by the apps themselves. (Server does not care
@@ -36,27 +37,27 @@ public class ContainerAdvancedMachine extends Container {
 	 * Public, unmodifiable access to the registered apps.
 	 */
 	public final List<App> registeredApps = Collections.unmodifiableList(apps);
-	
+
 	private int nextAppId = 0;
 	public static final int panelHeight = 160;
 	public static final int panelWidth = 340;
-	
+
 	public ContainerAdvancedMachine(EntityPlayer player, IAdvancedMachineGUI machine) {
-		if(player == null) {
+		if (player == null) {
 			throw new IllegalArgumentException("Attempted creation of " + getClass().getName() + " with null player.");
 		}
-		if(machine == null) {
+		if (machine == null) {
 			throw new IllegalArgumentException("Attempted creation of " + getClass().getName() + " with null machine.");
 		}
 		this.machine = machine;
 		this.player = player;
 		isRemote = player.world.isRemote;
-		
+
 		bindPlayerInventory(player.inventory);
-		
+
 		machine.setup(this);
-		
-		for(App app : apps) {
+
+		for (App app : apps) {
 			app.firstSlot = inventorySlots.size();
 			app.setupSlots();
 			app.slotCount = inventorySlots.size() - app.firstSlot;
@@ -65,7 +66,7 @@ public class ContainerAdvancedMachine extends Container {
 
 	/**
 	 * {@link #addSlotToContainer(Slot)} for access from apps.
-	 * 
+	 *
 	 * @param slot
 	 */
 	public void addSlot(Slot slot) {
@@ -97,9 +98,9 @@ public class ContainerAdvancedMachine extends Container {
 	public void onContainerClosed(EntityPlayer playerIn) {
 		machine.markDirty();
 	}
-	
+
 	public void onAppPacket(TPAdvancedGuiAppData message) {
-		if(message.appContainerId < 0 || message.appContainerId >= apps.size()) {
+		if (message.appContainerId < 0 || message.appContainerId >= apps.size()) {
 			Log.error("Received update packet for app {}. List size: {}. Packet was discarded.", message.appContainerId, apps.size());
 			return;
 		}
@@ -115,7 +116,7 @@ public class ContainerAdvancedMachine extends Container {
 	 * Registers a new App with this container. Called from the constructor
 	 * {@link App#App(ContainerAdvancedMachine)}. You do not need to call this
 	 * yourself.
-	 * 
+	 *
 	 * @param app
 	 * @return
 	 */
@@ -126,7 +127,7 @@ public class ContainerAdvancedMachine extends Container {
 
 	/**
 	 * Switches apps & updates slot visibility where possible.
-	 * 
+	 *
 	 * @param app
 	 */
 	public void switchApp(App app) {
@@ -140,4 +141,9 @@ public class ContainerAdvancedMachine extends Container {
 		}
 	}
 
+	@Override
+	public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
+		// Advanced machine GUIs currently can't shift click, this prevents an infinite loop
+		return ItemStack.EMPTY;
+	}
 }
