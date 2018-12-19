@@ -1,53 +1,131 @@
 package net.teamio.taam.conveyors.filters;
 
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.InventoryBasic;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.RenderItem;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.fml.client.config.GuiUtils;
 import net.teamio.taam.util.InventoryUtils;
 
-public class FilterSlot extends HidableSlot {
-	public static final IInventory emptyInventory = new InventoryBasic("[Null]", true, 0);
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Consumer;
+
+public class FilterSlot extends GuiButton {
 
 	public final ItemFilterCustomizable filter;
+	private final GuiScreen screen;
 	public final int index;
+	public Consumer<ItemStack> onChanged;
 
-	public FilterSlot(ItemFilterCustomizable filter, int index, int xPosition, int yPosition) {
-		super(emptyInventory, index, xPosition, yPosition);
+	public static final int size = 16;
+
+	public FilterSlot(ItemFilterCustomizable filter, GuiScreen screen, int index, int x, int y) {
+		super(0, x, y, size, size, null);
 		this.filter = filter;
+		this.screen = screen;
 		this.index = index;
 	}
 
-	@Override
-	public ItemStack decrStackSize(int amount) {
-		filter.getEntries()[index] = ItemStack.EMPTY;
-		this.onSlotChanged();
-		return ItemStack.EMPTY;
+	public void drawTooltip(Minecraft mc, int mouseX, int mouseY) {
+		if (!visible || !hovered) {
+			return;
+		}
+
+		ItemStack itemStack = filter.getEntries()[index];
+		boolean hasItemInHand = !InventoryUtils.isEmpty(mc.player.inventory.getItemStack());
+
+		if (!InventoryUtils.isEmpty(itemStack)) {
+			if (hovered) {
+				List<String> tooltip = getItemToolTip(mc, itemStack);
+				if (hasItemInHand) {
+					tooltip.add(0, "Click to replace filter");
+				} else {
+					tooltip.add(0, "Click to remove filter");
+				}
+				tooltip.add(1, "");
+
+				FontRenderer font = itemStack.getItem().getFontRenderer(itemStack);
+				if (font == null) font = mc.fontRenderer;
+				GuiUtils.drawHoveringText(itemStack, tooltip, mouseX, mouseY, screen.width, screen.height, 300, font);
+			}
+		} else if (hovered) {
+			if (hasItemInHand) {
+				GuiUtils.drawHoveringText(Arrays.asList("Click to set filter"), mouseX, mouseY, screen.width, screen.height, 300, mc.fontRenderer);
+			}
+		}
+
+		GlStateManager.disableLighting();
+		GlStateManager.enableDepth();
 	}
 
 	@Override
-	public boolean getHasStack() {
-		return !InventoryUtils.isEmpty(filter.getEntries()[index]);
+	public void drawButton(Minecraft mc, int mouseX, int mouseY, float partialTicks) {
+		if (!visible) return;
+
+		RenderHelper.enableGUIStandardItemLighting();
+		GlStateManager.enableRescaleNormal();
+
+		this.hovered = mouseX >= x && mouseY >= y && mouseX < x + width
+				&& mouseY < y + height;
+
+		if (hovered) {
+			GlStateManager.disableLighting();
+			GlStateManager.disableDepth();
+			GlStateManager.colorMask(true, true, true, false);
+			drawGradientRect(x, y, x + 16, y + 16, 0x80FFFFFF, 0x80FFFFFF);
+			GlStateManager.colorMask(true, true, true, true);
+			GlStateManager.enableLighting();
+			GlStateManager.enableDepth();
+		}
+
+		ItemStack itemStack = filter.getEntries()[index];
+
+		if (!InventoryUtils.isEmpty(itemStack)) {
+			RenderItem itemRender = mc.getRenderItem();
+
+			GlStateManager.enableDepth();
+			itemRender.zLevel = 100;
+			itemRender.renderItemAndEffectIntoGUI(mc.player, itemStack, x, y);
+			itemRender.renderItemOverlayIntoGUI(mc.fontRenderer, itemStack, x, y, null);
+		}
+
+		GlStateManager.disableLighting();
 	}
 
-	@Override
-	public ItemStack getStack() {
-		return filter.getEntries()[index];
+	public List<String> getItemToolTip(Minecraft mc, ItemStack itemStack) {
+		List<String> list = itemStack.getTooltip(mc.player, mc.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL);
+
+		for (int i = 0; i < list.size(); ++i) {
+			if (i == 0) {
+				list.set(i, itemStack.getRarity().color + (String) list.get(i));
+			} else {
+				list.set(i, TextFormatting.GRAY + (String) list.get(i));
+			}
+		}
+
+		return list;
 	}
 
-	@Override
-	public void putStack(ItemStack stack) {
+	public void clicked(Minecraft mc) {
+		ItemStack itemStack = mc.player.inventory.getItemStack();
+
 		ItemStack filterEntry;
-		if (InventoryUtils.isEmpty(stack)) {
+		if (InventoryUtils.isEmpty(itemStack)) {
 			filterEntry = ItemStack.EMPTY;
 		} else {
-			filterEntry = InventoryUtils.copyStack(stack, 1);
+			filterEntry = InventoryUtils.copyStack(itemStack, 1);
 		}
 		filter.getEntries()[index] = filterEntry;
-		this.onSlotChanged();
-	}
 
-	@Override
-	public int getSlotStackLimit() {
-		return 0;
+		if (onChanged != null) {
+			onChanged.accept(filterEntry);
+		}
 	}
 }

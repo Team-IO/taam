@@ -8,6 +8,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.config.GuiUtils;
 import net.teamio.taam.Config;
 import net.teamio.taam.Log;
+import net.teamio.taam.conveyors.filters.FilterSlot;
 import net.teamio.taam.gui.util.CustomButton;
 import net.teamio.taam.gui.util.Drawable;
 
@@ -158,6 +159,9 @@ public class GuiAdvancedMachine extends GuiContainer {
 			} else {
 				cButton.eventHandler.apply(cButton);
 			}
+		} else if (button instanceof FilterSlot) {
+			FilterSlot filterSlot = (FilterSlot) button;
+			filterSlot.clicked(mc);
 		} else {
 			Log.warn("Unknown button class found: {} This may be an error", button.getClass());
 		}
@@ -203,6 +207,19 @@ public class GuiAdvancedMachine extends GuiContainer {
 			drawCenteredString(fontRenderer, name, halfWidth, 10, 0xFFFFFF);
 		} else {
 			machineContainer.activeApp.gui.drawForeground(this, mouseX, mouseY);
+		}
+	}
+
+	@Override
+	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+		super.drawScreen(mouseX, mouseY, partialTicks);
+		renderHoveredToolTip(mouseX, mouseY);
+
+		for (GuiButton aButtonList : this.buttonList) {
+			if (aButtonList instanceof FilterSlot) {
+				FilterSlot filterSlot = (FilterSlot) aButtonList;
+				filterSlot.drawTooltip(mc, mouseX, mouseY);
+			}
 		}
 	}
 

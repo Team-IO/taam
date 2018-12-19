@@ -3,6 +3,7 @@ package net.teamio.taam.gui.util;
 import com.google.common.base.Function;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraftforge.fml.client.config.GuiUtils;
 import net.teamio.taam.gui.advanced.GuiAdvancedMachine;
 
@@ -67,6 +68,7 @@ public class CustomButton extends GuiButton {
 				hoverState = 3;
 			}
 
+			GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 			GuiUtils.drawContinuousTexturedBox(GuiAdvancedMachine.guiTexture,
 					x, y,//x y
 					baseTextureU, baseTextureV + hoverState * baseTextureHeight,//u v
