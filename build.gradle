@@ -107,7 +107,7 @@ dependencies {
 			'org.junit.vintage:junit-vintage-engine:5.3.2'
 	)
 
-	codacy group: 'com.codacy', name: 'codacy-coverage-reporter', version: '1.0.7'
+	codacy group: 'com.codacy', name: 'codacy-coverage-reporter', version: '5.0.310'
 }
 
 test {
@@ -125,6 +125,7 @@ task uploadCoverageToCodacy(type: JavaExec, group: "publishing", dependsOn: jaco
 	main = "com.codacy.CodacyCoverageReporter"
 	classpath = configurations.codacy
 	args = [
+			"report",
 			"-l",
 			"Java",
 			"-r",
