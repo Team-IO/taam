@@ -125,6 +125,7 @@ task uploadCoverageToCodacy(type: JavaExec, group: "publishing", dependsOn: jaco
 	main = "com.codacy.CodacyCoverageReporter"
 	classpath = configurations.codacy
 	args = [
+			"report",
 			"-l",
 			"Java",
 			"-r",
