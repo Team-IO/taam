@@ -217,7 +217,7 @@ curseforge {
 		changelog = {
 			File f = file('build/changelog.md')
 			if (f.exists()) {
-				return "https://github.com/Team-IO/taam/releases/tag/${config.mc_version}-${config.mod_version}\n" + f.readLines().join("\n")
+				return "https://github.com/Team-IO/taam/releases/tag/${config.mc_version}-${config.mod_version}\n\n" + f.readLines().join("\n")
 			}
 			return "https://github.com/Team-IO/taam/releases/tag/${config.mc_version}-${config.mod_version}"
 		}
