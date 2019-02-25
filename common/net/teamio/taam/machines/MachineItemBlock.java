@@ -16,6 +16,7 @@ import net.teamio.taam.Taam;
 import net.teamio.taam.content.IRotatable;
 
 import javax.annotation.Nullable;
+import java.util.Collections;
 import java.util.List;
 
 public class MachineItemBlock extends ItemBlock {
@@ -34,8 +35,10 @@ public class MachineItemBlock extends ItemBlock {
 	@Override
 	public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
 		int meta = stack.getMetadata();
-		IMachineMetaInfo info = MachineTileEntity.getInfo(meta);
-		info.addInformation(stack, worldIn, tooltip, flagIn);
+		String[] ttip = MachineTileEntity.getInfo(meta).getTooltip();
+		if (ttip != null) {
+			Collections.addAll(tooltip, ttip);
+		}
 	}
 
 	@Override

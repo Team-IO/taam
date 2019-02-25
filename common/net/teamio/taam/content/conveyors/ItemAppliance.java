@@ -64,15 +64,15 @@ public class ItemAppliance extends ItemBlock {
 
 	@Override
 	public boolean placeBlockAt(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side,
-			float hitX, float hitY, float hitZ, IBlockState newState) {
+	                            float hitX, float hitY, float hitZ, IBlockState newState) {
 		EnumFacing dir = side.getOpposite();
 		int meta = stack.getMetadata();
 		IConveyorApplianceMetaInfo info = getInfo(meta);
 
 		// If the player clicked the top or bottom & that is not supported
 		// use the player's facing direction
-		if(!info.isDirectionSupported(dir)) {
-			if(dir.getAxis() == EnumFacing.Axis.Y) {
+		if (!info.isDirectionSupported(dir)) {
+			if (dir.getAxis() == EnumFacing.Axis.Y) {
 				dir = player.getAdjustedHorizontalFacing();
 			} else {
 				return false;
@@ -105,8 +105,10 @@ public class ItemAppliance extends ItemBlock {
 		}
 		// Add metadata-specific values
 		int meta = stack.getMetadata();
-		IConveyorApplianceMetaInfo info = getInfo(meta);
-		info.addInformation(stack, worldIn, tooltip, flagIn);
+		String[] ttip = getInfo(meta).getTooltip();
+		if (ttip != null) {
+			Collections.addAll(tooltip, ttip);
+		}
 	}
 
 }
