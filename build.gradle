@@ -12,7 +12,7 @@ buildscript {
 	dependencies {
 		classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
 		// Used for com.github.breadmoirai.github-release:
-		classpath 'com.squareup.okhttp3:okhttp:3.12.1'
+		classpath 'com.squareup.okhttp3:okhttp:3.13.1'
 		classpath 'com.j256.simplemagic:simplemagic:1.16'
 	}
 }
