@@ -108,41 +108,39 @@ public abstract class BaseBlock extends Block {
 
 	@Override
 	public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
-		if (worldIn.isRemote) {
-			return;
-		}
+		if (!worldIn.isRemote) {
+			TileEntity te = worldIn.getTileEntity(pos);
 
-		TileEntity te = worldIn.getTileEntity(pos);
-
-		/*
-		 * Drop Items
-		 */
-		if (te != null && !(te instanceof TileEntityChute)) {
-			IConveyorSlots conveyorSlots = TaamUtil.getCapability(Taam.CAPABILITY_CONVEYOR, te, EnumFacing.UP);
-			if (conveyorSlots != null) {
-				ConveyorUtil.dropItems(worldIn, pos, conveyorSlots, false);
-			}
-
-			if (te instanceof TileEntityConveyor) {
-				TileEntityConveyor conveyor = (TileEntityConveyor) te;
-				int redirectorCount = 0;
-				if (conveyor.isRedirectorLeft()) {
-					redirectorCount++;
+			/*
+			 * Drop Items
+			 */
+			if (te != null && !(te instanceof TileEntityChute)) {
+				IConveyorSlots conveyorSlots = TaamUtil.getCapability(Taam.CAPABILITY_CONVEYOR, te, EnumFacing.UP);
+				if (conveyorSlots != null) {
+					ConveyorUtil.dropItems(worldIn, pos, conveyorSlots, false);
 				}
-				if (conveyor.isRedirectorRight()) {
-					redirectorCount++;
-				}
-				if (redirectorCount > 0) {
-					InventoryUtils.dropItem(new ItemStack(TaamMain.itemPart, redirectorCount, Taam.ITEM_PART_META.redirector.ordinal()), worldIn, pos, true);
-				}
-			}
 
-			IItemHandler itemHandler = TaamUtil.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, te, EnumFacing.UP);
-			if (itemHandler != null) {
-				for (int index = 0; index < itemHandler.getSlots(); index++) {
-					ItemStack itemstack = itemHandler.getStackInSlot(index);
-					// dropItem checks for null/empty stacks
-					InventoryUtils.dropItem(itemstack, worldIn, pos, true);
+				if (te instanceof TileEntityConveyor) {
+					TileEntityConveyor conveyor = (TileEntityConveyor) te;
+					int redirectorCount = 0;
+					if (conveyor.isRedirectorLeft()) {
+						redirectorCount++;
+					}
+					if (conveyor.isRedirectorRight()) {
+						redirectorCount++;
+					}
+					if (redirectorCount > 0) {
+						InventoryUtils.dropItem(new ItemStack(TaamMain.itemPart, redirectorCount, Taam.ITEM_PART_META.redirector.ordinal()), worldIn, pos, true);
+					}
+				}
+
+				IItemHandler itemHandler = TaamUtil.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, te, EnumFacing.UP);
+				if (itemHandler != null) {
+					for (int index = 0; index < itemHandler.getSlots(); index++) {
+						ItemStack itemstack = itemHandler.getStackInSlot(index);
+						// dropItem checks for null/empty stacks
+						InventoryUtils.dropItem(itemstack, worldIn, pos, true);
+					}
 				}
 			}
 		}
@@ -284,26 +282,6 @@ public abstract class BaseBlock extends Block {
 		IExtendedBlockState extendedState = (IExtendedBlockState) state;
 
 		return extendedState.withProperty(OBJModel.OBJProperty.instance, retState);
-	}
-
-	/**
-	 * Updates a block and all surrounding blocks (meaning, pushes a block
-	 * update for this block and for all directly adjacent blocks)
-	 * <p>
-	 * Useful when working with redstone.
-	 *
-	 * @param world The world
-	 * @param pos   The origin block aroung which the updates should occur.
-	 */
-	public static void updateBlocksAround(World world, BlockPos pos) {
-		Block blockType = world.getBlockState(pos).getBlock();
-		world.notifyNeighborsOfStateChange(pos, blockType, true);
-		world.notifyNeighborsOfStateChange(pos.west(), blockType, false);
-		world.notifyNeighborsOfStateChange(pos.east(), blockType, false);
-		world.notifyNeighborsOfStateChange(pos.down(), blockType, false);
-		world.notifyNeighborsOfStateChange(pos.up(), blockType, false);
-		world.notifyNeighborsOfStateChange(pos.north(), blockType, false);
-		world.notifyNeighborsOfStateChange(pos.south(), blockType, false);
 	}
 
 }

@@ -67,6 +67,11 @@ public class BlockSensor extends BaseBlock {
 		return getDefaultState().withProperty(DIRECTION, EnumFacing.byIndex(meta));
 	}
 
+	@Override
+	public int damageDropped(IBlockState state) {
+		return 0;
+	}
+
 	@Nullable
 	@Override
 	public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
@@ -186,7 +191,7 @@ public class BlockSensor extends BaseBlock {
 
 	@Override
 	public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
-		BaseBlock.updateBlocksAround(worldIn, pos);
+		updateBlocksAround(worldIn, state.getValue(DIRECTION), pos);
 		super.breakBlock(worldIn, pos, state);
 	}
 
@@ -206,6 +211,14 @@ public class BlockSensor extends BaseBlock {
 	@Override
 	public boolean canPlaceBlockOnSide(World worldIn, BlockPos pos, EnumFacing side) {
 		return worldIn.isSideSolid(pos.offset(side.getOpposite()), side);
+	}
+
+	/**
+	 * Updates everything that needs an update to know the sensor has changed state.
+	 */
+	public void updateBlocksAround(World worldIn, EnumFacing direction, BlockPos pos) {
+		worldIn.notifyNeighborsOfStateChange(pos, this, false);
+		worldIn.notifyNeighborsOfStateChange(pos.offset(direction.getOpposite()), this, false);
 	}
 
 }

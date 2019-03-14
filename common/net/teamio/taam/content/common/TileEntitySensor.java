@@ -11,7 +11,6 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.teamio.taam.Config;
 import net.teamio.taam.TaamMain;
-import net.teamio.taam.content.BaseBlock;
 import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IRotatable;
 
@@ -146,7 +145,7 @@ public class TileEntitySensor extends BaseTileEntity implements IRotatable, ITic
 
 		if(found != powering) {
 			powering = found;
-			BaseBlock.updateBlocksAround(world, pos);
+			TaamMain.blockSensor.updateBlocksAround(world, direction, pos);
 		}
 	}
 
@@ -189,5 +188,9 @@ public class TileEntitySensor extends BaseTileEntity implements IRotatable, ITic
 		this.direction = direction;
 		setBlockMeta();
 		blockUpdate();
+	}
+
+	public void disable() {
+		this.powering = false;
 	}
 }
