@@ -12,8 +12,8 @@ buildscript {
 	dependencies {
 		classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
 		// Used for com.github.breadmoirai.github-release:
-		classpath 'com.squareup.okhttp3:okhttp:3.12.1'
-		classpath 'com.j256.simplemagic:simplemagic:1.14'
+		classpath 'com.squareup.okhttp3:okhttp:3.14.0'
+		classpath 'com.j256.simplemagic:simplemagic:1.16'
 	}
 }
 plugins {
@@ -98,13 +98,13 @@ dependencies {
 			'junit:junit:4.12'
 	)
 	testImplementation(
-			'org.junit.jupiter:junit-jupiter-api:5.3.2',
+			'org.junit.jupiter:junit-jupiter-api:5.4.0',
 			'com.builtbroken.codinglib:CodingLib:0.+',
 			'com.builtbroken.minecraftjunit:MinecraftJUnit:1.12.2-0.+:deobf'
 	)
 	testRuntimeOnly(
-			'org.junit.jupiter:junit-jupiter-engine:5.3.2',
-			'org.junit.vintage:junit-vintage-engine:5.3.2'
+			'org.junit.jupiter:junit-jupiter-engine:5.4.0',
+			'org.junit.vintage:junit-vintage-engine:5.4.0'
 	)
 
 	codacy group: 'com.codacy', name: 'codacy-coverage-reporter', version: '5.0.310'
