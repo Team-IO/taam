@@ -11,7 +11,6 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.teamio.taam.Taam;
-import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.piping.IPipe;
 import org.lwjgl.opengl.GL11;
 

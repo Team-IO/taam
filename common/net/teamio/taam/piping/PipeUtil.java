@@ -27,7 +27,7 @@ public final class PipeUtil {
 	 * Returns a pipe connected to a side of a block. Looks for a TileEntity
 	 * in the direction of side, then asks that tile for a pipe in direction of
 	 * side.getOpposite().
-	 *
+	 * <p>
 	 * Checks for blocked/disabled pipes. To get any pipe, regardless of blocked/disabled state, use {@link #getPipe(IBlockAccess, BlockPos, EnumFacing)}.
 	 *
 	 * @param world
@@ -38,12 +38,12 @@ public final class PipeUtil {
 	public static IPipe getConnectedPipe(IBlockAccess world, BlockPos pos, EnumFacing side) {
 		BlockPos offsetPos = pos.offset(side);
 		TileEntity ent = world.getTileEntity(offsetPos);
-		if(ent == null) {
+		if (ent == null) {
 			return null;
 		}
 		EnumFacing opposite = side.getOpposite();
 		IPipe candidate = TaamUtil.getCapability(Taam.CAPABILITY_PIPE, ent, opposite);
-		if(candidate != null && candidate.isSideAvailable(opposite)) {
+		if (candidate != null && candidate.isSideAvailable(opposite)) {
 			return candidate;
 		}
 		return null;
@@ -53,7 +53,7 @@ public final class PipeUtil {
 	 * Returns a pipe connected to a side of a block. Looks for a TileEntity in
 	 * the direction of side, then asks that tile for a pipe in direction of
 	 * side.getOpposite().
-	 *
+	 * <p>
 	 * Does not check for blocked/disabled pipes! For that, use
 	 * {@link #getConnectedPipe(IBlockAccess, BlockPos, EnumFacing)}.
 	 *
@@ -65,7 +65,7 @@ public final class PipeUtil {
 	public static IPipe getPipe(IBlockAccess world, BlockPos pos, EnumFacing side) {
 		BlockPos offsetPos = pos.offset(side);
 		TileEntity ent = world.getTileEntity(offsetPos);
-		if(ent == null) {
+		if (ent == null) {
 			return null;
 		}
 		EnumFacing opposite = side.getOpposite();
@@ -81,6 +81,7 @@ public final class PipeUtil {
 
 	/**
 	 * Transfers content between pipes, up to the specified amount.
+	 *
 	 * @param source
 	 * @param destination
 	 * @param amount
@@ -134,6 +135,7 @@ public final class PipeUtil {
 
 	/**
 	 * The default interaction for tanks, usually fills/drains a selected fluid container.
+	 *
 	 * @param player
 	 * @param tank
 	 * @return
@@ -143,49 +145,48 @@ public final class PipeUtil {
 		Log.debug("Beginning fluid interaction.");
 		ItemStack playerStack = player.inventory.getCurrentItem();
 		ItemStack handlingStack = playerStack;
-		if(handlingStack == null) {
+		if (InventoryUtils.isEmpty(handlingStack)) {
 			return false;
 		}
-		boolean isPartialStack = false;
 		if(handlingStack.stackSize > 1) {
-			isPartialStack = true;
 			handlingStack = InventoryUtils.copyStack(handlingStack, 1);
 		}
 
 		IFluidHandler itemFH = FluidUtils.getFluidHandlerForItem(handlingStack);
 
 		boolean success = false;
+		boolean modifyInventory = !player.capabilities.isCreativeMode;
 
-		if(itemFH != null) {
+		if (itemFH != null) {
 			FluidStack inTank = tank.getFluid();
-			if(inTank != null) {
+			if (inTank != null) {
 				Log.debug("Attempting to fill {}x{} into item.", inTank.amount, inTank.getFluid());
 				// Fill into the item
-				int fill = itemFH.fill(inTank, true);
+				int fill = itemFH.fill(inTank, modifyInventory);
 				Log.debug("Filled {} into item.", fill);
-				if(fill > 0) {
+				if (fill > 0) {
 					// Drain from the tank
 					FluidStack drained = tank.drain(fill, true);
 					// Failsave check
-					if(drained == null || drained.amount != fill) {
+					if (drained == null || drained.amount != fill) {
 						Log.error("Error filling item. Drained amount {} was not the expected amount {} filled into the item. This should not happen.", drained == null ? 0 : drained.amount, fill);
 					}
 					success = true;
 				} else {
 					Log.debug("Attempting to drain {}x{} from item.", inTank.amount, inTank.getFluid());
 					int capa = tank.getCapacity();
-					if(inTank.amount < capa) {
+					if (inTank.amount < capa) {
 						// Get the remaining capacity
 						FluidStack toDrain = inTank.copy();
 						toDrain.amount = capa - inTank.amount;
 						// Drain maximum of that from the item
-						FluidStack drain = itemFH.drain(toDrain, true);
-						if(drain != null && drain.amount > 0) {
+						FluidStack drain = itemFH.drain(toDrain, modifyInventory);
+						if (drain != null && drain.amount > 0) {
 							Log.debug("Drained {}x{} from item.", drain.amount, drain.getFluid());
 							// Fill into the tank
 							int filled = tank.fill(drain, true);
 							// Failsave check
-							if(filled != drain.amount) {
+							if (filled != drain.amount) {
 								Log.error("Error draining item. Filled amount {} was not the expected amount {} drained from the item. This should not happen.", filled, drain.amount);
 							}
 							success = true;
@@ -197,13 +198,13 @@ public final class PipeUtil {
 			} else {
 				Log.debug("Attempting to drain anything from item.");
 				// Drain maximum of tank capacity from the item
-				FluidStack drain = itemFH.drain(tank.getCapacity(), true);
-				if(drain != null && drain.amount > 0) {
+				FluidStack drain = itemFH.drain(tank.getCapacity(), modifyInventory);
+				if (drain != null && drain.amount > 0) {
 					Log.debug("Drained {}x{} from item.", drain.amount, drain.getFluid());
 					// Fill into the tank
 					int filled = tank.fill(drain, true);
 					// Failsave check
-					if(filled != drain.amount) {
+					if (filled != drain.amount) {
 						Log.error("Error draining item. Filled amount {} was not the expected amount {} drained from the item. This should not happen.", filled, drain.amount);
 					}
 					success = true;
@@ -213,9 +214,13 @@ public final class PipeUtil {
 			}
 		}
 
-		if(success && isPartialStack) {
+		if(success && modifyInventory) {
+			// Adjust stack that was clicked
 			playerStack.stackSize--;
-			InventoryUtils.tryDropToInventory(player, handlingStack, player.getPosition());
+			// Drop empty or filled container into inventory
+			if(!InventoryUtils.isEmpty(handlingStack)) {
+				InventoryUtils.tryDropToInventory(player, handlingStack, player.getPosition());
+			}
 		}
 		return success;
 	}

@@ -11,13 +11,16 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.teamio.taam.content.BaseTileEntity;
 import net.teamio.taam.content.IWorldInteractable;
+import net.teamio.taam.util.InventoryUtils;
+
+import javax.annotation.Nullable;
 
 public class TileEntityCreativeCache extends BaseTileEntity implements IInventory, IWorldInteractable {
 
 	private ItemStack template = null;
 
-	public void setTemplate(ItemStack stack) {
-		if(stack == null) {
+	public void setTemplate(@Nullable ItemStack stack) {
+		if (InventoryUtils.isEmpty(stack)) {
 			template = null;
 		} else {
 			template = stack.copy();
@@ -30,7 +33,7 @@ public class TileEntityCreativeCache extends BaseTileEntity implements IInventor
 
 	@Override
 	protected void writePropertiesToNBT(NBTTagCompound tag) {
-		if(template != null) {
+		if (!InventoryUtils.isEmpty(template)) {
 			NBTTagCompound templateTag = new NBTTagCompound();
 			template.writeToNBT(templateTag);
 			tag.setTag("template", templateTag);
@@ -40,7 +43,7 @@ public class TileEntityCreativeCache extends BaseTileEntity implements IInventor
 	@Override
 	protected void readPropertiesFromNBT(NBTTagCompound tag) {
 		NBTTagCompound templateTag = tag.getCompoundTag("template");
-		if(templateTag != null) {
+		if (templateTag != null) {
 			template = ItemStack.loadItemStackFromNBT(templateTag);
 		} else {
 			template = null;
@@ -49,13 +52,9 @@ public class TileEntityCreativeCache extends BaseTileEntity implements IInventor
 
 	@Override
 	public boolean onBlockActivated(World world, EntityPlayer player, EnumHand hand, boolean hasWrench, EnumFacing side,
-			float hitX, float hitY, float hitZ) {
+	                                float hitX, float hitY, float hitZ) {
 		ItemStack stack = player.inventory.getStackInSlot(player.inventory.currentItem);
-		if(stack == null) {
-			template = null;
-		} else {
-			template = stack.copy();
-		}
+		setTemplate(stack);
 		updateState(true, false, true);
 		return true;
 	}
@@ -76,7 +75,7 @@ public class TileEntityCreativeCache extends BaseTileEntity implements IInventor
 
 	@Override
 	public ItemStack getStackInSlot(int slot) {
-		if(template == null) {
+		if (InventoryUtils.isEmpty(template)) {
 			return null;
 		}
 		return template.copy();
@@ -84,17 +83,15 @@ public class TileEntityCreativeCache extends BaseTileEntity implements IInventor
 
 	@Override
 	public ItemStack decrStackSize(int slot, int amount) {
-		if(template == null) {
+		if (InventoryUtils.isEmpty(template)) {
 			return null;
 		}
-		ItemStack clone = template.copy();
-		clone.stackSize = Math.min(amount, clone.getMaxStackSize());
-		return clone;
+		return InventoryUtils.setCount(template.copy(), Math.min(amount, template.getMaxStackSize()));
 	}
 
 	@Override
 	public ItemStack removeStackFromSlot(int slot) {
-		if(template == null) {
+		if (InventoryUtils.isEmpty(template)) {
 			return null;
 		}
 		return template.copy();

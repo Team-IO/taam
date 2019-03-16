@@ -1,8 +1,11 @@
 package net.teamio.taam.machines;
 
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.capabilities.Capability;
 import net.teamio.taam.Log;
 import net.teamio.taam.Taam;
@@ -13,13 +16,35 @@ public class MachineTileEntity extends BaseTileEntity implements ITickable, IMac
 	public IMachine machine;
 	public IMachineMetaInfo meta;
 
-	public MachineTileEntity() {
-		machine = new MachineDummy();
+	public static Taam.MACHINE_META getInfo(int meta) {
+		Taam.MACHINE_META[] values = Taam.MACHINE_META.values();
+		int ordinal = MathHelper.clamp(meta, 0, values.length - 1);
+		return values[ordinal];
 	}
 
-	public MachineTileEntity(IMachineMetaInfo meta) {
-		this.meta = meta;
-		machine = meta.createMachine(this);
+	public static EnumFacing getDirection(EntityLivingBase player, BlockPos pos) {
+		EnumFacing placeDir = EnumFacing.NORTH;
+
+		// TODO: Determination of special placement
+		//if (defaultPlacement) ...
+
+		// We hit top/bottom of a block
+		double xDist = player.posX - pos.getX();
+		double zDist = player.posZ - pos.getZ();
+		if (Math.abs(xDist) > Math.abs(zDist)) {
+			if (xDist < 0) {
+				placeDir = EnumFacing.EAST;
+			} else {
+				placeDir = EnumFacing.WEST;
+			}
+		} else {
+			if (zDist < 0) {
+				placeDir = EnumFacing.SOUTH;
+			} else {
+				placeDir = EnumFacing.NORTH;
+			}
+		}
+		return placeDir;
 	}
 
 	@Override
@@ -30,11 +55,15 @@ public class MachineTileEntity extends BaseTileEntity implements ITickable, IMac
 	@Override
 	public void onLoad() {
 		if (machine == null) {
-			Log.error("MachineTileEntity at {} is missing machine instance.", getPos());
-			return;
+			this.meta = getInfo(getBlockMetadata());
+
+			Log.info("MachineTileEntity at {} creating machine instance {}.", getPos(), meta.unlocalizedName());
+			this.machine = meta.createMachine(this);
+			markDirty();
 		}
 		machine.onCreated(world, pos);
 	}
+
 
 	@Override
 	public void onChunkUnload() {
@@ -56,7 +85,7 @@ public class MachineTileEntity extends BaseTileEntity implements ITickable, IMac
 			// DO NOT LOG, this will definitely lead to log spamming.
 			return;
 		}
-		if(machine.update(world, pos)) {
+		if (machine.update(world, pos)) {
 			markDirty();
 		}
 	}

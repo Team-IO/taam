@@ -14,8 +14,6 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import net.teamio.taam.Log;
 import net.teamio.taam.Taam;
 import net.teamio.taam.content.IRotatable;
@@ -31,10 +29,6 @@ public class BlockProductionLineAppliance extends BlockProductionLine {
 
 	public static final PropertyEnum<Taam.BLOCK_PRODUCTIONLINE_APPLIANCE_META> VARIANT = PropertyEnum.create("variant", Taam.BLOCK_PRODUCTIONLINE_APPLIANCE_META.class);
 	public static final PropertyEnum<EnumFacing> DIRECTION = PropertyEnum.create("direction", EnumFacing.class, EnumFacing.HORIZONTALS);
-
-	public BlockProductionLineAppliance() {
-		super();
-	}
 
 	@Override
 	protected BlockStateContainer createBlockState() {
@@ -90,11 +84,10 @@ public class BlockProductionLineAppliance extends BlockProductionLine {
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public void getSubBlocks(Item item, CreativeTabs creativeTab, List<ItemStack> list) {
+	public void getSubBlocks(Item item, CreativeTabs creativeTab, List<ItemStack> items) {
 		Enum<?>[] values = Taam.BLOCK_PRODUCTIONLINE_APPLIANCE_META.values();
 		for (int i = 0; i < values.length; i++) {
-			list.add(new ItemStack(item, 1, i));
+			items.add(new ItemStack(item, 1, i));
 		}
 	}
 

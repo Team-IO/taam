@@ -214,7 +214,7 @@ public class MachineMultipart extends Multipart implements INormallyOccludingPar
 
 	@Override
 	public boolean onActivated(EntityPlayer player, EnumHand hand, ItemStack heldItem, PartMOP hit) {
-		boolean playerHasWrench = WrenchUtil.playerHasWrenchInHand(player, hand);
+		boolean playerHasWrench = WrenchUtil.playerHoldsWrench(player, hand);
 
 		if (!playerHasWrench) {
 			if(machine instanceof IWorldInteractable) {

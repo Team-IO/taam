@@ -1,11 +1,9 @@
 package net.teamio.taam.gui.advanced.apps;
 
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.teamio.taam.conveyors.appliances.ApplianceAligner;
-import net.teamio.taam.conveyors.filters.FilterSlot;
 import net.teamio.taam.conveyors.filters.ItemFilterCustomizable;
 import net.teamio.taam.gui.advanced.App;
 import net.teamio.taam.gui.advanced.AppGui;
@@ -29,23 +27,8 @@ public class AlignerSettings extends App {
 
 	@Override
 	public void setupSlots() {
-		int leftOff = 230;
-		int topOff = ContainerAdvancedMachine.panelHeight / 2;
-
-		int xSpace = 20;
-		int ySpace = 40;
-
-		int verticalOffset = topOff - aligner.filters.length / 2 * ySpace - 9;
-
-		for (int i = 0; i < aligner.filters.length; i++) {
-			ItemFilterCustomizable itemFilterCustomizable = aligner.filters[i];
-			ItemStack[] entries = itemFilterCustomizable.getEntries();
-			for (int j = 0; j < entries.length; j++) {
-				int x = leftOff + j * xSpace + 1;
-				int y = verticalOffset + i * ySpace + 1;
-				container.addSlot(new FilterSlot(itemFilterCustomizable, j, x, y));
-			}
-		}
+		// Currently no slots - the filter slots are handled as buttons,
+		// as 1.12 introduced ItemStack.EMPTY and broke the fake slot implementation used before.
 	}
 
 	@Override

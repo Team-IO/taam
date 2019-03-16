@@ -9,12 +9,8 @@ import net.teamio.taam.util.TaamUtil;
 public abstract class ATileEntityAttachable extends BaseTileEntity implements IRotatable {
 
 	public static final SlotMatrix SLOT_MATRIX = new SlotMatrix(true, false, false, true, false, false, true, false, false);
-	
-	protected EnumFacing direction = EnumFacing.NORTH;
 
-	public ATileEntityAttachable() {
-		super();
-	}
+	protected EnumFacing direction = EnumFacing.NORTH;
 
 	/*
 	 * IRotatable implementation
@@ -39,7 +35,7 @@ public abstract class ATileEntityAttachable extends BaseTileEntity implements IR
 
 	@Override
 	public void setFacingDirection(EnumFacing direction) {
-		if(this.direction != direction) {
+		if (this.direction != direction) {
 			// Only update if necessary
 			this.direction = direction;
 			// Also do a block update, in case neighboring machines need to know...

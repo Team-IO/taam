@@ -6,6 +6,7 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.oredict.OreDictionary;
 import net.teamio.taam.Log;
+import net.teamio.taam.util.InventoryUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,9 +27,9 @@ public final class ProcessingRegistryEntry {
 	public ProcessingRegistryEntry(Class<? extends IProcessingRecipe> recipeClass, String machineName) {
 		this.recipeClass = recipeClass;
 		this.machineName = machineName;
-		recipes = new HashMap<Item, IProcessingRecipe[]>();
-		recipesOreDict = new HashMap<String, IProcessingRecipe[]>();
-		recipesFluid = new HashMap<Fluid, IProcessingRecipeFluidBased[]>();
+		recipes = new HashMap<>();
+		recipesOreDict = new HashMap<>();
+		recipesFluid = new HashMap<>();
 	}
 
 	/**
@@ -36,10 +37,11 @@ public final class ProcessingRegistryEntry {
 	 * Searches for an exact {@link Item} match first, then the ore dictionary
 	 * entries.
 	 *
-	 * @param input
-	 * @return
+	 * @param input The input item to search for
+	 * @return The first matching recipe, or null if none matched.
 	 */
 	public IProcessingRecipe getRecipe(ItemStack input) {
+		if (InventoryUtils.isEmpty(input)) return null;
 
 		IProcessingRecipe[] matches = recipes.get(input.getItem());
 
@@ -80,10 +82,11 @@ public final class ProcessingRegistryEntry {
 	 * Returns all {@link IProcessingRecipe} that have a matching input. Exact
 	 * {@link Item} matches will appear sorted before ore dictionary matches.
 	 *
-	 * @param input
-	 * @return
+	 * @param input The input item to search for
+	 * @return An array of matching recipes. May return null or an empty array.
 	 */
 	public IProcessingRecipe[] getRecipes(ItemStack input) {
+		if (InventoryUtils.isEmpty(input)) return new IProcessingRecipe[0];
 		ArrayList<IProcessingRecipe> actualMatches = new ArrayList<IProcessingRecipe>();
 
 		IProcessingRecipe[] matches = recipes.get(input.getItem());
@@ -125,8 +128,8 @@ public final class ProcessingRegistryEntry {
 	 * Returns the first {@link IProcessingRecipeFluidBased} that has a matching
 	 * input.
 	 *
-	 * @param input
-	 * @return
+	 * @param input The input fluid to search for
+	 * @return The first matching recipe, or null if none matched.
 	 */
 	public IProcessingRecipeFluidBased getRecipe(FluidStack input) {
 
@@ -148,8 +151,8 @@ public final class ProcessingRegistryEntry {
 	 * Returns all {@link IProcessingRecipeFluidBased} that have a matching
 	 * input.
 	 *
-	 * @param input
-	 * @return
+	 * @param input The input fluid to search for
+	 * @return An array of matching recipes. May return null or an empty array.
 	 */
 	public IProcessingRecipeFluidBased[] getRecipes(FluidStack input) {
 		IProcessingRecipeFluidBased[] matches = recipesFluid.get(input.getFluid());
@@ -178,22 +181,22 @@ public final class ProcessingRegistryEntry {
 	 * {@link IProcessingRecipe} are indexed for input item or ore dictionary
 	 * name. All recipes can then be searched using
 	 * {@link #getRecipe(ItemStack)}.
-	 *
+	 * <p>
 	 * Special handling: {@link IProcessingRecipeFluidBased} will be indexed for
 	 * input fluid and can be searched using {@link #getRecipe(FluidStack)}.
 	 *
-	 * @param recipe
+	 * @param recipe A recipe of the correct class that was given in the constructor.
 	 */
 	public void registerRecipe(IProcessingRecipe recipe) {
 		if (!recipeClass.isInstance(recipe)) {
-			throw new RuntimeException(String.format(
+			throw new IllegalArgumentException(String.format(
 					"Error registering recipe %o for machine %s. Recipe is not an instance of the designated recipe class %o.",
 					recipe, machineName, recipeClass));
 		}
 		Item key = null;
 		{
 			ItemStack inputStack = recipe.getInput();
-			if (inputStack != null) {
+			if (!InventoryUtils.isEmpty(inputStack)) {
 				key = inputStack.getItem();
 			}
 		}
@@ -203,7 +206,7 @@ public final class ProcessingRegistryEntry {
 		boolean isItemBased = key != null || keyOreDict != null;
 
 		if (!isItemBased && !isFluidBased) {
-			throw new RuntimeException("Error registering recipe " + recipe + " for machine " + machineName
+			throw new IllegalArgumentException("Error registering recipe " + recipe + " for machine " + machineName
 					+ ". Both keys (item and ore dict) were null, and not a fluid recipe.");
 		}
 
@@ -219,13 +222,13 @@ public final class ProcessingRegistryEntry {
 	/**
 	 * Registers an {@link IProcessingRecipe} for search via {@link ItemStack}.
 	 *
-	 * @param recipe
+	 * @param recipe The recipe to index, already checked for the correct class.
 	 */
 	private void registerRecipeItemBased(IProcessingRecipe recipe) {
 		Item key = null;
 		{
 			ItemStack inputStack = recipe.getInput();
-			if (inputStack != null) {
+			if (!InventoryUtils.isEmpty(inputStack)) {
 				key = inputStack.getItem();
 			}
 		}
@@ -260,10 +263,9 @@ public final class ProcessingRegistryEntry {
 	}
 
 	/**
-	 * Registers an {@link IProcessingRecipeFluidBased} for search via
-	 * {@link FluidStack}.
+	 * Registers an {@link IProcessingRecipeFluidBased} for search via {@link FluidStack}.
 	 *
-	 * @param recipe
+	 * @param recipe The recipe to index, already checked for the correct class.
 	 */
 	private void registerRecipeFluidBased(IProcessingRecipeFluidBased recipe) {
 		Fluid key = recipe.getInputFluid().getFluid();
@@ -273,7 +275,7 @@ public final class ProcessingRegistryEntry {
 		IProcessingRecipeFluidBased[] matches;
 
 		if (key == null) {
-			throw new RuntimeException("Error registering fluid recipe " + recipe + " for machine " + machineName
+			throw new IllegalArgumentException("Error registering fluid recipe " + recipe + " for machine " + machineName
 					+ ". Key (fluid) was null.");
 		}
 		matches = recipesFluid.get(key);
@@ -289,17 +291,22 @@ public final class ProcessingRegistryEntry {
 		recipesFluid.put(key, matches);
 	}
 
+	/**
+	 * Combines all registered recipes into one list.
+	 *
+	 * @return A single ArrayList of all recipes, without duplicates, but not in a guaranteed order.
+	 */
 	public List<IProcessingRecipe> getAllRecipes() {
-		Set<IProcessingRecipe> recipes = new HashSet<IProcessingRecipe>();
-		for(IProcessingRecipe[] list : this.recipes.values()) {
+		Set<IProcessingRecipe> recipes = new HashSet<>();
+		for (IProcessingRecipe[] list : this.recipes.values()) {
 			Collections.addAll(recipes, list);
 		}
-		for(IProcessingRecipe[] list : recipesFluid.values()) {
+		for (IProcessingRecipe[] list : recipesFluid.values()) {
 			Collections.addAll(recipes, list);
 		}
-		for(IProcessingRecipe[] list : recipesOreDict.values()) {
+		for (IProcessingRecipe[] list : recipesOreDict.values()) {
 			Collections.addAll(recipes, list);
 		}
-		return new ArrayList<IProcessingRecipe>(recipes);
+		return new ArrayList<>(recipes);
 	}
 }

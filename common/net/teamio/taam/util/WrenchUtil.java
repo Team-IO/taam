@@ -21,52 +21,65 @@ import net.teamio.taam.conveyors.IConveyorApplianceHost;
 import net.teamio.taam.conveyors.IConveyorSlots;
 import net.teamio.taam.machines.MachineTileEntity;
 
+import javax.annotation.Nonnull;
+
 public class WrenchUtil {
 
+
 	/**
-	 * Returns true if the player is holding a wrench in his mainhand hand.
+	 * Returns true if the player is holding a wrench in any hand.
 	 *
-	 * @param player
-	 * @return
+	 * @param player The player to check for
+	 * @return true if the player holds a wrench item
 	 */
-	public static boolean playerHasWrenchInHand(EntityPlayer player, EnumHand hand) {
+	public static boolean playerHoldsWrench(EntityPlayer player) {
+		return playerHoldsWrench(player, EnumHand.MAIN_HAND) || playerHoldsWrench(player, EnumHand.OFF_HAND);
+	}
+
+	/**
+	 * Returns true if the player is holding a wrench in the given hand.
+	 *
+	 * @param player The player to check for
+	 * @return true if the given hand holds a wrench item
+	 */
+	public static boolean playerHoldsWrench(EntityPlayer player, EnumHand hand) {
 		ItemStack held = player.getHeldItem(hand);
-		if(held == null) {
-			return false;
-		}
+		if (InventoryUtils.isEmpty(held)) return false;
 		//TODO: Check other wrench types once supported
 		return held.getItem() == TaamMain.itemWrench;
 	}
 
-	public static boolean playerHasDebugTool(EntityPlayer player) {
-		return playerHasDebugToolInMainhand(player) || playerHasDebugToolInOffhand(player);
+	/**
+	 * Returns true if the player is holding a debug item in any hand.
+	 *
+	 * @param player The player to check for
+	 * @return true if the player holds a debug item item
+	 */
+	public static boolean playerHoldsDebugTool(EntityPlayer player) {
+		return playerHoldsDebugTool(player, EnumHand.MAIN_HAND) || playerHoldsDebugTool(player, EnumHand.OFF_HAND);
 	}
 
-	public static boolean playerHasDebugToolInMainhand(EntityPlayer player) {
-		ItemStack held = player.getHeldItemMainhand();
-		if (held == null) {
-			return false;
-		}
+	/**
+	 * Returns true if the player is holding a debug item in the given hand.
+	 *
+	 * @param player The player to check for
+	 * @return true if the given hand holds a debug item item
+	 */
+	public static boolean playerHoldsDebugTool(EntityPlayer player, EnumHand hand) {
+		ItemStack held = player.getHeldItem(hand);
+		if (InventoryUtils.isEmpty(held)) return false;
 		return held.getItem() == TaamMain.itemDebugTool;
 	}
 
-	public static boolean playerHasDebugToolInOffhand(EntityPlayer player) {
-		ItemStack held = player.getHeldItemOffhand();
-		if (held == null) {
-			return false;
-		}
-		return held.getItem() == TaamMain.itemDebugTool;
-	}
-
-	public static EnumActionResult wrenchBlock(World world, BlockPos pos, EntityPlayer player, EnumHand hand,
-			EnumFacing side, float hitX, float hitY, float hitZ) {
+	@Nonnull
+	public static EnumActionResult wrenchBlock(World world, BlockPos pos, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
 		Log.debug("Checking for wrench activity.");
 
-		boolean playerHasWrenchInMainhand = WrenchUtil.playerHasWrenchInHand(player, EnumHand.MAIN_HAND);
-		boolean playerHasWrench = playerHasWrenchInMainhand || (player.isSneaking() && WrenchUtil.playerHasWrenchInHand(player, EnumHand.OFF_HAND));
+		boolean playerHasWrenchInMainhand = WrenchUtil.playerHoldsWrench(player, EnumHand.MAIN_HAND);
+		boolean playerHasWrench = playerHasWrenchInMainhand || (player.isSneaking() && WrenchUtil.playerHoldsWrench(player, EnumHand.OFF_HAND));
 		Log.debug("Player has wrench: " + playerHasWrench);
 
-		if(!playerHasWrench) {
+		if (!playerHasWrench) {
 			Log.debug("Player has no wrench, skipping.");
 			return EnumActionResult.PASS;
 		}

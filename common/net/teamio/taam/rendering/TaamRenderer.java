@@ -1,6 +1,5 @@
 package net.teamio.taam.rendering;
 
-import com.google.common.base.Function;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderGlobal;
@@ -40,12 +39,15 @@ import net.teamio.taam.conveyors.ConveyorUtil;
 import net.teamio.taam.conveyors.IConveyorSlots;
 import net.teamio.taam.conveyors.ItemWrapper;
 import net.teamio.taam.conveyors.appliances.ApplianceAligner;
+import net.teamio.taam.util.InventoryUtils;
 import net.teamio.taam.util.WrenchUtil;
 import org.lwjgl.opengl.GL11;
 
+import javax.annotation.Nonnull;
 import javax.vecmath.Vector2f;
 import javax.vecmath.Vector3f;
 import java.util.Random;
+import java.util.function.Function;
 
 public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 
@@ -59,16 +61,16 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 	 * Rotation counter, currently only used for calculating
 	 * {@link TaamRenderer#rotSin}.
 	 */
-	private float rot = 0;
+	private float rot;
 	/**
 	 * Rotation counter, currently unused, was used for blinking the motion
 	 * sensor light.
 	 */
-	private float rot_sensor = 0;
+	private float rot_sensor;
 	/**
 	 * sin(rot), used for animating the conveyor sieve.
 	 */
-	public static double rotSin = 0;
+	public static double rotSin;
 
 	/**
 	 * Value used for expanding the rendered selection boxes below. Value is
@@ -88,18 +90,99 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 	/**
 	 * Function for fetching texture sprites.
 	 */
-	public static final Function<ResourceLocation, TextureAtlasSprite> textureGetter = new Function<ResourceLocation, TextureAtlasSprite>() {
-		@Override
-		public TextureAtlasSprite apply(ResourceLocation location) {
-			return Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString());
-		}
+	public static final Function<ResourceLocation, TextureAtlasSprite> textureGetter = location -> Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString());
+
+	/*
+	 * Vertex infos from exported .obj file
+	 * These are used in renderSieveMesh
+	 */
+	final Vector3f[] sieve_vertices = new Vector3f[]{
+			new Vector3f(0.9375f, 0.49f, 0.0625f),
+			new Vector3f(0.9375f, 0.52f, 0.0625f),
+			new Vector3f(0.0625f, 0.49f, 0.0625f),
+			new Vector3f(0.5000f, 0.49f, 0.0625f),
+			new Vector3f(0.0625f, 0.52f, 0.0625f),
+			new Vector3f(0.5000f, 0.52f, 0.0625f),
+			new Vector3f(0.9375f, 0.45f, 0.9375f),
+			new Vector3f(0.9375f, 0.47f, 0.5000f),
+			new Vector3f(0.9375f, 0.50f, 0.5000f),
+			new Vector3f(0.9375f, 0.48f, 0.9375f),
+			new Vector3f(0.0625f, 0.45f, 0.9375f),
+			new Vector3f(0.0625f, 0.47f, 0.5000f),
+			new Vector3f(0.5000f, 0.45f, 0.9375f),
+			new Vector3f(0.5000f, 0.47f, 0.5000f),
+			new Vector3f(0.5000f, 0.50f, 0.5000f),
+			new Vector3f(0.0625f, 0.50f, 0.5000f),
+			new Vector3f(0.0625f, 0.48f, 0.9375f),
+			new Vector3f(0.5000f, 0.48f, 0.9375f)
+	};
+	final Vector2f[] sieve_tex = new Vector2f[]{
+			new Vector2f(0.000000f, 0.359375f),
+			new Vector2f(0.058594f, 0.359375f),
+			new Vector2f(0.058594f, 0.417969f),
+			new Vector2f(0.000000f, 0.417969f),
+			new Vector2f(0.003906f, 0.355469f),
+			new Vector2f(0.003906f, 0.417969f),
+			new Vector2f(0.000000f, 0.355469f),
+			new Vector2f(0.000000f, 0.414062f),
+			new Vector2f(0.062500f, 0.414062f),
+			new Vector2f(0.062500f, 0.417969f)
+	};
+	final Vector3f[] sieve_normals = new Vector3f[]{
+			new Vector3f(0.000000f, -0.99900f, -0.0457f),
+			new Vector3f(0.000000f, 0.000000f, -1.00000f),
+			new Vector3f(0.000000f, 0.999000f, 0.045700f),
+			new Vector3f(1.000000f, 0.000000f, 0.000000f),
+			new Vector3f(-1.00000f, 0.00000f, 0.00000f),
+			new Vector3f(0.000000f, 0.000000f, 1.000000f)
+	};
+	final ObjFace[] sieve_faces = new ObjFace[]{
+			new ObjFace(new int[]{8, 14, 4, 1}, new int[]{1, 2, 3, 4}, 1),
+			new ObjFace(new int[]{1, 4, 6, 2}, new int[]{5, 6, 4, 7}, 2),
+			new ObjFace(new int[]{9, 2, 6, 15}, new int[]{1, 4, 3, 2}, 3),
+			new ObjFace(new int[]{8, 1, 2, 9}, new int[]{8, 9, 10, 4}, 4),
+			new ObjFace(new int[]{12, 3, 4, 14}, new int[]{1, 4, 3, 2}, 1),
+			new ObjFace(new int[]{3, 5, 6, 4}, new int[]{5, 7, 4, 6}, 2),
+			new ObjFace(new int[]{16, 15, 6, 5}, new int[]{1, 2, 3, 4}, 3),
+			new ObjFace(new int[]{12, 16, 5, 3}, new int[]{8, 4, 10, 9}, 5),
+			new ObjFace(new int[]{8, 7, 13, 14}, new int[]{1, 4, 3, 2}, 1),
+			new ObjFace(new int[]{7, 10, 18, 13}, new int[]{5, 7, 4, 6}, 6),
+			new ObjFace(new int[]{9, 15, 18, 10}, new int[]{1, 2, 3, 4}, 3),
+			new ObjFace(new int[]{8, 9, 10, 7}, new int[]{8, 4, 10, 9}, 4),
+			new ObjFace(new int[]{12, 14, 13, 11}, new int[]{1, 2, 3, 4}, 1),
+			new ObjFace(new int[]{11, 13, 18, 17}, new int[]{5, 6, 4, 7}, 6),
+			new ObjFace(new int[]{16, 17, 18, 15}, new int[]{1, 4, 3, 2}, 3),
+			new ObjFace(new int[]{12, 11, 17, 16}, new int[]{8, 9, 10, 4}, 5)
 	};
 
 	/**
+	 * Holder for static object faces.
+	 * This is used for dynamic rendering of object models.
+	 * The values are extracted from an exported .obj file.
+	 */
+	public static class ObjFace {
+		public final int[] vertexIndexes;
+		public final int[] textureIndexes;
+		public final int normalIndex;
+
+		/**
+		 * @param vertexIndexes  The sequence of vertex indices in render order. Should have a length of 4, matching to textureIndices.
+		 * @param textureIndexes The sequence of texture indices in render order. Should have a length of 4, matching to vertexIndexes.
+		 * @param normalIndex    The normal index for this face, to be looked up in an associated array of normal vectors.
+		 */
+		public ObjFace(@Nonnull int[] vertexIndexes, @Nonnull int[] textureIndexes, int normalIndex) {
+			this.vertexIndexes = vertexIndexes;
+			this.textureIndexes = textureIndexes;
+			this.normalIndex = normalIndex;
+		}
+
+	}
+
+	/**
 	 * Executed each client tick to update the animated values. Client tick,
-	 * because that is fixed timing, so not framerate dependent.
+	 * because that is fixed timing, so not frame rate dependent.
 	 *
-	 * @param event
+	 * @param event client tick event, called once per game tick
 	 */
 	@SubscribeEvent
 	public void onClientTick(TickEvent.ClientTickEvent event) {
@@ -117,9 +200,9 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 	 * Draw custom highlight boxes on conveyor machines with default movement.
 	 * (e.g. conveyors themselves or the conveyor sieve)
 	 * <p>
-	 * The hightlight box will be drawn around the slot aimed at.
+	 * The highlight box will be drawn around the slot aimed at.
 	 *
-	 * @param event
+	 * @param event draw block highlight event, called when the user directly looks at a block
 	 */
 	@SubscribeEvent
 	public void onDrawBlockHighlight(DrawBlockHighlightEvent event) {
@@ -131,12 +214,11 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		BlockPos pos;
 		if (target != null && (pos = target.getBlockPos()) != null) {
 			EntityPlayer player = event.getPlayer();
-			boolean playerHasDebugTool = WrenchUtil.playerHasDebugTool(player);
+			boolean playerHasDebugTool = WrenchUtil.playerHoldsDebugTool(player);
 			World world = player.world;
 			TileEntity te = world.getTileEntity(pos);
 
 			try {
-				playerHasDebugTool = true;
 				if (playerHasDebugTool) {
 					TaamRendererDebug.renderTEDebug(te, player, target.sideHit, event.getPartialTicks());
 				}
@@ -166,7 +248,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 						double z = pos.getZ() + slot % 3 * ConveyorUtil.oneThird;
 
 
-						if (wrapper.itemStack == null && player.getHeldItemMainhand() != null) {
+						if (wrapper.isEmpty() && !InventoryUtils.isEmpty(player.getHeldItemMainhand())) {
 							drawSelectionBoundingBox(player, event.getPartialTicks(), 4, 1, 1, 1, 1, new AxisAlignedBB(x, y, z,
 									x + ConveyorUtil.oneThird, y + 0.1d, z + ConveyorUtil.oneThird));
 						} else {
@@ -178,7 +260,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 							drawSlotInfo(player, x, y, z, slot, cte.getMovementDirection(), event.getPartialTicks());
 						}
 
-						if (wrapper.itemStack != null) {
+						if (!wrapper.isEmpty()) {
 							float progress = wrapper.movementProgress;
 
 							if (wrapper.isRenderingInterpolated()) {
@@ -314,16 +396,16 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 	}
 
 	@Override
-	public void renderTileEntityAt(TileEntity tileEntity, double x, double y, double z, float partialTicks, int destroyStage) {
+	public void renderTileEntityAt(TileEntity te, double x, double y, double z, float partialTicks, int destroyStage) {
 
 		if (Config.render_tank_content) {
-			TankRenderInfo[] tankRI = tileEntity.getCapability(Taam.CAPABILITY_RENDER_TANK, null);
+			TankRenderInfo[] tankRI = te.getCapability(Taam.CAPABILITY_RENDER_TANK, null);
 
 			if (tankRI != null) {
 				GL11.glPushMatrix();
 				GL11.glTranslated(x, y, z);
 
-				float rotationDegrees = RenderUtil.getRotationDegrees(tileEntity);
+				float rotationDegrees = RenderUtil.getRotationDegrees(te);
 
 				GL11.glTranslated(.5f, .5f, .5f);
 				GL11.glRotatef(rotationDegrees, 0, 1, 0);
@@ -336,12 +418,12 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 			}
 		}
 
-		IConveyorSlots conveyorSlots = tileEntity.getCapability(Taam.CAPABILITY_CONVEYOR, EnumFacing.UP);
+		IConveyorSlots conveyorSlots = te.getCapability(Taam.CAPABILITY_CONVEYOR, EnumFacing.UP);
 		if (conveyorSlots != null) {
 			boolean oscillate = false;
 
-			if (tileEntity instanceof TileEntityConveyorSieve) {
-				oscillate = !((TileEntityConveyorSieve) tileEntity).isShutdown;
+			if (te instanceof TileEntityConveyorSieve) {
+				oscillate = !((TileEntityConveyorSieve) te).isShutdown;
 			}
 
 			if (Config.render_items) {
@@ -349,11 +431,11 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 			}
 		}
 
-		if (Config.render_items && tileEntity instanceof TileEntityConveyorProcessor) {
-			TileEntityConveyorProcessor processor = (TileEntityConveyorProcessor) tileEntity;
+		if (Config.render_items && te instanceof TileEntityConveyorProcessor) {
+			TileEntityConveyorProcessor processor = (TileEntityConveyorProcessor) te;
 			ItemStack processingStack = processor.getRenderStack();
 
-			if (processingStack != null && processingStack.stackSize > 0 && processingStack.getItem() != null) {
+			if (!InventoryUtils.isEmpty(processingStack)) {
 				IBakedModel model = ri.getItemModelMesher().getItemModel(processingStack);
 
 				GL11.glPushMatrix();
@@ -368,7 +450,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 				 * Get Rotation
 				 */
 
-				float rotationDegrees = RenderUtil.getRotationDegrees(tileEntity);
+				float rotationDegrees = RenderUtil.getRotationDegrees(te);
 
 				GL11.glTranslatef(0.5f, 0.4f, 0.5f);
 
@@ -398,65 +480,65 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 			}
 		}
 
-		if (tileEntity instanceof TileEntityConveyorSieve) {
+		if (te instanceof TileEntityConveyorSieve) {
 			GL11.glPushMatrix();
 			GL11.glTranslated(x, y, z);
 
-			float rotationDegrees = RenderUtil.getRotationDegrees(tileEntity);
+			float rotationDegrees = RenderUtil.getRotationDegrees(te);
 
 			GL11.glTranslated(.5f, .5f, .5f);
 			GL11.glRotatef(rotationDegrees, 0, 1, 0);
 			GL11.glTranslated(-.5f, -.5f, -.5f);
 
-			renderSieveMesh(((TileEntityConveyorSieve) tileEntity).isShutdown);
+			renderSieveMesh(((TileEntityConveyorSieve) te).isShutdown);
 
 			GL11.glPopMatrix();
 		}
 
-		if (tileEntity instanceof TileEntityConveyorItemBag) {
+		if (te instanceof TileEntityConveyorItemBag) {
 			GL11.glPushMatrix();
 			GL11.glTranslated(x, y, z);
 
-			float rotationDegrees = RenderUtil.getRotationDegrees(tileEntity);
+			float rotationDegrees = RenderUtil.getRotationDegrees(te);
 
 			GL11.glTranslated(.5f, .5f, .5f);
 			GL11.glRotatef(rotationDegrees, 0, 1, 0);
 			GL11.glTranslated(-.5f, -.5f, -.5f);
 
-			float fillFactor = ((TileEntityConveyorItemBag) tileEntity).fillPercent;
+			float fillFactor = ((TileEntityConveyorItemBag) te).fillPercent;
 
 			renderBagFilling(fillFactor);
 
 			GL11.glPopMatrix();
 		}
 
-		if (tileEntity instanceof TileEntityConveyorTrashCan) {
+		if (te instanceof TileEntityConveyorTrashCan) {
 			GL11.glPushMatrix();
 			GL11.glTranslated(x, y, z);
 
-			float rotationDegrees = RenderUtil.getRotationDegrees(tileEntity);
+			float rotationDegrees = RenderUtil.getRotationDegrees(te);
 
 			GL11.glTranslated(.5f, .5f, .5f);
 			GL11.glRotatef(rotationDegrees, 0, 1, 0);
 			GL11.glTranslated(-.5f, -.5f, -.5f);
 
-			float fillFactor = ((TileEntityConveyorTrashCan) tileEntity).fillLevel / Config.pl_trashcan_maxfill;
+			float fillFactor = ((TileEntityConveyorTrashCan) te).fillLevel / Config.pl_trashcan_maxfill;
 
 			renderBagFilling(fillFactor);
 
 			GL11.glPopMatrix();
 		}
 
-		if (tileEntity instanceof ApplianceAligner) {
+		if (te instanceof ApplianceAligner) {
 
 
-			ApplianceAligner aligner = (ApplianceAligner) tileEntity;
+			ApplianceAligner aligner = (ApplianceAligner) te;
 
 			EnumFacing direction = aligner.getFacingDirection();
 			EnumFacing conveyorDirection = aligner.conveyorDirection;
 
 			if (aligner.clientRenderCache != null && conveyorDirection != null && direction.getAxis() != conveyorDirection.getAxis()) {
-				float rotationDegrees = RenderUtil.getRotationDegrees(tileEntity);
+				float rotationDegrees = RenderUtil.getRotationDegrees(te);
 
 				byte conveyorSpeedsteps = aligner.conveyorSpeedsteps;
 
@@ -536,7 +618,7 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 					GlStateManager.disableTexture2D();
 
 					// Render bit
-					RenderGlobal.drawSelectionBoundingBox(new AxisAlignedBB(0, 0, 0, size, 0.8/3, size), 30, 80, 80, 255);
+					RenderGlobal.drawSelectionBoundingBox(new AxisAlignedBB(0, 0, 0, size, 0.8 / 3, size), 30, 80, 80, 255);
 
 					GlStateManager.popMatrix();
 				}
@@ -546,18 +628,18 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 			}
 		}
 
-		if (tileEntity instanceof TileEntityConveyorElevator) {
+		if (te instanceof TileEntityConveyorElevator) {
 			GL11.glPushMatrix();
 			GL11.glTranslated(x, y, z);
 
-			float rotationDegrees = RenderUtil.getRotationDegrees(tileEntity);
+			float rotationDegrees = RenderUtil.getRotationDegrees(te);
 
 			GL11.glTranslated(.5f, .5f, .5f);
 			GL11.glRotatef(rotationDegrees, 0, 1, 0);
 			GL11.glTranslated(-.5f, -.5f, -.5f);
 
 
-			TileEntityConveyorElevator.ElevatorDirection escalation = ((TileEntityConveyorElevator) tileEntity).escalation;
+			TileEntityConveyorElevator.ElevatorDirection escalation = ((TileEntityConveyorElevator) te).escalation;
 
 			renderElevator(escalation, partialTicks);
 
@@ -767,68 +849,6 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		tearDownDefaultGL();
 	}
 
-	/*
-	 * Vertex infos from exported .obj file
-	 */
-	final Vector3f[] sieve_vertices = new Vector3f[]{
-			new Vector3f(0.9375f, 0.49f, 0.0625f),
-			new Vector3f(0.9375f, 0.52f, 0.0625f),
-			new Vector3f(0.0625f, 0.49f, 0.0625f),
-			new Vector3f(0.5000f, 0.49f, 0.0625f),
-			new Vector3f(0.0625f, 0.52f, 0.0625f),
-			new Vector3f(0.5000f, 0.52f, 0.0625f),
-			new Vector3f(0.9375f, 0.45f, 0.9375f),
-			new Vector3f(0.9375f, 0.47f, 0.5000f),
-			new Vector3f(0.9375f, 0.50f, 0.5000f),
-			new Vector3f(0.9375f, 0.48f, 0.9375f),
-			new Vector3f(0.0625f, 0.45f, 0.9375f),
-			new Vector3f(0.0625f, 0.47f, 0.5000f),
-			new Vector3f(0.5000f, 0.45f, 0.9375f),
-			new Vector3f(0.5000f, 0.47f, 0.5000f),
-			new Vector3f(0.5000f, 0.50f, 0.5000f),
-			new Vector3f(0.0625f, 0.50f, 0.5000f),
-			new Vector3f(0.0625f, 0.48f, 0.9375f),
-			new Vector3f(0.5000f, 0.48f, 0.9375f)
-	};
-	final Vector2f[] sieve_tex = new Vector2f[]{
-			new Vector2f(0.000000f, 0.359375f),
-			new Vector2f(0.058594f, 0.359375f),
-			new Vector2f(0.058594f, 0.417969f),
-			new Vector2f(0.000000f, 0.417969f),
-			new Vector2f(0.003906f, 0.355469f),
-			new Vector2f(0.003906f, 0.417969f),
-			new Vector2f(0.000000f, 0.355469f),
-			new Vector2f(0.000000f, 0.414062f),
-			new Vector2f(0.062500f, 0.414062f),
-			new Vector2f(0.062500f, 0.417969f)
-	};
-	final Vector3f[] sieve_normals = new Vector3f[]{
-			new Vector3f(0.000000f, -0.99900f, -0.0457f),
-			new Vector3f(0.000000f, 0.000000f, -1.00000f),
-			new Vector3f(0.000000f, 0.999000f, 0.045700f),
-			new Vector3f(1.000000f, 0.000000f, 0.000000f),
-			new Vector3f(-1.00000f, 0.00000f, 0.00000f),
-			new Vector3f(0.000000f, 0.000000f, 1.000000f)
-	};
-	final ObjFace[] sieve_faces = new ObjFace[]{
-			new ObjFace(new int[]{8, 14, 4, 1}, new int[]{1, 2, 3, 4}, 1),
-			new ObjFace(new int[]{1, 4, 6, 2}, new int[]{5, 6, 4, 7}, 2),
-			new ObjFace(new int[]{9, 2, 6, 15}, new int[]{1, 4, 3, 2}, 3),
-			new ObjFace(new int[]{8, 1, 2, 9}, new int[]{8, 9, 10, 4}, 4),
-			new ObjFace(new int[]{12, 3, 4, 14}, new int[]{1, 4, 3, 2}, 1),
-			new ObjFace(new int[]{3, 5, 6, 4}, new int[]{5, 7, 4, 6}, 2),
-			new ObjFace(new int[]{16, 15, 6, 5}, new int[]{1, 2, 3, 4}, 3),
-			new ObjFace(new int[]{12, 16, 5, 3}, new int[]{8, 4, 10, 9}, 5),
-			new ObjFace(new int[]{8, 7, 13, 14}, new int[]{1, 4, 3, 2}, 1),
-			new ObjFace(new int[]{7, 10, 18, 13}, new int[]{5, 7, 4, 6}, 6),
-			new ObjFace(new int[]{9, 15, 18, 10}, new int[]{1, 2, 3, 4}, 3),
-			new ObjFace(new int[]{8, 9, 10, 7}, new int[]{8, 4, 10, 9}, 4),
-			new ObjFace(new int[]{12, 14, 13, 11}, new int[]{1, 2, 3, 4}, 1),
-			new ObjFace(new int[]{11, 13, 18, 17}, new int[]{5, 6, 4, 7}, 6),
-			new ObjFace(new int[]{16, 17, 18, 15}, new int[]{1, 4, 3, 2}, 3),
-			new ObjFace(new int[]{12, 11, 17, 16}, new int[]{8, 9, 10, 4}, 5)
-	};
-
 	public void renderSieveMesh(boolean shutDown) {
 		/*
 		 * Prepare rendering
@@ -873,24 +893,6 @@ public class TaamRenderer extends TileEntitySpecialRenderer<TileEntity> {
 		Tessellator.getInstance().draw();
 
 		tearDownDefaultGL();
-	}
-
-	public static class ObjFace {
-		public final int[] vertexIndexes;
-		public final int[] textureIndexes;
-		public final int normalIndex;
-
-		/**
-		 * @param vertexIndexes
-		 * @param textureIndexes
-		 * @param normalIndex
-		 */
-		public ObjFace(int[] vertexIndexes, int[] textureIndexes, int normalIndex) {
-			this.vertexIndexes = vertexIndexes;
-			this.textureIndexes = textureIndexes;
-			this.normalIndex = normalIndex;
-		}
-
 	}
 
 	/**

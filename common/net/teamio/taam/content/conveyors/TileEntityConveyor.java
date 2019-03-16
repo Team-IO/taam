@@ -33,6 +33,8 @@ import net.teamio.taam.util.InventoryUtils;
 import net.teamio.taam.util.TaamUtil;
 import net.teamio.taam.util.WrenchUtil;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 
 public class TileEntityConveyor extends BaseTileEntity implements IRotatable, IConveyorApplianceHost, IWorldInteractable, ITickable, IRenderable {
@@ -310,11 +312,11 @@ public class TileEntityConveyor extends BaseTileEntity implements IRotatable, IC
 	}
 
 	@Override
-	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-		if(capability == Taam.CAPABILITY_CONVEYOR) {
+	public boolean hasCapability(@Nonnull Capability<?> capability, EnumFacing facing) {
+		if (capability == Taam.CAPABILITY_CONVEYOR) {
 			return true;
 		}
-		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+		if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
 			return true;
 		}
 		return super.hasCapability(capability, facing);
@@ -322,11 +324,12 @@ public class TileEntityConveyor extends BaseTileEntity implements IRotatable, IC
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-		if(capability == Taam.CAPABILITY_CONVEYOR) {
+	@Nullable
+	public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
+		if (capability == Taam.CAPABILITY_CONVEYOR) {
 			return (T) conveyorSlots;
 		}
-		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+		if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
 			return (T) conveyorSlots.getItemHandler(facing);
 		}
 		return super.getCapability(capability, facing);
@@ -353,7 +356,7 @@ public class TileEntityConveyor extends BaseTileEntity implements IRotatable, IC
 		}
 		conveyorSlots.rotation = direction;
 		updateState(false, true, true);
-		world.notifyBlockOfStateChange(pos, blockType);
+		world.notifyNeighborsRespectDebug(pos, blockType);
 		if (blockType != null) {
 			blockType.onNeighborChange(world, pos, pos);
 		}
@@ -384,7 +387,7 @@ public class TileEntityConveyor extends BaseTileEntity implements IRotatable, IC
 
 	public void updateApplianceCache() {
 		if (speedLevel == 1) {
-			applianceCache = ConveyorUtil.getTouchingAppliances(this, world, pos);
+			applianceCache = ConveyorUtil.getTouchingAppliances(world, pos);
 		} else {
 			applianceCache = null;
 		}
@@ -400,16 +403,15 @@ public class TileEntityConveyor extends BaseTileEntity implements IRotatable, IC
 	 */
 	@Override
 	public boolean onBlockActivated(World world, EntityPlayer player, EnumHand hand, boolean hasWrench, EnumFacing side,
-			float hitX, float hitY, float hitZ) {
+	                                float hitX, float hitY, float hitZ) {
 		ItemStack held = player.getHeldItem(hand);
-		if (speedLevel == 1 && held != null && held.getItem() == TaamMain.itemPart
-				&& held.getMetadata() == Taam.ITEM_PART_META.redirector.ordinal()) {
-			RedirectorSide redirectorSide = ConveyorUtil.getRedirectorSide(direction, side, hitX, hitY, hitZ, false);
+		if (speedLevel == 1 && InventoryUtils.isItem(held, TaamMain.itemPart, Taam.ITEM_PART_META.redirector.ordinal())) {
+			RedirectorSide redirectorSide = ConveyorUtil.getRedirectorSide(direction, side, hitX, hitZ, false);
 			Log.debug("Tried placing redirector on side: {}", redirectorSide);
 			if (redirectorSide == RedirectorSide.Left) {
 				if (!redirectorLeft) {
 					setRedirectorLeft(true);
-					if(!player.capabilities.isCreativeMode) {
+					if (!player.capabilities.isCreativeMode) {
 						held.stackSize--;
 					}
 					return true;
@@ -418,7 +420,7 @@ public class TileEntityConveyor extends BaseTileEntity implements IRotatable, IC
 			} else if (redirectorSide == RedirectorSide.Right) {
 				if (!redirectorRight) {
 					setRedirectorRight(true);
-					if(!player.capabilities.isCreativeMode) {
+					if (!player.capabilities.isCreativeMode) {
 						held.stackSize--;
 					}
 					return true;
@@ -431,12 +433,12 @@ public class TileEntityConveyor extends BaseTileEntity implements IRotatable, IC
 
 		//TODO: Cleanup, move to base block with the rest of the hand logic
 
-		boolean playerHasWrenchInMainhand = WrenchUtil.playerHasWrenchInHand(player, EnumHand.MAIN_HAND);
-		boolean playerHasWrench = playerHasWrenchInMainhand || (player.isSneaking() && WrenchUtil.playerHasWrenchInHand(player, EnumHand.OFF_HAND));
+		boolean playerHasWrenchInMainhand = WrenchUtil.playerHoldsWrench(player, EnumHand.MAIN_HAND);
+		boolean playerHasWrench = playerHasWrenchInMainhand || (player.isSneaking() && WrenchUtil.playerHoldsWrench(player, EnumHand.OFF_HAND));
 		if (playerHasWrench) {
 			boolean playerIsSneaking = player.isSneaking() && playerHasWrenchInMainhand;
 			if (playerIsSneaking) {
-				RedirectorSide redirectorSide = ConveyorUtil.getRedirectorSide(direction, side, hitX, hitY, hitZ, false);
+				RedirectorSide redirectorSide = ConveyorUtil.getRedirectorSide(direction, side, hitX, hitZ, false);
 				Log.debug("Tried disassembling redirector on side: {}", redirectorSide);
 				if (redirectorSide == RedirectorSide.Left) {
 					if (redirectorLeft) {

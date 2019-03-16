@@ -5,7 +5,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -25,10 +24,11 @@ import net.teamio.taam.piping.PipeUtil;
 import net.teamio.taam.recipes.IProcessingRecipeFluidBased;
 import net.teamio.taam.recipes.ProcessingRegistry;
 import net.teamio.taam.rendering.TankRenderInfo;
+import net.teamio.taam.util.InventoryUtils;
 
 import javax.annotation.Nonnull;
 
-public class ApplianceSprayer extends ATileEntityAppliance implements ITickable, IWorldInteractable {
+public class ApplianceSprayer extends ATileEntityAppliance implements IWorldInteractable {
 
 	public static final float b_tankBorder = 1.5f / 16f;
 	public static final float b_tankBorderSprayer = b_tankBorder + 4f / 16f;
@@ -114,10 +114,6 @@ public class ApplianceSprayer extends ATileEntityAppliance implements ITickable,
 	}
 
 	@Override
-	public void update() {
-	}
-
-	@Override
 	protected void readPropertiesFromNBT(NBTTagCompound tag) {
 		super.readPropertiesFromNBT(tag);
 
@@ -142,7 +138,7 @@ public class ApplianceSprayer extends ATileEntityAppliance implements ITickable,
 
 	@Override
 	public boolean processItem(IConveyorApplianceHost conveyor, int slot, ItemWrapper wrapper) {
-		if (wrapper.itemStack == null) {
+		if (InventoryUtils.isEmpty(wrapper.itemStack)) {
 			return false;
 		}
 
@@ -205,7 +201,7 @@ public class ApplianceSprayer extends ATileEntityAppliance implements ITickable,
 		 * Replace input stack with output
 		 */
 
-		wrapper.itemStack = result;
+		wrapper.setStack(result);
 		wrapper.unblock();
 
 		markDirty();

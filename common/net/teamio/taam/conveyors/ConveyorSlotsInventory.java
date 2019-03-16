@@ -3,6 +3,7 @@ package net.teamio.taam.conveyors;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
+import net.teamio.taam.util.InventoryUtils;
 
 /**
  * A {@link IConveyorSlots} implementation that inputs into an inventory. No
@@ -40,7 +41,7 @@ public class ConveyorSlotsInventory extends ConveyorSlotsBase {
 
 	@Override
 	public int insertItemAt(ItemStack item, int slot, boolean simulate) {
-		if (item == null || item.stackSize == 0) {
+		if (InventoryUtils.isEmpty(item)) {
 			return 0;
 		}
 		ItemStack notAdded = ItemHandlerHelper.insertItemStacked(inventory, item, simulate);

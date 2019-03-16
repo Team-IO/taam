@@ -3,21 +3,16 @@ package net.teamio.taam.gui.util;
 import com.google.common.base.Function;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraftforge.fml.client.config.GuiUtils;
 import net.teamio.taam.gui.advanced.GuiAdvancedMachine;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 public class CustomButton extends GuiButton {
 
-	public CustomButton(int id, int xPos, int yPos, int width, int height,
-			String displayString) {
-		super(id, xPos, yPos, width, height, displayString);
-	}
-
-	public CustomButton(int id, int xPos, int yPos, String displayString) {
-		super(id, xPos, yPos, baseTextureHeight, baseTextureHeight, displayString);
-	}
-
-	static final int baseTextureHeight = 16;
+	static final int baseTextureSize = 16;
 	static final int baseTextureU = 177;
 	static final int baseTextureV = 0;
 	boolean mouseDown = false;
@@ -43,6 +38,14 @@ public class CustomButton extends GuiButton {
 	 */
 	public int textHorizontalAlignment = 2;
 
+	public CustomButton(int id, int xPos, int yPos, int width, int height, @Nullable String displayString) {
+		super(id, xPos, yPos, width, height, displayString);
+	}
+
+	public CustomButton(int id, int xPos, int yPos, String displayString) {
+		super(id, xPos, yPos, baseTextureSize, baseTextureSize, displayString);
+	}
+
 	@Override
 	public boolean mousePressed(Minecraft mc, int mouseX, int mouseY) {
 		boolean inside = super.mousePressed(mc, mouseX, mouseY);
@@ -55,58 +58,62 @@ public class CustomButton extends GuiButton {
 		mouseDown = false;
 	}
 
-	@Override
-	public void drawButton(Minecraft mc, int mouseX, int mouseY) {
-		if (visible) {
-			hovered = mouseX >= xPosition && mouseY >= yPosition && mouseX < xPosition + width
-					&& mouseY < yPosition + height;
-			int hoverState = getHoverState(hovered);
 
-			if (hoverState == 2 && mouseDown) {
-				hoverState = 3;
+	@Override
+	public void drawButton(@Nonnull Minecraft mc, int mouseX, int mouseY) {
+		if (!visible) {
+			return;
+		}
+		hovered = mouseX >= xPosition && mouseY >= yPosition && mouseX < xPosition + width
+				&& mouseY < yPosition + height;
+		int hoverState = getHoverState(hovered);
+
+		if (hoverState == 2 && mouseDown) {
+			hoverState = 3;
+		}
+
+		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+		GuiUtils.drawContinuousTexturedBox(GuiAdvancedMachine.guiTexture,
+				xPosition, yPosition,//x y
+				baseTextureU, baseTextureV + hoverState * baseTextureSize,//u v
+				width, height,//width height
+				baseTextureSize, baseTextureSize, // texture width height
+				3, zLevel);
+
+		int pressOffset = hoverState == 3 ? 1 : 0;
+
+		if (displayString != null) {
+
+			int color = 0xE0E0E0;
+
+			if (packedFGColour != 0) {
+				color = packedFGColour;
+			} else if (!enabled) {
+				color = 0xA0A0A0;
+			} else if (hovered) {
+				color = 0xFFFFA0;
 			}
 
-			GuiUtils.drawContinuousTexturedBox(GuiAdvancedMachine.guiTexture,
-					xPosition, yPosition,//x y
-					baseTextureU, baseTextureV + hoverState * baseTextureHeight,//u v
-					width, height,//width height
-					baseTextureHeight, baseTextureHeight, // texture width height
-					3, zLevel);
+			String buttonText = displayString;
+			int strWidth = mc.fontRendererObj.getStringWidth(buttonText);
 
-			int pressOffset = hoverState == 3 ? 1 : 0;
+			boolean doEllipsis = trimText && textHorizontalAlignment > 0 && textHorizontalAlignment < 4;
 
-			if (displayString != null) {
+			if (doEllipsis) {
+				int ellipsisWidth = mc.fontRendererObj.getStringWidth("...");
 
-				int color = 0xE0E0E0;
-
-				if (packedFGColour != 0) {
-					color = packedFGColour;
-				} else if (!enabled) {
-					color = 0xA0A0A0;
-				} else if (hovered) {
-					color = 0xFFFFA0;
+				if (strWidth > width - textPadding && strWidth > ellipsisWidth) {
+					strWidth = width - textPadding - ellipsisWidth;
+					buttonText = mc.fontRendererObj.trimStringToWidth(buttonText, strWidth).trim() + "...";
 				}
+			}
 
-				String buttonText = displayString;
-				int strWidth = mc.fontRendererObj.getStringWidth(buttonText);
+			int textHeight = 8;
 
-				boolean doEllipsis = trimText && textHorizontalAlignment > 0 && textHorizontalAlignment < 4;
+			int leftOffset;
+			int topOffset;
 
-				if(doEllipsis) {
-					int ellipsisWidth = mc.fontRendererObj.getStringWidth("...");
-
-					if (strWidth > width - textPadding && strWidth > ellipsisWidth) {
-						strWidth = width - textPadding - ellipsisWidth;
-						buttonText = mc.fontRendererObj.trimStringToWidth(buttonText, strWidth).trim() + "...";
-					}
-				}
-
-				int textHeight = 8;
-
-				int leftOffset;
-				int topOffset;
-
-				switch(textHorizontalAlignment) {
+			switch (textHorizontalAlignment) {
 				case 0:
 					leftOffset = -strWidth - textPadding;
 					break;
@@ -123,9 +130,9 @@ public class CustomButton extends GuiButton {
 				case 4:
 					leftOffset = width + textPadding;
 					break;
-				}
+			}
 
-				switch(textVerticalAlignment) {
+			switch (textVerticalAlignment) {
 				case 0:
 					topOffset = -textHeight - textPadding;
 					break;
@@ -142,14 +149,13 @@ public class CustomButton extends GuiButton {
 				case 4:
 					topOffset = height + textPadding;
 					break;
-				}
-
-				drawString(mc.fontRendererObj, buttonText, xPosition + pressOffset + leftOffset, yPosition + pressOffset + topOffset, color);
 			}
 
-			if(image != null) {
-				image.drawCentered(xPosition + width / 2 + pressOffset, yPosition + height / 2 + pressOffset);
-			}
+			drawString(mc.fontRendererObj, buttonText, xPosition + pressOffset + leftOffset, yPosition + pressOffset + topOffset, color);
+		}
+
+		if (image != null) {
+			image.drawCentered(xPosition + width / 2 + pressOffset, yPosition + height / 2 + pressOffset);
 		}
 	}
 

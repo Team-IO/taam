@@ -16,7 +16,6 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
  * routing over the network.
  *
  * @author Oliver Kahrmann
- *
  */
 public class WorldCoord {
 	public int world;
@@ -52,7 +51,7 @@ public class WorldCoord {
 	}
 
 	public int[] toData() {
-		return new int[] { world, x, y, z };
+		return new int[]{world, x, y, z};
 	}
 
 	public void writeToNBT(NBTTagCompound tag) {

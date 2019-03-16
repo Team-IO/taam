@@ -91,12 +91,12 @@ public class BlockMachines extends BaseBlock {
 		return super.getUnlocalizedName() + "." + values[i].name();
 	}
 
+
 	@Override
-	@SideOnly(Side.CLIENT)
-	public void getSubBlocks(Item item, CreativeTabs creativeTab, List<ItemStack> list) {
+	public void getSubBlocks(Item item, CreativeTabs creativeTab, List<ItemStack> items) {
 		BLOCK_MACHINES_META[] values = Taam.BLOCK_MACHINES_META.values();
 		for (int i = 0; i < values.length; i++) {
-			list.add(new ItemStack(item, 1, i));
+			items.add(new ItemStack(item, 1, i));
 		}
 	}
 

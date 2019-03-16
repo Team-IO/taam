@@ -29,16 +29,16 @@ public class TileEntityChute extends BaseTileEntity implements IRotatable, ITick
 	public boolean isConveyorVersion = false;
 	private EnumFacing direction = EnumFacing.NORTH;
 	private final FluidHandlerOutputOnly wrappedHandler = new FluidHandlerOutputOnly();
-	
+
 	private final ConveyorSlotsBase conveyorSlots = new ConveyorSlotsBase() {
-		
+
 		@Override
 		public int insertItemAt(ItemStack stack, int slot, boolean simulate) {
 			IItemHandler target = getTargetItemHandler();
 
 			ItemStack notAdded = ItemHandlerHelper.insertItemStacked(target, stack, simulate);
 			int added = stack.stackSize;
-			if(notAdded != null)
+			if(!InventoryUtils.isEmpty(notAdded))
 				added -= notAdded.stackSize;
 			return added;
 		}
@@ -47,7 +47,7 @@ public class TileEntityChute extends BaseTileEntity implements IRotatable, ITick
 		public ItemStack removeItemAt(int slot, int amount, boolean simulate) {
 			return null;
 		}
-		
+
 		@Override
 		public double getInsertMaxY() {
 			return isConveyorVersion ? 0.9 : 1.3;
@@ -131,10 +131,10 @@ public class TileEntityChute extends BaseTileEntity implements IRotatable, ITick
 	private TileEntity getTarget() {
 		return world.getTileEntity(pos.down());
 	}
-	
+
 	private IItemHandler getDropItemHandler() {
 		return new IItemHandler() {
-			
+
 			@Override
 			public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
 				if(canDrop()) {
@@ -149,17 +149,17 @@ public class TileEntityChute extends BaseTileEntity implements IRotatable, ITick
 				}
 				return stack;
 			}
-			
+
 			@Override
 			public ItemStack getStackInSlot(int slot) {
 				return null;
 			}
-			
+
 			@Override
 			public int getSlots() {
 				return 1;
 			}
-			
+
 			@Override
 			public ItemStack extractItem(int slot, int amount, boolean simulate) {
 				return null;
@@ -178,7 +178,7 @@ public class TileEntityChute extends BaseTileEntity implements IRotatable, ITick
 		}
 		return handler;
 	}
-	
+
 
 	private IFluidHandler getTargetFluidHandler() {
 		TileEntity target = getTarget();

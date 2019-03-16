@@ -42,7 +42,7 @@ Mod & Dependency versions are controlled in the `build.gradle` and according `bu
 
 Item/Block names are recorded in the class `net.teamio.taam.Taam`. Main mod class is `net.teamio.taam.TaamMain`. Anything else in that package is somewhat related to global registration with Minecraft or config stuff.
 
-ll Item & block classes (and related stuff) are located in the `net.teamio.taam.content.*` packages, clustered by area.
+All Item & block classes (and related stuff) are located in the `net.teamio.taam.content.*` packages, clustered by area.
 Supporting classes for the themes (Utils, API, etc.) are located in the corresponding `net.teamio.taam.*` packages.
 
 Integrations with other mods belong in a corresponding package in `net.teamio.taam.integration`. GUI, rendering and network sit in their respective package in `net.teamio.taam`.

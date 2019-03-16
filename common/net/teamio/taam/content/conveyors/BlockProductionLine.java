@@ -112,11 +112,10 @@ public class BlockProductionLine extends BaseBlock {
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public void getSubBlocks(Item item, CreativeTabs creativeTab, List<ItemStack> list) {
+	public void getSubBlocks(Item item, CreativeTabs creativeTab, List<ItemStack> items) {
 		Enum<?>[] values = Taam.BLOCK_PRODUCTIONLINE_META.values();
 		for (int i = 0; i < values.length; i++) {
-			list.add(new ItemStack(item, 1, i));
+			items.add(new ItemStack(item, 1, i));
 		}
 	}
 
@@ -231,9 +230,11 @@ public class BlockProductionLine extends BaseBlock {
 	public boolean canPlaceBlockAt(World world, BlockPos pos) {
 		TileEntity ent = world.getTileEntity(pos);
 
-		EnumFacing myDir = null;
+		EnumFacing myDir;
 		if (ent instanceof TileEntityConveyor) {
 			myDir = ((TileEntityConveyor) ent).getFacingDirection();
+		} else {
+			myDir = null;
 		}
 		return canBlockStay(world, pos, myDir);
 	}

@@ -5,10 +5,10 @@ import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.MathHelper;
 
 /**
- * Helper to get slot availability, with automatic calculation of rotations.
+ * Helper to get conveyor slot availability, with automatic calculation of rotations.
+ * This is used by machines to determine if their slots are available based on the machine rotation.
  *
  * @author Oliver Kahrmann
- *
  */
 public class SlotMatrix {
 
@@ -18,7 +18,7 @@ public class SlotMatrix {
 	private boolean[][] rotated;
 
 	public SlotMatrix() {
-		unrotated = new boolean[] {
+		unrotated = new boolean[]{
 				true, true, true,
 				true, true, true,
 				true, true, true
@@ -26,16 +26,16 @@ public class SlotMatrix {
 	}
 
 	public SlotMatrix(boolean one, boolean two, boolean three, boolean four, boolean five, boolean six, boolean seven,
-			boolean eight, boolean nine) {
-		unrotated = new boolean[] { one, two, three, four, five, six, seven, eight, nine };
+	                  boolean eight, boolean nine) {
+		unrotated = new boolean[]{one, two, three, four, five, six, seven, eight, nine};
 	}
 
 	/**
 	 * Checks the unrotated state of this matrix. By convention this means
 	 * facing North.
 	 *
-	 * @param slot
-	 * @return
+	 * @param slot A slot id (0-8). This is automatically clamped, so be careful not to overshoot or the results are undefined.
+	 * @return True if the slot is available
 	 */
 	public boolean isSlotAvailable(int slot) {
 		slot = MathHelper.clamp(slot, 0, 8);
@@ -47,9 +47,9 @@ public class SlotMatrix {
 	 * Checks a rotated state of this matrix. Vertical Axis is ignored &
 	 * considered unrotated.
 	 *
-	 * @param slot
-	 * @param rotation
-	 * @return
+	 * @param slot     A slot id (0-8). This is automatically clamped, so be careful not to overshoot or the results are undefined.
+	 * @param rotation The rotation for which the slot should be checked. Vertical rotations are considered unrotated.
+	 * @return True if the slot is available
 	 */
 	public boolean isSlotAvailable(int slot, EnumFacing rotation) {
 		// Non-Rotation can be skipped, also if we are the ALL instance.
@@ -80,8 +80,14 @@ public class SlotMatrix {
 		rotated[3] = rotate(rotated[0]);
 	}
 
+	/**
+	 * Rotates the given source array counter-clockwise
+	 *
+	 * @param source An array of 9 booleans
+	 * @return A new array of 9 booleans with the contents rotated according to the default slot layout
+	 */
 	public static boolean[] rotate(boolean[] source) {
-		return new boolean[] {
+		return new boolean[]{
 				source[6], source[3], source[0],
 				source[7], source[4], source[1],
 				source[8], source[5], source[2]

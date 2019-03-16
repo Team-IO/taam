@@ -111,7 +111,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements IReds
 
 		if (!isCoolingDown()) {
 			ItemStack stack = itemHandler.getStackInSlot(0);
-			if (stack == null || stack.stackSize < stack.getMaxStackSize()) {
+			if (InventoryUtils.isEmpty(stack) || stack.stackSize < stack.getMaxStackSize()) {
 				ConveyorUtil.tryInsertItemsFromWorld(this, world, null, false);
 			}
 		}
@@ -217,7 +217,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements IReds
 
 		ItemStack input = itemHandler.getStackInSlot(0);
 
-		if (input == null) {
+		if (InventoryUtils.isEmpty(input)) {
 			recipe = null;
 			return ProcessResult.NoOperation;
 		}
@@ -251,7 +251,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements IReds
 
 		ItemStack input = itemHandler.getStackInSlot(0);
 
-		if (input == null) {
+		if (InventoryUtils.isEmpty(input)) {
 			return false;
 		}
 		timeout += Config.pl_processor_shredder_timeout;
@@ -301,10 +301,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements IReds
 
 	@Override
 	protected void readPropertiesFromNBT(NBTTagCompound tag) {
-		NBTTagCompound itemTag = tag.getCompoundTag("items");
-		if (itemTag != null) {
-			itemHandler.deserializeNBT(itemTag);
-		}
+		itemHandler.deserializeNBT(tag.getCompoundTag("items"));
 
 		chute.readFromNBT(tag.getCompoundTag("chute"));
 
@@ -387,10 +384,10 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements IReds
 		}
 		int playerSlot = player.inventory.currentItem;
 		ItemStack playerStack = player.inventory.getCurrentItem();
-		if (playerStack == null) {
+		if (InventoryUtils.isEmpty(playerStack)) {
 			// Take from Processor
 			ItemStack taken = itemHandler.extractItem(0, player.inventory.getInventoryStackLimit(), false);
-			if (taken != null) {
+			if (!InventoryUtils.isEmpty(taken)) {
 				player.inventory.setInventorySlotContents(playerSlot, taken);
 			}
 		} else {
@@ -409,7 +406,7 @@ public class TileEntityConveyorProcessor extends BaseTileEntity implements IReds
 	public boolean onBlockHit(World world, EntityPlayer player, boolean hasWrench) {
 		if (hasWrench) {
 			ItemStack taken = itemHandler.getStackInSlot(0);
-			if (taken != null) {
+			if (!InventoryUtils.isEmpty(taken)) {
 				InventoryUtils.tryDropToInventory(player, taken, .5, .5, .5);
 				itemHandler.setStackInSlot(0, null);
 			}

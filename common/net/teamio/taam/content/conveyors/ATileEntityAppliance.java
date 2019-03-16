@@ -10,7 +10,7 @@ import net.teamio.taam.conveyors.IConveyorApplianceHost;
 public abstract class ATileEntityAppliance extends BaseTileEntity implements IConveyorAppliance {
 
 	protected EnumFacing direction = EnumFacing.NORTH;
-	
+
 	@Override
 	protected void writePropertiesToNBT(NBTTagCompound tag) {
 		tag.setInteger("direction", direction.ordinal());

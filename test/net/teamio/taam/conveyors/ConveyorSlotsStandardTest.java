@@ -2,7 +2,6 @@ package net.teamio.taam.conveyors;
 
 import com.builtbroken.mc.testing.junit.AbstractTest;
 import com.builtbroken.mc.testing.junit.VoltzTestRunner;
-import junit.framework.TestCase;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import org.junit.runner.RunWith;
@@ -26,7 +25,7 @@ public class ConveyorSlotsStandardTest extends AbstractTest {
 
 		for (int sl = 0; sl < 9; sl++) {
 			// Nothing retained
-			assertNull(slots.slots[sl].itemStack);
+			assertTrue(slots.slots[sl].isEmpty());
 		}
 	}
 

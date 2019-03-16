@@ -1,6 +1,7 @@
 package net.teamio.taam;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemModelMesher;
@@ -52,10 +53,8 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3f;
-import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings("deprecation")
 @SideOnly(Side.CLIENT)
 public class TaamClientProxy extends TaamCommonProxy {
 
@@ -63,7 +62,7 @@ public class TaamClientProxy extends TaamCommonProxy {
 
 	public static TaamRenderer taamRenderer;
 
-	private final List<ModelResourceLocation> locationsToReplace = new ArrayList<ModelResourceLocation>();
+	private static final List<ModelResourceLocation> locationsToReplace = Lists.newArrayList();
 
 	@Override
 	public void registerPackets(SimpleNetworkWrapper network) {

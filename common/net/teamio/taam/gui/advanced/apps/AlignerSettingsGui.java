@@ -1,6 +1,5 @@
 package net.teamio.taam.gui.advanced.apps;
 
-import com.google.common.base.Function;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
@@ -13,6 +12,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.teamio.taam.Taam;
 import net.teamio.taam.TaamMain;
+import net.teamio.taam.conveyors.filters.FilterSlot;
 import net.teamio.taam.conveyors.filters.ItemFilterCustomizable;
 import net.teamio.taam.conveyors.filters.ItemFilterCustomizable.FilterMode;
 import net.teamio.taam.gui.advanced.AppGui;
@@ -23,19 +23,19 @@ import net.teamio.taam.gui.util.Drawable;
 import org.lwjgl.opengl.GL11;
 
 public class AlignerSettingsGui extends AppGui {
-	
+
 	public static final Drawable icon = new Drawable(new ResourceLocation("minecraft", "textures/items/stick.png"), 0, 0, 16, 16, 32, 32, 16, 16);
-	public static final ResourceLocation tex_machine_config = new ResourceLocation("taam", "textures/gui/machine_config.png");
 
 	private final CustomButton[] cbExcluding;
 	private final CustomButton[] cbMode;
 	private final CustomButton[] cbCheckNBT;
 	private final CustomButton[] cbCheckMeta;
-	
+	private final FilterSlot[][] bFilterSlot;
+
 	private final AlignerSettings app;
-	
+
 	private final int filterLength;
-	
+
 	public AlignerSettingsGui(AlignerSettings app) {
 		this.app = app;
 		filterLength = app.aligner.filters.length;
@@ -43,19 +43,20 @@ public class AlignerSettingsGui extends AppGui {
 		cbMode = new CustomButton[filterLength];
 		cbCheckNBT = new CustomButton[filterLength];
 		cbCheckMeta = new CustomButton[filterLength];
+		bFilterSlot = new FilterSlot[filterLength][];
 	}
 
 	@Override
 	public void initGui(GuiAdvancedMachine gui) {
 		int guiLeft = gui.getGuiLeft();
 		int guiTop = gui.getGuiTop();
-		
-		int leftOff =  guiLeft + 230;
+
+		int leftOff = guiLeft + 230;
 		int topOff = guiTop + ContainerAdvancedMachine.panelHeight / 2;
 
 		int xSpace = 20;
 		int ySpace = 40;
-		
+
 		int verticalOffset = topOff - filterLength / 2 * ySpace - 9;
 
 		int buttonOffset = leftOff + xSpace * 3;
@@ -67,32 +68,24 @@ public class AlignerSettingsGui extends AppGui {
 			cbExcluding[i] = new CustomButton(i, leftOff, verticalOffset + i * ySpace + 19, 10, 10, "Excluding");
 			cbExcluding[i].image = GuiAdvancedMachine.iconCheckbox;
 			cbExcluding[i].textHorizontalAlignment = 4;
-			cbExcluding[i].eventHandler = new Function<CustomButton, Boolean>() {
-				
-				@Override
-				public Boolean apply(CustomButton input) {
-					ItemFilterCustomizable filter = app.aligner.filters[input.id];
-					filter.setExcluding(!filter.isExcluding());
-					onSettingsChange();
-					return true;
-				}
+			cbExcluding[i].eventHandler = input -> {
+				ItemFilterCustomizable filter = app.aligner.filters[input.id];
+				filter.setExcluding(!filter.isExcluding());
+				onSettingsChange();
+				return true;
 			};
 			gui.addButton(cbExcluding[i]);
-			
+
 			/*
 			 * Filter Mode
 			 */
 			cbMode[i] = new CustomButton(i, buttonOffset, verticalOffset + i * ySpace + 2, 14, 14, null);
 			cbMode[i].image = GuiAdvancedMachine.iconMatchExact;
-			cbMode[i].eventHandler = new Function<CustomButton, Boolean>() {
-				
-				@Override
-				public Boolean apply(CustomButton input) {
-					ItemFilterCustomizable filter = app.aligner.filters[input.id];
-					filter.mode = FilterMode.getNext(filter.mode);
-					onSettingsChange();
-					return true;
-				}
+			cbMode[i].eventHandler = input -> {
+				ItemFilterCustomizable filter = app.aligner.filters[input.id];
+				filter.mode = FilterMode.getNext(filter.mode);
+				onSettingsChange();
+				return true;
 			};
 			gui.addButton(cbMode[i]);
 
@@ -101,15 +94,11 @@ public class AlignerSettingsGui extends AppGui {
 			 */
 			cbCheckMeta[i] = new CustomButton(i, buttonOffset + 14, verticalOffset + i * ySpace - 3, 12, 12, null);
 			cbCheckMeta[i].image = GuiAdvancedMachine.iconCheckMeta;
-			cbCheckMeta[i].eventHandler = new Function<CustomButton, Boolean>() {
-				
-				@Override
-				public Boolean apply(CustomButton input) {
-					ItemFilterCustomizable filter = app.aligner.filters[input.id];
-					filter.checkMeta = !filter.checkMeta;
-					onSettingsChange();
-					return true;
-				}
+			cbCheckMeta[i].eventHandler = input -> {
+				ItemFilterCustomizable filter = app.aligner.filters[input.id];
+				filter.checkMeta = !filter.checkMeta;
+				onSettingsChange();
+				return true;
 			};
 			gui.addButton(cbCheckMeta[i]);
 
@@ -118,17 +107,26 @@ public class AlignerSettingsGui extends AppGui {
 			 */
 			cbCheckNBT[i] = new CustomButton(i, buttonOffset + 14, verticalOffset + i * ySpace - 3 + 12, 12, 12, null);
 			cbCheckNBT[i].image = GuiAdvancedMachine.iconDontCheckNBT;
-			cbCheckNBT[i].eventHandler = new Function<CustomButton, Boolean>() {
-				
-				@Override
-				public Boolean apply(CustomButton input) {
-					ItemFilterCustomizable filter = app.aligner.filters[input.id];
-					filter.checkNBT = !filter.checkNBT;
-					onSettingsChange();
-					return true;
-				}
+			cbCheckNBT[i].eventHandler = input -> {
+				ItemFilterCustomizable filter = app.aligner.filters[input.id];
+				filter.checkNBT = !filter.checkNBT;
+				onSettingsChange();
+				return true;
 			};
 			gui.addButton(cbCheckNBT[i]);
+
+			ItemFilterCustomizable itemFilterCustomizable = app.aligner.filters[i];
+			ItemStack[] entries = itemFilterCustomizable.getEntries();
+			bFilterSlot[i] = new FilterSlot[entries.length];
+
+			for (int j = 0; j < entries.length; j++) {
+				int x = leftOff + j * xSpace + 1;
+				int y = verticalOffset + i * ySpace + 1;
+				FilterSlot slot = new FilterSlot(itemFilterCustomizable, gui, j, x, y);
+				slot.onChanged = (stack) -> onSettingsChange();
+				bFilterSlot[i][j] = slot;
+				gui.addButton(slot);
+			}
 		}
 	}
 
@@ -145,7 +143,7 @@ public class AlignerSettingsGui extends AppGui {
 		// Update Buttons
 		onShow(null);
 	}
-	
+
 	@Override
 	public Drawable getIcon() {
 		return icon;
@@ -155,20 +153,20 @@ public class AlignerSettingsGui extends AppGui {
 	public void drawBackground(GuiAdvancedMachine gui, float partialTicks, int mouseX, int mouseY) {
 		int guiLeft = gui.getGuiLeft();
 		int guiTop = gui.getGuiTop();
-		
+
 		TextureManager textureManager = Minecraft.getMinecraft().getTextureManager();
 		textureManager.bindTexture(GuiAdvancedMachine.guiTexture);
-		
+
 		int leftOff = guiLeft + 230;
 
 		int yCenter = guiTop + ContainerAdvancedMachine.panelHeight / 2;
 		int xCenter = guiLeft + ContainerAdvancedMachine.panelWidth / 2;
-		
+
 		int xSpace = 20;
 		int ySpace = 40;
-		
+
 		int verticalOffset = yCenter - filterLength / 2 * ySpace - 9;
-		
+
 		for (int i = 0; i < filterLength; i++) {
 			ItemFilterCustomizable itemFilterCustomizable = app.aligner.filters[i];
 			ItemStack[] entries = itemFilterCustomizable.getEntries();
@@ -176,11 +174,10 @@ public class AlignerSettingsGui extends AppGui {
 				gui.drawTexturedModalRect(leftOff + j * xSpace, verticalOffset + i * ySpace, 238, 0, 18, 18);
 			}
 		}
-		
 
 
 		final ItemStack renderStack = new ItemStack(TaamMain.blockProductionLine, 1, Taam.BLOCK_PRODUCTIONLINE_META.conveyor2.ordinal());
-		
+
 		{
 			textureManager.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 
@@ -194,13 +191,13 @@ public class AlignerSettingsGui extends AppGui {
 			GL11.glRotated(90, 1, 0, 0);
 
 			float degrees = 0;
-			if(app.aligner.conveyorDirection == app.aligner.getFacingDirection().rotateY()) {
+			if (app.aligner.conveyorDirection == app.aligner.getFacingDirection().rotateY()) {
 				// Right
 				degrees = 90;
-			} else if(app.aligner.conveyorDirection == app.aligner.getFacingDirection().rotateYCCW()) {
+			} else if (app.aligner.conveyorDirection == app.aligner.getFacingDirection().rotateYCCW()) {
 				// Left
 				degrees = -90;
-			} else if(app.aligner.conveyorDirection == app.aligner.getFacingDirection()) {
+			} else if (app.aligner.conveyorDirection == app.aligner.getFacingDirection()) {
 				// Facing away
 				degrees = 180;
 			}
@@ -216,20 +213,20 @@ public class AlignerSettingsGui extends AppGui {
 
 			GL11.glPopMatrix();
 		}
-		
+
 
 		textureManager.bindTexture(GuiAdvancedMachine.guiTexture);
 //		textureManager.bindTexture(tex_machine_config);
-		
+
 
 		GL11.glTranslated(0, 0, 1.5);
-		
+
 		gui.drawTexturedModalRect(leftOff - 30, yCenter - 32, 230, 18, 26, 63);
-		
-		if(app.aligner.conveyorDirection == app.aligner.getFacingDirection().rotateY()) {
+
+		if (app.aligner.conveyorDirection == app.aligner.getFacingDirection().rotateY()) {
 			// Draw right Arrow
 			gui.drawTexturedModalRect(xCenter + 6, yCenter - 9, 222, 18, 8, 17);
-		} else if(app.aligner.conveyorDirection == app.aligner.getFacingDirection().rotateYCCW()) {
+		} else if (app.aligner.conveyorDirection == app.aligner.getFacingDirection().rotateYCCW()) {
 			// Draw left Arrow
 			gui.drawTexturedModalRect(xCenter - 15, yCenter - 9, 201, 18, 8, 17);
 		} else {
@@ -242,8 +239,8 @@ public class AlignerSettingsGui extends AppGui {
 	public void drawForeground(GuiAdvancedMachine gui, int mouseX, int mouseY) {
 		for (int i = 0; i < cbExcluding.length; i++) {
 			ItemFilterCustomizable filter = app.aligner.filters[i];
-			if(cbMode[i].isMouseOver()) {
-				switch(filter.mode) {
+			if (cbMode[i].isMouseOver()) {
+				switch (filter.mode) {
 					default:
 						gui.drawTooltipTranslated("taam.gui.filter.mode", mouseX, mouseY);
 						break;
@@ -258,15 +255,15 @@ public class AlignerSettingsGui extends AppGui {
 						break;
 				}
 			}
-			if(cbCheckMeta[i].isMouseOver()) {
-				if(filter.checkMeta) {
+			if (cbCheckMeta[i].isMouseOver()) {
+				if (filter.checkMeta) {
 					gui.drawTooltipTranslated("taam.gui.filter.meta.true", mouseX, mouseY);
 				} else {
 					gui.drawTooltipTranslated("taam.gui.filter.meta.false", mouseX, mouseY);
 				}
 			}
-			if(cbCheckNBT[i].isMouseOver()) {
-				if(filter.checkNBT) {
+			if (cbCheckNBT[i].isMouseOver()) {
+				if (filter.checkNBT) {
 					gui.drawTooltipTranslated("taam.gui.filter.nbt.true", mouseX, mouseY);
 				} else {
 					gui.drawTooltipTranslated("taam.gui.filter.nbt.false", mouseX, mouseY);
@@ -280,18 +277,18 @@ public class AlignerSettingsGui extends AppGui {
 		for (int i = 0; i < cbExcluding.length; i++) {
 			boolean isExact = false;
 			Drawable image;
-			switch(app.aligner.filters[i].mode) {
-			default:
-			case Exact:
-				isExact = true;
-				image = GuiAdvancedMachine.iconMatchExact;
-				break;
-			case Mod:
-				image = GuiAdvancedMachine.iconMatchMod;
-				break;
-			case OreDict:
-				image = GuiAdvancedMachine.iconMatchOredict;
-				break;
+			switch (app.aligner.filters[i].mode) {
+				default:
+				case Exact:
+					isExact = true;
+					image = GuiAdvancedMachine.iconMatchExact;
+					break;
+				case Mod:
+					image = GuiAdvancedMachine.iconMatchMod;
+					break;
+				case OreDict:
+					image = GuiAdvancedMachine.iconMatchOredict;
+					break;
 			}
 			cbExcluding[i].visible = true;
 			cbExcluding[i].image = app.aligner.filters[i].isExcluding() ? GuiAdvancedMachine.iconCheckbox : null;
@@ -303,6 +300,10 @@ public class AlignerSettingsGui extends AppGui {
 			cbCheckNBT[i].image = app.aligner.filters[i].checkNBT ? GuiAdvancedMachine.iconCheckNBT : GuiAdvancedMachine.iconDontCheckNBT;
 			cbCheckMeta[i].visible = isExact;
 			cbCheckMeta[i].image = app.aligner.filters[i].checkMeta ? GuiAdvancedMachine.iconCheckMeta : GuiAdvancedMachine.iconDontCheckMeta;
+
+			for (int j = 0; j < bFilterSlot[i].length; j++) {
+				bFilterSlot[i][j].visible = true;
+			}
 		}
 	}
 
@@ -310,9 +311,13 @@ public class AlignerSettingsGui extends AppGui {
 	public void onHide(GuiAdvancedMachine gui) {
 		for (int i = 0; i < cbExcluding.length; i++) {
 			cbExcluding[i].visible = false;
-			cbMode     [i].visible = false; 
-			cbCheckNBT [i].visible = false; 
-			cbCheckMeta[i].visible = false; 
+			cbMode[i].visible = false;
+			cbCheckNBT[i].visible = false;
+			cbCheckMeta[i].visible = false;
+
+			for (int j = 0; j < bFilterSlot[i].length; j++) {
+				bFilterSlot[i][j].visible = false;
+			}
 		}
 	}
 }

@@ -8,37 +8,30 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.teamio.taam.Taam;
 import net.teamio.taam.content.IRotatable;
 
+import java.util.Collections;
 import java.util.List;
 
 public class MachineItemMultipart extends ItemMultiPart {
-
-	private final IMachineMetaInfo[] values;
 
 	public MachineItemMultipart(IMachineMetaInfo[] values) {
 		super();
 		if (values == null || values.length == 0) {
 			throw new IllegalArgumentException("Specified meta values were null or empty");
 		}
-		this.values = values;
 		setHasSubtypes(true);
-	}
-
-	public IMachineMetaInfo getInfo(int meta) {
-		int ordinal = MathHelper.clamp(meta, 0, values.length);
-		return values[ordinal];
 	}
 
 	@Override
 	public IMultipart createPart(World world, BlockPos pos, EnumFacing side, Vec3d hit, ItemStack stack, EntityPlayer player) {
 		int meta = stack.getMetadata();
-		IMachineMetaInfo info = getInfo(meta);
+		IMachineMetaInfo info = MachineTileEntity.getInfo(meta);
 
 		// TODO: distinguish between IMachine and IMachineWithSpecialRenderer later
 
@@ -103,23 +96,26 @@ public class MachineItemMultipart extends ItemMultiPart {
 	@Override
 	public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
 		int meta = stack.getMetadata();
-		IMachineMetaInfo info = getInfo(meta);
-		info.addInformation(stack, playerIn, tooltip, advanced);
+		String[] ttip = MachineTileEntity.getInfo(meta).getTooltip();
+		if (ttip != null) {
+			Collections.addAll(tooltip, ttip);
+		}
 	}
 
 	@Override
 	public String getUnlocalizedName(ItemStack stack) {
 		int meta = stack.getMetadata();
-		IMachineMetaInfo info = getInfo(meta);
+		IMachineMetaInfo info = MachineTileEntity.getInfo(meta);
 
 		return this.getUnlocalizedName() + "." + info.unlocalizedName();
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void getSubItems(Item item, CreativeTabs creativeTab, List<ItemStack> list) {
+	public void getSubItems(Item item, CreativeTabs creativeTab, List<ItemStack> items) {
+		Taam.MACHINE_META[] values = Taam.MACHINE_META.values();
 		for (int i = 0; i < values.length; i++) {
-			list.add(new ItemStack(item, 1, values[i].metaData()));
+			items.add(new ItemStack(item, 1, values[i].metaData()));
 		}
 	}
 }

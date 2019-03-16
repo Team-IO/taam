@@ -20,6 +20,7 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.teamio.taam.machines.IMachineMetaInfo;
 import net.teamio.taam.machines.MachineItemMultipart;
 import net.teamio.taam.machines.MachineMultipart;
+import net.teamio.taam.util.TaamUtil;
 
 public class MultipartHandler {
 
@@ -41,7 +42,7 @@ public class MultipartHandler {
 				multipart.readUpdatePacket(buf);
 				return multipart;
 			}
-		}, Taam.MACHINE_META.valuesAsString());
+		}, TaamUtil.enumValuesAsString(Taam.MACHINE_META.values()));
 	}
 
 	public static Item createMultipartItem(IMachineMetaInfo[] meta) {

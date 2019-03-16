@@ -16,6 +16,9 @@ import java.io.IOException;
 
 public class TPAdvancedGuiAppData implements IMessage {
 
+	public NBTTagCompound tag;
+	public int appContainerId;
+
 	public static final class Handler implements IMessageHandler<TPAdvancedGuiAppData, IMessage> {
 
 		@Override
@@ -36,11 +39,7 @@ public class TPAdvancedGuiAppData implements IMessage {
 			}
 			return null;
 		}
-
 	}
-
-	public NBTTagCompound tag;
-	public int appContainerId;
 
 	/**
 	 * Constructor for serialization
@@ -50,7 +49,7 @@ public class TPAdvancedGuiAppData implements IMessage {
 
 	/**
 	 * Create a new packet with given tag and app container id.
-	 * 
+	 *
 	 * @param tag
 	 * @param appContainerId
 	 */
@@ -68,8 +67,6 @@ public class TPAdvancedGuiAppData implements IMessage {
 			tag = packetBuffer.readCompoundTag();
 		} catch (IOException e) {
 			Log.error("Error reading network packet", e);
-		} finally {
-			packetBuffer.release();
 		}
 	}
 

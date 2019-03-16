@@ -8,20 +8,32 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.config.GuiUtils;
 import net.teamio.taam.Config;
 import net.teamio.taam.Log;
+import net.teamio.taam.conveyors.filters.FilterSlot;
 import net.teamio.taam.gui.util.CustomButton;
 import net.teamio.taam.gui.util.Drawable;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Gui class for the advanced gui.
+ * Handles communication with a {@link ContainerAdvancedMachine} and handles custom button classes.
+ * Currently supported: {@link AppButton}, {@link CustomButton}, {@link FilterSlot}.
+ * Regular {@link GuiButton} instances don't work, as they only have a button ID and we don't have any matching logic in this gui class.
+ * <p>
+ * Also draws the home screen and the app buttons when no app is active.
+ *
+ * @author Oliver Kahrmann
+ */
 public class GuiAdvancedMachine extends GuiContainer {
 
 	public static final ResourceLocation guiTexture = new ResourceLocation("taam", "textures/gui/advanced.png");
 
 	protected final ContainerAdvancedMachine machineContainer;
 
-	private final List<AppButton> appButtons = new ArrayList<AppButton>();
+	private final List<AppButton> appButtons = new ArrayList<>();
 	private AppButton homeButton;
 
 	public static final Drawable iconCheckbox = new Drawable(guiTexture, 144, 0, 10, 10);
@@ -40,9 +52,9 @@ public class GuiAdvancedMachine extends GuiContainer {
 	public static final Drawable iconDontCheckNBT = new Drawable(guiTexture, 155, 30, 10, 10);
 
 
-	final int buttonSpace = 60;
-	final int buttonSize = 40;
-	final int buttonsPerRow = 4;
+	private static final int buttonSpace = 60;
+	private static final int buttonSize = 40;
+	private static final int buttonsPerRow = 4;
 
 	public GuiAdvancedMachine(ContainerAdvancedMachine inventorySlotsIn) {
 		super(inventorySlotsIn);
@@ -52,9 +64,11 @@ public class GuiAdvancedMachine extends GuiContainer {
 	/**
 	 * Allow adding buttons or checkboxes from outside this class.
 	 *
-	 * @param button
+	 * @param button any {@link GuiButton} instance that is handled. Currently supported: {@link AppButton}, {@link CustomButton}, {@link FilterSlot}.
+	 *               Regular {@link GuiButton} instances don't work, as they only have a button ID and we don't have any matching logic in this gui class.
 	 */
-	public <T extends GuiButton> T addButton(T button) {
+	@Nonnull
+	public <T extends GuiButton> T addButton(@Nonnull T button) {
 		return super.addButton(button);
 	}
 
@@ -70,8 +84,8 @@ public class GuiAdvancedMachine extends GuiContainer {
 		this.guiTop /= 2;
 
 
-		int buttonsPerRow = this.buttonsPerRow;
-		if(buttonsPerRow > machineContainer.registeredApps.size()) {
+		int buttonsPerRow = GuiAdvancedMachine.buttonsPerRow;
+		if (buttonsPerRow > machineContainer.registeredApps.size()) {
 			buttonsPerRow = machineContainer.registeredApps.size();
 		}
 
@@ -121,7 +135,7 @@ public class GuiAdvancedMachine extends GuiContainer {
 	 * Switches to the given app. Updates the GUI & relays the switch to the
 	 * container below.
 	 *
-	 * @param app
+	 * @param app the target application. Displays the home screen when null is passed.
 	 */
 	public void switchApp(App app) {
 		if (app == null) {
@@ -146,18 +160,23 @@ public class GuiAdvancedMachine extends GuiContainer {
 
 	@Override
 	protected void actionPerformed(GuiButton button) {
+		if (button == null) return;
+
 		if (button instanceof AppButton) {
 			App app = ((AppButton) button).app;
 			switchApp(app);
 		} else if (button instanceof CustomButton) {
 			CustomButton cButton = (CustomButton) button;
-			if(cButton.eventHandler == null) {
+			if (cButton.eventHandler == null) {
 				Log.warn("Skipping button handler, as it is null.");
 			} else {
 				cButton.eventHandler.apply(cButton);
 			}
+		} else if (button instanceof FilterSlot) {
+			FilterSlot filterSlot = (FilterSlot) button;
+			filterSlot.clicked(mc);
 		} else {
-			// TODO: do we even handle non-custom buttons?
+			Log.warn("Unknown button class found: {} This may be an error", button.getClass());
 		}
 	}
 
@@ -204,11 +223,23 @@ public class GuiAdvancedMachine extends GuiContainer {
 		}
 	}
 
+	@Override
+	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+		super.drawScreen(mouseX, mouseY, partialTicks);
+
+		for (GuiButton aButtonList : this.buttonList) {
+			if (aButtonList instanceof FilterSlot) {
+				FilterSlot filterSlot = (FilterSlot) aButtonList;
+				filterSlot.drawTooltip(mc, mouseX, mouseY);
+			}
+		}
+	}
+
 	public void drawTooltip(List<String> text, int mouseX, int mouseY) {
 		this.drawHoveringText(text, mouseX - guiLeft, mouseY - guiTop);
 	}
 
-	private static final List<String> textList = new ArrayList<String>();
+	private static final List<String> textList = new ArrayList<>();
 
 	public void drawTooltipTranslated(String unlocalized, int mouseX, int mouseY) {
 		textList.clear();
@@ -218,7 +249,7 @@ public class GuiAdvancedMachine extends GuiContainer {
 		String[] split = localized.split("\\\\n");
 		Collections.addAll(textList, split);
 
-		this.drawHoveringText(textList, mouseX - guiLeft, mouseY - guiTop);
+		drawTooltip(textList, mouseX, mouseY);
 	}
 
 }

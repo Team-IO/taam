@@ -23,8 +23,10 @@ import net.teamio.taam.gui.advanced.ContainerAdvancedMachine;
 import net.teamio.taam.gui.advanced.IAdvancedMachineGUI;
 import net.teamio.taam.gui.advanced.apps.AlignerSettings;
 import net.teamio.taam.gui.advanced.apps.RedstoneMode;
+import net.teamio.taam.util.InventoryUtils;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class ApplianceAligner extends ATileEntityAppliance implements IWorldInteractable {
 
@@ -46,7 +48,7 @@ public class ApplianceAligner extends ATileEntityAppliance implements IWorldInte
 
 	public ApplianceAligner() {
 		filters = new ItemFilterCustomizable[3];
-		for(int i = 0; i < 3; i++) {
+		for (int i = 0; i < 3; i++) {
 			filters[i] = new ItemFilterCustomizable(3);
 		}
 	}
@@ -61,7 +63,7 @@ public class ApplianceAligner extends ATileEntityAppliance implements IWorldInte
 	@SideOnly(Side.CLIENT)
 	public void renderUpdate() {
 		TileEntity te = world.getTileEntity(pos.offset(direction));
-		if(te instanceof IConveyorApplianceHost) {
+		if (te instanceof IConveyorApplianceHost) {
 			IConveyorApplianceHost host = (IConveyorApplianceHost) te;
 			IConveyorSlots slots = host.getSlots();
 			conveyorDirection = slots.getMovementDirection();
@@ -101,18 +103,18 @@ public class ApplianceAligner extends ATileEntityAppliance implements IWorldInte
 	};
 
 	@Override
-	public boolean hasCapability(@Nonnull Capability<?> capability, @Nonnull EnumFacing facing) {
-		if(capability == Taam.CAPABILITY_ADVANCED_GUI) {
+	public boolean hasCapability(@Nonnull Capability<?> capability, EnumFacing facing) {
+		if (capability == Taam.CAPABILITY_ADVANCED_GUI) {
 			return true;
 		}
 		return super.hasCapability(capability, facing);
 	}
 
-	@Nonnull
+	@Nullable
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T getCapability(@Nonnull Capability<T> capability, @Nonnull EnumFacing facing) {
-		if(capability == Taam.CAPABILITY_ADVANCED_GUI) {
+	public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
+		if (capability == Taam.CAPABILITY_ADVANCED_GUI) {
 			return (T) gui;
 		}
 		return super.getCapability(capability, facing);
@@ -144,7 +146,7 @@ public class ApplianceAligner extends ATileEntityAppliance implements IWorldInte
 
 	@Override
 	public boolean onBlockActivated(World world, EntityPlayer player, EnumHand hand, boolean hasWrench, EnumFacing side,
-			float hitX, float hitY, float hitZ) {
+	                                float hitX, float hitY, float hitZ) {
 		player.openGui(TaamMain.instance, 2, world, pos.getX(), pos.getY(), pos.getZ());
 		return true;
 	}
@@ -164,17 +166,18 @@ public class ApplianceAligner extends ATileEntityAppliance implements IWorldInte
 		return false;
 	}
 
+	@Nonnull
 	@Override
 	public EnumFacing overrideNextSlot(IConveyorApplianceHost host, int slot, ItemWrapper wrapper,
-			EnumFacing beforeOverride) {
-		if(wrapper.itemStack == null) {
+	                                   EnumFacing beforeOverride) {
+		if (InventoryUtils.isEmpty(wrapper.itemStack)) {
 			return beforeOverride;
 		}
 
 		EnumFacing direction = host.getSlots().getMovementDirection();
 
 		// We can only align when it passes left/right
-		if(direction.getAxis() == this.direction.getAxis()) {
+		if (direction.getAxis() == this.direction.getAxis()) {
 			return beforeOverride;
 		}
 
@@ -182,7 +185,7 @@ public class ApplianceAligner extends ATileEntityAppliance implements IWorldInte
 		int lane = ConveyorUtil.LANES.get(slot, direction);
 
 		// Only process the front-most row
-		if(row != 1) {
+		if (row != 1) {
 			return beforeOverride;
 		}
 
@@ -194,7 +197,7 @@ public class ApplianceAligner extends ATileEntityAppliance implements IWorldInte
 		ItemFilterCustomizable filterLane2;
 		ItemFilterCustomizable filterLane3;
 
-		if(direction == this.direction.rotateY()) {
+		if (direction == this.direction.rotateY()) {
 			filterLane1 = filters[0];
 			filterLane2 = filters[1];
 			filterLane3 = filters[2];
@@ -212,28 +215,28 @@ public class ApplianceAligner extends ATileEntityAppliance implements IWorldInte
 		boolean canContinueLane3 = filterLane3.isItemStackMatching(wrapper.itemStack) != filterLane3.isExcluding();
 
 		// FIXME Debug-Mode, move all to center
-		if(lane == 1) {
-			if(!canContinueLane1) {
+		if (lane == 1) {
+			if (!canContinueLane1) {
 				// If it can continue on one of the other lanes, move right. Else block.
-				if(canContinueLane2 || canContinueLane3) {
+				if (canContinueLane2 || canContinueLane3) {
 					afterOverride = right;
 				} else {
 					wrapper.blockForce();
 				}
 			}
-		} else if(lane == 3) {
-			if(!canContinueLane3) {
-				if(canContinueLane1 || canContinueLane2) {
+		} else if (lane == 3) {
+			if (!canContinueLane3) {
+				if (canContinueLane1 || canContinueLane2) {
 					afterOverride = left;
 				} else {
 					wrapper.blockForce();
 				}
 			}
 		} else {
-			if(!canContinueLane2) {
-				if(canContinueLane1) {
+			if (!canContinueLane2) {
+				if (canContinueLane1) {
 					afterOverride = left;
-				} else if(canContinueLane3) {
+				} else if (canContinueLane3) {
 					afterOverride = right;
 				} else {
 					wrapper.blockForce();
@@ -242,21 +245,21 @@ public class ApplianceAligner extends ATileEntityAppliance implements IWorldInte
 		}
 
 		// On the client, update the rendering information
-		if(world.isRemote) {
-			if(clientRenderCache == null) {
+		if (world.isRemote) {
+			if (clientRenderCache == null) {
 				clientRenderCache = new ItemWrapper[4];
 			}
-			if(afterOverride == right) {
-				if(lane == 1) {
+			if (afterOverride == right) {
+				if (lane == 1) {
 					clientRenderCache[0] = wrapper;
-				} else if(lane == 2) {
+				} else if (lane == 2) {
 					clientRenderCache[2] = wrapper;
 				}
 			}
-			if(afterOverride == left) {
-				if(lane == 2) {
+			if (afterOverride == left) {
+				if (lane == 2) {
 					clientRenderCache[1] = wrapper;
-				} else if(lane == 3) {
+				} else if (lane == 3) {
 					clientRenderCache[3] = wrapper;
 				}
 			}

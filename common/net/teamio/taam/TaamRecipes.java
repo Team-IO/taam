@@ -11,18 +11,18 @@ import net.teamio.taam.Taam.BLOCK_ORE_META;
 
 public class TaamRecipes {
 
-	public static void registerSmeltingRecipes(){
+	public static void registerSmeltingRecipes() {
 		BLOCK_ORE_META[] values = Taam.BLOCK_ORE_META.values();
 		// Ores -> Ingots
-		for(int meta = 0; meta < values.length; meta++) {
-			if(!values[meta].ingot || !values[meta].ore) {
+		for (int meta = 0; meta < values.length; meta++) {
+			if (!values[meta].ingot || !values[meta].ore) {
 				continue;
 			}
 			GameRegistry.addSmelting(new ItemStack(TaamMain.blockOre, 1, meta), new ItemStack(TaamMain.itemIngot, 1, meta), 1);
 		}
 		// Dusts -> Ingots
-		for(int meta = 0; meta < values.length; meta++) {
-			if(!values[meta].ingot || !values[meta].dust) {
+		for (int meta = 0; meta < values.length; meta++) {
+			if (!values[meta].ingot || !values[meta].dust) {
 				continue;
 			}
 			GameRegistry.addSmelting(new ItemStack(TaamMain.itemDust, 1, meta), new ItemStack(TaamMain.itemIngot, 1, meta), 1);
@@ -31,13 +31,13 @@ public class TaamRecipes {
 		GameRegistry.addSmelting(new ItemStack(TaamMain.blockOre, 1, Taam.BLOCK_ORE_META.bauxite.ordinal()), new ItemStack(TaamMain.itemMaterial, 1, Taam.ITEM_MATERIAL_META.aluminum_nugget.ordinal()), 1);
 		GameRegistry.addSmelting(new ItemStack(TaamMain.itemDust, 1, Taam.BLOCK_ORE_META.bauxite.ordinal()), new ItemStack(TaamMain.itemMaterial, 1, Taam.ITEM_MATERIAL_META.aluminum_nugget.ordinal()), 1);
 		// Resin -> Rubber Bar
-		GameRegistry.addSmelting(new ItemStack(TaamMain.itemMaterial,1,Taam.ITEM_MATERIAL_META.resin.ordinal()), new ItemStack(TaamMain.itemMaterial, 1, Taam.ITEM_MATERIAL_META.rubber_bar.ordinal()), 1);
+		GameRegistry.addSmelting(new ItemStack(TaamMain.itemMaterial, 1, Taam.ITEM_MATERIAL_META.resin.ordinal()), new ItemStack(TaamMain.itemMaterial, 1, Taam.ITEM_MATERIAL_META.rubber_bar.ordinal()), 1);
 		//Iron Dust -> Iron Ingot
 		GameRegistry.addSmelting(new ItemStack(TaamMain.itemDust, 1, Taam.BLOCK_ORE_META.iron.ordinal()), new ItemStack(Items.IRON_INGOT), 1);
 		//Gold Dust -> Gold Ingot
 		GameRegistry.addSmelting(new ItemStack(TaamMain.itemDust, 1, Taam.BLOCK_ORE_META.gold.ordinal()), new ItemStack(Items.GOLD_INGOT), 1);
 		//Rubber Bar -> Plastic sheets
-		GameRegistry.addSmelting(new ItemStack(TaamMain.itemMaterial, 1, Taam.ITEM_MATERIAL_META.rubber_bar.ordinal()),new ItemStack(TaamMain.itemMaterial, 1, Taam.ITEM_MATERIAL_META.plastic_sheet.ordinal()) , 1);
+		GameRegistry.addSmelting(new ItemStack(TaamMain.itemMaterial, 1, Taam.ITEM_MATERIAL_META.rubber_bar.ordinal()), new ItemStack(TaamMain.itemMaterial, 1, Taam.ITEM_MATERIAL_META.plastic_sheet.ordinal()), 1);
 	}
 
 	public static void registerCraftingRecipes() {

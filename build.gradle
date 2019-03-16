@@ -98,13 +98,13 @@ dependencies {
 			'junit:junit:4.12'
 	)
 	testImplementation(
-			'org.junit.jupiter:junit-jupiter-api:5.1.0',
+			'org.junit.jupiter:junit-jupiter-api:5.4.0',
 			'com.builtbroken.codinglib:CodingLib:0.+',
 			'com.builtbroken.minecraftjunit:MinecraftJUnit:1.10.2-0.+:deobf'
 	)
 	testRuntimeOnly(
-			'org.junit.jupiter:junit-jupiter-engine:5.1.0',
-			'org.junit.vintage:junit-vintage-engine:5.1.0'
+			'org.junit.jupiter:junit-jupiter-engine:5.4.0',
+			'org.junit.vintage:junit-vintage-engine:5.4.0'
 	)
 
 	codacy group: 'com.codacy', name: 'codacy-coverage-reporter', version: '5.0.310'
@@ -215,7 +215,7 @@ curseforge {
 		changelog = {
 			File f = file('build/changelog.md')
 			if (f.exists()) {
-				return "https://github.com/Team-IO/taam/releases/tag/${config.mc_version}-${config.mod_version}\n" + f.readLines().join("\n")
+				return "https://github.com/Team-IO/taam/releases/tag/${config.mc_version}-${config.mod_version}\n\n" + f.readLines().join("\n")
 			}
 			return "https://github.com/Team-IO/taam/releases/tag/${config.mc_version}-${config.mod_version}"
 		}

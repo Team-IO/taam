@@ -32,6 +32,7 @@ public abstract class ConveyorSlotsBase implements IConveyorSlots {
 	 * Implementations further down can then call their own logic in here.
 	 */
 	public void onChangeHook() {
+		// Default implementation
 	}
 
 	@Override

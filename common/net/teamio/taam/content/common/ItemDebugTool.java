@@ -23,11 +23,11 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.teamio.taam.Config;
 import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.conveyors.TileEntityConveyor;
-import net.teamio.taam.conveyors.IConveyorApplianceHost;
 import net.teamio.taam.piping.IPipe;
 import net.teamio.taam.piping.PipeUtil;
 import net.teamio.taam.util.FluidUtils;
 
+import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 
@@ -35,7 +35,6 @@ import java.util.List;
  * Debug Tool, currently used for debugging conveyors.
  *
  * @author founderio
- *
  */
 public class ItemDebugTool extends Item {
 
@@ -47,85 +46,88 @@ public class ItemDebugTool extends Item {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean detailInfo) {
-		list.add(TextFormatting.DARK_GREEN + I18n.format("lore.taam.debugtool"));
+	public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> tooltip, boolean detailInfo) {
+		tooltip.add(TextFormatting.DARK_GREEN + I18n.format("lore.taam.debugtool"));
 		if (GuiScreen.isShiftKeyDown()) {
 			String usage = I18n.format("lore.taam.debugtool.usage");
 			//Split at literal \n in the translated text. a lot of escaping here.
-			Collections.addAll(list, usage.split("\\\\n"));
+			Collections.addAll(tooltip, usage.split("\\\\n"));
 		} else {
-			list.add(TextFormatting.DARK_PURPLE + I18n.format("lore.taam.shift"));
+			tooltip.add(TextFormatting.DARK_PURPLE + I18n.format("lore.taam.shift"));
 		}
 	}
 
+	@Nonnull
 	@Override
-	public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-		if(!Config.debug_output)
-		{
-			worldIn.playSound(playerIn, pos, TaamMain.soundSipAh, SoundCategory.BLOCKS, 1f, 1f);
+	public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+		if (!Config.debug_output) {
+			worldIn.playSound(player, pos, TaamMain.soundSipAh, SoundCategory.BLOCKS, 1f, 1f);
 			// return EnumActionResult.SUCCESS;
 		}
-		char remoteState = worldIn.isRemote ? 'C' : 'S';
+		String remoteState = worldIn.isRemote ? "Client" : "Server";
 
 		IBlockState state = worldIn.getBlockState(pos);
 
-		String text = String.format(remoteState + " RS: %b Side: %s Weak: %d Strong: %d",
-				state.canProvidePower(), facing.toString(), state.getWeakPower(worldIn, pos, facing), state.getStrongPower(worldIn, pos, facing));
+		String text = String.format("%s RS: %b Side: %s Weak: %d Strong: %d",
+				remoteState, state.canProvidePower(), facing.toString(), state.getWeakPower(worldIn, pos, facing), state.getStrongPower(worldIn, pos, facing));
 
-		playerIn.sendStatusMessage(new TextComponentString(text));
+		player.sendStatusMessage(new TextComponentString(text));
 
 		EnumFacing oppSide = facing.getOpposite();
 
-		text = String.format(remoteState + " RS: %b Opposite Side: %s Weak: %d Strong: %d",
-				state.canProvidePower(), oppSide.toString(), state.getWeakPower(worldIn, pos, oppSide), state.getStrongPower(worldIn, pos, oppSide));
+		text = String.format("%s RS: %b Opposite Side: %s Weak: %d Strong: %d",
+				remoteState, state.canProvidePower(), oppSide.toString(), state.getWeakPower(worldIn, pos, oppSide), state.getStrongPower(worldIn, pos, oppSide));
 
+		player.sendStatusMessage(new TextComponentString(text));
 
-		text = String.format(remoteState + " Indirectly Powered: %d",
-				worldIn.isBlockIndirectlyGettingPowered(pos));
+		text = String.format("%s Powered: %b",
+				remoteState, worldIn.isBlockPowered(pos));
 
-		playerIn.sendStatusMessage(new TextComponentString(text));
+		player.sendStatusMessage(new TextComponentString(text));
 
 		boolean didSomething = false;
 
 		TileEntity te = worldIn.getTileEntity(pos);
-		if(te == null) {
+		if (te == null) {
 			return EnumActionResult.PASS;
 		}
 
 
-		if(te instanceof TileEntityConveyor) {
+		if (te instanceof TileEntityConveyor) {
 			didSomething = true;
 			TileEntityConveyor tec = (TileEntityConveyor) te;
 			tec.updateContainingBlockInfo();
 
-			text = String.format(remoteState + " Conveyor facing %s. isEnd: %b isBegin: %b",
-					tec.getFacingDirection().toString(), tec.isEnd, tec.isBegin);
+			text = String.format("%s Conveyor facing %s. isEnd: %b isBegin: %b",
+					remoteState, tec.getFacingDirection().toString(), tec.isEnd, tec.isBegin);
 
-			playerIn.sendStatusMessage(new TextComponentString(text));
+			player.sendStatusMessage(new TextComponentString(text));
 
 		}
 
-		if(te instanceof IConveyorApplianceHost) {
-			//IConveyorApplianceHost host = (IConveyorApplianceHost)te;
-		}
+		//if(te instanceof IConveyorApplianceHost) {
+		//IConveyorApplianceHost host = (IConveyorApplianceHost)te;
+		//}
 
 		IPipe pipe = PipeUtil.getPipe(worldIn, pos, facing);
 
-		if(pipe != null) {
+		if (pipe != null) {
 
-			StringBuilder content = new StringBuilder("[");
+			StringBuilder content = new StringBuilder(remoteState)
+					.append(' ')
+					.append(pipe.getClass().getName())
+					.append(" Pipe pressure: ")
+					.append(pipe.getPressure())
+					.append(" Content: [");
 			List<FluidStack> fs = pipe.getFluids();
 			if (fs != null) {
-				for(FluidStack fluidContent : fs) {
-					content.append(fluidContent.getLocalizedName()).append(" ").append(fluidContent.amount).append(", ");
+				for (FluidStack fluidContent : fs) {
+					content.append(fluidContent.getLocalizedName()).append(' ').append(fluidContent.amount).append(", ");
 				}
 			}
-			content.append("]");
+			content.append(']');
 
-			text = String.format(remoteState + " %s Pipe pressure: %d  Content: %s",
-					pipe.getClass().getName(), pipe.getPressure(), content.toString());
-
-			playerIn.sendStatusMessage(new TextComponentString(text));
+			player.sendStatusMessage(new TextComponentString(content.toString()));
 		}
 
 		IFluidHandler fh = FluidUtils.getFluidHandler(te, facing);
@@ -133,20 +135,23 @@ public class ItemDebugTool extends Item {
 		if (fh != null) {
 
 			IFluidTankProperties[] ti = fh.getTankProperties();
-			String content = "";
+			StringBuilder content = new StringBuilder(remoteState)
+					.append(" Content: [");
 			if (ti.length > 0) {
 				int capacity = ti[0].getCapacity();
 				FluidStack contents = ti[0].getContents();
 				if (contents == null) {
-					content = "Nothing 0/" + capacity;
+					content.append("Nothing 0/").append(capacity);
 				} else {
-					content = contents.getLocalizedName() + " " + contents.amount + "/" + capacity;
+					content.append(contents.getLocalizedName()).append(' ')
+							.append(contents.amount).append('/').append(capacity);
 				}
+			} else {
+				content.append("No Tanks Present");
 			}
+			content.append(']');
 
-			text = String.format(remoteState + " Content: %s", content);
-
-			playerIn.sendStatusMessage(new TextComponentString(text));
+			player.sendStatusMessage(new TextComponentString(content.toString()));
 
 			didSomething = true;
 		}

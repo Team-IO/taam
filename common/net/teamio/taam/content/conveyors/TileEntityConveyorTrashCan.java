@@ -17,8 +17,8 @@ import net.teamio.taam.conveyors.ConveyorSlotsBase;
 /**
  * Conveyor Trash Can.
  * Non-Ticking TE
- *
  * @author Oliver Kahrmann
+ *
  */
 public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements IWorldInteractable {
 
@@ -34,8 +34,8 @@ public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements
 
 		@Override
 		public int insertItemAt(ItemStack stack, int slot, boolean simulate) {
-			float added = stack.stackSize / (float) stack.getMaxStackSize();
-			if (fillLevel + added < Config.pl_trashcan_maxfill) {
+			float added = stack.stackSize / (float)stack.getMaxStackSize();
+			if(fillLevel + added < Config.pl_trashcan_maxfill) {
 				fillLevel += added;
 				updateState(true, false, false);
 				return stack.stackSize;
@@ -53,8 +53,8 @@ public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements
 
 		@Override
 		public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
-			float added = stack.stackSize / (float) stack.getMaxStackSize();
-			if (fillLevel + added < Config.pl_trashcan_maxfill) {
+			float added = stack.stackSize / (float)stack.getMaxStackSize();
+			if(fillLevel + added < Config.pl_trashcan_maxfill) {
 				fillLevel += added;
 				updateState(true, true, false);
 				return null;
@@ -77,9 +77,6 @@ public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements
 			return null;
 		}
 	};
-
-	public TileEntityConveyorTrashCan() {
-	}
 
 	@Override
 	public String getName() {
@@ -113,10 +110,10 @@ public class TileEntityConveyorTrashCan extends ATileEntityAttachable implements
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-		if (capability == Taam.CAPABILITY_CONVEYOR) {
+		if(capability == Taam.CAPABILITY_CONVEYOR) {
 			return (T) conveyorSlots;
 		}
-		if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
 			return (T) itemHandler;
 		}
 		return super.getCapability(capability, facing);

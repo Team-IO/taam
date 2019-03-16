@@ -19,6 +19,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import net.teamio.taam.Log;
 import net.teamio.taam.Taam;
 import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.common.TileEntityChute;
@@ -35,6 +36,25 @@ import net.teamio.taam.util.WrenchUtil;
 
 import java.util.List;
 
+/**
+ * BaseBlock is the superclass for all blocks with tile entities in Taam.
+ * It is configured for easier rendering
+ * <ul>
+ * <li>not a full block, not opaque
+ * <li>handles metadata of dropped items
+ * <li>handle OBJModel block state via {@link #getExtendedState}
+ * (requires unlisted state to be added to subclasses' block state)
+ * </ul>
+ * <p>
+ * and for handling the tile entities
+ * <ul>
+ * <li>set the owner of a tile entity when placed
+ * <li>handle breaking of unsupported blocks (canBlockStay)
+ * <li>drop items in tile entity inventory when broken
+ * <li>support rotation via {@link WrenchUtil#rotateBlock}
+ * <li>support world interaction via {@link IWorldInteractable} on the tile entity
+ * </ul>
+ */
 public abstract class BaseBlock extends Block {
 
 	/**
@@ -51,10 +71,15 @@ public abstract class BaseBlock extends Block {
 	public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer,
 	                            ItemStack stack) {
 		// Update Owner
-		if (placer instanceof EntityPlayer) {
-			BaseTileEntity te = (BaseTileEntity) worldIn.getTileEntity(pos);
-			te.setOwner((EntityPlayer) placer);
+		if (!(placer instanceof EntityPlayer)) {
+			return;
 		}
+		BaseTileEntity te = (BaseTileEntity) worldIn.getTileEntity(pos);
+		if (te == null) {
+			Log.error("Tile entity was null at position {} in world {}, expected instance of {}", pos, worldIn.provider.getDimension(), BaseTileEntity.class.getName());
+			return;
+		}
+		te.setOwner((EntityPlayer) placer);
 	}
 
 	public abstract boolean canBlockStay(World worldIn, BlockPos pos, IBlockState state);
@@ -83,42 +108,38 @@ public abstract class BaseBlock extends Block {
 
 	@Override
 	public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
-		if (worldIn.isRemote) {
-			return;
-		}
+		if (!worldIn.isRemote) {
+			TileEntity te = worldIn.getTileEntity(pos);
 
-		TileEntity te = worldIn.getTileEntity(pos);
-
-		/*
-		 * Drop Items
-		 */
-		if (te != null && !(te instanceof TileEntityChute)) {
-			IConveyorSlots conveyorSlots = TaamUtil.getCapability(Taam.CAPABILITY_CONVEYOR, te, EnumFacing.UP);
-			if (conveyorSlots != null) {
-				ConveyorUtil.dropItems(worldIn, pos, conveyorSlots, false);
-			}
-
-			if (te instanceof TileEntityConveyor) {
-				TileEntityConveyor conveyor = (TileEntityConveyor) te;
-				int redirectorCount = 0;
-				if (conveyor.isRedirectorLeft()) {
-					redirectorCount++;
+			/*
+			 * Drop Items
+			 */
+			if (te != null && !(te instanceof TileEntityChute)) {
+				IConveyorSlots conveyorSlots = TaamUtil.getCapability(Taam.CAPABILITY_CONVEYOR, te, EnumFacing.UP);
+				if (conveyorSlots != null) {
+					ConveyorUtil.dropItems(worldIn, pos, conveyorSlots, false);
 				}
-				if (conveyor.isRedirectorRight()) {
-					redirectorCount++;
-				}
-				if (redirectorCount > 0) {
-					InventoryUtils.dropItem(new ItemStack(TaamMain.itemPart, redirectorCount, Taam.ITEM_PART_META.redirector.ordinal()), worldIn, pos);
-				}
-			}
 
-			IItemHandler itemHandler = TaamUtil.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, te, EnumFacing.UP);
-			if (itemHandler != null) {
-				for (int index = 0; index < itemHandler.getSlots(); index++) {
-					ItemStack itemstack = itemHandler.getStackInSlot(index);
+				if (te instanceof TileEntityConveyor) {
+					TileEntityConveyor conveyor = (TileEntityConveyor) te;
+					int redirectorCount = 0;
+					if (conveyor.isRedirectorLeft()) {
+						redirectorCount++;
+					}
+					if (conveyor.isRedirectorRight()) {
+						redirectorCount++;
+					}
+					if (redirectorCount > 0) {
+						InventoryUtils.dropItem(new ItemStack(TaamMain.itemPart, redirectorCount, Taam.ITEM_PART_META.redirector.ordinal()), worldIn, pos, true);
+					}
+				}
 
-					if (itemstack != null && itemstack.stackSize > 0 && itemstack.getItem() != null) {
-						InventoryUtils.dropItem(itemstack, worldIn, pos);
+				IItemHandler itemHandler = TaamUtil.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, te, EnumFacing.UP);
+				if (itemHandler != null) {
+					for (int index = 0; index < itemHandler.getSlots(); index++) {
+						ItemStack itemstack = itemHandler.getStackInSlot(index);
+						// dropItem checks for null/empty stacks
+						InventoryUtils.dropItem(itemstack, worldIn, pos, true);
 					}
 				}
 			}
@@ -133,7 +154,7 @@ public abstract class BaseBlock extends Block {
 	}
 
 	@Override
-	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
+	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing facing, float hitX, float hitY, float hitZ) {
 
 		TileEntity te = worldIn.getTileEntity(pos);
 		IWorldInteractable interactable = null;
@@ -148,14 +169,14 @@ public abstract class BaseBlock extends Block {
 		if (interactable != null) {
 			// All world interaction (perform action, open gui, etc.) is
 			// handled within the entity
-			boolean playerHasWrench = WrenchUtil.playerHasWrenchInHand(playerIn, hand);
-			boolean intercepted = interactable.onBlockActivated(worldIn, playerIn, hand, playerHasWrench, side, hitX, hitY, hitZ);
+			boolean playerHasWrench = WrenchUtil.playerHoldsWrench(playerIn, hand);
+			boolean intercepted = interactable.onBlockActivated(worldIn, playerIn, hand, playerHasWrench, facing, hitX, hitY, hitZ);
 			if (intercepted) {
 				return true;
 			}
 		}
 
-		if (WrenchUtil.wrenchBlock(worldIn, pos, playerIn, hand, side, hitX, hitY, hitZ) == EnumActionResult.SUCCESS) {
+		if (WrenchUtil.wrenchBlock(worldIn, pos, playerIn, hand, facing, hitX, hitY, hitZ) == EnumActionResult.SUCCESS) {
 			return true;
 		}
 
@@ -168,14 +189,6 @@ public abstract class BaseBlock extends Block {
 			return true;
 		}
 		return false;
-
-//		if (worldIn.isRemote) {
-//			return te instanceof IWorldInteractable || te instanceof TileEntityConveyorHopper
-//					|| te instanceof TileEntityConveyorItemBag;
-//		} else {
-
-
-//		}
 	}
 
 	@Override
@@ -195,7 +208,7 @@ public abstract class BaseBlock extends Block {
 			if (interactable != null) {
 				// All world interaction (perform action, open gui, etc.) is
 				// handled within the entity
-				boolean playerHasWrench = WrenchUtil.playerHasWrenchInHand(playerIn, EnumHand.MAIN_HAND);
+				boolean playerHasWrench = WrenchUtil.playerHoldsWrench(playerIn, EnumHand.MAIN_HAND);
 				interactable.onBlockHit(worldIn, playerIn, playerHasWrench);
 			}
 		}
@@ -269,26 +282,6 @@ public abstract class BaseBlock extends Block {
 		IExtendedBlockState extendedState = (IExtendedBlockState) state;
 
 		return extendedState.withProperty(OBJModel.OBJProperty.instance, retState);
-	}
-
-	/**
-	 * Updates a block and all surrounding blocks (meaning, pushes a block
-	 * update for this block and for all directly adjacent blocks)
-	 * <p>
-	 * Useful when working with redstone.
-	 *
-	 * @param world
-	 * @param pos
-	 */
-	public static void updateBlocksAround(World world, BlockPos pos) {
-		Block blockType = world.getBlockState(pos).getBlock();
-		world.notifyNeighborsOfStateChange(pos, blockType);
-		world.notifyNeighborsOfStateChange(pos.west(), blockType);
-		world.notifyNeighborsOfStateChange(pos.east(), blockType);
-		world.notifyNeighborsOfStateChange(pos.down(), blockType);
-		world.notifyNeighborsOfStateChange(pos.up(), blockType);
-		world.notifyNeighborsOfStateChange(pos.north(), blockType);
-		world.notifyNeighborsOfStateChange(pos.south(), blockType);
 	}
 
 }

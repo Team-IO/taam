@@ -1,9 +1,8 @@
 package net.teamio.taam.machines;
 
-import net.minecraft.nbt.NBTTagCompound;
-
 /**
- * Created by oliver on 2017-12-31.
+ * Used to communicate from a machine instance back to the wrapping block.
+ * This was necessary to have both TileEntity and Multipart with the same logic (via IMachine).
  */
 public interface IMachineWrapper {
 	void sendPacket();

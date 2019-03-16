@@ -10,8 +10,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import net.teamio.taam.Taam;
 import net.teamio.taam.Taam.BLOCK_ORE_META;
 
@@ -71,12 +69,11 @@ public class BlockOre extends Block {
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public void getSubBlocks(Item item, CreativeTabs creativeTab, List<ItemStack> list) {
+	public void getSubBlocks(Item item, CreativeTabs creativeTab, List<ItemStack> items) {
 		Taam.BLOCK_ORE_META[] values = Taam.BLOCK_ORE_META.values();
 		for (int i = 0; i < values.length; i++) {
 			if(values[i].ore) {
-				list.add(new ItemStack(item, 1, i));
+				items.add(new ItemStack(item, 1, i));
 			}
 		}
 	}

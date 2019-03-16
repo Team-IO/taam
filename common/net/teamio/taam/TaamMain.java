@@ -39,7 +39,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 import net.teamio.taam.Taam.FLUID_MATERIAL_META;
-import net.teamio.taam.Taam.ITEM_PART_META;
 import net.teamio.taam.content.ItemWithMetadata;
 import net.teamio.taam.content.ItemWithMetadata.ItemDelegate;
 import net.teamio.taam.content.common.BlockBuilding;
@@ -81,10 +80,11 @@ import net.teamio.taam.machines.MachineItemBlock;
 import net.teamio.taam.machines.MachineItemMultipart;
 import net.teamio.taam.machines.MachineTileEntity;
 import net.teamio.taam.piping.IPipe;
-import net.teamio.taam.piping.PipeEnd;
 import net.teamio.taam.rendering.TankRenderInfo;
+import net.teamio.taam.util.TaamUtil;
 import org.apache.commons.lang3.NotImplementedException;
 
+import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 
@@ -191,6 +191,7 @@ public class TaamMain {
 		MinecraftForge.EVENT_BUS.register(new TaamCraftingHandler());
 		MinecraftForge.EVENT_BUS.register(new Config());
 		MinecraftForge.EVENT_BUS.register(proxy);
+		MinecraftForge.EVENT_BUS.register(this);
 
 		/*
 		 * Read Config
@@ -198,7 +199,7 @@ public class TaamMain {
 
 		Config.init(event.getSuggestedConfigurationFile());
 		creativeTab = new CreativeTabs(Taam.MOD_ID) {
-
+			@Nonnull
 			@Override
 			@SideOnly(Side.CLIENT)
 			public ItemStack getIconItemStack() {
@@ -236,7 +237,7 @@ public class TaamMain {
 				blockLamp = new BlockLamp(false),
 				new ItemBlock(blockLamp),
 				Taam.BLOCK_LAMP
-				);
+		);
 		registerBlock(
 				blockLampInverted = new BlockLamp(true),
 				new ItemBlock(blockLampInverted),
@@ -246,73 +247,68 @@ public class TaamMain {
 				blockSensor = new BlockSensor(),
 				new ItemBlock(blockSensor),
 				Taam.BLOCK_SENSOR
-				);
+		);
 
 		registerBlock(
 				blockMachines = new BlockMachines(),
-				new ItemMultiTexture(blockMachines, blockMachines, Taam.BLOCK_MACHINES_META.valuesAsString()),
+				new ItemMultiTexture(blockMachines, blockMachines, TaamUtil.enumValuesAsString(Taam.BLOCK_MACHINES_META.values())),
 				Taam.BLOCK_MACHINES
-				);
+		);
 
 		registerBlock(
 				blockProductionLine = new BlockProductionLine(),
-				new ItemProductionLine(blockProductionLine, Taam.BLOCK_PRODUCTIONLINE_META.valuesAsString()),
+				new ItemProductionLine(blockProductionLine, TaamUtil.enumValuesAsString(Taam.BLOCK_PRODUCTIONLINE_META.values())),
 				Taam.BLOCK_PRODUCTIONLINE
-				);
+		);
 
 		registerBlock(
 				blockProductionLineAttachable = new BlockProductionLineAttachable(),
-				new ItemAttachable(blockProductionLineAttachable, Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META.valuesAsString()),
+				new ItemAttachable(blockProductionLineAttachable, TaamUtil.enumValuesAsString(Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE_META.values())),
 				Taam.BLOCK_PRODUCTIONLINE_ATTACHABLE
-				);
+		);
 
 		registerBlock(
 				blockProductionLineAppliance = new BlockProductionLineAppliance(),
 				new ItemAppliance(blockProductionLineAppliance, Taam.BLOCK_PRODUCTIONLINE_APPLIANCE_META.values()),
 				Taam.BLOCK_PRODUCTIONLINE_APPLIANCE
-				);
+		);
 
 		registerBlock(
 				blockOre = new BlockOre(),
-				new ItemMultiTexture(blockOre, blockOre, Taam.BLOCK_ORE_META.valuesAsString()),
+				new ItemMultiTexture(blockOre, blockOre, TaamUtil.enumValuesAsString(Taam.BLOCK_ORE_META.values())),
 				Taam.BLOCK_ORE
-				);
+		);
 
 		registerBlock(
 				blockConcrete = new BlockBuilding(),
 				new ItemMultiTexture(blockConcrete, blockConcrete, Taam.BLOCK_CONCRETE_META.valuesAsString()),
 				Taam.BLOCK_CONCRETE
-				);
+		);
 
 		registerBlock(
 				blockSupportBeam = new BlockSupportBeam(),
 				new ItemBlock(blockSupportBeam),
 				Taam.BLOCK_SUPPORT_BEAM
-				);
+		);
 
 		registerItem(itemDebugTool = new ItemDebugTool(), Taam.ITEM_DEBUG_TOOL);
 		registerItem(itemWrench = new ItemWrench(), Taam.ITEM_WRENCH);
 		registerItem(itemSaw = new ItemTool(Taam.ITEM_TOOL_META.saw), Taam.ITEM_TOOL + "." + Taam.ITEM_TOOL_META.saw.name());
 
-		registerItem(itemMaterial = new ItemWithMetadata<Taam.ITEM_MATERIAL_META>("material", Taam.ITEM_MATERIAL_META.values(), null), Taam.ITEM_MATERIAL);
-		registerItem(itemPart = new ItemWithMetadata<Taam.ITEM_PART_META>("part", Taam.ITEM_PART_META.values(),
+		registerItem(itemMaterial = new ItemWithMetadata<>("material", Taam.ITEM_MATERIAL_META.values(), null), Taam.ITEM_MATERIAL);
+		registerItem(itemPart = new ItemWithMetadata<>("part", Taam.ITEM_PART_META.values(),
 				new ItemDelegate<Taam.ITEM_PART_META>() {
 					@Override
 					@SideOnly(Side.CLIENT)
-					public void addInformation(ItemStack stack, EntityPlayer player, List<String> lines,
-							boolean detailedInfoSetting) {
+					public void addInformation(ItemStack stack, EntityPlayer player, List<String> tooltip, boolean detailedInfoSetting) {
 						if(stack.getMetadata() == Taam.ITEM_PART_META.redirector.ordinal()) {
 							String usage = I18n.format("lore.taam.redirector.usage");
 							// Split at literal \n in the translated text. a lot of escaping here.
-							Collections.addAll(lines, usage.split("\\\\n"));
+							Collections.addAll(tooltip, usage.split("\\\\n"));
 						}
 					}
-					@Override
-					public boolean isValidMetadata(ITEM_PART_META meta) {
-						return true;
-					}
 				}), Taam.ITEM_PART);
-		registerItem(itemIngot = new ItemWithMetadata<Taam.BLOCK_ORE_META>("ingot", Taam.BLOCK_ORE_META.values(),
+		registerItem(itemIngot = new ItemWithMetadata<>("ingot", Taam.BLOCK_ORE_META.values(),
 				new ItemDelegate<Taam.BLOCK_ORE_META>() {
 					@Override
 					public boolean isValidMetadata(Taam.BLOCK_ORE_META meta) {
@@ -321,28 +317,21 @@ public class TaamMain {
 
 					@Override
 					@SideOnly(Side.CLIENT)
-					public void addInformation(ItemStack stack, EntityPlayer player, List<String> lines,
-							boolean detailedInfoSetting) {
+					public void addInformation(ItemStack stack, EntityPlayer player, List<String> tooltip, boolean detailedInfoSetting) {
 						if(stack.getMetadata() == Taam.BLOCK_ORE_META.iron.ordinal() ||
 								stack.getMetadata() == Taam.BLOCK_ORE_META.gold.ordinal()) {
 							String usage = I18n.format("lore.taam.ingots.cheaty");
 							// Split at literal \n in the translated text. a lot of escaping here.
-							Collections.addAll(lines, usage.split("\\\\n"));
+							Collections.addAll(tooltip, usage.split("\\\\n"));
 						}
 					}
 				}), Taam.ITEM_INGOT);
 
-		registerItem(itemDust = new ItemWithMetadata<Taam.BLOCK_ORE_META>("dust", Taam.BLOCK_ORE_META.values(),
+		registerItem(itemDust = new ItemWithMetadata<>("dust", Taam.BLOCK_ORE_META.values(),
 				new ItemDelegate<Taam.BLOCK_ORE_META>() {
 					@Override
 					public boolean isValidMetadata(Taam.BLOCK_ORE_META meta) {
 						return meta.dust;
-					}
-
-					@Override
-					@SideOnly(Side.CLIENT)
-					public void addInformation(ItemStack stack, EntityPlayer player, List<String> lines,
-							boolean detailedInfoSetting) {
 					}
 				}), Taam.ITEM_DUST);
 
@@ -374,28 +363,27 @@ public class TaamMain {
 		GameRegistry.registerTileEntity(MachineTileEntity.class, Taam.TILEENTITY_MACHINE_WRAPPER);
 
 
-		if(Config.multipart_load) {
+		if (Config.multipart_load) {
 			MultipartHandler.registerMultipartStuff();
 		}
 
-		Taam.MACHINE_META[] machine_meta_values = Taam.MACHINE_META.values();
 		/*
 		 * Wrapper block for machines if multipart is not available
 		 */
 		registerBlock(
-				blockMachine = new MachineBlock(machine_meta_values),
+				blockMachine = new MachineBlock(),
 				Taam.BLOCK_MACHINE_WRAPPER
-				);
+		);
 
 		/*
 		 * Either Multipart or regular items
 		 */
 		if(Config.multipart_load && Config.multipart_register_items) {
 			// Multipart Item
-			itemMachine = MultipartHandler.createMultipartItem(machine_meta_values);
+			itemMachine = MultipartHandler.createMultipartItem(Taam.MACHINE_META.values());
 		} else {
 			// Regular item, places a wrapper block
-			itemMachine = new MachineItemBlock(blockMachine, machine_meta_values);
+			itemMachine = new MachineItemBlock(blockMachine);
 		}
 		registerItem(itemMachine, Taam.BLOCK_MACHINE_WRAPPER);
 
@@ -412,6 +400,7 @@ public class TaamMain {
 		 * Fluids
 		 */
 
+		//TODO: Move this to the config
 		boolean registerFluidBlocks = true;
 
 		Taam.FLUID_DYE_META[] fluidsDyeValues = Taam.FLUID_DYE_META.values();
@@ -425,15 +414,15 @@ public class TaamMain {
 
 			if (registerFluidBlocks) {
 				BlockFluidClassic fluidBlock = new BlockFluidClassic(fluidsDye[i], Material.WATER) {
+					@SuppressWarnings("deprecation") // Deprecation: overriding/implementing is fine
 					@Override
-					public boolean shouldSideBeRendered(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
+					public boolean shouldSideBeRendered(@Nonnull IBlockState state, IBlockAccess world, BlockPos pos, @Nonnull EnumFacing side) {
 						IBlockState neighbor = world.getBlockState(pos.offset(side));
 						// Force rendering if there is a different block adjacent, not only a different material
-						if (neighbor.getBlock() != this)
-				        {
-				            return true;
-				        }
-				        return super.shouldSideBeRendered(state, world, pos, side);
+						if (neighbor.getBlock() != this) {
+							return true;
+						}
+						return super.shouldSideBeRendered(state, world, pos, side);
 					}
 				};
 				String blockName = "fluid.dye." + fluidsDyeValues[i].name();
@@ -450,25 +439,25 @@ public class TaamMain {
 		fluidsMaterial = new FluidMaterial[fluidsMaterialValues.length];
 		blocksFluidMaterial = new BlockFluidFinite[fluidsMaterialValues.length];
 
-		for(int i = 0; i < fluidsMaterialValues.length; i++) {
+		for (int i = 0; i < fluidsMaterialValues.length; i++) {
 			fluidsMaterial[i] = new FluidMaterial(fluidsMaterialValues[i]);
 			FluidRegistry.registerFluid(fluidsMaterial[i]);
 			FluidRegistry.addBucketForFluid(fluidsMaterial[i]);
 
 			if (registerFluidBlocks) {
 				BlockFluidFinite fluidBlock = new BlockFluidFinite(fluidsMaterial[i], Material.WATER) {
+					@SuppressWarnings("deprecation") // Deprecation: overriding/implementing is fine
 					@Override
-					public boolean shouldSideBeRendered(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
+					public boolean shouldSideBeRendered(@Nonnull IBlockState state, IBlockAccess world, BlockPos pos, @Nonnull EnumFacing side) {
 						IBlockState neighbor = world.getBlockState(pos.offset(side));
 						// Force rendering if there is a different block adjacent, not only a different material
-				        if (neighbor.getBlock() != this)
-				        {
-				            return true;
-				        }
-				        return super.shouldSideBeRendered(state, world, pos, side);
+						if (neighbor.getBlock() != this) {
+							return true;
+						}
+						return super.shouldSideBeRendered(state, world, pos, side);
 					}
 				};
-				if(fluidsMaterialValues[i] == FLUID_MATERIAL_META.coating) {
+				if (fluidsMaterialValues[i] == FLUID_MATERIAL_META.coating) {
 					fluidBlock.setQuantaPerBlock(2);
 				} else {
 					fluidBlock.setQuantaPerBlock(1);
@@ -511,32 +500,36 @@ public class TaamMain {
 
 			@Override
 			public NBTBase writeNBT(Capability<IPipe> capability, IPipe instance, EnumFacing side) {
+				// This is not a capability that can be saved to NBT
 				return null;
 			}
 
 			@Override
 			public void readNBT(Capability<IPipe> capability, IPipe instance, EnumFacing side, NBTBase nbt) {
+				// This is not a capability that can be saved to NBT
 			}
 
-		}, PipeEnd.class);
+		}, () -> null);
 		CapabilityManager.INSTANCE.register(TankRenderInfo[].class, new Capability.IStorage<TankRenderInfo[]>() {
 
 			@Override
 			public NBTBase writeNBT(Capability<TankRenderInfo[]> capability, TankRenderInfo[] instance, EnumFacing side) {
+				// This is not a capability that can be saved to NBT
 				return null;
 			}
 
 			@Override
 			public void readNBT(Capability<TankRenderInfo[]> capability, TankRenderInfo[] instance, EnumFacing side, NBTBase nbt) {
+				// This is not a capability that can be saved to NBT
 			}
 
-		}, TankRenderInfo[].class);
+		}, () -> new TankRenderInfo[0]);
 
 		CapabilityManager.INSTANCE.register(IConveyorSlots.class, new Capability.IStorage<IConveyorSlots>() {
 
 			@Override
 			public NBTBase writeNBT(Capability<IConveyorSlots> capability, IConveyorSlots instance, EnumFacing side) {
-				if(instance instanceof ConveyorSlotsStandard) {
+				if (instance instanceof ConveyorSlotsStandard) {
 					return ((ConveyorSlotsStandard) instance).serializeNBT();
 				}
 				throw new NotImplementedException("Cannot save a generic IConveyorSlots instance to NBT. Only ConveyorSlotsStandard is supported.");
@@ -544,27 +537,29 @@ public class TaamMain {
 
 			@Override
 			public void readNBT(Capability<IConveyorSlots> capability, IConveyorSlots instance, EnumFacing side,
-					NBTBase nbt) {
-				if(instance instanceof ConveyorSlotsStandard) {
+			                    NBTBase nbt) {
+				if (instance instanceof ConveyorSlotsStandard) {
 					((ConveyorSlotsStandard) instance).deserializeNBT((NBTTagList) nbt);
 				}
 				throw new NotImplementedException("Cannot read a generic IConveyorSlots instance from NBT. Only ConveyorSlotsStandard is supported.");
 
 			}
 
-		}, ConveyorSlotsStandard.class);
+		}, ConveyorSlotsStandard::new);
 
 		CapabilityManager.INSTANCE.register(IAdvancedMachineGUI.class, new Capability.IStorage<IAdvancedMachineGUI>() {
 
 			@Override
 			public NBTBase writeNBT(Capability<IAdvancedMachineGUI> capability, IAdvancedMachineGUI instance, EnumFacing side) {
+				// This is not a capability that can be saved to NBT
 				return null;
 			}
 
 			@Override
 			public void readNBT(Capability<IAdvancedMachineGUI> capability, IAdvancedMachineGUI instance, EnumFacing side, NBTBase nbt) {
+				// This is not a capability that can be saved to NBT
 			}
-		}, IAdvancedMachineGUI.class);
+		}, () -> null);
 	}
 
 	/**
@@ -572,16 +567,16 @@ public class TaamMain {
 	 */
 	public static void validateCapabilities() {
 		if (Taam.CAPABILITY_PIPE == null) {
-			throw new RuntimeException("Registering a capability failed (Taam.CAPABILITY_PIPE - IPipe) - field was null after registry.");
+			throw new IllegalStateException("Registering a capability failed (Taam.CAPABILITY_PIPE - IPipe) - field was null after registry.");
 		}
-		if(Taam.CAPABILITY_RENDER_TANK == null) {
-			throw new RuntimeException("Registering a capability failed (Taam.CAPABILITY_RENDER_TANK - TankRenderInfo[]) - field was null after registry.");
+		if (Taam.CAPABILITY_RENDER_TANK == null) {
+			throw new IllegalStateException("Registering a capability failed (Taam.CAPABILITY_RENDER_TANK - TankRenderInfo[]) - field was null after registry.");
 		}
-		if(Taam.CAPABILITY_CONVEYOR == null) {
-			throw new RuntimeException("Registering a capability failed (Taam.CAPABILITY_CONVEYOR - IConveyorSlots) - field was null after registry.");
+		if (Taam.CAPABILITY_CONVEYOR == null) {
+			throw new IllegalStateException("Registering a capability failed (Taam.CAPABILITY_CONVEYOR - IConveyorSlots) - field was null after registry.");
 		}
-		if(Taam.CAPABILITY_ADVANCED_GUI == null) {
-			throw new RuntimeException("Registering a capability failed (Taam.CAPABILITY_ADVANCED_GUI - IAdvancedMachineGUI) - field was null after registry.");
+		if (Taam.CAPABILITY_ADVANCED_GUI == null) {
+			throw new IllegalStateException("Registering a capability failed (Taam.CAPABILITY_ADVANCED_GUI - IAdvancedMachineGUI) - field was null after registry.");
 		}
 	}
 
@@ -680,7 +675,7 @@ public class TaamMain {
 		};
 
 		int metaBlack = Taam.ITEM_MATERIAL_META.pigment_black.ordinal();
-		for(int dyeMeta = 0; dyeMeta < 16; dyeMeta++) {
+		for (int dyeMeta = 0; dyeMeta < 16; dyeMeta++) {
 
 			OreDictionary.registerOre("dye" + dyes[dyeMeta], new ItemStack(TaamMain.itemMaterial, 1, metaBlack + dyeMeta));
 		}

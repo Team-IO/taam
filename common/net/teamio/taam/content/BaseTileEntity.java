@@ -18,6 +18,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.teamio.taam.piping.IPipePos;
 import net.teamio.taam.util.TaamUtil;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -26,22 +27,51 @@ import java.util.UUID;
  * Base class for Taam's TileEntities. Keeps track of the block owner, manages
  * network updates and saving to/loading from disk.
  *
- * @author oliverkahrmann
+ * @author Oliver Kahrmann
  */
 public abstract class BaseTileEntity extends TileEntity implements IWorldNameable, IPipePos {
 
-	private UUID owner = null;
+	private UUID owner;
 	/**
 	 * ThreadLocal storage for the list of visible parts (required due to some
 	 * concurrency issues, See issue #194)
 	 */
-	public static final ThreadLocal<List<String>> visibleParts = new ThreadLocal<List<String>>() {
-		@Override
-		protected List<String> initialValue() {
-			return new ArrayList<String>(14);
-		}
-	};
+	public static final ThreadLocal<List<String>> visibleParts = ThreadLocal.withInitial(() -> new ArrayList<>(14));
 
+	/**
+	 * Separate method as due to obfuscation issues we cannot use getPos from TileEntity
+	 *
+	 * @return the BlockPos of this entity
+	 */
+	@Override
+	public BlockPos getPipePos() {
+		return pos;
+	}
+
+	/**
+	 * Separate method as due to obfuscation issues we cannot use getWorld from TileEntity
+	 *
+	 * @return the world instance related to this entity
+	 */
+	@Override
+	public IBlockAccess getPipeWorld() {
+		return getWorld();
+	}
+
+	/**
+	 * Set the owner of the block to the given UUID.
+	 *
+	 * @param owner The player ID. Pass null to clear the owner.
+	 */
+	public void setOwner(UUID owner) {
+		this.owner = owner;
+	}
+
+	/**
+	 * Set the owner of the block to the given player's UUID.
+	 *
+	 * @param player The player from which to ge the ID. Pass null to clear the owner.
+	 */
 	public void setOwner(EntityPlayer player) {
 		if (player == null) {
 			owner = null;
@@ -51,27 +81,10 @@ public abstract class BaseTileEntity extends TileEntity implements IWorldNameabl
 	}
 
 	/**
-	 * Separate method as due to obfuscation issues we cannot use getPos from TileEntity
-	 * @return
+	 * Get the owner's UUID.
+	 *
+	 * @return A UUID belonging to a player profile, or null, if the block does not have an owner.
 	 */
-	@Override
-	public BlockPos getPipePos() {
-		return pos;
-	}
-
-	/**
-	 * Separate method as due to obfuscation issues we cannot use getWorld from TileEntity
-	 * @return
-	 */
-	@Override
-	public IBlockAccess getPipeWorld() {
-		return getWorld();
-	}
-
-	public void setOwner(UUID owner) {
-		this.owner = owner;
-	}
-
 	public UUID getOwner() {
 		return owner;
 	}
@@ -114,15 +127,19 @@ public abstract class BaseTileEntity extends TileEntity implements IWorldNameabl
 
 	/**
 	 * Called inside {@link BaseBlock#neighborChanged(IBlockState, World, BlockPos, Block)}. (On server side)
+	 * Override as needed.
 	 */
 	public void blockUpdate() {
+		// Default implementation
 	}
 
 	/**
 	 * Called within {@link BaseBlock#getActualState(IBlockState, IBlockAccess, BlockPos)}
 	 * to update render state in the tile entity.
+	 * Override as needed.
 	 */
 	public void renderUpdate() {
+		// Default implementation
 	}
 
 	/*
@@ -131,26 +148,28 @@ public abstract class BaseTileEntity extends TileEntity implements IWorldNameabl
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
+	public void onDataPacket(@Nonnull NetworkManager net, @Nonnull SPacketUpdateTileEntity pkt) {
 		NBTTagCompound nbt = pkt.getNbtCompound();
 
 		readPropertiesFromNBTInternal(nbt);
 	}
 
 	@Override
+	@Nonnull
 	public SPacketUpdateTileEntity getUpdatePacket() {
 		NBTTagCompound nbt = new NBTTagCompound();
 		writePropertiesToNBTInternal(nbt);
 		return new SPacketUpdateTileEntity(getPos(), getBlockMetadata(), nbt);
 	}
 
+	@Nonnull
 	@Override
 	public NBTTagCompound getUpdateTag() {
 		return writeToNBT(new NBTTagCompound());
 	}
 
 	@Override
-	public void handleUpdateTag(NBTTagCompound tag) {
+	public void handleUpdateTag(@Nonnull NBTTagCompound tag) {
 		readFromNBT(tag);
 	}
 
@@ -158,8 +177,9 @@ public abstract class BaseTileEntity extends TileEntity implements IWorldNameabl
 	 * NBT
 	 */
 
+	@Nonnull
 	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound tag) {
+	public NBTTagCompound writeToNBT(@Nonnull NBTTagCompound tag) {
 		super.writeToNBT(tag);
 
 		writePropertiesToNBTInternal(tag);
@@ -167,7 +187,7 @@ public abstract class BaseTileEntity extends TileEntity implements IWorldNameabl
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound tag) {
+	public void readFromNBT(@Nonnull NBTTagCompound tag) {
 		super.readFromNBT(tag);
 
 		readPropertiesFromNBTInternal(tag);
@@ -177,9 +197,9 @@ public abstract class BaseTileEntity extends TileEntity implements IWorldNameabl
 	 * Internal, writes common properties to NBT & calls the write method on the
 	 * subclass.
 	 *
-	 * @param tag
+	 * @param tag The destination tag, properties are written directly into this tag
 	 */
-	private void writePropertiesToNBTInternal(NBTTagCompound tag) {
+	private void writePropertiesToNBTInternal(@Nonnull NBTTagCompound tag) {
 		if (owner != null) {
 			tag.setBoolean("owner", true);
 			tag.setUniqueId("owner", owner);
@@ -189,18 +209,20 @@ public abstract class BaseTileEntity extends TileEntity implements IWorldNameabl
 
 	/**
 	 * Write-method for subclasses to store their properties easily.
+	 * This is automatically called during save and during network updates.
+	 * Everything in this tag is written to the network update package and written to disk.
 	 *
-	 * @param tag
+	 * @param tag The destination tag, properties are written directly into this tag
 	 */
-	protected abstract void writePropertiesToNBT(NBTTagCompound tag);
+	protected abstract void writePropertiesToNBT(@Nonnull NBTTagCompound tag);
 
 	/**
 	 * Internal, reads common properties from NBT & calls the read method on the
 	 * subclass.
 	 *
-	 * @param tag
+	 * @param tag The source tag, properties are read directly from this tag
 	 */
-	private void readPropertiesFromNBTInternal(NBTTagCompound tag) {
+	private void readPropertiesFromNBTInternal(@Nonnull NBTTagCompound tag) {
 		if (tag.getBoolean("owner")) {
 			owner = tag.getUniqueId("owner");
 		} else {
@@ -211,9 +233,10 @@ public abstract class BaseTileEntity extends TileEntity implements IWorldNameabl
 
 	/**
 	 * Write-method for subclasses to read their properties easily.
+	 * This is automatically called during load and during network updates.
 	 *
-	 * @param tag
+	 * @param tag The source tag, properties are read directly from this tag
 	 */
-	protected abstract void readPropertiesFromNBT(NBTTagCompound tag);
+	protected abstract void readPropertiesFromNBT(@Nonnull NBTTagCompound tag);
 
 }

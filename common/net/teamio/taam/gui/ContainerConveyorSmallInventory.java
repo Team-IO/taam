@@ -10,6 +10,9 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
+import net.teamio.taam.util.InventoryUtils;
+
+import javax.annotation.Nonnull;
 
 public class ContainerConveyorSmallInventory extends Container {
 	protected final IItemHandler tileEntity;
@@ -29,7 +32,7 @@ public class ContainerConveyorSmallInventory extends Container {
 	}
 
 	@Override
-	public boolean canInteractWith(EntityPlayer player) {
+	public boolean canInteractWith(@Nonnull EntityPlayer player) {
 		return true;
 	}
 
@@ -53,7 +56,7 @@ public class ContainerConveyorSmallInventory extends Container {
 		// null checks and checks if the item can be stacked (maxStackSize > 1)
 		if (slot != null && slot.getHasStack()) {
 			ItemStack stackInSlot = slot.getStack();
-			if (stackInSlot != null) {
+			if (!InventoryUtils.isEmpty(stackInSlot)) {
 				stack = stackInSlot.copy();
 
 				// merges the item into player inventory since its in the tileEntity
@@ -68,7 +71,7 @@ public class ContainerConveyorSmallInventory extends Container {
 				}
 			}
 
-			if (stackInSlot == null || stackInSlot.stackSize == 0) {
+			if (InventoryUtils.isEmpty(stackInSlot)) {
 				slot.putStack(null);
 			} else {
 				slot.onSlotChanged();

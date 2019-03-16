@@ -15,8 +15,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.conveyors.IConveyorApplianceMetaInfo;
 import net.teamio.taam.util.TaamUtil;
@@ -38,7 +36,7 @@ public class ItemAppliance extends ItemBlock {
 	}
 
 	public IConveyorApplianceMetaInfo getInfo(int meta) {
-		int ordinal = MathHelper.clamp(meta, 0, values.length);
+		int ordinal = MathHelper.clamp(meta, 0, values.length - 1);
 		return values[ordinal];
 	}
 
@@ -56,24 +54,23 @@ public class ItemAppliance extends ItemBlock {
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public void getSubItems(Item item, CreativeTabs creativeTab, List<ItemStack> list) {
+	public void getSubItems(Item item, CreativeTabs creativeTab, List<ItemStack> items) {
 		for (int i = 0; i < values.length; i++) {
-			list.add(new ItemStack(item, 1, values[i].metaData()));
+			items.add(new ItemStack(item, 1, values[i].metaData()));
 		}
 	}
 
 	@Override
 	public boolean placeBlockAt(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side,
-			float hitX, float hitY, float hitZ, IBlockState newState) {
+	                            float hitX, float hitY, float hitZ, IBlockState newState) {
 		EnumFacing dir = side.getOpposite();
 		int meta = stack.getMetadata();
 		IConveyorApplianceMetaInfo info = getInfo(meta);
 
 		// If the player clicked the top or bottom & that is not supported
 		// use the player's facing direction
-		if(!info.isDirectionSupported(dir)) {
-			if(dir.getAxis() == EnumFacing.Axis.Y) {
+		if (!info.isDirectionSupported(dir)) {
+			if (dir.getAxis() == EnumFacing.Axis.Y) {
 				dir = player.getAdjustedHorizontalFacing();
 			} else {
 				return false;
@@ -94,21 +91,22 @@ public class ItemAppliance extends ItemBlock {
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public void addInformation(ItemStack itemStack, EntityPlayer player, List<String> list, boolean detailInfo) {
+	public void addInformation(ItemStack stack, EntityPlayer player, List<String> tooltip, boolean detailInfo) {
 
-		list.add(TextFormatting.DARK_GREEN + I18n.format("lore.taam.conveyor_appliance"));
+		tooltip.add(TextFormatting.DARK_GREEN + I18n.format("lore.taam.conveyor_appliance"));
 		if (!GuiScreen.isShiftKeyDown()) {
-			list.add(TextFormatting.DARK_PURPLE + I18n.format("lore.taam.shift"));
+			tooltip.add(TextFormatting.DARK_PURPLE + I18n.format("lore.taam.shift"));
 		} else {
 			String usage = I18n.format("lore.taam.conveyor_appliance.usage");
 			// Split at literal \n in the translated text. a lot of escaping here.
-			Collections.addAll(list, usage.split("\\\\n"));
+			Collections.addAll(tooltip, usage.split("\\\\n"));
 		}
 		// Add metadata-specific values
-		int meta = itemStack.getMetadata();
-		IConveyorApplianceMetaInfo info = getInfo(meta);
-		info.addInformation(itemStack, player, list, detailInfo);
+		int meta = stack.getMetadata();
+		String[] ttip = getInfo(meta).getTooltip();
+		if (ttip != null) {
+			Collections.addAll(tooltip, ttip);
+		}
 	}
 
 }

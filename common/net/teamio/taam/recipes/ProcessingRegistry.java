@@ -16,22 +16,18 @@ import java.util.Map;
 
 /**
  * Registry for all processing machines. Provides indexed access to all recipes.
- *
+ * <p>
  * Supported recipes have to extend {@link IProcessingRecipe}, special handling
  * for {@link IProcessingRecipeFluidBased} exists.
- *
+ * <p>
  * For every machine there is an integer constant e.g. {@link #GRINDER}, that
  * can be used for querying. New machines can be added via
  * {@link #registerMachine(ProcessingRegistryEntry)} which returns a new integer
  * "constant".
  *
  * @author Oliver Kahrmann
- *
  */
 public final class ProcessingRegistry {
-	private ProcessingRegistry() {
-		// Util Class
-	}
 
 	private static final Map<Integer, ProcessingRegistryEntry> entries;
 
@@ -53,14 +49,18 @@ public final class ProcessingRegistry {
 		FLUIDDRIER = registerMachine(new ProcessingRegistryEntry(FluidDrierRecipe.class, "Fluid Drier"));
 	}
 
+	private ProcessingRegistry() {
+		// Util Class
+	}
+
 	/**
 	 * Returns the number of registered machines. Since the machines are
 	 * numbered sequentially, this can be used to iterate over all machines.
-	 *
+	 * <p>
 	 * See also {@link #getRegistryEntries()}.
 	 *
 	 * @return The number of registered machines, also used as the next index
-	 *         for registering new machines.
+	 * for registering new machines.
 	 */
 	public static int getCount() {
 		return count;
@@ -90,8 +90,8 @@ public final class ProcessingRegistry {
 	 *
 	 * @param entry
 	 * @return The integer value that can be used to query the registry later.
-	 *         Alternatively, the registry entry itself can be used, as the
-	 *         registry simply delegates to the correct entry per machine.
+	 * Alternatively, the registry entry itself can be used, as the
+	 * registry simply delegates to the correct entry per machine.
 	 */
 	public static Integer registerMachine(ProcessingRegistryEntry entry) {
 		Integer id = count;
@@ -162,7 +162,7 @@ public final class ProcessingRegistry {
 	 * {@link IProcessingRecipe} are indexed for input item or ore dictionary
 	 * name. All recipes can then be searched using
 	 * {@link #getRecipe(int, ItemStack)}.
-	 *
+	 * <p>
 	 * Special handling: {@link IProcessingRecipeFluidBased} will be indexed for
 	 * input fluid and can be searched using {@link #getRecipe(int, FluidStack)}
 	 * .

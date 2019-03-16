@@ -272,7 +272,7 @@ public class TileEntityConveyorElevator extends BaseTileEntity implements ITicka
 			this.direction = EnumFacing.NORTH;
 		}
 		updateState(false, true, true);
-		world.notifyBlockOfStateChange(pos, blockType);
+		world.notifyNeighborsRespectDebug(pos, blockType);
 		if (blockType != null) {
 			blockType.onNeighborChange(world, pos, pos);
 		}

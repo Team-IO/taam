@@ -7,13 +7,16 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.teamio.taam.util.InventoryUtils;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
  * Wrapper for item stacks on the conveyor system. Keeps track of movement,
  * processing and blocking.
  *
- * @author oliverkahrmann
+ * @author Oliver Kahrmann
  */
-public class ItemWrapper implements INBTSerializable<NBTTagCompound>{
+public class ItemWrapper implements INBTSerializable<NBTTagCompound> {
 	public static final ItemWrapper EMPTY = new ItemWrapper(null) {
 		@Override
 		public boolean isEmpty() {
@@ -23,32 +26,30 @@ public class ItemWrapper implements INBTSerializable<NBTTagCompound>{
 
 	public ItemStack itemStack;
 	public byte movementProgress;
-	
+
 	@SideOnly(Side.CLIENT)
 	private boolean stuck;
 
 	public ItemWrapper() {
 	}
-	
+
 	public ItemWrapper(ItemStack itemStack) {
-		this.itemStack = itemStack;
+		this.itemStack = InventoryUtils.guardAgainstNull(itemStack);
 	}
 
 	public boolean isEmpty() {
-		return itemStack == null;
+		return InventoryUtils.isEmpty(itemStack);
 	}
 
 	public int getStackSize() {
-		if (itemStack == null) {
+		if (InventoryUtils.isEmpty(itemStack)) {
 			return 0;
 		}
 		return itemStack.stackSize;
 	}
 
 	public void setStackSize(int stackSize) {
-		if (itemStack != null) {
-			itemStack.stackSize = stackSize;
-		}
+		itemStack = InventoryUtils.setCount(itemStack, stackSize);
 	}
 
 	public boolean isBlocked() {
@@ -95,11 +96,11 @@ public class ItemWrapper implements INBTSerializable<NBTTagCompound>{
 			movementProgress = 0;
 		}
 	}
-	
+
 	/**
 	 * Sets a client-side flag used for rendering. Stuck wrappers are not
 	 * interpolated in between game ticks to prevent stuttering.
-	 * 
+	 *
 	 * @param value
 	 */
 	@SideOnly(Side.CLIENT)
@@ -110,7 +111,7 @@ public class ItemWrapper implements INBTSerializable<NBTTagCompound>{
 	/**
 	 * Gets a client-side flag used for rendering. Stuck wrappers are not
 	 * interpolated in between game ticks to prevent stuttering.
-	 * 
+	 *
 	 * @return
 	 */
 	@SideOnly(Side.CLIENT)
@@ -121,10 +122,10 @@ public class ItemWrapper implements INBTSerializable<NBTTagCompound>{
 	/**
 	 * Checks whether the client-side rendering shall be interpolated in between
 	 * game ticks.
-	 * 
+	 * <p>
 	 * Checks if the wrapper is neither stuck (client-side flag), blocked nor
 	 * empty. (Last one especially for highlight box rendering)
-	 * 
+	 *
 	 * @return
 	 */
 	@SideOnly(Side.CLIENT)
@@ -142,7 +143,7 @@ public class ItemWrapper implements INBTSerializable<NBTTagCompound>{
 	public NBTTagCompound serializeNBT() {
 		NBTTagCompound tag = new NBTTagCompound();
 		tag.setByte("move", movementProgress);
-		if (itemStack != null) {
+		if (!InventoryUtils.isEmpty(itemStack)) {
 			itemStack.writeToNBT(tag);
 		}
 		return tag;
@@ -163,13 +164,16 @@ public class ItemWrapper implements INBTSerializable<NBTTagCompound>{
 	/**
 	 * Executes a deep-copy of this ItemWrapper.
 	 *
-	 * @return An exact copy of this ItemWrapper, including an exact copy of its
-	 *         contents.
+	 * @return An exact copy of this ItemWrapper, including an exact copy of its contents.
 	 */
+	@Nonnull
 	public ItemWrapper copy() {
-		ItemWrapper clone = new ItemWrapper(
-				InventoryUtils.copyStack(itemStack, getStackSize()));
+		ItemWrapper clone = new ItemWrapper(InventoryUtils.copyStack(itemStack, getStackSize()));
 		clone.movementProgress = movementProgress;
 		return clone;
+	}
+
+	public void setStack(@Nullable ItemStack stack) {
+		itemStack = InventoryUtils.guardAgainstNull(stack);
 	}
 }

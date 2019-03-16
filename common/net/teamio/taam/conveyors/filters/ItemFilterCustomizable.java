@@ -4,6 +4,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.MathHelper;
 import net.teamio.taam.Log;
+import net.teamio.taam.util.InventoryUtils;
 import net.teamio.taam.util.TaamUtil;
 
 public class ItemFilterCustomizable implements IItemFilter {
@@ -51,7 +52,7 @@ public class ItemFilterCustomizable implements IItemFilter {
 		};
 
 		public static FilterMode getNext(FilterMode mode) {
-			if(mode == null) {
+			if (mode == null) {
 				return FilterMode.Exact;
 			}
 			return nextModes[mode.ordinal()];
@@ -66,7 +67,7 @@ public class ItemFilterCustomizable implements IItemFilter {
 	public boolean isItemStackMatching(ItemStack stack) {
 		for (int i = 0; i < entries.length; i++) {
 			ItemStack filterEntry = entries[i];
-			if(isItemStackMatching(filterEntry, stack)) {
+			if (isItemStackMatching(filterEntry, stack)) {
 				return true;
 			}
 		}
@@ -74,38 +75,30 @@ public class ItemFilterCustomizable implements IItemFilter {
 	}
 
 	public boolean isItemStackMatching(ItemStack filterEntry, ItemStack stack) {
-		if (stack == null) {
-			Log.error("Matching null item stack. Result: false, this should not happen!");
-			return false;
-		}
-		if (stack.getItem() == null) {
-			Log.error("Matching null item in input. Result: false, this should not happen!");
-			return false;
-		}
 		// Null Matching
-		if (filterEntry == null || filterEntry.getItem() == null) {
+		if (InventoryUtils.isEmpty(filterEntry) || InventoryUtils.isEmpty(stack)) {
 			return false;
 		}
 		// Actual matching
 		switch (mode) {
-		case Exact:
-			if (stack.getItem() != filterEntry.getItem()) {
-				return false;
-			}
-			if (checkMeta && stack.getMetadata() != filterEntry.getMetadata()) {
-				return false;
-			}
-			if (checkNBT && !ItemStack.areItemStackTagsEqual(stack, filterEntry)) {
-				return false;
-			}
-			return true;
+			case Exact:
+				if (stack.getItem() != filterEntry.getItem()) {
+					return false;
+				}
+				if (checkMeta && stack.getMetadata() != filterEntry.getMetadata()) {
+					return false;
+				}
+				if (checkNBT && !ItemStack.areItemStackTagsEqual(stack, filterEntry)) {
+					return false;
+				}
+				return true;
 			case Mod:
-			return TaamUtil.isModMatch(stack, filterEntry);
-		case OreDict:
-			return TaamUtil.isOreDictMatch(stack, filterEntry);
-		default:
-			Log.error("Unknown filter mode {}. Result: false, this should not happen!", mode);
-			return false;
+				return TaamUtil.isModMatch(stack, filterEntry);
+			case OreDict:
+				return TaamUtil.isOreDictMatch(stack, filterEntry);
+			default:
+				Log.error("Unknown filter mode {}. Result: false, this should not happen!", mode);
+				return false;
 		}
 	}
 
@@ -121,7 +114,7 @@ public class ItemFilterCustomizable implements IItemFilter {
 		for (int i = 0; i < entries.length; i++) {
 			ItemStack entry = entries[i];
 			NBTTagCompound entryTag = new NBTTagCompound();
-			if (entry == null) {
+			if (InventoryUtils.isEmpty(entry)) {
 				entryTag.setBoolean("defined", false);
 			} else {
 				entryTag.setBoolean("defined", true);

@@ -119,22 +119,16 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IRedston
 			}
 			for (int i = 0; i < itemHandler.getSlots(); i++) {
 				ItemStack stack = itemHandler.extractItem(i, wholeStack ? 64 : 1, false);
-				if (stack == null || stack.stackSize == 0) {
-					continue;
+				if (!InventoryUtils.isEmpty(stack)) {
+					EntityItem item = new EntityItem(world, pos.getX() + 0.5, pos.getY() - 0.3, pos.getZ() + 0.5, stack);
+					item.motionX = 0;
+					item.motionY = 0;
+					item.motionZ = 0;
+					world.spawnEntity(item);
+
+					somethingEjected = true;
+					break;
 				}
-
-				/*
-				 * -----------
-				 */
-
-				EntityItem item = new EntityItem(world, pos.getX() + 0.5, pos.getY() - 0.3, pos.getZ() + 0.5, stack);
-				item.motionX = 0;
-				item.motionY = 0;
-				item.motionZ = 0;
-				world.spawnEntity(item);
-
-				somethingEjected = true;
-				break;
 			}
 		} else {
 
@@ -147,14 +141,11 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IRedston
 			for (int i = 0; i < itemHandler.getSlots(); i++) {
 				// Simulate extracting first to see if there is anything in there
 				ItemStack stack = itemHandler.extractItem(i, wholeStack ? 64 : 1, true);
-				if (stack != null && stack.stackSize != 0) {
-					/*
-					 * -----------
-					 */
+				if (!InventoryUtils.isEmpty(stack)) {
 					ItemStack unableToInsert = ItemHandlerHelper.insertItemStacked(targetHandler, stack, false);
 
 					int amount = stack.stackSize;
-					if (unableToInsert != null) {
+					if (!InventoryUtils.isEmpty(unableToInsert)) {
 						amount -= unableToInsert.stackSize;
 					}
 					// If we fit anything, decrease inventory accordingly
@@ -163,11 +154,11 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IRedston
 						somethingEjected = true;
 						break;
 					}
-					// In linear mode, we only look at the front most stack that has items
-					if (linearMode) {
-						break;
-					}
+				}
 
+				// In linear mode, we only look at the front most stack that has items
+				if (linearMode) {
+					break;
 				}
 			}
 		}
@@ -185,7 +176,7 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IRedston
 		// Move Items to the front in linear mode
 		if (linearMode) {
 			for (int i = 0; i < itemHandler.getSlots() - 1; i++) {
-				if (itemHandler.getStackInSlot(i) == null) {
+				if (InventoryUtils.isEmpty(itemHandler.getStackInSlot(i))) {
 					itemHandler.setStackInSlot(i, itemHandler.getStackInSlot(i + 1));
 					itemHandler.setStackInSlot(i + 1, null);
 					changed = true;
@@ -218,9 +209,7 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IRedston
 	@Override
 	protected void readPropertiesFromNBT(NBTTagCompound tag) {
 		NBTTagCompound itemTag = tag.getCompoundTag("items");
-		if (itemTag != null) {
-			itemHandler.deserializeNBT(itemTag);
-		}
+		itemHandler.deserializeNBT(itemTag);
 		highSpeed = tag.getBoolean("highSpeed");
 		timeout = tag.getInteger("timeout");
 		eject = tag.getBoolean("eject");

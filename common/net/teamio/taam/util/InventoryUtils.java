@@ -22,9 +22,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTPrimitive;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
@@ -32,83 +31,163 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import net.minecraftforge.items.wrapper.SidedInvWrapper;
 import net.teamio.taam.Config;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
  * Utilities for working with inventories. Some code is based on the
  * InventoryUtils by Chicken-Bones, as it seems CodeChickenLib is gone for
  * good..
- * 
+ *
  * @author Chicken-Bones, Oliver Kahrmann
- * 
- *         To avoid issues with licensing, this specific file is licensed under
- *         the LGPL.
- * 
+ * <p>
+ * To avoid issues with licensing, this specific file is licensed under
+ * the LGPL.
  */
 public final class InventoryUtils {
+
+	/**
+	 * Tag for reading/writing stack sizes of more than 127 to NBT.
+	 */
+	public static final String QUANTITY_TAG = "Quantity";
+	/**
+	 * Tag for reading/writing the slot ID of item stacks to NBT.
+	 */
+	public static final String SLOT_TAG = "Slot";
+
 	private InventoryUtils() {
 		// Util Class
 	}
 
-	public static boolean canStack(ItemStack stack1, ItemStack stack2) {
-		return stack1 == null || stack2 == null
-				|| (stack1.getItem() == stack2.getItem()
-						&& (!stack2.getHasSubtypes() || stack2.getItemDamage() == stack1.getItemDamage())
-						&& ItemStack.areItemStackTagsEqual(stack2, stack1)) && stack1.isStackable();
+	public static boolean isItem(@Nullable ItemStack stack, @Nonnull Item item, int meta) {
+		return !isEmpty(stack) && stack.getItem() == item && stack.getMetadata() == meta;
 	}
 
 	/**
-	 * Copies an itemstack with a new quantity
-	 * 
-	 * @param stack
-	 *            The original item stack. Can be null.
-	 * @param quantity
-	 *            The new quantity.
-	 * @return A new item stack with the given quantity, or null if stack was
-	 *         null.
-	 * 
-	 * @author Chicken-Bones
+	 * Checks if the given stack is empty. ({@literal null} or {{@link ItemStack#getItem()}} == null
+	 *
+	 * @param stack The stack to be checked, may be null.
+	 * @return true if the stack is null or empty
+	 * @author Oliver Kahrmann
 	 */
-	public static ItemStack copyStack(ItemStack stack, int quantity) {
-		if (stack == null)
-			return null;
+	public static boolean isEmpty(@Nullable ItemStack stack) {
+		return stack == null || stack.getItem() == null || stack.stackSize == 0;
+	}
 
-		stack = stack.copy();
-		stack.stackSize = quantity;
+	/**
+	 * Replaces stacks with null items with a null stack.
+	 *
+	 * @param stack Any stack, including null
+	 * @return null or a valid stack.
+	 * @author Oliver Kahrmann
+	 */
+	public static ItemStack guardAgainstNull(@Nullable ItemStack stack) {
+		if (isEmpty(stack)) return null;
 		return stack;
 	}
 
 	/**
-	 * Drop an item into the world, using random motion.
-	 * 
-	 * Does NOT check world.isRemote!
-	 * 
-	 * @param stack
-	 * @param world
-	 * @param pos
-	 * @return
-	 * 
+	 * Adds the given amount to the stack. Pass a negative amount to subtract.
+	 * If this results in an empty stack, null is returned.
+	 * Otherwise, the stack is adjusted and returned with the new stack size.
+	 * No checks on upper/lower limits are done, the number is processed as is.
+	 *
+	 * @param stack  A non-empty stack. If an empty stack is passed in, null is returned.
+	 * @param amount The amount to be added/subtracted (no checks are done!)
+	 * @return null or the same stack with a different stack size (same object)
 	 * @author Oliver Kahrmann
 	 */
-	public static EntityItem dropItem(ItemStack stack, World world, BlockPos pos) {
-		return dropItem(stack, world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, true);
+	public static ItemStack adjustCount(@Nullable ItemStack stack, int amount) {
+		if (isEmpty(stack)) return null;
+
+		int count = stack.stackSize + amount;
+		if (count <= 0) {
+			return null;
+		}
+		stack.stackSize = count;
+		return stack;
+	}
+
+	/**
+	 * Sets the stack size of the given stack.
+	 * If this results in an empty stack, null is returned.
+	 * Otherwise, the stack is adjusted and returned with the new stack size.
+	 *
+	 * @param stack A non-null stack. If an null stack is passed in, an empty stack is returned.
+	 * @param count The amount to be set
+	 * @return null or the same stack with a different stack size (same object)
+	 * @author Oliver Kahrmann
+	 */
+	public static ItemStack setCount(@Nullable ItemStack stack, int count) {
+		if (isEmpty(stack)) return null;
+
+		if (count <= 0) {
+			return null;
+		}
+		stack.stackSize = count;
+		return stack;
+	}
+
+	/**
+	 * Checks if two stacks can be stacked together.
+	 * Compares item, metadata (if applicable), NBT, and if the stacks want to stack.
+	 * Null and empty stacks can be stacked together, but not with non-empty stacks.
+	 * Does not check the max stack size, only if the items are compatible.
+	 *
+	 * @param stack1 The first stack to be checked, may be null.
+	 * @param stack2 The second stack to be checked, may be null.
+	 * @return true if the two stack can be safely stacked into one.
+	 * @author Oliver Kahrmann
+	 */
+	public static boolean canStack(@Nullable ItemStack stack1, @Nullable ItemStack stack2) {
+		// Stackable if both are empty
+		if (isEmpty(stack1)) return isEmpty(stack2);
+		if (isEmpty(stack2)) return false;
+
+		// Both stacks need to be able to stack
+		if (!stack1.isStackable() || !stack2.isStackable()) return false;
+		// Equal items & damage value
+		if (!stack1.isItemEqual(stack2)) return false;
+		// Equal NBT
+		if (!ItemStack.areItemStackTagsEqual(stack2, stack1)) return false;
+
+		return true;
+	}
+
+	/**
+	 * Copies an itemstack with a new quantity
+	 *
+	 * @param stack    The original item stack. If an empty/null stack is passed in, an empty stack is returned.
+	 * @param quantity The new quantity.
+	 * @return A new item stack with the given quantity, or ItemStack.EMPTY if stack was
+	 * null or empty
+	 * @author Oliver Kahrmann based on code by Chicken-Bones
+	 */
+	public static ItemStack copyStack(@Nullable ItemStack stack, int quantity) {
+		if (isEmpty(stack)) return null;
+
+		ItemStack copy = stack.copy();
+		copy.stackSize = quantity;
+		return copy;
 	}
 
 	/**
 	 * Drop an item into the world, optionally using random motion.
-	 * 
+	 * <p>
 	 * Does NOT check world.isRemote!
-	 * 
-	 * @param stack
-	 * @param world
-	 * @param pos
-	 * @param randomMotion
-	 * @return
-	 * 
+	 *
+	 * @param stack        An item stack to be dropped as an {@link EntityItem}
+	 * @param world        The destination world
+	 * @param pos          Destination coordinates for the entity. 0.5 is added to each coordinate to spawn in the middle of the block.
+	 * @param randomMotion Enable random motion like in vanilla code. Pass false to spawn the item without motion.
+	 * @return The spawned EntityItem or null, if the given stack was empty.
 	 * @author Oliver Kahrmann
 	 */
 	public static EntityItem dropItem(ItemStack stack, World world, BlockPos pos, boolean randomMotion) {
@@ -116,40 +195,22 @@ public final class InventoryUtils {
 	}
 
 	/**
-	 * Drop an item into the world, using random motion.
-	 * 
-	 * Does NOT check world.isRemote!
-	 * 
-	 * @param stack
-	 * @param world
-	 * @param x
-	 * @param y
-	 * @param z
-	 * @return
-	 * 
-	 * @author Oliver Kahrmann
-	 */
-	public static EntityItem dropItem(ItemStack stack, World world, double x, double y, double z) {
-		return dropItem(stack, world, x, y, z, true);
-	}
-
-	/**
 	 * Drop an item into the world, optionally using random motion.
-	 * 
+	 * <p>
 	 * Does NOT check world.isRemote!
-	 * 
-	 * @param stack
-	 * @param world
-	 * @param x
-	 * @param y
-	 * @param z
-	 * @param randomMotion
-	 * @return
-	 * 
-	 * @author Chicken-Bones, Oliver Kahrmann
+	 *
+	 * @param stack        An item stack to be dropped as an {@link EntityItem}
+	 * @param world        The destination world
+	 * @param x            Destination coordinates for the entity
+	 * @param y            Destination coordinates for the entity
+	 * @param z            Destination coordinates for the entity
+	 * @param randomMotion Enable random motion like in vanilla code. Pass false to spawn the item without motion.
+	 * @return The spawned EntityItem or null, if the given stack was empty.
+	 * @author Oliver Kahrmann based on code by Chicken-Bones
 	 */
-	public static EntityItem dropItem(ItemStack stack, World world, double x, double y, double z,
-			boolean randomMotion) {
+	public static EntityItem dropItem(@Nullable ItemStack stack, World world, double x, double y, double z, boolean randomMotion) {
+		if (isEmpty(stack)) return null;
+
 		EntityItem item = new EntityItem(world, x, y, z, stack);
 		if (randomMotion) {
 			item.motionX = world.rand.nextGaussian() * 0.05;
@@ -162,15 +223,14 @@ public final class InventoryUtils {
 
 	/**
 	 * Gets an {@link IItemHandler} from the given tile entity.
-	 * 
+	 * <p>
 	 * If enabled in the config, {@link ISidedInventory} and {@link IInventory}
 	 * will be wrapped & returned accordingly.
-	 * 
+	 *
 	 * @param tileEntity
 	 * @param side
 	 * @return An {@link IItemHandler} for the given tileEntity, or null if no
-	 *         inventory was found or tileEntity was null.
-	 * 
+	 * inventory was found or tileEntity was null.
 	 * @author Oliver Kahrmann
 	 */
 	public static IItemHandler getInventory(TileEntity tileEntity, EnumFacing side) {
@@ -190,16 +250,15 @@ public final class InventoryUtils {
 
 	/**
 	 * Gets an {@link IItemHandler} from the given position in the world.
-	 * 
+	 * <p>
 	 * If enabled in the config, {@link ISidedInventory} and {@link IInventory}
 	 * will be wrapped & returned accordingly.
-	 * 
+	 *
 	 * @param world
 	 * @param pos
 	 * @param side
 	 * @return An {@link IItemHandler} for the given tileEntity, or null if no
-	 *         inventory tileEntity was found.
-	 * 
+	 * inventory tileEntity was found.
 	 * @author Oliver Kahrmann
 	 */
 	public static IItemHandler getInventory(IBlockAccess world, BlockPos pos, EnumFacing side) {
@@ -207,65 +266,17 @@ public final class InventoryUtils {
 	}
 
 	/**
-	 * NBT item loading function with support for stack sizes > 32K.
-	 * 
-	 * Items are loaded with the slot index, so make sure the array is sized big
-	 * enough to fit all slots. Otherwise use
-	 * {@link #readItemStacksFromTagSequential(ItemStack[], NBTTagList)} where
-	 * the slot index is not read.
-	 * 
-	 * @param items
-	 *            An appropriately sized array for the loaded items.
-	 * @param tagList
-	 * 
-	 * @author Chicken-Bones
-	 */
-	public static void readItemStacksFromTag(ItemStack[] items, NBTTagList tagList) {
-		for (int i = 0; i < tagList.tagCount(); i++) {
-			NBTTagCompound tag = tagList.getCompoundTagAt(i);
-			int b = tag.getShort("Slot");
-			items[b] = ItemStack.loadItemStackFromNBT(tag);
-			if (tag.hasKey("Quantity"))
-				items[b].stackSize = ((NBTPrimitive)tag.getTag("Quantity")).getInt();
-		}
-	}
-
-	/**
-	 * NBT item loading function with support for stack sizes > 32K. Reads the
-	 * {@link ItemStack}s without checking the slot ID. Useful for internal
-	 * lists.
-	 * 
-	 * @author Oliver Kahrmann, based on
-	 *         {@link #readItemStacksFromTag(ItemStack[], NBTTagList)}
-	 * 
-	 * @param items
-	 * @param tagList
-	 * 
-	 * @author Chicken-Bones
-	 */
-	public static void readItemStacksFromTagSequential(ItemStack[] items, NBTTagList tagList) {
-		for (int i = 0; i < tagList.tagCount(); i++) {
-			NBTTagCompound tag = tagList.getCompoundTagAt(i);
-			int b = tag.getShort("Slot");
-			items[b] = ItemStack.loadItemStackFromNBT(tag);
-			if (tag.hasKey("Quantity"))
-				items[b].stackSize = ((NBTPrimitive) tag.getTag("Quantity")).getInt();
-		}
-	}
-
-	/**
 	 * Tries to drop an item into a player inventory or drops it at the
 	 * specified coordinates.
-	 * 
-	 * 
+	 * <p>
+	 * <p>
 	 * Checks world.isRemote before dropping items. Regular adding is also done
 	 * on client side. Server-side inventory change is sent to client
 	 * immediately.
-	 * 
+	 *
 	 * @param player
 	 * @param stack
 	 * @param pos
-	 * 
 	 * @author Oliver Kahrmann
 	 */
 	public static void tryDropToInventory(EntityPlayer player, ItemStack stack, BlockPos pos) {
@@ -275,26 +286,25 @@ public final class InventoryUtils {
 	/**
 	 * Tries to drop an item into a player inventory or drops it at the
 	 * specified coordinates.
-	 * 
+	 * <p>
 	 * Checks world.isRemote before dropping items. Regular adding is also done
 	 * on client side. Server-side inventory change is sent to client
 	 * immediately.
-	 * 
+	 *
 	 * @param player
 	 * @param stack
 	 * @param x
 	 * @param y
 	 * @param z
-	 * 
 	 * @author Oliver Kahrmann
 	 */
-	public static void tryDropToInventory(EntityPlayer player, ItemStack stack, double x, double y, double z) {
-		if (player.capabilities.isCreativeMode) {
-			return;
-		}
+	public static void tryDropToInventory(EntityPlayer player, @Nullable ItemStack stack, double x, double y, double z) {
+		if (isEmpty(stack)) return;
+		if (player.capabilities.isCreativeMode) return;
+
 		if (!player.inventory.addItemStackToInventory(stack)) {
 			if (!player.world.isRemote) {
-				dropItem(stack, player.world, x, y, z);
+				dropItem(stack, player.world, x, y, z, true);
 			}
 		} else if (player instanceof EntityPlayerMP) {
 			((EntityPlayerMP) player).sendContainerToPlayer(player.inventoryContainer);
@@ -302,48 +312,34 @@ public final class InventoryUtils {
 	}
 
 	/**
-	 * NBT item saving function. Uses the default
-	 * {@link #writeItemStacksToTag(ItemStack[], int)} and assumes maxQuantity
-	 * 64.
-	 * 
-	 * @param items
-	 *            The array of item stacks to be written. May contain null
-	 *            values, but not BE null.
-	 * @return A new tag list containing the serialized item stacks.
-	 * 
-	 * @author Chicken-Bones
-	 */
-	public static NBTTagList writeItemStacksToTag(ItemStack[] items) {
-		return writeItemStacksToTag(items, 64);
-	}
-
-	/**
 	 * NBT item saving function with support for stack sizes > 32K.
-	 * 
+	 * ItemStacks only write a byte of data, so max 127 items per stack.
+	 * <p>
 	 * Items are saved with their slot index, so null stacks can be skipped.
-	 * 
-	 * @param items
-	 *            The array of item stacks to be written. May contain null
-	 *            values, but not BE null.
-	 * @param maxQuantity
-	 *            Determines if the stack size has to be written separately, and
-	 *            which data type is used.
+	 *
+	 * @param items       The array of item stacks to be written. May contain null
+	 *                    values, but not BE null.
+	 * @param maxQuantity Determines if the stack size has to be written separately, and
+	 *                    which data type is used. Careful, too small values result in data loss.
+	 * @param sequential  If sequential, the slot number is not written. Empty stacks are simply skipped.
+	 *                    Useful for internal arrays where the exact position is less important than the order.
 	 * @return A new tag list containing the serialized item stacks.
-	 * 
-	 * @author Chicken-Bones
+	 * @author Oliver Kahrmann, based on code by Chicken-Bones
 	 */
-	public static NBTTagList writeItemStacksToTag(ItemStack[] items, int maxQuantity) {
+	public static NBTTagList writeItemStacksToTag(ItemStack[] items, int maxQuantity, boolean sequential) {
 		NBTTagList tagList = new NBTTagList();
 		for (int i = 0; i < items.length; i++) {
-			if (items[i] != null) {
+			if (!isEmpty(items[i])) {
 				NBTTagCompound tag = new NBTTagCompound();
-				tag.setShort("Slot", (short) i);
+				if (!sequential) {
+					tag.setShort(SLOT_TAG, (short) i);
+				}
 				items[i].writeToNBT(tag);
 
 				if (maxQuantity > Short.MAX_VALUE)
-					tag.setInteger("Quantity", items[i].stackSize);
+					tag.setInteger(QUANTITY_TAG, items[i].stackSize);
 				else if (maxQuantity > Byte.MAX_VALUE)
-					tag.setShort("Quantity", (short) items[i].stackSize);
+					tag.setShort(QUANTITY_TAG, (short) items[i].stackSize);
 
 				tagList.appendTag(tag);
 			}
@@ -352,59 +348,41 @@ public final class InventoryUtils {
 	}
 
 	/**
-	 * NBT item saving function
-	 * 
-	 * Writes the itemStacks without adding the slot ID. Useful for internal
-	 * lists. Uses the default
-	 * {@link #writeItemStacksToTagSequential(ItemStack[], int)} and assumes
-	 * maxQuantity 64.
-	 * 
-	 * @param items
-	 *            The array of item stacks to be written. May contain null
-	 *            values, but not BE null.
-	 * @return A new tag list containing the serialized item stacks.
-	 * 
-	 * @author Oliver Kahrmann, based on
-	 *         {@link #writeItemStacksToTag(ItemStack[])}
+	 * NBT item loading function with support for stack sizes > 32K.
+	 * ItemStacks only write a byte of data, so max 127 items per stack.
+	 * <p>
+	 * Items are loaded with the slot index, so make sure the array is sized big
+	 * enough to fit all slots. Otherwise use the sequential flag where
+	 * the slot index is not read.
+	 * <p>
+	 * Empty spots and invalid stacks in the items array are replaced with ItemStack.EMPTY.
+	 *
+	 * @param items      An appropriately sized array for the loaded items.
+	 *                   You can use the tag count of the list for sequentially written tags.
+	 * @param tagList    The NBT list to read from
+	 * @param sequential Read the entries sequentially, ignoring a slot number if present.
+	 *                   Useful for internal lists.
+	 * @author Oliver Kahrmann, based on code by Chicken-Bones
 	 */
-	public static NBTTagList writeItemStacksToTagSequential(ItemStack[] items) {
-		return writeItemStacksToTagSequential(items, 64);
-	}
-
-	/**
-	 * NBT item saving function with support for stack sizes > 32K
-	 * 
-	 * Writes the itemStacks without adding the slot ID. Useful for internal
-	 * lists.
-	 * 
-	 * @author Oliver Kahrmann, based on
-	 *         {@link #writeItemStacksToTag(ItemStack[], int)}
-	 * @param items
-	 *            The array of item stacks to be written. May contain null
-	 *            values, but not BE null.
-	 * @param maxQuantity
-	 *            Determines if the stack size has to be written separately, and
-	 *            which data type is used.
-	 * @return A new tag list containing the serialized item stacks.
-	 * 
-	 * @author Oliver Kahrmann, based on
-	 *         {@link #writeItemStacksToTag(ItemStack[])}
-	 */
-	public static NBTTagList writeItemStacksToTagSequential(ItemStack[] items, int maxQuantity) {
-		NBTTagList tagList = new NBTTagList();
+	public static void readItemStacksFromTag(ItemStack[] items, NBTTagList tagList, boolean sequential) {
+		for (int i = 0; i < tagList.tagCount(); i++) {
+			NBTTagCompound tag = tagList.getCompoundTagAt(i);
+			int slot;
+			if (sequential) {
+				slot = i;
+			} else {
+				slot = tag.getShort(SLOT_TAG);
+			}
+			items[slot] = ItemStack.loadItemStackFromNBT(tag);
+			if (tag.hasKey(QUANTITY_TAG, Constants.NBT.TAG_SHORT))
+				items[slot].stackSize = tag.getShort(QUANTITY_TAG);
+			else if (tag.hasKey(QUANTITY_TAG, Constants.NBT.TAG_INT))
+				items[slot].stackSize = tag.getInteger(QUANTITY_TAG);
+		}
 		for (int i = 0; i < items.length; i++) {
-			if (items[i] != null) {
-				NBTTagCompound tag = new NBTTagCompound();
-				items[i].writeToNBT(tag);
-
-				if (maxQuantity > Short.MAX_VALUE)
-					tag.setInteger("Quantity", items[i].stackSize);
-				else if (maxQuantity > Byte.MAX_VALUE)
-					tag.setShort("Quantity", (short) items[i].stackSize);
-
-				tagList.appendTag(tag);
+			if (isEmpty(items[i])) {
+				items[i] = null;
 			}
 		}
-		return tagList;
 	}
 }

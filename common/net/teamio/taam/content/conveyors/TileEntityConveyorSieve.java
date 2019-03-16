@@ -167,22 +167,22 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements IRotatabl
 	private boolean tryOutput(ItemWrapper wrapper, IItemHandler outputInventory) {
 		if (outputInventory == null) {
 			// Output to world
-			if (!world.isRemote && wrapper.itemStack != null) {
+			if (!world.isRemote && !InventoryUtils.isEmpty(wrapper.itemStack)) {
 				EntityItem item = new EntityItem(world, pos.getX() + 0.5, pos.getY() - 0.3, pos.getZ() + 0.5, wrapper.itemStack);
 				item.motionX = 0;
 				item.motionY = 0;
 				item.motionZ = 0;
 				world.spawnEntity(item);
-				wrapper.itemStack = null;
+				wrapper.setStack(null);
 			}
 			return true;
 		}
 		// Output to inventory
-		if (wrapper.itemStack == null) {
+		if (InventoryUtils.isEmpty(wrapper.itemStack)) {
 			return true;
 		}
 		wrapper.itemStack = ItemHandlerHelper.insertItemStacked(outputInventory, wrapper.itemStack, false);
-		return wrapper.itemStack == null;
+		return InventoryUtils.isEmpty(wrapper.itemStack);
 	}
 
 	@Override
@@ -245,7 +245,7 @@ public class TileEntityConveyorSieve extends BaseTileEntity implements IRotatabl
 		}
 		conveyorSlots.rotation = direction;
 		updateState(false, true, true);
-		world.notifyBlockOfStateChange(pos, blockType);
+		world.notifyNeighborsRespectDebug(pos, blockType);
 		if (blockType != null) {
 			blockType.onNeighborChange(world, pos, pos);
 		}

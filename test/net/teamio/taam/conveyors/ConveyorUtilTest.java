@@ -14,8 +14,9 @@ import net.teamio.taam.TaamMain;
 import net.teamio.taam.content.common.ItemWrench;
 import net.teamio.taam.content.conveyors.BlockProductionLine;
 import net.teamio.taam.content.conveyors.BlockProductionLineAppliance;
-import net.teamio.taam.content.conveyors.ItemAttachable;
+import net.teamio.taam.content.conveyors.ItemAppliance;
 import net.teamio.taam.content.conveyors.ItemProductionLine;
+import net.teamio.taam.util.TaamUtil;
 import org.junit.runner.RunWith;
 
 /**
@@ -29,10 +30,10 @@ public class ConveyorUtilTest extends AbstractTest {
 		GameRegistry.register(TaamMain.itemWrench = new ItemWrench(), new ResourceLocation(Taam.MOD_ID, Taam.ITEM_WRENCH));
 
 		GameRegistry.register(TaamMain.blockProductionLine = new BlockProductionLine(), new ResourceLocation(Taam.MOD_ID, Taam.BLOCK_PRODUCTIONLINE));
-		GameRegistry.register(new ItemProductionLine(TaamMain.blockProductionLine, Taam.BLOCK_PRODUCTIONLINE_META.valuesAsString()), new ResourceLocation(Taam.MOD_ID, Taam.BLOCK_PRODUCTIONLINE));
+		GameRegistry.register(new ItemProductionLine(TaamMain.blockProductionLine, TaamUtil.enumValuesAsString(Taam.BLOCK_PRODUCTIONLINE_META.values())), new ResourceLocation(Taam.MOD_ID, Taam.BLOCK_PRODUCTIONLINE));
 
 		GameRegistry.register(TaamMain.blockProductionLineAppliance = new BlockProductionLineAppliance(), new ResourceLocation(Taam.MOD_ID, Taam.BLOCK_PRODUCTIONLINE_APPLIANCE));
-		GameRegistry.register(new ItemAttachable(TaamMain.blockProductionLineAppliance, Taam.BLOCK_PRODUCTIONLINE_APPLIANCE_META.valuesAsString()), new ResourceLocation(Taam.MOD_ID, Taam.BLOCK_PRODUCTIONLINE_APPLIANCE));
+		GameRegistry.register(new ItemAppliance(TaamMain.blockProductionLineAppliance, Taam.BLOCK_PRODUCTIONLINE_APPLIANCE_META.values()), new ResourceLocation(Taam.MOD_ID, Taam.BLOCK_PRODUCTIONLINE_APPLIANCE));
 
 		Config.init(null);
 		Config.debug_output_as_info = true;
@@ -72,20 +73,20 @@ public class ConveyorUtilTest extends AbstractTest {
 		// NBT Tag Compound
 		// NBT not in blacklist, NBT is ignored
 		ItemStack stack = new ItemStack(Items.POTIONITEM);
-		stack = PotionUtils.addPotionToItemStack(stack, PotionTypes.INVISIBILITY);
+		PotionUtils.addPotionToItemStack(stack, PotionTypes.INVISIBILITY);
 		assertTrue(ConveyorUtil.isBlacklistedForConveyor(stack));
 
 		stack = new ItemStack(Items.POTIONITEM);
-		stack = PotionUtils.addPotionToItemStack(stack, PotionTypes.LEAPING);
+		PotionUtils.addPotionToItemStack(stack, PotionTypes.LEAPING);
 		assertTrue(ConveyorUtil.isBlacklistedForConveyor(stack));
 
 		// NBT in blacklist, NBT is respected
 		stack = new ItemStack(Items.SPLASH_POTION);
-		stack = PotionUtils.addPotionToItemStack(stack, PotionTypes.INVISIBILITY);
+		PotionUtils.addPotionToItemStack(stack, PotionTypes.INVISIBILITY);
 		assertTrue(ConveyorUtil.isBlacklistedForConveyor(stack));
 
 		stack = new ItemStack(Items.SPLASH_POTION);
-		stack = PotionUtils.addPotionToItemStack(stack, PotionTypes.LEAPING);
+		PotionUtils.addPotionToItemStack(stack, PotionTypes.LEAPING);
 		assertFalse(ConveyorUtil.isBlacklistedForConveyor(stack));
 	}
 }

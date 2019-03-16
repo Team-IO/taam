@@ -8,6 +8,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import net.teamio.taam.Taam;
 import net.teamio.taam.conveyors.ConveyorSlotsInventory;
+import net.teamio.taam.util.InventoryUtils;
 
 /**
  * Conveyor Item Bag.
@@ -48,6 +49,11 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable {
 
 	@Override
 	public void blockUpdate() {
+		renderUpdate();
+	}
+
+	@Override
+	public void renderUpdate() {
 		if (world != null && world.isRemote) {
 			/*
 			 * Fill display calculation is only needed on the client..
@@ -58,7 +64,7 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable {
 
 			for (int i = 0; i < itemHandler.getSlots(); i++) {
 				ItemStack stack = itemHandler.getStackInSlot(i);
-				if (stack != null && stack.getItem() != null && stack.getMaxStackSize() > 0) {
+				if (!InventoryUtils.isEmpty(stack) && stack.getMaxStackSize() > 0) {
 					float singleFillFactor = stack.stackSize / (float) stack.getMaxStackSize();
 					fillPercent += singleFillFactor * stackFactor;
 				}
@@ -86,8 +92,7 @@ public class TileEntityConveyorItemBag extends ATileEntityAttachable {
 
 	@Override
 	protected void readPropertiesFromNBT(NBTTagCompound tag) {
-		NBTTagCompound itemTag = tag.getCompoundTag("items");
-		itemHandler.deserializeNBT(itemTag);
+		itemHandler.deserializeNBT(tag.getCompoundTag("items"));
 		direction = EnumFacing.getFront(tag.getInteger("direction"));
 		conveyorSlots.rotation = direction;
 		blockUpdate();

@@ -35,6 +35,11 @@ public class GuiConveyorHopper extends GuiContainer {
 	}
 
 	@Override
+	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+		super.drawScreen(mouseX, mouseY, partialTicks);
+	}
+
+	@Override
 	public void initGui() {
 		super.initGui();
 		//TODO: Adjust background image & draw inside ;)
@@ -67,6 +72,7 @@ public class GuiConveyorHopper extends GuiContainer {
 			break;
 		default:
 			appendage = "Wonky";
+			break;
 		}
 
 

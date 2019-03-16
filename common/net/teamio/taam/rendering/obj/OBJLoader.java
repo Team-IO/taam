@@ -21,7 +21,7 @@ import java.util.Set;
  * If you need more control over accepted resources - extend the class, and register a new instance with ModelLoaderRegistry.
  *
  * Replacement for the original OBJLoader. Hacky workaround.
- * 
+ *
  * @author shadekiller666
  * https://github.com/shadekiller666/MinecraftForge/tree/1.9_OBJLoader/src/main/java/net/minecraftforge/client/model/obj
  *
