@@ -12,4 +12,4 @@ notifications:
     on_start: never     # options: [always|never|change] default: always
 
 after_script:
-  - ./gradlew uploadCoverageToCodacy
+- ./gradlew uploadCoverageToCodacy
