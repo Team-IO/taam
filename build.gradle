@@ -12,13 +12,14 @@ buildscript {
 	dependencies {
 		classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
 		// Used for com.github.breadmoirai.github-release:
-		classpath 'com.squareup.okhttp3:okhttp:3.12.0'
-		classpath 'com.j256.simplemagic:simplemagic:1.14'
+		classpath 'com.squareup.okhttp3:okhttp:3.14.0'
+		classpath 'com.j256.simplemagic:simplemagic:1.16'
 	}
 }
 plugins {
 	id "com.github.breadmoirai.github-release" version "2.2.1"
 	id 'com.matthewprenger.cursegradle' version "1.1.2"
+	id "jacoco"
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
 
@@ -28,11 +29,16 @@ repositories {
 		url "http://maven.amadornes.com/"
 	}
 	maven {
+		name 'for JEI'
 		url "http://dvs1.progwml6.com/files/maven"
 	}
 	maven {
-		name="bbm"
-		url="http://api.dmodoomsirius.me/"
+		name "bbm, for MinecraftJUnit"
+		url "http://api.dmodoomsirius.me/"
+	}
+	maven {
+		name "bintray, for codacy upload"
+		url "http://dl.bintray.com/typesafe/maven-releases"
 	}
 }
 
@@ -53,7 +59,7 @@ compileJava {
 	sourceCompatibility = targetCompatibility = '1.8'
 }
 
-if(System.env.BUILD_NUMBER)
+if (System.env.BUILD_NUMBER)
 	version = "${config.mod_version}.b${System.env.BUILD_NUMBER}"
 
 minecraft {
@@ -79,6 +85,10 @@ sourceSets {
 	}
 }
 
+configurations {
+	codacy
+}
+
 dependencies {
 	//compile 'com.mod-buildcraft:buildcraft:6.0.8:dev'
 	deobfCompile "MCMultiPart:MCMultiPart:${config.mcmultipart_version}:universal"
@@ -96,10 +106,31 @@ dependencies {
 			'org.junit.jupiter:junit-jupiter-engine:5.1.0',
 			'org.junit.vintage:junit-vintage-engine:5.1.0'
 	)
+
+	codacy group: 'com.codacy', name: 'codacy-coverage-reporter', version: '5.0.310'
 }
 
 test {
 	useJUnitPlatform()
+}
+
+jacocoTestReport {
+	reports {
+		xml.enabled true
+	}
+}
+check.dependsOn jacocoTestReport
+
+task uploadCoverageToCodacy(type: JavaExec, group: "publishing", dependsOn: jacocoTestReport) {
+	main = "com.codacy.CodacyCoverageReporter"
+	classpath = configurations.codacy
+	args = [
+			"report",
+			"-l",
+			"Java",
+			"-r",
+			"${buildDir}/reports/jacoco/test/jacocoTestReport.xml"
+	]
 }
 
 jar {
@@ -118,8 +149,7 @@ jar {
 	exclude '**/*.svg'
 }
 
-processResources
-{
+processResources {
 	// this will ensure that this task is redone when the versions change.
 	inputs.property "version", project.version
 	inputs.property "config.mc_version", project.minecraft.version
@@ -127,12 +157,12 @@ processResources
 	// Replace properties in info files
 	from(sourceSets.main.resources.srcDirs) {
 		include '*.info'
-		expand 'version':config.version,'mcversion':project.minecraft.version
+		expand 'version': config.version, 'mcversion': project.minecraft.version
 	}
 	// Filter out unsupported keys from the material files to keep console output clean
 	from(sourceSets.main.resources.srcDirs) {
 		include '**/*.mtl'
-		filter {String line ->
+		filter { String line ->
 			isValidMtlLine(line) ? line : null
 		}
 	}
@@ -140,24 +170,23 @@ processResources
 
 // Cleans up all material files in-place.
 // Manually run to have a clean repository.
-task cleanupMtl <<
-{
+task cleanupMtl << {
 	FileTree tree = fileTree('resources/assets/taam/models') {
 		include '**/*.mtl'
 	}
-	tree.each {File file ->
+	tree.each { File file ->
 		println "Attempting to fix $file.name"
 		List<String> content = new ArrayList<String>(20)
 		BufferedReader reader = new BufferedReader(new FileReader(file))
 		String currentLine
-		while((currentLine = reader.readLine()) != null) {
-			if(isValidMtlLine(currentLine)) {
+		while ((currentLine = reader.readLine()) != null) {
+			if (isValidMtlLine(currentLine)) {
 				content.add(currentLine)
 			}
 		}
 		reader.close()
 		BufferedWriter writer = new BufferedWriter(new FileWriter(file))
-		content.each {String line ->
+		content.each { String line ->
 			writer.write(line)
 			writer.write('\n')
 		}
@@ -166,12 +195,12 @@ task cleanupMtl <<
 }
 
 static boolean isValidMtlLine(String line) {
-	if(
+	if (
 	line.startsWith('illum') ||
-	line.startsWith('Ns') ||
-	line.startsWith('Ni') ||
-	line.startsWith('Ks') ||
-	line.startsWith('Ke')
+			line.startsWith('Ns') ||
+			line.startsWith('Ni') ||
+			line.startsWith('Ks') ||
+			line.startsWith('Ke')
 	) {
 		return false
 	}
