@@ -98,7 +98,7 @@ dependencies {
 			'junit:junit:4.12'
 	)
 	testImplementation(
-			'org.junit.jupiter:junit-jupiter-api:5.4.0',
+			'org.junit.jupiter:junit-jupiter-api:5.4.2',
 			'com.builtbroken.codinglib:CodingLib:0.+',
 			'com.builtbroken.minecraftjunit:MinecraftJUnit:1.12.2-0.+:deobf'
 	)
