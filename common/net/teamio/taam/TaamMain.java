@@ -489,6 +489,9 @@ public class TaamMain {
 		Early registration of model loader
 		 */
 		proxy.registerModelLoader();
+
+		// Marker for automatic server test, to make sure the mod was loaded
+		Log.info("Taam preInit done");
 	}
 
 	public static void registerCapabilities() {

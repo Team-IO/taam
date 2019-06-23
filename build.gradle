@@ -209,6 +209,14 @@ static boolean isValidMtlLine(String line) {
 	return true
 }
 
+static String getJVMBinary() {
+	if (System.getProperty("os.name").startsWith("Win")) {
+		return System.getProperties().getProperty("java.home") + File.separator + "bin" + File.separator + "java.exe";
+	} else {
+		return System.getProperties().getProperty("java.home") + File.separator + "bin" + File.separator + "java";
+	}
+}
+
 curseforge {
 	// Store this in $GRADLE_USER_HOME/gradle.properties
 	apiKey = findProperty('curseforge.apikey') ?: "unset"
@@ -265,5 +273,103 @@ githubRelease {
 	FilenameFilter filter = { dir, filename -> filename.contains("${config.mc_version}-${config.mod_version}.jar") }
 	releaseAssets = {
 		jar.destinationDir.listFiles(filter).first()
+	}
+}
+
+task downloadTestServer(group: "servertest") {
+	def modsFolder = file("$buildDir/server/mods")
+	modsFolder.mkdirs()
+
+	outputs.dir(modsFolder)
+	outputs.files(
+			"$buildDir/server/forge-${config.mc_version}-${config.forge_version}-installer.jar"/*,
+			"$buildDir/server/minecraft_server.${config.mc_version}.jar"*/
+	)
+	/*ant.get(
+			src: "https://s3.amazonaws.com/Minecraft.Download/versions/${config.mc_version}/minecraft_server.${config.mc_version}.jar",
+			dest: "$buildDir/server/minecraft_server.${config.mc_version}.jar"
+	)*/
+	ant.get(
+			src: "https://files.minecraftforge.net/maven/net/minecraftforge/forge/${config.mc_version}-${config.forge_version}/forge-${config.mc_version}-${config.forge_version}-installer.jar",
+			dest: "$buildDir/server/forge-${config.mc_version}-${config.forge_version}-installer.jar"
+	)
+
+}
+
+task deployTestServer(group: "servertest", type: JavaExec, dependsOn: downloadTestServer) {
+	main = 'net.minecraftforge.installer.SimpleInstaller'
+	classpath = files("$buildDir/server/forge-${config.mc_version}-${config.forge_version}-installer.jar")
+	workingDir = "$buildDir/server"
+	args = [
+			'--installServer'
+	]
+
+	outputs.files("$buildDir/server/eula.txt", "$buildDir/server/forge-${config.mc_version}-${config.forge_version}-universal.jar")
+
+	doLast {
+		new File("$buildDir/server/eula.txt").text = """#By changing the setting below to TRUE you are indicating your agreement to our EULA (https://account.mojang.com/documents/minecraft_eula).
+#Date Would Be Here
+eula=true"""
+	}
+}
+
+task deployModToTestServer(group: "servertest", type: Copy, dependsOn: [deployTestServer, build]) {
+	from jar
+	into "$buildDir/server/mods"
+
+	doFirst {
+		delete fileTree("$buildDir/server/mods") {
+			include "*.jar"
+		}
+	}
+}
+
+task testActualServer(group: "servertest", dependsOn: deployModToTestServer) {
+
+	doLast {
+		delete "$buildDir/server/world"
+		delete "$buildDir/server/logs"
+
+		delete fileTree("$buildDir/server") {
+			include "*.properties"
+			include "*.json"
+		}
+
+		def serverOutput = new ByteArrayOutputStream()
+
+		ProcessBuilder builder = new ProcessBuilder(getJVMBinary(), "-jar", "$buildDir/server/forge-${config.mc_version}-${config.forge_version}-universal.jar", "nogui")
+		builder.redirectErrorStream(true)
+		builder.directory(new File("$buildDir/server"))
+		Process process = builder.start()
+
+		InputStream stdout = process.getInputStream()
+		BufferedReader reader = new BufferedReader(new InputStreamReader(stdout))
+
+		OutputStream stdin = process.getOutputStream()
+		OutputStreamWriter writer = new OutputStreamWriter(stdin)
+
+		def serverReady = false
+		def modReady = false
+
+		def line
+		while ((line = reader.readLine()) != null) {
+			println line
+			if (line.contains("Taam preInit done")) {
+				modReady = true
+			}
+			if (line.contains("Done") && line.contains("For help, type \"help\" or \"?\"")) {
+				println "server is ready"
+				serverReady = true
+				writer.write("stop\n")
+				writer.flush()
+			}
+		}
+
+		if (!serverReady) {
+			throw new GradleException("Server did not report \"Done\" before exit")
+		}
+		if (!modReady) {
+			throw new GradleException("Mod did not report ready before exit")
+		}
 	}
 }
