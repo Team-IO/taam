@@ -484,7 +484,6 @@ public class TaamMain {
 		network = NetworkRegistry.INSTANCE.newSimpleChannel(Taam.CHANNEL_NAME);
 		proxy.registerPackets(network);
 
-
 		/*
 		Early registration of model loader
 		 */
