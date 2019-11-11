@@ -17,7 +17,7 @@ public class CustomButton extends GuiButton {
 	private static final int baseTextureV = 0;
 	private static final int textPadding = 2;
 
-	private boolean mouseDown = false;
+	private boolean mouseDown;
 	public Function<CustomButton, Boolean> eventHandler;
 
 	public Drawable image;
