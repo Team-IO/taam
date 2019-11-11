@@ -257,6 +257,7 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IRedston
 
 	public void setHighSpeed(boolean highSpeed) {
 		this.highSpeed = highSpeed;
+		markDirty();
 	}
 
 	public boolean isEject() {
