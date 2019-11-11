@@ -38,7 +38,7 @@ public class TileEntityChute extends BaseTileEntity implements IRotatable, ITick
 
 			ItemStack notAdded = ItemHandlerHelper.insertItemStacked(target, stack, simulate);
 			int added = stack.getCount();
-			if(!InventoryUtils.isEmpty(notAdded))
+			if (!InventoryUtils.isEmpty(notAdded))
 				added -= notAdded.getCount();
 			return added;
 		}
@@ -104,7 +104,7 @@ public class TileEntityChute extends BaseTileEntity implements IRotatable, ITick
 		if (capability == Taam.CAPABILITY_CONVEYOR) {
 			return true;
 		}
-		if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+		if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
 			return true;
 		}
 		if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
@@ -116,13 +116,13 @@ public class TileEntityChute extends BaseTileEntity implements IRotatable, ITick
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-		if(capability == Taam.CAPABILITY_CONVEYOR) {
+		if (capability == Taam.CAPABILITY_CONVEYOR) {
 			return (T) conveyorSlots;
 		}
-		if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+		if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
 			return (T) getTargetFluidHandlerWrapped();
 		}
-		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+		if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
 			return (T) getTargetItemHandler();
 		}
 		return super.getCapability(capability, facing);
@@ -137,8 +137,11 @@ public class TileEntityChute extends BaseTileEntity implements IRotatable, ITick
 
 			@Override
 			public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
-				if(canDrop()) {
-					if(!simulate && !world.isRemote) {
+				if (InventoryUtils.isEmpty(stack)) {
+					return ItemStack.EMPTY;
+				}
+				if (canDrop()) {
+					if (!simulate && !world.isRemote) {
 						EntityItem item = new EntityItem(world, pos.getX() + 0.5, pos.getY() - 0.3, pos.getZ() + 0.5, stack);
 						item.motionX = 0;
 						item.motionY = 0;
@@ -174,11 +177,11 @@ public class TileEntityChute extends BaseTileEntity implements IRotatable, ITick
 
 	private IItemHandler getTargetItemHandler() {
 		TileEntity target = getTarget();
-		if(target == null) {
+		if (target == null) {
 			return getDropItemHandler();
 		}
 		IItemHandler handler = InventoryUtils.getInventory(target, EnumFacing.UP);
-		if(handler == null) {
+		if (handler == null) {
 			return getDropItemHandler();
 		}
 		return handler;
@@ -192,7 +195,7 @@ public class TileEntityChute extends BaseTileEntity implements IRotatable, ITick
 
 	private IFluidHandler getTargetFluidHandlerWrapped() {
 		IFluidHandler handler = getTargetFluidHandler();
-		if(handler == null) {
+		if (handler == null) {
 			wrappedHandler.origin = null;
 			return null;
 		}
@@ -220,9 +223,9 @@ public class TileEntityChute extends BaseTileEntity implements IRotatable, ITick
 
 	@Override
 	public void setFacingDirection(EnumFacing direction) {
-		if(isConveyorVersion) {
+		if (isConveyorVersion) {
 			this.direction = direction;
-			if(!ArrayUtils.contains(EnumFacing.HORIZONTALS, direction)) {
+			if (!ArrayUtils.contains(EnumFacing.HORIZONTALS, direction)) {
 				this.direction = EnumFacing.NORTH;
 			}
 			updateState(false, true, false);
