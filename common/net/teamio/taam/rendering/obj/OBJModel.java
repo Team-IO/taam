@@ -223,7 +223,7 @@ public class OBJModel implements IModel {
 				currentLine = objReader.readLine();
 				if (currentLine == null) break;
 				currentLine = currentLine.trim();
-				if (currentLine.isEmpty() || currentLine.startsWith("#")) continue;
+				if (currentLine.isEmpty() || currentLine.charAt(0) == '#') continue;
 
 				String[] fields = WHITE_SPACE.split(currentLine, 2);
 				String key = fields[0];
