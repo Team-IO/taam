@@ -522,7 +522,7 @@ public class ConveyorUtil {
 			/*
 			 * Let the appliances process the current slot.
 			 */
-			if (appliances != null && appliances.size() > 0) {
+			if (appliances != null && !appliances.isEmpty()) {
 
 				// Let each appliance process the item
 				for (IConveyorAppliance appliance : appliances) {

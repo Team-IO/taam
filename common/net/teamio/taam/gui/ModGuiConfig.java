@@ -20,7 +20,7 @@ public class ModGuiConfig extends GuiConfig {
 
 	public ModGuiConfig(GuiScreen guiScreen) {
 		super(guiScreen, getElements(), Taam.MOD_ID, false, false,
-				GuiConfig.getAbridgedConfigPath(Config.config.toString()));
+				GuiConfig.getAbridgedConfigPath(Config.configContainer.toString()));
 
 	}
 
@@ -28,7 +28,7 @@ public class ModGuiConfig extends GuiConfig {
 		List<IConfigElement> elements = new ArrayList<>();
 		// Create config elements for all sections mentioned in Config
 		for (String category : Config.guiSections) {
-			ConfigElement cfgEl = new ConfigElement(Config.config.getCategory(category));
+			ConfigElement cfgEl = new ConfigElement(Config.configContainer.getCategory(category));
 			elements.add(cfgEl);
 		}
 		return elements;

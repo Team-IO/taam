@@ -36,9 +36,9 @@ public final class TestUtil extends AbstractTest {
 			return (Capability<T>) providers.get(realName);
 
 		} catch (NoSuchFieldException e) {
-			throw new IllegalStateException("Failed to get field 'providers' from CapabilityManager");
+			throw new IllegalStateException("Failed to get field 'providers' from CapabilityManager", e);
 		} catch (IllegalAccessException e) {
-			throw new IllegalStateException("Failed to read field 'providers' from CapabilityManager");
+			throw new IllegalStateException("Failed to read field 'providers' from CapabilityManager", e);
 		}
 	}
 

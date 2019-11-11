@@ -209,8 +209,7 @@ public final class TaamUtil {
 	 * @return
 	 */
 	public static boolean canAttachAppliance(IBlockAccess world, BlockPos pos, EnumFacing dir) {
-		TileEntity ent = world.getTileEntity(pos.offset(dir));
-		return ent instanceof IConveyorApplianceHost;
+		return world.getTileEntity(pos.offset(dir)) instanceof IConveyorApplianceHost;
 	}
 
 	/**

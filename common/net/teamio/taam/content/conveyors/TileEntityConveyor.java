@@ -44,7 +44,7 @@ public class TileEntityConveyor extends BaseTileEntity implements IRotatable, IC
 	 */
 	private final ConveyorSlotsMoving conveyorSlots;
 	private EnumFacing direction = EnumFacing.NORTH;
-	private int speedLevel = 0;
+	private int speedLevel;
 
 	private boolean redirectorLeft = false;
 	private boolean redirectorRight = false;
@@ -148,7 +148,7 @@ public class TileEntityConveyor extends BaseTileEntity implements IRotatable, IC
 		 * Let the appliances override the direction, if required
 		 */
 		List<IConveyorAppliance> appliances = getAppliances();
-		if (appliances != null && appliances.size() > 0) {
+		if (appliances != null && !appliances.isEmpty()) {
 			ItemWrapper wrapper = conveyorSlots.getSlot(slot);
 			// Let each appliance have the chance to override the next slot
 			for (IConveyorAppliance appliance : appliances) {
@@ -447,13 +447,11 @@ public class TileEntityConveyor extends BaseTileEntity implements IRotatable, IC
 								new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.redirector.ordinal()), pos);
 						return true;
 					}
-				} else if (redirectorSide == RedirectorSide.Right) {
-					if (redirectorRight) {
-						setRedirectorRight(false);
-						InventoryUtils.tryDropToInventory(player,
-								new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.redirector.ordinal()), pos);
-						return true;
-					}
+				} else if (redirectorSide == RedirectorSide.Right && redirectorRight) {
+					setRedirectorRight(false);
+					InventoryUtils.tryDropToInventory(player,
+							new ItemStack(TaamMain.itemPart, 1, Taam.ITEM_PART_META.redirector.ordinal()), pos);
+					return true;
 				}
 				Log.debug("Disassembling conveyor.");
 				TaamUtil.breakBlockToInventory(player, world, pos, world.getBlockState(pos));

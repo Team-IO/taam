@@ -12,14 +12,15 @@ import java.util.function.Function;
 
 public class CustomButton extends GuiButton {
 
-	static final int baseTextureSize = 16;
-	static final int baseTextureU = 177;
-	static final int baseTextureV = 0;
-	boolean mouseDown = false;
+	private static final int baseTextureSize = 16;
+	private static final int baseTextureU = 177;
+	private static final int baseTextureV = 0;
+	private static final int textPadding = 2;
+
+	private boolean mouseDown = false;
 	public Function<CustomButton, Boolean> eventHandler;
 
 	public Drawable image;
-	public final int textPadding = 2;
 	public boolean trimText = true;
 	/**
 	 * 0: Above

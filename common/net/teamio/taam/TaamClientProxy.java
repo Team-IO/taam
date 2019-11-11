@@ -57,6 +57,7 @@ import java.util.List;
 @SideOnly(Side.CLIENT)
 public class TaamClientProxy extends TaamCommonProxy {
 
+	public static final String INVENTORY_VARIANT = "inventory";
 	public static int blockRendererId;
 
 	public static TaamRenderer taamRenderer;
@@ -129,24 +130,24 @@ public class TaamClientProxy extends TaamCommonProxy {
 			String metaName = meta.name();
 			if (meta.ore) {
 				ModelLoader.setCustomModelResourceLocation(itemOre, metaInt,
-						new ModelResourceLocation(Taam.MOD_ID + ":ore." + metaName, "inventory"));
+						new ModelResourceLocation(Taam.MOD_ID + ":ore." + metaName, INVENTORY_VARIANT));
 			} else {
 				ModelLoader.setCustomModelResourceLocation(itemOre, metaInt,
-						new ModelResourceLocation(Taam.MOD_ID + ":ore.impossible", "inventory"));
+						new ModelResourceLocation(Taam.MOD_ID + ":ore.impossible", INVENTORY_VARIANT));
 			}
 			if (meta.ingot) {
 				ModelLoader.setCustomModelResourceLocation(itemIngot, metaInt,
-						new ModelResourceLocation(Taam.MOD_ID + ":ingot." + metaName, "inventory"));
+						new ModelResourceLocation(Taam.MOD_ID + ":ingot." + metaName, INVENTORY_VARIANT));
 			} else {
 				ModelLoader.setCustomModelResourceLocation(itemIngot, metaInt,
-						new ModelResourceLocation(Taam.MOD_ID + ":ingot.impossible", "inventory"));
+						new ModelResourceLocation(Taam.MOD_ID + ":ingot.impossible", INVENTORY_VARIANT));
 			}
 			if (meta.dust) {
 				ModelLoader.setCustomModelResourceLocation(itemDust, meta.ordinal(),
-						new ModelResourceLocation(Taam.MOD_ID + ":dust." + metaName, "inventory"));
+						new ModelResourceLocation(Taam.MOD_ID + ":dust." + metaName, INVENTORY_VARIANT));
 			} else {
 				ModelLoader.setCustomModelResourceLocation(itemDust, meta.ordinal(),
-						new ModelResourceLocation(Taam.MOD_ID + ":dust.impossible", "inventory"));
+						new ModelResourceLocation(Taam.MOD_ID + ":dust.impossible", INVENTORY_VARIANT));
 			}
 		}
 
@@ -160,7 +161,7 @@ public class TaamClientProxy extends TaamCommonProxy {
 			int metaInt = meta.ordinal();
 			String metaName = meta.name();
 			ModelLoader.setCustomModelResourceLocation(itemToRegister, metaInt,
-					new ModelResourceLocation(Taam.MOD_ID + ":concrete." + metaName, "inventory"));
+					new ModelResourceLocation(Taam.MOD_ID + ":concrete." + metaName, INVENTORY_VARIANT));
 		}
 
 		/*
@@ -173,7 +174,7 @@ public class TaamClientProxy extends TaamCommonProxy {
 			int metaInt = meta.ordinal();
 			String metaName = meta.name();
 			ModelLoader.setCustomModelResourceLocation(itemToRegister, metaInt,
-					new ModelResourceLocation(Taam.MOD_ID + ":material." + metaName, "inventory"));
+					new ModelResourceLocation(Taam.MOD_ID + ":material." + metaName, INVENTORY_VARIANT));
 		}
 
 		/*
@@ -186,7 +187,7 @@ public class TaamClientProxy extends TaamCommonProxy {
 			int metaInt = meta.ordinal();
 			String metaName = meta.name();
 			ModelLoader.setCustomModelResourceLocation(itemToRegister, metaInt,
-					new ModelResourceLocation(Taam.MOD_ID + ":part." + metaName, "inventory"));
+					new ModelResourceLocation(Taam.MOD_ID + ":part." + metaName, INVENTORY_VARIANT));
 		}
 
 		/*
@@ -197,14 +198,14 @@ public class TaamClientProxy extends TaamCommonProxy {
 			String metaName = meta.name();
 			itemToRegister = ForgeRegistries.ITEMS.getValue(new ResourceLocation(Taam.MOD_ID, "fluid.dye." + metaName));
 			ModelLoader.setCustomModelResourceLocation(itemToRegister, 0,
-					new ModelResourceLocation(Taam.MOD_ID + ":fluid.dye." + metaName, "inventory"));
+					new ModelResourceLocation(Taam.MOD_ID + ":fluid.dye." + metaName, INVENTORY_VARIANT));
 		}
 
 		for (Taam.FLUID_MATERIAL_META meta : Taam.FLUID_MATERIAL_META.values()) {
 			String metaName = meta.name();
 			itemToRegister = ForgeRegistries.ITEMS.getValue(new ResourceLocation(Taam.MOD_ID, "fluid.material." + metaName));
 			ModelLoader.setCustomModelResourceLocation(itemToRegister, 0,
-					new ModelResourceLocation(Taam.MOD_ID + ":fluid.material." + metaName, "inventory"));
+					new ModelResourceLocation(Taam.MOD_ID + ":fluid.material." + metaName, INVENTORY_VARIANT));
 		}
 
 		/*
@@ -271,7 +272,7 @@ public class TaamClientProxy extends TaamCommonProxy {
 		Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(Taam.MOD_ID, itemId));
 
 		// Create & remember model location
-		final ModelResourceLocation resourceLocation = new ModelResourceLocation(Taam.MOD_ID + ":" + modelFile, "inventory");
+		final ModelResourceLocation resourceLocation = new ModelResourceLocation(Taam.MOD_ID + ":" + modelFile, INVENTORY_VARIANT);
 		locationsToReplace.add(resourceLocation);
 
 		// Register the model location
@@ -288,7 +289,7 @@ public class TaamClientProxy extends TaamCommonProxy {
 	 * @param name
 	 */
 	private static void registerItemDefault(Item item, int meta, String name) {
-		ModelLoader.setCustomModelResourceLocation(item, meta, new ModelResourceLocation(name, "inventory"));
+		ModelLoader.setCustomModelResourceLocation(item, meta, new ModelResourceLocation(name, INVENTORY_VARIANT));
 	}
 
 	@SubscribeEvent
@@ -453,7 +454,7 @@ public class TaamClientProxy extends TaamCommonProxy {
 			defaultBlockTransform = new SimpleModelState(builder.build());
 		}
 
-		private OBJBakedModel original;
+		private final OBJBakedModel original;
 
 		public ItemAwareOBJBakedModel(OBJBakedModel original) {
 			this.original = original;

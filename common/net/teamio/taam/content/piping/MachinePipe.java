@@ -27,6 +27,7 @@ import net.teamio.taam.piping.PipeUtil;
 import net.teamio.taam.util.FaceBitmap;
 import net.teamio.taam.util.FluidUtils;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public class MachinePipe implements IMachine, IPipe, IRenderable {
@@ -198,10 +199,8 @@ public class MachinePipe implements IMachine, IPipe, IRenderable {
 				adjacentPipes = FaceBitmap.setSideBit(adjacentPipes, side);
 				continue;
 			}
-			if (Config.pl_pipe_wrap_ifluidhandler) {
-				if (FluidUtils.getFluidHandler(world, pos.offset(side), side.getOpposite()) != null) {
-					adjacentPipes = FaceBitmap.setSideBit(adjacentPipes, side);
-				}
+			if (Config.pl_pipe_wrap_ifluidhandler && FluidUtils.getFluidHandler(world, pos.offset(side), side.getOpposite()) != null) {
+				adjacentPipes = FaceBitmap.setSideBit(adjacentPipes, side);
 			}
 		}
 		return old != adjacentPipes;
@@ -328,7 +327,7 @@ public class MachinePipe implements IMachine, IPipe, IRenderable {
 	}
 
 	@Override
-	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+	public boolean hasCapability(@Nonnull Capability<?> capability, EnumFacing facing) {
 		if (capability == Taam.CAPABILITY_PIPE) {
 			return true;
 		}
@@ -337,7 +336,7 @@ public class MachinePipe implements IMachine, IPipe, IRenderable {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+	public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
 		if (capability == Taam.CAPABILITY_PIPE) {
 			return (T) this;
 		}
@@ -382,14 +381,12 @@ public class MachinePipe implements IMachine, IPipe, IRenderable {
 		for (EnumFacing side : EnumFacing.values()) {
 			int sideIdx = side.ordinal();
 			if (isSideAvailable(side)) {
-				// If there is no "regular" pipe on that side
 				IPipe pipeOnSide = PipeUtil.getConnectedPipe(getWorld(), getPos(), side);
-				if (pipeOnSide == null) {
-					// Check for fluid handler wrappers
-					if (adjacentFluidHandlers[sideIdx] != null) {
-						internalPipes[sideIdx] = adjacentFluidHandlers[sideIdx];
-						continue;
-					}
+				// If there is no "regular" pipe on that side,
+				// check for fluid handler wrappers
+				if (pipeOnSide == null && adjacentFluidHandlers[sideIdx] != null) {
+					internalPipes[sideIdx] = adjacentFluidHandlers[sideIdx];
+					continue;
 				}
 			}
 			internalPipes[sideIdx] = null;

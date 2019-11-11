@@ -16,11 +16,11 @@ import net.teamio.taam.content.IRotatable;
 
 public class TileEntitySensor extends BaseTileEntity implements IRotatable, ITickable {
 
-	private final float offLength = 1.5f;
-	private final float offLeft = 1.5f;
-	private final float offRight = 1.5f;
-	private final int blind = 1;
-	private final float down = 2.5f;
+	private static final float offLength = 1.5f;
+	private static final float offLeft = 1.5f;
+	private static final float offRight = 1.5f;
+	private static final int blind = 1;
+	private static final float down = 2.5f;
 
 	private boolean powering = false;
 
@@ -49,14 +49,16 @@ public class TileEntitySensor extends BaseTileEntity implements IRotatable, ITic
 	@Override
 	public EnumFacing getFacingDirection() {
 		return direction;
-
 	}
 
+	/**
+	 * Set block metadata/state according to rotation.
+	 * Marks the tile entity as dirty if something changed.
+	 */
 	private void setBlockMeta() {
-		// Set block metadata according to rotation
 		IBlockState blockState = world.getBlockState(pos);
 		EnumFacing dir = blockState.getValue(BlockSensor.DIRECTION);
-		if(dir != direction) {
+		if (dir != direction) {
 			world.setBlockState(pos, blockState.withProperty(BlockSensor.DIRECTION, direction));
 			markDirty();
 		}
@@ -70,6 +72,34 @@ public class TileEntitySensor extends BaseTileEntity implements IRotatable, ITic
 	@Override
 	public void update() {
 
+		AxisAlignedBB bb = getObservedBB();
+
+		boolean found = false;
+
+		if (tickOn > 0) {
+			tickOn--;
+			found = true;
+		} else {
+			for (Object obj : world.loadedEntityList) {
+				Entity ent = (Entity) obj;
+
+				if (isDetectedEntityType(ent) && isEntityWithinBoundingBox(bb, ent)) {
+					found = true;
+					break;
+				}
+			}
+			if (found) {
+				tickOn = Config.sensor_delay;
+			}
+		}
+
+		if (found != powering) {
+			powering = found;
+			TaamMain.blockSensor.updateBlocksAround(world, direction, pos);
+		}
+	}
+
+	public AxisAlignedBB getObservedBB() {
 		float xMin = pos.getX() + 0.5f;
 		float yMin = pos.getY() + 0.5f;
 		float zMin = pos.getZ() + 0.5f;
@@ -77,76 +107,51 @@ public class TileEntitySensor extends BaseTileEntity implements IRotatable, ITic
 		float yMax = pos.getY() + 0.5f;
 		float zMax = pos.getZ() + 0.5f;
 
-		switch(direction) {
-		default:
-		case DOWN:
-			yMax -= blind;
-			yMin -= down;
-			xMin -= offLength / 2;
-			xMax += offLength / 2;
-			zMin -= offLength / 2;
-			zMax += offLength / 2;
-			break;
-		case UP:
-			yMax += down;
-			yMin += blind;
-			xMin -= offLength / 2;
-			xMax += offLength / 2;
-			zMin -= offLength / 2;
-			zMax += offLength / 2;
-			break;
-			//TODO: blind for the following ones...
-		case NORTH:
-			yMin -= down;
-			zMin -= offLength;
-			xMin -= offLeft;
-			xMax += offRight;
-			break;
-		case SOUTH:
-			yMin -= down;
-			zMax += offLength;
-			xMin -= offRight;
-			xMax += offLeft;
-			break;
-		case WEST:
-			yMin -= down;
-			xMin -= offLength;
-			zMax += offLeft;
-			zMin -= offRight;
-			break;
-		case EAST:
-			yMin -= down;
-			xMax += offLength;
-			zMax += offRight;
-			zMin -= offLeft;
-			break;
+		switch (direction) {
+			default:
+			case DOWN:
+				yMax -= blind;
+				yMin -= down;
+				xMin -= offLength / 2;
+				xMax += offLength / 2;
+				zMin -= offLength / 2;
+				zMax += offLength / 2;
+				break;
+			case UP:
+				yMax += down;
+				yMin += blind;
+				xMin -= offLength / 2;
+				xMax += offLength / 2;
+				zMin -= offLength / 2;
+				zMax += offLength / 2;
+				break;
+			case NORTH:
+				yMin -= down;
+				zMin -= offLength;
+				xMin -= offLeft;
+				xMax += offRight;
+				break;
+			case SOUTH:
+				yMin -= down;
+				zMax += offLength;
+				xMin -= offRight;
+				xMax += offLeft;
+				break;
+			case WEST:
+				yMin -= down;
+				xMin -= offLength;
+				zMax += offLeft;
+				zMin -= offRight;
+				break;
+			case EAST:
+				yMin -= down;
+				xMax += offLength;
+				zMax += offRight;
+				zMin -= offLeft;
+				break;
 		}
 
-		AxisAlignedBB bb = new AxisAlignedBB(xMin, yMin, zMin, xMax, yMax, zMax);
-
-		boolean found = false;
-
-		if(tickOn > 0) {
-			tickOn--;
-			found = true;
-		} else {
-			for(Object obj : world.loadedEntityList) {
-				Entity ent = (Entity)obj;
-
-				if(isDetectedEntityType(ent) && isEntityWithinBoundingBox(bb, ent)) {
-					found = true;
-					break;
-				}
-			}
-			if(found) {
-				tickOn = Config.sensor_delay;
-			}
-		}
-
-		if(found != powering) {
-			powering = found;
-			TaamMain.blockSensor.updateBlocksAround(world, direction, pos);
-		}
+		return new AxisAlignedBB(xMin, yMin, zMin, xMax, yMax, zMax);
 	}
 
 	private static boolean isDetectedEntityType(Entity ent) {
@@ -157,7 +162,7 @@ public class TileEntitySensor extends BaseTileEntity implements IRotatable, ITic
 
 	private static boolean isEntityWithinBoundingBox(AxisAlignedBB bb, Entity ent) {
 		AxisAlignedBB entityBounds = ent.getEntityBoundingBox();
-		if(entityBounds == null) {
+		if (entityBounds == null) {
 			return bb.contains(ent.getPositionVector());
 		}
 		return entityBounds.intersects(bb);
@@ -175,8 +180,8 @@ public class TileEntitySensor extends BaseTileEntity implements IRotatable, ITic
 
 	@Override
 	public EnumFacing getNextFacingDirection() {
-		for(EnumFacing nextDir = EnumFacing.byIndex(direction.ordinal() + 1); nextDir != direction; nextDir = EnumFacing.byIndex(nextDir.ordinal() + 1)) {
-			if(TaamMain.blockSensor.canPlaceBlockOnSide(world, pos, nextDir)) {
+		for (EnumFacing nextDir = EnumFacing.byIndex(direction.ordinal() + 1); nextDir != direction; nextDir = EnumFacing.byIndex(nextDir.ordinal() + 1)) {
+			if (TaamMain.blockSensor.canPlaceBlockOnSide(world, pos, nextDir)) {
 				return nextDir;
 			}
 		}

@@ -24,6 +24,8 @@ import net.teamio.taam.util.InventoryUtils;
 import net.teamio.taam.util.TaamUtil;
 import net.teamio.taam.util.WorldCoord;
 
+import javax.annotation.Nonnull;
+
 
 public class TileEntityConveyorHopper extends BaseTileEntity implements IRedstoneControlled, IRotatable, ITickable {
 
@@ -225,7 +227,7 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IRedston
 	}
 
 	@Override
-	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+	public boolean hasCapability(@Nonnull Capability<?> capability, EnumFacing facing) {
 		if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
 			return true;
 		}
@@ -237,7 +239,7 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IRedston
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+	public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
 		if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
 			return (T) itemHandler;
 		}

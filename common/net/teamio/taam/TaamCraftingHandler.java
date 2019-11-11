@@ -14,11 +14,9 @@ public class TaamCraftingHandler {
 		IInventory craftMatrix = craftedEvent.craftMatrix;
 		for (int i = 0; i < craftMatrix.getSizeInventory(); i++) {
 			ItemStack j = craftMatrix.getStackInSlot(i);
-			if (isDamageCrafting(j)) {
-				if (j.getItemDamage() + 1 < j.getItem().getMaxDamage()) {
-					ItemStack k = new ItemStack(j.getItem(), 2, j.getItemDamage() + 1);
-					craftMatrix.setInventorySlotContents(i, k);
-				}
+			if (isDamageCrafting(j) && j.getItemDamage() + 1 < j.getItem().getMaxDamage()) {
+				ItemStack k = new ItemStack(j.getItem(), 2, j.getItemDamage() + 1);
+				craftMatrix.setInventorySlotContents(i, k);
 			}
 		}
 	}

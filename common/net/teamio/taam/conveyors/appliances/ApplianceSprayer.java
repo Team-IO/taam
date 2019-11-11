@@ -27,6 +27,7 @@ import net.teamio.taam.rendering.TankRenderInfo;
 import net.teamio.taam.util.InventoryUtils;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class ApplianceSprayer extends ATileEntityAppliance implements IWorldInteractable {
 
@@ -87,10 +88,8 @@ public class ApplianceSprayer extends ATileEntityAppliance implements IWorldInte
 		FluidStack inside = tank.getFluid();
 
 		// If we have no remembered fluid, or a new fluid (empty tank is considered "same"), fetch new fluid
-		if (inside != null) {
-			if (lastInputFluid == null || !lastInputFluid.isFluidEqual(inside)) {
-				lastInputFluid = inside;
-			}
+		if (inside != null && (lastInputFluid == null || !lastInputFluid.isFluidEqual(inside))) {
+			lastInputFluid = inside;
 		}
 
 		if (lastInputFluid == null) {
@@ -210,6 +209,7 @@ public class ApplianceSprayer extends ATileEntityAppliance implements IWorldInte
 		return true;
 	}
 
+	@Nonnull
 	@Override
 	public EnumFacing overrideNextSlot(IConveyorApplianceHost host, int slot, ItemWrapper wrapper,
 	                                   EnumFacing beforeOverride) {
@@ -250,7 +250,7 @@ public class ApplianceSprayer extends ATileEntityAppliance implements IWorldInte
 	}
 
 	@Override
-	public boolean hasCapability(@Nonnull Capability<?> capability, @Nonnull EnumFacing facing) {
+	public boolean hasCapability(@Nonnull Capability<?> capability, EnumFacing facing) {
 		if (capability == Taam.CAPABILITY_PIPE) {
 			return facing == pipeEnd.getSide();
 		}
@@ -263,10 +263,10 @@ public class ApplianceSprayer extends ATileEntityAppliance implements IWorldInte
 		return super.hasCapability(capability, facing);
 	}
 
-	@Nonnull
+	@Nullable
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T getCapability(@Nonnull Capability<T> capability, @Nonnull EnumFacing facing) {
+	public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
 		if (capability == Taam.CAPABILITY_PIPE && facing == pipeEnd.getSide()) {
 			return (T) pipeEnd;
 		}

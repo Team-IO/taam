@@ -12,7 +12,7 @@ import java.util.Set;
 
 public class Config {
 
-	public static Configuration config;
+	public static Configuration configContainer;
 
 	/**
 	 * Force-switch to only load default values - for use with automated tests / unit tests
@@ -41,7 +41,7 @@ public class Config {
 
 	public static int pl_conveyor_supportrange;
 	public static final byte[] pl_conveyor_speedsteps = new byte[3];
-	public static Set<String> pl_conveyor_rightclick_blacklist = new HashSet<String>();
+	public static Set<String> pl_conveyor_rightclick_blacklist = new HashSet<>();
 
 	public static byte pl_elevator_speedsteps;
 
@@ -121,11 +121,11 @@ public class Config {
 	 * @param configFile The config file - pass null to only load default values, see {@link #load_defaults_only}
 	 */
 	public static void init(File configFile) {
-		if (config == null) {
+		if (configContainer == null) {
 			if (configFile == null) {
 				load_defaults_only = true;
 			} else {
-				config = new Configuration(configFile);
+				configContainer = new Configuration(configFile);
 			}
 
 			loadConfig();
@@ -137,26 +137,18 @@ public class Config {
 			return defaultValue;
 		}
 		String langKey = getLangKey(name, category);
-		return config.getInt(name, category, defaultValue, minValue, maxValue, comment, langKey);
+		return configContainer.getInt(name, category, defaultValue, minValue, maxValue, comment, langKey);
 	}
 
 	/**
-	 * Sets needsWorldRestart
-	 *
-	 * @param name
-	 * @param category
-	 * @param defaultValue
-	 * @param minValue
-	 * @param maxValue
-	 * @param comment
-	 * @return
+	 * Sets needsWorldRestart, otherwise works the same as {@link #getInt(String, String, int, int, int, String)}.
 	 */
 	private static int getIntWR(String name, String category, int defaultValue, int minValue, int maxValue, String comment) {
 		if (load_defaults_only) {
 			return defaultValue;
 		}
 		String langKey = getLangKey(name, category);
-		Property prop = config.get(category, name, defaultValue, comment, minValue, maxValue);
+		Property prop = configContainer.get(category, name, defaultValue, comment, minValue, maxValue);
 		prop.setLanguageKey(langKey);
 		prop.setRequiresWorldRestart(true);
 		return prop.getInt();
@@ -167,7 +159,7 @@ public class Config {
 			return defaultValue;
 		}
 		String langKey = getLangKey(name, category);
-		return config.getFloat(name, category, defaultValue, minValue, maxValue, comment, langKey);
+		return configContainer.getFloat(name, category, defaultValue, minValue, maxValue, comment, langKey);
 	}
 
 	private static byte getByte(String name, String category, int defaultValue, int minValue, int maxValue, String comment) {
@@ -175,7 +167,7 @@ public class Config {
 			return (byte) defaultValue;
 		}
 		String langKey = getLangKey(name, category);
-		return (byte) config.getInt(name, category, defaultValue, minValue, maxValue, comment, langKey);
+		return (byte) configContainer.getInt(name, category, defaultValue, minValue, maxValue, comment, langKey);
 	}
 
 	private static boolean getBoolean(String name, String category, boolean defaultValue, String comment) {
@@ -183,7 +175,7 @@ public class Config {
 			return defaultValue;
 		}
 		String langKey = getLangKey(name, category);
-		return config.getBoolean(name, category, defaultValue, comment, langKey);
+		return configContainer.getBoolean(name, category, defaultValue, comment, langKey);
 	}
 
 	private static String getString(String name, String category, String defaultValue, String comment) {
@@ -191,7 +183,7 @@ public class Config {
 			return defaultValue;
 		}
 		String langKey = getLangKey(name, category);
-		return config.getString(name, category, defaultValue, comment, langKey);
+		return configContainer.getString(name, category, defaultValue, comment, langKey);
 	}
 
 	private static String getLangKey(String name, String category) {
@@ -210,8 +202,8 @@ public class Config {
 			oreDepositCount[i] = getInt("oreDepositCount", sectionName, oreMeta[i].gen_default_count, 0, Integer.MAX_VALUE, "Number of " + name + " ore veins per chunk");
 		}
 
-		if (config != null) {
-			config.getCategory(SECTION_INTEGRATION_MULTIPART).setRequiresMcRestart(true);
+		if (configContainer != null) {
+			configContainer.getCategory(SECTION_INTEGRATION_MULTIPART).setRequiresMcRestart(true);
 		}
 
 		debug_output = getBoolean("debug_output", Configuration.CATEGORY_GENERAL, false, "Should the Debug mode of Taam be activated? Enables some extra output to debug what is going on.");
@@ -276,8 +268,8 @@ public class Config {
 
 		jei_render_machines_into_gui = getBoolean("render_machines_into_gui", SECTION_INTEGRATION_JEI, true, "Enable or disable rendering the machine into the recipe display in JEI. For troubleshooting only; you should leave this enabled normally.");
 
-		if (config != null && config.hasChanged()) {
-			config.save();
+		if (configContainer != null && configContainer.hasChanged()) {
+			configContainer.save();
 		}
 	}
 

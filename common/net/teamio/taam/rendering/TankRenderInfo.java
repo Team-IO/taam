@@ -14,7 +14,10 @@ import net.teamio.taam.Taam;
  *
  */
 public class TankRenderInfo {
-	private TankRenderInfo[] asArray;
+	/**
+	 * Cache for the array returned by {@link #asArray()}
+	 */
+	private TankRenderInfo[] cachedArray;
 
 	public AxisAlignedBB bounds;
     public FluidStack fluid;
@@ -59,9 +62,9 @@ public class TankRenderInfo {
 	 * @return
 	 */
 	public TankRenderInfo[] asArray() {
-		if (asArray == null) {
-			asArray = new TankRenderInfo[] { this };
+		if (cachedArray == null) {
+			cachedArray = new TankRenderInfo[] { this };
 		}
-		return asArray;
+		return cachedArray;
 	}
 }

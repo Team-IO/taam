@@ -59,12 +59,10 @@ public abstract class ChanceBasedRecipe extends BaseProcessingRecipe {
 
 	@Override
 	public ItemStack[] getOutput(ItemStack input) {
-		ArrayList<ItemStack> output = new ArrayList<ItemStack>();
+		ArrayList<ItemStack> output = new ArrayList<>();
 		for (ChancedOutput co : this.output) {
-			if (co != null && co.chance > 0 && co.output != null) {
-				if (TaamUtil.RANDOM.nextFloat() < co.chance) {
-					output.add(co.output.copy());
-				}
+			if (co != null && co.chance > 0 && co.output != null && TaamUtil.RANDOM.nextFloat() < co.chance) {
+				output.add(co.output.copy());
 			}
 		}
 		return output.toArray(new ItemStack[0]);
