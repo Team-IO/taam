@@ -72,14 +72,14 @@ public class TileEntitySensor extends BaseTileEntity implements IRotatable, ITic
 	@Override
 	public void update() {
 
-		AxisAlignedBB bb = getObservedBB();
-
 		boolean found = false;
 
 		if (tickOn > 0) {
 			tickOn--;
 			found = true;
-		} else {
+		} else if (!world.loadedEntityList.isEmpty()) {
+			AxisAlignedBB bb = getObservedBB();
+
 			for (Object obj : world.loadedEntityList) {
 				Entity ent = (Entity) obj;
 
