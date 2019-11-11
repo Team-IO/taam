@@ -6,6 +6,7 @@
 /.idea
 /classes/
 logs
+.attach_pid*
 
 #Eclipse
 /bin
@@ -36,3 +37,9 @@ logs
 
 /CameraStudio_log.*
 *.hprof
+
+# Garbage produced by the unit tests using a fake server
+ops.json
+server.properties
+whitelist.json
+banned-*.json

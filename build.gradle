@@ -99,7 +99,7 @@ dependencies {
 	)
 	testImplementation(
 			'org.junit.jupiter:junit-jupiter-api:5.5.1',
-			'com.builtbroken.minecraftjunit:MinecraftJUnit:1.12.2-0.+:deobf'
+			'com.builtbroken.minecraftjunit:MinecraftJUnit:1.12.2-0.6.0b5:deobf'
 	)
 	testRuntimeOnly(
 			'org.junit.jupiter:junit-jupiter-engine:5.5.1',

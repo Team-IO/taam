@@ -6,6 +6,8 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 import net.teamio.taam.piping.IPipe;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,10 +45,16 @@ public final class TestUtil extends AbstractTest {
 	public static void registerCapabilities() {
 		if (CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY == null) {
 			CapabilityFluidHandler.register();
-
-			TaamMain.registerCapabilities();
-
 			CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY = TestUtil.getCapability(IFluidHandler.class);
+		}
+
+		if (CapabilityItemHandler.ITEM_HANDLER_CAPABILITY == null) {
+			CapabilityItemHandler.register();
+			CapabilityItemHandler.ITEM_HANDLER_CAPABILITY = TestUtil.getCapability(IItemHandler.class);
+		}
+
+		if (Taam.CAPABILITY_PIPE == null) {
+			TaamMain.registerCapabilities();
 			Taam.CAPABILITY_PIPE = TestUtil.getCapability(IPipe.class);
 		}
 	}

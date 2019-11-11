@@ -248,6 +248,114 @@ public class TaamMain {
 		 * Register Stuff
 		 */
 
+		registerBlocksAndItems();
+
+		/*
+		 * Worldgen
+		 */
+
+		OreGenerator worldgen = new OreGenerator();
+		MinecraftForge.EVENT_BUS.register(worldgen);
+
+		GameRegistry.registerWorldGenerator(worldgen, 2);
+
+		/*
+		 * Fluids
+		 */
+		registerFluids();
+
+		/*
+		 * Capabilities
+		 */
+		registerCapabilities();
+		validateCapabilities();
+
+		network = NetworkRegistry.INSTANCE.newSimpleChannel(Taam.CHANNEL_NAME);
+		proxy.registerPackets(network);
+
+		/*
+		Early registration of model loader
+		 */
+		proxy.registerModelLoader();
+
+		// Marker for automatic server test, to make sure the mod was loaded
+		Log.info("Taam preInit done");
+	}
+
+	public static void registerFluids() {
+		//TODO: Move this to the config
+		boolean registerFluidBlocks = true;
+
+		Taam.FLUID_DYE_META[] fluidsDyeValues = Taam.FLUID_DYE_META.values();
+		fluidsDye = new FluidDye[fluidsDyeValues.length];
+		blocksFluidDye = new BlockFluidClassic[fluidsDyeValues.length];
+
+		for (int i = 0; i < fluidsDyeValues.length; i++) {
+			fluidsDye[i] = new FluidDye(Taam.FLUID_DYE + fluidsDyeValues[i].name());
+			FluidRegistry.registerFluid(fluidsDye[i]);
+			FluidRegistry.addBucketForFluid(fluidsDye[i]);
+
+			if (registerFluidBlocks) {
+				BlockFluidClassic fluidBlock = new BlockFluidClassic(fluidsDye[i], Material.WATER) {
+					@SuppressWarnings("deprecation") // Deprecation: overriding/implementing is fine
+					@Override
+					public boolean shouldSideBeRendered(@Nonnull IBlockState state, IBlockAccess world, BlockPos pos, @Nonnull EnumFacing side) {
+						IBlockState neighbor = world.getBlockState(pos.offset(side));
+						// Force rendering if there is a different block adjacent, not only a different material
+						if (neighbor.getBlock() != this) {
+							return true;
+						}
+						return super.shouldSideBeRendered(state, world, pos, side);
+					}
+				};
+				String blockName = "fluid.dye." + fluidsDyeValues[i].name();
+				registerBlock(
+						fluidBlock,
+						new ItemBlock(fluidBlock),
+						blockName);
+				blocksFluidDye[i] = fluidBlock;
+			}
+
+		}
+
+		FLUID_MATERIAL_META[] fluidsMaterialValues = FLUID_MATERIAL_META.values();
+		fluidsMaterial = new FluidMaterial[fluidsMaterialValues.length];
+		blocksFluidMaterial = new BlockFluidFinite[fluidsMaterialValues.length];
+
+		for (int i = 0; i < fluidsMaterialValues.length; i++) {
+			fluidsMaterial[i] = new FluidMaterial(fluidsMaterialValues[i]);
+			FluidRegistry.registerFluid(fluidsMaterial[i]);
+			FluidRegistry.addBucketForFluid(fluidsMaterial[i]);
+
+			if (registerFluidBlocks) {
+				BlockFluidFinite fluidBlock = new BlockFluidFinite(fluidsMaterial[i], Material.WATER) {
+					@SuppressWarnings("deprecation") // Deprecation: overriding/implementing is fine
+					@Override
+					public boolean shouldSideBeRendered(@Nonnull IBlockState state, IBlockAccess world, BlockPos pos, @Nonnull EnumFacing side) {
+						IBlockState neighbor = world.getBlockState(pos.offset(side));
+						// Force rendering if there is a different block adjacent, not only a different material
+						if (neighbor.getBlock() != this) {
+							return true;
+						}
+						return super.shouldSideBeRendered(state, world, pos, side);
+					}
+				};
+				if (fluidsMaterialValues[i] == FLUID_MATERIAL_META.coating) {
+					fluidBlock.setQuantaPerBlock(2);
+				} else {
+					fluidBlock.setQuantaPerBlock(1);
+				}
+				String blockName = "fluid.material." + fluidsMaterialValues[i].name();
+				registerBlock(
+						fluidBlock,
+						new ItemBlock(fluidBlock),
+						blockName);
+				blocksFluidMaterial[i] = fluidBlock;
+			}
+		}
+	}
+
+	public static void registerBlocksAndItems() {
 		registerBlock(
 				blockLamp = new BlockLamp(false),
 				new ItemBlock(blockLamp),
@@ -371,12 +479,11 @@ public class TaamMain {
 
 		GameRegistry.registerTileEntity(TileEntityCreativeWell.class, new ResourceLocation(Taam.MOD_ID, Taam.TILEENTITY_CREATIVEWELL));
 
+		GameRegistry.registerTileEntity(MachineTileEntity.class, new ResourceLocation(Taam.MOD_ID, Taam.TILEENTITY_MACHINE_WRAPPER));
+
 		/*
 		 * Multiparts
 		 */
-
-		GameRegistry.registerTileEntity(MachineTileEntity.class, new ResourceLocation(Taam.MOD_ID, Taam.TILEENTITY_MACHINE_WRAPPER));
-
 
 		if (Config.multipart_load) {
 			MultipartHandler.registerMultipartStuff();
@@ -390,107 +497,6 @@ public class TaamMain {
 				Taam.BLOCK_MACHINE_WRAPPER
 		);
 		registerItem(itemMachine = new MachineItemBlock(blockMachine), Taam.BLOCK_MACHINE_WRAPPER);
-
-		/*
-		 * Worldgen
-		 */
-
-		OreGenerator worldgen = new OreGenerator();
-		MinecraftForge.EVENT_BUS.register(worldgen);
-
-		GameRegistry.registerWorldGenerator(worldgen, 2);
-
-		/*
-		 * Fluids
-		 */
-
-		//TODO: Move this to the config
-		boolean registerFluidBlocks = true;
-
-		Taam.FLUID_DYE_META[] fluidsDyeValues = Taam.FLUID_DYE_META.values();
-		fluidsDye = new FluidDye[fluidsDyeValues.length];
-		blocksFluidDye = new BlockFluidClassic[fluidsDyeValues.length];
-
-		for (int i = 0; i < fluidsDyeValues.length; i++) {
-			fluidsDye[i] = new FluidDye(Taam.FLUID_DYE + fluidsDyeValues[i].name());
-			FluidRegistry.registerFluid(fluidsDye[i]);
-			FluidRegistry.addBucketForFluid(fluidsDye[i]);
-
-			if (registerFluidBlocks) {
-				BlockFluidClassic fluidBlock = new BlockFluidClassic(fluidsDye[i], Material.WATER) {
-					@SuppressWarnings("deprecation") // Deprecation: overriding/implementing is fine
-					@Override
-					public boolean shouldSideBeRendered(@Nonnull IBlockState state, IBlockAccess world, BlockPos pos, @Nonnull EnumFacing side) {
-						IBlockState neighbor = world.getBlockState(pos.offset(side));
-						// Force rendering if there is a different block adjacent, not only a different material
-						if (neighbor.getBlock() != this) {
-							return true;
-						}
-						return super.shouldSideBeRendered(state, world, pos, side);
-					}
-				};
-				String blockName = "fluid.dye." + fluidsDyeValues[i].name();
-				registerBlock(
-						fluidBlock,
-						new ItemBlock(fluidBlock),
-						blockName);
-				blocksFluidDye[i] = fluidBlock;
-			}
-
-		}
-
-		Taam.FLUID_MATERIAL_META[] fluidsMaterialValues = Taam.FLUID_MATERIAL_META.values();
-		fluidsMaterial = new FluidMaterial[fluidsMaterialValues.length];
-		blocksFluidMaterial = new BlockFluidFinite[fluidsMaterialValues.length];
-
-		for (int i = 0; i < fluidsMaterialValues.length; i++) {
-			fluidsMaterial[i] = new FluidMaterial(fluidsMaterialValues[i]);
-			FluidRegistry.registerFluid(fluidsMaterial[i]);
-			FluidRegistry.addBucketForFluid(fluidsMaterial[i]);
-
-			if (registerFluidBlocks) {
-				BlockFluidFinite fluidBlock = new BlockFluidFinite(fluidsMaterial[i], Material.WATER) {
-					@SuppressWarnings("deprecation") // Deprecation: overriding/implementing is fine
-					@Override
-					public boolean shouldSideBeRendered(@Nonnull IBlockState state, IBlockAccess world, BlockPos pos, @Nonnull EnumFacing side) {
-						IBlockState neighbor = world.getBlockState(pos.offset(side));
-						// Force rendering if there is a different block adjacent, not only a different material
-						if (neighbor.getBlock() != this) {
-							return true;
-						}
-						return super.shouldSideBeRendered(state, world, pos, side);
-					}
-				};
-				if (fluidsMaterialValues[i] == FLUID_MATERIAL_META.coating) {
-					fluidBlock.setQuantaPerBlock(2);
-				} else {
-					fluidBlock.setQuantaPerBlock(1);
-				}
-				String blockName = "fluid.material." + fluidsMaterialValues[i].name();
-				registerBlock(
-						fluidBlock,
-						new ItemBlock(fluidBlock),
-						blockName);
-				blocksFluidMaterial[i] = fluidBlock;
-			}
-		}
-
-		/*
-		 * Capabilities
-		 */
-		registerCapabilities();
-		validateCapabilities();
-
-		network = NetworkRegistry.INSTANCE.newSimpleChannel(Taam.CHANNEL_NAME);
-		proxy.registerPackets(network);
-
-		/*
-		Early registration of model loader
-		 */
-		proxy.registerModelLoader();
-
-		// Marker for automatic server test, to make sure the mod was loaded
-		Log.info("Taam preInit done");
 	}
 
 	public static void registerCapabilities() {
