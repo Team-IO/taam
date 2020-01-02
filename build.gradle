@@ -95,7 +95,7 @@ dependencies {
 	compile "mezz.jei:jei_${config.jei_mc_version}:${config.jei_version}"
 
 	testCompileOnly(
-			'junit:junit:4.12'
+			'junit:junit:4.13'
 	)
 	testImplementation(
 			'org.junit.jupiter:junit-jupiter-api:5.5.2',
