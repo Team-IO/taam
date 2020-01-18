@@ -193,6 +193,17 @@ public class PipeInfo {
 	}
 
 	/**
+	 * Clears content and pressure from this instance.
+	 * Calls {@link #onUpdate()}.
+	 */
+	public void clear() {
+		content.clear();
+		pressure = 0;
+		fillLevel = 0;
+		onUpdate();
+	}
+
+	/**
 	 * Override this when you need update events, e.g. for markDirty(). Default implementation does nothing.
 	 */
 	protected void onUpdate() {

@@ -45,11 +45,12 @@ public class TileEntityCreativeWell extends BaseTileEntity implements ITickable,
 
 	@Override
 	public void update() {
+		if (fluidHandler.template == null) {
+			return;
+		}
 		for (EnumFacing side : EnumFacing.VALUES) {
 			int index = side.ordinal();
-			if (fluidHandler.template != null) {
-				pipeEnds[index].addFluid(fluidHandler.template);
-			}
+			pipeEnds[index].addFluid(fluidHandler.template);
 		}
 	}
 
@@ -119,6 +120,7 @@ public class TileEntityCreativeWell extends BaseTileEntity implements ITickable,
 		ItemStack stack = player.inventory.getStackInSlot(player.inventory.currentItem);
 		if (stack == null) {
 			fluidHandler.template = null;
+			Log.debug("Removed fluid from creative well");
 		} else {
 			fluidHandler.template = FluidUtils.getFluidFromItem(stack);
 			if (fluidHandler.template != null) {
@@ -128,8 +130,7 @@ public class TileEntityCreativeWell extends BaseTileEntity implements ITickable,
 		}
 		for (EnumFacing peSide : EnumFacing.VALUES) {
 			int index = peSide.ordinal();
-			pipeEnds[index].info.content.clear();
-			pipeEnds[index].info.recalculateFillLevel();
+			pipeEnds[index].info.clear();
 		}
 		updateState(true, false, true);
 		return true;
