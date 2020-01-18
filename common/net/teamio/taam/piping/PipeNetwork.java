@@ -109,6 +109,14 @@ public class PipeNetwork {
 		}
 	}
 
+	/**
+	 * Marks the pipe network to rescan on the next update.
+	 * Required when e.g. rotating machines without actually adding/removing pipes from the world.
+	 */
+	public void forceRescan() {
+		needsRescan = true;
+	}
+
 	public List<IPipe> getPipes() {
 		return graph.orderedNodes;
 	}

@@ -286,6 +286,10 @@ public class MachinePump implements IMachine, IPipePos, IRotatable {
 		pipeEndIn.setSide(direction.getOpposite());
 		updateOcclusion();
 
-		// TODO: updateState(true, true, true);
+		// update pipe network
+		PipeNetwork.NET.forceRescan();
+
+		// Block update
+		worldObj.notifyNeighborsOfStateChange(pos, worldObj.getBlockState(pos).getBlock(), true);
 	}
 }
