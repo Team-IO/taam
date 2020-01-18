@@ -29,6 +29,7 @@ import net.teamio.taam.piping.PipeNetwork;
 import net.teamio.taam.recipes.IProcessingRecipeFluidBased;
 import net.teamio.taam.recipes.ProcessingRegistry;
 import net.teamio.taam.util.FaceBitmap;
+import net.teamio.taam.util.FluidUtils;
 import net.teamio.taam.util.TaamUtil;
 
 import java.io.IOException;
@@ -448,5 +449,13 @@ public class MachineMixer implements IMachine, IPipePos, IRotatable {
 
 		// Block update
 		worldObj.notifyNeighborsOfStateChange(pos, worldObj.getBlockState(pos).getBlock(), true);
+	}
+
+	@Override
+	public int getComparatorInputOverride() {
+		// Average fill level across both pipe ends
+		float fillLevel = (pipeEndIn.info.getFillLevelPercent() + pipeEndOut.info.getFillLevelPercent()) / 2f;
+
+		return FluidUtils.getComparatorValueFromFillLevel(fillLevel);
 	}
 }

@@ -24,6 +24,7 @@ import net.teamio.taam.piping.PipeNetwork;
 import net.teamio.taam.recipes.IProcessingRecipeFluidBased;
 import net.teamio.taam.recipes.ProcessingRegistry;
 import net.teamio.taam.util.FaceBitmap;
+import net.teamio.taam.util.FluidUtils;
 import net.teamio.taam.util.TaamUtil;
 
 import java.io.IOException;
@@ -316,5 +317,10 @@ public class MachineFluidDrier implements IMachine, IPipePos {
 			return (T) pipeEndIn;
 		}
 		return null;
+	}
+
+	@Override
+	public int getComparatorInputOverride() {
+		return FluidUtils.getComparatorValueFromFillLevel(pipeEndIn.info.getFillLevelPercent());
 	}
 }
