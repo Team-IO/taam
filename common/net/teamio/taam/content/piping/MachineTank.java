@@ -27,6 +27,7 @@ import net.teamio.taam.piping.PipeNetwork;
 import net.teamio.taam.piping.PipeUtil;
 import net.teamio.taam.rendering.TankRenderInfo;
 import net.teamio.taam.util.FaceBitmap;
+import net.teamio.taam.util.FluidUtils;
 
 import java.io.IOException;
 import java.util.List;
@@ -222,6 +223,11 @@ public class MachineTank implements IMachine, IPipePos, IWorldInteractable {
 			return (T) tankRI.asArray();
 		}
 		return null;
+	}
+
+	@Override
+	public int getComparatorInputOverride() {
+		return FluidUtils.getComparatorValueFromFillLevel(FluidUtils.getTankFillLevel(tank));
 	}
 
 	/*

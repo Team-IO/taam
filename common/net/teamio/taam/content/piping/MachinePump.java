@@ -24,6 +24,7 @@ import net.teamio.taam.piping.PipeInfo;
 import net.teamio.taam.piping.PipeNetwork;
 import net.teamio.taam.rendering.TankRenderInfo;
 import net.teamio.taam.util.FaceBitmap;
+import net.teamio.taam.util.FluidUtils;
 
 import java.io.IOException;
 import java.util.List;
@@ -64,12 +65,13 @@ public class MachinePump implements IMachine, IPipePos, IRotatable {
 	private final TankRenderInfo tankRI = new TankRenderInfo(boundsPumpTank[2]);
 
 	private byte occludedSides;
+
 	private World worldObj;
 	private BlockPos pos;
 	private IMachineWrapper wrapper;
 
 	public MachinePump() {
-		info = new PipeInfo(Config.pl_pump_capacity){
+		info = new PipeInfo(Config.pl_pump_capacity) {
 			@Override
 			protected void onUpdate() {
 				if (wrapper == null) return;
@@ -176,9 +178,9 @@ public class MachinePump implements IMachine, IPipePos, IRotatable {
 		//int left = Config.pl_pump_pressure - amount;
 		int amount = 0;
 		//if(left > 0) {
-			// Results are added to amount to mark the whole pump as dirty if a pipe end changed
-			amount -= pipeEndIn.applyPressure(-Config.pl_pump_pressure);
-			amount += pipeEndOut.applyPressure(Config.pl_pump_pressure);
+		// Results are added to amount to mark the whole pump as dirty if a pipe end changed
+		amount -= pipeEndIn.applyPressure(-Config.pl_pump_pressure);
+		amount += pipeEndOut.applyPressure(Config.pl_pump_pressure);
 		//}
 		return amount > 0;
 	}
@@ -191,7 +193,13 @@ public class MachinePump implements IMachine, IPipePos, IRotatable {
 	@Override
 	public void blockUpdate(World world, BlockPos pos, byte occlusionField) {
 		occludedSides = occlusionField;
+
 		updateOcclusion();
+	}
+
+	@Override
+	public int getComparatorInputOverride() {
+		return FluidUtils.getComparatorValueFromFillLevel(info.getFillLevelPercent());
 	}
 
 	@Override

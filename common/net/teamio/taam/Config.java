@@ -225,7 +225,7 @@ public class Config {
 		pl_conveyor_speedsteps[1] = getByte("speedsteps_2", SECTION_PRODUCTIONLINE_CONVEYORS, 40, 1, Byte.MAX_VALUE, "Speedsteps (1/speed) for tier 2 conveyors (aluminum)");
 		pl_conveyor_speedsteps[2] = getByte("speedsteps_3", SECTION_PRODUCTIONLINE_CONVEYORS, 5, 1, Byte.MAX_VALUE, "Speedsteps (1/speed) for tier 3 conveyors (high throughput)");
 
-		String blacklist = getString("rightclick_blacklist", SECTION_PRODUCTIONLINE_CONVEYORS, "taam:wrench;taam:productionline;taam:part@16;taam:productionline_attachable;taam:productionline_appliance", "Blacklist for items that cannot be put on a conveyor (and similar machines) by right clicking. Use this to prevent accidentally losing wrench-like items or similar use cases.");
+		String blacklist = getString("rightclick_blacklist", SECTION_PRODUCTIONLINE_CONVEYORS, "taam:wrench;taam:productionline;taam:part@16;taam:productionline_attachable;taam:productionline_appliance", "Blacklist for items that cannot be put on a conveyor (and similar machines) by right clicking. Use this to prevent accidentally losing wrench-like items or similar use cases. Values are separated by semicolon (;).");
 		pl_conveyor_rightclick_blacklist.clear();
 		pl_conveyor_rightclick_blacklist.addAll(Arrays.asList(blacklist.split(";")));
 

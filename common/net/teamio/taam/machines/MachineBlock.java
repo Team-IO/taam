@@ -208,4 +208,15 @@ public class MachineBlock extends BaseBlock implements ITileEntityProvider {
 				.withProperty(VARIANT, MachineTileEntity.getInfo(meta));
 	}
 
+	@Override
+	public boolean hasComparatorInputOverride(IBlockState state) {
+		Taam.MACHINE_META meta = state.getValue(VARIANT);
+		return meta.hasComparatorOverride();
+	}
+
+	@Override
+	public int getComparatorInputOverride(IBlockState blockState, World worldIn, BlockPos pos) {
+		MachineTileEntity tileEntity = (MachineTileEntity) worldIn.getTileEntity(pos);
+		return tileEntity.machine.getComparatorInputOverride();
+	}
 }

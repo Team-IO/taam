@@ -450,26 +450,29 @@ public final class Taam {
 	 */
 	public enum MACHINE_META implements IMachineMetaInfo {
 
-		pipe(MachinePipe.class, "pipe", null),
-		tank(MachineTank.class, "tank", null),
-		pump(MachinePump.class, "pump", null),
-		mixer(MachineMixer.class, "mixer", null),
-		fluid_drier(MachineFluidDrier.class, "fluid_drier", null);
+		pipe(MachinePipe.class, "pipe", null, false),
+		tank(MachineTank.class, "tank", null, true),
+		pump(MachinePump.class, "pump", null, true),
+		mixer(MachineMixer.class, "mixer", null, false),
+		fluid_drier(MachineFluidDrier.class, "fluid_drier", null, false);
 
 		private Class<? extends IMachine> machineClass;
 		private String unlocalizedName;
 		private String[] info;
+		private boolean hasComparatorOverride;
 
 
 		/**
 		 * @param machineClass    Implementation of the machine logic
 		 * @param unlocalizedName The unlocalized name for registration and translation
 		 * @param info            Information added to the item tooltip
+		 * @param hasComparatorOverride Enable comparator override for this machine variant. Override values will be provided by the machine implementation.
 		 */
-		MACHINE_META(Class<? extends IMachine> machineClass, String unlocalizedName, String[] info) {
+		MACHINE_META(Class<? extends IMachine> machineClass, String unlocalizedName, String[] info, boolean hasComparatorOverride) {
 			this.machineClass = machineClass;
 			this.unlocalizedName = unlocalizedName;
 			this.info = info;
+			this.hasComparatorOverride = hasComparatorOverride;
 		}
 
 		/*
@@ -501,6 +504,11 @@ public final class Taam {
 		@Override
 		public String[] getTooltip() {
 			return info;
+		}
+
+		@Override
+		public boolean hasComparatorOverride() {
+			return hasComparatorOverride;
 		}
 
 		/*

@@ -10,4 +10,6 @@ public interface IMachineMetaInfo extends IStringSerializable {
 	String unlocalizedName();
 
 	String[] getTooltip();
+
+	boolean hasComparatorOverride();
 }

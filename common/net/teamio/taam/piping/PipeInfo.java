@@ -198,4 +198,20 @@ public class PipeInfo {
 	protected void onUpdate() {
 		// Default implementation
 	}
+
+	/**
+	 * Calculates the current fill level in percent.
+	 * Uses cached fill level data.
+	 *
+	 * @return Percentage, 0..1
+	 */
+	public float getFillLevelPercent() {
+		if (capacity <= 0) {
+			return 0;
+		}
+		if (fillLevel >= capacity) {
+			return 1;
+		}
+		return fillLevel / (float) capacity;
+	}
 }

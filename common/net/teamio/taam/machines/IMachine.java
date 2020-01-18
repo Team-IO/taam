@@ -61,4 +61,6 @@ public interface IMachine extends ICapabilityProvider {
 	void setWrapper(IMachineWrapper wrapper);
 	void onCreated(World worldObj, BlockPos pos);
 	void onUnload(World worldObj, BlockPos pos);
+
+	default int getComparatorInputOverride() {return 0;};
 }
