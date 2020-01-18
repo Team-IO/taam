@@ -259,7 +259,8 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IRedston
 
 	public void setHighSpeed(boolean highSpeed) {
 		this.highSpeed = highSpeed;
-		markDirty();
+		// Not used, but setting this would actually change the visuals, so do a render update and block update as well
+		updateState(true, true, true);
 	}
 
 	public boolean isEject() {
@@ -272,7 +273,7 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IRedston
 			TPMachineConfiguration config = TPMachineConfiguration.newChangeBoolean(new WorldCoord(this), (byte) 1, eject);
 			TaamMain.network.sendToServer(config);
 		} else {
-			markDirty();
+			updateState(true, false, false);
 		}
 	}
 
@@ -286,7 +287,7 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IRedston
 			TPMachineConfiguration config = TPMachineConfiguration.newChangeBoolean(new WorldCoord(this), (byte) 2, stackMode);
 			TaamMain.network.sendToServer(config);
 		} else {
-			markDirty();
+			updateState(true, false, false);
 		}
 	}
 
@@ -301,7 +302,7 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IRedston
 			TPMachineConfiguration config = TPMachineConfiguration.newChangeBoolean(new WorldCoord(this), (byte) 3, linearMode);
 			TaamMain.network.sendToServer(config);
 		} else {
-			markDirty();
+			updateState(true, false, false);
 		}
 	}
 
@@ -326,7 +327,7 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IRedston
 			TPMachineConfiguration config = TPMachineConfiguration.newChangeInteger(new WorldCoord(this), (byte) 1, redstoneMode);
 			TaamMain.network.sendToServer(config);
 		} else {
-			markDirty();
+			updateState(true, false, false);
 		}
 	}
 
@@ -352,5 +353,4 @@ public class TileEntityConveyorHopper extends BaseTileEntity implements IRedston
 			updateState(false, true, false);
 		}
 	}
-
 }
