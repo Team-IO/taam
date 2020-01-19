@@ -14,11 +14,14 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.teamio.taam.Log;
+import net.teamio.taam.Taam;
 import net.teamio.taam.TaamMain;
 import net.teamio.taam.machines.IMachine;
+import net.teamio.taam.machines.MachineBlock;
 import net.teamio.taam.machines.MachineTileEntity;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class MachineMultipart implements IMultipart {
@@ -40,12 +43,30 @@ public class MachineMultipart implements IMultipart {
 
 	@Override
 	public List<AxisAlignedBB> getOcclusionBoxes(IPartInfo part) {
+		IMachine machine;
+
 		TileEntity te = part.getTile().getTileEntity();
-		if (te instanceof MachineTileEntity) {
-			IMachine machine = ((MachineTileEntity) te).machine;
-			machine.addOcclusionBoxes(new ArrayList<>());
+
+		if (te == null) {
+			// We don't have a block yet, create a temporary machine instance
+			Taam.MACHINE_META meta = part.getState().getValue(MachineBlock.VARIANT);
+			Log.debug("Creating a temporary instance of {}", meta.unlocalizedName());
+			machine = meta.createMachine(null);
+		} else if (te instanceof MachineTileEntity) {
+			machine = ((MachineTileEntity) te).machine;
+			if (machine == null) {
+				Log.error("MachineMultipart at {} does not have a machine instance", part.getPartPos().toString());
+
+				Taam.MACHINE_META meta = part.getState().getValue(MachineBlock.VARIANT);
+				Log.debug("Creating a temporary instance of {}", meta.unlocalizedName());
+				machine = meta.createMachine(null);
+			}
+		} else {
+			Log.error("MachineMultipart at %s did not wrap a MachineTileEntity (got {})", part.getPartPos().toString(), te);
+			return Collections.emptyList();
 		}
-		Log.error("MachineMultipart at %s did not wrap a MachineTileEntity (got %s)", part.getPartPos().toString(), te);
-		return null;
+		ArrayList<AxisAlignedBB> list = new ArrayList<>();
+		machine.addOcclusionBoxes(list);
+		return list;
 	}
 }

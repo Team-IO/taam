@@ -1,5 +1,7 @@
 package net.teamio.taam.machines;
 
+import mcmultipart.api.multipart.IMultipartTile;
+import mcmultipart.api.ref.MCMPCapabilities;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -120,6 +122,9 @@ public class MachineTileEntity extends BaseTileEntity implements ITickable, IMac
 
 	@Override
 	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+		if (capability == MCMPCapabilities.MULTIPART_TILE) {
+			return true;
+		}
 		if (machine == null) {
 			Log.error("MachineTileEntity at {} is missing machine instance.", pos);
 			return false;
@@ -129,6 +134,9 @@ public class MachineTileEntity extends BaseTileEntity implements ITickable, IMac
 
 	@Override
 	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+		if (capability == MCMPCapabilities.MULTIPART_TILE) {
+			return (T)IMultipartTile.wrap(this);
+		}
 		if (machine == null) {
 			Log.error("MachineTileEntity at {} is missing machine instance.", pos);
 			return null;
