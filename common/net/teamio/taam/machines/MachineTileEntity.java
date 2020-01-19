@@ -13,6 +13,8 @@ import net.teamio.taam.Log;
 import net.teamio.taam.Taam;
 import net.teamio.taam.content.BaseTileEntity;
 
+import javax.annotation.Nonnull;
+
 public class MachineTileEntity extends BaseTileEntity implements ITickable, IMachineWrapper {
 
 	public IMachine machine;
@@ -25,7 +27,7 @@ public class MachineTileEntity extends BaseTileEntity implements ITickable, IMac
 	}
 
 	public static EnumFacing getDirection(EntityLivingBase player, BlockPos pos) {
-		EnumFacing placeDir = EnumFacing.NORTH;
+		EnumFacing placeDir;
 
 		// TODO: Determination of special placement
 		//if (defaultPlacement) ...
@@ -76,6 +78,7 @@ public class MachineTileEntity extends BaseTileEntity implements ITickable, IMac
 		machine.onUnload(world, pos);
 	}
 
+	@Nonnull
 	@Override
 	public String getName() {
 		return "tile.taam.machine." + meta.getName() + ".name";
@@ -93,7 +96,7 @@ public class MachineTileEntity extends BaseTileEntity implements ITickable, IMac
 	}
 
 	@Override
-	protected void writePropertiesToNBT(NBTTagCompound tag) {
+	protected void writePropertiesToNBT(@Nonnull NBTTagCompound tag) {
 		if (meta != null) {
 			tag.setString("machine", meta.unlocalizedName());
 		}
@@ -121,7 +124,7 @@ public class MachineTileEntity extends BaseTileEntity implements ITickable, IMac
 	}
 
 	@Override
-	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+	public boolean hasCapability(@Nonnull Capability<?> capability, EnumFacing facing) {
 		if (capability == MCMPCapabilities.MULTIPART_TILE) {
 			return true;
 		}
@@ -133,9 +136,10 @@ public class MachineTileEntity extends BaseTileEntity implements ITickable, IMac
 	}
 
 	@Override
-	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+	@SuppressWarnings("unchecked")
+	public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
 		if (capability == MCMPCapabilities.MULTIPART_TILE) {
-			return (T)IMultipartTile.wrap(this);
+			return (T) IMultipartTile.wrap(this);
 		}
 		if (machine == null) {
 			Log.error("MachineTileEntity at {} is missing machine instance.", pos);

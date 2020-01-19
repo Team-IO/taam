@@ -35,9 +35,10 @@ import net.teamio.taam.content.IRotatable;
 import net.teamio.taam.content.MaterialMachinesTransparent;
 import net.teamio.taam.rendering.obj.OBJModel;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class MachineBlock extends BaseBlock implements ITileEntityProvider {
@@ -60,28 +61,33 @@ public class MachineBlock extends BaseBlock implements ITileEntityProvider {
 		return meta.ordinal();
 	}
 
+	@Nonnull
 	@Override
 	public IBlockState getStateFromMeta(int meta) {
 		return getDefaultState().withProperty(VARIANT, MachineTileEntity.getInfo(meta));
 	}
 
+	@Nonnull
 	@Override
 	protected BlockStateContainer createBlockState() {
 		return new ExtendedBlockState(this, new IProperty[]{DIRECTION, VARIANT}, new IUnlistedProperty[]{OBJModel.OBJProperty.instance});
 	}
 
+	@Nonnull
 	@Override
-	public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
+	public ItemStack getPickBlock(@Nonnull IBlockState state, RayTraceResult target, World world, @Nonnull BlockPos pos, EntityPlayer player) {
 		MachineTileEntity te = (MachineTileEntity) world.getTileEntity(pos);
 		return new ItemStack(TaamMain.itemMachine, 1, te.meta.metaData());
 	}
 
+	@Nonnull
 	@Override
-	public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
+	public List<ItemStack> getDrops(IBlockAccess world, @Nonnull BlockPos pos, @Nonnull IBlockState state, int fortune) {
 		MachineTileEntity te = (MachineTileEntity) world.getTileEntity(pos);
-		return Arrays.asList(new ItemStack(TaamMain.itemMachine, 1, te.meta.metaData()));
+		return Collections.singletonList(new ItemStack(TaamMain.itemMachine, 1, te.meta.metaData()));
 	}
 
+	@Nonnull
 	@Override
 	@SideOnly(Side.CLIENT)
 	public BlockRenderLayer getRenderLayer() {
@@ -119,7 +125,7 @@ public class MachineBlock extends BaseBlock implements ITileEntityProvider {
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World worldIn, int meta) {
+	public TileEntity createNewTileEntity(@Nonnull World worldIn, int meta) {
 		return new MachineTileEntity();
 	}
 
@@ -136,28 +142,34 @@ public class MachineBlock extends BaseBlock implements ITileEntityProvider {
 	};
 
 	@Override
-	public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean isActualState) {
+	public void addCollisionBoxToList(IBlockState state, World worldIn, @Nonnull BlockPos pos, @Nonnull AxisAlignedBB entityBox, @Nonnull List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean isActualState) {
 		MachineTileEntity tileEntity = (MachineTileEntity) worldIn.getTileEntity(pos);
+		if (tileEntity == null || tileEntity.machine == null) {
+			return;
+		}
 
 		List<AxisAlignedBB> tempList = this.tempList.get();
 		tempList.clear();
 
 		tileEntity.machine.addCollisionBoxes(entityBox.offset(-pos.getX(), -pos.getY(), -pos.getZ()), tempList, entityIn);
-		for (int i = 0; i < tempList.size(); i++) {
-			collidingBoxes.add(tempList.get(i).offset(pos.getX(), pos.getY(), pos.getZ()));
+		for (AxisAlignedBB axisAlignedBB : tempList) {
+			collidingBoxes.add(axisAlignedBB.offset(pos.getX(), pos.getY(), pos.getZ()));
 		}
 	}
 
 	@Override
-	public RayTraceResult collisionRayTrace(IBlockState blockState, World worldIn, BlockPos pos, Vec3d start,
-	                                        Vec3d end) {
+	public RayTraceResult collisionRayTrace(IBlockState blockState, World worldIn, @Nonnull BlockPos pos, @Nonnull Vec3d start, @Nonnull Vec3d end) {
+		MachineTileEntity tileEntity = (MachineTileEntity) worldIn.getTileEntity(pos);
+		if (tileEntity == null || tileEntity.machine == null) {
+			return null;
+		}
+
 		start = start.subtract(pos.getX(), pos.getY(), pos.getZ());
 		end = end.subtract(pos.getX(), pos.getY(), pos.getZ());
 
 		List<AxisAlignedBB> tempList = this.tempList.get();
 		tempList.clear();
 
-		MachineTileEntity tileEntity = (MachineTileEntity) worldIn.getTileEntity(pos);
 		tileEntity.machine.addSelectionBoxes(tempList);
 
 		RayTraceResult closestHit = null;
@@ -182,8 +194,9 @@ public class MachineBlock extends BaseBlock implements ITileEntityProvider {
 		return new RayTraceResult(closestHit.hitVec, closestHit.sideHit, pos);
 	}
 
+	@Nonnull
 	@Override
-	public AxisAlignedBB getSelectedBoundingBox(IBlockState state, World worldIn, BlockPos pos) {
+	public AxisAlignedBB getSelectedBoundingBox(IBlockState state, @Nonnull World worldIn, @Nonnull BlockPos pos) {
 		// Get player position + look vector
 		EntityPlayerSP player = Minecraft.getMinecraft().player;
 		Vec3d eyes = player.getPositionEyes(0);
@@ -202,8 +215,9 @@ public class MachineBlock extends BaseBlock implements ITileEntityProvider {
 		return closestBB.offset(pos.getX(), pos.getY(), pos.getZ());
 	}
 
+	@Nonnull
 	@Override
-	public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
+	public IBlockState getStateForPlacement(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumFacing facing, float hitX, float hitY, float hitZ, int meta, @Nonnull EntityLivingBase placer, EnumHand hand) {
 		return super.getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, meta, placer, hand)
 				.withProperty(VARIANT, MachineTileEntity.getInfo(meta));
 	}
@@ -217,6 +231,9 @@ public class MachineBlock extends BaseBlock implements ITileEntityProvider {
 	@Override
 	public int getComparatorInputOverride(IBlockState blockState, World worldIn, BlockPos pos) {
 		MachineTileEntity tileEntity = (MachineTileEntity) worldIn.getTileEntity(pos);
+		if (tileEntity == null || tileEntity.machine == null) {
+			return 0;
+		}
 		return tileEntity.machine.getComparatorInputOverride();
 	}
 }

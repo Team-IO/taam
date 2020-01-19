@@ -66,7 +66,9 @@ public class MachineMultipart implements IMultipart {
 			return Collections.emptyList();
 		}
 		ArrayList<AxisAlignedBB> list = new ArrayList<>();
-		machine.addOcclusionBoxes(list);
+		if (machine != null) {
+			machine.addOcclusionBoxes(list);
+		}
 		return list;
 	}
 }
