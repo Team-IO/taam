@@ -123,7 +123,8 @@ public class TaamMain {
 	 */
 	public static MachineBlock blockMachine;
 	/**
-	 * Either {@link MachineItemBlock} or old, FIXME not anymore MachineItemMultipart,
+	 * {@link MachineItemBlock}.
+	 * Was used in old versions of MCMultipart to hold MachineItemMultipart,
 	 * depending on availability of multipart.
 	 */
 	public static Item itemMachine;
@@ -480,14 +481,6 @@ public class TaamMain {
 		GameRegistry.registerTileEntity(TileEntityCreativeWell.class, new ResourceLocation(Taam.MOD_ID, Taam.TILEENTITY_CREATIVEWELL));
 
 		GameRegistry.registerTileEntity(MachineTileEntity.class, new ResourceLocation(Taam.MOD_ID, Taam.TILEENTITY_MACHINE_WRAPPER));
-
-		/*
-		 * Multiparts
-		 */
-
-		if (Config.multipart_load) {
-			MultipartHandler.registerMultipartStuff();
-		}
 
 		/*
 		 * Wrapper block for machines

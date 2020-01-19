@@ -95,16 +95,8 @@ public class TaamClientProxy extends TaamCommonProxy {
 
 		ClientRegistry.bindTileEntitySpecialRenderer(MachineTileEntity.class, taamRenderer);
 
-		// If we load multipart, register multipart things, too
-		if (Config.multipart_load) {
-			// TODO this config needs to be respected in the mc multipart integration, not here
-			//MultipartHandlerClient.registerRenderStuff();
-		}
-
 		// Receive event for Client Ticks
 		MinecraftForge.EVENT_BUS.register(taamRenderer);
-
-
 	}
 
 	@SideOnly(Side.CLIENT)

@@ -16,8 +16,6 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
-import net.teamio.taam.Config;
-import net.teamio.taam.MultipartHandler;
 import net.teamio.taam.Taam;
 import net.teamio.taam.content.IRedstoneControlled;
 import net.teamio.taam.conveyors.IConveyorApplianceHost;
@@ -297,9 +295,6 @@ public final class TaamUtil {
 		}
 		if (tileEntity.hasCapability(capability, side)) {
 			return tileEntity.getCapability(capability, side);
-		}
-		if (Config.multipart_present) {
-			return MultipartHandler.getCapabilityForCenter(capability, tileEntity.getWorld(), tileEntity.getPos(), side);
 		}
 		return null;
 	}

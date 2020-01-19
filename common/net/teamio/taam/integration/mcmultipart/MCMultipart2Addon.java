@@ -4,6 +4,7 @@ import mcmultipart.api.addon.IMCMPAddon;
 import mcmultipart.api.addon.MCMPAddon;
 import mcmultipart.api.multipart.IMultipartRegistry;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.teamio.taam.Config;
 import net.teamio.taam.TaamMain;
 
 /**
@@ -13,6 +14,9 @@ import net.teamio.taam.TaamMain;
 public class MCMultipart2Addon implements IMCMPAddon {
 	@Override
 	public void registerParts(IMultipartRegistry registry) {
+		if (!Config.multipart_load) {
+			return;
+		}
 		registry.registerPartWrapper(TaamMain.blockMachine, new MachineMultipart());
 		registry.registerStackWrapper(ForgeRegistries.ITEMS.getValue(TaamMain.blockMachine.getRegistryName()), TaamMain.blockMachine);
 	}
