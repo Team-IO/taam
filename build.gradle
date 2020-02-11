@@ -106,7 +106,7 @@ dependencies {
 			'org.junit.vintage:junit-vintage-engine:5.5.2'
 	)
 
-	codacy group: 'com.codacy', name: 'codacy-coverage-reporter', version: '6.1.4'
+	codacy group: 'com.codacy', name: 'codacy-coverage-reporter', version: '6.2.1'
 }
 
 test {
