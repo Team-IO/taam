@@ -103,7 +103,7 @@ dependencies {
 	)
 	testRuntimeOnly(
 			'org.junit.jupiter:junit-jupiter-engine:5.5.2',
-			'org.junit.vintage:junit-vintage-engine:5.5.2'
+			'org.junit.vintage:junit-vintage-engine:5.7.2'
 	)
 
 	codacy group: 'com.codacy', name: 'codacy-coverage-reporter', version: '6.1.4'
