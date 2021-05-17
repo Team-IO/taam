@@ -102,7 +102,7 @@ dependencies {
 			'com.builtbroken.minecraftjunit:MinecraftJUnit:1.12.2-0.6.0b5:deobf'
 	)
 	testRuntimeOnly(
-			'org.junit.jupiter:junit-jupiter-engine:5.5.2',
+			'org.junit.jupiter:junit-jupiter-engine:5.7.2',
 			'org.junit.vintage:junit-vintage-engine:5.5.2'
 	)
 
